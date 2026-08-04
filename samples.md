@@ -607,24 +607,30 @@ all five base apples are red.
 
 When a graph instead represents an outer `poi` as selection of the greatest
 satisfying subreference, no `Relative` record or maximality primitive is
-needed. For a previously computed `$demonstrators`, the reference property is:
+needed. For previously computed `$demonstrators` and `$building`, the clause
+property is bound once so its omitted-place closure identity is shared by both
+applications:
 
 ```lisp
-(λ (($surrounders (Referents Entity)))
-  (∧
-    (Among $surrounders $demonstrators)
-    (sruri $surrounders $building)
-    (∀
-      (λ (($candidate (Referents Entity)))
-        (→
-          (∧
-            (Among $candidate $demonstrators)
-            (sruri $candidate $building))
-          (Among $candidate $surrounders))))))
+(Let (($surrounds (Fn ((Referents Entity)) Content)
+        (λ (($r (Referents Entity)))
+          (sruri $r $building))))
+  (λ (($surrounders (Referents Entity)))
+    (∧
+      (Among $surrounders $demonstrators)
+      ($surrounds $surrounders)
+      (∀
+        (λ (($candidate (Referents Entity)))
+          (→
+            (∧
+              (Among $candidate $demonstrators)
+              ($surrounds $candidate))
+            (Among $candidate $surrounders)))))))
 ```
 
-This final block is a fragment. It preserves a collective `sruri` property of
-the selected plural reference; replacing it with `sruri $x $building` inside a
+This final block is a fragment: the `Let` body is the reference property to be
+supplied to `Refer`. It preserves one collective `sruri` property of the
+selected plural reference; replacing it with `sruri $x $building` inside a
 singular counting restriction is a different reading.
 
 A source `le gerku voi blabi` composes its one description property with the
@@ -665,7 +671,7 @@ and the white relative clause is the supplementary second operand:
 
 The same force-segment handler keeps the side commitment outside transparent
 negation and question force. Under the preceding `$dog` binding, the relevant
-act fragments are:
+handler-anchored act fragments are:
 
 ```lisp
 (Assert
@@ -685,7 +691,10 @@ act fragments are:
 In the first, only beauty is negated. In the second, only beauty is questioned.
 Whiteness is committed once as supplementary content in both cases. A graph
 which represents a genuinely local or conditional supplement names that
-different handler explicitly.
+different handler explicitly. A graph which retains the supplement at its body
+position may instead print `(¬ (Supplement (melbi $dog) (blabi $dog)))`;
+section 6.4 projects the same side commitment to the legal force handler while
+negating only the at-issue body.
 
 Multiple clauses retain their connector rather than a list of `Relative`
 records:

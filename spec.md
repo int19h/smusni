@@ -894,7 +894,7 @@ must already enclose both sites.
 | `(∃ (λ (...) body))` | lambda variables and ordinary body introductions are local; handled projective effects follow section 6.4; version 0 has no plain-existential witness export, so later anaphora must use a graph-licensed `Refer`/generalized-quantifier route or typed fallback rather than using the variable out of scope |
 | generalized quantifier | variable is local; only its registered successful run handle can authorize `Witnesses` |
 | `(Presuppose trigger body)` | emit the projective `trigger` at its dependency-legal handler, resolve or accommodate it once there, then evaluate `body`; the trigger's successful context is visible in `body` and in the handler continuation, while any shared lexical identity is bound outside the whole form |
-| `(Supplement body side)` | evaluate `body` in situ and emit `side` once as an ordered supplement-family effect at its graph-owned legal handler; `side` sees the body's successful context at that handler, is not an operand of a truth-functional or force operator around `body`, and exports only graph-declared shared identities; section 6.4 defines projection and commitment |
+| `(Supplement body side)` | evaluate `body` in situ and emit `side` once as an ordered supplement-family effect at its graph-owned legal handler; `side` is evaluated in the handler's context at its commitment point, ordered after the handler's at-issue content containing `body`; intervening shells contribute only what their own rows export, so `side` never sees body-local introductions across a `¬`, `∨`, `→`, `↔`, `⊕`, quantifier, or query shell; `side` is not an operand of a truth-functional or force operator around `body`, and exports only graph-declared shared identities; section 6.4 defines projection and commitment through the listed transparent shells |
 | `(Bind ... body)` | run the computation, bind its result, then evaluate the body; export follows the body's host rule |
 | `(Let ... body)`, `(LetRec ... body)` | bind inert identity without changing dynamic context; only `body` is evaluated at the enclosing dynamic host |
 | `Refer`, `Context` | run at their printed or expected-type-inserted operand host and introduce only their declared result/effects |
@@ -966,6 +966,17 @@ legal handler wins; equal-depth candidates are ordered by source order. Effects
 generated inside a supplement do not become at-issue content. Effects generated
 inside opaque or reified content cannot be hosted outside that boundary.
 
+Only a performance which evaluates stored content is a force-segment handler:
+one with force `Assertion`, `Question`, `Directive`, or `Expressive`.
+`Mention` and `Vocative` operands are inert values; performing those acts
+instantiates no operand-content judgment and commits no presupposition,
+supplement, or reference effect contained in that value. `Utterance` and `Sign`
+analyzer facts likewise do not become force handlers merely because their token
+is constructed. A projective effect whose search reaches a `Mention`,
+`Vocative`, utterance/sign analyzer-fact boundary, `Reify`, or `Opaque` boundary
+without finding a legal handler inside it has an absent handler and makes the
+smallest affected content use typed fallback.
+
 `Presuppose` is explicitly projective rather than an ordinary left-to-right
 conjunction. Its trigger may be handled outside transparent `¬`, `∨`, `→`, `↔`,
 `⊕`, and quantifier shells when all of its free dependencies remain in scope.
@@ -984,8 +995,10 @@ supplement effect rather than a presupposition trigger. Its graph-owned anchor
 either names an explicit dependency-legal local handler or uses the nearest
 performed force segment, enclosing `Do`/discourse sequence, or document
 performance convention.
-The handler commits `side` exactly once per performance after evaluating
-`body`; that commitment is not part of `body`'s at-issue truth conditions.
+The handler commits `side` exactly once per performance, ordered after the
+handler's at-issue content containing `body` has been evaluated. The at-issue
+value of `(Supplement body side)` is the value of `body`; commitment to `side`
+is not part of `body`'s at-issue truth conditions.
 Consequently it is not negated, questioned, made conditional, or made
 alternative merely because the printed `Supplement` occurs inside transparent
 `¬`, `∨`, `→`, `↔`, `⊕`, generalized-quantifier, or query shells. It projects
@@ -994,10 +1007,12 @@ remain in scope. A dependency boundary, force boundary, `Opaque` place, or
 reification blocks further projection. A graph which records a genuinely
 local or conditional side contribution must name that distinct legal handler;
 the renderer never infers local versus projective interpretation from surface
-nesting. An absent, illegal, or ambiguous supplement handler makes the
-smallest affected content use typed fallback. Nested effects generated while
-evaluating `side` retain their own families and handler rules, and do not
-become at-issue content by being inside a supplement.
+nesting. The printed placement must make that handler the nearest legal handler
+under these rules; a graph anchor naming a different handler is illegal because
+the output would not preserve it. An absent, illegal, or ambiguous supplement
+handler makes the smallest affected content use typed fallback. Nested effects
+generated while evaluating `side` retain their own families and handler rules,
+and do not become at-issue content by being inside a supplement.
 
 Reference resolution may have a legal `Discourse` host, including a graph-owned
 `Bind` spanning several acts in `Do`. The discourse handler runs that
@@ -1310,8 +1325,9 @@ Relative-clause taxonomy is eliminated into ordinary composition:
 - an inner restrictive `poi` in a description, such as
   `lo P poi Q`, conjoins its veridical clause property with the base
   description property before their one `Refer` computation;
-- a restrictive clause attached at a generalized-quantifier locus conjoins
-  with that quantifier's restriction. In particular, an explicit outer
+- under the generalized-quantifier restriction analysis, a restrictive clause
+  attached at that locus conjoins with the quantifier's restriction. In
+  particular, an explicit outer
   quantifier separates the description's reference computation from the
   outer selection: a clause inside the description modifies the base
   reference property, while a clause outside its `ku` modifies the outer
@@ -1380,7 +1396,10 @@ typed fallback; typed fallback is reserved for failure to represent or verify
 the graph's chosen reduction. If the clause property is effectful
 and its effects cannot be hoisted once while preserving this duplicated use,
 the maximal reduction is unavailable and the local boundary uses typed
-fallback. `Among` and a second `Refer` are therefore printed only when the
+fallback. When `$Q` contains a closure site or another shared identity, it MUST
+be bound once as a function and applied at both sites; inlining two copies would
+create distinct closure-site identities rather than duplicate one pure
+property. `Among` and a second `Refer` are therefore printed only when the
 input graph represents this distinct subreference computation, never merely
 because a relative-clause syntax node occurred.
 
@@ -3104,8 +3123,10 @@ output expectations:
 
 The corpus suite must include complex relative clauses, multiple connected
 relatives, inner and outer-`ku` `poi` with and without an explicit outer
-quantifier, a greatest-subreference case, `noi` under negation, alternatives,
-and questions, `goi`, all connective loci, compound and negated tags, arbitrary
+quantifier, a greatest-subreference case, inner `noi`, `noi` under negation,
+alternatives, and questions, a `noi` side depending on a quantified variable,
+supplements inside mentioned and reified content, `goi`, all connective loci,
+compound and negated tags, arbitrary
 `fi'o`, abstractions with extra places, shared event facets, de-re/de-dicto and
 opaque references, direct and embedded questions, multi-variable questions,
 termsets, respectively, recursion, quotations and every sign kind, indicators,
