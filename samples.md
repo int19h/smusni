@@ -137,7 +137,7 @@ A compound, negated tag retains its connector and negation:
         (klama Speaker :Eventuality $e)
         (∨
           (¬ (pilno :2 This :3 $e))
-          (mukti This $e))))))
+          (mukti Now $e))))))
 ```
 
 There is no modal-valued `At`; arguments inside each modal predicate are normal
