@@ -42,7 +42,7 @@ A literal skip uses a keyword. The plain value after `:2` fills current x3:
 ```lisp
 (Smusni 0
   (Assert
-    (pilno :2 This Now)))
+    (klama :2 This Yonder)))
 ```
 
 An actual place question uses computed `At` and no later plain operand:
@@ -160,6 +160,57 @@ reduces to the standard `fi'o se purci` analysis, so the event is x1 of
           (purci $e Now))))))
 ```
 
+`mo'i ri'u` is not a generic motion flag. Once the graph identifies the motion
+event and mover, the axial reduction uses the transparent `MotionVector`
+helper, whose definition projects `muvdu` by deleting only the unrepresented
+route place:
+
+```lisp
+(Smusni 0
+  (Assert
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (cadzu Speaker :Eventuality $e)
+          (MotionVector
+            $e
+            Speaker
+            (λ (($to (Referents Entity))
+                ($from (Referents Entity)))
+              (pritu $to $from Speaker))))))))
+```
+
+This specimen represents the walking event itself as the motion and identifies
+the walker as its mover. Neither follows mechanically from lexical x1: a
+separate concurrent motion would have its own event plus `cabna`, and a
+result-dependent reading would use the represented result relation. Other
+`mo'i` directions retain and delete different lexical places, as specified by
+their reduction rows.
+
+Sticky `ki` is not a discourse-state node in the output. For source
+`puki ... .i ...`, the resolved `pu` relation is simply repeated at each
+inheriting event:
+
+```lisp
+(Smusni 0
+  (Do
+    (Assert
+      (∃
+        (λ (($first Eventuality))
+          (Joi
+            (klama Speaker This :Eventuality $first)
+            (purci $first Now)))))
+    (Assert
+      (∃
+        (λ (($second Eventuality))
+          (Joi
+            (batci This That :Eventuality $second)
+            (purci $second Now)))))))
+```
+
+A later explicit tense composes onto the inherited path in source order, just
+as an explicitly repeated tense would.
+
 ## 5. Explicit `Close` for shared predicate terms
 
 An inline known-row predicate closes implicitly at `Assert`:
@@ -226,8 +277,10 @@ the later discourse:
         (ciska $cat)))))
 ```
 
-The `Bind` is at the least common legal host, so its lexical scope and its
-dynamic accessibility both include the two acts.
+This specimen assumes the graph explicitly owns one cross-act identity. Its
+`Bind` is at that legal common host, so lexical scope and dynamic accessibility
+both include the two acts; ordinary default raising would stop at a force
+boundary.
 
 An ordinary xorlo reference is fixed for the force segment, so it scopes
 outside visible negation:
@@ -613,13 +666,13 @@ with all facets:
             (λ (($events (Referents Eventuality)))
               (∧
                 (klama Speaker :Eventuality $events)
-                (purci $events)
-                (LongDuration $events))))))
+                (purci $events Now)
+                (zvati $events Here))))))
     (Mention $event)))
 ```
 
-`LongDuration` stands for a registered generated event-facet predicate, not an
-open-ended PascalCase spelling.
+The temporal and spatial facets are ordinary lowercase predicates of the same
+event reference; no event-facet record or opaque PascalCase name is needed.
 
 Reification is an explicit level crossing:
 
@@ -882,9 +935,7 @@ Set and interval operations use conventional mathematical notation:
 ```lisp
 (Smusni 0
   (Mention
-    (Interval
-      (Closed 0)
-      (Open 1))))
+    (Interval 0 1 Closed Open)))
 ```
 
 An unsupported questioned math operator remains typed fallback; it is not
@@ -900,17 +951,19 @@ Opaque quotation preserves text without interpreting it:
     (OpaqueQuote "mi klama")))
 ```
 
-A structured quotation can refer to a bound utterance token:
+A structured quotation can mention a complete transcript entry without
+performing it:
 
 ```lisp
 (Smusni 0
-  (Utterance (($u UtteranceToken))
-    (SpeakerOf $u Speaker)
-    (Realizes $u
-      (Assert
-        (klama Speaker)))
-    (LocutionOf $u
-      (StructuredQuote $u))))
+  (Let (($entry TranscriptEntry
+          (Utterance (($u UtteranceToken))
+            (SpeakerOf $u Speaker)
+            (Realizes $u
+              (Assert
+                (klama Speaker))))))
+    (Mention
+      (StructuredQuote $entry))))
 ```
 
 A sign token can have text and denotation facts without conflating either with
@@ -942,15 +995,15 @@ Mutually recursive inert functions use `LetRec`:
 ```lisp
 (Smusni 0
   (LetRec
-    (($even (Fn (Natural) Content)
-       (λ (($n Natural))
+    (($even (Fn (Number) Content)
+       (λ (($n Number))
          (∨
            (= $n 0)
            (∧
              (> $n 0)
              ($odd (− $n 1))))))
-     ($odd (Fn (Natural) Content)
-       (λ (($n Natural))
+     ($odd (Fn (Number) Content)
+       (λ (($n Number))
          (∧
            (> $n 0)
            ($even (− $n 1))))))

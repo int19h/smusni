@@ -116,9 +116,9 @@ without a leading plus sign or redundant leading zeroes. Exact non-integers use
 
 The namespaces are visually disjoint:
 
-- lowercase symbols are lexical content roots: `klama`, `sepi'o`;
+- lowercase symbols are lexical content roots: `klama`, `purci`;
 - PascalCase symbols are registered primitives, transparent prelude names,
-  types, or closed literals: `Assert`, `DescribedAs`, `Entity`, `Projective`;
+  types, or closed literals: `Assert`, `DescribedAs`, `Entity`, `Proximal`;
 - conventional mathematical glyphs are registered intrinsics: `λ`, `∀`, `∧`;
 - `$name` is a lexically bound variable;
 - `:2` and `:Eventuality` are literal place labels;
@@ -171,6 +171,7 @@ word-card      ::= (Word lexical-root string)
 type           ::= type-atom
                  | (Referents type)
                  | (Set type) | (Group type) | (List type)
+                 | (Interval type)
                  | (Tuple (type*))
                  | (Fn (type*) type)
                  | (PredTerm row)
@@ -298,6 +299,7 @@ Set<T>                 extensional mathematical set
 Group<T>               ordinary group-object sort with component kind T
 List<T>                ordered mathematical list
 Tuple<(A1 ... An)>     heterogeneous ordered product
+Interval<T>            ordered pair of endpoints with explicit inclusion
 Sign<K>                sign value of kind K
 UtteranceToken         graph-owned utterance identity
 SignToken<K>           graph-owned sign identity
@@ -306,12 +308,12 @@ PlaceOf<R,T[,C]>       one of the compatible current places of relation R accept
 ```
 
 The closed primitive sort atoms used by version 0 are `Entity`, `Eventuality`,
-`Achievement`, `Process`, `Activity`, `State`, `Location`, `Amount`, `Scale`,
-`TruthValue`, `Epistemology`, `ExperientialContent`, `Concept`, `Mind`,
+`Achievement`, `Process`, `Activity`, `State`, `Experience`, `Locution`,
+`Location`, `Amount`, `Scale`, `TruthValue`, `Epistemology`, `Concept`,
 `AbstractNature`, `Proposition`, `Question`, `Text`, `Number`, `Natural`, and
-`Cardinal`, `Interval`, plus the administrative `DeicticGround` sort. `Natural` is the
+`Cardinal`, plus the administrative `DeicticGround` sort. `Natural` is the
 nonnegative-integer subtype of `Number`.
-`Achievement`, `Process`, `Activity`, and `State` are subtypes of
+`Achievement`, `Process`, `Activity`, `State`, `Experience`, and `Locution` are subtypes of
 `Eventuality`; the only implicit event coercion is the one-way upcast to
 `Eventuality`. Finite `Natural` values have the canonical embedding into
 `Cardinal`. Other semantic sorts require a registered versioned addition or
@@ -482,6 +484,14 @@ Literal numeric positions use `:n`, not `(At 2 value)`. Predicate-term-valued
 modal designators do not exist. Modals normalize through `Joi` as specified in
 section 10.
 
+`At` is a typed surface form for dependent row application, not an independent
+semantic relation. Given a finite candidate row, it could be expanded to a
+case split that compares the place value and performs the corresponding
+literal fill in each branch. Canonical output retains `At` because that generic
+expansion would duplicate the surrounding predicate body and obscure the
+question being asked. Consequently a document with no first-class place value
+has no `At`; sparse and out-of-order literal fills use `:n` alone.
+
 An open `mo`-like relation question may bind a predicate term whose total row
 is not yet known. `(Row slots... Open)` records every statically required slot
 and an unknown surviving tail. Applying the variable fills only known current
@@ -523,14 +533,28 @@ predicate term and therefore uses typed fallback.
 
 ### 4.6 Relation formers
 
-`Tanru`, `Scalar`, `Degree`, `Phase`, and `DropPlace` are registered relation
-formers. Each declares its result row and a total mapping from every surviving
-surface slot to lexical provenance. A former with unknown row behavior cannot
-print in normal form.
+`Tanru`, `Scalar`, and `DropPlace` are registered relation formers. Each
+declares its result row and a total mapping from every surviving surface slot to
+lexical provenance. A former with unknown row behavior cannot print in normal
+form.
 
 `Tanru modifier head` preserves the head's effective row and records only the
 semantically represented vague modification. It MUST NOT invent a specific
 dictionary predicate.
+
+The version-0 scalar form is:
+
+```text
+Scalar : ScalarKind × PredTerm<ρ> -> PredTerm<ρ>
+```
+
+`OtherThan`, `Opposite`, and `Neutral` are the closed `ScalarKind` literals.
+The model's `Affirmed` case is the identity transformation and is a
+`ProvenDesugaring`, so it does not print. A scalar operation with an independently represented
+scale or restricted argument-place scope requires a separately registered
+exact reduction; otherwise it uses typed fallback. Displayed-content intensity
+and phase likewise lower through registered ordinary predicates or transparent
+prelude helpers, not generic `Degree` or `Phase` constructors.
 
 ## 5. Closing predicate content
 
@@ -577,7 +601,7 @@ Consequently this is canonical:
 
 and elaborates as if the inline predicate term were wrapped in `Close`.
 
-A bound, shared, row-erased, nonstandard, or independently targeted predicate
+A bound, shared, nonstandard, or independently targeted predicate
 term prints `Close`:
 
 ```lisp
@@ -630,6 +654,7 @@ must already enclose both sites.
 | `(∀ (λ (...) body))` | lambda variables and body introductions are local |
 | `(∃ (λ (...) body))` | lambda variables are lexical to the body; a graph-exported existential referent is reified through its registered witness/reference operation rather than by using the variable out of scope |
 | generalized quantifier | variable is local; only its registered witness handle can escape |
+| `(InnatelyCapable bearer host-property)` | expands through `jinzi`, `kakne`, and a locally bound possible-event reference; none of those local introductions escape |
 | `(Presuppose trigger body)` | resolve or accommodate `trigger`, then evaluate `body`; its successful dynamic context is visible in `body` and afterward, while any shared lexical identity is bound outside the whole form |
 | `(Supplement body side)` | evaluate `body`, then `side` against the body's context; only graph-declared shared identities export from `side` |
 | `(Bind ... body)` | run the computation, bind its result, then evaluate the body; export follows the body's host rule |
@@ -708,6 +733,25 @@ Express : Content -> Act<Expressive>
 Mention : A -> Act<Mentioning>
 Vocative: Referents<Entity> -> Act<Address>
 ```
+
+The input model's utterance-force cases are dispositions, not an invitation to
+mint more force constructors:
+
+| Model force | Normal form |
+|---|---|
+| `Assert` | `Assert content` |
+| `Ask` | `Ask query` |
+| `Command` | `Command addressee content`; the addressee is the graph-resolved command target, or the utterance audience only when that equality is a declared notation default |
+| `Mention` | `Mention value` |
+| `Vocative` | `Vocative addressee` plus any separately represented content |
+| `Quote` | `Mention sign` when the graph supplies that sign identity; otherwise typed fallback |
+| `Parenthetical` | `Supplement host side` at the graph's aside owner; it has no standalone `Parenthetical` act |
+| `Subordinated` | inert content under its owning connective, query, abstraction, or act; it has no standalone `Subordinated` act |
+
+If a parenthetical or subordinated node lacks the owner needed by these
+reductions, the smallest such utterance uses typed fallback. `Express` is the
+act constructor for separately represented displayed/expressive content; it is
+not an extra `UtteranceForce` spelling.
 
 The content or target of any act may be bound by `Let` and referred to by
 ordinary predicates. No `TargetFocus` enum is used; the target's identity and
@@ -846,7 +890,7 @@ SetOf : Property<T> -> Set<T>
 ∈     : T × Set<T> -> Content
 ∪, ∩  : Set<T> × Set<T> -> Set<T>
 ×     : Set<A> × Set<B> -> Set<Tuple<(A B)>>
-Card  : Set<T>|List<T> -> Number
+Card  : Set<T>|List<T> -> Cardinal
 ```
 
 Exact counting is over an explicit singular basis supplied by source/model
@@ -894,15 +938,30 @@ from its textual position. A nested `RefComp` required while evaluating `$P`
 runs inside this reference computation unless the graph assigns that nested
 effect its own legal outer host.
 
-The main gadri lower compositionally:
+The main gadri lower compositionally. The first three supply a property to
+`Refer`; the typical and stereotypical forms are their own irreducible reference
+computations:
 
-| Source family | Property supplied to `Refer` |
+| Source family | Normal reference computation |
 |---|---|
-| `lo P` | the veridical property `P` |
-| `le P` | `(λ (($r (Referents T))) (skicu Speaker $r Audience P))`; `P` is descriptive content, not asserted classification |
-| `la N` | `(λ (($r (Referents Entity))) (Named N $r))`; `Named` is the transparent standard `cmene`/`NameSign` expansion below, unless the graph supplies another explicit naming relation |
-| `lo'e P` | `Typical P`, an irreducible contextual reference operation |
-| `le'e P` | `Stereotypical P`, an irreducible speaker-description operation |
+| `lo P` | `(Refer P)`, where `P` is veridical |
+| `le P` | `(Refer (λ (($r (Referents T))) (skicu Speaker $r Audience P)))`; `P` is descriptive content, not asserted classification |
+| `la N` | `(Refer (λ (($r (Referents Entity))) (Named N $r)))`; `Named` is the transparent standard `cmene`/`NameSign` expansion below, unless the graph supplies another explicit naming relation |
+| `lo'e P` | `(Typical P)` |
+| `le'e P` | `(Stereotypical Speaker P)` |
+
+Their types are:
+
+```text
+Typical       : Property<Referents<T>> -> RefComp<Referents<T>>
+Stereotypical : Referents<Entity> × Property<Referents<T>>
+                -> RefComp<Referents<T>>
+```
+
+The explicit describer on `Stereotypical` prevents an irreducible operation
+from silently assuming the speaker. Source `le` keeps the audience argument of
+`skicu`; source `voi` uses `DescribedAs`, whose exact definition deletes that
+place because the relative construction does not supply one.
 
 There is no `Lo`, `Le`, `Relative`, or gadri-record constructor in normal form.
 
@@ -1186,7 +1245,7 @@ select different predicate and place maps, not different semantic ontologies.
   (λ (($e Eventuality))
     (Joi
       (klama Speaker :Eventuality $e)
-      (pilno :2 $car $e))))
+      (pilno :2 This $e))))
 ```
 
 `sepi'o` and direct `fi'o pilno` may map their source operands to different
@@ -1266,6 +1325,138 @@ definitions rather than approximate one-word glosses. Each shipped table entry
 therefore records the complete typed reduction and its evidence, not a minted
 PascalCase predicate name.
 
+The directly lexical spatial directions use the same shape. The host event or
+location fills x1, the origin fills x2, and an independently represented frame
+fills x3; otherwise ordinary closure supplies its contextual value:
+
+| Source directions | Lowercase relation pair |
+|---|---|
+| `ca'u` / `ti'a` | `crane` / `trixe` |
+| `zu'a` / `ri'u` | `zunle` / `pritu` |
+| `ga'u` / `ni'a` | `gapru` / `cnita` |
+| `be'a` / `ne'u` | `berti` / `snanu` |
+| `du'a` / `vu'a` | `stuna` / `stici` |
+
+Other FAhA members are not forced into this table by analogy. For example,
+movement, traversal, proximity, containment, and direction-without-position
+need their own exact paths through roots such as `muvdu`, `pagre`, `jibni`,
+`nenri`, or `farna` and all of those roots' independently represented places.
+
+`mo'i` is not an event-facet primitive. It transforms exactly the following
+spatial step, and that transformed step expands through ordinary motion and
+spatial predicates. The graph and the verified reduction row must say whether
+the motion is the host event, a distinct concurrent event, or an event whose
+result bears another represented relation to the host. `Joi` records the source
+tag attachment; it does not itself assert simultaneity or causation.
+
+Place deletion is essential to these reductions. A source motion marker does
+not by itself assert every destination, origin, and route role in the four-place
+row of `muvdu`. An unused role is removed with `DropPlace`, not silently filled
+with a contextual argument. Conversely, a role needed to connect the motion to
+its direction, distance, landmark, or route remains present. There is therefore
+no one fixed projection of `muvdu` for every `mo'i` step.
+
+For an axial step whose verified reduction represents motion from an origin to
+a destination, `MotionVector` is the transparent prelude helper defined in
+section 14.1. Let `R` be the corresponding lowercase relation from the table
+above. A same-event reduction has this shape:
+
+```lisp
+(Joi
+  (host :Eventuality $event)
+  (MotionVector
+    $event
+    $mover
+    (λ (($destination (Referents Entity))
+        ($origin (Referents Entity)))
+      (R $destination $origin $frame))))
+```
+
+`R` is specification metanotation and is replaced by `crane`, `trixe`,
+`zunle`, `pritu`, `gapru`, `cnita`, `berti`, `snanu`, `stuna`, or `stici` in
+an actual document. `MotionVector` retains `muvdu` x1, x2, and x3 because the
+mover and the displacement endpoints are all used, and deletes x4 because this
+schema does not identify a route. The graph must identify `$mover`; the renderer
+never equates it with the host predicate's x1 merely because both are
+available. CLL's `mi mo'i ca'uvu citka ...` can describe eating in a moving
+airplane, so grammatical x1 is not a general mover rule. The default frame is
+the utterance's speaker-oriented frame; an explicit `ma'i` supplies the
+represented replacement.
+
+If the motion has its own event `$motion`, `MotionVector` receives that event
+and the internal tag content additionally contains the graph's relation to the
+host. A simultaneous reading uses `(cabna $motion $event)`; a result-dependent
+reading uses its represented result or causal relation instead. The renderer
+does not introduce either event identity or relation merely from the spelling
+`mo'i`.
+
+Other motion directions use other projections. A graph-resolved heading toward
+a target without displacement distance can delete `muvdu` x2, x3, and x4 and
+use `farna` to constrain the motion event without claiming that the mover
+arrives at the target. Its motion projection has the explicit shape
+`(DropPlace (DropPlace (DropPlace muvdu 2) 3) 4)`; because deletion preserves
+the surviving labels, each numeral continues to name the corresponding current
+place. This heading-only reduction is available only when the graph supplies a
+first-class direction accepted by `farna`; it is not the arrival reading that
+CLL assigns to `mo'i fa'a`. A passage reading may instead use a projection of
+`pagre`, while an along/around reading must retain or construct a route and
+constrain that route. `fa'a`, `to'o`, `ne'i`, `zo'i`, `ze'o`, `zo'a`, `pa'o`,
+`re'o`, `te'e`, and `ru'u` therefore require individual verified table rows;
+they are not obtained by substituting a different static relation into the
+axial schema. Spatial distance constrains the same endpoint pair or route in
+the selected schema; `vi` and `vu` may use standard `jibni` and `darno`, while
+no exact baseline predicate for the intermediate `va` reading is assumed. If
+the graph and table do not determine the needed mover, event relation,
+endpoint, path, landmark, or frame links, only that transformed step uses typed
+fallback.
+
+Repeated directions compose as paths. For example, `pu pu` introduces the
+intermediate reference needed for “before a time which is itself before the
+anchor”; it is not flattened into two unrelated predicates of the host event:
+
+```lisp
+(∃
+  (λ (($event Eventuality))
+    (∃
+      (λ (($middle Eventuality))
+        (Joi
+          (broda :Eventuality $event)
+          (purci $middle Now)
+          (purci $event $middle))))))
+```
+
+ZAhO contours similarly use the host event as the process and an explicit or
+contextual checkpoint as anchor. Boundary contours introduce their boundary
+value rather than pretending that `cfari` alone relates a beginning to its
+host. For example, the standard roots license these transparent shapes:
+
+```lisp
+; co'a: the checkpoint is concurrent with a start of the host event
+(∃
+  (λ (($start Eventuality))
+    (∧
+      (krasi $start $host)
+      (cabna $start $checkpoint))))
+
+; co'u: the checkpoint is concurrent with an end of the host event
+(∃
+  (λ (($end Eventuality))
+    (∧
+      (fanmo $end $host)
+      (cabna $end $checkpoint))))
+```
+
+Natural endings, pauses, resumptions, anticipation, aftermath, and excessive
+continuation need additional structure; a one-word English gloss is not an
+exact reduction. ROI and TAhE may require a set of distinct event tokens,
+`SetOf`, `Card`, ordering, and a lowercase relation such as `rapli`, `krefu`,
+`dikni`, `cafne`, or `tcaci`. The BPFK-style `n roi` and `n re'u` expansions
+through `rapli` and `krefu` are admissible only with the tagged interval and
+ordinal/count places preserved. These are transparent higher-order reductions,
+not reasons to keep opaque contour or recurrence constructors. A row is
+unavailable until its event identity, counting interval, and any
+agent/participant policy are exact.
+
 For example, `mi pu citka` has an event explicitly related to the utterance
 time and joined to the host predication at the tag locus:
 
@@ -1283,6 +1474,31 @@ merge actuality with assertion, or replace a source logical connector within a
 compound tag by `Joi`. A table row is licensed only by an exact reduction;
 unsupported facets receive individual disposition entries and local typed
 fallback.
+
+The important exceptions are semantic rather than grammatical:
+
+- `ca'a` contributes ordinary `(fasnu event)` content. It never contracts with
+  `Assert`, because actuality can occur under negation, questions, quotation,
+  and intensional operators.
+- `ka'e` uses the transparent `InnatelyCapable` helper defined in section 14.1.
+  Its host-property operand abstracts both the host's x1 bearer and its
+  eventuality while retaining every other filled argument. The helper uses
+  `kakne` for capability and `jinzi` for the source's stronger innate reading;
+  it is not an opaque modal primitive. The reduction is available only when
+  the host has a recoverable x1 and event property. `pu'i` and `nu'o` reduce
+  compositionally to `InnatelyCapable` plus existence or nonexistence of a
+  corresponding actual `fasnu` event.
+- `ki` is eliminated by explicit reuse. A sticky tag's fully lowered relation
+  path is applied again at every inheriting event; a later explicit tag extends
+  that path in source order. The renderer binds a shared anchor or intermediate
+  path value with `Let` only when graph identity makes that sharing observable.
+  Bare `ki` resets subsequent elaboration to the current deictic ground, and a
+  subscripted `ki` selects the graph-resolved saved anchor. None of these cases
+  leaves a `Ki`, context-update, or discourse-state node in normal output. A
+  `manri` predication would merely describe a standard and therefore is not the
+  expansion of `ki`.
+- `cu'e` binds an open question over an exactly typed tag function. `fe'e` is a
+  temporal-to-spatial transformation schema. Neither is an event predicate.
 
 ## 11. Abstractions and higher-order values
 
@@ -1316,10 +1532,12 @@ the event explicitly:
 
 The caller uses `Bind` exactly as for any other `RefComp`. More specific event
 sorts replace `Eventuality` in the property with `Achievement`, `Process`,
-`Activity`, or `State`; their one-way upcast permits the reference at the root's
-event place. Therefore `EventOf`, `AchievementOf`, and `StateOf` are not
-primitives. A process or activity abstraction with an independently represented
-participant uses the corresponding crossing in section 11.3.
+`Activity`, `State`, or `Experience`; their one-way upcast permits the reference
+at the root's event place. Therefore `EventOf`, `AchievementOf`, and `StateOf`
+are not primitives. Process, activity, and experience abstractions use the
+crossings in section 11.3 only when their second Lojban places (stages,
+components, or experiencer) are independently represented; the one-place case
+remains the ordinary `Refer` shape.
 
 ### 11.3 Other abstraction crossings
 
@@ -1329,10 +1547,10 @@ The irreducible content-to-object crossings are:
 Reify              : Content -> Proposition
 Measure            : Content × Referents<Scale> -> Referents<Amount>
 TruthValue         : Content × Referents<Epistemology> -> Referents<TruthValue>
-ExperienceOf       : Content × Referents<Entity> -> Referents<ExperientialContent>
+ExperienceOf       : Content × Referents<Entity> -> Referents<Experience>
 ProcessOf          : Content × Referents<Eventuality> -> Referents<Process>
 ActivityOf         : Content × Referents<Eventuality> -> Referents<Activity>
-Concept            : Content × Referents<Mind> -> Referents<Concept>
+Concept            : Content × Referents<Entity> -> Referents<Concept>
 Abstract           : Content × Referents<T> -> Referents<AbstractNature>
 SentenceSign       : Content -> Sign<Sentence>
 ```
@@ -1364,12 +1582,14 @@ Polar : Content -> Query<()>
 OpenQ : Fn<(A1 ... An), Content> -> Query<(A1 ... An)>
 ```
 
-A question's variable domain is explicit in the lambda type. Supported domains
-include ordinary arguments, relation functions, current places, connectives,
-tense/modal values, mathematical operators, attitudes, quantities, and typed
-heterogeneous tuples. For example, a relation question binds the ordered
-function type required at that site; it does not bind a row-erased predicate
-term and hope application is valid.
+A question's variable domain is explicit in the lambda type. Ordinary arguments
+use their value type; relation questions use the exact `Fn` or open-row
+`PredTerm` required at the site; place questions use `PlaceOf`. Connective,
+tense/modal, mathematical-operator, attitude, and quantity questions print
+normally only when the versioned registry supplies an exact higher-order or
+value type for every answer. There are no opaque `Connective`, `TenseModal`, or
+`MathOperator` sort atoms. A graph which records only one of those coarse model
+sorts uses typed fallback rather than making an uncheckable question variable.
 
 A place question binds `PlaceOf<R,T>` when its finite compatible candidate row
 is derivable at the unique `At` host, or `PlaceOf<R,T,C>` when the graph narrows
@@ -1420,13 +1640,19 @@ Common exact operators use conventional symbols:
 = ≠ < ≤ > ≥ + − × ÷ ∈ ∪ ∩
 ```
 
-`Set`, `List`, `Tuple`, `Interval`, `Open`, and `Closed` construct typed
-mathematical values. In value position:
+`Set`, `List`, `Tuple`, and `Interval` construct typed mathematical values. In
+value position:
 
 ```text
 Tuple : A1 × ... × An -> Tuple<(A1 ... An)>
 Card  : Set<T>|List<T> -> Cardinal
+Interval : T × T × EndpointInclusion × EndpointInclusion -> Interval<T>
 ```
+
+`Open` and `Closed` are the two endpoint-inclusion literals. The first applies
+to the first endpoint and the second to the second endpoint. Centered,
+unordered, or otherwise differently structured intervals require an exact
+registered reduction or typed fallback; endpoint order is never guessed.
 
 The same `Tuple` head in a type expression is distinguished by the grammar's
 type position. The renderer always uses U+2212 `−` for subtraction; ASCII
@@ -1471,26 +1697,32 @@ signature.
 
 ### 13.2 Quantities
 
-Exact cardinal quantities reduce to set/cardinality mathematics. Registered
-non-cardinal scales use typed operators such as `Amount`, `Extent`, `Frequency`,
-`Portion`, and `Ordinal` with their explicit `Scale` value and property.
+Exact cardinal quantities reduce to set/cardinality mathematics. A non-cardinal
+quantity prints normally only when a versioned entry gives an exact lexical or
+transparent-prelude reduction with the complete scale, comparison set, and
+property. Version 0 has no generic `Amount`, `Extent`, `Frequency`, `Portion`,
+or `Ordinal` constructor: those names would merely repackage the model record.
 
-Approximate, indefinite, comparative, and vague quantities retain their actual
-typed operator when the graph supplies one. They MUST NOT be rounded into an
-exact `Number` or cardinal comparison.
+Approximate, indefinite, comparative, and vague quantities therefore use the
+smallest typed fallback until such a reduction is registered. They MUST NOT be
+rounded into an exact `Number` or cardinal comparison.
 
 ### 13.3 Quotation and signs
 
 ```text
 OpaqueQuote     : Text -> Sign<Opaque>
-StructuredQuote : UtteranceToken|Discourse -> Sign<Structured>
+StructuredQuote : TranscriptEntry|Discourse -> Sign<Structured>
 NameSign        : Text -> Sign<Name>
 SentenceSign    : Content -> Sign<Sentence>
 ```
 
-Word, letteral, connective, math-expression, and text signs retain their typed
-sign kind and structured operands when represented. Opaque quotation preserves
-exact quoted text and does not claim an internal interpretation.
+Word, letteral, connective, math-expression, and text signs use a `Sign` token
+plus ordinary registered facts when those facts completely represent their
+structure. Version 0 does not introduce generic `WordSign`, `LetteralSign`, or
+similar record wrappers. A raw sign value of one of those kinds whose structure
+cannot be expressed by the four constructors above and token facts uses typed
+fallback. Opaque quotation preserves exact quoted text and does not claim an
+internal interpretation.
 
 ## 14. Registered normal forms
 
@@ -1506,18 +1738,78 @@ from operands.
 | kernel crossings | `Close`, `Reify`, `QuestionOf`, `InterpretContent`, `InterpretAct`, `Singleton` |
 | force/performance | `Assert`, `Ask`, `Command`, `Express`, `Mention`, `Vocative`, `Perform`, `PerformUtterance`, `Do` |
 | dynamic effects/indexicals | `Presuppose`, `Supplement`, `Refer`, `Context`, `Typical`, `Stereotypical`, `Witnesses`, `Deictic` |
-| logic | `¬`, `∧`, `∨`, `→`, `↔`, `⊕`, `∀`, `∃`, `Joi` |
+| logic/intensional control | `¬`, `∧`, `∨`, `→`, `↔`, `⊕`, `∀`, `∃`, `Joi` |
 | reference/plural | `Among`, `Combine` |
-| relation formers | `DropPlace`, `Tanru`, `Scalar`, `Degree`, `Phase` |
+| relation formers | `DropPlace`, `Tanru`, `Scalar` |
 | abstractions | `Measure`, `TruthValue`, `ExperienceOf`, `ProcessOf`, `ActivityOf`, `Concept`, `Abstract` |
 | questions | `Polar`, `OpenQ`, `Answer`, `PolarAnswer`, `TupleAnswer`, `ContextualAnswer`, `UnresolvedAnswer` |
-| collections/math | `Set`, `SetOf`, `List`, `Tuple`, `Card`, `Interval`, `Open`, `Closed`, `ZipWith`, `=`, `<`, `≤`, `+`, `−`, `×`, `÷`, `∈` |
+| collections/math | `Set`, `SetOf`, `List`, `Tuple`, `Card`, `Interval`, `ZipWith`, `=`, `<`, `≤`, `+`, `−`, `×`, `÷`, `∈` |
 | signs | `OpaqueQuote`, `StructuredQuote`, `NameSign`, `SentenceSign` |
-| discourse | `NewTopic`, `Resume`, `Label` |
-| token facts | `Realizes`, `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Denotes`, `Quotes`, `Utters` |
-| quantity | `Amount`, `Extent`, `Frequency`, `Portion`, `Ordinal` |
+| discourse | `NewTopic`, `Resume` |
+| token/metadata facts | `Realizes`, `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Denotes`, `Quotes`, `Utters`, `Label` |
 | fallback | `Fallback`, `TypedGraph`, `Object`, `Field`, `Ref`, `RawList`, `RawAtom`, `RawTypedAtom`, `RawString`, `RawNull` |
 | packaging | `Smusni`, `Words`, `Word` |
+
+Every primitive not already given a more specific signature above has the
+following version-0 signature or signature schema:
+
+```text
+Presuppose : Content × Content -> Content
+Supplement : Content × Content -> Content
+
+Perform          : Act<F> -> Discourse
+PerformUtterance : TranscriptEntry -> Discourse
+Do               : Performable+ -> Discourse
+NewTopic, Resume : Discourse -> Discourse
+PriorDiscourse, FollowingDiscourse : Discourse
+
+Tanru  : PredTerm<μ> × PredTerm<ρ> -> PredTerm<ρ>
+Scalar : ScalarKind × PredTerm<ρ> -> PredTerm<ρ>
+
+Set     : T* -> Set<T>
+SetOf   : Property<T> -> Set<T>
+List    : T* -> List<T>
+Tuple   : A1 × ... × An -> Tuple<(A1 ... An)>
+Card    : Set<T>|List<T> -> Cardinal
+Interval: T × T × EndpointInclusion × EndpointInclusion -> Interval<T>
+ZipWith : Fn<(A1 ... An), Content> × List<A1> ... × List<An> -> Content
+=       : T × T -> Content
+<, ≤    : T × T -> Content for a registered ordered T
++, −, ÷ : Number × Number -> Number
+×       : Number × Number -> Number
+        | Set<A> × Set<B> -> Set<Tuple<(A B)>>
+∈       : T × Set<T> -> Content
+
+Realizes       : UtteranceToken × Act<F> -> Content
+SpeakerOf      : UtteranceToken × Referents<Entity> -> Content
+AudienceOf     : UtteranceToken × Referents<Entity> -> Content
+LocutionOf     : UtteranceToken × Referents<Locution> -> Content
+DeicticTimeOf  : UtteranceToken × Referents<Eventuality> -> Content
+DeicticPlaceOf : UtteranceToken × Referents<Location> -> Content
+TextOf         : UtteranceToken|SignToken<K> × Text -> Content
+Denotes        : SignToken<K> × A -> Content
+Quotes         : SignToken<K> × Quoteable -> Content
+Utters         : Referents<Entity> × Utterable -> Content
+Label          : LabelLevel × Number × A -> Content
+```
+
+`Quoteable` abbreviates the closed overload set `Text`, `Sign<K>`,
+`SignToken<K>`, `TranscriptEntry`, and `Discourse`. `Utterable` abbreviates
+`Act<F>`, `TranscriptEntry`, `Sign<K>`, and `SignToken<K>`. These two names are
+signature metanotation, not type atoms or printable union wrappers. Likewise,
+the vertical bars above denote closed overloads, not a surface union type.
+
+`Tanru` preserves the head row `ρ`; the registered tanru composition must also
+prove that the modifier's shared x1 can accept the head's x1 type. Arithmetic
+is exact and partial where ordinary mathematics is partial, such as division
+by zero; an invalid represented operation uses typed fallback. `Label` is an
+ordinary analyzer fact about its target, not a wrapper which changes the
+target's value or force.
+
+`Fallback` and the raw constructors have exactly the grammar and typing rules
+in section 16 rather than ordinary polymorphic application. `Smusni`, `Words`,
+and `Word` have the packaging grammar in section 2.4. No primitive obtains an
+additional overload merely because an input-model field would fit it.
 
 The derived prelude is a second closed registry. It is semantically equivalent
 to nesting the listed `Let` bindings outside the document body, in dependency
@@ -1529,6 +1821,7 @@ changing type, evaluation order, effects, or graph sharing.
 | Group | Prelude names |
 |---|---|
 | description/naming | `DescribedAs`, `Named` |
+| modality | `InnatelyCapable`, `MotionVector` |
 | generalized quantification | `Some`, `No`, `Every`, `Exactly`, `AtLeast`, `AtMost`, `MoreThan`, `FewerThan` |
 | mathematical | `≠`, `>`, `≥`, `∪`, `∩` |
 | deictic defaults | `This`, `That`, `Yonder` |
@@ -1581,6 +1874,71 @@ The standard name-description helper is likewise reducible:
   body)
 ```
 
+Innate capability is also a lexical composition. `InnatelyCapable` receives
+the actual bearer and a property which can reconstruct the tagged host for a
+candidate bearer and possible event:
+
+```lisp
+(Let ((InnatelyCapable
+       (Fn ((Referents Entity)
+            (Fn ((Referents Entity) (Referents Eventuality)) Content))
+           Content)
+       (λ (($bearer (Referents Entity))
+           ($host
+             (Fn ((Referents Entity) (Referents Eventuality)) Content)))
+         (jinzi
+           (λ (($candidate (Referents Entity)))
+             (Bind (($possible (Referents Eventuality)
+                     (Refer
+                       (λ (($event (Referents Eventuality)))
+                         ($host $candidate $event)))))
+               (kakne $candidate $possible)))
+           $bearer))))
+  body)
+```
+
+The reusable axial-motion helper removes only the route place that its
+displacement interface does not represent:
+
+```lisp
+(Let ((MotionVector
+       (Fn (Eventuality
+            (Referents Entity)
+            (Fn ((Referents Entity) (Referents Entity)) Content))
+           Content)
+       (λ (($motion Eventuality)
+           ($mover (Referents Entity))
+           ($displacement
+             (Fn ((Referents Entity) (Referents Entity)) Content)))
+         (∃
+           (λ (($destination (Referents Entity))
+               ($origin (Referents Entity)))
+             (∧
+               (Close
+                 ((DropPlace muvdu 4)
+                   $mover
+                   $destination
+                   $origin
+                   :Eventuality $motion))
+               ($displacement $destination $origin)))))))
+  body)
+```
+
+Deleting x4 is part of this helper's declared meaning, not a general rule that
+an omitted Lojban place means `zi'o`. A reduction with a represented route must
+use `muvdu` with x4 intact or a different transparent helper. Likewise this
+helper cannot be called until its mover and motion-event policy are known.
+
+The missing x3 of `kakne` is the ordinary distinct contextual/defaulted
+condition place supplied by `Close`; it is not innateness. `jinzi` says that
+the entire capability property is inherent in the bearer. For a host whose x1
+is `$bearer`, a `ka'e` tag supplies a `$host` lambda that substitutes its first
+parameter for x1, its second for `:Eventuality`, and preserves every other
+argument and relation former. This schema therefore works under quantifiers
+and negation without asserting that `$possible` actually occurs. A missing,
+deleted, or nonrecoverable host x1 makes this reduction unavailable rather than
+causing the renderer to guess a bearer.
+
 The deictic defaults are inert value bindings:
 
 ```lisp
@@ -1600,7 +1958,7 @@ constructors are:
 
 ```text
 PredTerm Row Fn Referents RefComp Act Query AnswerSelection GQ
-Set Group List Tuple Sign SignToken PlaceOf
+Set Group List Tuple Interval Sign SignToken PlaceOf
 ```
 
 Type position is determined by the grammar and registered signatures, so a
@@ -1614,16 +1972,36 @@ unknown-tail marker, not a callable value.
 collection element-type operands are grammar forms, not callable intrinsics.
 
 Closed literal families include force, sign kind, answer exhaustivity, answer
-polarity, scalar direction, degree, phase, label level, scale, and lexical scope
+polarity, scalar kind, label level, endpoint inclusion, scale, and lexical scope
 policy. A literal is valid only in a signature position that names its family;
 the same spelling MAY occur in two disjoint families.
+
+```text
+Force              = Assertion | Question | Directive | Expressive
+                     | Mentioning | Address
+SignKind           = Name | Sentence | Quotation | Word | Letteral
+                     | MathExpression | Connective | Text | Structured | Opaque
+AnswerPolarity     = Yes | No | Unknown
+AnswerExhaustivity = Exhaustive | MentionSome
+ScalarKind         = OtherThan | Opposite | Neutral
+LabelLevel         = Item | Division
+EndpointInclusion  = Open | Closed
+Proximity          = Proximal | Medial | Distal
+LexicalScopePolicy = Extensional | Intensional | Opaque
+```
+
+Scale literals are the finite members of the versioned generated scale table;
+that table declares the type and source of each member. An unknown scale does
+not become a new PascalCase literal.
 
 The closed irreducible deictic constants are `Speaker`, `Audience`, `Now`,
 `Here`, and `CurrentGround`; `This`, `That`, and `Yonder` are the prelude values
 above. `PriorDiscourse` and `FollowingDiscourse` are graph-owned discourse
 constants. Scale literals such as `DistanceScale` occur only in a scale-typed
 position. Registered indicator relations such as `Contrast` and generated event
-facets such as `LongDuration` belong to their versioned generated tables.
+relations belong to their versioned generated tables. Event facets use the
+exact lexical or transparent-prelude reductions required by section 10.4; an
+opaque `LongDuration`-style constructor is not minted from a model enum.
 
 ### 14.2 Lexical and generated registries
 
@@ -1644,6 +2022,39 @@ members are permitted only for a separately declared irreducible family or a
 transparent prelude definition; a table cannot mint an opaque semantic
 predicate from a source spelling.
 
+The normative generated artifacts have these logical schemas (their on-disk
+encoding is an implementation detail):
+
+```text
+LexicalRow =
+  root, normalized-root, ordered-place-types, event-license,
+  defaultable-places, dictionary-version
+
+ScopePolicyRow =
+  normalized-root, original-ordinal, dynamic-family,
+  scope-policy, evidence-id
+
+TagReductionRow =
+  source-family, source-member, operand-types, source-place-map,
+  host-event-map, typed-expansion-template, evidence-id
+
+GeneratedRelationRow =
+  family, PascalCase-name, complete-signature,
+  irreducibility-reason, evidence-id
+
+ScaleLiteralRow =
+  PascalCase-name, scale-type, source-members, evidence-id
+```
+
+An expansion template is syntax in this specification with typed holes for the
+host, event, explicit operand, and anchor; it may contain lowercase roots,
+kernel primitives, or transparent prelude calls only. Validation expands every
+template, checks every lexical row and place map, and rejects a recursive
+prelude dependency or an unregistered atom. An irreducibility reason is
+mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
+lexical/compositional reduction, the generated relation is invalid and the
+reduction must be used instead.
+
 ### 14.3 Required desugarings and forbidden record shapes
 
 | Input-model family | Normal form |
@@ -1662,9 +2073,12 @@ predicate from a source spelling.
 | quantifier record | higher-order `GQ`, lambda-taking `∀`/`∃`, or the explicit simultaneous-set reduction |
 | event-property record | predicates of one event variable |
 | abstraction record | `λ` or an explicit level crossing |
+| utterance force | section 7.1 force disposition; no `Quote`, `Parenthetical`, or `Subordinated` constructor |
 | utterance metadata record | token binder plus facts |
 | sign/quotation record | typed sign value or token facts |
 | sequence record | `Do` and actual discourse operators |
+| exact cardinal quantity | generalized-quantifier/set/cardinality reduction |
+| unsupported non-cardinal quantity | smallest typed fallback |
 | warning nodes | separate diagnostic channel |
 
 The following do not occur in normal output:
@@ -1673,10 +2087,11 @@ The following do not occur in normal output:
 Modal Relative Lo Le Se Te Ve Xe Import ProjectiveRecord TargetFocus
 WithWarnings Warning Warnings SelectionSource OpenPredTerm Interpretable
 QuantifiedContent PolyQuant Restrict EventOf AchievementOf StateOf GroupOf
+Degree Phase Parenthetical Subordinated Quote
 ```
 
-`Projective` may occur only as a typed literal in a registered family that
-actually requires it; source `Every` import does not print a separate node.
+Source `Every` import is carried by the `Every` generalized quantifier itself;
+there is no `Projective` literal or separate import node in version 0.
 
 ### 14.4 Projection-completeness dispositions
 
@@ -1698,7 +2113,10 @@ bundles, experience and locution events, every formula/connective family,
 reciprocals, place/connective/tense questions, composition exclusions,
 collective marking, scalar negation, intervals, arrays, math operator
 denotation, approximate quantities, names and `goi`, every sign kind, paragraph
-transitions, all event facets, and every displayed-content assertion effect.
+transitions, every utterance-force case, deictic proximity, recurrence,
+actuality, personal mass membership, descriptor definiteness, pro-sumti,
+plural quantifiers, centered/unordered intervals, all event facets, and every
+displayed-content assertion effect.
 
 Classification as fallback is acceptable for version 0; silent omission or an
 open wildcard is not.
