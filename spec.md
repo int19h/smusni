@@ -319,6 +319,8 @@ If `--show-defs` is requested, an optional `Words` section is the third child:
 
 `Words` is reference data, not semantic content. Warnings and errors MUST NOT
 appear in the datum; section 16 defines their separate channel.
+If `--show-defs` resolves no definitions, the renderer omits the optional
+`Words` section rather than emitting an empty one.
 
 The document convention supplies one current utterance context with
 speaker=`Speaker`, audience=`Audience`, time=`Now`, place=`Here`, deictic
@@ -2433,9 +2435,11 @@ not perform that segment, repeat its effects, or contribute content by
 themselves. Despite their `Discourse` value type, they are reference-only
 constants: they are legal only as ordinary values in registered fact operands
 such as `Quotes`, `Denotes`, or another relation whose signature accepts the
-value. They are illegal as the top-level `Smusni` performable and as `Perform`,
-`Do`, `Joi`, `NewTopic`, or `Resume` operands. If the graph requires the
-referenced segment to be performed at that site, the smallest affected
+value. This restriction follows the value through `Let` and every other
+identity-preserving binding; rebinding cannot turn it into a performable
+computation. They are illegal as the top-level `Smusni` performable and as
+`Perform`, `Do`, `Joi`, `NewTopic`, or `Resume` operands. If the graph requires
+the referenced segment to be performed at that site, the smallest affected
 performable uses typed fallback instead of treating the reference as the
 segment's computation.
 
