@@ -52,7 +52,7 @@ An actual place question uses computed `At` and no later plain operand:
   (Ask
     (OpenQ
       (λ (($p (PlaceOf klama (Referents Entity))))
-        (klama (At $p This) :5 This)))))
+        (klama :5 This (At $p This))))))
 ```
 
 `zi'o` removes a current numbered place. Surviving labels keep their visible
@@ -64,8 +64,8 @@ numbers and plain traversal skips the hole:
     ((DropPlace klama 3)
       Speaker
       This
-      :4 This
-      :5 This)))
+      This
+      This)))
 ```
 
 ## 3. Source place conversion is eliminated
@@ -109,10 +109,11 @@ A `sepi'o` modal shares the event of the main clause with a `pilno` predication:
 ```lisp
 (Smusni 0
   (Assert
-    (∃ (($e Eventuality))
-      (Joi
-        (klama Speaker :2 This :Eventuality $e)
-        (pilno :2 This :3 $e)))))
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (klama Speaker This :Eventuality $e)
+          (pilno :2 This $e))))))
 ```
 
 Direct `fi'o pilno` uses the place map represented by that tag rather than
@@ -121,10 +122,11 @@ assuming the `sepi'o` map:
 ```lisp
 (Smusni 0
   (Assert
-    (∃ (($e Eventuality))
-      (Joi
-        (klama Speaker :2 This :Eventuality $e)
-        (pilno Speaker :2 This :3 $e)))))
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (klama Speaker This :Eventuality $e)
+          (pilno Speaker This $e))))))
 ```
 
 A compound, negated tag retains its connector and negation:
@@ -132,16 +134,31 @@ A compound, negated tag retains its connector and negation:
 ```lisp
 (Smusni 0
   (Assert
-    (∃ (($e Eventuality))
-      (Joi
-        (klama Speaker :Eventuality $e)
-        (∨
-          (¬ (pilno :2 This :3 $e))
-          (mukti Now $e))))))
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (klama Speaker :Eventuality $e)
+          (∨
+            (¬ (pilno :2 This $e))
+            (mukti Now $e)))))))
 ```
 
 There is no modal-valued `At`; arguments inside each modal predicate are normal
 predicate fills.
+
+A tense uses the same ordinary-predicate-plus-`Joi` machinery. Here `pu`
+reduces to the standard `fi'o se purci` analysis, so the event is x1 of
+`purci` and the utterance time is x2:
+
+```lisp
+(Smusni 0
+  (Assert
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (citka Speaker :Eventuality $e)
+          (purci $e Now))))))
+```
 
 ## 5. Explicit `Close` for shared predicate terms
 
@@ -157,7 +174,13 @@ The same predicate term prints `Close` once it has identity of its own:
 
 ```lisp
 (Smusni 0
-  (Let (($description (PredTerm (Row)) (melbi This)))
+  (Let (($description
+          (PredTerm
+            (Row
+              (2 (Referents Entity))
+              (3 (Referents Entity))
+              (4 (Referents Entity))))
+          (melbi This)))
     (Do
       (Mention $description)
       (Assert (Close $description)))))
@@ -171,6 +194,16 @@ A nondefaultable higher-order gap cannot be silently closed:
     (Fallback Content "smusni.close.nondefaultable-place"
       (Object %1 "PredicateTerm"
         (Field "root" (RawAtom "higher-order-root"))))))
+```
+
+An elided value whose graph scope may depend on `$p` cannot disappear into
+`Close`; its dependency set is explicit. This is a fragment inside the binder
+for `$p`:
+
+```lisp
+(Bind (($destination (Referents Entity) (Context $p)))
+  (Assert
+    (klama Speaker $destination)))
 ```
 
 ## 6. Dynamic accessibility across connectives
@@ -196,42 +229,54 @@ the later discourse:
 The `Bind` is at the least common legal host, so its lexical scope and its
 dynamic accessibility both include the two acts.
 
-Negation traps an ordinary introduction:
+An ordinary xorlo reference is fixed for the force segment, so it scopes
+outside visible negation:
+
+```lisp
+(Smusni 0
+  (Bind (($cat (Referents Entity)
+          (Refer
+            (λ (($x (Referents Entity)))
+              (mlatu $x)))))
+    (Assert
+      (¬
+        (jbena $cat)))))
+```
+
+By contrast, the individual variable introduced inside this negated
+quantifier is both lexically and dynamically local:
 
 ```lisp
 (Smusni 0
   (Assert
     (¬
-      (Bind (($cat (Referents Entity)
-              (Refer
-                (λ (($x (Referents Entity)))
-                  (mlatu $x)))))
-        (jbena $cat)))))
+      (∃
+        (λ (($x Entity))
+          (∧
+            (mlatu $x)
+            (jbena $x)))))))
 ```
 
-Using `$cat` after this act would be ill-scoped unless the graph supplied an
-explicit fixed/de-re identity.
-
 An implication passes the successful antecedent context to its consequent.
-The consequent can therefore perform an ordinary contextual resolution, but
-the resolved value does not escape the conditional:
+When the graph says both operands use the same identity, one lexical binder
+must span both. This donkey-style normalization uses an explicit quantifier:
 
 ```lisp
 (Smusni 0
   (Assert
-    (→
-      (Bind (($x (Referents Entity)
-              (Refer
-                (λ (($r (Referents Entity)))
-                  (mlatu $r)))))
-        (jbena $x))
-      (Bind (($x (Referents Entity) Context))
-        (ciska $x)))))
+    (∀
+      (λ (($x Entity))
+        (→
+          (∧
+            (mlatu $x)
+            (jbena $x))
+          (ciska $x))))))
 ```
 
-`Context` in the consequent is evaluated against the antecedent's successful
-output context. A graph-fixed reference whose lexical identity must span both
-branches instead binds at a legal surrounding host.
+This is not a same-type `Context` lookup. If the consequent instead contains a
+genuinely new contextual choice, it receives its own `Bind`; if coreference is
+required but the graph does not identify the antecedent, the affected
+conditional uses typed fallback.
 
 ## 7. `lo`, `le`, and `la` are compositional references
 
@@ -257,7 +302,7 @@ asserting that the referent is extensionally a cat:
   (Bind (($described (Referents Entity)
           (Refer
             (λ (($x (Referents Entity)))
-              (skicu Speaker $x :4
+              (skicu Speaker $x Audience
                 (λ (($y (Referents Entity)))
                   (mlatu $y)))))))
     (Assert
@@ -271,7 +316,7 @@ A name description uses a sign and the graph's naming relation:
   (Bind (($named (Referents Entity)
           (Refer
             (λ (($x (Referents Entity)))
-              (cmene (NameSign "alis") $x)))))
+              (Named "alis" $x)))))
     (Assert
       (klama $named))))
 ```
@@ -305,20 +350,28 @@ A restrictive `poi` contributes its predicate inside the reference property:
       (jbena $white-cat))))
 ```
 
-A descriptive `voi` uses the transparent prelude helper `DescribedAs`. Its
-normative definition uses `DropPlace` to remove `skicu` x3, then fills surviving
-x1, x2, and x4; no audience is fabricated:
+A descriptive `voi` selects a subreference of its host and uses the transparent
+prelude helper `DescribedAs` rather than asserting the clause property. Its
+normative definition removes `skicu` x3; no audience is fabricated:
 
 ```lisp
 (Smusni 0
-  (Bind (($thing (Referents Entity)
+  (Bind (($base (Referents Entity)
           (Refer
             (λ (($x (Referents Entity)))
-              (DescribedAs Speaker $x
+              (skicu Speaker $x Audience
                 (λ (($y (Referents Entity)))
-                  (blabi $y)))))))
-    (Assert
-      (jbena $thing))))
+                  (gerku $y)))))))
+    (Bind (($thing (Referents Entity)
+            (Refer
+              (λ (($x (Referents Entity)))
+                (∧
+                  (Among $x $base)
+                  (DescribedAs Speaker $x
+                    (λ (($y (Referents Entity)))
+                      (blabi $y))))))))
+      (Assert
+        (jbena $thing)))))
 ```
 
 A nonrestrictive `noi` is supplementary content:
@@ -376,12 +429,14 @@ Its effect-level expansion is:
 
 ```lisp
 (Presuppose
-  (∃ (($x Entity))
-    (mlatu $x))
-  (∀ (($x Entity))
-    (→
-      (mlatu $x)
-      (jbena $x))))
+  (∃
+    (λ (($x Entity))
+      (mlatu $x)))
+  (∀
+    (λ (($x Entity))
+      (→
+        (mlatu $x)
+        (jbena $x)))))
 ```
 
 The expansion is a fragment and shows why the nonemptiness commitment projects
@@ -393,10 +448,11 @@ The mathematical nonimporting universal remains available directly:
 ```lisp
 (Smusni 0
   (Assert
-    (∀ (($x Entity))
-      (→
-        (mlatu $x)
-        (jbena $x)))))
+    (∀
+      (λ (($x Entity))
+        (→
+          (mlatu $x)
+          (jbena $x))))))
 ```
 
 ## 10. Sets, plurality, and exact cardinality
@@ -453,54 +509,75 @@ The last two blocks are fragments.
 
 ## 11. Generalized quantifier witnesses
 
-The quantified content has a stable identity; its witness is available only
-after that same content succeeds:
+The `GQ`, its nuclear-scope function, and their application each have stable
+identity. A witness is available only after that same application succeeds:
 
 ```lisp
 (Smusni 0
-  (Let (($q (QuantifiedContent Entity)
-          ((Exactly 3
-             (λ (($x Entity))
-               (gerku $x)))
-           (λ (($x Entity))
-             (bajra $x)))))
-    (Do
-      (Assert $q)
-      (Bind (($dogs (Referents Entity) (Witnesses $q)))
-        (Assert
-          (tatpi $dogs))))))
+  (Let (($gq (GQ Entity)
+          (Exactly 3
+            (λ (($x Entity))
+              (gerku $x)))))
+    (Let (($scope (Fn (Entity) Content)
+            (λ (($x Entity))
+              (bajra $x))))
+      (Let (($run Content ($gq $scope)))
+        (Do
+          (Assert $run)
+          (Bind (($dogs (Referents Entity)
+                  (Witnesses $gq $scope)))
+            (Assert
+              (tatpi $dogs))))))))
 ```
 
 This is not equivalent to counting members of `$dogs` after the fact. The full
-restrictor, scope, and success identity remain in `$q`.
+quantifier function, scope function, and success identity remain explicit.
 
 The following is deliberately invalid and therefore falls back:
 
 ```lisp
 (Fallback (Referents Entity) "smusni.witness.before-success"
   (Object %1 "WitnessRequest"
-    (Field "quantifiedContent" (RawAtom "$q"))))
+    (Field "gq" (RawAtom "$gq"))
+    (Field "scope" (RawAtom "$scope"))))
 ```
 
 ## 12. Simultaneous termsets
 
-Two generalized quantifiers with one polyadic nuclear scope remain coequal:
+Two generalized quantifiers with one polyadic nuclear scope reduce to
+mutually constrained, coordinate-exhaustive sets:
 
 ```lisp
 (Smusni 0
-  (Let (($dogs (GQ Entity)
-          (Exactly 3
-            (λ (($x Entity))
-              (gerku $x)))))
-    (Let (($people (GQ Entity)
-            (Exactly 2
-              (λ (($y Entity))
-                (prenu $y)))))
-      (Assert
-        (PolyQuant
-          (Tuple $dogs $people)
-          (λ (($dog Entity) ($person Entity))
-            (nelci $dog $person)))))))
+  (Assert
+    (∃
+      (λ (($dogs (Set Entity))
+          ($people (Set Entity)))
+        (∧
+          (= (Card $dogs) 3)
+          (= (Card $people) 2)
+          (∀
+            (λ (($dog Entity))
+              (↔
+                (∈ $dog $dogs)
+                (∧
+                  (gerku $dog)
+                  (∀
+                    (λ (($person Entity))
+                      (→
+                        (∈ $person $people)
+                        (nelci $dog $person))))))))
+          (∀
+            (λ (($person Entity))
+              (↔
+                (∈ $person $people)
+                (∧
+                  (prenu $person)
+                  (∀
+                    (λ (($dog Entity))
+                      (→
+                        (∈ $dog $dogs)
+                        (nelci $dog $person)))))))))))))
 ```
 
 Nesting `$dogs` around `$people` or vice versa would impose an order that can
@@ -522,19 +599,23 @@ A property abstraction needs only `λ`:
 (Smusni 0
   (Mention
     (λ (($x (Referents Entity)))
-      (melbi $x))))
+      (Close
+        (melbi $x)))))
 ```
 
-An event abstraction shares the event variable with all facets:
+An event abstraction is a reference computation whose property shares the event
+with all facets:
 
 ```lisp
 (Smusni 0
-  (Mention
-    (λ (($e Eventuality))
-      (∧
-        (klama Speaker :Eventuality $e)
-        (purci $e)
-        (LongDuration $e)))))
+  (Bind (($event (Referents Eventuality)
+          (Refer
+            (λ (($events (Referents Eventuality)))
+              (∧
+                (klama Speaker :Eventuality $events)
+                (purci $events)
+                (LongDuration $events))))))
+    (Mention $event)))
 ```
 
 `LongDuration` stands for a registered generated event-facet predicate, not an
@@ -549,13 +630,13 @@ Reification is an explicit level crossing:
       (klama Speaker))))
 ```
 
-The inline predicate closes because `Reify` expects `Content`. An abstraction
-with an extra semantic scale place selects a fixed-arity operator:
+The inline predicate closes because `Reify` expects `Content`. An explicit
+semantic scale fills the full-arity crossing:
 
 ```lisp
 (Smusni 0
   (Mention
-    (MeasureOn
+    (Measure
       (klama Speaker)
       DistanceScale)))
 ```
@@ -574,7 +655,7 @@ An act can be bound, targeted, and later performed:
               (klama Speaker))))
       (Do
         (Express
-          (Contrast $act $prior-act))
+          (Contrast :2 $act :3 $prior-act))
         (Perform $act)))))
 ```
 
@@ -596,7 +677,7 @@ An utterance with metadata and two co-realized acts keeps its token:
         (Realizes $u $current-act)
         (Realizes $u
           (Express
-            (Contrast $current-act $prior-act)))))))
+            (Contrast :2 $current-act :3 $prior-act)))))))
 ```
 
 The contrast targets the exact first-class act values. Facts about `$u` are
@@ -634,6 +715,21 @@ An open argument question:
         (klama $x)))))
 ```
 
+A relation question can bind an open-row predicate term when the answer's full
+place structure is not yet known:
+
+```lisp
+(Smusni 0
+  (Ask
+    (OpenQ
+      (λ (($relation
+            (PredTerm
+              (Row
+                (1 (Referents Entity))
+                Open))))
+        ($relation This)))))
+```
+
 A two-variable question retains an ordered heterogeneous answer tuple:
 
 ```lisp
@@ -641,8 +737,8 @@ A two-variable question retains an ordered heterogeneous answer tuple:
   (Ask
     (OpenQ
       (λ (($who (Referents Entity))
-          ($where (Referents Place)))
-        (klama $who :2 $where)))))
+          ($where (Referents Location)))
+        (klama $who $where)))))
 ```
 
 An indirect question is an inert object:
@@ -703,12 +799,15 @@ Inside an intensional desire place, a de-dicto reference remains local:
 (Smusni 0
   (Assert
     (djica Speaker
-      (EventOf
-        (Bind (($car (Referents Entity)
-                (Refer
-                  (λ (($x (Referents Entity)))
-                    (karce $x)))))
-          (pilno Speaker $car))))))
+      (Bind (($wanted (Referents Eventuality)
+              (Refer
+                (λ (($events (Referents Eventuality)))
+                  (Bind (($car (Referents Entity)
+                          (Refer
+                            (λ (($x (Referents Entity)))
+                              (karce $x)))))
+                    (pilno Speaker $car :Eventuality $events))))))
+        $wanted))))
 ```
 
 An explicit legal de-re owner may move `$car` outside that boundary:
@@ -721,8 +820,11 @@ An explicit legal de-re owner may move `$car` outside that boundary:
               (karce $x)))))
     (Assert
       (djica Speaker
-        (EventOf
-          (pilno Speaker $car))))))
+        (Bind (($wanted (Referents Eventuality)
+                (Refer
+                  (λ (($events (Referents Eventuality)))
+                    (pilno Speaker $car :Eventuality $events)))))
+          $wanted)))))
 ```
 
 A nested description remains inside the outer description property unless its
@@ -765,15 +867,16 @@ Set and interval operations use conventional mathematical notation:
 ```lisp
 (Smusni 0
   (Assert
-    (∃ (($x Entity))
-      (∈ $x
-        (∩
-          (SetOf
-            (λ (($y Entity))
-              (gerku $y)))
-          (SetOf
-            (λ (($y Entity))
-              (blabi $y))))))))
+    (∃
+      (λ (($x Entity))
+        (∈ $x
+          (∩
+            (SetOf
+              (λ (($y Entity))
+                (gerku $y)))
+            (SetOf
+              (λ (($y Entity))
+                (blabi $y)))))))))
 ```
 
 ```lisp
