@@ -1,4 +1,4 @@
-# Experimental smusni S-expression design, draft 7
+# Experimental smusni S-expression design, draft 8
 
 Status: reductive redesign after the owner review and independent Opus, Kimi,
 Qwen, and Gemini sweeps. This draft is not yet approved for implementation. It deliberately
@@ -172,9 +172,12 @@ content boundary existentially binds one local event. The binder may be silent
 only when the event is unshared, has no non-default properties, and is not
 externally referenced. Thus concise `(Assert (klama Speaker))` elaborates to
 `Assert(∃(λe. klama(Speaker, Eventuality=e)))`. It is
-normally implicit at a typed `Content` boundary and prints only when the same
-predicate term is also referenced as a predicate term. `Reify` and `Interpret`
-are never implicit: use and mention are not interchangeable.
+normally implicit at a typed `Content` boundary. It prints when the same value
+is used at both the predicate-term and content levels; when a named level
+crossing takes explicit `Content` from a bare or open predicate term, as in
+`(Measure (Close broda))`; and when an applied `OpenPredTerm` supplies a query
+body, as in `(Close ($p This))`. `Reify` and `Interpret` are never implicit:
+use and mention are not interchangeable.
 
 Effectful reference computations have one further crossing. It is polymorphic
 over the dynamic host in which the computation is sequenced:
@@ -227,16 +230,26 @@ boundaries determine the site:
   its declared local `Intensional` host and is transparent only inside that
   host;
 - omission is mandatory for a single-use computation when the site is unique and
-  the path to it crosses no visible scope-bearing operator whose reading would
-  become ambiguous. Crossing `¬`, `∨`, `→`, `↔`, `⊕`, an object-language quantifier,
-  a non-administrative function/query lambda, a recorded intensional boundary,
-  or a dependency lambda therefore makes the `Let` explicit when the bind itself
-  would cross that boundary. Crossing an `Opaque` boundary is never repaired by
-  an explicit outer `Let`: if the graph requests such an escape, projection uses
-  typed fallback. A single-use
-  computation wholly contained in the unique local host established by
-  `Reify`, another intensional input, or `Refer` may remain inline there; so may
-  an inline form beneath `Joi` or an administrative event shell.
+  the occurrence remains inside it and the path to it crosses no visible
+  scope-bearing operator whose reading would become ambiguous. Crossing `¬`,
+  `∨`, `→`, `↔`, `⊕`, an object-language quantifier, a non-administrative
+  function/query lambda, a recorded intensional boundary, or a dependency
+  lambda therefore makes the `Let` explicit when the bind itself would cross
+  that boundary. Crossing an `Opaque` boundary is never repaired by an explicit
+  outer `Let`: if the graph requests such an escape, projection uses typed
+  fallback. A single-use computation wholly contained in the unique local host
+  established by `Reify`, another intensional input, or `Refer` remains inline
+  there; so does an inline form beneath `Joi` or an administrative event shell.
+
+A pure-value definition/capture is also a boundary when the resulting pure
+value is shared or hoisted across the selected dynamic host. In that case the
+effectful reference binds explicitly before the pure value captures it. The
+pure `Let` remains semantically inert; the explicit outer bind exposes ordering
+which cannot live inside its initializer. The invisible eta binder introduced
+by `AsProperty` likewise counts as a non-administrative property lambda for
+site and crossing analysis even though it never prints. Its usual occurrence
+inside the local host established by `Refer` therefore remains concise, but
+the binder is not semantically absent.
 
 Multiple binds at one site sequence in printed left-to-right operand order. An
 explicit `Let` is also mandatory for shared identity, for a
@@ -245,7 +258,7 @@ base identity even if the final pretty-printed body happens to contain one
 variable occurrence. “Single use” is counted in the semantic graph before
 surface contraction. These rules are a deterministic inline/`Let` tie-break,
 not a prettifier choice. They keep common
-`(klama Speaker (Refer zarci))` concise and requires an explicit act-wide `Let` for
+`(klama Speaker (Refer zarci))` concise and require an explicit act-wide `Let` for
 `(¬ (melbi (Refer gerku)))`; the latter is never read as a fresh existential
 choice under negation.
 
@@ -254,9 +267,9 @@ predicate term, or a function value is never coerced to a pure `Referents`
 value. Its bind is scheduled at a legal enclosing host. A `RefComp` argument may
 itself be that local host, which is how a de-dicto description remains inside a
 recorded intensional argument instead of acquiring document-level actuality.
-Sharing, crossing a visible scope boundary, or dependency abstraction makes the
-bind explicit. If the graph supplies no legal dynamic site, the local typed
-fallback records that projection defect.
+Sharing, crossing a visible scope boundary, dependency abstraction, or capture
+by a shared/hoisted pure value makes the bind explicit. If the graph supplies
+no legal dynamic site, the local typed fallback records that projection defect.
 
 Scope boundaries are data, not renderer guesses. Every relation place and
 constructor input that can contain a dynamic value has a closed generated
@@ -1247,7 +1260,7 @@ SentenceSign: Content -> Sign<Sentence>                         sentence-sign ab
 ```
 
 These are not a generic `(Abstraction (Kind ...) (Body ...))` record. Their
-different signatures are the semantics. Unlike event/property abstractions,
+different signatures are the semantics. Unlike event abstractions,
 these named crossings already return the determinate referential or sign value
 licensed by the abstractor, so they do not wrap their result in `Refer`. This
 is intentional: `lo nu` selects eventualities satisfying a property, whereas
@@ -1265,6 +1278,13 @@ For example, a graph which records the stages of `lo pu'u broda` prints
 `(ProcessOf (Close broda) $stages)`, not merely a process-sorted event lambda.
 `SentenceSign` covers the distinct builder kind which also uses
 `abstractionOf` but returns a sign and has no extra place.
+
+When source gadri decoration attaches quantification or relative material to
+one of these syntactic abstractions, lowering first computes the named crossing.
+It then binds that determinate value and applies the ordinary fixed-reference,
+`Card`/`Among`, or `Supplement` machinery only when the semantic graph supplies
+the required relation. Otherwise projection uses typed fallback. It never wraps
+the named crossing in `Refer` as though the crossing itself were a property.
 
 ### 8.4 Event properties
 
@@ -1378,12 +1398,10 @@ explicit local `Reify`/`Discourse` input; if neither exists, projection uses
 typed fallback rather than treating the sign value as a discourse computation.
 
 ```lisp
-(Let (($c Content (klama Speaker (Refer zarci))))
-  (Let (($a (Act Assertion) (Assert $c)))
-    (Utterance $u
-      (Realizes $u $a)
-      (SpeakerOf $u Speaker)
-      (AudienceOf $u Audience))))
+(Utterance $u
+  (Realizes $u (Assert (klama Speaker (Refer zarci))))
+  (SpeakerOf $u Speaker)
+  (AudienceOf $u Audience))
 ```
 
 `SpeakerOf` is deliberately distinct from the indexical atom `Speaker`.
@@ -1739,7 +1757,7 @@ is unresolved. It is never an implementation fallback.
 
 ## 13. Constructor-family audit
 
-| draft-2 family | classification | draft-7 normal form |
+| draft-2 family | classification | draft-8 normal form |
 |---|---|---|
 | root, application, labelled fill | primitive plus concise fill sugar | ordinary operands, `:n`/`:Eventuality`, and core `At` for computed/modal places |
 | `DropPlace`, `Se`/conversion, scalar relation formers | primitive relation algebra | keep as applications |
@@ -1891,7 +1909,7 @@ by the `EventualitySort` mapping, not a duplicate event-subsort literal family.
 | `At` | core labelled-fill syntax `PlaceDesignator x T`, not a value | computed or PredTerm-valued modal place designator; numeric original identities remain accepted |
 | `DropPlace` | `PredTerm<ρ> x NumberedPlace -> PredTerm<ρ-p>` | `zi'o`; the distinguished event place is not a numbered `zi'o` target |
 | `Se`, `Te`, other verified conversions | `PredTerm<ρ> -> PredTerm<permute(ρ)>` | place conversion |
-| `Tanru` | `PredTerm x PredTerm -> PredTerm` | vague tanru relation former |
+| `Tanru` | `PredTerm x PredTerm<ρ> -> PredTerm<ρ>` | vague tanru relation former preserving the tertau's remaining-place row |
 | `Scalar` | `ScalarDirection x PredTerm<ρ> -> PredTerm<ρ>` | scalar relation transformation |
 | `Degree` | `DegreeValue x PredTerm<ρ> -> PredTerm<ρ>` | degree relation transformation |
 | `Phase` | `PhaseKind x PredTerm<ρ> -> PredTerm<ρ>` | phase relation transformation |
@@ -1956,7 +1974,7 @@ atom for `ScalarDirection`, `DegreeValue`, `PhaseKind`, `LabelLevel`,
 `ScaleValue`, `Force`, scope policy, and sign kind. The closed sign kinds are
 `Name`, `Sentence`, `Structured`, and `Opaque`; the closed force values are `Assertion`, `Expressive`, `Question`,
 `Directive`, `Mentioning`, and `Address`; the closed scope policies are
-`Extensional`, `Intensional`, and `Opaque`. `Strong`,
+`Extensional`, `Intensional`, and `Opaque`. `Strong`
 and `Opposite` are therefore typed literal atoms, not an open exception to
 registry closure. The abstraction names `Concept`,
 `ExperienceOf`, `Abstract`, and `SentenceSign` above are the notation spellings
@@ -1990,6 +2008,10 @@ structural and semantic:
 - every printed binder annotation unifies with the closed registry signature,
   including reference-valued `ce'u`/`ma`/`ZipWith` parameters and force-indexed
   acts;
+- every printed application unifies with its registered signature, including
+  the remaining-place row of each `PredTerm` result, the `OpenPredTerm`
+  precondition for applying a predicate-valued question variable, and present
+  or omitted operands of every abstraction crossing;
 - every term-level Pascal atom or glyph occurs in exactly one applicable
   declaration: callable registry, family-indexed literal table, kernel syntax,
   or the registered fill/token-binder surface syntax (`At`, `Utterance`,

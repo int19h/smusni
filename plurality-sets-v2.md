@@ -1,6 +1,6 @@
 # Reference pluralities with a set-theoretic counting layer
 
-Status: convergence candidate, folded into `sexpr-v3-draft.md` draft 7. This supersedes the concrete
+Status: convergence candidate, folded into `sexpr-v3-draft.md` draft 8. This supersedes the concrete
 `Referents<K> = Set⁺<Individual<K>>` recommendation in
 `plurality-sets-design.md`.
 

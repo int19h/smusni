@@ -1,4 +1,4 @@
-# Experimental smusni S-expression samples, draft 7
+# Experimental smusni S-expression samples, draft 8
 
 These are design probes, not output expectations. They exercise the reduced
 tree shape before implementation. After implementation they will be replaced or
@@ -647,30 +647,29 @@ to a proposition referent.
 (Smusni 0
   (Let (($alice (Referents Entity)
           (Refer (cmene (NameSign "alis") :3 Speaker))))
-    (Let (($c Content (klama $alice (Refer zarci))))
-      (Let (($a (Act Assertion) (Assert $c)))
-        (Utterance $u
-          (Realizes $u $a)
-          (SpeakerOf $u $alice)
-          (AudienceOf $u
-            (Refer (cmene (NameSign "bob") :3 Speaker))))))))
+    (Utterance $u
+      (Realizes $u
+        (Assert (klama $alice (Refer zarci))))
+      (SpeakerOf $u $alice)
+      (AudienceOf $u
+        (Refer (cmene (NameSign "bob") :3 Speaker))))))
 ```
 
-The direct record performs `$a` by document convention. Embedded under a sign
-or mention, it is inert transcript data.
+The direct record performs the inline assertion by document convention.
+Embedded under a sign or mention, it is inert transcript data.
 
 ```lisp
-(Let (($alice (Referents Entity)
-        (Refer (cmene (NameSign "alis") :3 Speaker)))
-      ($utterance (Referents Utterance) Context))
-  (Assert (Utters $alice $utterance)))
+(Assert
+  (Utters
+    (Refer (cmene (NameSign "alis") :3 Speaker))
+    Context))
 ```
 
 would instead be the current speaker's report about an uttering event.
 
 ## 22. Indicators target actual first-class values
 
-The draft-2 `Displayed` sample becomes. `Let` is transparent on the performing
+The draft-2 `Displayed` sample becomes the following. `Let` is transparent on the performing
 spine, so the `Utterance` entry below remains in the `Do` performing position
 and both `Realizes` acts are executed:
 
@@ -713,8 +712,9 @@ polarity transforms the relation, for example
 
 The target is `$p` itself. `Close` is visible because the same value is used at
 both the predicate-term and content levels. The effectful market description is
-bound at the enclosing dynamic site before it is captured by the inert
-predicate term.
+bound explicitly at the enclosing dynamic site before it is captured by the
+shared inert predicate term; that pure-value capture boundary is what requires
+the outer `Let`.
 
 ## 24. Questions are content/lambda queries with explicit level crossings
 
