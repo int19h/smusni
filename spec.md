@@ -2570,7 +2570,7 @@ repository. Before that first mint, this document is a design and implementation
 candidate: its kernel and transparent definitions may be implemented, but no
 renderer output is yet conformant normal form. After the mint, two different
 bundles MUST NOT both claim format version `0`; changing any normative row
-requires a new format version.
+or the checked-in `spec.md` requires a new format version.
 
 The canonical manifest records the format and bundle schema versions, the
 SHA-256 digest of the exact checked-in `spec.md` bytes, an immutable generator
@@ -2588,10 +2588,12 @@ as one JCS object followed by LF. Its `source-artifacts` and
 for a table artifact, such as `LexicalRow` or `TagReductionRow`. Every non-table
 source artifact, including `spec.md`, generator sources, and lockfiles, uses
 `OpaqueBytes` and has `row-count` 1. These row-schema names plus `OpaqueBytes`
-are the closed `schema-id` vocabulary. The manifest's logical fields are
-`format-version`, `bundle-schema-version`, `spec-digest`, `generator-id`,
-`source-artifacts`, `generated-artifacts`, and `bundle-digest`; JCS, rather
-than prose field order, determines their byte order.
+are the closed `schema-id` vocabulary. An `OpaqueBytes` payload is the exact
+checked-in file byte sequence and is verified by its digest; `row-count` 1 is a
+manifest sentinel, not a claim that the file has row structure. The manifest's
+logical fields are `format-version`, `bundle-schema-version`, `spec-digest`,
+`generator-id`, `source-artifacts`, `generated-artifacts`, and `bundle-digest`;
+JCS, rather than prose field order, determines their byte order.
 
 The bundle digest is SHA-256 of the JCS encoding, without a trailing LF, of the
 array `[[relative-path, digest], ...]` containing every source and generated
@@ -2727,8 +2729,10 @@ Validation expands every template, derives its result and dynamic summary,
 checks every lexical row and place map, and rejects a recursive prelude
 dependency, an unregistered atom, or a declared result which differs from the
 derived one. Every `PreludeRow` is generated mechanically from the definition
-in this document; after the specified canonicalization, its definition bytes
-and digest MUST match that generated definition exactly. An irreducibility reason is
+in this document. Its `canonical-definition` is the NFC-normalized canonical
+smusni spelling embedded as a JCS string, and `definition-digest` is SHA-256 of
+that spelling's unescaped NFC UTF-8 bytes. Both MUST match the mechanically
+generated definition exactly. An irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
 reduction must be used instead.
