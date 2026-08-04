@@ -779,7 +779,8 @@ Relative-clause taxonomy is eliminated into ordinary composition:
 
 - restrictive `poi` contributes a veridical predicate to the reference
   property's selection condition;
-- descriptive `voi` contributes the represented `DescribedAs` predication;
+- descriptive `voi` contributes the ordinary `skicu` predication after deleting
+  its audience place: `((DropPlace skicu 3) Speaker described property)`;
 - supplementary `noi` contributes `(Supplement body side)` at its graph-owned
   anchor;
 - multiple clauses combine with their actual logical or nonlogical connector;
@@ -1156,7 +1157,7 @@ variables are inferred from operands.
 | dynamic effects | `Presuppose`, `Supplement`, `Refer`, `Context`, `Typical`, `Stereotypical`, `Witnesses` |
 | logic | `¬`, `∧`, `∨`, `→`, `↔`, `⊕`, `∀`, `∃`, `Joi` |
 | quantification | `Some`, `No`, `Every`, `Exactly`, `AtLeast`, `AtMost`, `MoreThan`, `FewerThan`, `Restrict`, `PolyQuant` |
-| reference/plural | `Among`, `Combine`, `SetOf`, `GroupOf`, `DescribedAs` |
+| reference/plural | `Among`, `Combine`, `SetOf`, `GroupOf` |
 | relation formers | `DropPlace`, `Tanru`, `Scalar`, `Degree`, `Phase` |
 | abstractions | `EventOf`, `AchievementOf`, `ProcessOf`, `ProcessThrough`, `ActivityOf`, `ActivityThrough`, `StateOf`, `Measure`, `MeasureOn`, `TruthValue`, `TruthValueBy`, `ExperienceOf`, `ExperienceFor`, `Concept`, `ConceptFor`, `Abstract`, `AbstractAs`, `SentenceSign` |
 | questions | `Polar`, `OpenQ`, `Answer`, `PolarAnswer`, `TupleAnswer`, `ContextualAnswer` |
