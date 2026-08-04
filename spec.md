@@ -894,7 +894,7 @@ must already enclose both sites.
 | `(∃ (λ (...) body))` | lambda variables and ordinary body introductions are local; handled projective effects follow section 6.4; version 0 has no plain-existential witness export, so later anaphora must use a graph-licensed `Refer`/generalized-quantifier route or typed fallback rather than using the variable out of scope |
 | generalized quantifier | variable is local; only its registered successful run handle can authorize `Witnesses` |
 | `(Presuppose trigger body)` | emit the projective `trigger` at its dependency-legal handler, resolve or accommodate it once there, then evaluate `body`; the trigger's successful context is visible in `body` and in the handler continuation, while any shared lexical identity is bound outside the whole form |
-| `(Supplement body side)` | evaluate `body`, then `side` against the body's context; only graph-declared shared identities export from `side` |
+| `(Supplement body side)` | evaluate `body` in situ and emit `side` once as an ordered supplement-family effect at its graph-owned legal handler; `side` sees the body's successful context at that handler, is not an operand of a truth-functional or force operator around `body`, and exports only graph-declared shared identities; section 6.4 defines projection and commitment |
 | `(Bind ... body)` | run the computation, bind its result, then evaluate the body; export follows the body's host rule |
 | `(Let ... body)`, `(LetRec ... body)` | bind inert identity without changing dynamic context; only `body` is evaluated at the enclosing dynamic host |
 | `Refer`, `Context` | run at their printed or expected-type-inserted operand host and introduce only their declared result/effects |
@@ -978,6 +978,26 @@ boundary, `Opaque` place, or reification blocks further projection. If branch
 filtering or competing possible handlers are represented but do not determine
 one exact placement, the smallest affected content uses typed fallback rather
 than applying a generic natural-language projection heuristic.
+
+`Supplement` is likewise projective, but carries a separate assertional
+supplement effect rather than a presupposition trigger. Its graph-owned anchor
+either names an explicit dependency-legal local handler or uses the nearest
+performed force segment, enclosing `Do`/discourse sequence, or document
+performance convention.
+The handler commits `side` exactly once per performance after evaluating
+`body`; that commitment is not part of `body`'s at-issue truth conditions.
+Consequently it is not negated, questioned, made conditional, or made
+alternative merely because the printed `Supplement` occurs inside transparent
+`¬`, `∨`, `→`, `↔`, `⊕`, generalized-quantifier, or query shells. It projects
+through those shells to its recorded handler exactly when all dependencies
+remain in scope. A dependency boundary, force boundary, `Opaque` place, or
+reification blocks further projection. A graph which records a genuinely
+local or conditional side contribution must name that distinct legal handler;
+the renderer never infers local versus projective interpretation from surface
+nesting. An absent, illegal, or ambiguous supplement handler makes the
+smallest affected content use typed fallback. Nested effects generated while
+evaluating `side` retain their own families and handler rules, and do not
+become at-issue content by being inside a supplement.
 
 Reference resolution may have a legal `Discourse` host, including a graph-owned
 `Bind` spanning several acts in `Do`. The discourse handler runs that
@@ -1287,8 +1307,15 @@ There is no `Lo`, `Le`, `Relative`, or gadri-record constructor in normal form.
 
 Relative-clause taxonomy is eliminated into ordinary composition:
 
-- restrictive `poi` conjoins its veridical clause property directly with the
-  host description property before their one `Refer` computation;
+- an inner restrictive `poi` in a description, such as
+  `lo P poi Q`, conjoins its veridical clause property with the base
+  description property before their one `Refer` computation;
+- a restrictive clause attached at a generalized-quantifier locus conjoins
+  with that quantifier's restriction. In particular, an explicit outer
+  quantifier separates the description's reference computation from the
+  outer selection: a clause inside the description modifies the base
+  reference property, while a clause outside its `ku` modifies the outer
+  restriction. Lowering MUST NOT move a clause across that selection boundary;
 - descriptive `voi` conjoins the host description property with
   `DescribedAs` of the same candidate instead of asserting the clause property;
   its transparent prelude definition is ordinary `skicu` with its audience
@@ -1301,9 +1328,61 @@ Relative-clause taxonomy is eliminated into ordinary composition:
 
 Restrictive and nonrestrictive status is therefore visible in composition and
 effect placement, not in an enum. Veridicality remains in the predicate that is
-actually contributed. `Among` and a second `Refer` appear only when the input
-graph independently represents selection of a subreference; they are not
-introduced merely because a relative clause occurred.
+actually contributed.
+
+The source position before the description selbri, such as
+`lo poi ke'a Q ku'o P`, denotes the same outer attachment as the corresponding
+post-`ku` clause; it is not the inner `lo P poi Q` attachment. Surface
+`PA lo P ku poi Q` can support either a singular generalized-quantifier
+restriction analysis or a prior subreference-selection analysis in semantic
+profiles which distinguish them. The input graph MUST identify the selected
+analysis and handler. If it does not, the renderer uses local typed fallback;
+it never chooses from syntax, apparent distributivity, or lexical plausibility.
+
+A restrictive clause on an already assembled reference is not forced back
+into the reference's original property. If the input graph identifies the
+result with the original reference, ordinary predicate composition suffices.
+If it instead represents selection of a subreference, the base computation is
+evaluated once and `Among` relates the new reference to it. For a clause
+property `$Q`:
+
+```lisp
+(Bind (($base (Referents T) $base-computation))
+  (Refer
+    (λ (($sub (Referents T)))
+      (∧
+        (Among $sub $base)
+        ($Q $sub)))))
+```
+
+Some semantic profiles additionally give outer restrictive clauses a greatest
+satisfying subreference reading, conventionally called maximality. That is not
+a primitive or an unstated property of `Refer`. When the graph licenses it and
+`$Q` is a `PureProperty<Referents<T>>`, its full reduction adds:
+
+```lisp
+(∀
+  (λ (($candidate (Referents T)))
+    (→
+      (∧
+        (Among $candidate $base)
+        ($Q $candidate))
+      (Among $candidate $sub))))
+```
+
+inside the new reference property. This states that every satisfying
+subreference of `$base` is `Among $sub`; merely requiring `$sub` itself to
+satisfy `$Q` would not express maximality. Together with `$Q $sub` and
+`Among $sub $base`, antisymmetry of `Among` makes such a greatest
+subreference unique if it exists. The algebra does not guarantee that it
+exists. Failure to find one is ordinary reference-resolution failure, not
+typed fallback; typed fallback is reserved for failure to represent or verify
+the graph's chosen reduction. If the clause property is effectful
+and its effects cannot be hoisted once while preserving this duplicated use,
+the maximal reduction is unavailable and the local boundary uses typed
+fallback. `Among` and a second `Refer` are therefore printed only when the
+input graph represents this distinct subreference computation, never merely
+because a relative-clause syntax node occurred.
 
 ### 8.5 Set/group descriptions and referential connections
 
@@ -2775,7 +2854,7 @@ is resolved in favor of verified bundled data, never by preserving the sample.
 | definitional mode | registered logical/property definition when exact; otherwise typed fallback |
 | modal/tag record | modal predicate plus `Joi` |
 | place conversion | base-root remapping or eta-expanded `λ` |
-| relative-clause record | reference property, predicate, connector, or `Supplement` |
+| relative-clause record | reference property, predicate, connector, `Supplement`, or graph-licensed subreference selection through `Among` and `Refer` |
 | description/gadri record | `Refer`/typed reference operation and a property |
 | quantifier record | higher-order `GQ`, lambda-taking `∀`/`∃`, or the explicit simultaneous-set reduction |
 | event-property record | predicates of one event variable |
@@ -3024,7 +3103,9 @@ output expectations:
   CLL and corpus suites without imposing an experimental threshold.
 
 The corpus suite must include complex relative clauses, multiple connected
-relatives, `goi`, all connective loci, compound and negated tags, arbitrary
+relatives, inner and outer-`ku` `poi` with and without an explicit outer
+quantifier, a greatest-subreference case, `noi` under negation, alternatives,
+and questions, `goi`, all connective loci, compound and negated tags, arbitrary
 `fi'o`, abstractions with extra places, shared event facets, de-re/de-dicto and
 opaque references, direct and embedded questions, multi-variable questions,
 termsets, respectively, recursion, quotations and every sign kind, indicators,

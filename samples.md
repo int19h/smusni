@@ -569,6 +569,64 @@ reference property:
       (jbena $white-cat))))
 ```
 
+An explicit outer quantifier creates a semantic placement boundary. In
+`re lo mu plise poi xunre`, the inner `poi` helps define the five-member base
+reference before the outer selection. In `re lo mu plise ku poi xunre`, the
+base is five apples and the outside-`ku` clause instead joins the outer
+quantifier restriction. Schematically, the latter has this shape (with the
+source-licensed singular apple basis written explicitly):
+
+```lisp
+(Smusni 0
+  (Bind (($apples (Referents Entity)
+          (Refer
+            (λ (($r (Referents Entity)))
+              (∧
+                (plise $r)
+                (= (Card
+                    (SetOf
+                      (λ (($x Entity))
+                        (∧
+                          (plise $x)
+                          (Among $x $r)))))
+                   5))))))
+    (Assert
+      ((Exactly 2
+         (λ (($x Entity))
+           (∧
+             (plise $x)
+             (Among $x $apples)
+             (xunre $x))))
+       (λ (($x Entity))
+         (lebna Speaker $x))))))
+```
+
+Here `$apples` is the five-apple base reference before `Exactly 2` performs the
+outer selection. Moving `xunre` into its property would incorrectly say that
+all five base apples are red.
+
+When a graph instead represents an outer `poi` as selection of the greatest
+satisfying subreference, no `Relative` record or maximality primitive is
+needed. For a previously computed `$demonstrators`, the reference property is:
+
+```lisp
+(λ (($surrounders (Referents Entity)))
+  (∧
+    (Among $surrounders $demonstrators)
+    (sruri $surrounders $building)
+    (∀
+      (λ (($candidate (Referents Entity)))
+        (→
+          (∧
+            (Among $candidate $demonstrators)
+            (sruri $candidate $building))
+          (Among $candidate $surrounders))))))
+```
+
+This final block is a fragment. It preserves a collective `sruri` property of
+the selected plural reference; replacing it with `sruri $x $building` inside a
+singular counting restriction is a different reading.
+
 A source `le gerku voi blabi` composes its one description property with the
 transparent prelude helper `DescribedAs` rather than asserting whiteness. The
 helper's normative definition removes `skicu` x3; no audience is fabricated
@@ -604,6 +662,30 @@ and the white relative clause is the supplementary second operand:
         (melbi $dog)
         (blabi $dog)))))
 ```
+
+The same force-segment handler keeps the side commitment outside transparent
+negation and question force. Under the preceding `$dog` binding, the relevant
+act fragments are:
+
+```lisp
+(Assert
+  (Supplement
+    (¬ (melbi $dog))
+    (blabi $dog)))
+```
+
+```lisp
+(Ask
+  (Polar
+    (Supplement
+      (melbi $dog)
+      (blabi $dog))))
+```
+
+In the first, only beauty is negated. In the second, only beauty is questioned.
+Whiteness is committed once as supplementary content in both cases. A graph
+which represents a genuinely local or conditional supplement names that
+different handler explicitly.
 
 Multiple clauses retain their connector rather than a list of `Relative`
 records:
