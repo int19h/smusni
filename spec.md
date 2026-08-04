@@ -664,6 +664,32 @@ singleton-lift only where a sumti place expects a referential sign object.
 is represented. Quotation, denotation, and token facts do not imply
 interpretation.
 
+### 7.4 Indicators and displayed content
+
+An indicator's experiencer, target, and utterance anchor are first-class values.
+The target is the actual `Content`, `PredTerm`, `Act`, event, sign, or token that
+the semantic graph identifies. Clause-versus-predicate focus follows from that
+identity and type; no `TargetFocus` value prints.
+
+The indicator relation itself is a registered predicate, for example
+`(Contrast experiencer target anchor)`. Polarity, intensity, phase, and
+modifiers lower through registered relation formers or additional predicates.
+If a field has no compositional lowering, the displayed-content value uses local
+fallback rather than retaining a generic indicator record.
+
+The graph's assertion effect controls act construction:
+
+| Effect | Normal-form consequence |
+|---|---|
+| `None` | preserve the host act and add only the represented expressive relation |
+| `HostAsserted` | the host content is an `Assert` act at this utterance boundary |
+| `HostSubordinated` | retain the host content as a first-class target but do not construct an independent host assertion |
+| `MetalinguisticallyVoided` | do not assert the displayed host content; perform only the metalinguistic/expressive act and any other graph-recorded acts |
+| `Performative` | construct and perform the graph-identified performative act rather than treating its wording as a truth-conditional assertion |
+
+Multiple acts use `Do` or ordered `Realizes` facts. Nothing analogous to
+`AssertionEffect` prints after the act structure has been assembled.
+
 ## 8. References, plurality, sets, and descriptions
 
 ### 8.1 Number-neutral references
@@ -1177,7 +1203,12 @@ their schema; they cannot mint arbitrary PascalCase constructors.
 | Input-model family | Normal form |
 |---|---|
 | predication/selbri records | `PredTerm` application and fills |
-| assertion flag | explicit `Assert` or another force constructor |
+| asserted predication mode | explicit `Assert` at the owning force boundary |
+| inert predication mode | predicate term/content value without force |
+| restrictive predication mode | reference property or quantifier restriction |
+| incidental predication mode | `Supplement` at the represented anchor |
+| displayed/performative mode | displayed-content relation and explicit act/performance structure |
+| definitional mode | registered logical/property definition when exact; otherwise typed fallback |
 | modal/tag record | modal predicate plus `Joi` |
 | place conversion | base-root remapping or eta-expanded `λ` |
 | relative-clause record | reference property, predicate, connector, or `Supplement` |
