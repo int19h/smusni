@@ -926,9 +926,11 @@ The closed lexical policies are:
 - `Opaque`: it remains inside and rejects an escaping de-re host.
 
 Surface current coordinates map through row provenance to the lookup key
-`(root, original ordinal, dynamic family)`. Missing, contradictory, or
-unattested policy metadata fails closed; spelling, argument type, nearby rows,
-and converted surface position are never heuristics.
+`(root, original ordinal)`. Scope policy is a property of the semantic place,
+not of the particular reference or other dynamic computation encountered
+there. Missing, contradictory, or unattested policy metadata fails closed;
+spelling, argument type, nearby rows, and converted surface position are never
+heuristics.
 
 If the graph supplies a de-re or de-dicto host, that exact host is used after
 legality and dependency checks. Otherwise an ordinary xorlo `Refer` in an
@@ -2544,7 +2546,7 @@ and normalized identity from the versioned semantic dictionary. Dynamic lexical
 places additionally require a generated policy row with this schema:
 
 ```text
-normalized-root, original-ordinal, dynamic-family, scope-policy, evidence-id
+normalized-root, original-ordinal, scope-policy, evidence-id
 ```
 
 Tag reductions, event facets, model indicator relations, quantity scales, and
@@ -2570,21 +2572,34 @@ bundles MUST NOT both claim format version `0`; changing any normative row
 requires a new format version.
 
 The canonical manifest records the format and bundle schema versions, the
-SHA-256 digest of this specification, the generator identity, and for every
-source or generated artifact its stable relative path, schema id, row count,
-and SHA-256 digest. It also records one bundle digest over the path-and-digest
-pairs in lexicographic path order; the bundle-digest field itself is excluded
-from that computation. It is checked in as `registry/manifest.json`; its keys
-occur in this order: `format-version`, `bundle-schema-version`, `spec-digest`,
-`generator-id`, `source-artifacts`, `generated-artifacts`, `bundle-digest`.
-It uses canonical JSON with the same string, whitespace, and line-ending rules
-as one generated row. Generated tables are UTF-8 NFC JSON Lines with LF line
-endings, one object per row, no insignificant whitespace, keys in the logical
-schema order below, and rows sorted by their declared primary-key fields.
-Types, signatures, rows, and expansion templates embedded in a field use the
-canonical smusni spelling from this document. Consumers may compile these rows
-to another internal representation, but the checked-in bytes and manifest are
-the single normative source.
+SHA-256 digest of the exact checked-in `spec.md` bytes, an immutable generator
+identity, and for every source or generated artifact its stable relative path,
+schema id, row count, and SHA-256 digest. `samples.md` is deliberately outside
+this digest because it is pedagogical rather than normative.
+
+All SHA-256 values are lowercase hexadecimal. Every string is normalized to
+NFC before serialization, and every JSON value uses RFC 8785 JSON Canonicalization
+Scheme (JCS). The manifest is checked in as `registry/manifest.json`, serialized
+as one JCS object followed by LF. Its `source-artifacts` and
+`generated-artifacts` arrays are each sorted by `relative-path`; every entry has
+exactly `relative-path`, `schema-id`, `row-count`, and `digest`. The manifest's
+logical fields are `format-version`, `bundle-schema-version`, `spec-digest`,
+`generator-id`, `source-artifacts`, `generated-artifacts`, and `bundle-digest`;
+JCS, rather than prose field order, determines their byte order.
+
+The bundle digest is SHA-256 of the JCS encoding, without a trailing LF, of the
+array `[[relative-path, digest], ...]` containing every source and generated
+artifact in lexicographic `relative-path` order. The manifest itself and its
+`bundle-digest` field are not inputs. `generator-id` is likewise the SHA-256 of
+the JCS path-and-digest array for the checked-in generator source and lockfiles,
+all of which also appear as source artifacts; it is not a mutable tool name.
+Generated tables are JSON Lines: each row
+is one NFC-normalized JCS object followed by LF. Rows sort by their declared
+primary-key tuple: strings by Unicode scalar-value order, integers numerically,
+and composite keys left to right. Types, signatures, rows, and expansion
+templates embedded in a field use the canonical smusni spelling from this
+document. Consumers may compile these rows to another internal representation,
+but the checked-in bytes and manifest are the single normative source.
 
 The normative generated artifacts have these logical schemas:
 
@@ -2608,8 +2623,7 @@ LexicalRow =
   dictionary-entry-id, ordered-numbered-slot-rows, optional-event-slot-row
 
 ScopePolicyRow =
-  normalized-root, original-ordinal, dynamic-family,
-  scope-policy, evidence-id
+  normalized-root, original-ordinal, scope-policy, evidence-id
 
 PlaceDeletionEvidenceRow =
   expansion-owner, normalized-root, original-ordinal,
@@ -2620,6 +2634,11 @@ TagReductionRow =
   source-family, source-member, applicability-guard, operand-types,
   source-place-map, host-event-map, required-graph-identities,
   typed-expansion-template, resulting-type-schema, evidence-id
+
+RelationFormerReductionRow =
+  former-kind, source-owner, applicability-guard, operand-row-schemas,
+  result-row-schema, total-provenance-map,
+  typed-link-or-expansion-contract, evidence-id
 
 GeneratedRelationRow =
   family, PascalCase-name, complete-signature,
@@ -2641,12 +2660,17 @@ PreludeRow =
   direct-dependencies, definition-digest
 ```
 
-The primary keys, in table order, are `source-id`, `evidence-id`,
-`normalized-root`, `(normalized-root, original-ordinal, dynamic-family)`,
+The primary keys for the top-level tables, in schema order and excluding the
+inline `SlotRow` and `ClosePolicy` types, are `source-id`, `evidence-id`,
+`normalized-root`, `(normalized-root, original-ordinal)`,
 `(expansion-owner, normalized-root, original-ordinal)`,
 `(source-family, source-member, applicability-guard)`,
+`(former-kind, source-owner, applicability-guard)`,
 `(family, PascalCase-name)`, `PascalCase-name`, `reason-id`,
-`disposition-owner`, and `name`. Duplicate primary keys are invalid.
+`disposition-owner`, and `name`. Duplicate primary keys are invalid. The generic
+`Tanru` and `Scalar` row-preservation rules in section 4.6 need no per-use row;
+only a more specific argument link, scale, or source reduction uses a
+`RelationFormerReductionRow`.
 
 `SlotRow.label` is a positive original numbered label or `Eventuality`.
 `Contextual` licenses ordinary contextual closure but does not decide the
@@ -2667,13 +2691,16 @@ Kernel primitive context/effect/stability behavior is fixed by sections 3, 6,
 and 14.1 and cannot be overridden by the bundle. A lexical predicate term is
 inert while assembled; its operands and eventual `Close` determine the dynamic
 summary. A transparent prelude summary is computed by expanding its
-`PreludeRow`, and a tag summary is computed from its validated expansion
-template. Only an irreducible generated relation declares its own
-`context-effect-summary` and `stability-summary`; those summaries use the same
-`Γ -> Δ; E` judgment and per-performance stability vocabulary as sections 3.2
-and 6.1. Missing or contradictory summaries fail closed. This supplies the
-declarations consumed by the structural purity algorithm rather than leaving
-"registered pure" as an implementation choice.
+`PreludeRow`, and a tag or relation-former summary is computed from its
+validated expansion or link contract. Version-0 irreducible generated
+relations are ordinary inert predicates: their `context-effect-summary` is
+exactly the JSON object `{"context":"identity","effects":[]}` and their
+`stability-summary` is exactly the JSON string
+`"site-stable-within-performance"`. A generated relation requiring any other
+control or effect behavior must instead be a kernel primitive, a transparent
+expansion, or typed fallback. Missing or contradictory summaries fail closed.
+This supplies the declarations consumed by the structural purity algorithm
+rather than leaving "registered pure" as an implementation choice.
 
 An applicability guard and expansion template are canonical syntax in this
 specification with typed holes for the host, event, explicit operands, anchors,
@@ -2681,7 +2708,9 @@ and graph identities. A template may contain lowercase roots, kernel
 primitives, or transparent prelude calls only. Validation expands every
 template, derives its result and dynamic summary, checks every lexical row and
 place map, and rejects a recursive prelude dependency, an unregistered atom, or
-a declared result which differs from the derived one. An irreducibility reason is
+a declared result which differs from the derived one. Every `PreludeRow` is
+generated mechanically from the definition in this document and its canonical
+definition and digest MUST match that definition exactly. An irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
 reduction must be used instead.
@@ -2910,9 +2939,11 @@ output expectations:
 - the checked-in registry manifest validates every artifact path, schema, row
   count, evidence foreign key, disposition foreign key, digest, and bundle
   digest; two clean generator runs produce byte-identical artifacts;
-- every kernel summary agrees with sections 3, 6, and 14.1, every prelude/tag
-  summary is rederived from its expansion, and every irreducible generated
-  relation has one complete type/context/effect/stability row;
+- every kernel summary agrees with sections 3, 6, and 14.1, every prelude row
+  byte-matches the definition in this document, every prelude/tag/relation-former
+  summary is rederived from its expansion or link contract, and every
+  irreducible generated relation has one complete
+  type/context/effect/stability row;
 - every result is one parseable, well-typed `(Smusni 0 ...)` datum;
 - repeated rendering under one formatter configuration is byte-identical;
 - every variable and fallback reference is bound exactly once and used within
