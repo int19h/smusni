@@ -121,8 +121,8 @@ The namespaces are visually disjoint:
 - lowercase symbols are lexical content roots: `klama`, `purci`;
 - PascalCase symbols are registered primitives, transparent prelude names,
   types, or closed literals: `Assert`, `DescribedAs`, `Entity`, `Proximal`;
-- conventional mathematical glyphs are registered primitives or transparent
-  prelude functions: `λ`, `∀`, `∧`;
+- conventional callable mathematical glyphs are registered primitives or
+  transparent prelude functions: `∀`, `∧`, `≠`;
 - `$name` is a lexically bound variable;
 - `:2` and `:Eventuality` are literal place labels;
 - `%1`, `%2`, ... are fallback-object identities and occur only inside
@@ -321,11 +321,13 @@ appear in the datum; section 16 defines their separate channel.
 
 The document convention supplies one current utterance context with
 speaker=`Speaker`, audience=`Audience`, time=`Now`, place=`Here`, deictic
-ground=`CurrentGround`, and an actual generated locution event. A simple
-single realized act may contract from `Utterance` to that act only when its
-token is unreferenced and every omitted fact is exactly one of these declared
-defaults. Nondefault metadata, multiple acts, quotation, token reference, or
-any additional fact keeps the `Utterance` boundary. This is
+ground=`CurrentGround`, and an actual generated locution event. A simple single
+realized act may contract from `Utterance` to that act only on the implicit
+performance spine, when its token is unreferenced and every omitted fact is
+exactly one of these declared defaults. An `Utterance` used as an ordinary
+datum operand never contracts because doing so would change its
+`TranscriptEntry` type. Nondefault metadata, multiple acts, quotation, token
+reference, or any additional fact also keeps the `Utterance` boundary. This is
 `NotationDefault`, not provenance suppression.
 
 A consumer that does not support version `0` MUST reject the document rather
@@ -450,9 +452,10 @@ does not print in a surface type annotation.
 The refinement checker is structural and deterministic:
 
 1. it assigns every lambda and lexical closure site a stable graph identity;
-2. constants, variables, lexical predicate filling, fixed-context lookup, and
-   registered pure primitives/prelude calls compose their declared context,
-   effect, and stability summaries left to right;
+2. constants, variables, lexical predicate filling, fixed-context lookup,
+   kernel primitives with normative summaries, and transparent prelude calls
+   after expansion compose their context, effect, and stability summaries left
+   to right;
 3. `Let` copies the initializer summary to every use, while application
    instantiates the callee summary without minting new lexical closure sites;
 4. `Bind`, `Refer`, accommodation, `Presuppose`, `Supplement`, act performance,
@@ -862,9 +865,11 @@ typed effect tokens. It computes judgments bottom-up:
 The result of a branch join is therefore determined by graph identity and
 region equality, not by matching types or spellings. Any unregistered control
 form or unresolved join fails at the smallest typed owner. Together with the
-purity algorithm in section 3.2 and the witness-flow algorithm in section 9.4,
-these rules are the complete version-0 checker algorithm; an implementation may
-choose different internal data structures but not different transfer behavior.
+purity algorithm in section 3.2, the placement and handler rules in sections
+6.3 and 6.4, the witness-flow algorithm in section 9.4, and bundle validation
+in section 14.2, these rules are the complete version-0 checker algorithm; an
+implementation may choose different internal data structures but not different
+transfer behavior.
 
 ### 6.2 Accessibility table
 
@@ -881,9 +886,9 @@ must already enclose both sites.
 | `(¬ a)` | `a` sees the input; ordinary at-issue/reference introductions inside it do not escape, while handled projective effects follow section 6.4 |
 | `(→ a b)` | `b` sees the successful dynamic context of `a`; a referent used in both operands is nevertheless printed under one lexical binder spanning the whole conditional; neither operand's new ordinary introductions escape by default; handled projective effects follow section 6.4 |
 | `(↔ a b)` | has classical biconditional truth conditions and is primitive rather than a duplicating rewrite; `a` and `b` each see the same input context, each printed occurrence is evaluated at most once per performance, and neither operand's ordinary introductions flow into the other or escape; a shared identity is bound outside and handled projective effects follow section 6.4 |
-| `(⊕ a b)` | alternatives share input; branch-local identities do not escape |
-| `(∀ (λ (...) body))` | lambda variables and body introductions are local |
-| `(∃ (λ (...) body))` | lambda variables are lexical to the body; a graph-exported existential referent is reified through its registered witness/reference operation rather than by using the variable out of scope |
+| `(⊕ a b)` | alternatives share input; branch-local ordinary identities do not escape; handled projective effects follow section 6.4 |
+| `(∀ (λ (...) body))` | lambda variables and ordinary body introductions are local; handled projective effects follow section 6.4 |
+| `(∃ (λ (...) body))` | lambda variables and ordinary body introductions are local; handled projective effects follow section 6.4; version 0 has no plain-existential witness export, so later anaphora must use a graph-licensed `Refer`/generalized-quantifier route or typed fallback rather than using the variable out of scope |
 | generalized quantifier | variable is local; only its registered successful run handle can authorize `Witnesses` |
 | `(Presuppose trigger body)` | emit the projective `trigger` at its dependency-legal handler, resolve or accommodate it once there, then evaluate `body`; the trigger's successful context is visible in `body` and in the handler continuation, while any shared lexical identity is bound outside the whole form |
 | `(Supplement body side)` | evaluate `body`, then `side` against the body's context; only graph-declared shared identities export from `side` |
@@ -948,11 +953,13 @@ chooses semantic scope.
 ### 6.4 Side-effect handlers
 
 `Presuppose`, `Supplement`, expressive acts, and utterance facts are separate
-effect families. A construct handles only its declared family. The nearest
-enclosing legal handler wins; equal-depth candidates are ordered by source
-order. Effects generated inside a supplement do not become at-issue content.
-Effects generated inside opaque or reified content cannot be hosted outside
-that boundary.
+effect families. A construct handles only its declared family. Projective
+presuppositions are handled by the nearest performed force segment, an
+enclosing `Do`/discourse sequence, or the document performance convention,
+subject to the dependency and boundary rules below. The nearest enclosing
+legal handler wins; equal-depth candidates are ordered by source order. Effects
+generated inside a supplement do not become at-issue content. Effects generated
+inside opaque or reified content cannot be hosted outside that boundary.
 
 `Presuppose` is explicitly projective rather than an ordinary left-to-right
 conjunction. Its trigger may be handled outside transparent `¬`, `∨`, `→`, `↔`,
@@ -1018,10 +1025,13 @@ other value.
 `Do` sequences performables:
 
 ```text
-Do : Performable+ -> Discourse
+Do : Performable^n -> Discourse, n >= 2
 ```
 
-It evaluates left to right and preserves graph/source order. `Perform act`
+It evaluates left to right and preserves graph/source order. A one-item sequence
+has no distinct version-0 semantics and contracts to that item; at an ordinary
+`Discourse` operand an `Act` uses `Perform`, a `TranscriptEntry` uses
+`PerformUtterance`, and an existing `Discourse` remains as written. `Perform act`
 performs an act only when a position statically requires `Discourse` away from
 the implicit performance spine. An `Act` or `TranscriptEntry` operand of `Do`,
 or the top-level `Act` or `TranscriptEntry` of `Smusni`, prints directly and
@@ -1067,9 +1077,11 @@ transcript is therefore distinct from quotation of that wording sign.
 
 `Utterance` returns `TranscriptEntry`. The boundary MUST remain when the token
 identity is referenced or quoted, any nondefault metadata survives, more than
-one act is realized, or the entry itself is returned as data. A simple entry
-whose only identity-dependent fact is one `Realizes` fact and whose omitted
-metadata is exactly the document defaults may contract to that act.
+one act is realized, or the entry occurs in any ordinary datum position,
+including a `PerformUtterance` or `StructuredQuote` operand. Only on the
+implicit performance spine may a simple entry whose sole identity-dependent
+fact is one `Realizes` fact and whose omitted metadata is exactly the document
+defaults contract to that act.
 
 ### 7.3 Sign-token boundary
 
@@ -1088,7 +1100,7 @@ Name Sentence Quotation Word Letteral MathExpression Connective Text
 Structured Opaque
 ```
 
-Raw sign constructors include `NameSign`, `SentenceSign`, `StructuredQuote`,
+The raw sign constructors are `NameSign`, `SentenceSign`, `StructuredQuote`,
 and `OpaqueQuote`. A sign token and a raw `Sign<K>` are distinct. Either can
 singleton-lift to `Referents<Sign<K>>` or `Referents<SignToken<K>>` at a
 statically known referential operand; the resulting reference may then upcast
@@ -1503,7 +1515,7 @@ duplicate its truth condition. Reperforming the same `$run`, or reaching it
 through a branch which does not guarantee that unique success, makes retrieval
 ambiguous and therefore invalid. The type/effect checker tracks application
 identity, static witness type, performance occurrence, and success capability
-through acts, conjunction, and `Do`.
+through identity-preserving `Let` bindings, acts, conjunction, and `Do`.
 
 The uniqueness test is made at the retrieval site over successful performance
 occurrences which dominate that site on every reaching execution path. A later
@@ -2227,7 +2239,7 @@ Refer       : Property<Referents<T>> -> RefComp<Referents<T>>
 
 Perform          : Act<F> -> Discourse
 PerformUtterance : TranscriptEntry -> Discourse
-Do               : Performable+ -> Discourse
+Do               : Performable^n -> Discourse, n >= 2
 NewTopic, Resume : Discourse -> Discourse
 PriorDiscourse, FollowingDiscourse : Discourse
 
@@ -2549,23 +2561,51 @@ requires a deletion-evidence row. The row identifies the exact owner and
 lexical ordinal and states why that semantic role is absent; it cannot cite
 surface omission as its reason.
 
-Format version `0` identifies one immutable registry bundle containing the
-semantic dictionary and all tables below. Its canonical manifest records the
-source version and cryptographic digest of every artifact. Two different
+Format version `0` is minted only when one immutable registry bundle containing
+the semantic dictionary and all tables below is checked into the specification
+repository. Before that first mint, this document is a design and implementation
+candidate: its kernel and transparent definitions may be implemented, but no
+renderer output is yet conformant normal form. After the mint, two different
 bundles MUST NOT both claim format version `0`; changing any normative row
-requires a new format version. The implementation work is not conformant until
-that manifest is checked into the specification repository and the generated
-artifacts are reproducibly verified against it. Before then, only rows written
-out completely in this document are design-licensed, not silently supplied by
-the current contents of a mutable dictionary checkout.
+requires a new format version.
 
-The normative generated artifacts have these logical schemas (their on-disk
-encoding is an implementation detail):
+The canonical manifest records the format and bundle schema versions, the
+SHA-256 digest of this specification, the generator identity, and for every
+source or generated artifact its stable relative path, schema id, row count,
+and SHA-256 digest. It also records one bundle digest over the path-and-digest
+pairs in lexicographic path order; the bundle-digest field itself is excluded
+from that computation. It is checked in as `registry/manifest.json`; its keys
+occur in this order: `format-version`, `bundle-schema-version`, `spec-digest`,
+`generator-id`, `source-artifacts`, `generated-artifacts`, `bundle-digest`.
+It uses canonical JSON with the same string, whitespace, and line-ending rules
+as one generated row. Generated tables are UTF-8 NFC JSON Lines with LF line
+endings, one object per row, no insignificant whitespace, keys in the logical
+schema order below, and rows sorted by their declared primary-key fields.
+Types, signatures, rows, and expansion templates embedded in a field use the
+canonical smusni spelling from this document. Consumers may compile these rows
+to another internal representation, but the checked-in bytes and manifest are
+the single normative source.
+
+The normative generated artifacts have these logical schemas:
 
 ```text
+SourceArtifactRow =
+  source-id, source-kind, immutable-revision, canonical-locator,
+  artifact-digest
+
+EvidenceRow =
+  evidence-id, source-id, exact-locator, cited-content-digest,
+  adjudication-note
+
+SlotRow =
+  label, accepted-type-schema, close-policy, lexical-provenance,
+  evidence-id
+
+ClosePolicy = Required | Contextual | LocalExistential
+
 LexicalRow =
-  root, normalized-root, ordered-place-types, event-license,
-  defaultable-places, dictionary-version
+  root, normalized-root, word-class, dictionary-source-id,
+  dictionary-entry-id, ordered-numbered-slot-rows, optional-event-slot-row
 
 ScopePolicyRow =
   normalized-root, original-ordinal, dynamic-family,
@@ -2573,28 +2613,75 @@ ScopePolicyRow =
 
 PlaceDeletionEvidenceRow =
   expansion-owner, normalized-root, original-ordinal,
+  input-row-schema, result-row-schema, surviving-slot-map,
   semantic-absence-contract, evidence-id
 
 TagReductionRow =
-  source-family, source-member, operand-types, source-place-map,
-  host-event-map, typed-expansion-template, evidence-id
+  source-family, source-member, applicability-guard, operand-types,
+  source-place-map, host-event-map, required-graph-identities,
+  typed-expansion-template, resulting-type-schema, evidence-id
 
 GeneratedRelationRow =
   family, PascalCase-name, complete-signature,
+  context-effect-summary, stability-summary,
   irreducibility-reason, evidence-id
 
 ScaleLiteralRow =
-  PascalCase-name, scale-type, source-members, evidence-id
+  PascalCase-name, raw-value-type, source-members, evidence-id
 
 FallbackReasonRow =
   reason-id, expected-type-schema, minimum-raw-owner-type, disposition-owner
+
+DispositionRow =
+  disposition-owner, model-constructor-or-field, disposition,
+  target-schema-or-fallback-reason, evidence-id
+
+PreludeRow =
+  name, complete-signature-schema, canonical-definition,
+  direct-dependencies, definition-digest
 ```
 
-An expansion template is syntax in this specification with typed holes for the
-host, event, explicit operand, and anchor; it may contain lowercase roots,
-kernel primitives, or transparent prelude calls only. Validation expands every
-template, checks every lexical row and place map, and rejects a recursive
-prelude dependency or an unregistered atom. An irreducibility reason is
+The primary keys, in table order, are `source-id`, `evidence-id`,
+`normalized-root`, `(normalized-root, original-ordinal, dynamic-family)`,
+`(expansion-owner, normalized-root, original-ordinal)`,
+`(source-family, source-member, applicability-guard)`,
+`(family, PascalCase-name)`, `PascalCase-name`, `reason-id`,
+`disposition-owner`, and `name`. Duplicate primary keys are invalid.
+
+`SlotRow.label` is a positive original numbered label or `Eventuality`.
+`Contextual` licenses ordinary contextual closure but does not decide the
+graph-specific `Fixed`/`Underspecified` dependence classification;
+`LocalExistential` is valid only for an event slot. `lexical-provenance` is the
+normalized root plus original dictionary ordinal for numbered slots and the
+registered event license for `Eventuality`. Thus place type, defaultability,
+event licensing, and original identity are all machine-readable rather than
+inferred from definition prose.
+
+Every `evidence-id` is a foreign key to exactly one `EvidenceRow`, whose source
+is in turn a `SourceArtifactRow`; a label alone is not evidence. Every fallback
+disposition owner is a foreign key to one `DispositionRow`. A scale literal is
+a raw first-order value of `raw-value-type`; for example a raw `Scale` may use
+the ordinary singleton lift at an operand requiring `Referents<Scale>`.
+
+Kernel primitive context/effect/stability behavior is fixed by sections 3, 6,
+and 14.1 and cannot be overridden by the bundle. A lexical predicate term is
+inert while assembled; its operands and eventual `Close` determine the dynamic
+summary. A transparent prelude summary is computed by expanding its
+`PreludeRow`, and a tag summary is computed from its validated expansion
+template. Only an irreducible generated relation declares its own
+`context-effect-summary` and `stability-summary`; those summaries use the same
+`Γ -> Δ; E` judgment and per-performance stability vocabulary as sections 3.2
+and 6.1. Missing or contradictory summaries fail closed. This supplies the
+declarations consumed by the structural purity algorithm rather than leaving
+"registered pure" as an implementation choice.
+
+An applicability guard and expansion template are canonical syntax in this
+specification with typed holes for the host, event, explicit operands, anchors,
+and graph identities. A template may contain lowercase roots, kernel
+primitives, or transparent prelude calls only. Validation expands every
+template, derives its result and dynamic summary, checks every lexical row and
+place map, and rejects a recursive prelude dependency, an unregistered atom, or
+a declared result which differs from the derived one. An irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
 reduction must be used instead.
@@ -2606,11 +2693,12 @@ the same id for different fallback boundaries or invent ad hoc diagnostic ids.
 
 The lexical place maps in `samples.md` are pedagogical candidate applications
 of these schemas, not an undeclared second registry. Until the immutable
-manifest is checked in, a sample demonstrates notation shape only; an
-implementation may emit that normal form only after every row it uses has been
-verified from the bundle, and otherwise must use the specified smallest typed
-fallback. A dictionary conflict is resolved in favor of verified bundled data,
-never by preserving the sample.
+manifest is checked in, a sample demonstrates notation shape only. Building
+the initial bundle is therefore the first implementation gate after this design
+candidate converges. Once minted, an implementation may emit a sample's normal
+form only after every row it uses has been verified from that bundle, and
+otherwise must use the specified smallest typed fallback. A dictionary conflict
+is resolved in favor of verified bundled data, never by preserving the sample.
 
 ### 14.3 Required desugarings and forbidden record shapes
 
@@ -2819,6 +2907,12 @@ smusni type was established.
 Version-0 conformance requires structural and semantic validation, not golden
 output expectations:
 
+- the checked-in registry manifest validates every artifact path, schema, row
+  count, evidence foreign key, disposition foreign key, digest, and bundle
+  digest; two clean generator runs produce byte-identical artifacts;
+- every kernel summary agrees with sections 3, 6, and 14.1, every prelude/tag
+  summary is rederived from its expansion, and every irreducible generated
+  relation has one complete type/context/effect/stability row;
 - every result is one parseable, well-typed `(Smusni 0 ...)` datum;
 - repeated rendering under one formatter configuration is byte-identical;
 - every variable and fallback reference is bound exactly once and used within

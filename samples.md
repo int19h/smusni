@@ -375,8 +375,8 @@ performance:
 
 ```lisp
 (Smusni 0
-  (Let (($goer-property (Fn (Entity) Content)
-          (λ (($x Entity))
+  (Let (($goer-property (Fn ((Referents Entity)) Content)
+          (λ (($x (Referents Entity)))
             (klama $x))))
     (Assert
       (∧
@@ -628,7 +628,7 @@ A graph-owned `goi` alias becomes identity sharing:
 
 The final two blocks are fragments.
 
-## 9. Importing universal quantification
+## 9. Generalized quantification and importing universals
 
 Source `ro` uses the importing `Every` constructor:
 
@@ -659,6 +659,45 @@ Its effect-level expansion is:
 The expansion is a fragment and shows why the nonemptiness commitment projects
 through an outer negation. There is no `(Import Projective)` record and no
 unstated import choice.
+
+The other generalized-quantifier helpers have the same restriction-then-scope
+application shape. Existential and negative examples are:
+
+```lisp
+(Smusni 0
+  (Assert
+    ((Some
+       (λ (($x Entity))
+         (gerku $x)))
+     (λ (($x Entity))
+       (bajra $x)))))
+```
+
+```lisp
+(Smusni 0
+  (Assert
+    ((No
+       (λ (($x Entity))
+         (gerku $x)))
+     (λ (($x Entity))
+       (batci $x Speaker)))))
+```
+
+A lower-bound cardinal helper additionally requires a pure restriction, a pure
+nuclear scope, and the registered singular counting basis:
+
+```lisp
+(Smusni 0
+  (Assert
+    ((AtLeast 2
+       (λ (($x Entity))
+         (gerku $x)))
+     (λ (($x Entity))
+       (bajra $x)))))
+```
+
+`AtMost`, `MoreThan`, and `FewerThan` differ only in their registered comparison
+operator and retain the same purity and counting-basis gate.
 
 The mathematical nonimporting universal remains available directly:
 
@@ -957,15 +996,23 @@ anchor. Facts about `$u` are
 analyzer facts, not extra speaker assertions; if an indicator instead targets
 the utterance token, the same `$u` can be passed to its registered relation.
 
-An actual relation that Alice utters something can itself be asserted; this
-fragment assumes both referents are bound by its surrounding transcript:
+An actual relation that the speaker utters a reported transcript can itself be
+asserted. The nested `Utterance` is a `TranscriptEntry` datum and is not
+performed or contracted:
 
 ```lisp
-(Assert
-  (Utters $alis $utterance))
+(Smusni 0
+  (Assert
+    (Utters
+      Speaker
+      (Utterance (($reported UtteranceToken))
+        (SpeakerOf $reported Speaker)
+        (Realizes $reported
+          (Assert
+            (klama Speaker)))))))
 ```
 
-That reports an utterance relation; it does not perform `$utterance`.
+That reports an utterance relation; it does not perform the nested transcript.
 
 Address and directive force are first-class acts on the ordinary `Do` spine:
 
@@ -1000,7 +1047,7 @@ Discourse transitions remain visible when the graph owns them:
 ```lisp
 (Smusni 0
   (NewTopic
-    (Do
+    (Perform
       (Assert
         (melbi This)))))
 ```
@@ -1008,7 +1055,7 @@ Discourse transitions remain visible when the graph owns them:
 ```lisp
 (Smusni 0
   (Resume
-    (Do
+    (Perform
       (Assert
         (klama Speaker)))))
 ```
