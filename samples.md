@@ -305,16 +305,16 @@ A restrictive `poi` contributes its predicate inside the reference property:
       (jbena $white-cat))))
 ```
 
-A descriptive `voi` uses `skicu` with its audience place deleted. After
-`DropPlace` removes current place 3, plain traversal fills original places 1,
-2, and 4:
+A descriptive `voi` uses the transparent prelude helper `DescribedAs`. Its
+normative definition uses `DropPlace` to remove `skicu` x3, then fills surviving
+x1, x2, and x4; no audience is fabricated:
 
 ```lisp
 (Smusni 0
   (Bind (($thing (Referents Entity)
           (Refer
             (λ (($x (Referents Entity)))
-              ((DropPlace skicu 3) Speaker $x
+              (DescribedAs Speaker $x
                 (λ (($y (Referents Entity)))
                   (blabi $y)))))))
     (Assert

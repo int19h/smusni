@@ -116,8 +116,8 @@ without a leading plus sign or redundant leading zeroes. Exact non-integers use
 The namespaces are visually disjoint:
 
 - lowercase symbols are lexical content roots: `klama`, `sepi'o`;
-- PascalCase symbols are registered intrinsics, types, or closed literals:
-  `Assert`, `Entity`, `Projective`;
+- PascalCase symbols are registered primitives, transparent prelude names,
+  types, or closed literals: `Assert`, `DescribedAs`, `Entity`, `Projective`;
 - conventional mathematical glyphs are registered intrinsics: `λ`, `∀`, `∧`;
 - `$name` is a lexically bound variable;
 - `:2` and `:Eventuality` are literal place labels;
@@ -154,7 +154,9 @@ place-fill     ::= :positive-integer datum
 lambda         ::= (λ ((variable type)+) datum)
 quantifier     ::= (∀ ((variable type)+) datum)
                  | (∃ ((variable type)+) datum)
-let            ::= (Let ((variable type datum)) datum)
+let            ::= (Let ((let-name type datum)) datum)
+let-name       ::= variable | prelude-name
+prelude-name   ::= PascalCase atom from the closed prelude registry
 bind           ::= (Bind ((variable type datum)) datum)
 let-rec        ::= (LetRec ((variable type datum)+) datum)
 
@@ -184,7 +186,10 @@ version-0 syntax.
 
 `Let` and `Bind` each have exactly one binding in canonical output. Multiple
 nonrecursive bindings are nested. This removes any ambiguity between parallel
-and sequential binding.
+and sequential binding. A `Let` initializer can be any inert typed value,
+including a `Fn` introduced by `λ` or a predicate term. An explicit document
+binding uses a `$variable`; a closed PascalCase `prelude-name` occurs only in
+the specification's implicit prelude described in section 14.1.
 
 `LetRec` is the only multi-binding form. Its initializers are mutually visible,
 but recursion is permitted only for inert functions and predicate-term values.
@@ -199,7 +204,8 @@ Ordinary application is type-directed:
 - if the head is an `Fn`, the arguments fill its ordered parameters;
 - if the head is a `PredTerm`, its arguments fill predicate places according to
   section 4;
-- if the head is a registered intrinsic, its registered signature applies.
+- if the head is a registered primitive or prelude function, its registered
+  signature applies.
 
 Application is not implicitly left-associated. `($f a b)` is one application
 of `$f` to two arguments. Curried application prints as `(($f a) b)` when its
@@ -779,8 +785,8 @@ Relative-clause taxonomy is eliminated into ordinary composition:
 
 - restrictive `poi` contributes a veridical predicate to the reference
   property's selection condition;
-- descriptive `voi` contributes the ordinary `skicu` predication after deleting
-  its audience place: `((DropPlace skicu 3) Speaker described property)`;
+- descriptive `voi` contributes `DescribedAs`, whose transparent prelude
+  definition is ordinary `skicu` with its audience place deleted;
 - supplementary `noi` contributes `(Supplement body side)` at its graph-owned
   anchor;
 - multiple clauses combine with their actual logical or nonlogical connector;
@@ -1145,10 +1151,12 @@ exact quoted text and does not claim an internal interpretation.
 
 ## 14. Registered normal forms
 
-### 14.1 Callable intrinsic registry
+### 14.1 Callable-name registry and transparent prelude
 
-The following groups are closed for normal version-0 output. Polymorphic type
-variables are inferred from operands.
+Every callable PascalCase name is either an irreducible primitive or a
+transparent function in the version-0 prelude. The following primitive groups
+are closed for normal version-0 output. Polymorphic type variables are inferred
+from operands.
 
 | Group | Intrinsics |
 |---|---|
@@ -1168,6 +1176,40 @@ variables are inferred from operands.
 | quantity | `Amount`, `Extent`, `Frequency`, `Portion`, `Ordinal` |
 | fallback | `Fallback`, `TypedGraph`, `Object`, `Field`, `Ref`, `RawList`, `RawAtom`, `RawString`, `RawNull` |
 | packaging | `Smusni`, `Words`, `Word` |
+
+The derived prelude is a second closed registry. It is semantically equivalent
+to nesting the listed `Let` bindings outside the document body, in dependency
+order. Canonical output omits those wrappers and prints the PascalCase bound
+name directly. Such a name has no semantics beyond its displayed definition,
+cannot be shadowed by a document binding, and MAY always be expanded without
+changing type, evaluation order, effects, or graph sharing.
+
+Version 0 currently includes this definition:
+
+```lisp
+(Let ((DescribedAs
+       (Fn ((Referents Entity)
+            (Referents Entity)
+            (Fn ((Referents Entity)) Content))
+           Content)
+       (λ (($describer (Referents Entity))
+           ($described (Referents Entity))
+           ($property
+             (Fn ((Referents Entity)) Content)))
+         (Close
+           ((DropPlace skicu 3)
+             $describer
+             $described
+             $property)))))
+  body)
+```
+
+The `Close` is part of the definition: deleting x3 and filling surviving x1,
+x2, and x4 produces a saturated predicate term, while `DescribedAs` returns
+`Content`. The implementation MUST verify the `skicu` row used by this
+definition against the versioned dictionary. A mismatch makes the prelude
+definition unavailable and uses typed fallback; it does not silently change
+the definition.
 
 `Let`, `Bind`, `LetRec`, `λ`, `∀`, `∃`, `Utterance`, `Sign`, `At`, place keywords, and
 collection element-type operands are grammar forms, not callable intrinsics.
