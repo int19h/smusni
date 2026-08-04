@@ -55,6 +55,21 @@ An actual place question uses computed `At` and no later plain operand:
         (klama :5 This (At $p This))))))
 ```
 
+Two computed fills whose candidate domains overlap do not print as two `At`
+forms. The smallest content position falls back because answer substitution
+could assign both values to the same place:
+
+```lisp
+(Smusni 0
+  (Assert
+    (Fallback Content "smusni.at.overlapping-candidates"
+      (Object %1 "ComputedPlaceAssignment"
+        (Field "firstCandidates"
+          (RawList (RawString "1") (RawString "2")))
+        (Field "secondCandidates"
+          (RawList (RawString "2") (RawString "3")))))))
+```
+
 `zi'o` removes a current numbered place. Surviving labels keep their visible
 numbers and plain traversal skips the hole:
 
@@ -102,6 +117,28 @@ it eta-expands:
 
 That last block is a fragment. A place expecting a labelled `PredTerm` rather
 than the displayed `Fn` cannot consume it and uses typed fallback.
+
+Tanru and scalar relation formers remain relational values rather than
+grammar-shaped records. Their applications follow the effective row of the
+head relation:
+
+```lisp
+(Smusni 0
+  (Assert
+    ((Tanru sutra klama)
+      Speaker
+      This)))
+```
+
+```lisp
+(Smusni 0
+  (Assert
+    ((Scalar OtherThan melbi)
+      This)))
+```
+
+These specimens require the corresponding graph relation and scalar reading;
+the renderer does not infer either from an English gloss.
 
 ## 4. Modals are predicates joined by `Joi`
 
@@ -183,10 +220,11 @@ route place:
 
 This specimen represents the walking event itself as the motion and identifies
 the walker as its mover. Neither follows mechanically from lexical x1: a
-separate concurrent motion would have its own event plus `cabna`, and a
-result-dependent reading would use the represented result relation. Other
-`mo'i` directions retain and delete different lexical places, as specified by
-their reduction rows.
+separate concurrent motion uses its own event plus `cabna` only when that row is
+verified, and a result-dependent reading likewise requires its represented
+result relation. Without the corresponding exact row, either reading uses typed
+fallback. Other `mo'i` directions retain and delete different lexical places,
+as specified by their reduction rows.
 
 When a verified heading reduction represents no destination, origin, or route,
 it can project exactly the surviving mover place and relate the same motion to
@@ -282,6 +320,26 @@ inheriting event:
 A later explicit tense composes onto the inherited path in source order, just
 as an explicitly repeated tense would.
 
+This specimen shares only the deictic `Now`. If the graph instead owns one
+sticky reference-time anchor distinct from `Now`, that anchor is bound once
+outside `Do` with `Let` when inert or `Bind` when computed, and both repeated
+`purci` applications use the same variable.
+
+Version 0 does not pretend that a graph-owned noncurrent deictic ground is the
+current speech situation. Until that registered reduction exists, the smallest
+referential value falls back:
+
+```lisp
+(Smusni 0
+  (Mention
+    (Fallback (Referents Entity) "smusni.deictic.noncurrent-ground"
+      (Object %1 "DeicticReference"
+        (Field "proximity"
+          (RawTypedAtom "Proximity" "Proximal"))
+        (Field "ground"
+          (Object %2 "DeicticGround"))))))
+```
+
 ## 5. Explicit `Close` for shared predicate terms
 
 An inline known-row predicate closes implicitly at `Assert`:
@@ -308,6 +366,26 @@ The same predicate term prints `Close` once it has identity of its own:
       (Mention $description)
       (Assert (Close $description)))))
 ```
+
+A shared property may execute its lexical `Close` more than once without
+turning one omitted source place into several contextual choices. In this
+specimen the graph marks those omissions `Fixed`; each omitted place below has
+one lexical closure-site identity reused by both applications during this
+performance:
+
+```lisp
+(Smusni 0
+  (Let (($goer-property (Fn (Entity) Content)
+          (λ (($x Entity))
+            (klama $x))))
+    (Assert
+      (∧
+        ($goer-property Speaker)
+        ($goer-property This)))))
+```
+
+The two applications substitute different x1 values; they do not mint new
+identities for klama's omitted destination, origin, route, or means sites.
 
 A nondefaultable higher-order gap cannot be silently closed:
 
@@ -459,6 +537,20 @@ indefinite selection:
 
 The last block is a schema fragment; `⟦body⟧` is metanotation, not output
 syntax.
+
+A speaker-owned stereotype keeps its describer as an ordinary operand rather
+than hiding it in the constructor:
+
+```lisp
+(Bind (($stereotypical-cat (Referents Entity)
+        (Stereotypical
+          Speaker
+          (λ (($x (Referents Entity)))
+            (mlatu $x)))))
+  ⟦body⟧)
+```
+
+This is also a schema fragment.
 
 ## 8. Relative clauses are ordinary composition
 
@@ -851,6 +943,8 @@ An utterance with metadata and two co-realized acts keeps its token:
       (Utterance (($u UtteranceToken))
         (SpeakerOf $u Speaker)
         (AudienceOf $u Audience)
+        (DeicticTimeOf $u Now)
+        (DeicticPlaceOf $u Here)
         (Realizes $u $current-act)
         (Realizes $u
           (Express
@@ -872,6 +966,52 @@ fragment assumes both referents are bound by its surrounding transcript:
 ```
 
 That reports an utterance relation; it does not perform `$utterance`.
+
+Address and directive force are first-class acts on the ordinary `Do` spine:
+
+```lisp
+(Smusni 0
+  (Do
+    (Vocative Audience)
+    (Command Audience
+      (klama Audience This))))
+```
+
+At a non-spine `Discourse` position, the level crossings are explicit. This
+`Joi` connects two performances rather than merely storing their values:
+
+```lisp
+(Smusni 0
+  (Let (($act (Act Assertion)
+          (Assert
+            (klama Speaker))))
+    (Joi
+      (Perform $act)
+      (PerformUtterance
+        (Utterance (($u UtteranceToken))
+          (SpeakerOf $u Speaker)
+          (Realizes $u
+            (Assert
+              (melbi This))))))))
+```
+
+Discourse transitions remain visible when the graph owns them:
+
+```lisp
+(Smusni 0
+  (NewTopic
+    (Do
+      (Assert
+        (melbi This)))))
+```
+
+```lisp
+(Smusni 0
+  (Resume
+    (Do
+      (Assert
+        (klama Speaker)))))
+```
 
 ## 15. Direct, embedded, and answered questions
 
@@ -958,6 +1098,35 @@ uses an honest contextual profile:
 ```
 
 It does not claim the selected `$x` is present in the graph.
+
+When the graph does contain the ordered answer values, the tuple and
+exhaustivity are explicit:
+
+```lisp
+(Smusni 0
+  (Assert
+    (Answer
+      (OpenQ
+        (λ (($who (Referents Entity))
+            ($where (Referents Location)))
+          (klama $who $where)))
+      (TupleAnswer
+        (Tuple Speaker Here)
+        Exhaustive))))
+```
+
+An explicitly unresolved selection is a typed nullary value, not an invented
+polarity or contextual answer:
+
+```lisp
+(Smusni 0
+  (Assert
+    (Answer
+      (OpenQ
+        (λ (($x (Referents Entity)))
+          (cortu $x)))
+      UnresolvedAnswer)))
+```
 
 ## 16. De-re, de-dicto, nested, and opaque reference
 
@@ -1093,6 +1262,21 @@ performing it:
             (klama Speaker)))))))
 ```
 
+Raw name and sentence signs preserve their kind without minting a token:
+
+```lisp
+(Smusni 0
+  (Mention
+    (NameSign "alis")))
+```
+
+```lisp
+(Smusni 0
+  (Mention
+    (SentenceSign
+      (klama Speaker))))
+```
+
 A sign token can have text and denotation facts without conflating either with
 interpretation:
 
@@ -1101,6 +1285,9 @@ interpretation:
   (Mention
     (Sign (($s (SignToken Sentence)))
       (TextOf $s "mi klama")
+      (Quotes $s
+        (OpaqueQuote "mi klama"))
+      (Label Item 1 $s)
       (Denotes $s
         (Reify
           (klama Speaker))))))
@@ -1110,10 +1297,13 @@ When interpretation is represented, the result family is explicit:
 
 ```lisp
 (InterpretContent $sentence-sign)
-(InterpretAct $performative-sign)
+(Let (($directive (Act Directive)
+        (InterpretAct $performative-sign)))
+  (Perform $directive))
 ```
 
-Those two lines are fragments.
+Those two forms are fragments. The `Act<Directive>` annotation supplies the
+force index which a standalone `InterpretAct` could not infer.
 
 ## 19. Recursion and identity
 
