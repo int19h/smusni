@@ -241,7 +241,10 @@ local fallback rather than an English-gloss constructor or an approximate
         (Field "kind" (RawTypedAtom "EventContour" "Start"))))))
 ```
 
-A repeated tense is a path rather than two unrelated facets:
+A repeated tense is a path rather than two unrelated facets. This sample
+assumes one graph locus with a joint two-parameter existential; the nested-`∃`
+specimen in the specification represents nested binder identity rather than a
+second canonical spelling of this graph:
 
 ```lisp
 (Smusni 0
@@ -664,6 +667,10 @@ relation:
       (Mention $groups))))
 ```
 
+Because set and group object sorts are entity subtypes, `$sets` or `$groups`
+can also fill a general `Referents<Entity>` predicate place by covariance. They
+do not thereby unwrap to a raw mathematical `Set` or `Group` value.
+
 ## 11. Generalized quantifier witnesses
 
 The `GQ`, its nuclear-scope function, and their application each have stable
@@ -695,8 +702,10 @@ The following is deliberately invalid and therefore falls back:
 ```lisp
 (Fallback (Referents Entity) "smusni.witness.before-success"
   (Object %1 "WitnessRequest"
-    (Field "gq" (RawAtom "$gq"))
-    (Field "scope" (RawAtom "$scope"))))
+    (Field "run"
+      (Object %2 "QuantifierApplication"))
+    (Field "status"
+      (RawTypedAtom "WitnessAvailability" "BeforeSuccess"))))
 ```
 
 That fallback is a fragment inside a position expecting
@@ -805,6 +814,10 @@ semantic scale fills the full-arity crossing:
       DistanceScale)))
 ```
 
+This last sample is normal output only when `DistanceScale` is a verified member
+of the version-0 scale table; otherwise the affected scale value uses typed
+fallback.
+
 ## 14. First-class acts and utterance facts
 
 An act can be bound, targeted, and later performed:
@@ -845,7 +858,8 @@ An utterance with metadata and two co-realized acts keeps its token:
 ```
 
 The contrast's experiencer and two exact first-class act operands all remain
-visible; its anchor need not be an utterance token. Facts about `$u` are
+visible; its third role is the comparison target, not a generic utterance
+anchor. Facts about `$u` are
 analyzer facts, not extra speaker assertions; if an indicator instead targets
 the utterance token, the same `$u` can be passed to its registered relation.
 
@@ -1148,7 +1162,7 @@ whole graph structurally:
 
 ```lisp
 (Smusni 0
-  (TypedGraph "Performable"
+  (TypedGraph "SemanticGraph"
     (Object %1 "SemanticGraph"
       (Field "root"
         (Object %2 "UnknownRoot"))
