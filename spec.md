@@ -154,7 +154,7 @@ the grammar alone does not make an ill-typed application valid.
 
 ```text
 document       ::= (Smusni 0 performable [words])
-words          ::= (Words word-card*)
+words          ::= (Words word-card+)
 
 datum          ::= atom | string | integer | rational | variable
                  | application | special-form
@@ -263,13 +263,14 @@ binding uses a `$variable`; a closed `prelude-name` occurs only in
 the specification's implicit prelude described in section 14.1.
 
 `LetRec` is the only multi-binding form. Its initializers are mutually visible,
-and every initializer MUST be an inert `λ`. Every cycle in the initializer
-reference graph MUST cross at least one such lambda boundary; predicate terms,
+and every initializer MUST be an inert `λ`; consequently every mutually
+recursive reference is delayed inside a lambda body. Predicate terms,
 `RefComp`s, acts, discourse, presuppositions, supplements, and other effectful
 initializers are forbidden. `LetRec` denotes the recursive environment that
 ties those function identities together. A consumer need not unroll or
 normalize it, and applying a recursively bound function may diverge. A graph
-which does not meet this syntactic guardedness condition uses typed fallback.
+whose recursive value bindings are not all functions in this form uses typed
+fallback.
 
 ### 2.3 Application
 
@@ -395,7 +396,7 @@ entity-accepting predicate place. Higher-order and control families such as
 because they are first-class typed values.
 
 The only implicit sort conversions are one-way upcasts along these declared
-edges.
+edges plus the finite `Natural`-to-`Cardinal` embedding stated below.
 `Referents` is covariant along them: if `A <: B`, then
 `Referents<A> <: Referents<B>`. No corresponding downcast is implicit. Finite
 `Natural` values have the canonical embedding into `Cardinal`. Other semantic
@@ -1013,6 +1014,10 @@ the output would not preserve it. An absent, illegal, or ambiguous supplement
 handler makes the smallest affected content use typed fallback. Nested effects
 generated while evaluating `side` retain their own families and handler rules,
 and do not become at-issue content by being inside a supplement.
+A supplement whose side depends on a variable or dynamic introduction that is
+not available in any legal version-0 handler cannot be hoisted out of that
+scope. Version 0 has no hidden dependent-supplement handler: the smallest
+affected content uses typed fallback.
 
 Reference resolution may have a legal `Discourse` host, including a graph-owned
 `Bind` spanning several acts in `Do`. The discourse handler runs that
@@ -2219,6 +2224,16 @@ Interval : T × T × EndpointInclusion × EndpointInclusion -> Interval<T>
            for a registered ordered T
 ```
 
+The complete version-0 ordered-type registry is `Number`, `Natural`, and
+`Cardinal`. `<`, `≤`, the transparent `>` and `≥` preludes, and `Interval` are
+licensed only when both operands or endpoints have one common type from that
+set after the implicit conversions of section 3.1; type inference chooses the
+unique least such target in the conversion preorder. `Natural` uses the order
+inherited from `Number`; `Cardinal` has its standard cardinal order, including
+infinite cardinal values. No order is inferred for any other type. A comparison
+or interval over another type uses the smallest typed fallback unless a later
+format version explicitly registers it.
+
 `Open` and `Closed` are the two endpoint-inclusion literals. The first applies
 to the first endpoint and the second to the second endpoint. Centered,
 unordered, or otherwise differently structured intervals require an exact
@@ -2319,7 +2334,7 @@ Polymorphic type variables are inferred from operands.
 | collections/math | `Set`, `SetOf`, `List`, `Tuple`, `Card`, `Interval`, `ZipWith`, `=`, `<`, `≤`, `+`, `−`, `×`, `÷`, `∈` |
 | signs | `OpaqueQuote`, `StructuredQuote`, `NameSign`, `SentenceSign` |
 | discourse | `NewTopic`, `Resume`, `PriorDiscourse`, `FollowingDiscourse` |
-| token/metadata facts | `Realizes`, `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Denotes`, `Quotes`, `Utters`, `Label` |
+| utterance/sign/metadata facts | `Realizes`, `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Denotes`, `Quotes`, `Utters`, `Label` |
 | fallback | `Fallback`, `TypedGraph`, `Object`, `Field`, `Ref`, `RawList`, `RawAtom`, `RawTypedAtom`, `RawString`, `RawNull` |
 | packaging | `Smusni`, `Words`, `Word` |
 
@@ -2411,6 +2426,18 @@ is exact and partial where ordinary mathematics is partial, such as division
 by zero; an invalid represented operation uses typed fallback. `Label` is an
 ordinary analyzer fact about its target, not a wrapper which changes the
 target's value or force.
+
+`PriorDiscourse` and `FollowingDiscourse` are inert graph-owned references to
+the immediately preceding or following represented discourse segment. They do
+not perform that segment, repeat its effects, or contribute content by
+themselves. Despite their `Discourse` value type, they are reference-only
+constants: they are legal only as ordinary values in registered fact operands
+such as `Quotes`, `Denotes`, or another relation whose signature accepts the
+value. They are illegal as the top-level `Smusni` performable and as `Perform`,
+`Do`, `Joi`, `NewTopic`, or `Resume` operands. If the graph requires the
+referenced segment to be performed at that site, the smallest affected
+performable uses typed fallback instead of treating the reference as the
+segment's computation.
 
 `Fallback` and the raw constructors have exactly the grammar and typing rules
 in section 16 rather than ordinary polymorphic application. `Smusni`, `Words`,
@@ -2769,7 +2796,7 @@ DispositionRow =
   target-schema-or-fallback-reason, evidence-id
 
 PreludeRow =
-  name, complete-signature-schema, canonical-definition,
+  name, type-parameters, complete-signature-schema, canonical-definition,
   direct-dependencies, definition-digest
 ```
 
@@ -2823,7 +2850,9 @@ This supplies the declarations consumed by the structural purity algorithm
 rather than leaving "registered pure" as an implementation choice.
 
 An applicability guard, expansion template, or link contract is canonical
-smusni syntax extended only by the registry metatform `(Hole "name" type)`.
+smusni syntax extended by the registry metaform `(Hole "name" type)`. A
+`PreludeRow` signature or definition additionally admits the registry-only type
+metaform `(TypeParam "name")` in a type position.
 Hole names are unique lowercase ASCII identifiers within one row, their types
 use section 2.2 syntax, and every substitution MUST typecheck at the declared
 hole type using only the implicit conversions permitted by section 3.1. No
@@ -2832,15 +2861,31 @@ ordinary smusni datum is then validated. `Hole` is not a surface atom and can
 never be emitted. Templates use holes for the host, event, explicit operands,
 anchors, and graph identities. A template may contain lowercase roots, kernel
 primitives, or transparent prelude calls only.
+
+`type-parameters` is the ordered list of type-parameter names declared by a
+`PreludeRow`. Each name is unique ASCII and every `(TypeParam "name")` in that
+row MUST resolve to it. During summary and type derivation the parameters are
+rigid abstract types: distinct declared names do not unify, while repeated uses
+of one name must receive one consistent monomorphic substitution. Each prelude
+use is then elaborated at its operand and expected types as described in
+section 14.1. `TypeParam` is never a surface atom and can never be emitted.
+`Hole` is illegal in a `PreludeRow`, and `TypeParam` is illegal in every other
+registry row.
+
 Validation expands every template, derives its result and dynamic summary,
 checks every lexical row and place map, and rejects a recursive prelude
 dependency, an unregistered atom, or a declared result which differs from the
 derived one. Every `PreludeRow` is generated mechanically from the definition
-in this document. Its `canonical-definition` is the initializer value datum of
-the displayed prelude `Let`, excluding the surrounding binding and the
-`⟦body⟧` metanotation, in NFC-normalized canonical smusni spelling embedded as a
-JCS string. `definition-digest` is SHA-256 of that spelling's unescaped NFC
-UTF-8 bytes. Both MUST match the mechanically generated definition exactly. An
+in this document. Its `complete-signature-schema` and `canonical-definition`
+are respectively the displayed signature and initializer value datum of the
+prelude definition, excluding the surrounding binding and `⟦body⟧`
+metanotation. In a type-parameterized definition, each declared schematic type
+name in a type position is mechanically replaced by the corresponding
+`(TypeParam "name")`; no other rewriting is allowed. The result is
+NFC-normalized canonical registry spelling embedded as a JCS string.
+`definition-digest` is SHA-256 of the canonical definition's unescaped NFC
+UTF-8 bytes. The declared ordered `type-parameters`, signature, definition, and
+digest MUST all match the mechanically extracted definition exactly. An
 irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
@@ -3071,8 +3116,10 @@ output expectations:
   count, evidence foreign key, disposition foreign key, digest, and bundle
   digest, and rederives `generator-id` from the complete `generator-inputs`
   closure; two clean generator runs produce byte-identical artifacts;
-- every kernel summary agrees with sections 3, 6, and 14.1, every prelude row
-  byte-matches the definition in this document, every prelude/tag/relation-former
+- every kernel summary agrees with sections 3, 6, and 14.1, every prelude row's
+  declared type parameters, signature, canonical definition, and digest match
+  the mechanically extracted and registry-metaform-normalized definition in
+  this document, every prelude/tag/relation-former
   summary is rederived from its expansion or link contract, and every
   irreducible generated relation has one complete
   type/context/effect/stability row;

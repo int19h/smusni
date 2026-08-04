@@ -628,9 +628,10 @@ applications:
             (Among $candidate $surrounders)))))))
 ```
 
-This final block is a fragment: the `Let` body is the reference property to be
-supplied to `Refer`. It preserves one collective `sruri` property of the
-selected plural reference; replacing it with `sruri $x $building` inside a
+This final block is a fragment: the whole `Let` form evaluates to the reference
+property to be supplied to `Refer`. It preserves one collective `sruri`
+property of the selected plural reference; replacing it with
+`sruri $x $building` inside a
 singular counting restriction is a different reading.
 
 A source `le gerku voi blabi` composes its one description property with the
@@ -1467,7 +1468,8 @@ Mutually recursive inert functions use `LetRec`:
 ```
 
 The example demonstrates shape rather than a Lojban source sentence. Recursive
-effectful initializers are not legal `LetRec` and use fallback.
+bindings whose initializers are not inert lambdas are not legal `LetRec` and
+use fallback.
 
 ## 20. Fallback and diagnostic separation
 
