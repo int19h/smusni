@@ -626,14 +626,16 @@ fill is evaluated, the whole application reserves every place selected by its
 preceding plain and literal fills.
 
 The omitted candidate set denotes exactly all surviving current places of `R`
-that remain unreserved at the binding's `At` host and accept `T`. Canonical
-output omits the list when the graph's question domain is that derivable set.
-It prints `C` only when the graph narrows the domain further, or when a shared
-place variable has multiple hosts from which one domain cannot be recovered.
-Every explicit set MUST exclude reserved or deleted places and every place that
-rejects `T`. Candidate sets for multiple computed fills MUST be pairwise
-disjoint; an overlapping or otherwise noninjective assignment uses local typed
-fallback.
+that remain unreserved at the binding's `At` host and accept `T`; this
+derivable set contains numbered places only. Canonical output omits the list
+when the graph's question domain is that derivable set. It prints `C` only when
+the graph narrows the domain further, or when a shared place variable has
+multiple hosts from which one domain cannot be recovered. `Eventuality` may
+occur in an explicit `C` only when the graph's question domain genuinely
+includes the distinguished event place. Every explicit set MUST exclude
+reserved or deleted places and every place that rejects `T`. Candidate sets for
+multiple computed fills MUST be pairwise disjoint; an overlapping or otherwise
+noninjective assignment uses local typed fallback.
 
 ### 4.3 `At`
 
@@ -2584,30 +2586,35 @@ Scheme (JCS). The manifest is checked in as `registry/manifest.json`, serialized
 as one JCS object followed by LF. Its `source-artifacts` and
 `generated-artifacts` arrays are each sorted by NFC Unicode scalar-value
 `relative-path` order; every entry has exactly `relative-path`, `schema-id`,
-`row-count`, and `digest`. `schema-id` is exactly the declared row-schema name
-for a table artifact, such as `LexicalRow` or `TagReductionRow`. Every non-table
-source artifact, including `spec.md`, generator sources, and lockfiles, uses
-`OpaqueBytes` and has `row-count` 1. These row-schema names plus `OpaqueBytes`
-are the closed `schema-id` vocabulary. An `OpaqueBytes` payload is the exact
-checked-in file byte sequence and is verified by its digest; `row-count` 1 is a
-manifest sentinel, not a claim that the file has row structure. The manifest's
-logical fields are `format-version`, `bundle-schema-version`, `spec-digest`,
-`generator-id`, `source-artifacts`, `generated-artifacts`, and `bundle-digest`;
-JCS, rather than prose field order, determines their byte order.
+`row-count`, and `digest`. Its `generator-inputs` array contains source-artifact
+`relative-path` strings in the same order. `schema-id` is exactly the declared
+row-schema name for a table artifact, such as `LexicalRow` or
+`TagReductionRow`. Every non-table source artifact, including `spec.md`,
+generator sources, and lockfiles, uses `OpaqueBytes` and has `row-count` 1.
+These row-schema names plus `OpaqueBytes` are the closed `schema-id` vocabulary.
+An `OpaqueBytes` payload is the exact checked-in file byte sequence and is
+verified by its digest; `row-count` 1 is a manifest sentinel, not a claim that
+the file has row structure. The manifest's logical fields are `format-version`,
+`bundle-schema-version`, `spec-digest`, `generator-id`, `generator-inputs`,
+`source-artifacts`, `generated-artifacts`, and `bundle-digest`; JCS, rather than
+prose field order, determines their byte order.
 
 The bundle digest is SHA-256 of the JCS encoding, without a trailing LF, of the
 array `[[relative-path, digest], ...]` containing every source and generated
 artifact in NFC Unicode scalar-value `relative-path` order. The manifest itself
 and its `bundle-digest` field are not inputs. `generator-id` is likewise the
-SHA-256 of the JCS path-and-digest array for the checked-in generator source and
-lockfiles, all of which also appear as source artifacts; it is not a mutable
-tool name. Generated tables are JSON Lines: each row is one NFC-normalized JCS
-object followed by LF. Rows sort by their declared primary-key tuple: strings
-by Unicode scalar-value order, integers numerically, and composite keys left to
-right. Types, signatures, rows, and expansion templates embedded in a field use
-the canonical smusni spelling from this document. Consumers may compile these
-rows to another internal representation, but the checked-in bytes and manifest
-are the single normative source.
+SHA-256 of the JCS path-and-digest array selected by `generator-inputs`. Every
+listed path MUST resolve to exactly one `source-artifacts` entry, duplicates are
+invalid, and the array MUST enumerate the checked-in generator source and
+lockfile closure and no other artifacts. Thus a verifier rederives
+`generator-id` from the manifest and source-artifact digests; it is not a
+mutable tool name. Generated tables are JSON Lines: each row is one
+NFC-normalized JCS object followed by LF. Rows sort by their declared
+primary-key tuple: strings by Unicode scalar-value order, integers numerically,
+and composite keys left to right. Types, signatures, rows, and expansion
+templates embedded in a field use the canonical smusni spelling from this
+document. Consumers may compile these rows to another internal representation,
+but the checked-in bytes and manifest are the single normative source.
 
 The normative generated artifacts have these logical schemas:
 
@@ -2720,19 +2727,23 @@ rather than leaving "registered pure" as an implementation choice.
 An applicability guard, expansion template, or link contract is canonical
 smusni syntax extended only by the registry metatform `(Hole "name" type)`.
 Hole names are unique lowercase ASCII identifiers within one row, their types
-use section 2.2 syntax, and every occurrence is substituted by a value of that
-exact type before the resulting ordinary smusni datum is validated. `Hole` is
-not a surface atom and can never be emitted. Templates use holes for the host,
-event, explicit operands, anchors, and graph identities. A template may contain
-lowercase roots, kernel primitives, or transparent prelude calls only.
+use section 2.2 syntax, and every substitution MUST typecheck at the declared
+hole type using only the implicit conversions permitted by section 3.1. No
+registry-specific coercion or type inference is permitted. The resulting
+ordinary smusni datum is then validated. `Hole` is not a surface atom and can
+never be emitted. Templates use holes for the host, event, explicit operands,
+anchors, and graph identities. A template may contain lowercase roots, kernel
+primitives, or transparent prelude calls only.
 Validation expands every template, derives its result and dynamic summary,
 checks every lexical row and place map, and rejects a recursive prelude
 dependency, an unregistered atom, or a declared result which differs from the
 derived one. Every `PreludeRow` is generated mechanically from the definition
-in this document. Its `canonical-definition` is the NFC-normalized canonical
-smusni spelling embedded as a JCS string, and `definition-digest` is SHA-256 of
-that spelling's unescaped NFC UTF-8 bytes. Both MUST match the mechanically
-generated definition exactly. An irreducibility reason is
+in this document. Its `canonical-definition` is the initializer value datum of
+the displayed prelude `Let`, excluding the surrounding binding and the
+`⟦body⟧` metanotation, in NFC-normalized canonical smusni spelling embedded as a
+JCS string. `definition-digest` is SHA-256 of that spelling's unescaped NFC
+UTF-8 bytes. Both MUST match the mechanically generated definition exactly. An
+irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
 reduction must be used instead.
@@ -2960,7 +2971,8 @@ output expectations:
 
 - the checked-in registry manifest validates every artifact path, schema, row
   count, evidence foreign key, disposition foreign key, digest, and bundle
-  digest; two clean generator runs produce byte-identical artifacts;
+  digest, and rederives `generator-id` from the complete `generator-inputs`
+  closure; two clean generator runs produce byte-identical artifacts;
 - every kernel summary agrees with sections 3, 6, and 14.1, every prelude row
   byte-matches the definition in this document, every prelude/tag/relation-former
   summary is rederived from its expansion or link contract, and every
