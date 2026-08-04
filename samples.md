@@ -70,13 +70,14 @@ numbers and plain traversal skips the hole:
 
 ## 3. Source place conversion is eliminated
 
-An ordinary source `se klama` application prints the base `klama` root with
-base places filled. There is no `Se` node:
+For source `ti se klama mi`, source x1 `This` fills base `klama` x2 and source
+x2 `Speaker` fills base x1. The base order needs no labels, and there is no
+`Se` node:
 
 ```lisp
 (Smusni 0
   (Assert
-    (klama :2 Speaker :1 This)))
+    (klama Speaker This)))
 ```
 
 A converted property is an ordinary lambda over the permuted base fill:
@@ -96,7 +97,7 @@ it eta-expands:
 ```lisp
 (λ (($new-x1 (Referents Entity))
     ($new-x2 (Referents Entity)))
-  (tavla :2 $new-x1 :1 $new-x2))
+  (tavla $new-x2 $new-x1))
 ```
 
 That last block is a fragment. A place expecting a labelled `PredTerm` rather
@@ -140,7 +141,7 @@ A compound, negated tag retains its connector and negation:
           (klama Speaker :Eventuality $e)
           (∨
             (¬ (pilno :2 This $e))
-            (mukti Now $e)))))))
+            (purci $e Now)))))))
 ```
 
 There is no modal-valued `At`; arguments inside each modal predicate are normal
@@ -187,6 +188,73 @@ result-dependent reading would use the represented result relation. Other
 `mo'i` directions retain and delete different lexical places, as specified by
 their reduction rows.
 
+When a verified heading reduction represents no destination, origin, or route,
+it can project exactly the surviving mover place and relate the same motion to
+a first-class direction:
+
+```lisp
+(∧
+  ((DropPlace (DropPlace (DropPlace muvdu 2) 3) 4)
+    $mover
+    :Eventuality $motion)
+  (farna $direction $motion $frame))
+```
+
+That block is a fragment with graph-bound operands. The three deletions are
+semantic `zi'o`, not abbreviated contextual omission.
+
+Source `ka'e` uses the transparent capability helper. Its host property keeps
+the candidate bearer and possible event explicit:
+
+```lisp
+(Smusni 0
+  (Assert
+    (InnatelyCapable
+      Speaker
+      (λ (($candidate (Referents Entity))
+          ($possible (Referents Eventuality)))
+        (klama $candidate This :Eventuality $possible)))))
+```
+
+The helper deletes no `kakne` place: its condition place remains an ordinary
+contextual argument. Actuality is a separate predicate, not assertion force:
+
+```lisp
+(Smusni 0
+  (Assert
+    (∃
+      (λ (($e Eventuality))
+        (Joi
+          (citka Speaker :Eventuality $e)
+          (fasnu $e))))))
+```
+
+An aspect whose boundary/checkpoint relation has not yet been verified remains
+local fallback rather than an English-gloss constructor or an approximate
+`cfari` predication:
+
+```lisp
+(Smusni 0
+  (Assert
+    (Fallback Content "smusni.tag.coha.unverified-boundary"
+      (Object %1 "EventContour"
+        (Field "kind" (RawTypedAtom "EventContour" "Start"))))))
+```
+
+A repeated tense is a path rather than two unrelated facets:
+
+```lisp
+(Smusni 0
+  (Assert
+    (∃
+      (λ (($event Eventuality)
+          ($middle Eventuality))
+        (Joi
+          (citka Speaker :Eventuality $event)
+          (purci $middle Now)
+          (purci $event $middle))))))
+```
+
 Sticky `ki` is not a discourse-state node in the output. For source
 `puki ... .i ...`, the resolved `pu` relation is simply repeated at each
 inheriting event:
@@ -230,7 +298,8 @@ The same predicate term prints `Close` once it has identity of its own:
             (Row
               (2 (Referents Entity))
               (3 (Referents Entity))
-              (4 (Referents Entity))))
+              (4 (Referents Entity))
+              (Eventuality (Referents Eventuality))))
           (melbi This)))
     (Do
       (Mention $description)
@@ -382,14 +451,16 @@ indefinite selection:
         (Typical
           (λ (($x (Referents Entity)))
             (mlatu $x)))))
-  body)
+  ⟦body⟧)
 ```
 
-The last block is a fragment.
+The last block is a schema fragment; `⟦body⟧` is metanotation, not output
+syntax.
 
 ## 8. Relative clauses are ordinary composition
 
-A restrictive `poi` contributes its predicate inside the reference property:
+Source `lo mlatu poi blabi` contributes both veridical predicates inside one
+reference property:
 
 ```lisp
 (Smusni 0
@@ -403,31 +474,29 @@ A restrictive `poi` contributes its predicate inside the reference property:
       (jbena $white-cat))))
 ```
 
-A descriptive `voi` selects a subreference of its host and uses the transparent
-prelude helper `DescribedAs` rather than asserting the clause property. Its
-normative definition removes `skicu` x3; no audience is fabricated:
+A source `le gerku voi blabi` composes its one description property with the
+transparent prelude helper `DescribedAs` rather than asserting whiteness. The
+helper's normative definition removes `skicu` x3; no audience is fabricated
+for the `voi` relation:
 
 ```lisp
 (Smusni 0
-  (Bind (($base (Referents Entity)
+  (Bind (($thing (Referents Entity)
           (Refer
             (λ (($x (Referents Entity)))
-              (skicu Speaker $x Audience
-                (λ (($y (Referents Entity)))
-                  (gerku $y)))))))
-    (Bind (($thing (Referents Entity)
-            (Refer
-              (λ (($x (Referents Entity)))
-                (∧
-                  (Among $x $base)
-                  (DescribedAs Speaker $x
-                    (λ (($y (Referents Entity)))
-                      (blabi $y))))))))
-      (Assert
-        (jbena $thing)))))
+              (∧
+                (skicu Speaker $x Audience
+                  (λ (($y (Referents Entity)))
+                    (gerku $y)))
+                (DescribedAs Speaker $x
+                  (λ (($y (Referents Entity)))
+                    (blabi $y))))))))
+    (Assert
+      (jbena $thing))))
 ```
 
-A nonrestrictive `noi` is supplementary content:
+In `lo gerku noi blabi cu melbi`, the main beauty content is the first operand
+and the white relative clause is the supplementary second operand:
 
 ```lisp
 (Smusni 0
@@ -515,13 +584,13 @@ An outer exact count is ordinary cardinality of singular satisfiers:
 ```lisp
 (Smusni 0
   (Assert
-    (= 3
-      (Card
+    (= (Card
         (SetOf
           (λ (($x Entity))
             (∧
               (gerku $x)
-              (bajra $x))))))))
+              (bajra $x)))))
+       3)))
 ```
 
 One fixed plural reference can instead be constrained through a singular-member
@@ -534,11 +603,13 @@ set without identifying the reference with that set:
             (λ (($r (Referents Entity)))
               (∧
                 (gerku $r)
-                (= 3
-                  (Card
+                (= (Card
                     (SetOf
                       (λ (($x Entity))
-                        (Among $x $r))))))))))
+                        (∧
+                          (gerku $x)
+                          (Among $x $r)))))
+                   3))))))
     (Assert
       (bajra $dogs))))
 ```
@@ -551,14 +622,47 @@ set without identifying the reference with that set:
     (Combine $alis $bob)))
 ```
 
-`ce'o` constructs an ordered list of reference values, so its element type is
-explicit when the list is empty and inferred here:
+`ce'o` constructs one referent whose value is an ordered list of reference
+values, so the list is singleton-lifted for ordinary sumti use:
 
 ```lisp
-(List $alis $bob $carol)
+(Singleton (List $alis $bob $carol))
 ```
 
 The last two blocks are fragments.
+
+Set and group gadri refer to ordinary set/group objects through lexical
+relations; they do not turn the base reference into a mathematical set by
+coercion. For `lo'i gerku`:
+
+```lisp
+(Smusni 0
+  (Bind (($base (Referents Entity)
+          (Refer
+            (λ (($x (Referents Entity)))
+              (gerku $x)))))
+    (Bind (($sets (Referents (Set Entity))
+            (Refer
+              (λ (($x (Referents (Set Entity))))
+                (selcmi $x $base)))))
+      (Mention $sets))))
+```
+
+The parallel `loi gerku` shape changes only the outer object sort and lexical
+relation:
+
+```lisp
+(Smusni 0
+  (Bind (($base (Referents Entity)
+          (Refer
+            (λ (($x (Referents Entity)))
+              (gerku $x)))))
+    (Bind (($groups (Referents (Group Entity))
+            (Refer
+              (λ (($x (Referents (Group Entity))))
+                (gunma $x $base)))))
+      (Mention $groups))))
+```
 
 ## 11. Generalized quantifier witnesses
 
@@ -578,7 +682,7 @@ identity. A witness is available only after that same application succeeds:
         (Do
           (Assert $run)
           (Bind (($dogs (Referents Entity)
-                  (Witnesses $gq $scope)))
+                  (Witnesses $run)))
             (Assert
               (tatpi $dogs))))))))
 ```
@@ -595,9 +699,13 @@ The following is deliberately invalid and therefore falls back:
     (Field "scope" (RawAtom "$scope"))))
 ```
 
+That fallback is a fragment inside a position expecting
+`(Referents Entity)`; it is not a complete document.
+
 ## 12. Simultaneous termsets
 
-Two generalized quantifiers with one polyadic nuclear scope reduce to
+When the graph explicitly licenses the coordinate-closed complete-product
+profile, two generalized quantifiers with one polyadic nuclear scope reduce to
 mutually constrained, coordinate-exhaustive sets:
 
 ```lisp
@@ -634,8 +742,11 @@ mutually constrained, coordinate-exhaustive sets:
 ```
 
 Nesting `$dogs` around `$people` or vice versa would impose an order that can
-change generalized-quantifier truth conditions. An input graph that has already
-lost the coequal structure cannot be repaired heuristically:
+change generalized-quantifier truth conditions. The biconditionals also make
+this stronger than arbitrary complete-product subset selection: if four dogs
+all like the same two people, the displayed `Exactly 3`/`Exactly 2` content is
+false. A graph which records only equal scope, or which has already lost the
+coequal structure, cannot be repaired heuristically:
 
 ```lisp
 (Smusni 0
@@ -708,8 +819,8 @@ An act can be bound, targeted, and later performed:
               (klama Speaker))))
       (Do
         (Express
-          (Contrast :2 $act :3 $prior-act))
-        (Perform $act)))))
+          (Contrast Speaker $act $prior-act))
+        $act))))
 ```
 
 There is no `TargetFocus`; the target is statically `Act<Assertion>`.
@@ -730,10 +841,11 @@ An utterance with metadata and two co-realized acts keeps its token:
         (Realizes $u $current-act)
         (Realizes $u
           (Express
-            (Contrast :2 $current-act :3 $prior-act)))))))
+            (Contrast Speaker $current-act $prior-act)))))))
 ```
 
-The contrast targets the exact first-class act values. Facts about `$u` are
+The contrast's experiencer and two exact first-class act operands all remain
+visible; its anchor need not be an utterance token. Facts about `$u` are
 analyzer facts, not extra speaker assertions; if an indicator instead targets
 the utterance token, the same `$u` can be passed to its registered relation.
 
@@ -779,8 +891,10 @@ place structure is not yet known:
             (PredTerm
               (Row
                 (1 (Referents Entity))
+                (Eventuality (Referents Eventuality))
                 Open))))
-        ($relation This)))))
+        (Close
+          ($relation This))))))
 ```
 
 A two-variable question retains an ordered heterogeneous answer tuple:
@@ -956,14 +1070,13 @@ performing it:
 
 ```lisp
 (Smusni 0
-  (Let (($entry TranscriptEntry
-          (Utterance (($u UtteranceToken))
-            (SpeakerOf $u Speaker)
-            (Realizes $u
-              (Assert
-                (klama Speaker))))))
-    (Mention
-      (StructuredQuote $entry))))
+  (Mention
+    (StructuredQuote
+      (Utterance (($u UtteranceToken))
+        (SpeakerOf $u Speaker)
+        (Realizes $u
+          (Assert
+            (klama Speaker)))))))
 ```
 
 A sign token can have text and denotation facts without conflating either with
@@ -1037,10 +1150,11 @@ whole graph structurally:
 (Smusni 0
   (TypedGraph "Performable"
     (Object %1 "SemanticGraph"
-      (Field "root" (Ref %2))
+      (Field "root"
+        (Object %2 "UnknownRoot"))
       (Field "objects"
         (RawList
-          (Object %2 "UnknownRoot"))))))
+          (Ref %2))))))
 ```
 
 Neither document contains a `Warning` node. The corresponding stable diagnostic
