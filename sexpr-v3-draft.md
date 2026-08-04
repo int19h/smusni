@@ -1,4 +1,4 @@
-# Experimental smusni S-expression design, draft 8
+# Experimental smusni S-expression design, draft 9
 
 Status: reductive redesign after the owner review and independent Opus, Kimi,
 Qwen, and Gemini sweeps. This draft is not yet approved for implementation. It deliberately
@@ -173,11 +173,11 @@ only when the event is unshared, has no non-default properties, and is not
 externally referenced. Thus concise `(Assert (klama Speaker))` elaborates to
 `Assert(∃(λe. klama(Speaker, Eventuality=e)))`. It is
 normally implicit at a typed `Content` boundary. It prints when the same value
-is used at both the predicate-term and content levels; when a named level
-crossing takes explicit `Content` from a bare or open predicate term, as in
-`(Measure (Close broda))`; and when an applied `OpenPredTerm` supplies a query
-body, as in `(Close ($p This))`. `Reify` and `Interpret` are never implicit:
-use and mention are not interchangeable.
+is used at both the predicate-term and content levels; when a named abstraction
+crossing from section 8.3 takes explicit `Content` from a bare or open predicate
+term, as in `(Measure (Close broda))`; and when an applied `OpenPredTerm`
+supplies a query body, as in `(Close ($p This))`. `Reify` and `Interpret` are
+never implicit: use and mention are not interchangeable.
 
 Effectful reference computations have one further crossing. It is polymorphic
 over the dynamic host in which the computation is sequenced:
@@ -241,15 +241,22 @@ boundaries determine the site:
   established by `Reify`, another intensional input, or `Refer` remains inline
   there; so does an inline form beneath `Joi` or an administrative event shell.
 
-A pure-value definition/capture is also a boundary when the resulting pure
-value is shared or hoisted across the selected dynamic host. In that case the
-effectful reference binds explicitly before the pure value captures it. The
-pure `Let` remains semantically inert; the explicit outer bind exposes ordering
-which cannot live inside its initializer. The invisible eta binder introduced
-by `AsProperty` likewise counts as a non-administrative property lambda for
-site and crossing analysis even though it never prints. Its usual occurrence
-inside the local host established by `Refer` therefore remains concise, but
-the binder is not semantically absent.
+Host selection precedes the inline/`Let` decision. A pure-value
+definition/capture is also a boundary when a `RefComp` in its initializer has a
+selected dynamic host outside that initializer and the resulting pure value is
+shared across, or hoisted above, that host. The effectful reference then binds
+explicitly at the selected host before the pure value captures it. This rule
+does not move a computation whose selected local host is wholly inside the
+initializer: an intensional argument such as sample 22's `djica` content remains
+inline there. The pure `Let` remains semantically inert; the explicit outer bind
+only exposes ordering which cannot live inside its initializer.
+
+The invisible eta binder introduced by `AsProperty` likewise counts as a
+non-administrative property lambda for site and crossing analysis even though it
+never prints. After host selection, it is crossed exactly when the path from the
+occurrence to the selected bind site exits the eta binder. A computation whose
+selected site remains inside it therefore stays concise; a bind lifted to
+dominate the property makes the `Let` explicit.
 
 Multiple binds at one site sequence in printed left-to-right operand order. An
 explicit `Let` is also mandatory for shared identity, for a
@@ -310,9 +317,10 @@ in section 13.1:
    projective effects, force, and performance.
 
 Thus `Polar` and `OpenQ` are only injections into the `Query` sum; they do not
-themselves trap a fixed description. A direct question may bind that description
-at its `Ask` host. An embedded question receives its local intensional boundary
-from `Answer`, `QuestionOf`, or the lexical attitude place which consumes it.
+themselves trap a fixed description. A fixed description used only by a direct
+question binds at its `Ask` host. An embedded question receives its local
+intensional boundary from `Answer`, `QuestionOf`, or the lexical attitude place
+which consumes it.
 Likewise, an independent fixed reference may cross an extensional logical
 operator, while the operator's dynamic handler separately controls export of
 branch- or binder-local introductions.
@@ -1712,12 +1720,13 @@ the reference a de-re owner. `mayDependOn` keeps the site under its binder or
 lambda-lifts exactly the recorded dependencies.
 
 Only a `RefComp` initializer elaborates to `BindRef` and sequences its effects
-before the body at that selected host. A pure `Let` over `Content`, `Act`,
-`PredTerm`, `Query`, `TranscriptEntry`, or `Discourse` is ordinary graph sharing:
-it does not execute the shared value. Effects inside such a value run only when
-the enclosing semantic operator interprets or performs it. Thus `Let` never
-strips effects from `Refer`, `Context`, `Presuppose`, or `Supplement`, but
-neither does it accidentally perform an act merely by naming it.
+before the body at that selected host. A pure `Let` over `Referents<K>`, `Fn`,
+`Sign<K>`, `Content`, `Act`, `PredTerm`, `Query`, `TranscriptEntry`, or
+`Discourse` is ordinary graph sharing: it does not execute the shared value.
+Effects inside such a value run only when the enclosing semantic operator
+interprets or performs it. Thus `Let` never strips effects from `Refer`,
+`Context`, `Presuppose`, or `Supplement`, but neither does it accidentally
+perform an act merely by naming it.
 
 These rules address draft 2's large `definition-site-does-not-dominate-use`
 fallback class without abandoning lexical scope.
@@ -1757,7 +1766,7 @@ is unresolved. It is never an implementation fallback.
 
 ## 13. Constructor-family audit
 
-| draft-2 family | classification | draft-8 normal form |
+| draft-2 family | classification | draft-9 normal form |
 |---|---|---|
 | root, application, labelled fill | primitive plus concise fill sugar | ordinary operands, `:n`/`:Eventuality`, and core `At` for computed/modal places |
 | `DropPlace`, `Se`/conversion, scalar relation formers | primitive relation algebra | keep as applications |

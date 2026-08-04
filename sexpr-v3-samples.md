@@ -1,4 +1,4 @@
-# Experimental smusni S-expression samples, draft 8
+# Experimental smusni S-expression samples, draft 9
 
 These are design probes, not output expectations. They exercise the reduced
 tree shape before implementation. After implementation they will be replaced or

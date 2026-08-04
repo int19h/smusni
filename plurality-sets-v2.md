@@ -1,6 +1,6 @@
 # Reference pluralities with a set-theoretic counting layer
 
-Status: convergence candidate, folded into `sexpr-v3-draft.md` draft 8. This supersedes the concrete
+Status: convergence candidate, folded into `sexpr-v3-draft.md` draft 9. This supersedes the concrete
 `Referents<K> = Set⁺<Individual<K>>` recommendation in
 `plurality-sets-design.md`.
 
@@ -349,6 +349,10 @@ event-closure shells remain transparent inside the already selected host.
 Binding respects the closed `Extensional | Intensional | Opaque` policy for
 every dynamic relation place or constructor input and any graph-recorded de-re
 owner; the renderer never guesses an “intensional handler” from root spelling.
+The main draft's deterministic rules additionally account for the invisible
+`AsProperty` eta binder and for a shared pure value whose reference bind is
+selected outside its initializer. Those rules refine where `Let` must print;
+they do not alter the counting model.
 
 Consequently the old sample which placed `(Refer gerku)` freshly inside `¬` is
 wrong. The correct shape is:
