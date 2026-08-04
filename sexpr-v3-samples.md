@@ -1,4 +1,4 @@
-# Experimental smusni S-expression samples, draft 6
+# Experimental smusni S-expression samples, draft 7
 
 These are design probes, not output expectations. They exercise the reduced
 tree shape before implementation. After implementation they will be replaced or
@@ -646,14 +646,14 @@ to a proposition referent.
 ```lisp
 (Smusni 0
   (Let (($alice (Referents Entity)
-          (Refer (cmene (NameSign "alis") :3 Speaker)))
-        ($c Content (klama $alice (Refer zarci)))
-        ($a (Act Assertion) (Assert $c)))
-    (Utterance $u
-      (Realizes $u $a)
-      (SpeakerOf $u $alice)
-      (AudienceOf $u
-        (Refer (cmene (NameSign "bob") :3 Speaker))))))
+          (Refer (cmene (NameSign "alis") :3 Speaker))))
+    (Let (($c Content (klama $alice (Refer zarci))))
+      (Let (($a (Act Assertion) (Assert $c)))
+        (Utterance $u
+          (Realizes $u $a)
+          (SpeakerOf $u $alice)
+          (AudienceOf $u
+            (Refer (cmene (NameSign "bob") :3 Speaker))))))))
 ```
 
 The direct record performs `$a` by document convention. Embedded under a sign

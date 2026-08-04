@@ -1,4 +1,4 @@
-# Experimental smusni S-expression design, draft 6
+# Experimental smusni S-expression design, draft 7
 
 Status: reductive redesign after the owner review and independent Opus, Kimi,
 Qwen, and Gemini sweeps. This draft is not yet approved for implementation. It deliberately
@@ -25,6 +25,13 @@ Lambda(parameters, body)     numbered function abstraction
 Let(bindings, body)          acyclic graph identity sharing
 LetRec(bindings, body)       recursive graph identity sharing
 ```
+
+`Let` follows the conventional parallel-binding rule: its initializers are
+evaluated in the outer lexical environment and only its body sees all bound
+names. Acyclic values with initializer dependencies use nested `Let` forms in
+topological order. `LetRec` alone scopes every bound name over all initializers
+as well as its body. This keeps the familiar `let`/`letrec` distinction without
+adding a separate binder primitive.
 
 `Utterance` and `Sign` later appear as two typed *surface binder sugars* for
 real token boundaries. They are not additional denotational primitives: each
@@ -134,6 +141,14 @@ This is why `(Refer mlatu)` may stay concise even though the core input of
 positions; it is not a silent identification of predicates, functions, and
 content.
 
+This eta-expansion is deliberately **not** available for a singular
+`Property<K>` consumed by a generalized quantifier, `Card`, `Restrict`,
+`Witnesses`, or a scale quantifier. Such a property always prints an explicit
+singular lambda, for example `(λ (($x Entity)) (mlatu $x))`; the singular
+variable then fills the lexical `Referents<K>` place through the ordinary
+one-way `Singleton` lift. A bare root in explanatory quantifier prose is never
+a second implicit coercion.
+
 A raw function likewise fills only a place whose declared type accepts that
 function or property. An ordinary referential place does not silently reify a
 `Fn`; it needs a source-backed level crossing or uses typed fallback. This
@@ -211,11 +226,14 @@ boundaries determine the site:
   transparent only within the already selected host. `Reify` first establishes
   its declared local `Intensional` host and is transparent only inside that
   host;
-- omission is allowed for a single-use computation when the site is unique and
+- omission is mandatory for a single-use computation when the site is unique and
   the path to it crosses no visible scope-bearing operator whose reading would
   become ambiguous. Crossing `¬`, `∨`, `→`, `↔`, `⊕`, an object-language quantifier,
-  a recorded intensional or opaque boundary, or a dependency lambda therefore makes the `Let`
-  explicit when the bind itself would cross that boundary. A single-use
+  a non-administrative function/query lambda, a recorded intensional boundary,
+  or a dependency lambda therefore makes the `Let` explicit when the bind itself
+  would cross that boundary. Crossing an `Opaque` boundary is never repaired by
+  an explicit outer `Let`: if the graph requests such an escape, projection uses
+  typed fallback. A single-use
   computation wholly contained in the unique local host established by
   `Reify`, another intensional input, or `Refer` may remain inline there; so may
   an inline form beneath `Joi` or an administrative event shell.
@@ -267,6 +285,8 @@ in section 13.1:
    `Refer`, `Typical`, and `Stereotypical` establish the corresponding local
    `Intensional` reference computation. Each is subject to an explicit de-re
    owner; other ordinary operands of these constructors use the default below.
+   `Polar` and `OpenQ` are query injections rather than boundaries and are
+   therefore covered by the `Extensional` default in rule 3.
 3. Every other input position of every registered intrinsic is `Extensional`
    within the dynamic host already selected for its operands. This explicitly
    includes `Polar`, `OpenQ`, `Close`, `Presuppose`, `Supplement`, `Joi`, every
@@ -432,8 +452,11 @@ Examples:
 
 There is no modal-specific argument-printing rule.
 
-Unshared implicit `zo'e` is silent. Shared or dependency-bearing contextual
-values use ordinary binding and higher-order application:
+An unshared implicit `zo'e` is silent when its dependence is exactly the
+notation default: it may depend on every binder accessible at its `Close` site
+(or is `fixed` when no binder is accessible). Shared contextual values and
+non-default dependence profiles use ordinary binding and higher-order
+application:
 
 ```lisp
 ; one fixed contextual referent
@@ -551,8 +574,11 @@ cardinality and universal families are written `(Exactly n)`, `(AtLeast n)`,
 `(AtMost n)`, `(MoreThan n)`, `(FewerThan n)`, `Some`, `No`, and `Every`, each
 as a `GQ<T>`. `Restrict : GQ<T> x Property<T> -> GQ<T>` supplies the ordinary
 conservative restrictor for those registered quantifier families. For example,
-`(Restrict Every mlatu)` is the generalized quantifier which maps scope `S` to
-`∀x. mlatu(x) → S(x)`; it does not mean `Every(mlatu ∧ S)`. Saturated
+`(Restrict Every (λ (($x Entity)) (mlatu $x)))` is the generalized quantifier
+which maps scope `S` to `∀x. mlatu(x) → S(x)`; it does not mean
+`Every(mlatu ∧ S)`. Singular generalized-quantifier properties always retain
+that explicit lambda; the concise bare-root eta expansion is reserved for
+number-neutral reference-property positions. Saturated
 cardinality cases normally reduce all the way to the conventional glyph and
 `Card` form below. `Exactly`, `AtLeast`, `AtMost`, `MoreThan`, and `FewerThan`
 are additionally the closed `CardGQ<T>` family. The named values remain visible
@@ -592,8 +618,8 @@ This answers draft 2's unexplained `(Import Projective)` completely:
 
 Bare count quantification such as `su'o ci mlatu` has ratified expansion through
 a singular domain variable (`PA da poi mlatu`). Its higher-order value is
-`(Restrict (AtLeast 3) mlatu)`; after application to the containing scope it
-reduces to mathematical cardinality of a property extension:
+`(Restrict (AtLeast 3) (λ (($x Entity)) (mlatu $x)))`; after application to the
+containing scope it reduces to mathematical cardinality of a property extension:
 
 ```lisp
 (≥
@@ -700,7 +726,9 @@ Witnesses : GQ<T> x Property<T>
 The first operand is the originating generalized quantifier, including any
 independently present restriction; the second is its nuclear-scope property.
 Thus bare `ci da gerku` supplies `(Exactly 3)` and the property `gerku`, while a
-source `poi` restriction would be retained with `Restrict` in the first operand.
+source `poi` restriction would be retained in the first operand as
+`(Restrict (Exactly 3) (λ (($x Entity)) restriction))`; the independently
+printed nuclear-scope lambda remains the second operand.
 `Witnesses` denotes the discourse referent exported
 by that successful dynamic quantifier application. It is neither defined as an
 arbitrary satisfying subset nor silently fixed as the globally maximal
@@ -1219,7 +1247,15 @@ SentenceSign: Content -> Sign<Sentence>                         sentence-sign ab
 ```
 
 These are not a generic `(Abstraction (Kind ...) (Body ...))` record. Their
-different signatures are the semantics. The optional second operands of
+different signatures are the semantics. Unlike event/property abstractions,
+these named crossings already return the determinate referential or sign value
+licensed by the abstractor, so they do not wrap their result in `Refer`. This
+is intentional: `lo nu` selects eventualities satisfying a property, whereas
+`Reify`, `Measure`, and the other operators above are themselves the semantic
+level crossing. Their content input still carries the ordinary intensional and
+effect-routing policy.
+
+The optional second operands of
 `Measure`, `ProcessOf`, `ActivityOf`, `ExperienceOf`, `Concept`, and `Abstract`
 preserve the six extra abstraction places represented by the current builder;
 one is omitted only when the source/model omits it. `TruthValue` also admits its
@@ -1334,13 +1370,20 @@ not a newly quantified discourse entity. These are the two binder sugars named
 in section 1, so token facts remain bridi while no seventh kernel operation is
 introduced.
 
+The asymmetry between the two entry results is deliberate. `TranscriptEntry`
+is a `RefHost` because a recorded utterance can contain performed dynamic
+content. A raw `Sign<K>` is inert sign data and is not a host. A `RefComp`
+occurring in a sign fact therefore binds at a legal enclosing host, or inside an
+explicit local `Reify`/`Discourse` input; if neither exists, projection uses
+typed fallback rather than treating the sign value as a discourse computation.
+
 ```lisp
-(Let (($c Content (klama Speaker (Refer zarci)))
-      ($a (Act Assertion) (Assert $c)))
-  (Utterance $u
-    (Realizes $u $a)
-    (SpeakerOf $u Speaker)
-    (AudienceOf $u Audience)))
+(Let (($c Content (klama Speaker (Refer zarci))))
+  (Let (($a (Act Assertion) (Assert $c)))
+    (Utterance $u
+      (Realizes $u $a)
+      (SpeakerOf $u Speaker)
+      (AudienceOf $u Audience))))
 ```
 
 `SpeakerOf` is deliberately distinct from the indexical atom `Speaker`.
@@ -1601,6 +1644,8 @@ OpaqueQuote     : Text -> Sign<Opaque>
 The first overload quotes a graph-owned utterance token such as `$u`; the graph
 resolves its structured transcript entry. The second quotes an inline discourse
 computation. No undeclared bare `Utterance` type is involved.
+If the token has no graph-owned structured transcript entry, that overload uses
+typed fallback; it never invents quoted content from token metadata.
 
 When sign identity or multiple facts matter, retain a sign token boundary and
 express its properties as predications:
@@ -1694,7 +1739,7 @@ is unresolved. It is never an implementation fallback.
 
 ## 13. Constructor-family audit
 
-| draft-2 family | classification | draft-4 normal form |
+| draft-2 family | classification | draft-7 normal form |
 |---|---|---|
 | root, application, labelled fill | primitive plus concise fill sugar | ordinary operands, `:n`/`:Eventuality`, and core `At` for computed/modal places |
 | `DropPlace`, `Se`/conversion, scalar relation formers | primitive relation algebra | keep as applications |
@@ -1803,6 +1848,14 @@ position even when both namespaces contain them. Registry validation checks
 type-disjointness within each namespace; it does not reject a deliberate
 type/term homonym.
 
+Non-callable literal atoms are additionally indexed by their expected closed
+family rather than stored in one flat spelling map. Thus `Opaque` can be both a
+`SignKind` and a `ScopePolicy`, while the signature position selects the family;
+`Question` in `Act<Question>` is a `Force`, whereas `Question` in
+`Referents<Question>` is a referential kind. `Name` follows the same rule.
+`Achievement`, `Process`, `Activity`, and `State` are referential kinds produced
+by the `EventualitySort` mapping, not a duplicate event-subsort literal family.
+
 | family / printed atoms | signature | provenance |
 |---|---|---|
 | `Smusni` | `Version x Performable -> Document` | document convention |
@@ -1897,15 +1950,15 @@ type/term homonym.
 | `Unresolved` | model-declared unresolved semantic value | semantic graph only |
 
 Pascal event-facet predicates use a separate total generated table from each
-model facet to one typed signature over the shared event. A second closed
-generated literal table enumerates every non-callable Pascal atom for
-`ScalarDirection`, `DegreeValue`, `PhaseKind`, `LabelLevel`, `ScaleValue`,
-`Force`, scope policy, sign kind, and event subsort. The closed sign kinds are
+model facet to one typed signature over the shared event. A second closed,
+family-indexed generated literal table enumerates every non-callable Pascal
+atom for `ScalarDirection`, `DegreeValue`, `PhaseKind`, `LabelLevel`,
+`ScaleValue`, `Force`, scope policy, and sign kind. The closed sign kinds are
 `Name`, `Sentence`, `Structured`, and `Opaque`; the closed force values are `Assertion`, `Expressive`, `Question`,
 `Directive`, `Mentioning`, and `Address`; the closed scope policies are
 `Extensional`, `Intensional`, and `Opaque`. `Strong`,
-`Opposite`, and event subsort names are therefore typed literal atoms, not an
-open exception to registry closure. The abstraction names `Concept`,
+and `Opposite` are therefore typed literal atoms, not an open exception to
+registry closure. The abstraction names `Concept`,
 `ExperienceOf`, `Abstract`, and `SentenceSign` above are the notation spellings
 of the current builder relations rather than a second vocabulary.
 
@@ -1937,11 +1990,14 @@ structural and semantic:
 - every printed binder annotation unifies with the closed registry signature,
   including reference-valued `ce'u`/`ma`/`ZipWith` parameters and force-indexed
   acts;
-- every callable PascalCase name and glyph is registered, and every
-  non-callable Pascal atom occurs in the generated literal table;
+- every term-level Pascal atom or glyph occurs in exactly one applicable
+  declaration: callable registry, family-indexed literal table, kernel syntax,
+  or the registered fill/token-binder surface syntax (`At`, `Utterance`,
+  `Sign`); type-position atoms are checked against the separate type namespace;
 - kernel syntax and every type abbreviation used by a binder or signature are
   declared, including existential `PredTerm` row erasure, `Version`, `Document`,
-  `Math`, `Collection`, and the `Ordered` constraint;
+  `Math`, `Collection`, `OpenPredTerm`, `ArgumentPlace`, `SignKind`, and the
+  `Ordered` constraint;
 - every escaped witness retains its originating generalized quantifier plus
   nuclear scope, while the independent truth condition still counts or
   quantifies the original restriction/scope rather than the witness value;
