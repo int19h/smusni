@@ -734,11 +734,12 @@ Scalar : ScalarKind × PredTerm<ρ> -> PredTerm<ρ>
 
 `OtherThan`, `Opposite`, and `Neutral` are the closed `ScalarKind` literals.
 The model's `Affirmed` case is the identity transformation and is a
-`ProvenDesugaring`, so it does not print. A scalar operation with an independently represented
-scale or restricted argument-place scope requires a separately registered
-exact reduction; otherwise it uses typed fallback. Displayed-content intensity
-and phase likewise lower through registered ordinary predicates or transparent
-prelude helpers, not generic `Degree` or `Phase` constructors.
+`ProvenDesugaring`, so it does not print. A scalar operation with an
+independently represented scale or restricted argument-place scope requires a
+separately registered exact reduction; otherwise it uses typed fallback.
+Displayed-content intensity and phase likewise lower through registered
+ordinary predicates or transparent prelude helpers, not generic `Degree` or
+`Phase` constructors.
 
 ## 5. Closing predicate content
 
@@ -2581,25 +2582,30 @@ All SHA-256 values are lowercase hexadecimal. Every string is normalized to
 NFC before serialization, and every JSON value uses RFC 8785 JSON Canonicalization
 Scheme (JCS). The manifest is checked in as `registry/manifest.json`, serialized
 as one JCS object followed by LF. Its `source-artifacts` and
-`generated-artifacts` arrays are each sorted by `relative-path`; every entry has
-exactly `relative-path`, `schema-id`, `row-count`, and `digest`. The manifest's
-logical fields are `format-version`, `bundle-schema-version`, `spec-digest`,
-`generator-id`, `source-artifacts`, `generated-artifacts`, and `bundle-digest`;
-JCS, rather than prose field order, determines their byte order.
+`generated-artifacts` arrays are each sorted by NFC Unicode scalar-value
+`relative-path` order; every entry has exactly `relative-path`, `schema-id`,
+`row-count`, and `digest`. `schema-id` is exactly the declared row-schema name
+for a table artifact, such as `LexicalRow` or `TagReductionRow`. Every non-table
+source artifact, including `spec.md`, generator sources, and lockfiles, uses
+`OpaqueBytes` and has `row-count` 1. These row-schema names plus `OpaqueBytes`
+are the closed `schema-id` vocabulary. The manifest's logical fields are
+`format-version`, `bundle-schema-version`, `spec-digest`, `generator-id`,
+`source-artifacts`, `generated-artifacts`, and `bundle-digest`; JCS, rather
+than prose field order, determines their byte order.
 
 The bundle digest is SHA-256 of the JCS encoding, without a trailing LF, of the
 array `[[relative-path, digest], ...]` containing every source and generated
-artifact in lexicographic `relative-path` order. The manifest itself and its
-`bundle-digest` field are not inputs. `generator-id` is likewise the SHA-256 of
-the JCS path-and-digest array for the checked-in generator source and lockfiles,
-all of which also appear as source artifacts; it is not a mutable tool name.
-Generated tables are JSON Lines: each row
-is one NFC-normalized JCS object followed by LF. Rows sort by their declared
-primary-key tuple: strings by Unicode scalar-value order, integers numerically,
-and composite keys left to right. Types, signatures, rows, and expansion
-templates embedded in a field use the canonical smusni spelling from this
-document. Consumers may compile these rows to another internal representation,
-but the checked-in bytes and manifest are the single normative source.
+artifact in NFC Unicode scalar-value `relative-path` order. The manifest itself
+and its `bundle-digest` field are not inputs. `generator-id` is likewise the
+SHA-256 of the JCS path-and-digest array for the checked-in generator source and
+lockfiles, all of which also appear as source artifacts; it is not a mutable
+tool name. Generated tables are JSON Lines: each row is one NFC-normalized JCS
+object followed by LF. Rows sort by their declared primary-key tuple: strings
+by Unicode scalar-value order, integers numerically, and composite keys left to
+right. Types, signatures, rows, and expansion templates embedded in a field use
+the canonical smusni spelling from this document. Consumers may compile these
+rows to another internal representation, but the checked-in bytes and manifest
+are the single normative source.
 
 The normative generated artifacts have these logical schemas:
 
@@ -2679,13 +2685,20 @@ graph-specific `Fixed`/`Underspecified` dependence classification;
 normalized root plus original dictionary ordinal for numbered slots and the
 registered event license for `Eventuality`. Thus place type, defaultability,
 event licensing, and original identity are all machine-readable rather than
-inferred from definition prose.
+inferred from definition prose. Every `LexicalRow` object contains the
+`optional-event-slot-row` key; its value is JSON `null` when the root has no
+event slot.
 
 Every `evidence-id` is a foreign key to exactly one `EvidenceRow`, whose source
-is in turn a `SourceArtifactRow`; a label alone is not evidence. Every fallback
-disposition owner is a foreign key to one `DispositionRow`. A scale literal is
+is in turn a `SourceArtifactRow`; a label alone is not evidence. The checked-in
+`spec.md` is itself a source artifact, so a reduction contract defined in this
+document can be cited by an `EvidenceRow`. Every fallback disposition owner is
+a foreign key to one `DispositionRow`. A scale literal is
 a raw first-order value of `raw-value-type`; for example a raw `Scale` may use
 the ordinary singleton lift at an operand requiring `Referents<Scale>`.
+`source-kind` and `word-class` are bundle-curated provenance labels rather than
+closed format vocabularies; their exact checked-in values remain deterministic
+inputs to generation and validation.
 
 Kernel primitive context/effect/stability behavior is fixed by sections 3, 6,
 and 14.1 and cannot be overridden by the bundle. A lexical predicate term is
@@ -2702,15 +2715,20 @@ expansion, or typed fallback. Missing or contradictory summaries fail closed.
 This supplies the declarations consumed by the structural purity algorithm
 rather than leaving "registered pure" as an implementation choice.
 
-An applicability guard and expansion template are canonical syntax in this
-specification with typed holes for the host, event, explicit operands, anchors,
-and graph identities. A template may contain lowercase roots, kernel
-primitives, or transparent prelude calls only. Validation expands every
-template, derives its result and dynamic summary, checks every lexical row and
-place map, and rejects a recursive prelude dependency, an unregistered atom, or
-a declared result which differs from the derived one. Every `PreludeRow` is
-generated mechanically from the definition in this document and its canonical
-definition and digest MUST match that definition exactly. An irreducibility reason is
+An applicability guard, expansion template, or link contract is canonical
+smusni syntax extended only by the registry metatform `(Hole "name" type)`.
+Hole names are unique lowercase ASCII identifiers within one row, their types
+use section 2.2 syntax, and every occurrence is substituted by a value of that
+exact type before the resulting ordinary smusni datum is validated. `Hole` is
+not a surface atom and can never be emitted. Templates use holes for the host,
+event, explicit operands, anchors, and graph identities. A template may contain
+lowercase roots, kernel primitives, or transparent prelude calls only.
+Validation expands every template, derives its result and dynamic summary,
+checks every lexical row and place map, and rejects a recursive prelude
+dependency, an unregistered atom, or a declared result which differs from the
+derived one. Every `PreludeRow` is generated mechanically from the definition
+in this document; after the specified canonicalization, its definition bytes
+and digest MUST match that generated definition exactly. An irreducibility reason is
 mandatory for every `GeneratedRelationRow`; if the same meaning has an exact
 lexical/compositional reduction, the generated relation is invalid and the
 reduction must be used instead.
