@@ -444,6 +444,12 @@ registry-only schema form defined in section 14.2. Extensional comprehensions
 and every reduction which duplicates a property require this stronger
 judgment.
 
+The refinement may occur recursively in a higher-order function signature.
+For example, `Fn<(PureProperty<T>), Content>` is structurally the same surface
+function family as `GQ<T>`, but its callable value retains the precondition that
+the future nuclear-scope argument pass the purity checker. `Let` and other
+identity-preserving bindings retain that refined callable signature.
+
 `RefComp` denotes a dynamically hosted computation, not necessarily a context
 mutation. A graph-`Fixed` bare `Context` lookup is read-only, has `Γ = Δ` and an
 empty effect sequence, and is stable for its **lexical closure site** during one
@@ -1540,23 +1546,25 @@ these signatures:
 Some      : Property<T> -> GQ<T>
 No        : Property<T> -> GQ<T>
 Every     : PureProperty<T> -> GQ<T>
-Exactly   : Natural × PureProperty<T> -> GQ<T>
-AtLeast   : Natural × PureProperty<T> -> GQ<T>
-AtMost    : Natural × PureProperty<T> -> GQ<T>
-MoreThan  : Natural × PureProperty<T> -> GQ<T>
-FewerThan : Natural × PureProperty<T> -> GQ<T>
+Exactly   : Natural × PureProperty<T> -> Fn<(PureProperty<T>), Content>
+AtLeast   : Natural × PureProperty<T> -> Fn<(PureProperty<T>), Content>
+AtMost    : Natural × PureProperty<T> -> Fn<(PureProperty<T>), Content>
+MoreThan  : Natural × PureProperty<T> -> Fn<(PureProperty<T>), Content>
+FewerThan : Natural × PureProperty<T> -> Fn<(PureProperty<T>), Content>
 ```
 
 Natural arguments are nonnegative exact integers. Applying a `GQ<T>` to a
 nuclear-scope property produces ordinary `Content`. The five cardinal helpers
-carry an additional inferred application precondition that their nuclear scope
-is a `PureProperty<T>`; this refinement follows the function through `Let` and
-other identity-preserving bindings. `Every` permits an effectful nuclear scope
-because it does not duplicate that scope, but its restriction is pure because
-the import and conditional each use it. These are checker metaconstraints, not
-new printable type constructors. The structural surface type remains `GQ<T>`;
-an application which fails a retained purity precondition uses typed fallback
-rather than evaluating the displayed `SetOf` expansion unsoundly.
+encode the additional application precondition on their returned function's
+nuclear-scope parameter as the nested `PureProperty<T>` refinement shown above;
+this refinement follows the function through `Let` and other
+identity-preserving bindings. `Every` permits an effectful nuclear scope because
+it does not duplicate that scope, but its restriction is pure because the
+import and conditional each use it. These are checker metaconstraints, not new
+printable type constructors. After refinement erasure the cardinal return type
+is still structurally `GQ<T>`; an application which fails its retained purity
+precondition uses typed fallback rather than evaluating the displayed `SetOf`
+expansion unsoundly.
 
 For a restriction `$P` and nuclear scope `$Q`, their definitions are:
 
@@ -1722,8 +1730,6 @@ source generalized-quantifier family, bind `Si : Set<Ti>`, and let the pure
 polyadic nuclear relation be `R : Fn<(T1 ... Tn), Content>`. Define:
 
 ```text
-Mi = λ xi. xi ∈ Si
-
 Ei(xi; S-i) =
   Pi(xi) ∧
   ∀ x1 ... x(i-1) x(i+1) ... xn.
@@ -1773,7 +1779,7 @@ and `AtLeast n` for `n > 0`, `MoreThan n`, `Some`, and importing `Every`; naming
 a family never substitutes for the required profile evidence.
 
 This one-locus multi-parameter binder is distinct from the deliberately nested
-existentials used for a repeated tense path such as `pu pu` in section 10.2.
+existentials used for a repeated tense path such as `pu pu` in section 10.4.
 Those binders encode successive path-node dependencies, not simultaneous
 participant quantification; `samples.md` sections 4 and 12 show the two graph
 shapes separately.
@@ -1983,8 +1989,8 @@ above. A same-event reduction has this shape:
 `R` is specification metanotation and is replaced by `crane`, `trixe`,
 `zunle`, `pritu`, `gapru`, `cnita`, `berti`, `snanu`, `stuna`, or `stici` in
 an actual document. `MotionVector` retains `muvdu` x1, x2, and x3 because the
-mover and the displacement endpoints are all used, fills the retained
-eventuality place x5 with `$motion`, and deletes x4 because this helper's
+mover and the displacement endpoints are all used, fills the distinguished
+`:Eventuality` slot with `$motion`, and deletes x4 because this helper's
 registered displacement contract positively states that the derived relation
 has no route role. This is semantic absence evidence, not an inference from an
 omitted route operand. The graph must identify `$mover`; the renderer never
@@ -2784,10 +2790,12 @@ artifact in NFC Unicode scalar-value `relative-path` order. The manifest itself
 and its `bundle-digest` field are not inputs. `generator-id` is likewise the
 SHA-256 of the JCS path-and-digest array selected by `generator-inputs`. Every
 listed path MUST resolve to exactly one `source-artifacts` entry, duplicates are
-invalid, and the array MUST enumerate `spec.md` plus the checked-in generator
-source and lockfile closure, and no other artifacts. `spec.md` is a generator
-input because the prelude signatures and canonical definitions are extracted
-from it. Thus a verifier rederives
+invalid, and the array MUST enumerate exactly `spec.md`, the resolved mirrored
+production semantic-model module closure, the scanner and generator source,
+and the build configuration, toolchain, and lockfile closure which can affect
+their output. Generated artifacts are excluded. `spec.md` is a generator input
+because the prelude signatures and canonical definitions are extracted from
+it. Thus a verifier rederives
 `generator-id` from the manifest and source-artifact digests; it is not a
 mutable tool name. Generated tables are JSON Lines: each row is one
 NFC-normalized JCS object followed by LF. Rows sort by their declared
@@ -2853,7 +2861,8 @@ SourceOrigin = {
 }
 
 CoordinateOrigin = {
-  projection-id, nonempty-source-origins: SourceOrigin+
+  semantic-coordinate, projection-id,
+  nonempty-source-origins: SourceOrigin+
 }
 
 SemanticTypeRow =
@@ -2884,7 +2893,8 @@ ContextValueRow =
   context-value-id, context-value-kind, structural-schema, evidence-id
 
 ProjectionDeclarationRow =
-  projection-id, semantic-type-id, source-origins, emitted-semantic-coordinates,
+  projection-id, semantic-type-id,
+  coordinate-origins: CoordinateOrigin+,
   serialization-shape, evidence-id
 
 CheckedExclusionRow =
@@ -3004,6 +3014,14 @@ Duplicate primary keys are invalid. The generic
 only a more specific argument link, scale, or source reduction uses a
 `RelationFormerReductionRow`.
 
+Independently of table primary keys, every `GeneratedRelationRow.PascalCase-name`
+is globally unique across generated-relation families and disjoint from every
+primitive, transparent-prelude, generated constant, scale, and literal spelling
+in value position. Version 0 has no callable overloading and never uses the
+nonprinting `family` field to resolve one surface atom. The independently closed
+type namespace may still reuse a spelling in a syntactically determined type
+position as specified in section 13.3.
+
 `SlotRow.label` is a positive original numbered label or `Eventuality`.
 `Contextual` licenses ordinary contextual closure but does not decide the
 graph-specific `Fixed`/`Underspecified` dependence classification;
@@ -3070,9 +3088,13 @@ IDs generate the only legal IR and context-value identifiers.
 `ProjectionDeclarationRow.serialization-shape` is a closed tagged declaration
 of `Structural`, `Flattened`, `Tagged`, `Untagged`, or `CollapsedScalar`. It
 contains the exact constructor/payload mapping, surface and non-discriminator
-keys, discriminator computation, nested flattening, typed derived keys, source
-coverage, and output cardinality applicable to that shape. It is shared by the
-scanner and serializer. `CheckedExclusionRow.exclusion-kind` and
+keys, discriminator computation, nested flattening, and typed derived keys
+applicable to that shape. The row's `coordinate-origins` is the sole authority
+for the exact many-to-many mapping from source origins to emitted semantic
+coordinates; the flat origin and coordinate sets are mechanically derived as
+its two projections. The serialization shape and coordinate-origin mapping are
+shared by the scanner and serializer and MUST agree on every member and branch.
+`CheckedExclusionRow.exclusion-kind` and
 `AlgorithmFailureSiteRow.phase` and `allowed-boundary-kind` are
 closed generated domains. The generator source which defines those domains is
 a manifest input, but the authored rows determine their member set.
@@ -3080,11 +3102,13 @@ a manifest input, but the authored rows determine their member set.
 Every `SemanticTypeRow` has exactly one `ProjectionDeclarationRow`, including
 ordinary derived products, sums, aliases, and scalar newtypes. Those ordinary
 shapes use a checked `Structural` declaration rather than an implicit direct
-source path. Consequently every `CoordinateOrigin.projection-id` is a foreign
-key. `ProjectionDeclarationRow.semantic-type-id` is also a foreign key and is
-unique, and its complete value set equals the `SemanticTypeRow` primary-key
-set. Specialized declarations merely choose another serialization-shape
-variant; they do not create a second authority for the same type.
+source path. Every entry in `coordinate-origins` has a distinct
+`semantic-coordinate`, its `projection-id` equals its enclosing row's key, and
+that id is a foreign key. `ProjectionDeclarationRow.semantic-type-id` is also a
+foreign key and is unique, and its complete value set equals the
+`SemanticTypeRow` primary-key set. Specialized declarations merely choose
+another serialization-shape variant; they do not create a second authority for
+the same type.
 
 Fact and target decisions are typed applications, not bare identifiers. Every
 input slot has one of the six disjoint domains above, and every binding names
@@ -3289,11 +3313,14 @@ template is canonical smusni syntax extended by the registry metaform
 additionally admits the registry-only type metaform `(TypeParam "name")` in a
 type position when that row declares the parameter. A
 `PreludeRow.complete-signature-schema` alone also admits
-`(PureProperty type)`. This is a refinement schema whose structural erasure is
+`(PureProperty type)` recursively in any function-parameter type position.
+This is a refinement schema whose structural erasure is
 `(Fn (type) Content)` and whose argument must satisfy the exact purity judgment
 in section 3.2; it is not the surface atom `PureProperty` and can never be
 emitted. For example, the first argument of polymorphic `Every` is encoded as
-`(PureProperty (TypeParam "T"))`.
+`(PureProperty (TypeParam "T"))`, while a cardinal helper's returned GQ schema
+contains `(Fn ((PureProperty (TypeParam "T"))) Content)` so that the future
+nuclear-scope precondition survives partial application and binding.
 
 Hole names are unique lowercase ASCII identifiers within one row, their types
 use section 2.2 syntax, and every substitution MUST typecheck at the declared
@@ -3317,8 +3344,8 @@ atom and can never be emitted.
 `Hole` is illegal in a `PreludeRow` and `GeneratedRelationRow` and names only a
 typed template's declared smusni input slots. `TypeParam` is illegal outside
 the five row families which explicitly declare type parameters. Every declared
-generated-relation, target fact, target, or algorithm type parameter must be
-used, and each application receives the same fresh, rigid, monomorphic
+prelude, generated-relation, target fact, target, or algorithm type parameter
+must be used, and each application receives the same fresh, rigid, monomorphic
 substitution rules as a prelude application.
 
 Validation expands every template, derives its result and dynamic summary,
@@ -3334,11 +3361,13 @@ name in a type position is mechanically replaced by the corresponding
 `(TypeParam "name")`. The defined aliases `Property<T>` and `GQ<T>` are
 mechanically expanded to their section-3.2 structural `Fn` types, while
 `PureProperty<T>` becomes the registry refinement
-`(PureProperty (TypeParam "T"))`; no other rewriting is allowed. Validation
-erases that refinement for structural typechecking, independently proves its
-section-3.2 judgment at every application, and rejects a refinement not
-justified by the canonical definition's expanded use of the parameter. The
-result is NFC-normalized canonical registry spelling embedded as a JCS string.
+`(PureProperty (TypeParam "T"))` wherever it occurs, including recursively in a
+returned function's parameter list; no other rewriting is allowed. Validation
+recursively erases every such refinement for structural typechecking,
+independently proves its section-3.2 judgment at every application, and rejects
+a refinement not justified by the canonical definition's expanded use of the
+parameter. The result is NFC-normalized canonical registry spelling embedded
+as a JCS string.
 `definition-digest` is SHA-256 of the canonical definition's unescaped NFC
 UTF-8 bytes. The declared ordered `type-parameters`, signature, definition, and
 digest MUST all match the mechanically extracted definition exactly. An
@@ -3471,9 +3500,10 @@ Flattened objects and every reachable custom serializer use typed
 `ProjectionDeclarationRow`s shared by serialization and scanning. For each
 branch the declaration records its constructor and payload type, projected
 surface, discriminator key and value computation, projected fields, flattened
-nested dispatch, typed derived keys, exact source origins, and exact emitted
-coordinates. Enum branches and payloads are derived from the Rust type and must
-be exactly equal to the declaration. The serializer uses the same declared key
+nested dispatch, and typed derived keys; its `coordinate-origins` entries record
+the exact source-to-coordinate mapping for those branches. Enum branches and
+payloads are derived from the Rust type and must be exactly equal to the
+declaration. The serializer uses the same declared key
 constants and branch descriptors rather than a parallel spelling of keys such
 as `type`, `relationParameter`, or `operatorDenotes`. Every manual serializer,
 `serialize_with`, `flatten`, `transparent`, `untagged`, or other
@@ -3481,15 +3511,16 @@ shape-affecting serde form requires one such declaration; an unrecognized form
 is an error. Constructor identity, payload identity, and serialized
 representation remain separate facts.
 
-The scanner first constructs a multimap from each `SemanticCoordinate` to its
-one `CoordinateOrigin { projection-id, nonempty-source-origins }` and a reverse
-multimap from each `SourceOrigin` to semantic coordinates. A second emission of
-the same coordinate, including from a different source, is an error. A derived
-coordinate may depend on several source origins, but all dependencies occur in
-its one coordinate origin. A source origin may feed several coordinates only
-when its projection declaration lists that exact set. Observed forward and
-reverse coverage must equal the declarations exactly: unknown or stale
-origins, zero-covered reachable origins, undeclared fan-out, missing output,
+The scanner first constructs the declared map from each `SemanticCoordinate` to
+its one `CoordinateOrigin { semantic-coordinate, projection-id,
+nonempty-source-origins }` and a reverse multimap from each `SourceOrigin` to
+semantic coordinates. A second emission of the same coordinate, including from
+a different source, is an error. A derived coordinate may depend on several
+source origins, but all dependencies occur in its one coordinate origin. A
+source origin may feed several coordinates only when its projection declaration
+lists that exact set. Observed forward and reverse coverage must equal the
+authored `coordinate-origins` exactly: unknown or stale origins, zero-covered
+reachable origins, undeclared fan-out, missing output,
 duplicate output, extra output, or wrong cardinality are errors. Only after
 these checks is the coordinate key set compared with disposition owners; set
 insertion never silently deduplicates coverage.
@@ -3752,7 +3783,9 @@ output expectations:
 - every kernel summary agrees with sections 3, 6, and 14.1, every prelude row's
   declared type parameters, signature, canonical definition, and digest match
   the mechanically extracted and registry-metaform-normalized definition in
-  this document, every prelude/tag/relation-former
+  this document, every recursive `PureProperty` refinement is retained through
+  partial application and binding and enforced at the eventual application,
+  every prelude/tag/relation-former
   summary is rederived from its expansion or link contract, and every
   irreducible generated relation has one complete
   type/context/effect/stability row;
@@ -3788,6 +3821,8 @@ output expectations:
 - every tense, space, aspect, recurrence, and actuality node either expands by
   its registered exact lexical/compositional reduction or has an explicit
   fallback disposition;
+- every generated callable spelling is globally unambiguous in value position
+  and resolves without consulting a nonprinting family or overload tag;
 - all query domains and answer selections typecheck;
 - overlapping multi-`At` candidate domains fail locally rather than accepting a
   noninjective answer assignment;
@@ -3798,7 +3833,9 @@ output expectations:
   named field, tuple payload, custom discriminator, flattened field, and
   successful semantic derived fact is emitted exactly once and classified by
   the exhaustive disposition ledger, while checked exclusions are exact and
-  reasoned;
+  reasoned; every semantic coordinate's exact nonempty source-origin set and
+  every source origin's exact coordinate fan-out equal the authored
+  `coordinate-origins` mapping;
 - every semantic disposition decision is total, every projection fact has one
   pure generated evaluator, every target contract has one typed implementation,
   every projection algorithm has one generated executor, and authored fact,
@@ -3838,8 +3875,9 @@ Focused registry mutations must independently reject:
   non-discriminator key, discriminator, derived key, or value mapping, or a
   serializer which stops consuming its shared declaration;
 - an unregistered shape-affecting serde/custom-serializer change, duplicate
-  coordinate emission, wrong origin fan-out, zero-covered reachable origin,
-  unknown/stale origin, or missing/extra projection output;
+  coordinate emission, swapped or otherwise wrong coordinate-to-origin map,
+  wrong reverse origin fan-out, zero-covered reachable origin, unknown/stale
+  origin, or missing/extra projection output;
 - a missing, duplicate, unjustified, or stale exclusion, or confusion between
   semantic derived facts, notation facts, and algorithm failure sites;
 - an unknown, duplicate, or orphan target, fact, reason, algorithm, projection,
@@ -3849,7 +3887,10 @@ Focused registry mutations must independently reject:
   algorithm or raw-owner input; or a wrong structured reason-owner join;
 - an invalid local or whole-document boundary, raw root which disagrees with
   that boundary, loss of a `RawVariant`, `RawRecord`, or `RawMap` payload, or
-  identity/sharing corruption; and
+  identity/sharing corruption;
+- a missing nested cardinal-GQ purity refinement, an unjustified refinement, a
+  duplicate generated callable spelling in any family, or a collision with an
+  existing value-position atom; and
 - a cycle through `RecoveredAt`, registry expansion, fact/target/algorithm
   bindings, or lowered-value dependencies; generated-runtime drift; or
   mirrored-source drift.

@@ -57,18 +57,10 @@ An actual place question uses computed `At` and no later plain operand:
 
 Two computed fills whose candidate domains overlap do not print as two `At`
 forms. The smallest content position falls back because answer substitution
-could assign both values to the same place:
-
-```lisp
-(Smusni 0
-  (Assert
-    (Fallback Content "smusni.fallback.at.overlapping-candidates"
-      (Object %1 "ComputedPlaceAssignment"
-        (Field "firstCandidates"
-          (RawList (RawString "1") (RawString "2")))
-        (Field "secondCandidates"
-          (RawList (RawString "2") (RawString "3")))))))
-```
+could assign both values to the same place. Its registered local reason is
+`smusni.fallback.at.overlapping-candidates`; the fallback preserves the actual
+smallest reachable raw model owner rather than inventing a
+`ComputedPlaceAssignment` model type. Section 20 shows the complete raw syntax.
 
 `zi'o` removes a current numbered place. Surviving labels keep their visible
 numbers and plain traversal skips the hole:
@@ -269,15 +261,10 @@ contextual argument. Actuality is a separate predicate, not assertion force:
 
 An aspect whose boundary/checkpoint relation has not yet been verified remains
 local fallback rather than an English-gloss constructor or an approximate
-`cfari` predication:
-
-```lisp
-(Smusni 0
-  (Assert
-    (Fallback Content "smusni.fallback.tag.coha.unverified-boundary"
-      (Object %1 "EventContour"
-        (Field "kind" (RawTypedAtom "EventContour" "Start"))))))
-```
+`cfari` predication. Its registered local reason is
+`smusni.fallback.tag.coha.unverified-boundary`; its raw value is the actual
+reachable owner containing the inline aspect value, not a synthetic
+`EventContour` object.
 
 A repeated tense is a path rather than two unrelated facets. This sample
 assumes one graph locus with a joint two-parameter existential; the nested-`∃`
@@ -327,18 +314,11 @@ outside `Do` with `Let` when inert or `Bind` when computed, and both repeated
 
 Version 0 does not pretend that a graph-owned noncurrent deictic ground is the
 current speech situation. Until that registered reduction exists, the smallest
-referential value falls back:
-
-```lisp
-(Smusni 0
-  (Mention
-    (Fallback (Referents Entity) "smusni.fallback.deictic.noncurrent-ground"
-      (Object %1 "DeicticReference"
-        (Field "proximity"
-          (RawTypedAtom "Proximity" "Proximal"))
-        (Field "ground"
-          (Object %2 "DeicticGround"))))))
-```
+referential value falls back with reason
+`smusni.fallback.deictic.noncurrent-ground`. The raw encoding uses a
+`RawRecord` for an inline deictic-reference value and an `Object`/`Ref` only for
+the real graph-owned ground referent; it never promotes either into an invented
+semantic-object type.
 
 ## 5. Explicit `Close` for shared predicate terms
 
@@ -393,15 +373,10 @@ performance:
 The two applications substitute different x1 values; they do not mint new
 identities for klama's omitted destination, origin, route, or means sites.
 
-A nondefaultable higher-order gap cannot be silently closed:
-
-```lisp
-(Smusni 0
-  (Assert
-    (Fallback Content "smusni.fallback.close.nondefaultable-place"
-      (Object %1 "PredicateTerm"
-        (Field "root" (RawAtom "higher-order-root"))))))
-```
+A nondefaultable higher-order gap cannot be silently closed. It uses local
+fallback with reason `smusni.fallback.close.nondefaultable-place`, rooted in the
+actual reachable semantic-model owner; `PredicateTerm` is notation IR and is
+not fabricated as a raw model object.
 
 An elided value whose graph scope may depend on `$p` cannot disappear into
 `Close`; its dependency set is explicit. This is a fragment inside the binder
@@ -923,21 +898,11 @@ identity. A witness is available only after that same application succeeds:
 ```
 
 This is not equivalent to counting members of `$dogs` after the fact. The full
-quantifier function, scope function, and success identity remain explicit.
-
-The following is deliberately invalid and therefore falls back:
-
-```lisp
-(Fallback (Referents Entity) "smusni.fallback.witness.before-success"
-  (Object %1 "WitnessRequest"
-    (Field "run"
-      (Object %2 "QuantifierApplication"))
-    (Field "status"
-      (RawTypedAtom "WitnessAvailability" "BeforeSuccess"))))
-```
-
-That fallback is a fragment inside a position expecting
-`(Referents Entity)`; it is not a complete document.
+quantifier function, scope function, and success identity remain explicit. A
+request before successful execution uses local `(Referents Entity)` fallback
+with reason `smusni.fallback.witness.before-success`, preserving the actual
+reachable quantifier owner. `WitnessRequest` and `QuantifierApplication` are
+not raw model object types and therefore never appear in its raw value.
 
 ## 12. Simultaneous termsets
 
