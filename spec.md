@@ -438,9 +438,11 @@ applying it yields ordinary `Content`, not a quantifier-record wrapper.
 
 `PureProperty<T>` is specification metanotation for a `Property<T>` whose
 application has `Γ = Δ`, an empty effect sequence, and a stable result at one
-evaluation site for every argument. It is not a printable type constructor.
-Extensional comprehensions and every reduction which duplicates a property
-require this stronger judgment.
+evaluation site for every argument. It is not a surface-printable type
+constructor. A `PreludeRow` records this inferred refinement with the
+registry-only schema form defined in section 14.2. Extensional comprehensions
+and every reduction which duplicates a property require this stronger
+judgment.
 
 `RefComp` denotes a dynamically hosted computation, not necessarily a context
 mutation. A graph-`Fixed` bare `Context` lookup is read-only, has `Γ = Δ` and an
@@ -852,8 +854,16 @@ the ordered side effects. This typing is usually inferred and omitted from
 surface binder annotations.
 
 The dynamic interpretation is what gives anaphora the correct accessibility
-across connectives. `Assert` does not create this behavior; it performs content
-whose accessibility behavior is already defined.
+across connectives. `Assert` does not create this behavior: it constructs an
+act which stores content whose accessibility behavior is already defined.
+Crossing that act through the implicit top-level performance spine or explicit
+`Perform` executes the stored content.
+
+A **force segment** is one dynamic execution of the content stored by a single
+`Act<F>`, beginning when the implicit performance spine or `Perform` crosses
+that act and ending at its corresponding force handler. Merely constructing an
+act does not begin a segment. A nested act is inert until separately performed;
+that performance begins a distinct segment.
 
 The checker represents a context as graph-identity capabilities annotated with
 their lexical/multiplicity region, and represents `E` as an ordered sequence of
@@ -1016,12 +1026,19 @@ remain in scope. A dependency boundary, force boundary, `Opaque` place, or
 reification blocks further projection. A graph which records a genuinely
 local or conditional side contribution must name that distinct legal handler;
 the renderer never infers local versus projective interpretation from surface
-nesting. The printed placement must make that handler the nearest legal handler
-under these rules; a graph anchor naming a different handler is illegal because
-the output would not preserve it. An absent, illegal, or ambiguous supplement
-handler makes the smallest affected content use typed fallback. Nested effects
-generated while evaluating `side` retain their own families and handler rules,
-and do not become at-issue content by being inside a supplement.
+nesting. Once the handler is fixed, canonical output raises `Supplement` across
+every transparent shell to the outermost type-correct position inside that
+handler and all dependency boundaries. For an assertion this is immediately
+inside the act's `Assert`; for a polar question it cannot cross the
+`Content -> Query` boundary and is therefore immediately inside `Polar`.
+Canonical output never retains a lower equivalent attachment merely because it
+matches source nesting. The printed placement must make the selected handler
+the nearest legal handler under these rules; a graph anchor naming a different
+handler is illegal because the output would not preserve it. An absent,
+illegal, or ambiguous supplement handler makes the smallest affected content
+use typed fallback. Nested effects generated while evaluating `side` retain
+their own families and handler rules, and do not become at-issue content by
+being inside a supplement.
 A supplement whose side depends on a variable or dynamic introduction that is
 not available in any legal version-0 handler cannot be hoisted out of that
 scope. Version 0 has no hidden dependent-supplement handler: the smallest
@@ -1177,13 +1194,17 @@ identity and type; no `TargetFocus` value prints.
 The displayed-content family selects a registered relation table; the exact
 relation then prints as a predicate. There is no universal “anchor” place:
 each relation row names and types all of its roles. For example, version-0
-`Contrast` has experiencer, contrasted target, and comparison target, so both
-of its latter operands may be first-class acts. A different indicator may
-instead take an utterance token or another graph-owned anchor. Polarity,
-intensity, phase, and modifiers lower through registered relation formers or
-additional predicates. `TargetFocus` is recoverable from target identity/type
-and is a proven desugaring, not discarded provenance. If any remaining field
-has no compositional lowering, the smallest displayed-content value uses local
+`Contrast` is one type-parameterized generated relation with the signature
+`Referents<Entity> × T × T -> Content`: it has experiencer, contrasted target,
+and comparison target, so both latter operands may be first-class acts at the
+same monomorphic `T`, as in `samples.md` section 14. Different target types
+require a separately registered exact relation or typed fallback rather than
+unifying unrelated values. A different indicator may instead take an utterance
+token or another graph-owned anchor. Polarity, intensity, phase, and modifiers
+lower through registered relation formers or additional predicates.
+`TargetFocus` is recoverable from target identity/type and is a proven
+desugaring, not discarded provenance. If any remaining field has no
+compositional lowering, the smallest displayed-content value uses local
 fallback rather than retaining a generic indicator record.
 
 The graph's assertion effect controls act construction:
@@ -1696,13 +1717,12 @@ uses local typed fallback rather than trying to construct an empty
 
 A genuinely simultaneous termset whose graph licenses the
 **coordinate-closed complete-product** profile does not require a `PolyQuant`
-primitive. For each participant, let `Pi : PureProperty<Ti>`, let
-`gi : GQ<Ti>` be `Qi Pi`, bind `Si : Set<Ti>`, and let the pure polyadic nuclear
-relation be `R : Fn<(T1 ... Tn), Content>`. Define:
+primitive. For each participant, let `Pi : PureProperty<Ti>`, let `Qi` be its
+source generalized-quantifier family, bind `Si : Set<Ti>`, and let the pure
+polyadic nuclear relation be `R : Fn<(T1 ... Tn), Content>`. Define:
 
 ```text
 Mi = λ xi. xi ∈ Si
-Ci = gi Mi
 
 Ei(xi; S-i) =
   Pi(xi) ∧
@@ -1711,19 +1731,38 @@ Ei(xi; S-i) =
 ```
 
 The normal form existentially binds all `Si` at one same-force multi-parameter
-`∃` and conjoins every `Ci` with:
+`∃` and, for every coordinate, conjoins its one canonical direct participant
+constraint `Di` with:
 
 ```text
 ∀ xi. xi ∈ Si ↔ Ei(xi; S-i)
 ```
 
-for every coordinate. The biconditional makes each selected set the maximal
-coordinate of a complete rectangle. This is stronger than merely saying that
-some selected Cartesian product satisfies `R`: if four dogs all relate to the
-same two people, an `Exactly 3` by `Exactly 2` rectangle exists, but the
-coordinate-closed reading is false because the dog coordinate contains four.
-That strength is deliberate only when the graph or a verified source reduction
-records it; equal scope alone does not entail maximality.
+The closed `Di` spellings are:
+
+```text
+Some          Di = (> (Card $Si) 0)
+Exactly n     Di = (= (Card $Si) $n)
+AtLeast n     Di = (≥ (Card $Si) $n)
+MoreThan n    Di = (> (Card $Si) $n)
+Every         Di = (= $Si (SetOf $Pi))
+```
+
+For importing `Every`, its independent
+`Presuppose(∃ xi. Pi(xi), ...)` is hosted as specified below. These direct
+constraints are the normative output of the registered coordinate-closed
+reduction. They use the biconditional's consequence `Si ⊆ Pi` and the
+extensional equality of the selected comprehension with `Si`; they are not
+mere beta reductions. The renderer MUST NOT instead print the equivalent
+generalized-quantifier application for this profile.
+
+The biconditional makes each selected set the maximal coordinate of a complete
+rectangle. This is stronger than merely saying that some selected Cartesian
+product satisfies `R`: if four dogs all relate to the same two people, an
+`Exactly 3` by `Exactly 2` rectangle exists, but the coordinate-closed reading
+is false because the dog coordinate contains four. That strength is deliberate
+only when the graph or a verified source reduction records it; equal scope
+alone does not entail maximality.
 
 The selected-set equations are mutually referential, but the one multi-
 parameter existential introduces no asymmetric participant scope order. This
@@ -1731,16 +1770,20 @@ schema is licensed only for a graph-recorded coordinate-closed profile with
 pure `Pi` and `R`, supported `Qi`, every singular counting basis, and one
 polyadic nuclear scope. The supported participant families are `Exactly n`
 and `AtLeast n` for `n > 0`, `MoreThan n`, `Some`, and importing `Every`; naming
-a family never substitutes for the required profile evidence. The direct
-cardinality equations used in examples are beta-reduced `Ci` forms justified
-by the coordinate equations' `Si` subset of `Pi` consequence.
+a family never substitutes for the required profile evidence.
 
-For an importing `Every` participant, the `Presuppose` inside `Ci` obeys
-section 6.4 independently of the selected-set existential. Its trigger mentions
-`Pi` but not `Si`, so the supported schema hosts that trigger at the nearest
-dependency-legal force handler outside the selected-set binder. If a candidate
-trigger depends on `Si`, another selected coordinate, or branch-local data, this
-version-0 termset reduction is not licensed and uses typed fallback.
+This one-locus multi-parameter binder is distinct from the deliberately nested
+existentials used for a repeated tense path such as `pu pu` in section 10.2.
+Those binders encode successive path-node dependencies, not simultaneous
+participant quantification; `samples.md` sections 4 and 12 show the two graph
+shapes separately.
+
+For an importing `Every` participant, the `Presuppose` associated with `Di`
+obeys section 6.4 independently of the selected-set existential. Its trigger
+mentions `Pi` but not `Si`, so the supported schema hosts that trigger at the
+nearest dependency-legal force handler outside the selected-set binder. If a
+candidate trigger depends on `Si`, another selected coordinate, or branch-local
+data, this version-0 termset reduction is not licensed and uses typed fallback.
 
 Downward-entailing, zero-compatible, non-cardinal, partial-product,
 complete-but-not-coordinate-closed, effectful, or otherwise unsupported
@@ -1940,15 +1983,16 @@ above. A same-event reduction has this shape:
 `R` is specification metanotation and is replaced by `crane`, `trixe`,
 `zunle`, `pritu`, `gapru`, `cnita`, `berti`, `snanu`, `stuna`, or `stici` in
 an actual document. `MotionVector` retains `muvdu` x1, x2, and x3 because the
-mover and the displacement endpoints are all used, and deletes x4 because this
-helper's registered displacement contract positively states that the derived
-relation has no route role. This is semantic absence evidence, not an inference
-from an omitted route operand. The graph must identify `$mover`; the renderer
-never equates it with the host predicate's x1 merely because both are
-available. CLL's `mi mo'i ca'uvu citka ...` can describe eating in a moving
-airplane, so grammatical x1 is not a general mover rule. The default frame is
-the utterance's speaker-oriented frame, so a frame-dependent axial template
-prints `Speaker`; an explicit `ma'i` supplies the represented replacement.
+mover and the displacement endpoints are all used, fills the retained
+eventuality place x5 with `$motion`, and deletes x4 because this helper's
+registered displacement contract positively states that the derived relation
+has no route role. This is semantic absence evidence, not an inference from an
+omitted route operand. The graph must identify `$mover`; the renderer never
+equates it with the host predicate's x1 merely because both are available.
+CLL's `mi mo'i ca'uvu citka ...` can describe eating in a moving airplane, so
+grammatical x1 is not a general mover rule. The default frame is the utterance's
+speaker-oriented frame, so a frame-dependent axial template prints `Speaker`;
+an explicit `ma'i` supplies the represented replacement.
 `NotationDefault` in the source disposition ledger suppresses the redundant
 input-model default field, not the semantically required `Speaker` operand in
 the expansion. This `mo'i` rule does not change ordinary unrelated spatial
@@ -2740,8 +2784,10 @@ artifact in NFC Unicode scalar-value `relative-path` order. The manifest itself
 and its `bundle-digest` field are not inputs. `generator-id` is likewise the
 SHA-256 of the JCS path-and-digest array selected by `generator-inputs`. Every
 listed path MUST resolve to exactly one `source-artifacts` entry, duplicates are
-invalid, and the array MUST enumerate the checked-in generator source and
-lockfile closure and no other artifacts. Thus a verifier rederives
+invalid, and the array MUST enumerate `spec.md` plus the checked-in generator
+source and lockfile closure, and no other artifacts. `spec.md` is a generator
+input because the prelude signatures and canonical definitions are extracted
+from it. Thus a verifier rederives
 `generator-id` from the manifest and source-artifact digests; it is not a
 mutable tool name. Generated tables are JSON Lines: each row is one
 NFC-normalized JCS object followed by LF. Rows sort by their declared
@@ -2791,7 +2837,7 @@ RelationFormerReductionRow =
   typed-link-or-expansion-contract, evidence-id
 
 GeneratedRelationRow =
-  family, PascalCase-name, complete-signature,
+  family, PascalCase-name, type-parameters, complete-signature-schema,
   context-effect-summary, stability-summary,
   irreducibility-reason, evidence-id
 
@@ -2804,6 +2850,10 @@ SemanticCoordinate = {
 
 SourceOrigin = {
   source-artifact, module-path, type, member-locator
+}
+
+CoordinateOrigin = {
+  projection-id, nonempty-source-origins: SourceOrigin+
 }
 
 SemanticTypeRow =
@@ -3234,9 +3284,17 @@ rather than leaving "registered pure" as an implementation choice.
 
 An applicability guard, expansion template, link contract, or typed target
 template is canonical smusni syntax extended by the registry metaform
-`(Hole "name" type)`. A `PreludeRow`, `ProjectionFactRow`,
-`ProjectionAlgorithmRow`, or `TargetContractRow` additionally admits the registry-only type metaform
-`(TypeParam "name")` in a type position when that row declares the parameter.
+`(Hole "name" type)`. A `PreludeRow`, `GeneratedRelationRow`,
+`ProjectionFactRow`, `ProjectionAlgorithmRow`, or `TargetContractRow`
+additionally admits the registry-only type metaform `(TypeParam "name")` in a
+type position when that row declares the parameter. A
+`PreludeRow.complete-signature-schema` alone also admits
+`(PureProperty type)`. This is a refinement schema whose structural erasure is
+`(Fn (type) Content)` and whose argument must satisfy the exact purity judgment
+in section 3.2; it is not the surface atom `PureProperty` and can never be
+emitted. For example, the first argument of polymorphic `Every` is encoded as
+`(PureProperty (TypeParam "T"))`.
+
 Hole names are unique lowercase ASCII identifiers within one row, their types
 use section 2.2 syntax, and every substitution MUST typecheck at the declared
 hole type using only the implicit conversions permitted by section 3.1. No
@@ -3247,31 +3305,40 @@ anchors, and graph identities. A template may contain lowercase roots, kernel
 primitives, or transparent prelude calls only.
 
 `type-parameters` is the ordered list of type-parameter names declared by a
-`PreludeRow`, `ProjectionFactRow`, `ProjectionAlgorithmRow`, or
-`TargetContractRow`. Each
+`PreludeRow`, `GeneratedRelationRow`, `ProjectionFactRow`,
+`ProjectionAlgorithmRow`, or `TargetContractRow`. Each
 name is unique ASCII and every `(TypeParam "name")` in that row MUST resolve to
 it. During summary and type derivation the parameters are
 rigid abstract types: distinct declared names do not unify, while repeated uses
 of one name must receive one consistent monomorphic substitution. Each prelude
-or projection use is then elaborated at its operand and expected types as
-described in section 14.1. `TypeParam` is never a surface atom and can never be emitted.
-`Hole` is illegal in a `PreludeRow` and names only a typed template's declared
-smusni input slots. `TypeParam` is illegal outside the four
-row families which explicitly declare type parameters. Every declared target
-fact, target, or algorithm type parameter must be used, and each application receives the
-same fresh, rigid, monomorphic substitution rules as a prelude application.
+generated-relation, or projection use is then elaborated at its operand and
+expected types as described in section 14.1. `TypeParam` is never a surface
+atom and can never be emitted.
+`Hole` is illegal in a `PreludeRow` and `GeneratedRelationRow` and names only a
+typed template's declared smusni input slots. `TypeParam` is illegal outside
+the five row families which explicitly declare type parameters. Every declared
+generated-relation, target fact, target, or algorithm type parameter must be
+used, and each application receives the same fresh, rigid, monomorphic
+substitution rules as a prelude application.
 
 Validation expands every template, derives its result and dynamic summary,
-checks every lexical row and place map, and rejects a recursive prelude
-dependency, an unregistered atom, or a declared result which differs from the
-derived one. Every `PreludeRow` is generated mechanically from the definition
+checks every lexical row, generated-relation signature, and place map, and
+rejects a recursive prelude dependency, an unregistered atom, or a declared
+result which differs from the derived one. Every `PreludeRow` is generated
+mechanically from the definition
 in this document. Its `complete-signature-schema` and `canonical-definition`
 are respectively the displayed signature and initializer value datum of the
 prelude definition, excluding the surrounding binding and `⟦body⟧`
 metanotation. In a type-parameterized definition, each declared schematic type
 name in a type position is mechanically replaced by the corresponding
-`(TypeParam "name")`; no other rewriting is allowed. The result is
-NFC-normalized canonical registry spelling embedded as a JCS string.
+`(TypeParam "name")`. The defined aliases `Property<T>` and `GQ<T>` are
+mechanically expanded to their section-3.2 structural `Fn` types, while
+`PureProperty<T>` becomes the registry refinement
+`(PureProperty (TypeParam "T"))`; no other rewriting is allowed. Validation
+erases that refinement for structural typechecking, independently proves its
+section-3.2 judgment at every application, and rejects a refinement not
+justified by the canonical definition's expanded use of the parameter. The
+result is NFC-normalized canonical registry spelling embedded as a JCS string.
 `definition-digest` is SHA-256 of the canonical definition's unescaped NFC
 UTF-8 bytes. The declared ordered `type-parameters`, signature, definition, and
 digest MUST all match the mechanically extracted definition exactly. An
@@ -3559,11 +3626,13 @@ The renderer returns three products internally:
 stdout document, ordered diagnostics, projection statistics
 ```
 
-The CLI writes only the `Smusni` datum to stdout. Diagnostics use the same
-standard stderr rendering as `gentufa`. Each failed projection edge contributes
-exactly one stable diagnostic code and one message; wrapper failures do not
-duplicate child diagnostics. Statistics are API data unless separately
-requested.
+The CLI writes only the `Smusni` datum to stdout and writes ordered diagnostics
+to stderr through its selected diagnostic renderer. Each failed projection
+edge contributes exactly one stable diagnostic code and one message; wrapper
+failures do not duplicate child diagnostics. Diagnostic ordering, codes, and
+messages are the format-independent contract; presentation is a host profile,
+not smusni syntax. The initial jbotci CLI profile uses the same standard stderr
+rendering as `gentufa`. Statistics are API data unless separately requested.
 
 ### 16.2 Local fallback
 
@@ -3574,8 +3643,9 @@ shows a complete payload-preserving local example for the registered
 
 `Fallback expected-type reason-id raw-value` inhabits only the stated expected
 type and is semantically opaque. The reason id is a stable ASCII string
-registered by the bundle's `FallbackReasonRow` table. It is not a warning node
-and does not replace the separately collected diagnostic.
+registered by the bundle's `FallbackReasonRow` table and begins with the closed
+namespace prefix `smusni.fallback.`. It is not a warning node and does not
+replace the separately collected diagnostic.
 `expected-type` is ordinary unquoted type syntax from section 2.2. A failure
 which occurs while determining that very type has no sound local position and
 therefore escalates to the nearest owner with a known expected type or to

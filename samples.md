@@ -62,7 +62,7 @@ could assign both values to the same place:
 ```lisp
 (Smusni 0
   (Assert
-    (Fallback Content "smusni.at.overlapping-candidates"
+    (Fallback Content "smusni.fallback.at.overlapping-candidates"
       (Object %1 "ComputedPlaceAssignment"
         (Field "firstCandidates"
           (RawList (RawString "1") (RawString "2")))
@@ -274,7 +274,7 @@ local fallback rather than an English-gloss constructor or an approximate
 ```lisp
 (Smusni 0
   (Assert
-    (Fallback Content "smusni.tag.coha.unverified-boundary"
+    (Fallback Content "smusni.fallback.tag.coha.unverified-boundary"
       (Object %1 "EventContour"
         (Field "kind" (RawTypedAtom "EventContour" "Start"))))))
 ```
@@ -332,7 +332,7 @@ referential value falls back:
 ```lisp
 (Smusni 0
   (Mention
-    (Fallback (Referents Entity) "smusni.deictic.noncurrent-ground"
+    (Fallback (Referents Entity) "smusni.fallback.deictic.noncurrent-ground"
       (Object %1 "DeicticReference"
         (Field "proximity"
           (RawTypedAtom "Proximity" "Proximal"))
@@ -349,6 +349,12 @@ An inline known-row predicate closes implicitly at `Assert`:
   (Assert
     (melbi This)))
 ```
+
+The version-0 lexical row treats `melbi` x3 and x4 as ordinary
+`Referents<Entity>` roles for the conceptual aspect/property and aesthetic
+standard, not as function-valued places. The dictionary's `(ka)` gloss does
+not itself impose a function type, so contextual closure of these roles is
+legal under that row.
 
 The same predicate term prints `Close` once it has identity of its own:
 
@@ -392,7 +398,7 @@ A nondefaultable higher-order gap cannot be silently closed:
 ```lisp
 (Smusni 0
   (Assert
-    (Fallback Content "smusni.close.nondefaultable-place"
+    (Fallback Content "smusni.fallback.close.nondefaultable-place"
       (Object %1 "PredicateTerm"
         (Field "root" (RawAtom "higher-order-root"))))))
 ```
@@ -692,10 +698,9 @@ handler-anchored act fragments are:
 In the first, only beauty is negated. In the second, only beauty is questioned.
 Whiteness is committed once as supplementary content in both cases. A graph
 which represents a genuinely local or conditional supplement names that
-different handler explicitly. A graph which retains the supplement at its body
-position may instead print `(¬ (Supplement (melbi $dog) (blabi $dog)))`;
-section 6.4 projects the same side commitment to the legal force handler while
-negating only the at-issue body.
+different handler explicitly. Canonical output raises a projective supplement
+to the outermost type-correct position inside that handler, so the equivalent
+lower spelling `(¬ (Supplement (melbi $dog) (blabi $dog)))` does not print.
 
 Multiple clauses retain their connector rather than a list of `Relative`
 records:
@@ -923,7 +928,7 @@ quantifier function, scope function, and success identity remain explicit.
 The following is deliberately invalid and therefore falls back:
 
 ```lisp
-(Fallback (Referents Entity) "smusni.witness.before-success"
+(Fallback (Referents Entity) "smusni.fallback.witness.before-success"
   (Object %1 "WitnessRequest"
     (Field "run"
       (Object %2 "QuantifierApplication"))
@@ -977,15 +982,12 @@ Nesting `$dogs` around `$people` or vice versa would impose an order that can
 change generalized-quantifier truth conditions. The biconditionals also make
 this stronger than arbitrary complete-product subset selection: if four dogs
 all like the same two people, the displayed `Exactly 3`/`Exactly 2` content is
-false. A graph which records only equal scope, or which has already lost the
-coequal structure, cannot be repaired heuristically:
-
-```lisp
-(Smusni 0
-  (Assert
-    (Fallback Content "smusni.termset.equal-scope-lost"
-      (Object %1 "OrderedQuantifierNest"))))
-```
+false. A graph which retains one coequal quantifier-bundle locus but lacks the
+verified coordinate-closed profile uses local `Content` fallback with reason
+`smusni.fallback.termset.profile-unverified`, preserving that complete raw
+`Formula` object as in section 20. A graph already elaborated as an ordered
+quantifier nest instead renders that ordinary nesting; the renderer does not
+guess that it was formerly simultaneous.
 
 ## 13. Lambdas, abstractions, and event facets
 
