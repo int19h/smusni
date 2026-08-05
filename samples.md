@@ -1479,12 +1479,42 @@ sharing:
 ```lisp
 (Smusni 0
   (Assert
-    (Fallback Content "smusni.unsupported.quantity-comparison"
-      (Object %1 "QuantityComparison"
-        (Field "left"
-          (Object %2 "Quantity"
-            (Field "kind" (RawAtom "Approximate"))))
-        (Field "right" (Ref %2))))))
+    (=
+      (Fallback Number "smusni.fallback.math.power-unregistered"
+        (Object %1 "MathExpression"
+          (Field "kind"
+            (RawVariant "MathExpressionNodeKind" "Operator"
+              (Field "operator"
+                (RawVariant "MathOperator" "Power"))
+              (Field "operands"
+                (RawList
+                  (Object %2 "MathExpression"
+                    (Field "kind"
+                      (RawVariant "MathExpressionNodeKind" "Literal"
+                        (Field "literal"
+                          (RawRecord "MathLiteral"
+                            (Field "kind"
+                              (RawTypedAtom "MathLiteralKind" "Integer"))
+                            (Field "value"
+                              (RawVariant "MathLiteralValue" "Integer"
+                                (Field "value" (RawScalar "i64" "2"))))))
+                        (Field "denotes" (RawNull))))
+                    (Field "scalarNegation" (RawNull))
+                    (Field "subscript" (RawNull))
+                    (Field "common"
+                      (RawRecord "SemanticObjectCommon"
+                        (Field "source" (RawNull))
+                        (Field "diagnostics" (RawList)))))
+                  (Ref %2)))
+              (Field "operatorDenotes" (RawNull))
+              (Field "endpointInclusion" (RawNull))))
+          (Field "scalarNegation" (RawNull))
+          (Field "subscript" (RawNull))
+          (Field "common"
+            (RawRecord "SemanticObjectCommon"
+              (Field "source" (RawNull))
+              (Field "diagnostics" (RawList))))))
+      4)))
 ```
 
 If the renderer cannot establish a typed performable root, it preserves the
@@ -1492,13 +1522,25 @@ whole graph structurally:
 
 ```lisp
 (Smusni 0
-  (TypedGraph "SemanticGraph"
+  (TypedGraph "SemanticGraph" "smusni.fallback.graph.root-not-performable"
     (Object %1 "SemanticGraph"
+      (Field "version" (RawString "lojban-semantics-json-1"))
       (Field "root"
-        (Object %2 "UnknownRoot"))
+        (Object %2 "Parameter"
+          (Field "sort" (RawVariant "SemanticSort" "Entity"))
+          (Field "role"
+            (RawTypedAtom "ParameterRole" "ArgumentQuestion"))
+          (Field "introducedBy" (RawString "ma"))
+          (Field "subscript" (RawNull))
+          (Field "common"
+            (RawRecord "SemanticObjectCommon"
+              (Field "source" (RawNull))
+              (Field "diagnostics" (RawList))))))
       (Field "objects"
-        (RawList
-          (Ref %2))))))
+        (RawMap
+          (Entry
+            (RawScalar "SemanticObjectId" "parameter:1")
+            (Ref %2)))))))
 ```
 
 Neither document contains a `Warning` node. The corresponding stable diagnostic
