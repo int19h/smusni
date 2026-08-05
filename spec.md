@@ -2894,7 +2894,7 @@ ContextValueRow =
 
 ProjectionDeclarationRow =
   projection-id, semantic-type-id,
-  coordinate-origins: CoordinateOrigin+,
+  coordinate-origins: CoordinateOrigin*,
   serialization-shape, evidence-id
 
 CheckedExclusionRow =
@@ -3017,10 +3017,11 @@ only a more specific argument link, scale, or source reduction uses a
 Independently of table primary keys, every `GeneratedRelationRow.PascalCase-name`
 is globally unique across generated-relation families and disjoint from every
 primitive, transparent-prelude, generated constant, scale, and literal spelling
-in value position. Version 0 has no callable overloading and never uses the
-nonprinting `family` field to resolve one surface atom. The independently closed
-type namespace may still reuse a spelling in a syntactically determined type
-position as specified in section 13.3.
+in value position. Generated relations do not overload and never use the
+nonprinting `family` field to resolve one surface atom. This does not prohibit
+the explicitly enumerated closed primitive overloads in section 14.1. The
+independently closed type namespace may still reuse a spelling in a
+syntactically determined type position as specified in section 14.1.
 
 `SlotRow.label` is a positive original numbered label or `Eventuality`.
 `Contextual` licenses ordinary contextual closure but does not decide the
@@ -3102,13 +3103,18 @@ a manifest input, but the authored rows determine their member set.
 Every `SemanticTypeRow` has exactly one `ProjectionDeclarationRow`, including
 ordinary derived products, sums, aliases, and scalar newtypes. Those ordinary
 shapes use a checked `Structural` declaration rather than an implicit direct
-source path. Every entry in `coordinate-origins` has a distinct
-`semantic-coordinate`, its `projection-id` equals its enclosing row's key, and
-that id is a foreign key. `ProjectionDeclarationRow.semantic-type-id` is also a
-foreign key and is unique, and its complete value set equals the
-`SemanticTypeRow` primary-key set. Specialized declarations merely choose
-another serialization-shape variant; they do not create a second authority for
-the same type.
+source path. A projection declaration for an `Alias` row MUST have an empty
+`coordinate-origins` mapping; every non-`Alias` row MUST have a nonempty mapping.
+The alias's exact expanded target schema and reachability are still scanned and
+validated, but a transparent alias contributes no semantic coordinate and does
+not duplicate its target's coordinates. Every entry in `coordinate-origins`
+has a distinct `semantic-coordinate`, its `projection-id` equals its enclosing
+row's key, and that id is a foreign key. A `semantic-coordinate` is globally
+unique across the `coordinate-origins` entries of all projection declarations.
+`ProjectionDeclarationRow.semantic-type-id` is also a foreign key and is
+unique, and its complete value set equals the `SemanticTypeRow` primary-key set.
+Specialized declarations merely choose another serialization-shape variant;
+they do not create a second authority for the same type.
 
 Fact and target decisions are typed applications, not bare identifiers. Every
 input slot has one of the six disjoint domains above, and every binding names
@@ -3833,9 +3839,11 @@ output expectations:
   named field, tuple payload, custom discriminator, flattened field, and
   successful semantic derived fact is emitted exactly once and classified by
   the exhaustive disposition ledger, while checked exclusions are exact and
-  reasoned; every semantic coordinate's exact nonempty source-origin set and
-  every source origin's exact coordinate fan-out equal the authored
-  `coordinate-origins` mapping;
+  reasoned; aliases alone have empty coordinate-origin mappings and contribute
+  no semantic coordinates, every other semantic type has a nonempty mapping,
+  every semantic coordinate is globally unique and has its exact nonempty
+  source-origin set, and every source origin's exact coordinate fan-out equals
+  the authored `coordinate-origins` mapping;
 - every semantic disposition decision is total, every projection fact has one
   pure generated evaluator, every target contract has one typed implementation,
   every projection algorithm has one generated executor, and authored fact,
@@ -3875,9 +3883,11 @@ Focused registry mutations must independently reject:
   non-discriminator key, discriminator, derived key, or value mapping, or a
   serializer which stops consuming its shared declaration;
 - an unregistered shape-affecting serde/custom-serializer change, duplicate
-  coordinate emission, swapped or otherwise wrong coordinate-to-origin map,
-  wrong reverse origin fan-out, zero-covered reachable origin, unknown/stale
-  origin, or missing/extra projection output;
+  authored coordinate across projection rows, duplicate coordinate emission,
+  swapped or otherwise wrong coordinate-to-origin map, wrong reverse origin
+  fan-out, zero-covered reachable origin, unknown/stale origin, missing/extra
+  projection output, an empty non-alias coordinate mapping, or a nonempty alias
+  coordinate mapping;
 - a missing, duplicate, unjustified, or stale exclusion, or confusion between
   semantic derived facts, notation facts, and algorithm failure sites;
 - an unknown, duplicate, or orphan target, fact, reason, algorithm, projection,
