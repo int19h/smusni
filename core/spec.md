@@ -975,8 +975,8 @@ target — no dedicated operator is needed:
   library's `Holds` (the model-theoretic inverse of `Reify`):
 
   ```lisp
-  (Let ((p (Reify c)))
-    (Supplement p (Close (i-rel Speaker p degree)) (Holds p)))
+  (Let (($p Proposition (Reify c)))
+    (Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p)))
   ```
 
   so anchor, side, and evaluated body all speak of the same content with
@@ -1137,6 +1137,7 @@ must provide for the core to interpret predications over it:
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
 | plurality behavior | optional, per place: how the relation composes with plural arguments (distributive-capable, collective-leaning, neutral) — lexical knowledge, never a covert operator (§4.8) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
+| degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
 | kind admission | whether a place admits kind-like referents (ruling P3) |
 | abstraction sorts | for places selecting abstractions: which sorts (§9), with drift cases adjudicated in the dictionary, not coerced |
 | tag reductions | for tense/modal cmavo: the event-predicate expansion (`pu` → `purci(e, anchor)`, BAI → their gismu relations with the licensed host-event link), consumed by the mapping annex |
@@ -1303,18 +1304,25 @@ standard where marked):
                  (AtLeast θ P Q))
 ```
 
-Gradable predication: a `GradableRel<ρ>` is a lexical relation whose
-entry declares a **degree projection** `deg_R : ρ-subject × Scale →
-Amount` (the lexicon interface's degree field); `Region<Scale>` is the
-sort of scale regions (poles, midpoints, intervals). Then
+Gradable predication: a `GradableRel<ρ,ℓ>` is a lexical relation whose
+entry's **degree field** (§10) declares its graded place `ℓ : Label<ρ>`
+and a degree projection
+
+```text
+deg_R    : Referents<T_ℓ> × Scale → Amount     (T_ℓ the type at place ℓ)
+InRegion : Amount × Region<Scale> → Content
+```
+
+(`Region<Scale>` — poles, midpoints, intervals — declared here for the
+whole document). Then
 
 ```text
 (Grade R s reg) : PredTerm<ρ> ≝
-  (λ (fills…). (∈-region (deg_R subject-of-fills s) reg))
+  (λ (r : Record ρ). (InRegion (deg_R r.ℓ s) reg))
 ```
 
-— the relation holding of its fills exactly when the subject's degree on
-scale `s` lies in region `reg`. No `…` remains in this chapter.
+— the relation holding of a row record exactly when its ℓ-field's degree
+on scale `s` lies in region `reg`. No `…` remains in this chapter.
 
 **Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
 distribution over members (`Distrib` at the use site); maximal base

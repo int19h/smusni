@@ -192,10 +192,10 @@ classes, which no single referent could verify (rationale §1.9).
 ; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
 (Bind (($dog (Referents Entity)
         (Refer (λ (($x (Referents Entity)))
-          (∧ (Close (DescribedBy Speaker $x Audience     ; the le-head:
-               (λ (($y (Referents Entity))) (gerku $y)))) ; "my dog"
-             (Close ((DropPlace DescribedBy 3) Speaker $x ; the voi
-               (λ (($y (Referents Entity))) (blabi $y)))))))))  ; restriction
+          (∧ (DescribedBy Speaker $x Audience             ; the le-head:
+               (λ (($y (Referents Entity))) (gerku $y)))  ; "my dog"
+             ((DropPlace DescribedBy 3) Speaker $x        ; the voi
+               (λ (($y (Referents Entity))) (blabi $y))))))))    ; restriction
   (Assert (Close (jbena $dog))))
 ; the voi conjunct's audience place is DELETED, not omitted — a voi
 ; description has no audience role; the le-head keeps its audience.
@@ -401,10 +401,10 @@ own lexical presupposition, never from `kau`.
   (Close
     (jinvi Speaker
       (Reify
-        (Let ((p (Reify (Close (klama Audience)))))
-          (Supplement p
-            (Close (evidential-basis Speaker p Hearsay))
-            (Holds p)))))))
+        (Let (($p Proposition (Reify (Close (klama Audience)))))
+          (Supplement $p
+            (Close (evidential-basis Speaker $p Hearsay))
+            (Holds $p)))))))
 ; content-level display: the content occurs ONCE, under a pure Reify
 ; shared by Let; Holds evaluates that same proposition object, so the
 ; anchor, the displayed basis, and the evaluated body all carry one set
