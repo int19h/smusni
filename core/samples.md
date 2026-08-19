@@ -87,7 +87,9 @@ joining operator is retired):
 (Assert
   (∃ (λ (($e (Referents Eventuality)))
     (∧ (Close (klama Speaker This :Eventuality $e))
-       (Close (pilno :2 This :Eventuality $e))))))
+       (Close (pilno :2 This :3 $e))))))
+; the host event fills pilno x3 (purpose) — the tag row's licensed link
+; per the official row: x1 uses x2 for purpose x3.
 ```
 
 Contrast (`nai` on the tag): `mi klama ti sepi'onai ti` negates only the
@@ -151,7 +153,7 @@ flag.
 ```
 
 ```lisp
-; lo'i gerku — a set object, via selcmi with plural x2   [pin P5]
+; lo'i gerku — a set object via selcmi (xorxes' lujvo: x2 = members) [P5]
 (Bind (($base (Referents Entity)
         (MaxRefer (λ (($x Entity)) (gerku $x)))))   ; the maximal base:
                                                     ; THE dogs, not some

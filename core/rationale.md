@@ -356,9 +356,13 @@ answer, which emotion `.uinai` names, how `bevri` composes with plural
 carriers. A definition that inlined all of this would be a dictionary; one
 that ignored it would be unusable. The core's answer is a typed interface
 (spec §10): the *schema* of lexical knowledge is normative, its *content*
-is curated data. One entry is legislated outright because the inherited gloss is
-defective: `gunma`/`selcmi` x2 as plural (CLL's set-of-sets gloss is
-unusable). The `le`-description relation (`DescribedBy`) is legislated on
+is curated data. No collection entry needed legislating after all — the sweep showed
+official `gunma` x2 is already the components and `selcmi` (a xorxes
+lujvo; there is no CLL gloss) already takes its members as x2; both are
+adopted with plural-reference x2. The defective gloss in this area is
+official `cmima`'s x2-as-set, which the library simply avoids. (An
+earlier draft claimed a self-referential `selcmi` gloss needed repair —
+the fourth unverified claim caught in this family; withdrawn.) The `le`-description relation (`DescribedBy`) is legislated on
 different, weaker grounds, and the record here corrects an earlier
 version of this paragraph: `skicu`'s official x4 **is** a description
 property — "x1 tells about/describes x2 to audience x3 with description

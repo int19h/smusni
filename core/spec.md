@@ -11,8 +11,9 @@ core represents that vagueness with typed machinery; where CLL is merely
 underspecified — vague by accident rather than by design — this document
 pins an interpretation and records the pin as a numbered ruling. The
 baseline for gadri and quantification is xorlo
-(<https://mw.lojban.org/papri/How_to_use_xorlo>); CLL's pre-xorlo gadri
-semantics is superseded where they conflict.
+(<https://mw.lojban.org/papri/How_to_use_xorlo>) — which this project's
+CLL edition itself ratifies in-text (CLL 6.2) — and pre-xorlo gadri
+semantics is superseded where older texts conflict.
 
 The intended audience of this document is a reader comfortable with formal
 semantics: typed lambda calculi, generalized quantifiers, dynamic semantics,
@@ -815,7 +816,7 @@ The normative classification:
 | vague-quantity thresholds (`so'i`, `so'e`, …; `ji'i` tolerance) | `Vague` | sorites: no fact fixes the boundary |
 | `du'e` / `mo'a` / `rau` | `Vague` threshold **constrained by** a `Context` standard/purpose | two parameters; the purpose is recoverable, the boundary is not |
 | `na'i`'s defect dimension | `Context` | the hearer is expected to see what is defective |
-| bare `jai` (no FAI tag) | `Vague` | an unspecified involvement of the promoted argument in the host relation's event — the `tu'a` pattern at relation level (CLL 9.12); tagged `jai` promotes an explicit role and is exact (library expansion) |
+| bare `jai` (no tag) | `Vague` | raises a participant out of the abstraction filling the host's x1 (the abstraction moves to `fai`); *which role* the raised argument plays there is the vague dimension — `tu'a`'s raising inverted (CLL 9.12, 11.10); `jai`+tag specifies the role and is exact (library expansion) |
 | tenselessness; bare-`kau` exhaustivity; unmarked distributivity | **absence** | no hole, no parameter (P8, P9, P4) |
 
 ### 6.2 Tanru
@@ -854,8 +855,9 @@ within the scale/set), `Opposite` the antipodal region, `Neutral` the
 midpoint region (excluding both extremes). Scalar negation is therefore
 *stronger* than `¬`, not weaker: `ta na'e melbi` denies beauty and
 asserts a contextually admissible alternative aesthetic standing. The
-same former serves as the documented *fallback* for indicator polarity
-where the lexicon lists no `nai`-pair (§7.6).
+`Opposite` operator doubles as the documented fallback for indicator
+polarity where the lexicon names no `nai`-pole (§7.6; CLL 15.7 applies
+scalar negation's opposite-end rule to indicators).
 
 ### 6.4 Gradable predication and vague quantities
 
@@ -1034,11 +1036,14 @@ names. Each indicator's lexicon entry (§10) provides:
   all other modifiers compose over the *pair* in surface order — `.uinai
   cai` is intense unhappiness (degree selects the pair's scale region),
   `dai` shifts the pair's experiencer, `cu'i` selects the neutral region
-  of whatever relation it reaches. Where no pair is listed, the documented
-  fallback composes `Scalar OtherThan` over the relation — weaker
-  semantics (other-than-this-stance, naming no polar stance), so lexicon
-  review prefers declaring pairs. Every grammatical `nai` attachment thus
-  has a denotation, by pairing or fallback, exhaustively and exclusively.
+  of whatever relation it reaches. CLL's own mechanism (13.4, 15.7,
+  13.8) is polar: `nai` refers the indicator to the **opposite end of
+  its scale**, and the pair lexeme is the lexicon *naming* that pole
+  (`.uinai` = unhappiness). Where no pair is listed, the documented
+  fallback is therefore `Scalar Opposite` over the relation — the
+  antipode, exactly CLL's rule — and lexicon review prefers naming the
+  pole. Every grammatical `nai` attachment thus has a denotation, by
+  named pole or antipode, exhaustively and exclusively.
   The pair carries its own host-force profile, inheriting the entry's
   profile family where it declares none; `nai` never flips a host-force
   profile;
@@ -1183,9 +1188,13 @@ must provide for the core to interpret predications over it:
 | tag reductions | for tense/modal cmavo: the event-predicate expansion (`pu` → `purci(e, anchor)`, BAI → their gismu relations with the licensed host-event link), consumed by the mapping annex |
 | indicator entries | for UI: relation, roles, degree place, `nai`-pair (with `Scalar OtherThan` fallback where unpaired), host-force profile, evidential basis-kind where applicable (§7.6) |
 
-Two legislated entries (rulings carried into the lexicon): `gunma` and
-`selcmi` take **plural x2** (components/members as a plural reference —
-repairing CLL's self-referential `selcmi` gloss); the `le`-description
+Adopted collection entries (P5): official `gunma` already takes its
+components as x2, and `selcmi` — a community lujvo (xorxes), not a CLL
+gloss — already takes its members as x2; both are adopted with plural
+x2 read as plural references. (The genuine defect in this area is
+official `cmima`'s x2 being glossed as a *set*; the library avoids
+`cmima`, and the lexicon program may propose broadening its x2.) The
+`le`-description
 relation is a dedicated entry `DescribedBy⟨describer, described, audience,
 property⟩`. (Official `skicu` x4 is itself a description property, so a
 `skicu`-based lowering is expressively adequate; the sole remaining
@@ -1248,7 +1257,8 @@ existentially unless shared explicitly. Tense/aspect/spatial cmavo and BAI
 → event-predicate conjuncts per the lexicon's tag reductions, joined by
 `∧` at the tag locus; tense chains (`pu pu`) compose as anchor paths.
 Tenseless bridi → no temporal conjunct. ⊳ `ki` stickiness propagates
-resolved tense by source order. CAhA: `ka'e` → the library's capability
+resolved tense by source order; ⊳ story time (CLL 10.14) supplies
+narrative sequencing as reading inference, not semantics. CAhA: `ka'e` → the library's capability
 schema; `ca'a` → `fasnu` actuality conjunct. ZAhO → boundary relations per
 lexicon rows (gap-registered until filled). `fi'o P` → `P` as tag with the
 lexicon's host-event link.
@@ -1265,9 +1275,10 @@ place, counting converted places; P12); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`
 the abstraction relations with reference outside; `mo'e` → the
 `AmountValue` numeric crossing; `tu'a X` → `Vague` abstraction
 constrained by shape + `srana`-aboutness, **sort selected by the host
-place** (an event place gets an event-sorted abstraction); tagged `jai` →
-explicit role promotion (library expansion over the host row); bare
-`jai` → `Vague` involvement (§6.1); `la'e`/`lu'e` → interpretation /
+place** (an event place gets an event-sorted abstraction); `jai`+tag →
+explicit role promotion, old x1 to the fillable `fai` place (library
+expansion); bare `jai` → participant raising out of the abstraction-x1
+with the role `Vague` (§6.1); `la'e`/`lu'e` → interpretation /
 sign-of crossings.
 
 **Questions and answers** (§8, P9). `xu` → `Polar`; `ma`/`mo`/`fi'a`/
@@ -1435,12 +1446,14 @@ capability worlds, §5.1); `(nu'o b P)` ≝ `(∧ (InnatelyCapable b P)
 event place and promoted role ℓ,
 
 ```text
-(JaiPromote R ℓ) : PredTerm<ρ[ℓ→x1]> ≝
-  (λ (x, remaining-fills…).
-    (∃ (λ e. (R remaining-fills… :ℓ x :Eventuality e))))
+(JaiPromote R ℓ) : PredTerm<ρ[ℓ→x1, x1→fai]> ≝
+  (λ (x, fills… incl. optional :fai v).
+    (R fills… :x1 v-or-closure :ℓ x))
 ```
 
-per the lexicon's promotion row; bare `jai` per §6.1.
+— the promoted role becomes x1 and the old x1 becomes the labelled,
+*fillable* `fai` place (closing contextually like any place when
+unfilled — CLL 9.12); bare `jai` per §6.1.
 
 **Acts and discourse:** discourse relations `Contrast`, `Addition`,
 `Parallel`, `Elaboration` — lexical relations over two act values,
@@ -1489,16 +1502,20 @@ vagueness is never pinned; it is classified in §6.1.)
 - **P4** No distributivity default and **no covert cover parameter**;
   neutral plural predication is the resolved reading; marked readings are
   explicit; lexical plurality behavior lives in the lexicon.
-- **P5** `loi`/`lo'i` denote group/set objects via `gunma`/`selcmi` with
-  plural x2 (legislated); inner PA = group/set size, outer PA counts
-  groups/sets.
+- **P5** `loi`/`lo'i` denote group/set objects via `gunma`/`selcmi`,
+  whose x2s (official components; xorxes' members) are read as plural
+  references; inner PA = group/set size, outer PA counts groups/sets.
+  (`cmima` x2-as-set is the one defective gloss nearby; avoided.)
 - **P6** Donkey configurations normalize to joint multi-parameter loci;
   dynamic accessibility includes restrictor introductions; CLL 7.6
   counting is the mapping discipline over accessible referents.
 - **P7** `noi` is projective supplement, anchored; dependent supplements
   commit per instantiation inside their binder.
-- **P8** Tenseless bridi carry no temporal predication; `ki` is
-  text-to-reading stickiness.
+- **P8** Tenseless bridi carry no temporal predication (CLL 10.1: "All
+  tense information is optional"); `ki` is text-to-reading stickiness,
+  and so is **story time** (CLL 10.14): the narrative convention reading
+  tenseless sentences as "what happens next" is a text-to-reading
+  inference, never a semantic default.
 - **P9** Bare `kau`: answerhood with exhaustivity **absent** — weakest
   truth conditions; strengthenings lexical/pragmatic/explicit. (Absence,
   not `Vague`: Lojban has no grammatical precisification route.)
@@ -1532,8 +1549,9 @@ vagueness is never pinned; it is classified in §6.1.)
   with every dog biting each man, and says nothing stronger; the
   coordinate-closed profile is a named strengthening; referential members
   need no termset semantics at all. The bare-PA half is a **documented
-  divergence from CLL's letter**: ch. 16 §6 glosses bare numeric
-  quantification globally ("exactly two, no more or less"), and this
+  divergence from CLL's letter**: ch. 16 §6 (Example 16.34) glosses bare
+  numeric quantification globally ("exactly two things, no more or
+  less"), and this
   specification pins witness-set exactness instead (§4.10) — the
   xorlo-era reading that composes with witness export and termsets — with
   the CLL-literal reading available as `GlobalExactly`.
