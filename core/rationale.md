@@ -213,7 +213,7 @@ little longer; uniformity pays for it.
 **Job.** Force, quotation, and reported speech. **Witnesses.** One content
 under four forces (`do klama` / `xu` / `ko` / displayed); `mi cusku lu ko
 klama li'u` (a directive described, not issued — construction ≠
-performance); `lo'u mi du do le'u` (quoting the unparseable — signs carry
+performance); `lo'u mi do du le'u` (quoting the unparseable — signs carry
 text, not meaning); `la'e lu mi klama li'u` (a sign and what it expresses
 are different things, and Lojban crosses between them explicitly).
 **Why opaque quotation boundaries?** Anaphora and presupposition must not
@@ -229,7 +229,7 @@ independently witnessed.
 lexical); `.uinai cai` (intense *unhappiness* — `nai` selects the paired
 emotion, then degree applies: pairing must precede degree, so pairing is
 lexical, with `Scalar OtherThan` only as documented fallback); `mi jinvi
-lo du'u do ti'e klama` (hearsay marked on *embedded* content — so
+lo du'u ti'e do klama` (hearsay marked on *embedded* content — so
 evidentials cannot be an operand on assertion force; they are targeted
 display whose force-grounding effect fires when the target is the
 enclosing act's content); `pei` (attitudes are questionable — so they are

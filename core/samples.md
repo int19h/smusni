@@ -116,9 +116,9 @@ default present (pin P8).
 ```
 
 Pinned reading: a new referent — one or more real cats, number-neutral,
-no quantifier. Contrast: `su'o mlatu cu blabi` quantifies and its witness
-quantifies (though its selected witness stays referable — §5 below);
-`lo` introduces with no quantificational force at all.
+no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (though its
+selected witness stays referable — §5 below); `lo` introduces with no
+quantificational force at all.
 
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
@@ -154,7 +154,8 @@ whose x4 is a medium of expression, not a property (rationale §2.6).
         (MaxRefer (λ (($x Entity)) (gerku $x)))))   ; the maximal base:
                                                     ; THE dogs, not some
   (Bind (($sets (Referents (Set Entity))
-          (Refer (λ (($s (Referents (Set Entity)))) (Close (selcmi $s $base)))))))
+          (Refer (λ (($s (Referents (Set Entity))))
+            (Close (selcmi $s $base))))))
     (Mention $sets)))
 ```
 
@@ -188,11 +189,24 @@ classes, which no single referent could verify (rationale §1.9).
 ```
 
 ```lisp
+; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
+(Bind (($dog (Referents Entity)
+        (Refer (λ (($x (Referents Entity)))
+          (Close ((DropPlace DescribedBy 3) Speaker $x
+            (λ (($y (Referents Entity))) (blabi $y))))))))
+  (Assert (Close (jbena $dog))))
+; the audience place is DELETED, not omitted — voi's description has no
+; audience role. Three-way contrast: poi (veridical restriction, in the
+; property), noi (projective supplement, below), voi (non-veridical
+; restriction through the describer).
+```
+
+```lisp
 ; lo gerku noi blabi cu na melbi     [pin P7]
 (Bind (($dog (Referents Entity)
         (Refer (λ (($x (Referents Entity))) (gerku $x)))))
   (Assert
-    (Supplement $dog (blabi $dog)
+    (Supplement $dog (Close (blabi $dog))
       (¬ (Close (melbi $dog))))))
 ```
 
@@ -358,7 +372,7 @@ own lexical presupposition, never from `kau`.
 ; .ui do klama — pure emotion: host asserted, joy displayed
 (Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
   (Do (Perform $a)
-      (Express (Display (happiness Speaker Moderate) $a))))
+      (Express (Close (happiness Speaker $a Moderate)))))
 
 ; .au mi sipna — propositional attitude: host subordinated  [R6]
 (Express (Close (desire Speaker (Reify (Close (sipna Speaker))))))
@@ -367,32 +381,34 @@ own lexical presupposition, never from `kau`.
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
 (Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
   (Do (Perform $a)
-      (Express (Display (unhappiness Speaker Intense) $a))))
+      (Express (Close (unhappiness Speaker $a Intense)))))
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [R5]
 (Let (($a (Act Assertion) (Assert (Close (cadzu Audience)))))
   (Do (Perform $a)
-      (Express (Display (evidential-basis Speaker Observation) $a))))
-; the display's target is the performed act's content, so the family
+      (Express (Close (evidential-basis Speaker $a Observation)))))
+; act-level display: an Express beside the bound host act; the family
 ; force clause grounds the assertion (a mode of commitment);
 ; na za'a do cadzu negates the walking, never the basis.
 
 ; mi jinvi lo du'u ti'e do klama — evidential on embedded content
-(Let (($c Content (Close (klama Audience))))
-  (Assert
-    (Close
-      (jinvi Speaker
-        (Reify
-          (Supplement $c
-            (Display (evidential-basis Speaker Hearsay) $c)
-            $c))))))
-; at content level Display reduces to an anchored Supplement, so the
-; hearsay display rides the embedded claim projectively — the reason
-; evidentials are targeted display, not an operand on assertion force.
-; (ti'e placed after du'u, targeting the abstraction's content, per the
-; CLL attachment rule.)
+(Assert
+  (Close
+    (jinvi Speaker
+      (Reify
+        (Supplement (Reify (Close (klama Audience)))
+          (Close (evidential-basis Speaker
+                   (Reify (Close (klama Audience))) Hearsay))
+          (Close (klama Audience)))))))
+; content-level display: a Supplement anchored at the reified content
+; (Reify is pure — repeating it names the same object; the content
+; itself is evaluated once, in body position), so the hearsay display
+; rides the embedded claim projectively — the reason evidentials are
+; targeted display, not an operand on assertion force. (ti'e placed
+; after du'u, targeting the abstraction's content, per the CLL
+; attachment rule.)
 ```
 
 ```lisp
@@ -429,11 +445,13 @@ own lexical presupposition, never from `kau`.
 ```
 
 ```lisp
-; ti na'e melbi — scalar otherness            [spec §6.3]
-(Assert (Close ((Scalar OtherThan melbi) This)))
+; ta na'e melbi — scalar otherness            [spec §6.3]
+(Assert (Close ((Scalar OtherThan melbi) That)))
 ; scale dimension: Context; region boundary: Vague.
-; does NOT entail ¬(melbi ti) — that exclusion is implicature;
-; to'e (Opposite) does entail it.
+; DENIES beauty AND asserts an admissible alternative standing on the
+; recovered scale (CLL 15.4: a selbri negation "remains an assertion of
+; some specific truth") — stronger than na, not weaker; to'e asserts
+; the antipode, no'e the midpoint.
 ```
 
 ```lisp
@@ -443,8 +461,8 @@ own lexical presupposition, never from `kau`.
   (Bind (($a (Referents Eventuality)          ; sort from djica's x2
           (Vague (λ (($v (Referents Eventuality)))
             (∧ (∃ (λ (($c Content))
-                 (= $v (EventOfContent $c)))) ; shape: an abstraction
-               (Close (srana $v $book)))))))  ; ... about the book
+                 (CoRef $v (EventOfContent $c)))) ; shape: an abstraction
+               (Close (srana $v $book)))))))      ; ... about the book
     (Assert (Close (djica Speaker $a)))))
 ```
 
@@ -484,10 +502,16 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; lo du'u mi klama cu se djuno do
 (Bind (($p (Referents Proposition)
         (Refer (λ (($q (Referents Proposition)))
-          (= $q (Reify (Close (klama Speaker))))))))
+          (CoRef $q (Reify (Close (klama Speaker))))))))
   (Assert (Close (djuno Audience $p))))
-; (= here at the Proposition sort via the singleton lift; se du'u — the
-; expressing sentence — goes through the derived DuhuRel x2, spec §9.2.)
+; CoRef (library) is plural co-reference — mutual Among — since typed =
+; stays first-order; Reify is pure and lifts to a singleton reference.
+
+; le se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
+(Bind (($s (Referents (Sign Sentence))
+        (Refer (λ (($x (Referents (Sign Sentence))))
+          (Close ((DuhuRel (Close (klama Speaker))) :2 $x))))))
+  (Mention $s))
 
 ; lo ni mi klama — an abstraction relation, reference outside  [R2]
 (Bind (($a (Referents Amount)
@@ -540,6 +564,15 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; contrast: me'o re te'a ci mentions the EXPRESSION sign, not 8:
 ; (Mention (Sign (($s (SignToken MathExpression))) (TextOf $s "re te'a ci")))
 
+; li pa vu'u mo'e le ni mi klama — the numeric crossing (CLL 11.5)
+(Bind (($amt (Referents Amount)
+        (Refer (λ (($a (Referents Amount)))
+          (Close ((NiRel (Close (klama Speaker))) $a))))))
+  (Bind (($scale (Referents Scale) (Context)))
+    (Mention (− 1 (AmountValue $amt $scale)))))
+; mo'e = AmountValue: the amount's numeric value on its scale, usable
+; in arithmetic; fuzzy jei runs through TruthValueDegree likewise.
+
 ; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
 (Bind (($bob (Referents Entity)
         (Refer (λ (($x (Referents Entity))) (Named "bab" $x)))))
@@ -566,7 +599,7 @@ The recovery test draws this line: `co'e` expects the hearer to recover
       (Perform $a1))
     (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs)))))
       (Do (Perform $a2)
-          (Express (Display (unhappiness Speaker Intense) $a2))))))
+          (Express (Close (unhappiness Speaker $a2 Intense)))))))
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its

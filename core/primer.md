@@ -307,7 +307,7 @@ a degree on an intensity scale — displayed alongside its host:
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
 (Let (($a (Act Assertion) (Assert (Close (tatpi $dogs)))))
   (Do (Perform $a)
-      (Express (Display (unhappiness Speaker Intense) $a))))
+      (Express (Close (unhappiness Speaker $a Intense)))))
 ```
 
 Note the three moving parts, all decided by rulings you can look up:
@@ -327,7 +327,7 @@ Two special indicator families:
 - **Evidentials**: `za'a do cadzu` — "I see you're walking" — the `za'a`
   gives the *basis* of the claim (observation), and negating the sentence
   negates the walking, never the basis. Deeper embeddings work too:
-  `mi jinvi lo du'u do ti'e klama` marks hearsay on the *embedded*
+  `mi jinvi lo du'u ti'e do klama` marks hearsay on the *embedded*
   content. That's why the core treats evidentials as targeted display
   rather than as a feature of assertion.
 
