@@ -356,11 +356,23 @@ answer, which emotion `.uinai` names, how `bevri` composes with plural
 carriers. A definition that inlined all of this would be a dictionary; one
 that ignored it would be unusable. The core's answer is a typed interface
 (spec §10): the *schema* of lexical knowledge is normative, its *content*
-is curated data. Two entries are legislated outright because the
-inherited glosses are defective: `gunma`/`selcmi` x2 as plural
-(CLL's set-of-sets gloss is unusable), and `le`'s description relation as
-dedicated (`DescribedBy`), because the traditional `skicu` paraphrase
-misuses that word's x4 — a medium place, not a property place.
+is curated data. One entry is legislated outright because the inherited gloss is
+defective: `gunma`/`selcmi` x2 as plural (CLL's set-of-sets gloss is
+unusable). The `le`-description relation (`DescribedBy`) is legislated on
+different, weaker grounds, and the record here corrects an earlier
+version of this paragraph: `skicu`'s official x4 **is** a description
+property — "x1 tells about/describes x2 to audience x3 with description
+x4 (property)" — so the once-claimed place misuse never existed, and a
+`skicu`-based `le` (the property applied to x2 by `skicu`'s own
+definition) is expressively adequate. The dedicated relation stands on
+two considerations only: `skicu` denotes an *act* of describing, so a
+`skicu`-based lowering must anchor its event performatively to the
+current utterance ("the one I hereby describe as…") — coherent in this
+core's machinery, at the cost of utterance-reflexive reference
+properties on every `le`; and a closed-class gadri's semantics arguably
+should not depend on an open-class dictionary entry. Both are
+contestable, and the self-hosting alternative is a live option flagged
+at pin P10.
 
 ### 2.7 Alternatives shaped like implementations
 
@@ -422,9 +434,16 @@ genuinely fought:
   and stronger readings come from the embedding predicate's lexical
   presuppositions or explicit markers. The parallel with tenselessness
   and distributivity is exact, and deliberate.
-- **P10 (`le`).** The `skicu` x4 misuse was caught in panel review; the
-  dedicated relation also cleanly hosts `voi` (restrictive
-  non-veridical) by audience-deletion.
+- **P10 (`le`).** *Corrected post-review:* the panel's claim that the
+  traditional `skicu` analysis misused a "medium" x4 was false —
+  official `skicu` x4 is a description property, and the owner-raised
+  check exposed the error. The dedicated `DescribedBy` relation
+  therefore rests only on the act-vs-identification consideration
+  (`skicu` describes a telling event; a `skicu`-based `le` needs
+  performative anchoring to the utterance) and on definitional
+  ownership of a closed-class meaning; it still cleanly hosts `voi` by
+  audience-deletion, but the `skicu`-based self-hosting analysis is
+  rehabilitated as a live alternative for review (§2.6).
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual

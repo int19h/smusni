@@ -138,8 +138,10 @@ quantificational force at all.
 
 Pinned reading: reference through the speaker's identifying description —
 non-veridical (the "cat" may be a raccoon), speaker-specific. The
-dedicated `DescribedBy` relation replaces older `skicu`-based spellings,
-whose x4 is a medium of expression, not a property (rationale §2.6).
+dedicated `DescribedBy` relation replaces older `skicu`-based spellings
+on act-vs-identification grounds, not place structure — official `skicu`
+x4 is itself a description property; see rationale §2.6 and the P10
+flag.
 
 ```lisp
 ; la .alis. klama

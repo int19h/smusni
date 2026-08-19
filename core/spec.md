@@ -1147,7 +1147,12 @@ Two legislated entries (rulings carried into the lexicon): `gunma` and
 `selcmi` take **plural x2** (components/members as a plural reference —
 repairing CLL's self-referential `selcmi` gloss); the `le`-description
 relation is a dedicated entry `DescribedBy⟨describer, described, audience,
-property⟩` — **not** `skicu`, whose x4 is a medium of expression. `voi`
+property⟩`. (Official `skicu` x4 is itself a description property, so a
+`skicu`-based lowering is expressively adequate; the dedicated entry is
+chosen because `skicu` denotes a describing *event* — a `skicu`-based
+`le` would need performative anchoring to the current utterance — and to
+keep a closed-class meaning independent of an open-class dictionary
+entry. See the rationale; the alternative is flagged at P10.) `voi`
 uses the audience-deleted variant `(DropPlace DescribedBy 3) :
 ⟨describer, described, property⟩` restrictively — the deletion is
 semantic (no audience role exists in a `voi` description), per pin P10.
@@ -1456,7 +1461,12 @@ vagueness is never pinned; it is classified in §6.1.)
   truth conditions; strengthenings lexical/pragmatic/explicit. (Absence,
   not `Vague`: Lojban has no grammatical precisification route.)
 - **P10** `le` via the dedicated `DescribedBy` relation — speaker-indexed,
-  non-veridical, number-neutral; `voi` restrictive variant; not `skicu`.
+  non-veridical, number-neutral; `voi` restrictive variant. *(Flagged
+  for review: the once-claimed `skicu` x4 place-misuse was false —
+  official x4 is a description property — so the dedicated relation
+  stands only on act-vs-identification and definitional-ownership
+  grounds, and a performatively anchored `skicu`-based analysis is a
+  live alternative; §10, rationale §2.6.)*
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
 - **P12** Implicit `ce'u`: exactly one, first unfilled place, counting
