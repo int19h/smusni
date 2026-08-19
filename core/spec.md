@@ -50,7 +50,47 @@ This is the same architecture Eberban's "from scratch" chapter demonstrates:
 a deliberately small logical core, with the practical vocabulary
 reconstructed over it as definitions.
 
-### 1.2 Resolved readings
+### 1.2 Sources, compatibility, and the two programs
+
+**Guides, not authorities.** This specification is the normative
+definition; its sources are interpretations that *guide* it. That
+includes CLL itself — which has well-known internal inconsistencies —
+the official dictionary, the xorlo baseline, guskant's gadri commentary
+("gadri: an unofficial commentary from a logical point of view"), and
+Brismu's relational interpretation. Where the guides conflict or fall
+silent, this document decides, and records the decision as a pin.
+
+**The compatibility principle.** A speaker who does not know or care
+about formal semantics but already speaks CLL Lojban in practice must
+not have the rug pulled from under them: this document defines *Lojban*,
+not a successor language. Some backwards incompatibility is unavoidable —
+no coherent definition can cover every interpretation in circulation —
+but a deviation from established reading or practice is acceptable only
+when strongly motivated: it resolves a contradiction, or it buys a
+substantially simpler model where the alternative is convoluted for no
+real gain. Gratuitous deviation is a defect. Every deviation is a pin
+that names its motivation against this principle.
+
+**The lexicon program.** The wider project includes a revision of the
+official gismu list to give entries defined semantics. This
+specification may therefore *propose* redefinitions of existing words —
+marked as proposals with exact wording, decided by the project's human
+committee, never silently applied — where an existing word is almost
+right and a minor diff unlikely to affect real usage would make it
+exactly right.
+
+**The content-word program.** The end state has **only content words as
+predicates**: every PascalCase operator in this document is a
+placeholder for a future content word (an existing gismu/lujvo where one
+fits, a proposed redefinition where one almost fits, a new coinage
+otherwise), each carrying a predicate-style definition and a see-also
+note explaining why nearby existing words do or do not serve. The
+PascalCase convention persists in the notation as those placeholders.
+How far this program reaches — whether even the binding and force
+vocabulary reduces to content words over first-class signs — is under
+active design; the placeholder doctrine holds regardless.
+
+### 1.3 Resolved readings
 
 The core denotes **resolved readings**. Processes that turn a text into a
 reading — anaphora resolution (which antecedent `ri` takes), erasure
@@ -65,7 +105,7 @@ accessible antecedent, an unassigned assignable with no discourse key) has
 no resolved reading; that is a statement about the mapping, not an error
 object in the semantics.
 
-### 1.3 Three ways not to be specific
+### 1.4 Three ways not to be specific
 
 The single most load-bearing distinction in this document is between three
 things a meaning can do short of full specificity. They are distinct term
@@ -96,7 +136,7 @@ covert operator. Where a dimension is absent, the truth conditions are
 those of the weakest reading, and strengthenings enter only lexically,
 pragmatically, or by explicit marking. (Rulings P8, P9, P4.)
 
-### 1.4 Ambiguity is upstream
+### 1.5 Ambiguity is upstream
 
 Grammatical ambiguity — a text with several parses, or a parse with several
 resolutions — yields several resolved readings, each a distinct core term.
@@ -108,7 +148,7 @@ construction's readings genuinely differ — e.g. implicit `ce'u` with
 several unfilled places — the mapping annex says "distinct readings," never
 "contextual vagueness"; ruling P12.)
 
-### 1.5 Well-formedness, not failure
+### 1.6 Well-formedness, not failure
 
 The core is defined by formation rules and typing judgments. An ill-typed
 combination is not a term; a construction whose side conditions fail (e.g.
@@ -118,7 +158,7 @@ model. Meanings this core deliberately does not analyze are listed in the
 gap register (§14) with the reason no analysis is assigned; a gap is a
 statement about this specification, not a runtime event.
 
-### 1.6 Two truth values
+### 1.7 Two truth values
 
 At-issue content is two-valued. Partiality (undefined operations,
 presupposition failure) is handled by the projective machinery (§5.5): a
@@ -564,7 +604,7 @@ cross-sentence reference).
 
 ### 5.3 The specificity triad
 
-Three primitive computations answer §1.3:
+Three primitive computations answer §1.4:
 
 - `(Refer P) : RefComp<Referents<T>>`, for `P` a property of references —
   introduces a **new discourse referent**: a nonempty, number-neutral
@@ -615,7 +655,7 @@ binders (§7.4).
 at the nearest boundary that can commit it (accommodating contexts may add
 it), and it survives `¬`, `∨`, `→`, and question force. It is the
 mechanism of quantifier import (ruling P2), definedness of partial
-operations (§1.6), and lexically triggered presuppositions.
+operations (§1.7), and lexically triggered presuppositions.
 
 `(Supplement anchor side body)` contributes `side` as a **non-at-issue
 commitment about `anchor`** while the at-issue value is `body`'s. The side
@@ -757,7 +797,7 @@ construct in Lojban:
 > construct is `Context`. If the speaker waives specificity, so that
 > recovery yields at most an admissible family with no fact of the matter
 > selecting a member, it is `Vague`. If the meaning simply lacks the
-> dimension, it is **absence** (§1.3) and gets no machinery at all.
+> dimension, it is **absence** (§1.4) and gets no machinery at all.
 
 The normative classification:
 
@@ -879,7 +919,7 @@ in any way not stated here:
   a precisification says so explicitly, with a library precisification
   constant or an exact value — and the commitment must itself pass the
   recovery test. Absence of commitment is `Vague`; absence of the
-  dimension is nothing at all (§1.3); the two are never conflated.
+  dimension is nothing at all (§1.4); the two are never conflated.
 
 ## 7. Speech acts and discourse
 
@@ -1148,11 +1188,13 @@ Two legislated entries (rulings carried into the lexicon): `gunma` and
 repairing CLL's self-referential `selcmi` gloss); the `le`-description
 relation is a dedicated entry `DescribedBy⟨describer, described, audience,
 property⟩`. (Official `skicu` x4 is itself a description property, so a
-`skicu`-based lowering is expressively adequate; the dedicated entry is
-chosen because `skicu` denotes a describing *event* — a `skicu`-based
-`le` would need performative anchoring to the current utterance — and to
-keep a closed-class meaning independent of an open-class dictionary
-entry. See the rationale; the alternative is flagged at P10.) `voi`
+`skicu`-based lowering is expressively adequate; the sole remaining
+ground for the dedicated entry is that `skicu` denotes a describing
+*event*, so a `skicu`-based `le` needs performative anchoring to the
+current utterance. Under the lexicon and content-word programs (§1.2)
+`DescribedBy` is in any case a placeholder — the natural candidates
+being `skicu` with an anchoring clarification, or a proposed refinement
+of it — flagged at P10 for committee decision.) `voi`
 uses the audience-deleted variant `(DropPlace DescribedBy 3) :
 ⟨describer, described, property⟩` restrictively — the deletion is
 semantic (no audience role exists in a `voi` description), per pin P10.
@@ -1463,10 +1505,14 @@ vagueness is never pinned; it is classified in §6.1.)
 - **P10** `le` via the dedicated `DescribedBy` relation — speaker-indexed,
   non-veridical, number-neutral; `voi` restrictive variant. *(Flagged
   for review: the once-claimed `skicu` x4 place-misuse was false —
-  official x4 is a description property — so the dedicated relation
-  stands only on act-vs-identification and definitional-ownership
-  grounds, and a performatively anchored `skicu`-based analysis is a
-  live alternative; §10, rationale §2.6.)*
+  official x4 is a description property — and the definitional-ownership
+  ground is void under the lexicon program (§1.2), leaving only
+  act-vs-identification: `skicu` names a describing event, so a
+  `skicu`-based `le` needs performative anchoring to the utterance.
+  `DescribedBy` is a content-word-program placeholder; the
+  performatively anchored `skicu` analysis, possibly via a proposed
+  clarifying redefinition, is the natural candidate — committee
+  decision; §10, rationale §2.6.)*
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
 - **P12** Implicit `ce'u`: exactly one, first unfilled place, counting

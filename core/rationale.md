@@ -365,14 +365,19 @@ property — "x1 tells about/describes x2 to audience x3 with description
 x4 (property)" — so the once-claimed place misuse never existed, and a
 `skicu`-based `le` (the property applied to x2 by `skicu`'s own
 definition) is expressively adequate. The dedicated relation stands on
-two considerations only: `skicu` denotes an *act* of describing, so a
+one consideration only: `skicu` denotes an *act* of describing, so a
 `skicu`-based lowering must anchor its event performatively to the
 current utterance ("the one I hereby describe as…") — coherent in this
 core's machinery, at the cost of utterance-reflexive reference
-properties on every `le`; and a closed-class gadri's semantics arguably
-should not depend on an open-class dictionary entry. Both are
-contestable, and the self-hosting alternative is a live option flagged
-at pin P10.
+properties on every `le`. (An earlier draft added a definitional-
+ownership ground — that closed-class semantics should not depend on an
+open-class entry; the owner struck it: the project's lexicon program
+revises the gismu list precisely to give entries defined semantics, so
+no such independence requirement exists.) Under the content-word
+program every PascalCase relation is a placeholder anyway, so the real
+question is only which content word `le` lowers through — `skicu` with
+an anchoring clarification being the natural candidate; flagged at pin
+P10 for committee decision.
 
 ### 2.7 Alternatives shaped like implementations
 
@@ -442,8 +447,10 @@ genuinely fought:
   (`skicu` describes a telling event; a `skicu`-based `le` needs
   performative anchoring to the utterance) and on definitional
   ownership of a closed-class meaning; it still cleanly hosts `voi` by
-  audience-deletion, but the `skicu`-based self-hosting analysis is
-  rehabilitated as a live alternative for review (§2.6).
+  audience-deletion; with the ownership ground struck by the owner
+  (§2.6), the performatively anchored `skicu`-based analysis is the
+  leading candidate under the content-word program — committee
+  decision.
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
