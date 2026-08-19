@@ -1173,8 +1173,8 @@ group/set objects via `gunma`/`selcmi` (P5), the base being the **maximal
 plurality of the description** (`lo'i gerku` is the set of the dogs, not
 of some dogs — the library's maximal-base form supplies it). Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
-selection / subreference selection (P1, §4.10). `lo no broda` →
-referentially defective (P22).
+selection / subreference selection (P1, §4.10). Inner `no` → the
+zero-count schema, never `Refer` (special case, P22).
 
 **Relative clauses.** `poi` → conjunct in the reference property; `noi` →
 `Supplement` anchored at the referent (P7); `voi` → `DescribedBy`
@@ -1487,8 +1487,20 @@ vagueness is never pinned; it is classified in §6.1.)
   a first-class value in the term; modifier composition in surface order.
 - **P20** `da` ranges unrestricted; `poi` is the only domain restriction.
 - **P21** Two truth values; partiality by projective definedness.
-- **P22** Inner `no` (`lo no broda`) is referentially defective;
-  `no lo broda` is the grammatical form.
+- **P22** Inner `no`: a description with inner `no` never lowers through
+  `Refer` (plural references are nonempty by type); it is
+  **special-cased at the mapping layer** to the zero-count schema —
+  `lo no broda` in a bridi frame `R[·]` lowers to
+  `(No (λx. broda x) (λx. R[x]))`, guskant's unofficial
+  `naku su'oi da poi ke'a broda` relativized to the frame ("gadri: an
+  unofficial commentary from a logical point of view", the "Cannot say
+  zero" section). This is what makes answer substitution work: `lo xo
+  prenu cu jmaji …` answered by `no` is elliptical `lo no prenu cu
+  jmaji …`, and `go'i`-inherited frames likewise. Anaphora to an
+  inner-`no` description is inaccessible (`No` exports nothing) — there
+  is nothing to refer to. `no lo broda` remains the fully explicit outer
+  form. *(Amended after review on the owner-raised guskant argument;
+  the earlier ruling made the form defective outright.)*
 - **P23** `ba'e` = sign-level focus; `du` = `=`.
 - **P24** Fresh event per bridi unless shared explicitly; ZAhO pinned as
   boundary-relation shape, contours filled lexically.

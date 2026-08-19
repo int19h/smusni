@@ -384,12 +384,34 @@ genuinely fought:
 
 - **P1/P22 (xorlo, inner `no`).** "No default quantifiers. At all." is
   the xorlo page verbatim; everything else follows from `Refer` +
-  nonempty plural references. `lo no broda` is then referentially
-  defective by type — the honest reading of a form the community already
-  avoids.
-- **P2 (`ro` imports).** `naku ro gerku cu blabi` conversationally grants
-  dogs; projection through negation is presupposition behavior, so the
-  import is a `Presuppose`, with mathematical `∀` still available bare.
+  nonempty plural references. For inner `no` that type argument shows
+  only that `lo no broda` cannot be a *reference*; it does not show the
+  form is meaningless, and guskant's gadri commentary ("Cannot say
+  zero") supplies both the reading and the reason to want one: her
+  unofficial `lo no broda = naku su'oi da poi ke'a broda`, motivated by
+  answer continuity — `lo xo prenu cu jmaji …` answered by `no`,
+  elliptical for `lo no prenu cu jmaji …` — the pattern that also
+  carries `go'i`-inherited frames. The pin therefore special-cases
+  inner `no` at the mapping layer to the zero-count (`No`) schema over
+  the description's property and the bridi frame: substitution into
+  question frames works, nothing touches the nonemptiness of the
+  reference type, and anaphora to the form is correctly inaccessible
+  because `No` exports no witness. (An earlier revision ruled the form
+  defective outright and leaned on an unverified claim that usage
+  avoids it; the claim is withdrawn and the special case adopted.)
+- **P2 (`ro` imports).** Saying `ro gerku cu blabi` commits the speaker
+  to there being dogs, and the commitment survives wrapping: `naku ro
+  gerku cu blabi` denies the universal while still granting dogs, and
+  `xu ro gerku cu blabi` questions the universal while still granting
+  them. Surviving negation and question force is the signature of
+  presupposition, not of an at-issue conjunct (a conjoined `∃` would be
+  negated and questioned along with the rest), so the import is a
+  `Presuppose` on the description quantifier's restrictor. The
+  non-importing reading is not lost: bare logic's `ro da` maps to plain
+  `∀` with no presupposition, so mathematical discourse pays nothing.
+  Cost: universal claims over empty restrictors are presupposition
+  failures rather than vacuous truths — the standard
+  natural-language trade.
 - **P9 (`kau` exhaustivity is absent).** Three candidates fought:
   default-exhaustive (adds a claim CLL never makes), a `Vague`
   exhaustivity parameter (posits a decision point that *no Lojban

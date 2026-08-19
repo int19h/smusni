@@ -290,6 +290,17 @@ projects; only the universal is negated. Bare-logic `ro da` carries no
 presupposition.
 
 ```lisp
+; lo xo prenu cu jmaji — ... no — inner-no answer      [pin P22]
+; the answer "no" is elliptical lo no prenu cu jmaji (guskant),
+; which lowers through the zero-count special case, never Refer:
+(Assert
+  (No (λ (($x Entity)) (prenu $x))
+      (λ (($x Entity)) (Close (jmaji $x)))))
+; answer substitution into the question's frame works; anaphora to
+; the form is inaccessible (No exports nothing — nothing to refer to).
+```
+
+```lisp
 ; ci gerku ce'e re prenu cu nelci    [pin P17]
 (Assert
   (∃ (λ (($dogs (Set Entity)) ($people (Set Entity)))
