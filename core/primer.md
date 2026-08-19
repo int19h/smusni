@@ -17,7 +17,9 @@ who bit whom? What, exactly, does a tanru say?
 The semantic core answers by giving Lojban a second notation: a small,
 typed, Lisp-looking language of *meanings*. Every Lojban sentence, once you
 settle its reading, translates into a term of this language, and the term
-is the meaning — spelled out completely, with nothing left to prose. The
+is the meaning — with all its semantic structure typed, defined, or
+honestly registered as an open gap (a few constructs, like generic
+sentences, are frankly axiomatic, and the spec says so on the spot). The
 core is deliberately verbose: it is an assembly language for meaning, and
 ordinary Lojban is the high-level language that compiles to it. You will
 never speak the core. You consult it the way you consult a dictionary: when
@@ -45,12 +47,15 @@ dense specification when you want to. One example sentence follows us
 through the whole book:
 
 ```
-lo ci gerku noi blabi cu na batci re prenu .i ri .ui nai cai tatpi
+lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
 ```
 
-"The three dogs, which are white, didn't bite two people. They — ugh! — are
+"The three dogs, which are white, didn't bite two people. Ugh — they are
 tired." By the end you will be able to write down everything this little
-discourse commits its speaker to, and everything it leaves open.
+discourse commits its speaker to, and everything it leaves open. (Even
+the word order teaches: the `.uinai cai` sits at the front of its
+sentence so that the displayed feeling is about the whole claim — placed
+after `ri` it would be a feeling about the dogs.)
 
 ## 1. Saying things: predication
 
@@ -82,7 +87,10 @@ whose content the hearer is expected to recover from the situation:
       (klama Speaker $destination … :Eventuality $e)))))
 ```
 
-(There's also an event variable in there — chapter 2.) Three different
+(Only the destination slot is shown — the origin, route, and means each
+get their own `Context` binding exactly like it; the specification's
+samples write all four out. There's also an event variable in there —
+chapter 2.) Three different
 "missing thing" markers get three different treatments, and the difference
 matters:
 
@@ -163,8 +171,8 @@ The other gadri, briefly:
 - `le P` — *the ones I'm describing as P*: reference through the
   speaker's description, which may be inaccurate ("that `le nanmu`
   turned out to be a woman"). The core uses a dedicated
-  describing-relation — you count on the speaker's ability to point,
-  not on the description's truth.
+  describing-relation, `DescribedBy` — you count on the speaker's
+  ability to point, not on the description's truth.
 - `la N` — reference through a name-sign.
 - `loi P` / `lo'i P` — reference to a *group object* / a *set object*
   built from P-things. A crowd can surround a building though no person
@@ -200,10 +208,15 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ (λ (($p Entity) ($d Entity))
+(∀ (λ (($p Entity) ($d (Referents Entity)))
   (→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
      (darxi $p $d))))
 ```
+
+(The donkey variable is a *plural* one — if someone owns several donkeys,
+`ri` reaches all of them; and the full form also carries the "there are
+donkey-owners" presupposition that `ro` brings — the spec's version
+spells both out.)
 
 The pronoun inside the consequent covaries with the donkey inside the
 relative clause — classical logic can't write that with separate
@@ -230,37 +243,50 @@ Quantifiers sit *on top of* reference. Three shapes to keep apart:
 ;   the mathematician's ∀; no presupposition.  (bare logic)
 ```
 
+(One honesty note the spec records as a pin: the printed CLL glosses
+bare numbers globally — "exactly two, no more or less". The core sides
+with modern usage: `ci gerku` picks its three and stays silent about
+others, and the global "and no more" reading is there when you mark it.)
+
 Two pins worth knowing. First, `ro broda` **imports**: saying "every
 broda" commits you to broda existing — and that commitment survives
 negation ("it's not true that every dog ran" still grants dogs), which is
 why the core represents it as a *presupposition*, a claim that projects
-out of whatever you wrap around it. Second, bare numbers select
-**witness sets**: `ci gerku ce'e re prenu cu batci` picks out three dogs
-and two people with all six bitings — and says nothing about whether a
-fourth dog also joined in. CLL's own worked example reads this way; the
-"and nobody else" reading is available, but you have to say it.
+out of whatever you wrap around it. Second, termsets: `ci gerku ce'e re
+prenu cu batci` picks out three dogs and two people with all six bitings
+— and says nothing about whether a fourth dog also joined in. CLL's own
+termset chapter glosses it exactly so ("picks out two groups … every one
+of the dogs bites each of the men") and stops there; the "and nobody
+else" reading is available, but you have to say it.
 
-Vague numbers (`so'i` "many", `du'e` "too many", `ji'i` "about") get a
-different treatment entirely — chapter 10 — because "many" doesn't have a
-secret exact threshold that context knows and you don't.
+Vague numbers get chapter 10's treatment. Two different shapes hide
+here: `so'i` "many" has *no* exact threshold — not even a secret one
+context knows — while `ji'i re no` "about twenty" states its number and
+leaves the *tolerance* fuzzy.
+
+One more thing quantifiers do: their picks stay referable. After `su'o
+gerku cu bajra`, the next sentence's `ri` can be those very dogs — a
+quantified claim and a lasting referent at once (the spec calls this
+witness export).
 
 ## 6. Doing things with words
 
 `Assert` from chapter 1 has siblings:
 
 ```
-(Ask (Polar (klama Speaker)))          ; xu mi klama
-(Ask (OpenQ (λ (($x (Referents Entity))) (klama $x))))   ; ma klama
-(Command Audience (klama Audience))    ; ko klama
+(Ask (Polar (Close (klama Speaker))))                          ; xu mi klama
+(Ask (OpenQ (λ (($x (Referents Entity))) (Close (klama $x))))) ; ma klama
+(Command Audience (Close (klama Audience)))                    ; ko klama
 (Express …)                            ; .ui and friends — chapter 7
-(Vocative $djan)                       ; doi djan.
+(Vocative Audience)                    ; doi (addressing the listener)
 ```
 
 Acts are *values*: you can build one, quote one, talk about one — none of
 which performs it. `mi cusku lu ko klama li'u` reports a command without
 giving one; the quotation marks in the core are a hard boundary that
 meaning does not leak through. Performing happens only on the discourse
-spine — the sequence of things actually said.
+**spine** — the document's top-level sequence of acts, the things
+actually said (everything else is acts *talked about*).
 
 Embedded questions: `mi djuno lo du'u ma kau klama` — "I know who came."
 What `kau` contributes is *answerhood*: my knowledge settles the question.
@@ -272,16 +298,16 @@ exhaustivity slot is simply absent — another "absence means absence" case.
 
 ## 7. Feelings and evidence
 
-Now the `.ui nai cai` in our running example. Indicators are the core's
+Now the `.uinai cai` in our running example. Indicators are the core's
 **displayed content**: things shown rather than claimed. Each attitudinal
 is a little relation from the dictionary — an experiencer, a target, and
-a degree on an intensity scale — wrapped in `Express`:
+a degree on an intensity scale — displayed alongside its host:
 
 ```
-; .i ri .ui nai cai tatpi
-(Do
-  (Assert (tatpi $dogs))
-  (Express (unhappiness Speaker $that-assertion Intense)))
+; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
+(Let (($a (Act Assertion) (Assert (Close (tatpi $dogs)))))
+  (Do (Perform $a)
+      (Express (Display (unhappiness Speaker Intense) $a))))
 ```
 
 Note the three moving parts, all decided by rulings you can look up:
@@ -310,9 +336,11 @@ previous one; `na'i` objects to a prior utterance ("something's off about
 saying that") without negating anything — which is why Lojban has three
 negation-flavored words, and the core gives them three unrelated meanings:
 
-> **Not the same as!** `na` (the claim is false) / `na'e` (other-than on
-> a scale: `na'e melbi`, something other than beautiful — possibly plain)
-> / `na'i` (metalinguistic objection: the utterance itself was defective).
+> **Not the same as!** `na` (the claim is false, nothing more) / `na'e`
+> (scalar: denies the stated point AND asserts something else on the
+> scale — `na'e melbi` says not-beautiful-but-something-else, perhaps
+> plain; it claims *more* than `na`, not less) / `na'i` (metalinguistic
+> objection: the utterance itself was defective — no truth claim at all).
 
 ## 8. Ideas about ideas
 
@@ -385,7 +413,7 @@ Lojban without paradox.
 ## 11. The whole example
 
 ```
-lo ci gerku noi blabi cu na batci re prenu .i ri .ui nai cai tatpi
+lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
 ```
 
 Everything at once now. `lo ci gerku` introduces a three-dog referent.
@@ -393,13 +421,14 @@ Everything at once now. `lo ci gerku` introduces a three-dog referent.
 that follows will not touch it, and if this had been a `xu` question the
 whiteness still wouldn't be questioned. `na batci re prenu`: the at-issue
 claim, negated — within it, `re prenu` selects a two-person witness set;
-the negation says no such biting configuration holds. `.i ri`: the dogs,
-still accessible (negation blocked nothing here — the dogs were introduced
-*outside* it). `tatpi` claims they're tired; `.ui nai cai` displays the
-speaker's intense unhappiness about that very claim. And what was left
-open, on purpose: when any of this happened; whether the dogs are tired
-jointly or severally; and nothing else — everything other than these was
-said.
+the negation says no such biting configuration holds. `.i ri`: the dogs.
+Notice what the negation *did* block: the two people are trapped inside
+it, inaccessible to any later anaphor — which is exactly why `ri` skips
+them and lands on the dogs, introduced outside. `tatpi` claims they're
+tired; the sentence-initial `.uinai cai` displays the speaker's intense
+unhappiness about that whole claim. And what was left open, on purpose:
+when any of this happened; whether the dogs are tired jointly or
+severally; and nothing else — everything other than these was said.
 
 If you can reconstruct that paragraph from the sentence, you have the
 core. The specification is the same story with the definitions filled in.
@@ -410,7 +439,9 @@ core. The specification is the same story with the definitions filled in.
 
 | Core | Plain | Lojban | Spec |
 |---|---|---|---|
-| `PredTerm` / row | relation with labelled places | brivla places | §3.3 |
+| `PredTerm<ρ>` | the type of relations over place row ρ | a brivla's relation | §3.3 |
+| row ρ | the labelled place structure itself | x1…xn | §3.3 |
+| `RefComp` | a computation that refers/retrieves (what `Bind` runs) | — | §3.4 |
 | `Close` | fill remaining places from context, claim an event | unmarked bridi | §4.6 |
 | `Refer` | introduce things into the conversation | `lo`/`le`/`la` | §5.3 |
 | `Context` | context supplies the specific value | `zo'e`, omissions, `co'e` | §5.3 |
@@ -430,7 +461,7 @@ core. The specification is the same story with the definitions filled in.
 | pin | our documented ruling where CLL was silent | — | §13 |
 | gap | honestly not yet analyzed | `da'i`, … | §14 |
 
-**Further reading**, staged. Lojban side: CLL chapters 5–11, 13–19, and
+**Further reading**, staged. Lojban side: CLL chapters 5–19, and
 the xorlo page — the primer's claims cite them throughout. First formal
 steps: Heim & Kratzer, *Semantics in Generative Grammar* (λs, quantifiers);
 Groenendijk & Stokhof's "Dynamic Predicate Logic" and Kamp's DRT for

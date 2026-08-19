@@ -159,11 +159,16 @@ marks (`lu'a`, `Distrib`, group gadri) — which Lojban has.
 
 Three relation formers, three witnesses: `mi klama ti zi'o` (a relation
 with the role *gone* — neither `zo'e` nor closure can remove a role);
-`sutra klama` (constitutive modification vagueness — §1.3); `ti na'e
-melbi` (scalar otherness is not `¬`: something other-than-beautiful on
-the aesthetic scale may be plain, and `na'e` does not even entail
-not-beautiful — the exclusion is implicature, while `to'e` antipodal
-does entail it). Why not lexicalize scalar forms per predicate? The
+`sutra klama` (constitutive modification vagueness — §1.3); `ta na'e
+melbi` (scalar otherness is not `¬` — it is *stronger*: CLL 15.4, a
+selbri negation "asserts that a relationship exists other than that
+stated" and "remains an assertion of some specific truth", so `na'e P`
+denies P's stated region *and* positively asserts an admissible
+alternative on the recovered scale; `to'e` asserts the antipode, `no'e`
+the midpoint. An earlier panel reading had `na'e` weaker than `¬`; the
+primary text overruled it in review, and the King-of-France passage of
+CLL 15.4 — selbri negations "still make affirmative claims" — is the
+decisive witness). Why not lexicalize scalar forms per predicate? The
 operators are productive across the whole lexicon; three formers beat
 thousands of entries.
 
@@ -171,7 +176,7 @@ thousands of entries.
 
 **Job.** `lo'e`/`le'e` talk about typicality without a specimen.
 **Witness (against every specimen theory).** `lo'e cinfo cu se kerfa lo
-clani` (maned — normal *males*) with `lo'e cinfo cu jbena lo cinfo`
+clani` (maned — normal *males*) with `lo'e cinfo cu se jbena lo cinfo`
 (bears young — normal *females*): no single typical lion verifies both,
 so a fixed "typical-lion reference" gives wrong conjunctions under
 referential transparency. **Why not `∀`/`∃`/`Refer`?** Generics tolerate
@@ -191,9 +196,10 @@ at large and pretending otherwise would be false precision.
 `lo ni mi klama cu barda` (bigness takes amounts): swap them and both are
 gibberish — the sorts are real. **Why is only `Reify` primitive?**
 Because `du'u` is the one genuine level crossing (content to object); the
-others — `ni`, `jei`, `li'i`, `si'o`, `su'u` — are, per CLL's own
-presentation, *selbri with place structures* ("x1 is the amount of … on
-scale x2"), so the core renders them as named abstraction relations and
+others — `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, `zu'o` — are
+abstractors to which CLL itself assigns place structures (CLL 11.3, 11.5,
+11.6, 11.9: "x1 is the amount of … on scale x2"), so the core renders
+them as named abstraction relations and
 lets reference apply outside: `lo ni …` and `le ni …` then differ exactly
 as `lo` and `le` always differ, outer quantifiers and relative clauses
 work unchanged, and the omitted x2 (`su'u`'s "type", `ni`'s scale) is
@@ -233,14 +239,31 @@ inventory?** The UI lexicon is open; the core supplies the *shape*
 instances. **Cost.** The lexicon carries real semantic load — by design
 (§2.6).
 
+### 1.13 Why facet joining is plain conjunction
+
+**Job (dissolved).** An earlier design kept a dedicated non-logical
+joining operator for tense/modal facets sharing an event. **Why it
+died.** No witness separates it from dynamic `∧`: the shared event is an
+explicit variable, so "locus identity" is carried by binding, not by a
+connector; and the tag-negation paradigm *derives* from `∧`-placement
+what a dedicated operator would have to stipulate — `mi klama ti
+sepi'onai ti` negates just the instrument conjunct (`klama ∧ ¬pilno`)
+while bridi `na` negates the whole (`¬(klama ∧ pilno)`), and tense
+chains (`pu pu`) need precisely `∧`'s left-to-right accessibility for
+their anchor anaphora. What survives of the old operator: sumti `joi` as
+group formation, discourse joining as `Do`, and the genuinely
+unspecified connection as a `Vague` relation (spec §6.1). **Cost.**
+None found; the decomposition is pure simplification.
+
 ## 2. Design essays
 
 ### 2.1 Why not plain predicate logic
 
-FOL loses, in order: cross-sentence anaphora (no discourse referents),
-donkey readings (no dynamic binding), projective content (one dimension
-of meaning), force (assertion only), plurals (singular terms),
-vagueness-as-meaning (bivalent atoms only), and use/mention (no signs).
+FOL loses, in order: cross-sentence anaphora (no discourse referents —
+spec §5.6), donkey readings (no dynamic binding — §5.6), projective
+content (one dimension of meaning — §5.5), force (assertion only —
+§7.1), plurals (singular terms — §3.2/§4.8), vagueness-as-meaning
+(bivalent atoms only — §6), and use/mention (no signs — §7.5).
 Each loss above is a witnessed Lojban phenomenon. The core is exactly
 FOL's spine — typed λ, connectives, quantifiers — plus the six
 disciplined extensions those witnesses force.
@@ -293,9 +316,9 @@ The tempting design: unmarked plural predication carries a covert cover
 variable (context supplies it, or it's vague). Rejected on three grounds.
 First, xorlo says unmarked gadri are *unspecified* for distributivity —
 and a parameter is not unspecification, it is a question the sentence
-now silently asks. Second, plural logic (Boolos: "the rocks rained down")
-needs no hidden quantification over covers — the predicate holds of the
-plurality, and *how* it holds is the predicate's lexical business, which
+now silently asks. Second, plural logic's lesson ("the rocks rained
+down" hides no quantifier over ways-of-raining) — the predicate holds of
+the plurality, and *how* it holds is the predicate's lexical business, which
 the lexicon interface records per place. Third, the precisifications of a
 cover parameter would have different truth conditions (each-carried vs
 together-carried), which makes it an *ambiguity* parameter, and ambiguity
@@ -362,13 +385,19 @@ genuinely fought:
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (termsets, no maximality).** CLL 16.45 glosses `ci gerku ce'e re
-  nanmu cu batci` as: two picked groups, full product — and stops. The
-  coordinate-closure strengthening ("and no other dog bites them") makes
-  the sentence false in situations speakers plainly use it for, so it is
-  a named optional profile, not the default. Bare-PA exactness attaches
-  to the picked witness sets (CLL 16.42–.43's own expansions), keeping
-  simple sentences and termsets consistent.
+- **P17 (termsets, no maximality).** CLL ch. 16 §7 (its examples
+  16.42–16.45, print numbering) glosses `ci gerku ce'e re nanmu cu
+  batci` as: two picked groups, "every one of the dogs bites each of the
+  men" — full product — and stops. The coordinate-closure strengthening
+  ("and no other dog bites them") makes the sentence false in situations
+  speakers plainly use it for, so it is a named optional profile, not
+  the default. The bare-PA half is pinned *against* the letter of CLL
+  ch. 16 §6, whose gloss of bare numeric quantification is global
+  ("exactly two, no more or less"): this specification takes witness-set
+  exactness — the xorlo-era reading, the one consistent with termset
+  composition and witness export — and keeps the CLL-literal reading as
+  the named `GlobalExactly`. The divergence is documented, not
+  smuggled.
 - **P8 vs the present-tense temptation.** CLL ch. 10 makes tense
   optional; "untensed = present" is an anglophone reflex, not a rule.
   Tenseless bridi make no time claim.
@@ -378,15 +407,30 @@ genuinely fought:
 
 ## 4. What would change our minds
 
+A design-record note first, owed to accuracy: several of this document's
+positions were contested in the design rounds and settled by concession
+rather than initial consensus — the drops of the closure and witness
+primitives, the sort-hierarchy trims, the tanru/scalar formers' survival,
+`Generic` over fixed typical references, termset non-maximality, and the
+`kau` representation among them; the round records preserve who argued
+what, and one panel reading (`na'e` weaker than `¬`) was overruled by
+primary text in draft review (§1.8). One separation *was* found during
+the rounds: the dependent-witness sentence `ro prenu cu ponse ci gerku
+.i ri tatpi` genuinely separates an embedded quantifier's witness from
+any single top-level plural — and was absorbed by generalizing the
+export rule to joint-locus normalization, not by refuting the
+simplification.
+
 Standing invitations, recorded so future revisions know where to push:
-a Lojban sentence that separates an exported witness from the directly
-bound plural (kills the §1.6 simplification); a facet-joining sentence
+a witness-separating configuration that joint-locus normalization cannot
+absorb (narrows §1.6); a facet-joining sentence
 where dynamic `∧` mispredicts (revives a dedicated joining operator); a
 sentence forcing world variables into terms (moves intension into the
 syntax); a genericity theory that derives `Generic` while preserving the
 `lo'e`/`le'e` contrast (demotes it to the library); evidence that
 speakers systematically read unmarked `kau` exhaustively even in
 non-`djuno` frames (reopens P9); and community usage data on termset
-maximality (reopens P17's default). Each of these was hunted during the
-design rounds and not found; the invitations are the negative results,
-kept falsifiable.
+maximality (reopens P17's default). Each was hunted during the design
+rounds; where the hunts came back empty the invitations record the
+negative result, kept falsifiable, and where a find was absorbed (the
+dependent witness, above) the invitation is narrowed to what remains.

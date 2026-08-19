@@ -61,8 +61,9 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 
 ## 2. Events, tense, facets
 
-Facet joining is dynamic conjunction over a shared event (final ruling
-B5; the older idea of a dedicated joining operator is retired):
+Facet joining is dynamic conjunction over a shared event (the final
+rulings' samples-consequences clause; the older idea of a dedicated
+joining operator is retired):
 
 ```lisp
 ; mi pu citka
@@ -92,7 +93,7 @@ B5; the older idea of a dedicated joining operator is retired):
 Contrast (`nai` on the tag): `mi klama ti sepi'onai ti` negates only the
 instrumental conjunct — `(∧ (klama …) (¬ (pilno …)))` — while bridi `na`
 negates the whole conjunction. Both fall out of `∧` placement; nothing is
-stipulated (rationale §1.5).
+stipulated (rationale §1.13, the facet-decomposition entry).
 
 ```lisp
 ; mi ca'a citka — actuality as a facet
@@ -116,7 +117,8 @@ default present (pin P8).
 
 Pinned reading: a new referent — one or more real cats, number-neutral,
 no quantifier. Contrast: `su'o mlatu cu blabi` quantifies and its witness
-is sentence-local business (§5 below); `lo` introduces for the discourse.
+quantifies (though its selected witness stays referable — §5 below);
+`lo` introduces with no quantificational force at all.
 
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
@@ -149,9 +151,10 @@ whose x4 is a medium of expression, not a property (rationale §2.6).
 ```lisp
 ; lo'i gerku — a set object, via selcmi with plural x2   [pin P5]
 (Bind (($base (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (gerku $x)))))
+        (MaxRefer (λ (($x Entity)) (gerku $x)))))   ; the maximal base:
+                                                    ; THE dogs, not some
   (Bind (($sets (Referents (Set Entity))
-          (Refer (λ (($s (Referents (Set Entity)))) (selcmi $s $base)))))
+          (Refer (λ (($s (Referents (Set Entity)))) (Close (selcmi $s $base)))))))
     (Mention $sets)))
 ```
 
@@ -169,9 +172,10 @@ unwraps to its members implicitly.
 Pinned reading: a generic claim through a normality ordering — no
 "typical cat" specimen exists in the term. `le'e` adds the Speaker as
 stereotype-holder. Contrast (the witness that killed specimen theories):
-`lo'e cinfo cu se kerfa lo clani` and `lo'e cinfo cu jbena lo cinfo` are
-both fine and generically true — supported by different normality classes,
-which no single referent could verify (rationale §1.9).
+`lo'e cinfo cu se kerfa lo clani` (maned — normal adult males) and
+`lo'e cinfo cu se jbena lo cinfo` (bears young — normal adult females)
+are both fine and generically true — supported by different normality
+classes, which no single referent could verify (rationale §1.9).
 
 ## 4. Relative clauses and supplements
 
@@ -215,27 +219,28 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ```lisp
 ; ci gerku cu bajra .i ri tatpi      [spec §5.6]
-(Do
-  (Assert
-    ((Exactly 3 (λ (($x Entity)) (gerku $x)))
-     (λ (($x Entity)) (Close (bajra $x)))))
-  (Assert (Close (tatpi $dogs))))
-; $dogs binds the witness referent exported by the successful
-; Exactly-3 evaluation — an accessibility fact, not an operator.
+(Bind (($dogs (Referents Entity)
+        (SelectExactly 3 (λ (($x Entity)) (gerku $x)))))
+  (Do
+    (Assert (Distrib (λ (($x Entity)) (Close (bajra $x))) $dogs))
+    (Assert (Close (tatpi $dogs)))))
+; the selection introduces and BINDS the witness; the anaphor is an
+; ordinary bound occurrence — no free names, no retrieval operator.
 ```
 
 The old formulation with an explicit run-retrieval operator is retired:
-the exported witness *is* the three-dog referent, and nothing else was
-ever needed (rationale §1.6).
+the exported witness *is* the three-dog reference the selection binds,
+and nothing else was ever needed (rationale §1.6).
 
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
 (Assert
-  (∀ (λ (($p Entity) ($d (Referents Entity)))
-    (→ (∧ (prenu $p)
-          (= (Card $d (λ (($x Entity)) (gerku $x))) 3)
-          (ponse $p $d))
-       (Close (tatpi $d))))))
+  (Presuppose (∃ (λ (($x Entity)) (prenu $x)))
+    (∀ (λ (($p Entity) ($d (Referents Entity)))
+      (→ (∧ (prenu $p)
+            (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
+            (Close (ponse $p $d)))
+         (Close (tatpi $d)))))))
 ```
 
 Pinned reading: each person's three dogs are tired — the anaphor
@@ -245,9 +250,14 @@ summed reading ("all the dogs together") requires explicit collection.
 ```lisp
 ; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
 (Assert
-  (∀ (λ (($p Entity) ($d Entity))
-    (→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
-       (Close (darxi $p $d))))))
+  (Presuppose (∃ (λ (($x Entity))
+                (∧ (prenu $x)
+                   (∃ (λ (($y Entity)) (∧ (xasli $y) (Close (ponse $x $y))))))))
+    (∀ (λ (($p Entity) ($d (Referents Entity)))
+      (→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+         (Close (darxi $p $d)))))))
+; $d at the plural type: the witness donkeys; the atomic-pair spelling
+; is the distributive strengthening.
 ```
 
 ```lisp
@@ -276,7 +286,8 @@ presupposition.
                     (∧ (prenu $p) (Close (nelci $d $p)))))))))))))
 ```
 
-Pinned reading (CLL 16.45): two picked witness sets, full product —
+Pinned reading (CLL ch. 16 §7's own gloss): two picked witness sets,
+full product —
 every one of the three dogs likes each of the two people. **No
 maximality**: a fourth dog also liking them does not falsify this. The
 coordinate-closed strengthening ("and they are exactly the participating
@@ -288,10 +299,10 @@ predication.
 ```lisp
 ; so'i prenu cu klama — vague quantity    [spec §6.4]
 (Bind (($n Natural
-        (Vague (λ (($t Natural)) (AdmissibleManyThreshold $t …)))))
+        (Vague (AdmissibleThreshold Many (λ (($x Entity)) (prenu $x))))))
   (Assert
-    ((AtLeast $n (λ (($x Entity)) (prenu $x)))
-     (λ (($x Entity)) (Close (klama $x))))))
+    (AtLeast $n (λ (($x Entity)) (prenu $x))
+                (λ (($x Entity)) (Close (klama $x))))))
 ```
 
 No exact count hides here: the term denotes the family over admissible
@@ -312,7 +323,7 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
 
 ; klama fi'a ti — a place question           [spec §4.7]
 (Ask (OpenQ (λ (($p (Label klama)))
-  (Close (At $p This)))))
+  (Close (At klama $p This)))))
 ```
 
 ```lisp
@@ -345,38 +356,43 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; .ui do klama — pure emotion: host asserted, joy displayed
-(Do
-  (Assert (Close (klama Audience)))
-  (Express (Close (happiness Speaker $that-assertion Moderate))))
+(Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
+  (Do (Perform $a)
+      (Express (Display (happiness Speaker Moderate) $a))))
 
 ; .au mi sipna — propositional attitude: host subordinated  [R6]
 (Express (Close (desire Speaker (Reify (Close (sipna Speaker))))))
 ; no assertion of sleeping occurs — the host-force profile of .au.
 
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
-(Do
-  (Assert (Close (klama Audience)))
-  (Express (Close (unhappiness Speaker $that-assertion Intense))))
+(Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
+  (Do (Perform $a)
+      (Express (Display (unhappiness Speaker Intense) $a))))
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [R5]
-(Do
-  (Assert (Close (cadzu Audience)))
-  (Express (Close (evidential-basis Speaker $that-assertion Observation))))
-; the display grounds the assertion (a mode of commitment);
+(Let (($a (Act Assertion) (Assert (Close (cadzu Audience)))))
+  (Do (Perform $a)
+      (Express (Display (evidential-basis Speaker Observation) $a))))
+; the display's target is the performed act's content, so the family
+; force clause grounds the assertion (a mode of commitment);
 ; na za'a do cadzu negates the walking, never the basis.
 
-; mi jinvi lo du'u do ti'e klama — evidential on embedded content
-(Assert
-  (Close
-    (jinvi Speaker
-      (Reify
-        (Do (Mention (Close (klama Audience)))
-            (Express (Close (evidential-basis Speaker
-                              $that-content Hearsay))))))))
-; hearsay marks the embedded claim — the reason evidentials are
-; targeted display, not an operand on assertion force.
+; mi jinvi lo du'u ti'e do klama — evidential on embedded content
+(Let (($c Content (Close (klama Audience))))
+  (Assert
+    (Close
+      (jinvi Speaker
+        (Reify
+          (Supplement $c
+            (Display (evidential-basis Speaker Hearsay) $c)
+            $c))))))
+; at content level Display reduces to an anchored Supplement, so the
+; hearsay display rides the embedded claim projectively — the reason
+; evidentials are targeted display, not an operand on assertion force.
+; (ti'e placed after du'u, targeting the abstraction's content, per the
+; CLL attachment rule.)
 ```
 
 ```lisp
@@ -391,11 +407,13 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; na'i — metalinguistic objection             [spec §7.3]
-(Express
-  (Close
-    (MetalinguisticallyDefective $prior-utterance (Context))))
-; the defect dimension is contextual; nothing is negated and the
-; objected content is not performed.
+(Let (($prior (Act Assertion) …))          ; the objected act, bound
+                                           ; earlier in the discourse
+  (Bind (($defect DefectKind (Context)))
+    (Express
+      (Close (MetalinguisticallyDefective $prior $defect)))))
+; the defect dimension is contextually recovered; nothing is negated
+; and the objected content is not performed.
 ```
 
 ## 8. Vagueness
@@ -404,8 +422,9 @@ own lexical presupposition, never from `kau`.
 ; sutra klama — the tanru link is Vague       [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
-; ≗ (Bind (($link LinkType
-;           (Vague (λ (($r LinkType)) (TanruAdmissible sutra klama $r)))))
+; ≗ (Bind (($link (PredTerm ρ(klama))
+;           (Vague (λ (($r (PredTerm ρ(klama))))
+;                    (TanruAdmissible sutra klama $r)))))
 ;     … (∧ (klama …) ($link …)))
 ```
 
@@ -421,19 +440,35 @@ own lexical presupposition, never from `kau`.
 ; mi djica tu'a lo cukta                      [pin P14]
 (Bind (($book (Referents Entity)
         (Refer (λ (($x (Referents Entity))) (cukta $x)))))
-  (Bind (($a (Referents AbstractNature)
-          (Vague (λ (($v (Referents AbstractNature)))
-            (∧ (∃ (λ (($c Proposition) ($k (Referents Entity)))
-                 (abstraction-of $v $c $k)))
-               (Close (srana $v $book)))))))
+  (Bind (($a (Referents Eventuality)          ; sort from djica's x2
+          (Vague (λ (($v (Referents Eventuality)))
+            (∧ (∃ (λ (($c Content))
+                 (= $v (EventOfContent $c)))) ; shape: an abstraction
+               (Close (srana $v $book)))))))  ; ... about the book
     (Assert (Close (djica Speaker $a)))))
 ```
 
-Pinned reading: some abstraction — its content deliberately withheld —
-pertaining to the book. The shape conjunct matters: aboutness alone would
-admit nearly anything.
+Pinned reading: some eventuality-sorted abstraction — its content
+deliberately withheld — pertaining to the book, the sort fixed by the
+host place (`djica` x2). The shape conjunct matters: aboutness alone
+would admit nearly anything.
 
 ```lisp
+; ta barda — gradable predication: Context scale, Vague cutoff  [spec §6.4]
+(Bind (($s Scale (Context))                    ; which size-scale: recoverable
+       ($reg (Region Scale)
+         (Vague (λ (($r (Region Scale))) (AdmissibleCutoff $s $r)))))
+  (Assert (Close ((Grade barda $s $reg) That))))
+
+; du'e gerku cu klama — Vague threshold, Context purpose  [spec §6.4]
+(Bind (($purpose (Referents Entity) (Context))  ; too many FOR WHAT: recoverable
+       ($n Natural
+         (Vague (AdmissibleThreshold TooMany
+                  (λ (($x Entity)) (gerku $x)) $purpose))))
+  (Assert
+    (MoreThan $n (λ (($x Entity)) (gerku $x))
+                 (λ (($x Entity)) (Close (klama $x))))))
+
 ; mi co'e do — elliptical selbri: Context, not Vague   [spec §6.1]
 (Bind (($r (PredTerm ⟨x1:(Referents Entity), x2:(Referents Entity)⟩)
         (Context)))
@@ -447,9 +482,12 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 
 ```lisp
 ; lo du'u mi klama cu se djuno do
-(Bind (($p Proposition (Refer (λ (($q Proposition))
-        (= $q (Reify (Close (klama Speaker))))))))
+(Bind (($p (Referents Proposition)
+        (Refer (λ (($q (Referents Proposition)))
+          (= $q (Reify (Close (klama Speaker))))))))
   (Assert (Close (djuno Audience $p))))
+; (= here at the Proposition sort via the singleton lift; se du'u — the
+; expressing sentence — goes through the derived DuhuRel x2, spec §9.2.)
 
 ; lo ni mi klama — an abstraction relation, reference outside  [R2]
 (Bind (($a (Referents Amount)
@@ -465,7 +503,7 @@ The recovery test draws this line: `co'e` expects the hearer to recover
         (Refer (λ (($k (Referents Entity))) (fasnu $k)))))
   (Bind (($a (Referents AbstractNature)
           (Refer (λ (($x (Referents AbstractNature)))
-            ((SuhuRel (Close (klama Speaker))) $x $kind)))))
+            (Close ((SuhuRel (Close (klama Speaker))) $x $kind))))))
     (Mention $a)))
 
 ; lo nu mi pu klama — event abstraction: Refer at the event sort
@@ -491,34 +529,56 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 (Assert (Close (valsi (WordSign "klama"))))
 
 ; la'e lu mi klama li'u — a sign's content
-(Mention (InterpretContent (StructuredQuote …)))
+(Mention
+  (InterpretContent
+    (StructuredQuote
+      (Utterance (($u UtteranceToken))
+        (Realizes $u (Assert (Close (klama Speaker))))))))
+
+; li re te'a ci du li bi — MEX with te'a (library)
+(Assert (= (te'a 2 3) 8))
+; contrast: me'o re te'a ci mentions the EXPRESSION sign, not 8:
+; (Mention (Sign (($s (SignToken MathExpression))) (TextOf $s "re te'a ci")))
+
+; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
+(Bind (($bob (Referents Entity)
+        (Refer (λ (($x (Referents Entity))) (Named "bab" $x)))))
+  (Do (Assert (Close (klama $bob)))
+      (Assert (Close (prami $bob)))))
+; the letteral by. is a binding KEY resolved at the mapping layer;
+; both occurrences consume the one binding.
 ```
 
 ## 11. The spiral sentence, in full
 
 ```lisp
-; lo ci gerku noi blabi cu na batci re prenu .i ri .ui nai cai tatpi
+; lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
 (Bind (($dogs (Referents Entity)
         (Refer (λ (($r (Referents Entity)))
           (∧ (gerku $r)
-             (= (Card $r (λ (($x Entity)) (gerku $x))) 3))))))
+             (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3))))))
   (Do
-    (Assert
-      (Supplement $dogs (blabi $dogs)
-        (¬ ((Exactly 2 (λ (($x Entity)) (prenu $x)))
-            (λ (($x Entity)) (Close (batci $dogs $x)))))))
-    (Do
-      (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs)))))
-        (Do (Perform $a2)
-            (Express (Close (unhappiness Speaker $a2 Intense))))))))
+    (Let (($a1 (Act Assertion)
+            (Assert
+              (Supplement $dogs (Close (blabi $dogs))
+                (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))
+                     (λ (($x Entity)) (Close (batci $dogs $x)))))))))
+      (Perform $a1))
+    (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs)))))
+      (Do (Perform $a2)
+          (Express (Display (unhappiness Speaker Intense) $a2))))))
 ```
 
-Everything committed: three real dogs, introduced; their whiteness, as a
-projective aside the negation never touches; the denial that a
-two-person witness set exists whom they bit; their tiredness; and the
-speaker's displayed intense unhappiness about that last claim. Everything
-open, on purpose: when; jointly or severally; and which precisification
-of nothing — because nothing else here is vague.
+(The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
+grammatical target is the whole second assertion, per the CLL attachment
+rule the mapping annex carries; placed after `ri` it would instead
+display unhappiness about the dogs.) Everything committed: three real
+dogs, introduced; their whiteness, as a projective aside the negation
+never touches; the denial that a two-person witness set exists whom they
+bit; their tiredness; and the speaker's displayed intense unhappiness
+about that last claim. Everything open, on purpose: when; jointly or
+severally; and which precisification of nothing — because nothing else
+here is vague.
 
 ## 12. Meanings without analyses
 
