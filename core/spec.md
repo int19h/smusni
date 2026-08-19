@@ -970,11 +970,17 @@ target — no dedicated operator is needed:
 - **Content-level** (the target is embedded content, a referent, or a
   sign): the display is a `Supplement` whose anchor is the target's
   first-order object — for content, its reification — and whose side is
-  the indicator predication of that object, riding the host content:
-  `(Supplement (Reify c) (Close (i-rel Speaker (Reify c) degree)) c)`.
-  `Reify` is pure, so the anchor repeats without re-evaluation and `c`
-  itself is evaluated exactly once, in body position; the side projects
-  per §5.5.
+  the indicator predication of that object. The content occurs **once**,
+  under a pure `Reify` shared by `Let`, and is evaluated through the
+  library's `Holds` (the model-theoretic inverse of `Reify`):
+
+  ```lisp
+  (Let ((p (Reify c)))
+    (Supplement p (Close (i-rel Speaker p degree)) (Holds p)))
+  ```
+
+  so anchor, side, and evaluated body all speak of the same content with
+  the same contextual sites; the side projects per §5.5.
 
 Targets are always bound terms or pure object-formers — never free
 names. Each indicator's lexicon entry (§10) provides:
@@ -1253,9 +1259,11 @@ export status per §5.6):
 (Exactly n P Q)  ≝ (Bind ((w (SelectExactly n P))) (Distrib Q w))
 (AtLeast n P Q)  ≝ (Bind ((w (SelectAtLeast n P))) (Distrib Q w))
 (Some P Q)       ≝ (Bind ((w (SelectSome P)))      (Distrib Q w))
-(Every P Q)      ≝ (Bind ((w (MaxRefer P)))         ; exports the maximal
-                     (Presuppose (∃ P)              ; restrictor reference
-                       (Distrib Q w)))
+(Every P Q)      ≝ (Presuppose (∃ P)            ; import emitted FIRST —
+                     (Bind ((w (MaxRefer P)))    ; else an empty restrictor
+                       (Distrib Q w)))          ; would fail the selection
+                                                ; instead of failing the
+                                                ; presupposition; exports w
 (No P Q)         ≝ (¬ (Some P Q))                          ; no export
 (AtMost n P Q)   ≝ (¬ (AtLeast n+1 P Q))                   ; no export
 (MoreThan n P Q) ≝ (AtLeast n+1 P Q)
@@ -1287,18 +1295,26 @@ standard where marked):
 (TooMany P Q)≝ (Bind ((σ (Referents Entity) (Context))          ; purpose
                       (θ Natural (Vague (AdmissibleThreshold TooMany P σ))))
                  (MoreThan θ P Q))
-(TooFew P Q) ≝ … (FewerThan θ P Q), same two parameters
-(Enough P Q) ≝ … (AtLeast θ P Q), same two parameters
-(Grade R s reg) ≝ the relation of R's row holding when the graded degree
-                 of R's subject on scale s lies in region reg
-   Grade : GradableRel<ρ> × Scale × Region<Scale> → PredTerm<ρ>
-   GradableRel<ρ>: a lexical relation whose entry declares a degree
-     dimension;  Region<Scale>: the sort of scale regions (poles,
-     midpoints, intervals) — both declared here for the whole document
+(TooFew P Q) ≝ (Bind ((σ (Referents Entity) (Context))
+                      (θ Natural (Vague (AdmissibleThreshold TooFew P σ))))
+                 (FewerThan θ P Q))
+(Enough P Q) ≝ (Bind ((σ (Referents Entity) (Context))
+                      (θ Natural (Vague (AdmissibleThreshold Enough P σ))))
+                 (AtLeast θ P Q))
 ```
 
-(`TooFew`/`Enough` differ from `TooMany` only in the comparison, shown
-elided; every other `…` in this chapter is prohibited.)
+Gradable predication: a `GradableRel<ρ>` is a lexical relation whose
+entry declares a **degree projection** `deg_R : ρ-subject × Scale →
+Amount` (the lexicon interface's degree field); `Region<Scale>` is the
+sort of scale regions (poles, midpoints, intervals). Then
+
+```text
+(Grade R s reg) : PredTerm<ρ> ≝
+  (λ (fills…). (∈-region (deg_R subject-of-fills s) reg))
+```
+
+— the relation holding of its fills exactly when the subject's degree on
+scale `s` lies in region `reg`. No `…` remains in this chapter.
 
 **Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
 distribution over members (`Distrib` at the use site); maximal base
@@ -1340,8 +1356,14 @@ so the `fa'u` specimen expands completely:
 (Named t x)     ≝ (Close (cmene (NameSign t) x)) ; bearer of name-sign t,
                                                  ; naming convention from
                                                  ; the lexicon's cmene row
-(MaxRefer P)    : RefComp<Referents<T>> — Refer constrained so every
-                  P-satisfier is Among the referent (the lo'i/loi base)
+(MaxRefer P)    : RefComp<Referents<T>> ≝
+  (Refer (λ (r. (∧ (Distrib P r)
+                   (∀ (λ x. (→ (P x) (Among x r))))))))
+                ; the P-satisfying reference every P-satisfier is Among —
+                ; the maximal base (lo'i/loi, Every's export)
+(Holds p)       : Content — the content the proposition object p
+                  represents (the model-theoretic inverse of Reify;
+                  evaluating Holds(Reify c) is evaluating c)
 ```
 
 **Events and tags:** the adjacent-sort crossings of P13 —

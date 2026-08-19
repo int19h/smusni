@@ -192,13 +192,16 @@ classes, which no single referent could verify (rationale §1.9).
 ; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
 (Bind (($dog (Referents Entity)
         (Refer (λ (($x (Referents Entity)))
-          (Close ((DropPlace DescribedBy 3) Speaker $x
-            (λ (($y (Referents Entity))) (blabi $y))))))))
+          (∧ (Close (DescribedBy Speaker $x Audience     ; the le-head:
+               (λ (($y (Referents Entity))) (gerku $y)))) ; "my dog"
+             (Close ((DropPlace DescribedBy 3) Speaker $x ; the voi
+               (λ (($y (Referents Entity))) (blabi $y)))))))))  ; restriction
   (Assert (Close (jbena $dog))))
-; the audience place is DELETED, not omitted — voi's description has no
-; audience role. Three-way contrast: poi (veridical restriction, in the
-; property), noi (projective supplement, below), voi (non-veridical
-; restriction through the describer).
+; the voi conjunct's audience place is DELETED, not omitted — a voi
+; description has no audience role; the le-head keeps its audience.
+; Three-way contrast: poi (veridical restriction, in the property),
+; noi (projective supplement, below), voi (non-veridical restriction
+; through the describer).
 ```
 
 ```lisp
@@ -398,17 +401,17 @@ own lexical presupposition, never from `kau`.
   (Close
     (jinvi Speaker
       (Reify
-        (Supplement (Reify (Close (klama Audience)))
-          (Close (evidential-basis Speaker
-                   (Reify (Close (klama Audience))) Hearsay))
-          (Close (klama Audience)))))))
-; content-level display: a Supplement anchored at the reified content
-; (Reify is pure — repeating it names the same object; the content
-; itself is evaluated once, in body position), so the hearsay display
-; rides the embedded claim projectively — the reason evidentials are
-; targeted display, not an operand on assertion force. (ti'e placed
-; after du'u, targeting the abstraction's content, per the CLL
-; attachment rule.)
+        (Let ((p (Reify (Close (klama Audience)))))
+          (Supplement p
+            (Close (evidential-basis Speaker p Hearsay))
+            (Holds p)))))))
+; content-level display: the content occurs ONCE, under a pure Reify
+; shared by Let; Holds evaluates that same proposition object, so the
+; anchor, the displayed basis, and the evaluated body all carry one set
+; of contextual sites. The hearsay rides the embedded claim projectively
+; — the reason evidentials are targeted display, not an operand on
+; assertion force. (ti'e placed after du'u, targeting the abstraction's
+; content, per the CLL attachment rule.)
 ```
 
 ```lisp
@@ -507,7 +510,7 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; CoRef (library) is plural co-reference — mutual Among — since typed =
 ; stays first-order; Reify is pure and lifts to a singleton reference.
 
-; le se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
+; lo se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
 (Bind (($s (Referents (Sign Sentence))
         (Refer (λ (($x (Referents (Sign Sentence))))
           (Close ((DuhuRel (Close (klama Speaker))) :2 $x))))))
@@ -564,14 +567,21 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; contrast: me'o re te'a ci mentions the EXPRESSION sign, not 8:
 ; (Mention (Sign (($s (SignToken MathExpression))) (TextOf $s "re te'a ci")))
 
-; li pa vu'u mo'e le ni mi klama — the numeric crossing (CLL 11.5)
-(Bind (($amt (Referents Amount)
-        (Refer (λ (($a (Referents Amount)))
-          (Close ((NiRel (Close (klama Speaker))) $a))))))
-  (Bind (($scale (Referents Scale) (Context)))
+; li pa vu'u mo'e lo ni mi klama — the numeric crossing (CLL 11.5)
+(Bind (($scale (Referents Scale) (Context)))      ; ONE scale, hoisted:
+  (Bind (($amt (Referents Amount)                 ; it fills NiRel's x2
+          (Refer (λ (($a (Referents Amount)))     ; AND reads the value
+            ((NiRel (Close (klama Speaker))) $a $scale)))))
     (Mention (− 1 (AmountValue $amt $scale)))))
-; mo'e = AmountValue: the amount's numeric value on its scale, usable
-; in arithmetic; fuzzy jei runs through TruthValueDegree likewise.
+; mo'e = AmountValue: the amount's numeric value on the SAME scale that
+; defined it (distinct Context sites would allow a mismatch — pin P15).
+
+; lo jei mi klama — fuzzy truth degree (CLL 11.6)
+(Bind (($ep (Referents Epistemology) (Context)))
+  (Bind (($tv (Referents TruthValue)
+          (Refer (λ (($v (Referents TruthValue)))
+            ((JeiRel (Close (klama Speaker))) $v $ep)))))
+    (Mention (TruthValueDegree $tv))))   ; a Number in [0,1]
 
 ; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
 (Bind (($bob (Referents Entity)
