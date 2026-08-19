@@ -823,7 +823,7 @@ Gradable predication exposes its two parameters through the library's
 `Grade` schema:
 
 ```text
-Grade : GradableRel<ρ> × Scale × Region<Scale> → PredTerm<ρ>
+Grade : GradableRel<ρ,ℓ> × Scale × Region<Scale> → PredTerm<ρ>
 ```
 
 with the scale obtained by `Context` when not lexical (which dimension —
