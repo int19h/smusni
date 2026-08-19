@@ -128,6 +128,28 @@ the table is the single normative statement, so surface and model can
 never drift apart. **Why are `↔`/`⊕` primitive?** Their classical
 rewrites evaluate operands twice; under effects, twice-evaluated
 introductions and supplements are real differences, not stylistic ones.
+**Why not share the operands instead of duplicating them?** `Let` cannot
+do it: `Let` shares the *term*, not the *evaluation* (spec §4.4 — it is
+immediate application), so `(Let (($p Content a)) ((→ $p $q) ∧ (→ $q
+$p)))` still evaluates each operand once per use site — two `Context`
+sites where the original had one (an omitted place may resolve
+*differently* in the two copies, satisfying the rewrite where the
+original fails), supplements and presupposition triggers committed per
+copy, introductions doubled. `Bind` shares an evaluation but shares its
+*returned value*, and `Content` returns unit — the meaning is the state
+transformation, and no boolean comes back to reuse. The derivation
+could be forced through by minting a truth-capture operator
+(`TruthOf : Content → RefComp<Bool>` — run once, reify the truth
+outcome), but that is not a reduction: it is a general
+**dynamic-to-static reflection**, strictly more powerful than the two
+connectives it would replace, usable anywhere as an escape hatch
+(testing content in a restrictor without its effects), and needed by no
+Lojban construct. `↔` and `⊕` are that same once-per-operand evaluation
+confined to two closed truth-functional shapes with stated accessibility
+rows — capabilities minimized, not operator names. In a pure,
+effect-free logic both would be derivable; they are primitive *given*
+effects and given the deliberate absence of any reflection operator to
+route the sharing through.
 
 ### 1.6 Witness export without run objects
 
