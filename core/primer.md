@@ -32,12 +32,19 @@ Three promises the core makes, which this primer keeps returning to:
    choice written down as a numbered "pin" and an argument for it.
 2. **It refuses to resolve what Lojban deliberately leaves open.** A tanru
    really is vague; `zo'e` really does hand the matter to context; a bare
-   sentence really has no tense. The core has machinery to *say precisely
-   that something is left open, and in which way* — this may be its most
-   unusual feature.
+   sentence really carries no tense marker, and which of its several
+   readings you meant is yours to have meant. The core has machinery to
+   *say precisely that something is left open, and in which way* — this
+   may be its most unusual feature.
 3. **It never depends on any program.** The core is a definition on paper.
    It mentions no parser, no software, no error messages. Anyone can
    implement it; nobody has to.
+
+One naming note: the CapitalizedWords you'll see in core terms are
+*placeholders*. The project's end state is that every predicate is an
+ordinary Lojban content word — many already are (`purci`, `gunma`,
+`skicu`), and the rest carry dictionary-style definitions awaiting an
+existing word or a new coinage (the spec's §16 tracks each one).
 
 **How to read this primer.** Each chapter takes Lojban you already know,
 shows the core term for it, and introduces the few formal ideas involved —
@@ -131,12 +138,16 @@ predicate (`purci`, "is earlier than") applied to the event. `ba` is
 trick with other predicates. Stacked tenses chain: `mi pu pu klama` says
 the going is before some point which is itself before now.
 
-And a bare, tenseless bridi? **It says nothing about time at all.** Not
-"present tense by default" — nothing. Context may make a time obvious, the
-way it makes the destination of `mi klama` obvious, but the sentence's
-meaning carries no time claim. This is our first example of a principle
-the core applies everywhere: *absence of a marker is absence of the
-meaning*, never a hidden default. (Pin P8.)
+And a bare, tenseless bridi? **There is no default tense** — but CLL
+itself lists the readings: `mi klama` "can be understood as" I went, I'm
+going, I will go, I continually go — "context resolves which is
+correct." The core takes that literally: those are different *readings*.
+On an episodic reading ("I went") the time is a contextual slot exactly
+like the destination — think of "I didn't turn off the stove!", which
+denies one particular relevant failure, not every stove-touching in
+history. On a habitual or timeless reading, there is genuinely no time
+claim at all. What never happens is the core inserting a tense you
+didn't choose. (Pin P8.)
 
 ## 3. Things: reference
 
@@ -170,9 +181,10 @@ The other gadri, briefly:
 
 - `le P` — *the ones I'm describing as P*: reference through the
   speaker's description, which may be inaccurate ("that `le nanmu`
-  turned out to be a woman"). The core uses a dedicated
-  describing-relation, `DescribedBy` — you count on the speaker's
-  ability to point, not on the description's truth.
+  turned out to be a woman"). The core spells this with `skicu` itself —
+  "the one I describe to you as P," where the describing is the very act
+  of saying `le P` — so you count on the speaker's ability to point, not
+  on the description's truth.
 - `la N` — reference through a name-sign.
 - `loi P` / `lo'i P` — reference to a *group object* / a *set object*
   built from P-things. A crowd can surround a building though no person

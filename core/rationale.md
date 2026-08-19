@@ -368,20 +368,19 @@ version of this paragraph: `skicu`'s official x4 **is** a description
 property — "x1 tells about/describes x2 to audience x3 with description
 x4 (property)" — so the once-claimed place misuse never existed, and a
 `skicu`-based `le` (the property applied to x2 by `skicu`'s own
-definition) is expressively adequate. The dedicated relation stands on
-one consideration only: `skicu` denotes an *act* of describing, so a
-`skicu`-based lowering must anchor its event performatively to the
-current utterance ("the one I hereby describe as…") — coherent in this
-core's machinery, at the cost of utterance-reflexive reference
-properties on every `le`. (An earlier draft added a definitional-
-ownership ground — that closed-class semantics should not depend on an
-open-class entry; the owner struck it: the project's lexicon program
-revises the gismu list precisely to give entries defined semantics, so
-no such independence requirement exists.) Under the content-word
-program every PascalCase relation is a placeholder anyway, so the real
-question is only which content word `le` lowers through — `skicu` with
-an anchoring clarification being the natural candidate; flagged at pin
-P10 for committee decision.
+definition) is expressively adequate. The question closed in
+round 6: the audit surfaced guskant's own `le` expansion — `zo'e noi mi
+ke'a do skicu lo ka ce'u broda` — showing the community's formal
+analysis was the `skicu` analysis all along, and the one surviving
+concern (that `skicu` names a describing *event*) is answered by the
+anchoring clause: the describing event is this utterance's own locution,
+true by construction, with the token machinery already there to say it.
+So `le` lowers through `skicu`, exact official fit, no dictionary
+change; the `DescribedBy` placeholder is retired. (Review history worth
+keeping: a false x4-"medium" claim and a definitional-ownership ground
+the owner struck — no independence-from-the-dictionary requirement
+exists, since the lexicon program defines gismu semantics — both fell
+before this closure.)
 
 ### 2.7 Alternatives shaped like implementations
 
@@ -443,18 +442,12 @@ genuinely fought:
   and stronger readings come from the embedding predicate's lexical
   presuppositions or explicit markers. The parallel with tenselessness
   and distributivity is exact, and deliberate.
-- **P10 (`le`).** *Corrected post-review:* the panel's claim that the
-  traditional `skicu` analysis misused a "medium" x4 was false —
-  official `skicu` x4 is a description property, and the owner-raised
-  check exposed the error. The dedicated `DescribedBy` relation
-  therefore rests only on the act-vs-identification consideration
-  (`skicu` describes a telling event; a `skicu`-based `le` needs
-  performative anchoring to the utterance) and on definitional
-  ownership of a closed-class meaning; it still cleanly hosts `voi` by
-  audience-deletion; with the ownership ground struck by the owner
-  (§2.6), the performatively anchored `skicu`-based analysis is the
-  leading candidate under the content-word program — committee
-  decision.
+- **P10 (`le`) — closed.** Two false supports fell (the x4-"medium"
+  claim; the ownership requirement), guskant's expansion supplied the
+  precedent, and the anchoring clause answered act-vs-identification:
+  `le` lowers through `skicu` with the describing event anchored to
+  this utterance's locution — performative, true by construction.
+  `voi` = audience-deleted `skicu`. `DescribedBy` retired (§2.6).
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
@@ -471,10 +464,24 @@ genuinely fought:
   exactness — the xorlo-era reading, the one consistent with termset
   composition and witness export — and keeps the CLL-literal reading as
   the named `GlobalExactly`. The divergence is documented, not
-  smuggled.
-- **P8 vs the present-tense temptation.** CLL ch. 10 makes tense
-  optional; "untensed = present" is an anglophone reflex, not a rule.
-  Tenseless bridi make no time claim.
+  smuggled — and the compatibility audit supplied the positive argument
+  it needed: witness-set semantics is what dynamic anaphora *forces*.
+  If bare PA meant global exactness, `ci gerku cu bajra .i ri tatpi`
+  would have no specific three-dog referent to export — only a size
+  claim about a maximal set — so the pin is motivated by composition,
+  not preference.
+- **P8 vs the present-tense temptation — amended in review.** CLL
+  ch. 10 makes tense optional; "untensed = present" is an anglophone
+  reflex, not a rule. But pure absence was also wrong, as the
+  compatibility audit showed: CLL 10.1 itself enumerates the readings of
+  the tenseless example and says "context resolves which is correct",
+  and the Partee-style stove case (a tenseless denial targets one
+  contextually relevant occasion) demands a contextually anchored time
+  on episodic readings. The amended pin: tenselessness is
+  reading-multiple — episodic readings carry a `Context` time facet,
+  habitual/gnomic readings carry nothing, and the semantics never
+  inserts a default; the choice among readings is upstream, like every
+  ambiguity.
 - **P12 (implicit `ce'u` at first unfilled place, counting converted
   places)** — subsumes the x1 tradition, matches practice, and declares
   multi-candidate cases distinct readings rather than vagueness.

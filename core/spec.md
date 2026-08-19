@@ -87,9 +87,12 @@ fits, a proposed redefinition where one almost fits, a new coinage
 otherwise), each carrying a predicate-style definition and a see-also
 note explaining why nearby existing words do or do not serve. The
 PascalCase convention persists in the notation as those placeholders.
-How far this program reaches — whether even the binding and force
-vocabulary reduces to content words over first-class signs — is under
-active design; the placeholder doctrine holds regardless.
+The program's reach and discipline are specified in §16 — including how
+far the reduction over first-class signs goes and where it provably
+stops. One boundary governs the whole program: **only content words
+denote object-language predicates; the structural judgments and
+evaluator operations that give them meaning are not thereby required to
+be content words.**
 
 ### 1.3 Resolved readings
 
@@ -817,7 +820,8 @@ The normative classification:
 | `du'e` / `mo'a` / `rau` | `Vague` threshold **constrained by** a `Context` standard/purpose | two parameters; the purpose is recoverable, the boundary is not |
 | `na'i`'s defect dimension | `Context` | the hearer is expected to see what is defective |
 | bare `jai` (no tag) | `Vague` | raises a participant out of the abstraction filling the host's x1 (the abstraction moves to `fai`); *which role* the raised argument plays there is the vague dimension — `tu'a`'s raising inverted (CLL 9.12, 11.10); `jai`+tag specifies the role and is exact (library expansion) |
-| tenselessness; bare-`kau` exhaustivity; unmarked distributivity | **absence** | no hole, no parameter (P8, P9, P4) |
+| bare-`kau` exhaustivity; unmarked distributivity | **absence** | no hole, no parameter (P9, P4) |
+| tenselessness | reading-multiple (P8) | episodic readings carry a `Context` time; habitual/gnomic readings carry nothing; never a default — the reading is chosen upstream |
 
 ### 6.2 Tanru
 
@@ -1194,19 +1198,18 @@ gloss — already takes its members as x2; both are adopted with plural
 x2 read as plural references. (The genuine defect in this area is
 official `cmima`'s x2 being glossed as a *set*; the library avoids
 `cmima`, and the lexicon program may propose broadening its x2.) The
-`le`-description
-relation is a dedicated entry `DescribedBy⟨describer, described, audience,
-property⟩`. (Official `skicu` x4 is itself a description property, so a
-`skicu`-based lowering is expressively adequate; the sole remaining
-ground for the dedicated entry is that `skicu` denotes a describing
-*event*, so a `skicu`-based `le` needs performative anchoring to the
-current utterance. Under the lexicon and content-word programs (§1.2)
-`DescribedBy` is in any case a placeholder — the natural candidates
-being `skicu` with an anchoring clarification, or a proposed refinement
-of it — flagged at P10 for committee decision.) `voi`
-uses the audience-deleted variant `(DropPlace DescribedBy 3) :
-⟨describer, described, property⟩` restrictively — the deletion is
-semantic (no audience role exists in a `voi` description), per pin P10.
+`le`-description relation is **`skicu` itself** — official row "x1 tells
+about/describes x2 to audience x3 with description x4 (property)", an
+exact fit place-for-place, and the analysis the community's formal gadri
+commentary has used all along (guskant: `le broda` = `zo'e noi mi ke'a
+do skicu lo ka ce'u broda`). The describing event is anchored by the
+mapping annex's clause (§11): it is the current utterance's own locution
+— saying `le broda` *is* the describing, so the anchor holds by
+construction through the token machinery (§7.4). `voi` uses the
+audience-deleted variant `(DropPlace skicu 3)` restrictively — the
+deletion is semantic (no audience role exists in a `voi` description),
+per pin P10. (`DescribedBy` was this entry's placeholder name through
+review; retired at R6-2.)
 
 ## 11. Mapping annex: Lojban constructs to core terms
 
@@ -1221,8 +1224,12 @@ force boundary. FA/conversion → labelled fills / row routing (§4.2).
 ⊳ `si`/`sa`/`su` erase before reading; quoted text preserves them.
 
 **Descriptions** (P1, P10, P11). `lo P` → `(Refer P)`, veridical,
-number-neutral. `le P` → `Refer` via `DescribedBy(Speaker, ·, Audience,
-P)`, non-veridical, speaker-identifying. `la N` → `Refer` via naming
+number-neutral. `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)`
+with the anchoring clause — the describing event is this utterance's own
+locution (performative by construction; §7.4 supplies the event) — and
+the speaker's commitment that the audience can identify the referent is
+a cooperative-use commitment stated here in prose, not machinery;
+non-veridical, speaker-identifying. `la N` → `Refer` via naming
 (`Named`/`NameSign`). `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical,
 [Speaker], P, ·)` at their predication (§5.8). `loi`/`lo'i` → `Refer` to
 group/set objects via `gunma`/`selcmi` (P5), the base being the **maximal
@@ -1256,7 +1263,9 @@ connection → `Vague` over the connecting relation; `ku'a`/`jo'e`/`pi'u`
 existentially unless shared explicitly. Tense/aspect/spatial cmavo and BAI
 → event-predicate conjuncts per the lexicon's tag reductions, joined by
 `∧` at the tag locus; tense chains (`pu pu`) compose as anchor paths.
-Tenseless bridi → no temporal conjunct. ⊳ `ki` stickiness propagates
+Tenseless bridi → per the selected reading (P8): episodic → a
+`Context`-anchored temporal facet; habitual/gnomic → no temporal
+conjunct. ⊳ Reading selection is upstream; `ki` stickiness propagates
 resolved tense by source order; ⊳ story time (CLL 10.14) supplies
 narrative sequencing as reading inference, not semantics. CAhA: `ka'e` → the library's capability
 schema; `ca'a` → `fasnu` actuality conjunct. ZAhO → boundary relations per
@@ -1511,25 +1520,29 @@ vagueness is never pinned; it is classified in §6.1.)
   counting is the mapping discipline over accessible referents.
 - **P7** `noi` is projective supplement, anchored; dependent supplements
   commit per instantiation inside their binder.
-- **P8** Tenseless bridi carry no temporal predication (CLL 10.1: "All
-  tense information is optional"); `ki` is text-to-reading stickiness,
-  and so is **story time** (CLL 10.14): the narrative convention reading
-  tenseless sentences as "what happens next" is a text-to-reading
-  inference, never a semantic default.
+- **P8** *(amended in review)* A tenseless bridi is
+  **reading-multiple**, per CLL 10.1's own enumeration (past, present,
+  perfect, future, "I continually go…" — "context resolves which is
+  correct"): an *episodic* reading carries a `Context`-anchored temporal
+  facet (the contextually relevant occasion — the reading on which "I
+  didn't turn off the stove" denies a particular failure, not all past
+  ones); *habitual/gnomic* readings carry no temporal conjunct at all.
+  The semantics never inserts a default; selecting the reading is
+  upstream (§1.5), `ki` is text-to-reading stickiness, and **story time**
+  (CLL 10.14) is one named text-to-reading resolver, never a semantic
+  default.
 - **P9** Bare `kau`: answerhood with exhaustivity **absent** — weakest
   truth conditions; strengthenings lexical/pragmatic/explicit. (Absence,
   not `Vague`: Lojban has no grammatical precisification route.)
-- **P10** `le` via the dedicated `DescribedBy` relation — speaker-indexed,
-  non-veridical, number-neutral; `voi` restrictive variant. *(Flagged
-  for review: the once-claimed `skicu` x4 place-misuse was false —
-  official x4 is a description property — and the definitional-ownership
-  ground is void under the lexicon program (§1.2), leaving only
-  act-vs-identification: `skicu` names a describing event, so a
-  `skicu`-based `le` needs performative anchoring to the utterance.
-  `DescribedBy` is a content-word-program placeholder; the
-  performatively anchored `skicu` analysis, possibly via a proposed
-  clarifying redefinition, is the natural candidate — committee
-  decision; §10, rationale §2.6.)*
+- **P10** *(closed at R6-2)* `le` lowers through **`skicu`** — exact
+  official fit, guskant-precedented — with the utterance-locution
+  anchoring clause (§11) answering act-vs-identification: the describing
+  event is this very utterance, true by construction. Speaker-indexed,
+  non-veridical, number-neutral; `voi` = `(DropPlace skicu 3)`
+  restrictive variant. No dictionary change; the `DescribedBy`
+  placeholder is retired. (Review history: a false x4-"medium" claim and
+  a void definitional-ownership ground both fell before this closure;
+  rationale §2.6.)
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
 - **P12** Implicit `ce'u`: exactly one, first unfilled place, counting
@@ -1661,4 +1674,172 @@ sign binders with the fact vocabulary, the sign constructors,
 `InterpretContent`/`InterpretAct`; the deictic projections, `Deictic`,
 `ShiftedGround`, `InContext`; `Polar`, `OpenQ`, `Answer` with its
 selection values; `Close` and `At` are normatively defined forms (§4.6,
-§4.7) and the library defines the rest.
+§4.7) and the library defines the rest. Each kernel and library name's
+content-word status is in §16.
+
+## 16. The content-word program
+
+The end state of §1.2's program: only content words serve as predicates.
+This chapter specifies what that means operator by operator, how far the
+reduction over first-class signs goes, and where it provably stops.
+
+### 16.1 Three cash-out classes
+
+"Placeholder for a content word" cashes out differently across the
+inventory:
+
+- **Class P — genuine predicates** (relations over individuals, acts,
+  tokens, signs): the direct targets. Each is *exact-fit* (an existing
+  word's official row serves, possibly through place baking, deletion,
+  or `se` — the standard combinators), *near-fit* (an existing word
+  would serve after a **proposed redefinition**: exact current wording,
+  exact proposed wording, blast-radius assessment, committee-decided,
+  never silently applied), or *no-fit* (a coinage is owed; until coined,
+  the PascalCase placeholder carries the predicate-style definition).
+- **Class O — operators over content, computations, or signs** (`Refer`,
+  `Context`, `Vague`, `Close`, `Bind`, the force constructors, the
+  question formers, `Presuppose`/`Supplement`, `Tanru`/`Scalar`,
+  `DropPlace`/`At`/`JaiPromote`, the selections): not predicates over
+  individuals. Their content-word fate is the sign reduction of §16.3,
+  and it reaches exactly as far as the bootstrap floor of §16.4 permits.
+  Where a natural *shadow relation* exists (a predicate that describes
+  the operator's result — `xusra` for what `Assert` builds, `danfu` for
+  answerhood, `smuni` for interpretation), the entry names it: the
+  shadow is real vocabulary either way, since acts, tokens, and signs
+  are first-class objects the language must talk *about*.
+- **Class M — metalanguage**: type formers, rows, typing judgments, the
+  evaluator, metalanguage recursion in library definitions. **No content
+  word is owed**, and the committee should coin none: a sort *predicate*
+  (`fasnu` for eventhood) is a content word; the sort *system* is not.
+
+### 16.2 Registry entry schema
+
+Each §16 entry carries: the placeholder name; a **predicate-style
+definition** (an x1…xn row, even for binder- and force-like operators —
+a binder relates a scoped sign to a closure, a force constructor relates
+an act to its content); **status** (exact-fit / near-fit / no-fit /
+machinery); **see-also** — nearby existing words with verified official
+rows and the reason each does or does not serve; **proposed
+redefinition** (near-fit only; none currently exist — the present audit
+found every near-fit repairable by the standard combinators); and the
+formal fields the reduction needs: *semantic class* (content-producing,
+value-producing, computation-producing, binder-producing, act-producing,
+type/index — determining what a definition may claim), *effect profile
+and sequencing law* (computation-producing entries are not defined by
+their predicate row alone), *binding arity and scope types* (binder
+entries consume scoped signs, never raw text), *sign-operand policy*
+(**active**: evaluation effects flow to the host; **inert**: the opacity
+row applies — declared per word, immutable by definition), *stage
+requirement*, and *basis or derived* status with the expansion equation
+(derived entries terminate in basis vocabulary — Brismu's
+dependency-order discipline).
+
+### 16.3 Evaluation over signs: the adopted architecture
+
+Signs stratify. Raw `Text` and the opaque sign kinds (§7.5) remain what
+they are — quoted material, never auto-interpreted. A new sign kind
+**`Expression`** covers elaborated, *scoped* core expressions: `{…}` is
+this specification's notation for an `Expression` sign, and it is
+**core-only notation** — no surface cmavo has, or may ever acquire,
+active-eval semantics (reassigning `lu…li'u`, `la'e`, or `me'o` to
+active evaluation would make quotation commit its speakers to quoted
+referents: the paradigm rug-pull). Any future *spoken* evaluation word
+is a new coinage through the lexicon program.
+
+Two evaluations, not one:
+
+- **Inert evaluation** — sign to value, no effects — is the existing
+  `InterpretContent`/`InterpretAct` family (§7.5), extended to
+  `Expression` signs per syntactic category (a sentence-expression
+  interprets at `Content`, a sumti-expression at `RefComp`, a
+  property-expression at a function type; one untyped `Eval` is not
+  typable).
+- **Active evaluation** — effects flowing into the host — exists at act
+  level already: `Perform` of an interpreted act re-issues quoted
+  discourse *with* its dynamics. Sub-sentential active evaluation (a
+  defined gadri taking effect inside a host sentence's reference
+  computation) is **floor** (§16.4): a content word can *describe* an
+  evaluation's effects; describing an introduction does not introduce.
+
+A mechanical `{}`-definition (sugar) is **admissible** only under the
+soundness law:
+
+- **S1 Accessibility uniformity** — the expansion preserves meaning
+  under every row of §5.4, not merely at top level.
+- **S2 Linearity** — effectful operand positions expand exactly once;
+  operand sharing goes through explicit binding, never textual
+  repetition (the `↔`/`⊕` lesson as a law).
+- **S3 Identity preservation** — `Context` sites and keys, and `Vague`
+  binding sites, map one-to-one through the expansion.
+- **S4 Resolution first** — readings resolve (anaphora, donkey
+  normalization, erasure, reading selection) *before* any expansion
+  applies; `{}` boundaries are scope islands, and expansions are local
+  where normalizations are global.
+- **S5 Acyclicity** — definitions in dependency order; no definiendum in
+  its own transitive definiens.
+- **S6 Policy immutability** — no definition alters the active/inert
+  policy of the signs it consumes.
+- **S7 Typing immutability** — no definition relaxes a well-formedness
+  side condition (§1.6); an ill-formed term stays non-denoting, never
+  merely false.
+
+### 16.4 The bootstrap floor
+
+The reduction stops here; these are machinery, not content words, and
+the doctrine sentence of §1.2 exempts them by design:
+
+| Floor item | Why no content word can be it |
+|---|---|
+| scope and hygiene (elaborated, scoped expressions; environments; capture-avoiding instantiation) | raw text carries no capture-free binding; textual substitution into signs is capture-prone and must skip nested inert quotations |
+| staged, partial evaluation | a same-stage total evaluator yields the liar diagonal; evaluation is defined at the stage above its operand, and elaboration is partial |
+| the lexical basis interpretation | definitions bottom out: some words' meanings are model-given, or the dictionary is a cycle |
+| effect sequencing | ordering of introductions, retrievals, and obligations is an operation, not a truth condition — a predicate's extension cannot carry it |
+| effect-flow policy | active vs inert consumption is not at-issue content; it is declared per consuming word and enforced by the semantics |
+| force performance | if asserting were predication, describing or quoting an assertion would perform it; `Perform` stays external |
+| typing judgments | well-formedness is decided before terms denote; as at-issue predication it would turn undefinedness into mere falsity (S7) |
+
+Sort *predicates* are content words (many exist: `fasnu` for
+eventualities, `pruce` for processes, `namcu` for numbers, `sinxa` for
+signs, …) — a consequence of the audit, not a separate program.
+
+### 16.5 The audit (initial population)
+
+Summary of the panel audit (full entries accrete under §16.2's schema;
+every official row cited here was verified against jbovlaste/CLL —
+sources and the round-6 record carry the details):
+
+- **Adopted now (exact-fit):** `skicu` for the `le` description (P10,
+  with the §11 anchoring clause); `cmene` (`Named`); `gunma`, `selcmi`
+  (P5); `purci`/`balvi`/`cabna` (tense facets); `srana` (`tu'a`
+  aboutness); `fasnu` (actuality, realization); the BAI tag gismu that
+  double as the named tanru-link relations (`tadji` manner, `mukti`
+  purpose, `krasi` source, `marji` material, `pilno` instrument, `simsa`
+  resemblance).
+- **Near-fit (combinators only; no redefinitions proposed):** `klani`
+  for `NiRel`/`AmountValue` (bake the measured place; its scale place is
+  the crossing's x2); `se lifri` for `LihiRel`; `sidbo` for `SihoRel`;
+  `pruce` for `PuhuRel` (delete inputs/outputs); `mintu` for `CoRef`
+  (delete the standard); `frica`/`simsa` for `Contrast`/`Parallel`
+  (act-typed relata); `smuni` for the interpretation crossings;
+  `sinxa`/`cusku`/`tavla` projections for the token-fact vocabulary;
+  the UI emotion gismu (`gleki`, `badri`, `djica`, `ganse`, …) for the
+  indicator relations, with `nai`-poles paired systematically.
+- **No-fit (coinage owed; placeholder carries the definition):**
+  `Among`, `Combine` (the plural algebra — `pagbu`/`cmima`/`gripau` all
+  cross the plurality/object line and are rejected), `ZuhoRel`,
+  `SuhuRel`, `JeiRel`, `Reify`/`Holds` (one coinage, two directions via
+  `se`), `UnitSet`/`CardBasis` (see-also `zilkancu`, which carries two
+  competing community definitions and guskant's own vagueness warning —
+  the unsettled record supports placeholder status), `InRegion`,
+  `AdmissibleThreshold`, `Addition`, `MetalinguisticallyDefective`,
+  `Realizes`/`TextOf`/`Quotes`, `Vocative`/`Mention` shadows.
+- **Rejected fits (the method note):** `fadni` for `Generic` — its
+  official row ("x1 is ordinary/typical in property x2 among members of
+  x3") is verbatim the specimen theory the split-normality witness
+  killed (R3): the audit's standing warning that surface resemblance
+  must be checked against the semantics before adoption.
+- **Class O shadows (vocabulary either way):** `xusra` (assertion),
+  `preti` (question text — its quoted-text x1 fits the sign machinery),
+  `minde` (command), `cinmo` (display), `danfu`/`spuda` (answerhood /
+  answering act), `drata` (the individual-level shadow of scalar
+  otherness).
