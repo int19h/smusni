@@ -200,8 +200,9 @@ Core terms are written as S-expressions:
   that requires a type annotation requires it. A compound type is a
   **generic instantiation** — a type constructor applied to indices of
   its declared kinds: sorts (`Referents Entity`), rows (`Record ρ`,
-  `PredTerm ρ(H)`), forces (`Act Assertion`), sign kinds
-  (`SignToken K`), place labels (`Label klama`) — and after `::` the
+  `PredTerm ρ(H)`, and `Label klama` — the §4.7 abbreviation of the
+  row-indexed `Label ρ(klama)`), forces (`Act Assertion`), sign kinds
+  (`SignToken K`) — and after `::` the
   application spine is written flat: `{$r :: Referents Entity}`
   applies the `Referents` former to
   `Entity` (the type the metalanguage displays as `Referents<Entity>`),
@@ -1487,8 +1488,10 @@ operand, left to right. No facade exists for the sign constructors
 commitment, or for `Interpret` itself.
 
 **The reflection law.** Every binder form *is* its Make-word applied
-to quotes — the aliases and definitions above — so the grammar has
-exactly three formers: atoms, braces, application. For the derived
+to quotes — the aliases and definitions above — so the
+term-expression grammar has
+exactly three formers: atoms, braces, application (telescope contents
+and the types after `::` carry the §2 subgrammar). For the derived
 facades the law is stated once: each facade equals its definition,
 with `≡` contextual equivalence at the result type, never equality of
 signs. Each law preserves S1–S7: one interpretation per operand, sites mapped
@@ -1500,7 +1503,8 @@ evaluations.
 
 **Why this section exists** (the design's point, argued in the
 rationale): with binding delegated to one sign-consuming word and the
-grammar reduced to atoms, braces, and application, every operator of
+term-expression grammar reduced to atoms, braces, and application,
+every operator of
 the core is a *nameable function* — a content-word candidate with
 sign-typed places — and the same stage-schematic vocabulary lets one
 text describe the stage below it, which is what makes a Lojban
