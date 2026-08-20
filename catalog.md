@@ -16,7 +16,11 @@ constructors, the abstraction relations, the cardinal quantifiers)
 share one subsection with per-name coverage inside it, so that their
 common story is told once.
 
-Two notational facts are catalogued here once rather than per entry:
+The scope is the **term language**: model-theory symbols
+(`Comp`, `InformationState`, `Obligations`, `Unit`, the `ctx` record,
+the world set W) are not forms and live in the short appendix at the
+end. Two notational facts are catalogued here once rather than per
+entry:
 multi-place fill notation (positional fills, `:n` labels, FA routing,
 `se`-conversion) desugars to nested single-place `At` (spec §4.1); and
 a specimen displayed as a bare act denotes the one-act discourse
@@ -78,7 +82,8 @@ restrictors; nuclear scopes are `EFn`.
 at these types. A restrictor that smuggles a `Refer` simply fails to
 have the pure type — the purity discipline is a typing fact, not an
 algorithm.
-**See.** [Spec §3.3](spec.md); [rationale §1.3](rationale.md).
+**See.** [Spec §3.3](spec.md); [rationale §1.14](rationale.md) (the
+pure/effectful seam).
 
 ### 1.5 `Record ρ` and `Label<ρ>` — rows
 
@@ -88,7 +93,9 @@ the finite type of its place labels. Labels are semantically real:
 Lojban reorders, deletes, and *asks about* places by label.
 **For.** `klama fi'a ti` is a question over `Label<ρ(klama)>`; the
 fill notation computes labels (spec §4.1). `PredTerm<ρ>` (defined
-section) is the row-function alias over these.
+section) is the row-function alias over these. (`Record` and `Label`
+are type constructors of the record theory, not first-order sorts —
+they do not appear in §3.1's hierarchy.)
 **See.** [Spec §3.3, §4.7](spec.md); [rationale §1.1](rationale.md).
 
 ### 1.6 `Content` — dynamic propositional content
@@ -130,7 +137,9 @@ directive without issuing it, because only `Perform` executes.
 that domain; `Bool` is the two-element polar answer type (distinct
 from the epistemology-relative `TruthValue` sort).
 **For.** `xu`, `ma`, `mo`, `fi'a`, `pei` all land in `Query` at
-different domains; `kau` builds embeddable question objects.
+different domains; `kau` supplies the contextual answer selection
+inside `Answer` (a `Proposition` results), while `QuestionOf` reifies
+a query as a `Question` object for question-object-selecting places.
 **See.** [Spec §8](spec.md); [primer ch. 6](primer.md).
 
 ### 1.10 `Sign<K>`, `SignToken<K>`, `UtteranceToken` — sign types
@@ -185,11 +194,13 @@ point is a `Bind` node the accessibility table can name. Uniform
 across result categories: the body may be content, an act, or a
 discourse, so a referent introduced before an act sequence stays bound
 across it.
-**For.** Cross-sentence reference:
-`(Bind (($cat (Refer mlatu-prop))) (Do (Assert …) (Assert …)))` — the
+**For.** Cross-sentence reference: `(Bind (($cat (Referents Entity)
+(Refer mlatu-prop))) (Do (Assert …) (Assert …)))` — the
 introduction runs once, the witness is reused in both acts.
+Multi-binding `Bind` is left-to-right nesting (spec §5.2).
 **See.** [Spec §5.2](spec.md); [primer ch. 4](primer.md);
-[rationale §1.14](rationale.md) (why not λ; why not CPS).
+[rationale §1.14, §2.4](rationale.md) (why not λ; why not CPS; the
+statics/dynamics seam).
 
 ### 1.15 Lexical predication
 
@@ -198,8 +209,9 @@ constants over their labelled rows, with the row, defaultability,
 scope policy, plurality behavior, meaningful deletions, and the rest
 supplied by the lexicon interface. The core is parameterized over the
 lexicon; a predication applied to fills for its row is `Content`.
-**For.** Every bridi. `(klama Speaker This)` — with unfilled places
-handled explicitly by `Close`, λ, or `DropPlace`, never silently.
+**For.** Every bridi. `(Close (klama Speaker This))` — the remaining
+places handled explicitly by `Close`'s contextual slots (or by λ or
+`DropPlace`), never silently.
 **See.** [Spec §4.1, §10](spec.md); [primer ch. 1](primer.md);
 [rationale §2.6](rationale.md).
 
@@ -250,11 +262,14 @@ quantifiers are built from selections, not from bare `∃`.
 
 ### 1.20 `=` — typed equality
 
-**Informally.** Primitive identity at every first-order sort — never
-at the plural reference type, where co-reference (`CoRef`, mutual
-`Among`) does the work.
-**For.** `du`; `ko'a du ko'a` is reflexively true under keyed
-retrieval (pin P16).
+**Informally.** Primitive identity at every first-order sort and at
+the discrete index types (`Bool`, place labels, the closed
+enumerations) — never at the plural reference type, where co-reference
+(`CoRef`, mutual `Among`) does the work; plural-sumti `du` lowers to
+`CoRef` (P23).
+**For.** `li re su'i re du li vo`; `ko'a du ko'a` reflexively true
+under keyed retrieval (pin P16) — at `CoRef` when the referents are
+plural.
 **See.** [Spec §4.5, §4.8](spec.md).
 
 ### 1.21 `Combine`
@@ -329,14 +344,17 @@ mixture kind, bare `jai`'s role.
 
 ### 1.27 `SelectExactly`, `SelectAtLeast`, `SelectSome` — the selections
 
-**Informally.** The quantifier-strength members of the `Refer` family:
-introduce a witness reference of the stated cardinal strength (exactly
-/ at least n units under the restrictor's basis; at least one), with
-the restrictor pure. Unlike `Refer`, a selection under a governing
-quantifier is *dependent* — one witness per value of the governor —
-which is what dependent anaphora normalizes over. Binding a witness
-never re-evaluates a selection; distinct selections have distinct
-witnesses.
+**Informally.** The quantifier-strength members of the `Refer`
+family: introduce a witness reference of the stated cardinal strength,
+with the restrictor pure. The witness laws: `(Distrib P w)` holds, and
+`(CardBasis w P)` is `= n` (`SelectExactly`) or `≥ n`
+(`SelectAtLeast`). Unlike `Refer`, a selection under a governing
+quantifier is *dependent* — one witness per value of the governor (the
+dependence law) — which is what dependent anaphora normalizes over,
+and why no `Refer`-plus-cardinality spelling can replace them (a
+`Refer` is a governor-invariant constant). Binding a witness never
+re-evaluates a selection; distinct selections have distinct witnesses.
+`SelectSome` is **defined** (§2.22).
 **For.** Bare-PA terms: `ci gerku cu bajra` selects a three-dog
 witness and predicates running of it, neutrally.
 **See.** [Spec §5.6, §4.10](spec.md); [primer ch. 5](primer.md);
@@ -383,23 +401,28 @@ birthing female lions) kills every fixed-specimen theory.
 **Informally.** The one bridge between content and object: `Reify`
 turns content into a `Proposition` (a first-order object representing
 the content's intension); `Holds` is its primitive inverse, with the
-axiom that evaluating `(Holds (Reify c))` is evaluating `c`. No other
-crossing exists in either direction.
+axiom pair: evaluating `(Holds (Reify c))` is evaluating `c`, and
+`(= (Reify (Holds p)) p)` for every proposition — so every
+proposition, however introduced, represents exactly the content
+`Holds` returns for it. The pair is the sole Proposition↔Content
+bridge (the sign and event crossings target other sorts).
 **For.** `du'u`; attitude objects; single-evaluation display
 (`Let`-shared `Reify` with `Holds` as the evaluated body).
 **See.** [Spec §9.1, §7.6](spec.md); [primer ch. 8](primer.md);
 [rationale §1.10](rationale.md).
 
-### 1.32 `Tanru` and `TanruAdmissible`
+### 1.32 `TanruAdmissible`
 
-**Informally.** `(Tanru M H)` is modification of head `H` by modifier
-`M`: the head's row, the head's predication, plus an admissible
-modification link — a `Vague` parameter ranging over relations that
-make `M` bear on *something* in the head predication, and nothing
-stronger. `TanruAdmissible` is the axiomatized admissibility
-constraint (nonempty by axiom: some link always exists).
-**For.** `sutra klama` — fast at going, on the common precisification,
-with the relation constitutively open (CLL ch. 5).
+**Informally.** The axiomatized admissibility constraint behind tanru
+modification: a relation of the head's row is admissible as the
+modification link exactly when it makes the modifier bear on
+*something* in the head predication (the event's manner, a
+participant, a purpose, …) and nothing stronger — no x1-sharing, no
+intersectivity. Nonempty by axiom: some link always exists,
+discharging the `Vague` formation obligation. The `Tanru` operator
+that consumes it is **defined** (§2.6).
+**For.** Constraining `sutra klama`'s open modification relation
+(CLL ch. 5).
 **See.** [Spec §6.2](spec.md); [primer ch. 9](primer.md);
 [rationale §1.8](rationale.md).
 
@@ -419,7 +442,10 @@ aesthetic standing. Also the `nai`-fallback for unpaired indicators
 ### 1.34 `AdmissibleThreshold`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
 **Informally.** The gradable/vague-quantity interface: the axiomatic
-admissibility predicates for degree-quantifier thresholds and gradable
+admissibility predicates for degree-quantifier thresholds (indexed by
+the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
+TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
+sort) and gradable
 scale regions (each nonempty by axiom, discharging the `Vague`
 formation obligation), the region-membership relation
 `InRegion : Amount × Region<Scale> → Content`, and the per-relation
@@ -474,20 +500,29 @@ signs, `me'o` expression mention.
 
 **Informally.** The explicit, typed interpretation crossings from
 signs (`la'e`; `lu'e` is the inverse sign-of): a sign to the content
-or the act it expresses — force-indexed, since a sign does not carry
-its force. On transcript entries, `InterpretAct` yields the realized
-act; `InterpretContent` is defined exactly when that act is an
-assertion (the content projection).
+or the act it expresses. `InterpretAct<F>` is a force-indexed
+*partial* family — defined exactly when the sign's realized (or
+intended) act has force `F`, since a sign does not carry its force. On
+transcript entries, `InterpretAct` yields the realized act;
+`InterpretContent` is defined exactly when that act is an
+assertion (the content projection); a question, directive, or
+expressive entry has no content projection and interprets only as an
+act.
 **For.** `la'e lu mi klama li'u` — the content, not the sentence.
 **See.** [Spec §7.5, §16.3](spec.md); [primer ch. 10](primer.md).
 
 ### 1.40 The token and sign fact relations
 
 **Informally.** The vocabulary for talking about utterances and signs
-as objects: `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`,
-`DeicticPlaceOf`, `TextOf`, `Realizes` (token realizes act), `Utters`,
-`Quotes`, `Denotes`. Ordinary assertable relations — placeholder
-content words under the §16 program.
+as objects — ordinary assertable relations, placeholder content words
+under the §16 program. Signatures (u an `UtteranceToken`, s a
+`SignToken<K>`, each relation `Content`-valued): `SpeakerOf u
+speaker`, `AudienceOf u audience` (both at `Referents<Entity>`);
+`LocutionOf u locution` (`Referents<Locution>`); `DeicticTimeOf u t`
+(`Time`); `DeicticPlaceOf u l` (`Location`); `TextOf u|s text`
+(`Text`); `Realizes u a` (an act value); `Utters agent u`;
+`Quotes s x` and `Denotes s x` (a sign token and what it quotes /
+denotes).
 **For.** Transcript entries, reported speech, the `le`-anchoring
 clause (the describing event is this utterance's locution).
 **See.** [Spec §7.4–7.5, §10–11](spec.md).
@@ -503,10 +538,9 @@ deictic projections from a given ground — the explicit context shift
 (`ra'o`), currently the sole member of the index-shift family.
 **For.** `mi`/`do`, `ti`/`ta`/`tu` (via the defined demonstratives),
 narrative perspective shifts.
-**See.** [Spec §5.1](spec.md); [primer ch. 1](primer.md);
-[rationale §2.3](rationale.md).
+**See.** [Spec §5.1](spec.md); [rationale §2.3](rationale.md).
 
-### 1.42 `Polar`, `OpenQ`, `QuestionOf`, `Answer`, and the selections
+### 1.42 `Polar`, `OpenQ`, `QuestionOf`, `Answer`, and the answer selections
 
 **Informally.** `(Polar c)` is the two-valued query (`Yes ↦ c`,
 `No ↦ ¬c`); `(OpenQ f)` the open query whose answer-content function
@@ -525,15 +559,22 @@ the defined `ContextualAnswer`.
 **Informally.** CLL's non-event abstractors are named relations with
 labelled rows, parameterized by the abstracted content; reference
 applies *outside*, so gadri, quantifiers, and relative clauses work on
-abstractions for free. Per name: `NiRel` (amount on a scale — `ni`),
-`JeiRel` (truth value under an epistemology — `jei`), `LihiRel`
-(experience with an experiencer — `li'i`), `SihoRel` (concept in a
-mind — `si'o`), `SuhuRel` (abstract nature with a category — `su'u`),
-`PuhuRel` (process with stages — `pu'u`), `ZuhoRel` (activity with
-repeated actions — `zu'o`). Event abstraction (`nu` and its sort
-refinements) is plain `Refer` at the event sort; `ka` is λ; `du'u` is
-`Reify`; `DuhuRel` is derived (defined section).
-**For.** `lo ni mi klama cu barda` — an amount, refered to like
+abstractions for free. The rows (each `(XRel c) : PredTerm⟨…⟩`, every
+place at `Referents<·>`): `NiRel` ⟨x1: Amount, x2: Scale⟩ (`ni`);
+`JeiRel` ⟨x1: TruthValue, x2: Epistemology⟩ (`jei`); `LihiRel`
+⟨x1: Experience, x2: Entity — experiencer⟩ (`li'i`); `SihoRel`
+⟨x1: Concept, x2: Entity — mind⟩ (`si'o`); `SuhuRel`
+⟨x1: AbstractNature, x2: Entity — category⟩ (`su'u`); `PuhuRel`
+⟨x1: Process, x2: Eventuality — stages⟩ (`pu'u`); `ZuhoRel`
+⟨x1: Activity, x2: Eventuality — repeated actions⟩ (`zu'o`). Event
+abstraction (`nu` and its sort refinements) is plain `Refer` at the
+event sort; `ka` is λ; `du'u` is `Reify`; `DuhuRel` is derived
+(defined section). Where the §16.5 audit records a combinator fit
+(`klani` for `NiRel`, `se lifri` for `LihiRel`, …), that is a
+committee-pending adoption plan: upon adoption the relation becomes a
+defined form over the adopted word; until then it stands primitive —
+content-word status and term-language status are independent axes.
+**For.** `lo ni mi klama cu barda` — an amount, referred to like
 anything else, its scale a contextual slot.
 **See.** [Spec §9.2](spec.md); [primer ch. 8](primer.md);
 [rationale §1.10](rationale.md).
@@ -541,10 +582,12 @@ anything else, its scale a contextual slot.
 ### 1.44 `AmountValue`, `TruthValueDegree`, `EventOfContent`
 
 **Informally.** The named adjacent-sort crossings (pin P13 allows no
-implicit ones): an amount's numeric value on its scale (`mo'e`; CLL
-11.5), a truth value's fuzzy degree in [0,1] (CLL 11.6), and the
-eventuality of a clause's content (used by `tu'a`'s shape conjunct and
-`nu` recasting).
+implicit ones): `AmountValue : Referents<Amount> × Referents<Scale> →
+Number` — an amount's numeric value on its scale (`mo'e`; CLL 11.5);
+`TruthValueDegree : Referents<TruthValue> → Number` — a truth value's
+fuzzy degree in [0,1] (CLL 11.6); and `EventOfContent : Content →
+Referents<Eventuality>` — the eventuality of a clause's content (used
+by `tu'a`'s shape conjunct and `nu` recasting).
 **See.** [Spec §9.2, §12](spec.md).
 
 ### 1.45 `MetalinguisticallyDefective` and the named value enumerations
@@ -562,18 +605,55 @@ regions (`Intense`/`cai`, `Strong`/`sai`, `Moderate`/unmarked,
 ### 1.46 The placeholder lexical relations
 
 **Informally.** Relations the core uses that await their Lojban
-content words under the §16 program, each with a predicate-style role
-structure: the indicator relations (`Happiness`, `Unhappiness`,
-`Desire`, `EvidentialBasis` — experiencer, target, degree/basis), the
-discourse relations (`Contrast`, `Addition`, `Parallel`,
-`Elaboration` — over two act values), and the named tanru-link
-precisification constants (`MannerLink`, `MaterialLink`,
-`PurposeLink`, `SourceLink`, `InstrumentLink`, `ResemblanceLink`, … —
-each satisfying `TanruAdmissible` by construction, shadowed by the BAI
-gismu). PascalCase marks exactly this placeholder status.
+content words under the §16 program. The indicator relations —
+`Happiness`, `Unhappiness`, `Desire` : experiencer × target
+(content, act, referent, or sign) × intensity region → `Content`, and
+`EvidentialBasis` : experiencer × target × `BasisKind` → `Content` —
+with the §16.5 audit mapping them to the UI emotion gismu (`gleki`,
+`badri`, `djica`, …) as committee-pending fits. The discourse
+relations — `Contrast`, `Addition`, `Parallel`, `Elaboration` : two
+act values → `Content` (audit: `frica`/`simsa` for contrast and
+parallel). The named tanru-link precisification constants —
+`MannerLink`, `MaterialLink`, `PurposeLink`, `SourceLink`,
+`InstrumentLink`, `ResemblanceLink` — each a relation of its head row
+satisfying `TanruAdmissible` by construction, shadowed by the BAI
+gismu (`tadji`, `marji`, `mukti`, `krasi`, `pilno`, `simsa`); an open
+family — a resolved reading may name links beyond these six.
+PascalCase marks exactly this placeholder status; as with §1.43, a
+recorded fit becomes a definition only when the committee adopts it.
 **See.** [Spec §7.6, §7.2, §12, §16.5](spec.md);
 [primer ch. 0, ch. 7](primer.md); the indicator instances appear in
 [samples §7, §11](samples.md).
+
+### 1.47 The `Utterance` and `Sign` entry formers
+
+**Informally.** `(Utterance ((u UtteranceToken)) fact…)` packages a
+fresh token variable with facts about it into an unperformed,
+dynamically opaque **transcript entry** — the value `StructuredQuote`
+consumes; `(Sign ((s (SignToken K))) fact…)` is the same former at the
+sign-token sort. Primitive because the result is a *value* inside a
+sign boundary, which no content computation can be: a `Bind`/`Refer`
+spelling would perform the introduction rather than suspend it. What
+needs no special form is performed-level token talk — asserting facts
+about a token in open discourse is ordinary `Refer` at the token sort.
+**For.** `lu mi klama li'u` → `(StructuredQuote (Utterance (($u
+UtteranceToken)) (Realizes $u (Assert (Close (klama Speaker))))))`.
+**See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
+[samples §6, §10](samples.md).
+
+### 1.48 `InnatelyCapable` and `MotionVector`
+
+**Informally.** Two lexically grounded primitives declared with the
+§12 helpers they serve. `InnatelyCapable : Referents<Entity> ×
+Fn<(Referents<Entity>, Referents<Eventuality>), Content> → Content` —
+`jinzi`-grounded innate possibility of P-events with the bearer,
+evaluated at capability worlds (the CAhA base). `MotionVector :
+Referents<Eventuality> × Referents<Entity> × Referents<Entity> →
+Content` — the `mo'i` heading: the event carries the mover's `muvdu`
+motion in the `farna` direction.
+**For.** `ka'e` (via the capability forms, §2.21) and the `mo'i`
+motion tags.
+**See.** [Spec §12, §11](spec.md).
 
 ## 2. Defined forms
 
@@ -638,21 +718,26 @@ recoverable destination — not "some destination", not nothing.
 **Informally.** The demonstratives, as deictic picks at the three
 proximities against the context's ground.
 **Formally.** `This ≝ (Deictic Proximal g)`, `That ≝ (Deictic Medial
-g)`, `Yonder ≝ (Deictic Distal g)`, `g` the context record's ground.
+g)`, `Yonder ≝ (Deictic Distal g)`, where `g` is the enclosing
+utterance context's ground (the `ctx` record's ground projection,
+spec §5.1).
 **For.** `ti`/`ta`/`tu`.
 **See.** [Spec §5.1](spec.md).
 
-### 2.6 The `Utterance` and `Sign` binder forms
+### 2.6 `Tanru`
 
-**Informally.** Bind a fresh token with its facts — reference
-introduction at the token sort, kept as a binder form for legibility;
-nothing token-specific remains once expanded.
-**Formally.** `(Utterance ((u UtteranceToken)) fact…) ≝ (Bind (($u
-(Referents UtteranceToken) (Refer (λ (($t …)) (∧ fact…[$t/u]))))) …)`;
-the `Sign` binder likewise at `SignToken<K>`.
-**For.** Transcript entries: `lu mi klama li'u` quotes an utterance
-token realizing an unperformed assertion.
-**See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md).
+**Informally.** Modification of a head by a modifier: the head's row,
+the head's predication, plus an admissible modification link — a
+`Vague` parameter ranging over the relations `TanruAdmissible`
+(§1.32) admits, with no fact of the matter selecting one.
+**Formally.** `((Tanru M H) fills…) ≝ (Bind (($link (PredTerm ρ(H))
+(Vague (λ (($r (PredTerm ρ(H)))) (TanruAdmissible M H $r)))))
+(∧ (H fills…) ($link fills…)))`.
+**For.** `sutra klama` — a goer, with `sutra` bearing on the going
+*somehow*; the library's named links are the common precisifications,
+a lujvo a lexicalized one.
+**See.** [Spec §6.2](spec.md); [primer ch. 9](primer.md);
+[rationale §1.8](rationale.md).
 
 ### 2.7 `UnitSet` and `CardBasis`
 
@@ -695,8 +780,21 @@ P-satisfiers and nothing else — every unit is P, every P-satisfier is
 among it, every part overlaps a P-unit. Defined only for inhabited P
 (a presupposition), with the model required to supply the reference
 (plural comprehension).
-**Formally.** See [spec §12](spec.md) (the three-conjunct `Refer` under
-`Presuppose (∃ P)`).
+**Formally.**
+
+```text
+(MaxRefer P) ≝
+  (Presuppose (∃ P)
+    (Refer (λ (($r (Referents T)))
+      (∧ (Distrib P $r)
+         (∀ (λ (($x T)) (→ (P $x) (Among $x $r))))
+         (∀ (λ (($r' (Referents T)))
+              (→ (Among $r' $r)
+                 (∃ (λ (($x T)) (∧ (P $x) (Overlap $x $r')))))))))))
+```
+
+Models must supply this reference for each inhabited lexical
+restrictor (plural comprehension — a model condition).
 **For.** The `lo'i`/`loi` base ("the set of *the* dogs") and `Every`'s
 witness export.
 **See.** [Spec §12, §11](spec.md).
@@ -739,10 +837,26 @@ cu jmaji` (the collective reading a distributive default cannot say).
 `Vague` (and, for the purpose-relative kinds, constrained by a
 `Context`-recovered standard): many, few, most, too many, too few,
 enough.
-**Formally.** `(Many P Q) ≝ (Bind ((θ Natural (Vague
-(AdmissibleThreshold Many P)))) (AtLeast θ P Q))`; `Few`/`TooMany`/
-`TooFew`/`Enough` likewise per [spec §12](spec.md); `(Most P Q)` by
-comparing `Card`s of the two comprehensions (pure operands).
+**Formally.** (`θ` a `Vague` threshold; `σ` a `Context` standard;
+kinds from `ThresholdKind`, §1.34; `P`, `Q` pure for `Most`.)
+
+```text
+(Many P Q)    ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold ManyK P))))
+                  (AtLeast θ P Q))
+(Few P Q)     ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold FewK P))))
+                  (FewerThan θ P Q))
+(TooMany P Q) ≝ (Bind ((σ (Referents Entity) (Context))
+                       (θ Natural (Vague (AdmissibleThreshold TooManyK P σ))))
+                  (MoreThan θ P Q))
+(TooFew P Q)  ≝ (Bind ((σ (Referents Entity) (Context))
+                       (θ Natural (Vague (AdmissibleThreshold TooFewK P σ))))
+                  (FewerThan θ P Q))
+(Enough P Q)  ≝ (Bind ((σ (Referents Entity) (Context))
+                       (θ Natural (Vague (AdmissibleThreshold EnoughK P σ))))
+                  (AtLeast θ P Q))
+(Most P Q)    ≝ (> (Card (SetOf (λ x. (∧ (P x) (Q x)))))
+                   (Card (SetOf (λ x. (∧ (P x) (¬ (Q x)))))))
+```
 **For.** `so'i prenu cu klama` — the family over admissible
 thresholds; no exact count hides anywhere.
 **See.** [Spec §6.4, §12](spec.md); [primer ch. 5, ch. 9](primer.md).
@@ -791,8 +905,10 @@ row: the referent is what the name names, the namer contextual.
 **Informally.** The derived `du'u` relation: its x1 is the reified
 content, its x2 a sentence sign expressing it (CLL 11.7's x2, `se
 du'u`). Derived because `Reify` already carries the crossing.
-**Formally.** Per [spec §9.2](spec.md): x1 relates to `(Reify c)`, x2
-to a sentence sign expressing `c`.
+**Formally.** `((DuhuRel c) x1 x2) ≝ (∧ (CoRef x1 (Reify c))
+(Distrib (λ (($s (Sign Sentence))) (CoRef (Reify (InterpretContent
+$s)) (Reify c))) x2))` — x2's signs are those whose interpretation
+reifies the same content.
 **For.** `lo se du'u mi klama` — the sentence, not the proposition.
 **See.** [Spec §9.2](spec.md); [samples §9](samples.md).
 
@@ -812,27 +928,36 @@ reading, strengthened only lexically or by explicit marker.
 the old x1 to the labelled, fillable `fai` place (closing contextually
 when unfilled — CLL 9.12). Bare `jai` is the mapping's
 `Vague`-role raising instead.
-**Formally.** Per [spec §12](spec.md): the λ over the permuted row
-`ρ[ℓ→x1, x1→fai]`.
+**Formally.** Writing ρ' for ρ with ℓ relabelled x1 and x1 relabelled
+`fai`: `(JaiPromote R ℓ) ≝ (λ (($r (Record ρ'))) (R {ℓ = $r.x1,
+x1 = $r.fai, rest unchanged}))`.
 **For.** `mi jai gau rinka` patterns; `fai` fills.
 **See.** [Spec §12, §6.1, §11](spec.md).
 
-### 2.21 The capability schemas
+### 2.21 `Realized`, `nu'o`, `pu'i` — the capability forms
 
-**Informally.** `InnatelyCapable` — `jinzi`-grounded possibility of
-P-events with a bearer, evaluated at capability worlds; `Realized` —
-an actual P-event of the bearer; `nu'o` = capable and never realized;
-`pu'i` = capable and realized.
-**Formally.** `(nu'o b P) ≝ (∧ (InnatelyCapable b P) (¬ (Realized b
-P)))`; `(pu'i b P)` with the conjunct positive; `(Realized b P) ≝ ∃e.
-(P-event b e) ∧ (fasnu e)`.
+**Informally.** Over the primitive `InnatelyCapable` (§1.48):
+`Realized` — an actual P-event of the bearer occurred; `nu'o` =
+capable and never realized; `pu'i` = capable and demonstrated. `P` is
+an event property of the bearer,
+`Fn<(Referents<Entity>, Referents<Eventuality>), Content>`.
+**Formally.**
+
+```text
+(Realized b P) ≝ (∃ (λ (($e (Referents Eventuality)))
+                    (∧ (P b $e) (fasnu $e))))
+(nu'o b P)     ≝ (∧ (InnatelyCapable b P) (¬ (Realized b P)))
+(pu'i b P)     ≝ (∧ (InnatelyCapable b P) (Realized b P))
+```
 **See.** [Spec §12, §11](spec.md).
 
-### 2.22 `MotionVector`
+### 2.22 `SelectSome`
 
-**Informally.** The heading-reduced motion projection (`mo'i` paths):
-a mover's event with a `farna` direction.
-**See.** [Spec §12](spec.md).
+**Informally.** The `su'o`-strength selection — at least one unit —
+as the weakest member of the selection family.
+**Formally.** `(SelectSome P) ≝ (SelectAtLeast 1 P)`.
+**For.** `su'o gerku cu bajra` — some dogs (one or more) ran.
+**See.** [Spec §5.6](spec.md); §1.27 above.
 
 ### 2.23 `NahiObjection`
 
@@ -848,8 +973,8 @@ dimension — performing nothing, negating nothing.
 **Informally.** The act-level evidential spelling: display, beside a
 performed act, the speaker's basis for it — a mode of commitment, not
 a second claim.
-**Formally.** `(GroundedBy b a)` ≝ the §7.6 act-level display of the
-evidential relation with basis `b` applied to act `a`.
+**Formally.** `(GroundedBy b a) ≝ (Do (Perform a) (Express (Close
+(EvidentialBasis Speaker a b))))`.
 **For.** `za'a do cadzu` — the assertion grounded in observation;
 negation touches the walking, never the basis.
 **See.** [Spec §12, §7.6](spec.md); [primer ch. 7](primer.md).
@@ -870,12 +995,43 @@ y f)) H[y]))) H[f])`.
 **Informally.** Performative expressives: a COI greeting/thanks/… is
 constituted by its performance — `Express` of the COI lexical relation
 with the performative host-force profile.
+**Formally.** `(COIExpress R addr) ≝ (Express (Close (R Speaker
+addr)))`, `R` the COI entry's lexical relation (`coi-greeting`,
+`ki'e-thanks`, …), performed with its performative profile.
+**For.** `coi do` — the greeting is the act.
 **See.** [Spec §12, §7.6, §11](spec.md).
 
 ### 2.27 `te'a`, `gei`, and `xi` indexing
 
 **Informally.** MEX helpers by metalanguage recursion: integer
-exponentiation; `gei x y ≝ y × 10^x`; subscripting as list/sequence
-indexing.
+exponentiation, order-of-magnitude, and subscripting as list
+indexing (undefined past the end — a projective definedness
+condition).
+**Formally.**
+
+```text
+(te'a x 0)              ≝ 1
+(te'a x (n+1))          ≝ (× x (te'a x n))
+(gei x y)               ≝ (× y (te'a 10 x))
+(xi (List a as…) 1)     ≝ a
+(xi (List a as…) (n+1)) ≝ (xi (List as…) n)
+```
 **For.** `li re te'a ci du li bi`.
 **See.** [Spec §12](spec.md); [samples §10](samples.md).
+
+## Appendix: model-theory symbols
+
+Not term-language forms — the denotational metalanguage of
+[spec §5.1](spec.md), listed so no named symbol goes unaccounted:
+`Comp<A> = InformationState → P(InformationState × A × Obligations)`
+is the computation carrier (`Content = Comp<Unit>`,
+`RefComp<T> = Comp<T>`; acts and discourse denote at the same carrier
+with their commitment effects); an `InformationState` is a set of
+world–assignment pairs over the model's world set W; `Obligations`
+collects pending projective commitments; `Unit` is the one-value
+return type of contentful computations; and `ctx` is the utterance
+context record (speaker, audience, time, place, ground) whose
+projections §5.1 names. These symbols may change with the model (the
+`da'i` gap entry anticipates a world-shift operation) without any term
+changing — which is the point of keeping them out of the term
+language (rationale §1.14).

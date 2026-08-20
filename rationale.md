@@ -243,8 +243,9 @@ at large and pretending otherwise would be false precision.
 **Job.** Lojban predicates select different abstraction sorts. **Witness.**
 `lo du'u mi klama cu se djuno do` (knowledge takes propositions) against
 `lo ni mi klama cu barda` (bigness takes amounts): swap them and both are
-gibberish — the sorts are real. **Why is only `Reify` primitive?**
-Because `du'u` is the one genuine level crossing (content to object); the
+gibberish — the sorts are real. **Why is the `Reify`/`Holds` pair primitive?**
+Because `du'u` is the one genuine Proposition↔Content crossing —
+`Reify` inward, its axiomatized inverse `Holds` outward — while the
 others — `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, `zu'o` — are
 abstractors to which CLL itself assigns place structures (CLL 11.3, 11.5,
 11.6, 11.9: "x1 is the amount of … on scale x2"), so the core renders
@@ -311,36 +312,43 @@ None found; the decomposition is pure simplification.
 binder — the seam between the pure λ-fragment and the dynamics.
 **Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
 *once*, with its witness reused across two performed acts —
-`(Bind ((x (Refer P))) (Do a₁ a₂))`. **Why not ordinary
-λ-application?** Under call-by-value they would coincide — and that is
-the honest gloss: `Bind` *is* application under mandatory call-by-value
-at computation types, made visible. Making application itself carry
-that behavior would fracture the λ-fragment's equational theory:
-β-substitution copies the argument's *text*, so an effectful argument
-would re-run per use site unless every effectful application were
-specially marked — and that marking is `Bind`, demoted from syntax to a
-side condition. The core prefers the discipline visible: β-equality
-holds unconditionally in the pure fragment, and every
-effect-sequencing point is a `Bind` node the accessibility table can
-name (witness-export width is stated in terms of it). **Why not the
-CPS/state encoding?** `Bind` is famously λ-definable if `RefComp<T>` is
-spelled as its state-threading function type — but then information
-states and continuations become first-class term values, and the term
-language acquires meanings no Lojban sentence has: state inspection,
-double-shot continuations (backtracking), and truth-capture-without-
-effects — the reflection operator §1.5 deliberately refuses — all free
-of charge and all requiring ban-conditions to re-exclude. It also
-freezes §5.1's carrier into the definition (any model refinement — the
-`da'i` gap entry already commits to adding a world index — would
-rewrite the type of every term ever written) and turns the definition
+`(Bind (($cat (Referents Entity) (Refer P))) (Do a₁ a₂))`. **Why not
+ordinary λ-application?** In the calculus as typed, application simply
+*cannot* consume a computation where a value is demanded — `Bind` is
+`RefComp`'s eliminator, and that type mismatch is the primary
+necessity witness. The live alternative is a different calculus: a
+direct-style call-by-value core where application itself sequences
+effectful arguments. There the two would coincide — the honest gloss
+is that `Bind` *is* application under mandatory call-by-value at
+computation types, made visible — but the direct-style calculus pays
+with a value-restricted β-law: substitution copies the argument's
+*text*, so β-equality would hold only for value arguments, with every
+effectful application node an unmarked sequencing point. The core
+prefers the discipline visible: β holds unconditionally in the pure
+fragment, and every sequencing point is a `Bind` node the
+accessibility table can name (witness-export width is stated in terms
+of it). **Why not the CPS/state encoding?** `Bind` is famously
+λ-definable if `RefComp<T>` is spelled as its *transparent*
+state-threading function type — but then information states and
+continuations become first-class term values, and the term language
+acquires meanings no Lojban sentence has: state inspection, double-shot
+continuations (backtracking), and truth-capture-without-effects — the
+reflection operator §1.5 deliberately refuses — all free of charge and
+all requiring ban-conditions to re-exclude. (An *abstract* or
+linearity-disciplined encoding avoids the junk exactly by reimposing
+the monadic interface — which concedes the point.) The transparent
+encoding also freezes §5.1's carrier into the definition (any carrier
+refinement — the `da'i` gap entry already commits to extending it
+with a world-shift operation — would rewrite the type of every term
+ever written) and turns the definition
 from an interface with many models into a description of one machine.
-**Comparative note.** Kuna, the one loglang implementation with real
-dynamics, makes the same choice: its expression language is a typed
+**Comparative note.** Kuna — the loglang implementation nearest this
+territory — makes the same choice: its expression language is a typed
 λ-calculus plus named effect constructors and named combinators
 (`and_then` — monadic bind — among its built-in constants), not a CPS
 expansion; exactly one of its effects (`Cont`, scope-taking) is
 deliberately continuation-typed. Eberban has no `Bind` because it has
-no computation layer at all — see §2.4. **Cost.** Two binder forms
+no distinct computation type to eliminate — see §2.4. **Cost.** Two binder forms
 (`Let`/`Bind`) where one calculus habit expects one; the distinction
 is load-bearing and must be taught.
 
@@ -402,10 +410,15 @@ the reader and the meaning). One content, two presentations; the
 definition shows the readable one and states the equivalence.
 
 Worth stating once, because it locates this whole design: **dynamic
-semantics is static semantics at a higher type**, twice over. A whole
-discourse's truth conditions are always classically statable — the
+semantics is static semantics at a higher type**, twice over. A
+supported at-issue declarative discourse — once its readings,
+contextual parameters, and precisifications are fixed — has
+classically statable truth conditions: the
 donkey normalization's output *is* a classical formula; normalization
-is the desugaring, performed by the mapping. And sentence meanings are
+is the desugaring, performed by the mapping. (Questions, directives,
+displays, and the projective dimension carry more than truth
+conditions; for them the desugaring target is the model's
+state-transformer objects, the second sense below.) And sentence meanings are
 statable statically too, at the state-transformer type — §5.1's
 carrier is a plain set-theoretic function space. What cannot be
 recovered by any desugaring is *compositional locality*: no assignment
@@ -423,16 +436,20 @@ logic with a threaded context parameter: its binding particles desugar,
 in its own refgram's equations, to conjunction, ∃-closure, and argument
 routing in static HOL, and its cross-sentence references are
 context-resolved named variables — retrieval, like this core's keyed
-KOhA, not binding. Nothing propositional is thereby inexpressible
+KOhA, not binding. Its conversation context is genuinely carried
+between sentences and updated by dedicated predicates (the refgram's
+`an` family), so what it lacks is not conversational state but a
+*distinct computation type* with dynamic witness export — binding into
+a closed existential across a sentence boundary, covariant donkey
+pronouns — and a formal projective-commitment layer (at-issue vs
+aside). Nothing propositional is thereby inexpressible
 (HOL states any classical truth condition, given restructuring into
-one sentence with shared variables); what is absent is the anaphoric
-route — binding into a closed existential across a sentence boundary,
-covariant donkey pronouns — and the two-dimensional layer (projective
-vs at-issue commitment). Lojban's grammar makes exactly those things
+one sentence with shared variables); the anaphoric route is what is
+absent. Lojban's grammar makes exactly that route
 core (`ri`, `go'i`, witness export, `noi`), so its definition cannot
-decline the discourse level; the day Eberban takes on discourse, it
-faces the same fork, and the fork is a fact about the phenomena, not a
-house style.
+decline the discourse level; a language that adds covariant
+cross-sentence binding faces the same fork, and the fork is a fact
+about the phenomena, not a house style.
 
 ### 2.5 Why there is no distributivity parameter
 

@@ -385,7 +385,7 @@ the full product there needs explicit `ro…ro` (CLL Example 16.46).
 ```lisp
 ; so'i prenu cu klama — vague quantity    [spec §6.4]
 (Bind (($n Natural
-        (Vague (AdmissibleThreshold Many (λ (($x Entity)) (prenu $x))))))
+        (Vague (AdmissibleThreshold ManyK (λ (($x Entity)) (prenu $x))))))
   (Assert
     (AtLeast $n (λ (($x Entity)) (prenu $x))
                 (λ (($w (Referents Entity))) (Close (klama $w))))))
@@ -553,7 +553,7 @@ would admit nearly anything.
 ; du'e gerku cu klama — Vague threshold, Context purpose  [spec §6.4]
 (Bind (($purpose (Referents Entity) (Context))  ; too many FOR WHAT: recoverable
        ($n Natural
-         (Vague (AdmissibleThreshold TooMany
+         (Vague (AdmissibleThreshold TooManyK
                   (λ (($x Entity)) (gerku $x)) $purpose))))
   (Assert
     (MoreThan $n (λ (($x Entity)) (gerku $x))
