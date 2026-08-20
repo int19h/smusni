@@ -2,7 +2,12 @@
 
 Why each piece of [the specification](spec.md) exists, why it is shaped as
 it is, and what was tried and rejected. The [samples](samples.md) supply
-the worked specimens cited here.
+the worked specimens cited here. Sources — CLL (and the edition whose
+section numbering is used), the official dictionary, the baselined gismu
+list, the xorlo page, guskant's commentary, Brismu, solpahi's articles,
+the Eberban and Toaq reference materials, and the plural-logic
+literature — are cited inline by name and section; full citations with
+URLs are collected in the specification's References section.
 
 ## 0. Method
 
@@ -178,10 +183,10 @@ never the set-object) are a plurality wearing `{}` clothing, and the
 clothing costs more than it carries — the plural axioms return as
 side conditions, the member-wise/object-wise distinction moves from
 the type system into per-place convention, and coverage is lost where
-Lojban is deliberately non-atomistic. An earlier version of this entry
-argued "the crowd can be large while the set is abstract"; that
-attacks set-*object* predication, which no serious set-typed design
-proposes, and is withdrawn as a strawman. **Why no distributivity/cover
+Lojban is deliberately non-atomistic. (The familiar objection — "the
+crowd can be large while the set is abstract" — attacks set-*object*
+predication, which no serious set-typed design proposes; this document
+does not lean on it.) **Why no distributivity/cover
 parameter?** See §2.5 — the strongest single "less is more" decision in
 the core. **Cost.** Marked readings need marks (`lu'a`, `Distrib`,
 group gadri) — which Lojban has.
@@ -196,8 +201,8 @@ selbri negation "asserts that a relationship exists other than that
 stated" and "remains an assertion of some specific truth", so `na'e P`
 denies P's stated region *and* positively asserts an admissible
 alternative on the recovered scale; `to'e` asserts the antipode, `no'e`
-the midpoint. An earlier panel reading had `na'e` weaker than `¬`; the
-primary text overruled it in review, and the King-of-France passage of
+the midpoint. A reading urged in design review had `na'e` weaker than
+`¬`; the primary text overruled it, and the King-of-France passage of
 CLL 15.4 — selbri negations "still make affirmative claims" — is the
 decisive witness). Why not lexicalize scalar forms per predicate? The
 operators are productive across the whole lexicon; three formers beat
@@ -333,7 +338,7 @@ transparency, which is this project's trade everywhere.
 
 De re/de dicto and opacity are real (`mi djica lo nu mi pilno lo karce`
 has two readings), so the model theory is world-indexed. But no Lojban
-sentence *binds* a world: the panel hunted (attitudes, CAhA, `da'i`,
+sentence *binds* a world: design review hunted (attitudes, CAhA, `da'i`,
 property-internal descriptions — `lo ka viska lo pavyseljirna` included)
 and every candidate resolves by binder placement plus lexical
 intensional-place marking, evaluated in the world-indexed model. So terms
@@ -370,31 +375,30 @@ answer, which emotion `.uinai` names, how `bevri` composes with plural
 carriers. A definition that inlined all of this would be a dictionary; one
 that ignored it would be unusable. The core's answer is a typed interface
 (spec §10): the *schema* of lexical knowledge is normative, its *content*
-is curated data. No collection entry needed legislating after all — the sweep showed
+is curated data. No collection entry needed legislating after all —
+source verification showed
 official `gunma` x2 is already the components and `selcmi` (a xorxes
 lujvo; there is no CLL gloss) already takes its members as x2; both are
 adopted with plural-reference x2. The defective gloss in this area is
-official `cmima`'s x2-as-set, which the library simply avoids. (An
-earlier draft claimed a self-referential `selcmi` gloss needed repair —
-the fourth unverified claim caught in this family; withdrawn.) The `le`-description relation (`DescribedBy`) is legislated on
-different, weaker grounds, and the record here corrects an earlier
-version of this paragraph: `skicu`'s official x4 **is** a description
-property — "x1 tells about/describes x2 to audience x3 with description
-x4 (property)" — so the once-claimed place misuse never existed, and a
-`skicu`-based `le` (the property applied to x2 by `skicu`'s own
-definition) is expressively adequate. The question closed in
-round 6: the audit surfaced guskant's own `le` expansion — `zo'e noi mi
-ke'a do skicu lo ka ce'u broda` — showing the community's formal
-analysis was the `skicu` analysis all along, and the one surviving
-concern (that `skicu` names a describing *event*) is answered by the
-anchoring clause: the describing event is this utterance's own locution,
-true by construction, with the token machinery already there to say it.
-So `le` lowers through `skicu`, exact official fit, no dictionary
-change; the `DescribedBy` placeholder is retired. (Review history worth
-keeping: a false x4-"medium" claim and a definitional-ownership ground
-the owner struck — no independence-from-the-dictionary requirement
-exists, since the lexicon program defines gismu semantics — both fell
-before this closure.)
+official `cmima`'s x2-as-set, which the library simply avoids.
+The `le`-description analysis deserves its history spelled out, since
+it was contested in review. `skicu`'s official definition — "x1 tells
+about/describes x2 to audience x3 with description x4 (property)" —
+makes its x4 a property, so a `skicu`-based `le` (the property applied
+to x2 by `skicu`'s own definition) is expressively adequate. The
+question closed when review surfaced guskant's own `le` expansion —
+`zo'e noi mi ke'a do skicu lo ka ce'u broda` — showing the community's
+formal analysis was the `skicu` analysis all along, and the one
+surviving concern (that `skicu` names a describing *event*) is
+answered by the anchoring clause: the describing event is this
+utterance's own locution, true by construction, with the token
+machinery already there to say it. So `le` lowers through `skicu`,
+exact official fit, no dictionary change. (Review history worth
+keeping: a dedicated `DescribedBy` relation was the draft analysis
+until two supports for keeping it fell — a false claim that `skicu`'s
+x4 was a "medium of expression", and a spurious requirement that core
+relations be definable independently of the dictionary, which nothing
+imposes, since the lexicon program defines gismu semantics.)
 
 ### 2.7 Alternatives shaped like implementations
 
@@ -417,13 +421,15 @@ The most serious alternative to §1.7's plural algebra is a set-typed
 lexicon: every argument place currently typed `Referents<T>` becomes a
 nonempty `Set<T>`, as Eberban's dictionary does throughout (its `tce`
 type is a *non-empty* set; a `*` marks places whose satisfaction
-survives passing a subset) and as Brismu's foundations choose ("sets
-are free over a universe of individuals … an inevitable structure").
+survives passing a subset — refgram, "Dictionary conventions") and as
+Brismu's foundations choose ("sets are free over a universe of
+individuals … an inevitable structure" — Brismu, "Sets, not Masses").
 The pre-xorlo dictionary ran a partial version of the same experiment:
-about thirty official places are glossed "(set)", usually with a
-completeness side condition (`sisku` x3 "complete specification of
-set"; `kampu`, `simxu` x1, `cuxna` x3, the `-mei`/`cmima` cluster).
-This section records what a full design round established, so the
+in the baselined gismu list (1994), about thirty official places are
+glossed "(set)", usually with a completeness side condition (`sisku`
+x3 "complete specification of set"; `kampu`, `simxu` x1, `cuxna` x3,
+the `-mei`/`cmima` cluster).
+This section records what a full design review established, so the
 choice is never again defended with less than its real argument.
 
 **First, the concession.** Under the discipline a working set-typed
@@ -440,7 +446,7 @@ set is abstract" is no objection there, because under D largeness is
 never predicated of the set-object at all. Eberban's own gloss of
 eating shows the discipline at work: the set is a delivery mechanism
 for the members, and the word's definition says how the members
-satisfy it.
+satisfy it (refgram, "Dictionary conventions": the `bure` example).
 
 **Second, the choice, and its grounds.**
 
@@ -464,7 +470,8 @@ satisfy it.
    and genuine set objects survive untouched, so "one collection
    machinery" is not delivered by any actual set-based design: Eberban
    itself needs a wrapped/unwrapped split ("mostly use these 'wrapped
-   versions' unless … speaking about nested sets") — which is the
+   versions' unless … speaking about nested sets" — refgram, "Eberban
+   from scratch", the sets chapter) — which is the
    `Referents<T>`/`Set<T>` distinction with the names filed off,
    enforced by convention where this core enforces it by type.
 
@@ -474,21 +481,24 @@ satisfy it.
    members-reading goes through membership machinery). With one
    set-type everywhere it is genuinely ambiguous — several sets
    reciprocally related, or one set's members — which is solpahi's
-   argument that a place cannot accept both readings without "a true
-   ambiguity", and is where the pre-xorlo set places actually hurt.
+   argument ("A Simpler Quantifier Logic") that a place cannot accept
+   both readings without "a true ambiguity", and is where the
+   pre-xorlo set places actually hurt.
    Under a uniform set re-spec the exception class that must be carved
    out — `cmima`, `selcmi`, `kampu`, `sisku` x3, the set operators —
    is exactly the current `Set<T>` vocabulary. The core is not
    set-averse; it is place-precise, and the re-spec's own exceptions
    recover its shape.
 
-4. *The dictionary record.* The set annotations of the 1994 baseline
-   were inconsistently applied (the paradigm collective predicate
-   `sruri` carries none), dragged completeness side conditions that
-   plural reference does not need, and were re-read as plural by
-   xorlo-era practice without the text ever changing — `simxu` still
-   says "(set)" in jbovlaste today, while the community's formal
-   treatments reconstructed the plural reading externally. Plural
+4. *The dictionary record.* The set annotations of the baselined
+   gismu list were inconsistently applied (the paradigm collective
+   predicate `sruri` carries none), dragged completeness side
+   conditions that plural reference does not need, and were re-read as
+   plural by xorlo-era practice without the text ever changing — the
+   official jbovlaste entry for `simxu` still says "(set)" as of this
+   writing, while the community's formal treatments (guskant's
+   commentary; solpahi's articles) reconstructed the plural reading
+   externally. Plural
    reference is what the set annotations were reaching for; the core
    says it directly. The per-place audit itself is owed under both
    designs (spec §10's plurality-behavior field is the same docket as
@@ -499,7 +509,7 @@ satisfy it.
 
 5. *Brismu's second-order objection does not weigh here.* "Plural
    logic is equiconsistent with monadic second-order logic, given a
-   predicate for masses" is true and idle: equiconsistency is far
+   predicate for masses" ("Sets, not Masses") is true and idle: equiconsistency is far
    weaker than equivalence of designs, the hedge concedes that plural
    quantification is present either way, and second-orderness is no
    incremental cost in a core that is already a typed λ-calculus with
@@ -519,7 +529,8 @@ which P4 declines as a default and Lojban marks when it means.
 
 Solpahi's "A Simpler Quantifier Logic" stands in the record as
 independent convergence: plural constants demand plural variables (the
-Clifford–xorxes exchange), and bare PA as plural-existential
+2004 Clifford–xorxes exchange, quoted there), and bare PA as
+plural-existential
 witness-sets is P17 arrived at from the other direction — including
 the scope-commutativity bonus. His hybrid-era gap (`no prenu cu
 jmaji` inexpressible) was the price of xorlo's no-rewrite move, and
@@ -571,12 +582,12 @@ genuinely fought:
   and stronger readings come from the embedding predicate's lexical
   presuppositions or explicit markers. The parallel with tenselessness
   and distributivity is exact, and deliberate.
-- **P10 (`le`) — closed.** Two false supports fell (the x4-"medium"
-  claim; the ownership requirement), guskant's expansion supplied the
+- **P10 (`le`).** The two supports for a dedicated description
+  relation fell in review (§2.6), guskant's expansion supplied the
   precedent, and the anchoring clause answered act-vs-identification:
   `le` lowers through `skicu` with the describing event anchored to
   this utterance's locution — performative, true by construction.
-  `voi` = audience-deleted `skicu`. `DescribedBy` retired (§2.6).
+  `voi` = audience-deleted `skicu`.
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
@@ -593,12 +604,12 @@ genuinely fought:
   exactness — the xorlo-era reading, the one consistent with termset
   composition and witness export — and keeps the CLL-literal reading as
   the named `GlobalExactly`. The divergence is documented, not
-  smuggled — and the compatibility audit supplied the positive argument
+  smuggled — and compatibility review supplied the positive argument
   it needed: witness-set semantics is what dynamic anaphora *forces*.
   If bare PA meant global exactness, `ci gerku cu bajra .i ri tatpi`
   would have no specific three-dog referent to export — only a size
   claim about a maximal set — so the pin is motivated by composition,
-  not preference. Independent convergence, found in the round-7 record:
+  not preference. Independent convergence:
   solpahi's "A Simpler Quantifier Logic" derives the same reading from
   plural logic alone (bare PA = plural-existential over a PA-membered
   witness), and notes the bonus this specification inherits: witness
@@ -607,8 +618,8 @@ genuinely fought:
   quantifiers was an artifact.
 - **P8 vs the present-tense temptation — amended in review.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone
-  reflex, not a rule. But pure absence was also wrong, as the
-  compatibility audit showed: CLL 10.1 itself enumerates the readings of
+  reflex, not a rule. But pure absence was also wrong, as compatibility
+  review showed: CLL 10.1 itself enumerates the readings of
   the tenseless example and says "context resolves which is correct",
   and the Partee-style stove case (a tenseless denial targets one
   contextually relevant occasion) demands a contextually anchored time
@@ -624,13 +635,13 @@ genuinely fought:
 ## 4. What would change our minds
 
 A design-record note first, owed to accuracy: several of this document's
-positions were contested in the design rounds and settled by concession
+positions were contested in design review and settled by concession
 rather than initial consensus — the drops of the closure and witness
 primitives, the sort-hierarchy trims, the tanru/scalar formers' survival,
 `Generic` over fixed typical references, termset non-maximality, and the
-`kau` representation among them; the round records preserve who argued
-what, and one panel reading (`na'e` weaker than `¬`) was overruled by
-primary text in draft review (§1.8). One separation *was* found during
+`kau` representation among them; the project's review record preserves
+who argued what, and one proposed reading (`na'e` weaker than `¬`) was
+overruled by primary text in draft review (§1.8). One separation *was* found during
 the rounds: the dependent-witness sentence `ro prenu cu ponse ci gerku
 .i ri tatpi` genuinely separates an embedded quantifier's witness from
 any single top-level plural — and was absorbed by generalizing the
@@ -648,7 +659,7 @@ speakers systematically read unmarked `kau` exhaustively even in
 non-`djuno` frames (reopens P9); community usage data on termset
 maximality (reopens P17's default); and a construction where
 set-*objecthood* at a lexical place does work that member-wise
-predication plus `SetOf` cannot (reopens §2.8 — the round-7 hunt found
+predication plus `SetOf` cannot (reopens §2.8 — the hunt found
 none; the candidate that fails is `lo selcmi cu simxu`, which the
 two-sort typing resolves correctly and uniform set typing renders
 ambiguous). Each was hunted during the design

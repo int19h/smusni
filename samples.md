@@ -10,6 +10,8 @@ expansions are the same meaning, and no spelling here is "canonical".
 Fragments (terms meant to appear inside a document) are marked; everything
 else is a complete meaning, with `Assert`/`Ask` and closure written out
 where they matter and elided (per spec §2 notation) where they don't.
+CLL and dictionary citations follow the editions listed in the
+specification's References section.
 
 ## 1. Predication and closure
 
@@ -61,9 +63,9 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 
 ## 2. Events, tense, facets
 
-Facet joining is dynamic conjunction over a shared event (the final
-rulings' samples-consequences clause; the older idea of a dedicated
-joining operator is retired):
+Facet joining is dynamic conjunction over a shared event — there is no
+dedicated joining operator, because plain `∧` over the shared event
+variable already says everything one would say:
 
 ```lisp
 ; mi pu citka
@@ -249,9 +251,9 @@ value per key, so `ko'a du ko'a` is reflexively true.
 ; ordinary bound occurrence — no free names, no retrieval operator.
 ```
 
-The old formulation with an explicit run-retrieval operator is retired:
-the exported witness *is* the three-dog reference the selection binds,
-and nothing else was ever needed (rationale §1.6).
+There is no retrieval operator: the exported witness *is* the three-dog
+reference the selection binds, and nothing else is needed
+(rationale §1.6).
 
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
@@ -323,8 +325,8 @@ full product —
 every one of the three dogs likes each of the two people. **No
 maximality**: a fourth dog also liking them does not falsify this. The
 coordinate-closed strengthening ("and they are exactly the participating
-dogs/people") is a distinct, marked meaning — the earlier design that
-made it the default is retired. Referential termsets (`le ci gerku ce'e
+dogs/people") is a distinct, marked meaning, never the
+default. Referential termsets (`le ci gerku ce'e
 le re prenu`) need no termset semantics at all: fixed referents, product
 predication.
 

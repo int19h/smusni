@@ -11,9 +11,10 @@ core represents that vagueness with typed machinery; where CLL is merely
 underspecified — vague by accident rather than by design — this document
 pins an interpretation and records the pin as a numbered ruling. The
 baseline for gadri and quantification is xorlo
-(<https://mw.lojban.org/papri/How_to_use_xorlo>) — which this project's
-CLL edition itself ratifies in-text (CLL 6.2) — and pre-xorlo gadri
-semantics is superseded where older texts conflict.
+(<https://mw.lojban.org/papri/How_to_use_xorlo>) — which the
+Contemporary Lojban Language edition of CLL ratifies in-text (CLL 6.2;
+editions and all other sources are listed in the References section) —
+and pre-xorlo gadri semantics is superseded where older texts conflict.
 
 The intended audience of this document is a reader comfortable with formal
 semantics: typed lambda calculi, generalized quantifiers, dynamic semantics,
@@ -1228,8 +1229,7 @@ mapping annex's clause (§11): it is the current utterance's own locution
 construction through the token machinery (§7.4). `voi` uses the
 audience-deleted variant `(DropPlace skicu 3)` restrictively — the
 deletion is semantic (no audience role exists in a `voi` description),
-per pin P10. (`DescribedBy` was this entry's placeholder name through
-review; retired at R6-2.)
+per pin P10.
 
 ## 11. Mapping annex: Lojban constructs to core terms
 
@@ -1540,7 +1540,7 @@ vagueness is never pinned; it is classified in §6.1.)
   counting is the mapping discipline over accessible referents.
 - **P7** `noi` is projective supplement, anchored; dependent supplements
   commit per instantiation inside their binder.
-- **P8** *(amended in review)* A tenseless bridi is
+- **P8** A tenseless bridi is
   **reading-multiple**, per CLL 10.1's own enumeration (past, present,
   perfect, future, "I continually go…" — "context resolves which is
   correct"): an *episodic* reading carries a `Context`-anchored temporal
@@ -1554,15 +1554,13 @@ vagueness is never pinned; it is classified in §6.1.)
 - **P9** Bare `kau`: answerhood with exhaustivity **absent** — weakest
   truth conditions; strengthenings lexical/pragmatic/explicit. (Absence,
   not `Vague`: Lojban has no grammatical precisification route.)
-- **P10** *(closed at R6-2)* `le` lowers through **`skicu`** — exact
+- **P10** `le` lowers through **`skicu`** — exact
   official fit, guskant-precedented — with the utterance-locution
   anchoring clause (§11) answering act-vs-identification: the describing
   event is this very utterance, true by construction. Speaker-indexed,
   non-veridical, number-neutral; `voi` = `(DropPlace skicu 3)`
-  restrictive variant. No dictionary change; the `DescribedBy`
-  placeholder is retired. (Review history: a false x4-"medium" claim and
-  a void definitional-ownership ground both fell before this closure;
-  rationale §2.6.)
+  restrictive variant. No dictionary change (the argument, including the
+  candidate analyses that fell in review, is rationale §2.6).
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
 - **P12** Implicit `ce'u`: exactly one, first unfilled place, counting
@@ -1606,13 +1604,13 @@ vagueness is never pinned; it is classified in §6.1.)
   jmaji …`, and `go'i`-inherited frames likewise. Anaphora to an
   inner-`no` description is inaccessible (`No` exports nothing) — there
   is nothing to refer to. `no lo broda` remains the fully explicit outer
-  form. *(Amended after review on the owner-raised guskant argument;
-  the earlier ruling made the form defective outright.)*
+  form. *(An earlier draft ruled the form defective outright; guskant's
+  answer-continuity argument reversed that.)*
 - **P23** `ba'e` = sign-level focus; `du` = `=`.
 - **P24** Fresh event per bridi unless shared explicitly; ZAhO pinned as
   boundary-relation shape, contours filled lexically.
 - **P25** Lexical argument rows take plural references, not sets. The
-  set-typed alternative was examined in full (round 7): under the
+  set-typed alternative was examined in full: under the
   discipline of §4.8's representation note the two designs are
   intertranslatable, so the choice is architectural, and this
   specification chooses the design in which the discipline is
@@ -1839,9 +1837,9 @@ signs, …) — a consequence of the audit, not a separate program.
 
 ### 16.5 The audit (initial population)
 
-Summary of the panel audit (full entries accrete under §16.2's schema;
-every official row cited here was verified against jbovlaste/CLL —
-sources and the round-6 record carry the details):
+Summary of the initial audit (full entries accrete under §16.2's
+schema; every official row cited here was verified against the
+official dictionary or CLL):
 
 - **Adopted now (exact-fit):** `skicu` for the `le` description (P10,
   with the §11 anchoring clause); `cmene` (`Named`); `gunma`, `selcmi`
@@ -1871,8 +1869,9 @@ sources and the round-6 record carry the details):
 - **Rejected fits (the method note):** `fadni` for `Generic` — its
   official row ("x1 is ordinary/typical in property x2 among members of
   x3") is verbatim the specimen theory the split-normality witness
-  killed (R3): the audit's standing warning that surface resemblance
-  must be checked against the semantics before adoption.
+  killed (the `Generic` ruling, P11): the audit's standing warning that
+  surface resemblance must be checked against the semantics before
+  adoption.
 - **Class O shadows (vocabulary either way):** `tanru` — the
   modification operator's own name, and the sharpest shadow in the
   inventory: its official row "⟨1⟩ is a binary metaphor formed with ⟨2⟩
@@ -1890,3 +1889,47 @@ sources and the round-6 record carry the details):
   `minde` (command), `cinmo` (display), `danfu`/`spuda` (answerhood /
   answering act), `drata` (the individual-level shadow of scalar
   otherness).
+
+## References
+
+Works cited across this document set (specification, primer, rationale,
+samples). Inline citations name the work and, where applicable, the
+chapter/section or dictionary entry.
+
+- **CLL** — Cowan, John Woldemar, *The Complete Lojban Language*,
+  Logical Language Group, 1997. Chapter/section citations ("CLL 15.4" =
+  chapter 15, section 4) follow the maintained **Contemporary Lojban
+  Language** edition (<https://github.com/int19h/cll>), an up-to-date
+  fork of the book; the in-text xorlo ratification cited in the header
+  is its §6.2. The original text is also served at
+  <https://lojban.github.io/cll/>.
+- **The official dictionary (jbovlaste)** —
+  <https://jbovlaste.lojban.org/>. "Official" place structures and
+  definitions are the entries credited to *officialdata*; entries are
+  cited by word.
+- **The baselined gismu list (1994)** — the official gismu wordlist
+  with its original place-structure annotations,
+  <https://lojban.org/publications/wordlists/gismu.txt>.
+- **xorlo** — "How to use xorlo",
+  <https://mw.lojban.org/papri/How_to_use_xorlo>.
+- **guskant** — "gadri: an unofficial commentary from a logical point
+  of view",
+  <https://mw.lojban.org/papri/gadri:_an_unofficial_commentary_from_a_logical_point_of_view>.
+- **Brismu** — *brismu: a relational interpretation of Lojban*,
+  <https://brismu.systems/>; the chapter "Sets, not Masses" is at
+  <https://brismu.systems/sets-not-masses.html>.
+- **solpahi** — "A Simpler Quantifier Logic", 2016,
+  <https://solpahi.wordpress.com/2016/09/25/a-simpler-quantifier-logic/>.
+- **Eberban** — reference grammar,
+  <https://eberban.github.io/eberban/> (source:
+  <https://github.com/eberban/eberban>); chapters cited by title
+  ("Logic framework", "Dictionary conventions", "Eberban from
+  scratch").
+- **Toaq / Kuna** — Toaq Delta reference grammar,
+  <https://toaq.net/refgram/>; Kuna, its reference semantic
+  implementation, <https://github.com/toaq/kuna>.
+- **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
+  (or to Be Some Values of Some Variables)", *The Journal of
+  Philosophy* 81(8), 1984, pp. 430–449.
+- **Oliver & Smiley** — Oliver, Alex and Smiley, Timothy, *Plural
+  Logic*, 2nd edition, Oxford University Press, 2016.

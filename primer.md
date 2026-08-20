@@ -139,7 +139,7 @@ trick with other predicates. Stacked tenses chain: `mi pu pu klama` says
 the going is before some point which is itself before now.
 
 And a bare, tenseless bridi? **There is no default tense** — but CLL
-itself lists the readings: `mi klama` "can be understood as" I went, I'm
+(ch. 10) itself lists the readings: `mi klama` "can be understood as" I went, I'm
 going, I will go, I continually go — "context resolves which is
 correct." The core takes that literally: those are different *readings*.
 On an episodic reading ("I went") the time is a contextual slot exactly
@@ -255,8 +255,8 @@ Quantifiers sit *on top of* reference. Three shapes to keep apart:
 ;   the mathematician's ∀; no presupposition.  (bare logic)
 ```
 
-(One honesty note the spec records as a pin: the printed CLL glosses
-bare numbers globally — "exactly two, no more or less". The core sides
+(One honesty note the spec records as a pin: the printed CLL (ch. 16)
+glosses bare numbers globally — "exactly two, no more or less". The core sides
 with modern usage: `ci gerku` picks its three and stays silent about
 others, and the global "and no more" reading is there when you mark it.)
 
@@ -267,8 +267,8 @@ why the core represents it as a *presupposition*, a claim that projects
 out of whatever you wrap around it. Second, termsets: `ci gerku ce'e re
 prenu cu batci` picks out three dogs and two people with all six bitings
 — and says nothing about whether a fourth dog also joined in. CLL's own
-termset chapter glosses it exactly so ("picks out two groups … every one
-of the dogs bites each of the men") and stops there; the "and nobody
+termset section (ch. 16) glosses it exactly so ("picks out two groups …
+every one of the dogs bites each of the men") and stops there; the "and nobody
 else" reading is available, but you have to say it.
 
 Vague numbers get chapter 10's treatment. Two different shapes hide
@@ -404,17 +404,18 @@ The tanru, finally, in full honesty:
 ```
 
 A `sutra klama` is a goer, with `sutra` bearing on the going *somehow* —
-fast at going, in the common precisification, but CLL is explicit that the
-relation is open (a fast-food courier? goes when fast things are needed?).
+fast at going, in the common precisification, but CLL (ch. 5) is explicit
+that the relation is open (a fast-food courier? goes when fast things are
+needed?).
 The core keeps a constrained open slot: any link that makes the modifier
 genuinely modify the head predication is admissible; naming one (there's a
 library of named links: manner, material, purpose…) is what a lujvo does.
 
-Pleasingly, Lojban already knew. The gismu `tanru` is officially "x1 is
-a binary metaphor formed with x2 modifying x3, **giving meaning x4 in
-usage/instance x5**" — the dictionary itself says a tanru's meaning is
-a per-occasion resolution, which is exactly the analysis above stated
-as a place structure.
+Pleasingly, Lojban already knew. The official dictionary entry for the
+gismu `tanru` (jbovlaste) reads "x1 is a binary metaphor formed with x2
+modifying x3, **giving meaning x4 in usage/instance x5**" — the
+dictionary itself says a tanru's meaning is a per-occasion resolution,
+which is exactly the analysis above stated as a place structure.
 
 ## 10. Words about words
 
@@ -516,15 +517,22 @@ is the same story with the definitions filled in.
 | pin | our documented ruling where CLL was silent | — | §13 |
 | gap | honestly not yet analyzed | `da'i`, … | §14 |
 
-**Further reading**, staged. Lojban side: CLL chapters 5–19, and
-the xorlo page — the primer's claims cite them throughout. First formal
+**Further reading**, staged. Lojban side: CLL chapters 5–19, the xorlo
+page (<https://mw.lojban.org/papri/How_to_use_xorlo>), the official
+dictionary (jbovlaste, <https://jbovlaste.lojban.org/>), and guskant's
+"gadri: an unofficial commentary from a logical point of view" — the
+primer's claims cite them throughout, and the specification's References
+section gives the full citations, including which CLL edition the
+section numbers follow. First formal
 steps: Heim & Kratzer, *Semantics in Generative Grammar* (λs, quantifiers);
 Groenendijk & Stokhof's "Dynamic Predicate Logic" and Kamp's DRT for
 chapter 4's ideas; Link's plural logic and Oliver & Smiley, *Plural Logic*
 for chapter 3; Hamblin/Karttunen on questions; Potts, *The Logic of
 Conventional Implicatures*, for supplements and expressives; Searle,
 *Speech Acts*, for chapter 6. Comparative: Eberban's reference grammar
-(a loglang with a formal core and a rebuilt vocabulary — the architecture
-this project borrowed) and Toaq's refgram with the Kuna semantic
+(<https://eberban.github.io/eberban/> — a loglang with a formal core and
+a rebuilt vocabulary; the architecture
+this project borrowed) and Toaq's refgram (<https://toaq.net/refgram/>)
+with the Kuna semantic
 implementation (the same problems, solved with algebraic effects). Then
 the [specification](spec.md), which you are now equipped to read.
