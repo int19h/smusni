@@ -194,7 +194,13 @@ Core terms are written as S-expressions:
   ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators (`⊤` is
   the trivially true content — the empty conjunction, `∧`'s unit).
 - `$name` — variables, always introduced by a binder with an explicit
-  type: `(λ {$x Entity} {…})`, `(Let {$p T} v {…})`.
+  type: `(λ {$x Entity} {…})`, `(Let {$p T} v {…})`. A compound type
+  in this position is written S-expression-style — `(Referents
+  Entity)` is the type this document's metalanguage displays as
+  `Referents<Entity>` — so `{$x Entity}` binds over single
+  individuals while `{$r (Referents Entity)}` binds a plural
+  reference (§3.2); the two are different types, not different
+  notations.
 - `:label value` — a labelled place fill inside a predication (§4.2);
   `:2` names the second lexical place, `:Eventuality` the event place.
 - `; text` — comments, to end of line; consumed as whitespace. By
