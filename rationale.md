@@ -169,13 +169,22 @@ configuration; the exotic ones are gap-registered rather than guessed.
 
 **Job.** Number-neutral reference with subreference and join. **Witness.**
 `mi jo'u do bevri lo pipno` (a plurality acts; no set object exists to
-act), `re lo mu plise` (subreference selection). **Why not sets?** Sets
-are objects with membership; predication over a plurality is not
-predication over a set-object (the crowd can be *large* while the set is
-abstract), and empty sets exist while empty pluralities do not. **Why no
-distributivity/cover parameter?** See §2.5 — the strongest single
-"less is more" decision in the core. **Cost.** Marked readings need
-marks (`lu'a`, `Distrib`, group gadri) — which Lojban has.
+act), `re lo mu plise` (subreference selection). **Why not sets?** In
+the nonempty, atomistic, member-wise fragment the two designs are
+intertranslatable — the honest answer is an equivalence-plus-choice,
+argued in full in §2.8. The short form: sets used the way a set-typed
+lexicon actually uses them (nonempty, predication reading the members,
+never the set-object) are a plurality wearing `{}` clothing, and the
+clothing costs more than it carries — the plural axioms return as
+side conditions, the member-wise/object-wise distinction moves from
+the type system into per-place convention, and coverage is lost where
+Lojban is deliberately non-atomistic. An earlier version of this entry
+argued "the crowd can be large while the set is abstract"; that
+attacks set-*object* predication, which no serious set-typed design
+proposes, and is withdrawn as a strawman. **Why no distributivity/cover
+parameter?** See §2.5 — the strongest single "less is more" decision in
+the core. **Cost.** Marked readings need marks (`lu'a`, `Distrib`,
+group gadri) — which Lojban has.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -402,6 +411,121 @@ running? Nothing in the core fails those tests; §14's gap register exists
 so that honesty about coverage never again requires inventing semantic
 objects for process states.
 
+### 2.8 Why lexical arguments are plural references, not sets
+
+The most serious alternative to §1.7's plural algebra is a set-typed
+lexicon: every argument place currently typed `Referents<T>` becomes a
+nonempty `Set<T>`, as Eberban's dictionary does throughout (its `tce`
+type is a *non-empty* set; a `*` marks places whose satisfaction
+survives passing a subset) and as Brismu's foundations choose ("sets
+are free over a universe of individuals … an inevitable structure").
+The pre-xorlo dictionary ran a partial version of the same experiment:
+about thirty official places are glossed "(set)", usually with a
+completeness side condition (`sisku` x3 "complete specification of
+set"; `kampu`, `simxu` x1, `cuxna` x3, the `-mei`/`cmima` cluster).
+This section records what a full design round established, so the
+choice is never again defended with less than its real argument.
+
+**First, the concession.** Under the discipline a working set-typed
+lexicon actually imposes — call it **D**: sets nonempty; members drawn
+from the individuals (atomistic generation); predication at lexical
+places reading the *members*, never the set-object; extensional
+identity, with discourse-introduction identity carried separately;
+representation sets kept distinct from first-order set objects — the
+two designs are intertranslatable. `Combine` is union, `Among` is
+subset, the singleton lift is `x ↦ {x}`, and
+`Referents<T>/CoRef ≅ NonEmptySet<T>` is a theorem. Inside D nothing
+expressible distinguishes the designs; "the crowd is large while the
+set is abstract" is no objection there, because under D largeness is
+never predicated of the set-object at all. Eberban's own gloss of
+eating shows the discipline at work: the set is a delivery mechanism
+for the members, and the word's definition says how the members
+satisfy it.
+
+**Second, the choice, and its grounds.**
+
+1. *The isomorphism is conditional, and the core sits outside its
+   conditions on purpose.* D's atomicity clause is a strict
+   strengthening of the plural algebra: §4.8 assumes no atoms
+   ("nothing requires that references bottom out in singletons"), and
+   counting is `CardBasis` — units under a description — rather than
+   cardinality of a canonical member basis. That is deliberate
+   plural-logic territory (guskant's indefinitely divisible bread;
+   mass-like reference generally). A set-typed lexicon either loses
+   that coverage or re-legislates it.
+
+2. *Inside D the re-spec is relabeling plus obligations.* The plural
+   axioms do not disappear; they return as side conditions —
+   nonemptiness at every place (Eberban's `tce` is the same exclusion
+   as our type, enforced by fiat rather than typing), ur-element
+   legislation, the member-wise reading imposed per place, and
+   provenance labels re-creating the co-reference/introduction
+   distinction that extensional sets collapse. Meanwhile lists, groups,
+   and genuine set objects survive untouched, so "one collection
+   machinery" is not delivered by any actual set-based design: Eberban
+   itself needs a wrapped/unwrapped split ("mostly use these 'wrapped
+   versions' unless … speaking about nested sets") — which is the
+   `Referents<T>`/`Set<T>` distinction with the names filed off,
+   enforced by convention where this core enforces it by type.
+
+3. *The two-sort split structurally excludes a real ambiguity.* With
+   plural references and set objects as different sorts, `lo selcmi cu
+   simxu lo ka tavla` has one analysis (set objects don't talk; the
+   members-reading goes through membership machinery). With one
+   set-type everywhere it is genuinely ambiguous — several sets
+   reciprocally related, or one set's members — which is solpahi's
+   argument that a place cannot accept both readings without "a true
+   ambiguity", and is where the pre-xorlo set places actually hurt.
+   Under a uniform set re-spec the exception class that must be carved
+   out — `cmima`, `selcmi`, `kampu`, `sisku` x3, the set operators —
+   is exactly the current `Set<T>` vocabulary. The core is not
+   set-averse; it is place-precise, and the re-spec's own exceptions
+   recover its shape.
+
+4. *The dictionary record.* The set annotations of the 1994 baseline
+   were inconsistently applied (the paradigm collective predicate
+   `sruri` carries none), dragged completeness side conditions that
+   plural reference does not need, and were re-read as plural by
+   xorlo-era practice without the text ever changing — `simxu` still
+   says "(set)" in jbovlaste today, while the community's formal
+   treatments reconstructed the plural reading externally. Plural
+   reference is what the set annotations were reaching for; the core
+   says it directly. The per-place audit itself is owed under both
+   designs (spec §10's plurality-behavior field is the same docket as
+   Eberban's stars); what differs is the failure mode — under the
+   re-spec a misassigned member-wise/object-wise call silently moves
+   truth conditions, while an unpopulated lexical field leaves
+   vagueness, not error.
+
+5. *Brismu's second-order objection does not weigh here.* "Plural
+   logic is equiconsistent with monadic second-order logic, given a
+   predicate for masses" is true and idle: equiconsistency is far
+   weaker than equivalence of designs, the hedge concedes that plural
+   quantification is present either way, and second-orderness is no
+   incremental cost in a core that is already a typed λ-calculus with
+   comprehension. The metatheory may freely use sets to model plural
+   extensions — §4.10's witness sets already do — without lexical
+   places denoting set objects.
+
+**Third, what was adopted from the set side.** The sharpest thing in
+Eberban's conventions is the star's definition, and the lexicon
+interface now uses it: the plurality-behavior field's "distributive"
+value means *satisfaction preserved under subreference* (`Among`),
+"collective" its explicit failure — a checkable lexical criterion, per
+P4 never a reading parameter. Not imported: the cumulative default
+Eberban writes into definitions like its eating verb (everyone eats at
+least one; every apple is eaten) — that is a resolved cover reading,
+which P4 declines as a default and Lojban marks when it means.
+
+Solpahi's "A Simpler Quantifier Logic" stands in the record as
+independent convergence: plural constants demand plural variables (the
+Clifford–xorxes exchange), and bare PA as plural-existential
+witness-sets is P17 arrived at from the other direction — including
+the scope-commutativity bonus. His hybrid-era gap (`no prenu cu
+jmaji` inexpressible) was the price of xorlo's no-rewrite move, and
+this core pays the other half of that bill with plural selections and
+joint loci — a repair orthogonal to sets.
+
 ## 3. Pin arguments
 
 Condensed; each pin's full context is in spec §13. The ones that were
@@ -474,7 +598,13 @@ genuinely fought:
   If bare PA meant global exactness, `ci gerku cu bajra .i ri tatpi`
   would have no specific three-dog referent to export — only a size
   claim about a maximal set — so the pin is motivated by composition,
-  not preference.
+  not preference. Independent convergence, found in the round-7 record:
+  solpahi's "A Simpler Quantifier Logic" derives the same reading from
+  plural logic alone (bare PA = plural-existential over a PA-membered
+  witness), and notes the bonus this specification inherits: witness
+  existentials commute, so `ci gerku cu batci re remna` and its
+  `se`-conversion agree — the scope asymmetry of globally-exact
+  quantifiers was an artifact.
 - **P8 vs the present-tense temptation — amended in review.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone
   reflex, not a rule. But pure absence was also wrong, as the
@@ -515,8 +645,13 @@ sentence forcing world variables into terms (moves intension into the
 syntax); a genericity theory that derives `Generic` while preserving the
 `lo'e`/`le'e` contrast (demotes it to the library); evidence that
 speakers systematically read unmarked `kau` exhaustively even in
-non-`djuno` frames (reopens P9); and community usage data on termset
-maximality (reopens P17's default). Each was hunted during the design
+non-`djuno` frames (reopens P9); community usage data on termset
+maximality (reopens P17's default); and a construction where
+set-*objecthood* at a lexical place does work that member-wise
+predication plus `SetOf` cannot (reopens §2.8 — the round-7 hunt found
+none; the candidate that fails is `lo selcmi cu simxu`, which the
+two-sort typing resolves correctly and uniform set typing renders
+ambiguous). Each was hunted during the design
 rounds; where the hunts came back empty the invitations record the
 negative result, kept falsifiable, and where a find was absorbed (the
 dependent witness, above) the invitation is narrowed to what remains.

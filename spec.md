@@ -474,6 +474,21 @@ cover vocabulary (§12) when a resolved reading commits to structure.
 (Rulings P4; the design follows plural logic — Boolos, Oliver & Smiley —
 rather than covert-operator theories.)
 
+**Representation note (non-normative).** Under the discipline **D** —
+nonempty, atomistically generated, singleton-separated pluralities with
+extensional identity (discourse-introduction identity carried outside
+the extension), natural under subsorts — the quotient
+`Referents<T>/CoRef` is isomorphic to the nonempty sets over `T`:
+`Combine` is union, `Among` is subset, the singleton lift is
+`x ↦ {x}`. A set-backed implementation of that fragment is therefore
+legitimate, and set-typed lexicons (Eberban's nonempty `tce` places)
+are intertranslatable with this one inside D. The specification does
+not adopt D: atomistic generation is exactly what the no-atoms clause
+declines, and representation sets must in any case stay distinct from
+the first-order `Set<T>` objects of §4.9 (ruling P25; the full
+argument, including why the re-spec was declined, is the rationale's
+sets essay).
+
 ### 4.9 Collections and mathematics
 
 Collection *objects* are first-order individuals distinct from plural
@@ -1189,7 +1204,7 @@ must provide for the core to interpret predications over it:
 | row | the labelled, typed place row (§3.3), with the distinguished event place where licensed |
 | defaultability | per place: whether closure (§4.6) may introduce a `Context` there; non-defaultable places must be filled or abstracted |
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
-| plurality behavior | optional, per place: how the relation composes with plural arguments (distributive-capable, collective-leaning, neutral) — lexical knowledge, never a covert operator (§4.8) |
+| plurality behavior | optional, per place: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). **distributive** is a defined value: satisfaction is preserved under subreference (`Among r' r` and `P … r …` entail `P … r' …` at that place — the pluralization of Eberban's subset-monotonicity star); **collective** is its explicit failure; **neutral** declares neither. The value states a lexical entailment of the word, never a reading parameter (P4) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
 | degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
 | kind admission | whether a place admits kind-like referents (ruling P3) |
@@ -1596,6 +1611,21 @@ vagueness is never pinned; it is classified in §6.1.)
 - **P23** `ba'e` = sign-level focus; `du` = `=`.
 - **P24** Fresh event per bridi unless shared explicitly; ZAhO pinned as
   boundary-relation shape, contours filled lexically.
+- **P25** Lexical argument rows take plural references, not sets. The
+  set-typed alternative was examined in full (round 7): under the
+  discipline of §4.8's representation note the two designs are
+  intertranslatable, so the choice is architectural, and this
+  specification chooses the design in which the discipline is
+  typographic — nonemptiness in the type, the member-wise/object-wise
+  distinction as a sort split (`Referents<T>` vs `Set<T>`) rather than
+  a per-place convention, and no atomistic basis imposed. Set objects
+  keep their places where Lojban talks about collections as
+  individuals (`lo'i`, `cmima`, `kampu`, `sisku` x3, the set
+  operators); the "distributive" value of the lexicon's plurality
+  field is defined by subreference monotonicity (§10). Reopens on the
+  rationale's standing invitation: a construction where
+  set-objecthood at a lexical place does work member-wise predication
+  plus `SetOf` cannot.
 
 ## 14. Gap register
 
