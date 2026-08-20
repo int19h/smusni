@@ -125,13 +125,17 @@ smuggling in an implementation?
 
 The documents are the definition; anything executable or machine-checked
 is a **derived artifact**, never the authority. Two lines look
-promising once the core stabilizes. A **Lean 4** mechanization: Lean's
-`Expr`-and-elaborator architecture is the same staged, typed,
-no-reification shape as the core's reflection layer, and its extensible
-syntax means elaborator macros could plausibly *interpret the core
-notation directly* — or even normalized Lojban text (normalization is
-roughly: spaces between words, no dots or commas) — making sample terms
-type-checked objects rather than prose. A **Metamath cross-check**
+promising once the core stabilizes. A **Lean 4** mechanization: Lean
+supplies a staged, typed syntax-elaboration-and-kernel-checking host,
+and its extensible syntax means elaborator macros could plausibly
+*interpret the core notation directly* — though a mechanization must
+separately enforce the core's written-only, constructive-only
+reflection discipline, which Lean's own syntax and `Expr` APIs
+(inspection, antiquotation) do not impose. Even Lojban text could be
+fed in, given an independently specified parsing and reading-resolution
+layer in front (mere normalization — spaces between words, no dots or
+commas — only makes the text lexable). The result would make sample
+terms type-checked objects rather than prose. A **Metamath cross-check**
 against Brismu's derivations would test the pin list from the opposite
 direction. Both are future work items, started only on explicit
 decision; neither may ever become a place where the definition lives.

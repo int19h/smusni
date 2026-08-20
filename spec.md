@@ -210,7 +210,9 @@ Core terms are written as S-expressions:
 - The binder names are **aliases** of the reflection words (§7.7):
   `λ` *is* `MakeLambda`, and `(λ {$x T} {body})` is an ordinary
   application — `Let` and `Bind` likewise per their definitions — so
-  `()` is function application and **nothing else**. A binder form is
+  `()` is function application and **nothing else** in term syntax
+  (type-level parameter lists such as `Fn<(A), B>` are metalanguage,
+  not terms). A binder form is
   always a word applied to a telescope quote, its active operands, and
   a body quote: `(λ {$x T} {body})`; `(Let {$x T} v {body})`;
   `(Bind {$x T} c {body})`, variadic by alternation
@@ -896,7 +898,7 @@ reference; the atomic-pair spelling is the distributive strengthening):
               (∃ (λ {$y Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))})
   (∀ (λ {($p Entity) ($d (Referents Entity))}
     {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-       (Close (darxi $p $d)))})))
+       (Close (darxi $p $d)))}))))
 ```
 
 The restrictor's relational conjunct ties the parameters; no E-type
@@ -1155,7 +1157,7 @@ different operators.
 
 ### 7.4 Utterance tokens
 
-`(Utterance {u UtteranceToken} {fact…})` is the **transcript-entry
+`(Utterance {$u UtteranceToken} {fact…})` is the **transcript-entry
 notation**: a token variable with facts about it — ordinary
 predicates: `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`,
 `DeicticPlaceOf`, `TextOf`, `Realizes` (the token realizes an act
@@ -1164,7 +1166,7 @@ value of whatever force — the force index is existential here),
 is a λ, not a computation:
 
 ```lisp
-(Utterance {u UtteranceToken} {fact…})
+(Utterance {$u UtteranceToken} {fact…})
   ≝ (λ {$u (Referents UtteranceToken)} {(∧ fact…)})
 ```
 
@@ -1194,7 +1196,7 @@ Constructors: `(OpaqueQuote text)` (`lo'u…le'u`, `zoi`),
 token-description property, §7.4; the constructor supplies the opaque
 boundary),
 `(NameSign text)`, `(SentenceSign content)`, `(LetteralSign text)`,
-`(WordSign text)`. `(Sign {s (SignToken K)} {fact…})` describes sign
+`(WordSign text)`. `(Sign {$s (SignToken K)} {fact…})` describes sign
 tokens with facts (`TextOf`, `Quotes`, `Denotes`) — the §7.4 defined
 entry notation at the sign-token sort. Interpretation is explicit and
 typed: `(InterpretContent sign) : Content` and the force-indexed
@@ -1350,7 +1352,11 @@ supplies the rest. For a closed quote (Γ = ∅) the environment operand
 is empty and elided: `(Interpret {a})` is the stated elision of
 `Interpret({a}, ⟨⟩)`. Evaluation never reads the evaluator's ambient
 context — everything comes from the package or the typed operand.
-Interpretation for stage-n code is a stage-(n+1) operation, there is
+Interpretation for stage-n code is a stage-(n+1) operation (the
+staged shape of MetaML and of Davies–Pfenning's modal analysis,
+analogically — the stage discipline is taken, their languages are not:
+no anti-quotation, no cross-stage persistence, none of their
+metatheorems inherited), there is
 no untyped universal `Eval`, and **the family is bootstrap floor and
 unreflectable** — no `MakeEval`, ever (a same-stage self-interpreter
 is the liar row of §16.4). When `A` is a computation type,
@@ -1387,8 +1393,13 @@ its operators consume values — so exactly one word needs to consume
 code:
 
 ```text
-MakeLambda : Telescope<Γ; Δ> × Expression<Γ·Δ, B, ε> → Arrow_ε<(Δ), B>
+MakeLambda : Telescope<Γ; Δ> × Expression<Δ, B, ε> → Arrow_ε<(Δ), B>
 ```
+
+(the body is *written* under ambient Γ, but its `Expression` index —
+its open context — is exactly the Δ the telescope designates; the
+ambient names are captured into the value, per the split above, and
+never appear in the index).
 
 Its clause: `(MakeLambda {Δ} {b})` — the telescope designates Δ as
 `b`'s open part, ambient Γ being captured per the split above — is the
@@ -1400,22 +1411,36 @@ glyph is an alias (and, like every PascalCase name, `MakeLambda` is a
 are **defined**, with `Bind` and `Let` their aliases:
 
 ```text
-MakeLet  : Telescope<Γ; ($x:A)> × A × Expression<Γ·($x:A), B, ε> → B
+MakeLet  : Telescope<Γ; ($x:A)> × A × Expression<($x:A), B, ε> → B
 (MakeLet {$x A} v {b})  ≝ ((MakeLambda {$x A} {b}) v)     ; v pure
 
-MakeBind : Telescope<Γ; ($x:A)> × Comp<A>
-           × Expression<Γ·($x:A), Comp<B>, ε> → Comp<B>
-(MakeBind {$x A} c {b}) ≝ (bind c (MakeLambda {$x A} {b}))
+MakeBind : Telescope<Γ; ($x:T)> × RefComp<T>
+           × Expression<($x:T), C, ε> → C
+    ; a schematic family, one member per computation-denoting term
+    ; category C — Content, RefComp<S>, Act<F>, Discourse (§5.2)
+(MakeBind {$x T} c {b}) ≝ (bind c (MakeLambda {$x T} {b}))
                       ; c consumed as a value; the result is itself a
                       ; computation — nothing runs at construction
 ```
 
 where `bind` is the §5.1 carrier's sequencing operation (the model-
-level `Comp<A> × (A → Comp<B>) → Comp<B>`, of which the surface `Bind`
-word is the readable face); the variadic `Bind` spelling nests per
+level `Comp<A> × (A → Comp<B>) → Comp<B>`): every category the family
+ranges over denotes in that one carrier (§5.1), so the single carrier
+equation defines every member uniformly. The continuation position
+demands no
+purity — ε is unconstrained in `MakeBind`'s signature, per §3.4's rule
+that only comprehension, restrictors, and selections demand it. The
+variadic `Bind` spelling nests per
 §5.2. A reflective application spelling exists as a defined
-form over the floor family — `(MakeApply {f} {a}) ≝
-((Interpret {f}) (Interpret {a}))`, each operand interpreted once —
+form over the floor family —
+
+```text
+MakeApply : Expression<∅, Arrow_δ<(A), B>, ε₁> × Expression<∅, A, ε₂> → B
+(MakeApply {f} {a}) ≝ ((Interpret {f}) (Interpret {a}))
+```
+
+closed quotes, each operand interpreted once (open code takes its
+environment through `Interpret` directly) —
 for contexts (notably the self-description program, §16) that need
 application as a *word*; `(f a)` itself remains grammar. Facades for
 the remaining operators follow one generic schema and are materialized
@@ -2058,7 +2083,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   `Refer` (plural references are nonempty by type); it is
   **special-cased at the mapping layer** to the zero-count schema —
   `lo no broda` in a bridi frame `R[·]` lowers to
-  `(No (λx. broda x) (λx. R[x]))`, guskant's unofficial
+  `(No (λ {$x Entity} {(broda $x)}) (λ {$x Entity} {R[$x]}))`,
+  guskant's unofficial
   `naku su'oi da poi ke'a broda` relativized to the frame ("gadri: an
   unofficial commentary from a logical point of view", the "Cannot say
   zero" section). This is what makes answer substitution work: `lo xo

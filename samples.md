@@ -356,7 +356,7 @@ presupposition.
             (∧ (gerku $d)
                (∀ (λ {$p Entity}
                  {(→ (∈ $p $people)
-                    (∧ (prenu $p) (Close (nelci $d $p))))}))))})))}))
+                    (∧ (prenu $p) (Close (nelci $d $p))))}))))})))})))
 ```
 
 Pinned reading (CLL ch. 16 §7's own gloss): two picked witness sets,

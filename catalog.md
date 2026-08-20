@@ -146,7 +146,9 @@ a query as a `Question` object for question-object-selecting places.
 
 **Informally.** Signs are quoted or mentioned linguistic material,
 classified by kind `K` (Name, Sentence, Word, Letteral, Quotation,
-MathExpression, Structured, Opaque, Text, Connective, Expression);
+MathExpression, Structured, Opaque, Text, Connective — and
+`Expression` and `Telescope`, the elaborated-core-notation kinds,
+§1.47);
 sign tokens and utterance tokens are the concrete occurrences facts
 attach to. Sign boundaries are opaque: no referent, presupposition, or
 introduction crosses them.
@@ -268,9 +270,11 @@ quantifiers are built from selections, not from bare `∃`.
 
 ### 1.20 `=` — typed equality
 
-**Informally.** Primitive identity at every first-order sort and at
+**Informally.** Primitive identity at every first-order sort — except
+the constructive-only syntax kinds (`Expression`/`Telescope` signs: no
+code equality, §1.47) — and at
 the discrete index types (`Bool`, place labels, the closed
-enumerations) — never at the plural reference type, where co-reference
+enumerations); never at the plural reference type, where co-reference
 (`CoRef`, mutual `Among`) does the work; plural-sumti `du` lowers to
 `CoRef` (P23).
 **For.** `li re su'i re du li vo`; `ko'a du ko'a` reflexively true
@@ -1100,7 +1104,8 @@ any operator acquires a sign-consuming form on demand.
 — one interpretation per operand; each law preserves S1–S7; no facade
 for the sign constructors, `Perform`'s commitment, or `Interpret`
 itself. Nothing runs at construction: `MakeBind` returns
-a computation value, inert until performed.
+a computation value, inert until consumed by the relevant dynamic
+operator or `Perform`.
 **For.** The self-description program: with these words, core terms
 and their semantics are statable as sentences about quoted code.
 **See.** [Spec §7.7](spec.md); [rationale §2.9](rationale.md).
