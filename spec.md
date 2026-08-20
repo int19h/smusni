@@ -1134,21 +1134,31 @@ different operators.
 ### 7.4 Utterance tokens
 
 `(Utterance ((u UtteranceToken)) fact…)` is the **transcript-entry
-former**: it packages a fresh token variable with facts about it —
-ordinary predicates: `SpeakerOf`, `AudienceOf`, `LocutionOf`,
-`DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Realizes` (the token realizes an act
+notation**: a token variable with facts about it — ordinary
+predicates: `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`,
+`DeicticPlaceOf`, `TextOf`, `Realizes` (the token realizes an act
 value of whatever force — the force index is existential here),
-`Utters` (agent utters token) — into an unperformed,
-dynamically opaque **transcript entry**, the value `StructuredQuote`
-(§7.5) consumes. The former is primitive because its result is a
-*value* (an entry inside a sign boundary), not a content computation:
-no `Bind`/`Refer` spelling can build a value that suspends its facts
-behind an opaque quote. What needs **no** special form is
-performed-level token talk: asserting facts about an utterance token
-in open discourse is ordinary reference introduction at the token
-sort (`Refer` over a token-property), exactly like any other sort.
-The `Sign` entry former of §7.5 is the same primitive at the
-sign-token sort. Transcript entries carry unperformed acts.
+`Utters` (agent utters token). It is **defined**, and its definition
+is a λ, not a computation:
+
+```lisp
+(Utterance ((u UtteranceToken)) fact…)
+  ≝ (λ (($u (Referents UtteranceToken))) (∧ fact…))
+```
+
+— a *pure token-description property*. The λ suspends the facts by
+nature (nothing is performed, nothing introduced — quoted material
+introduces no discourse referents), and `StructuredQuote` (§7.5)
+consumes exactly this property type, supplying the sign boundary's
+opacity itself: the primitivity in this neighborhood belongs to the
+sign constructors, not to the entry notation. (A `Bind`/`Refer`
+spelling, by contrast, would be a computation — the wrong category
+for a value behind an opaque boundary.) What likewise needs no
+special form is performed-level token talk: asserting facts about an
+utterance token in open discourse is ordinary reference introduction
+at the token sort. The `Sign` entry notation of §7.5 is the same
+defined λ at the sign-token sort. Transcript entries carry unperformed
+acts.
 
 ### 7.5 Signs and quotation
 
@@ -1156,11 +1166,13 @@ sign-token sort. Transcript entries carry unperformed acts.
 Quotation, MathExpression, Structured, Opaque, Text, Connective — and
 `Expression`, the elaborated-core-expression kind of §16.3).
 Constructors: `(OpaqueQuote text)` (`lo'u…le'u`, `zoi`),
-`(StructuredQuote entry)` (`lu…li'u` — a transcript entry, unperformed),
+`(StructuredQuote entry)` (`lu…li'u` — the operand a pure
+token-description property, §7.4; the constructor supplies the opaque
+boundary),
 `(NameSign text)`, `(SentenceSign content)`, `(LetteralSign text)`,
-`(WordSign text)`. `(Sign ((s (SignToken K))) fact…)` packages sign
-tokens with facts (`TextOf`, `Quotes`, `Denotes`) — the §7.4 entry
-former at the sign-token sort. Interpretation is explicit and
+`(WordSign text)`. `(Sign ((s (SignToken K))) fact…)` describes sign
+tokens with facts (`TextOf`, `Quotes`, `Denotes`) — the §7.4 defined
+entry notation at the sign-token sort. Interpretation is explicit and
 typed: `(InterpretContent sign) : Content` and the force-indexed
 partial family `InterpretAct<F> : Sign<K> → Act<F>` — defined exactly
 when the sign's realized (or intended) act has force `F`, since a
@@ -1973,7 +1985,7 @@ arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `Scalar`; the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the sign
-constructors, the transcript/token entry formers (§7.4),
+constructors (where quotation's opacity lives),
 `InterpretContent`/`InterpretAct<F>`, and the token/sign
 fact relations; `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
@@ -1983,7 +1995,8 @@ derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`/
 admissibility predicates (§12). **Defined forms** (term-language
 expansions; everything else is library or lexicon): `Close`, `At` with
 all fill notation, `Let`, the demonstratives, `Tanru` (§6.2),
-`SelectSome`, `PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
+`SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
+`PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
 `ContextualAnswer`, and the library of §12. The
 [catalog](catalog.md) carries one entry per name — prose, formal
 definition where one exists, purpose, example, and links; each name's

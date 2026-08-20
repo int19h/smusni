@@ -493,7 +493,9 @@ text-to-reading rules like `ki` stickiness and `go'i` reach reset);
 
 **Informally.** `(OpaqueQuote text)` — unparsed quoted text
 (`lo'u…le'u`, `zoi`); `(StructuredQuote entry)` — a transcript entry
-carrying an unperformed act (`lu…li'u`); `(NameSign text)`,
+carrying an unperformed act (`lu…li'u`; the entry operand is a pure
+token-description property, §2.27, and the constructor supplies the
+opaque boundary); `(NameSign text)`,
 `(WordSign text)` (`zo`), `(LetteralSign text)`,
 `(SentenceSign content)`. All build `Sign<K>` values; all boundaries
 are opaque to dynamics.
@@ -633,23 +635,7 @@ recorded fit becomes a definition only when the committee adopts it.
 [primer ch. 0, ch. 7](primer.md); the indicator instances appear in
 [samples §7, §11](samples.md).
 
-### 1.47 The `Utterance` and `Sign` entry formers
-
-**Informally.** `(Utterance ((u UtteranceToken)) fact…)` packages a
-fresh token variable with facts about it into an unperformed,
-dynamically opaque **transcript entry** — the value `StructuredQuote`
-consumes; `(Sign ((s (SignToken K))) fact…)` is the same former at the
-sign-token sort. Primitive because the result is a *value* inside a
-sign boundary, which no content computation can be: a `Bind`/`Refer`
-spelling would perform the introduction rather than suspend it. What
-needs no special form is performed-level token talk — asserting facts
-about a token in open discourse is ordinary `Refer` at the token sort.
-**For.** `lu mi klama li'u` → `(StructuredQuote (Utterance (($u
-UtteranceToken)) (Realizes $u (Assert (Close (klama Speaker))))))`.
-**See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
-[samples §6, §10](samples.md).
-
-### 1.48 `InnatelyCapable` and `MotionVector`
+### 1.47 `InnatelyCapable` and `MotionVector`
 
 **Informally.** Two lexically grounded primitives declared with the
 §12 helpers they serve. `InnatelyCapable : Referents<Entity> ×
@@ -1010,7 +996,25 @@ addr)))`, `R` the COI entry's lexical relation (`coi-greeting`,
 **For.** `coi do` — the greeting is the act.
 **See.** [Spec §12, §7.6, §11](spec.md).
 
-### 2.27 `te'a`, `gei`, and `xi` indexing
+### 2.27 The `Utterance` and `Sign` entry notations
+
+**Informally.** A token variable with facts about it — the transcript
+entry `StructuredQuote` consumes, and the same notation at the
+sign-token sort. Defined: the λ suspends the facts by nature (nothing
+performed, nothing introduced — quoted material introduces no
+discourse referents), yielding a *pure token-description property*;
+the opacity belongs to the consuming sign constructor, not to this
+notation. Performed-level token talk needs no special form — it is
+ordinary `Refer` at the token sort.
+**Formally.** `(Utterance ((u UtteranceToken)) fact…) ≝ (λ (($u
+(Referents UtteranceToken))) (∧ fact…))`; the `Sign` notation likewise
+at `SignToken<K>`.
+**For.** `lu mi klama li'u` → `(StructuredQuote (Utterance (($u
+UtteranceToken)) (Realizes $u (Assert (Close (klama Speaker))))))`.
+**See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
+[samples §6, §10](samples.md).
+
+### 2.28 `te'a`, `gei`, and `xi` indexing
 
 **Informally.** MEX helpers by metalanguage recursion: integer
 exponentiation, order-of-magnitude, and subscripting as list
