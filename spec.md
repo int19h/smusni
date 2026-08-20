@@ -734,7 +734,8 @@ node the accessibility table can see (rationale §1.14).
 `Bind` is **uniform across the result categories**: `Act<F>` and
 `Discourse` denote computations in the same carrier as `Content` (§5.1 —
 their effects include performance and commitment), so `body` may be
-`Content`, an act, or a discourse, and the binding scopes the referent
+`Content`, a reference computation, an act, or a discourse, and the
+binding scopes the referent
 over the whole body either way. This is what lets a description or
 selection introduced before an act sequence remain bound across it
 (`(Bind {$x (Referents T)} (Refer P) {(Do a₁ a₂)})` — the ordinary
@@ -895,10 +896,10 @@ reference; the atomic-pair spelling is the distributive strengthening):
 
 ```lisp
 (Presuppose (∃ (λ {$x Entity} {(∧ (prenu $x)
-              (∃ (λ {$y Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))})
+              (∃ (λ {$y Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
   (∀ (λ {($p Entity) ($d (Referents Entity))}
     {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-       (Close (darxi $p $d)))}))))
+       (Close (darxi $p $d)))})))
 ```
 
 The restrictor's relational conjunct ties the parameters; no E-type
@@ -1399,7 +1400,9 @@ MakeLambda : Telescope<Γ; Δ> × Expression<Δ, B, ε> → Arrow_ε<(Δ), B>
 (the body is *written* under ambient Γ, but its `Expression` index —
 its open context — is exactly the Δ the telescope designates; the
 ambient names are captured into the value, per the split above, and
-never appear in the index).
+never appear in the index; the telescope's own Γ index is different in
+kind — a telescope means "in Γ, introduce Δ", recording its write site
+for elaboration, and no environment ever feeds it).
 
 Its clause: `(MakeLambda {Δ} {b})` — the telescope designates Δ as
 `b`'s open part, ambient Γ being captured per the split above — is the
@@ -1428,7 +1431,7 @@ level `Comp<A> × (A → Comp<B>) → Comp<B>`): every category the family
 ranges over denotes in that one carrier (§5.1), so the single carrier
 equation defines every member uniformly. The continuation position
 demands no
-purity — ε is unconstrained in `MakeBind`'s signature, per §3.4's rule
+purity — ε is unconstrained in `MakeBind`'s signature, per §3.3's rule
 that only comprehension, restrictors, and selections demand it. The
 variadic `Bind` spelling nests per
 §5.2. A reflective application spelling exists as a defined
@@ -2083,8 +2086,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   `Refer` (plural references are nonempty by type); it is
   **special-cased at the mapping layer** to the zero-count schema —
   `lo no broda` in a bridi frame `R[·]` lowers to
-  `(No (λ {$x Entity} {(broda $x)}) (λ {$x Entity} {R[$x]}))`,
-  guskant's unofficial
+  `(No (λ {$x Entity} {(broda $x)}) (λ {$w (Referents Entity)}
+  {R[$w]}))`, guskant's unofficial
   `naku su'oi da poi ke'a broda` relativized to the frame ("gadri: an
   unofficial commentary from a logical point of view", the "Cannot say
   zero" section). This is what makes answer substitution work: `lo xo

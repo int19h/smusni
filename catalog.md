@@ -197,8 +197,9 @@ sequencing its effects before the continuation, and pass its *result*
 call-by-value at computation types, made visible: the pure λ-fragment
 keeps unconditional β-equality, and every effect-sequencing point is a
 `bind` node the accessibility table can name. Uniform across result
-categories: the continuation may yield content, an act, or a
-discourse, so a referent introduced before an act sequence stays bound
+categories: the continuation may yield content, a reference
+computation, an act, or a discourse, so a referent introduced before
+an act sequence stays bound
 across it. The surface binder word `Bind` — `(Bind {$x T} comp
 {body})` — is the *defined* telescope-spelled face: it is the alias of
 `MakeBind` (§2.28), which expands to `bind` over `MakeLambda`.
