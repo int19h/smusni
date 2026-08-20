@@ -194,6 +194,11 @@ decisive witness). Why not lexicalize scalar forms per predicate? The
 operators are productive across the whole lexicon; three formers beat
 thousands of entries.
 
+The `Tanru` analysis has independent lexical corroboration: the gismu
+`tanru`'s official row gives the compound its "meaning ⟨4⟩ in
+usage/instance ⟨5⟩" — occasion-relative resolution as a dictionary
+fact, adopted as the operator's shadow relation in spec §16.5.
+
 ### 1.9 `Generic`
 
 **Job.** `lo'e`/`le'e` talk about typicality without a specimen.

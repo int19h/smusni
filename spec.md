@@ -843,6 +843,11 @@ event's manner, a participant, a purpose, a source, …) and nothing
 stronger — no x1-sharing, no intersectivity. The library's named links are
 the common precisifications; a lujvo is a lexicalized precisification.
 
+The gismu `tanru` is this operator's shadow relation (§16.5), and an
+exact one: its official x4 ("giving meaning ⟨4⟩") and x5 ("in
+usage/instance ⟨5⟩") places state precisely this occasion-relative
+resolution, with sign-typed operand places to match.
+
 ### 6.3 Scalar operators
 
 `(Scalar k P)`, `k ∈ {OtherThan, Opposite, Neutral}`, is the `na'e`/
@@ -1838,7 +1843,19 @@ sources and the round-6 record carry the details):
   x3") is verbatim the specimen theory the split-normality witness
   killed (R3): the audit's standing warning that surface resemblance
   must be checked against the semantics before adoption.
-- **Class O shadows (vocabulary either way):** `xusra` (assertion),
+- **Class O shadows (vocabulary either way):** `tanru` — the
+  modification operator's own name, and the sharpest shadow in the
+  inventory: its official row "⟨1⟩ is a binary metaphor formed with ⟨2⟩
+  modifying ⟨3⟩, giving meaning ⟨4⟩ in usage/instance ⟨5⟩" (operands
+  "both text or both si'o") is the §6.2 semantics stated as a
+  dictionary entry, place for place — x2/x3 are sign-typed (the inert
+  operand policy of §16.2, already official), x4 is the resolved
+  reading `TanruAdmissible` admits, and x5 is the occasion that
+  resolves it: the dictionary itself records tanru meaning as
+  per-occasion, which is §6.1's Vague doctrine in an official row.
+  (`Tanru` the operator stays Class O — composition is an operator —
+  but its shadow relation needs no coinage at all.) Further: `xusra`
+  (assertion),
   `preti` (question text — its quoted-text x1 fits the sign machinery),
   `minde` (command), `cinmo` (display), `danfu`/`spuda` (answerhood /
   answering act), `drata` (the individual-level shadow of scalar

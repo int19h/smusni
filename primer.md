@@ -410,6 +410,12 @@ The core keeps a constrained open slot: any link that makes the modifier
 genuinely modify the head predication is admissible; naming one (there's a
 library of named links: manner, material, purpose…) is what a lujvo does.
 
+Pleasingly, Lojban already knew. The gismu `tanru` is officially "x1 is
+a binary metaphor formed with x2 modifying x3, **giving meaning x4 in
+usage/instance x5**" — the dictionary itself says a tanru's meaning is
+a per-occasion resolution, which is exactly the analysis above stated
+as a place structure.
+
 ## 10. Words about words
 
 `lu mi klama li'u` is a *sign* — a quoted transcript, mentioning an
@@ -442,8 +448,45 @@ unhappiness about that whole claim. And what was left open, on purpose:
 when any of this happened; whether the dogs are tired jointly or
 severally; and nothing else — everything other than these was said.
 
-If you can reconstruct that paragraph from the sentence, you have the
-core. The specification is the same story with the definitions filled in.
+And here is that story written down — the sentence's full core term:
+
+```lisp
+(Bind (($dogs (Referents Entity)                       ; chapter 3: lo introduces…
+        (Refer (λ (($r (Referents Entity)))
+          (∧ (gerku $r)
+             (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3)))))) ; …three dogs
+  (Do
+    (Let (($a1 (Act Assertion)                         ; chapter 6: build the act…
+            (Assert
+              (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
+                (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))  ; chapter 5: a two-person
+                     (λ (($x Entity)) (Close (batci $dogs $x))))))))) ; witness set
+      (Perform $a1))                                   ; …and actually say it
+    (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs))))) ; chapter 4: ri = $dogs
+      (Do (Perform $a2)
+          (Express (Close (unhappiness Speaker $a2 Intense))))))) ; chapter 7
+```
+
+Three names appear here that earlier chapters only gestured at.
+`CardBasis` is chapter 3's `…exactly-three-units…` made honest: it
+counts a plural referent *by a unit predicate* — these, counted as
+dogs, number three (so a plurality can be three dogs and one pack
+without contradiction). `Exactly n P body` is chapter 5's witness
+selection as one operator: pick an n-membered P witness set and run the
+body over it. And `Supplement` is `noi` itself: it attaches the aside
+(the whiteness) to its anchor (`$dogs`) alongside the at-issue claim —
+the aside is new information, committed by the speaker — but it
+*projects* the way chapter 5's presuppositions do, sitting structurally
+beside the `¬` rather than under it, where no negation or question can
+reach. Everything else you have seen: the two
+`Let`/`Perform` pairs are chapter 6's acts-as-values, built and then
+said; and `Express` takes `$a2` itself as the emotion's target — the
+displayed unhappiness is about *that assertion*, which only a language
+whose acts are values can even write down.
+
+If you can reconstruct the story from the sentence — or check it off
+against the term, line by line — you have the core. The specification
+is the same story with the definitions filled in.
 
 ## 12. Glossary and further reading
 
