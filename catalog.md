@@ -185,7 +185,7 @@ bodies, everything higher-order.
 
 ### 1.14 `Bind`
 
-**Informally.** `(Bind ((x T comp)) body)` runs the computation once,
+**Informally.** `(Bind (($x T comp)) body)` runs the computation once,
 sequencing its effects before the body, and binds its *result* — never
 the computation — for `body`. It is function application under
 mandatory call-by-value at computation types, made visible: the pure
