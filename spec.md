@@ -289,7 +289,9 @@ event-licensed lexical entries (§10) and is filled with `:Eventuality`.
   alias** for the row-function type `Record ρ → Content`: partial filling
   is abstraction over the residual row, place selection is record
   projection, and two relations equal on all row records are the same
-  relation. The alias is retained pervasively in signatures because
+  relation. A relation over the exhausted row is its content:
+  `PredTerm<⟨⟩>` applied at the empty record is `Content`, and the
+  notation writes that final application invisibly. The alias is retained pervasively in signatures because
   labelled places are the load-bearing Lojban-specific structure (free
   place order, `zi'o`, conversion, place questions all speak in labels).
 - `Fn<(A …), B>` — ordinary functions with positional parameters, the type
@@ -354,6 +356,30 @@ The event place is filled as `:Eventuality e`. Unfilled places do not
 default silently; they are closed by `Close` (§4.6) into explicit
 contextual computations, or abstracted by λ, or genuinely absent only
 under `DropPlace`.
+
+**All fill notation is sugar over one former.** The single-place fill
+`(At R ℓ v)` with a literal label (§4.7) fills place ℓ and yields the
+relation over the residual row; every multi-place fill desugars to
+nested single fills, with the positional and `:n`-continuation rules
+above merely computing which labels are used:
+
+```lisp
+(klama :2 This Yonder)
+  ≝ (At (At klama x2 This) x3 Yonder)
+(klama Speaker This)
+  ≝ (At (At klama x1 Speaker) x2 This)
+```
+
+Fills are values — effectful arguments are bound by `Bind` before they
+reach a fill position — so distinct-label fills **commute**:
+`(At (At R ℓ₁ v₁) ℓ₂ v₂) = (At (At R ℓ₂ v₂) ℓ₁ v₁)`. That commutation
+is the semantic fact beneath Lojban's free surface order: FA
+reordering and `se`-conversion are notation precisely because the
+order of fills never was part of the meaning. And `At` itself is no
+new primitive: with `PredTerm` a transparent alias (§3.3), the literal
+fill is partial application of the row function —
+`(At R ℓ v) ≝ (λ ((rest (Record ρ−ℓ))) (R rest∪{ℓ=v}))` — so the
+whole fill apparatus bottoms out in λ and labelled records.
 
 ### 4.2 Place conversion
 
@@ -434,16 +460,19 @@ notation (§2), not semantics.
 
 ### 4.7 Place questions
 
-`Label<ρ>` (§3.3) types questions over places. The defined form
-`(At R $p v)`, for `R : PredTerm<ρ>` and `$p : Label<ρ>`, fills `R`'s
-place denoted by `$p` with `v`; it abbreviates the finite case split over
-ρ's labels
+`Label<ρ>` (§3.3) types questions over places. `At` is the
+single-place fill former: with a **literal** label, `(At R ℓ v)` is
+partial application of the row function at field ℓ (§4.1 — every fill
+notation desugars to it). With a **computed** label — `$p : Label<ρ>`,
+the `fi'a` case — `(At R $p v)` abbreviates the finite case split over
+ρ's labels, each branch a literal fill:
 
 ```lisp
-(∨ (∧ (= $p ℓ₁) (R :ℓ₁ v …)) … (∧ (= $p ℓₙ) (R :ℓₙ v …)))
+(∨ (∧ (= $p ℓ₁) C[(At R ℓ₁ v)]) … (∧ (= $p ℓₙ) C[(At R ℓₙ v)]))
 ```
 
-and is well-formed only when the candidate domains of distinct computed
+(`C[·]` the containing predication through its closure), well-formed
+only when the candidate domains of distinct computed
 fills in one predication are disjoint. `fi'a` maps to an open question
 over `Label<ρ>` (§8.3); an open relation question (`mo`) binds a
 `PredTerm`-typed variable directly and needs no special row machinery.
@@ -1825,7 +1854,9 @@ gap entry is a defect in this document.
 
 The primitive inventory, for reference (everything else is library or
 lexicon): the type formers of §3; `λ`, application, `Let`, `Bind`;
-lexical predication with labelled fills; `DropPlace`; `¬ ∧ ∨ → ↔ ⊕ ∀ ∃
+lexical predication with labelled fills (all fill notation desugars to
+the single-place `At`, §4.1, itself record partial application);
+`DropPlace`; `¬ ∧ ∨ → ↔ ⊕ ∀ ∃
 =`; `Combine`, `Among`, `SetOf`, `Card`, `∈`, the arithmetic base;
 `Refer`, `Context`, `Vague`, the `Select` family; `Presuppose`,
 `Supplement` (display is its §7.6 spelling); `Generic`; `Reify`;
