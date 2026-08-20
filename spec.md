@@ -713,7 +713,8 @@ their effects include performance and commitment), so `body` may be
 `Content`, an act, or a discourse, and the binding scopes the referent
 over the whole body either way. This is what lets a description or
 selection introduced before an act sequence remain bound across it
-(`(Bind ((x (Refer P))) (Do a₁ a₂))` — the ordinary spelling of
+(`(Bind (($x (Referents T) (Refer P))) (Do a₁ a₂))` — the ordinary
+spelling of
 cross-sentence reference).
 
 ### 5.3 The specificity triad
