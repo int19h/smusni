@@ -89,8 +89,8 @@ whose content the hearer is expected to recover from the situation:
 
 ```
 (Assert
-  (Bind {$destination (Referents Entity)} (Context)
-    {(∃ (λ {$e (Referents Eventuality)}
+  (Bind {$destination :: Referents Entity} (Context)
+    {(∃ (λ {$e :: Referents Eventuality}
       {(klama Speaker $destination … :Eventuality $e)}))}))
 ```
 
@@ -126,7 +126,7 @@ going by me, and that going is earlier than now:
 ```
 ; mi pu klama
 (Assert
-  (∃ (λ {$e (Referents Eventuality)}
+  (∃ (λ {$e :: Referents Eventuality}
     {(∧ (klama Speaker :Eventuality $e)
        (purci $e Now))})))
 ```
@@ -156,7 +156,7 @@ core adopts wholesale —
 
 ```
 ; lo ci gerku
-(Refer (λ {$r (Referents Entity)}
+(Refer (λ {$r :: Referents Entity}
   {(∧ (gerku $r) …exactly-three-units…)}))
 ```
 
@@ -229,7 +229,7 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ (λ {($p Entity) ($d (Referents Entity))}
+(∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
   {(→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
      (darxi $p $d))}))
 ```
@@ -300,7 +300,7 @@ witness export).
 
 ```
 (Ask (Polar (Close (klama Speaker))))                          ; xu mi klama
-(Ask (OpenQ (λ {$x (Referents Entity)} {(Close (klama $x))}))) ; ma klama
+(Ask (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))}))) ; ma klama
 (Command Audience (Close (klama Audience)))                    ; ko klama
 (Express …)                            ; .ui and friends — chapter 7
 (Vocative Audience)                    ; doi (addressing the listener)
@@ -330,7 +330,7 @@ a degree on an intensity scale — displayed alongside its host:
 
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
-(Let {$a (Act Assertion)} (Assert (Close (tatpi $dogs)))
+(Let {$a :: Act Assertion} (Assert (Close (tatpi $dogs)))
   {(Do (Perform $a)
       (Express (Close (Unhappiness Speaker $a Intense))))})
 ```
@@ -452,7 +452,7 @@ Lojban without paradox.
 > quotes above, the core has braces — `{…}` — which quote *the core's
 > own notation*, not Lojban text. A quoted piece of notation is held
 > back, unevaluated, and special words operate on it: the λ you have
-> seen everywhere is really such a word — `(λ {$x T} {body})` applies
+> seen everywhere is really such a word — `(λ {$x :: T} {body})` applies
 > it to a quoted parameter and a quoted body and *produces* the
 > function, so the braces show at a glance which parts are held back
 > and parentheses only ever mean "apply". One rule keeps this safe:
@@ -492,25 +492,25 @@ its episodic readings (each sentence's occasion contextually anchored,
 the way chapter 2 anchored the stove):
 
 ```lisp
-(Bind {$dogs (Referents Entity)}                       ; chapter 3: lo introduces…
-      (Refer (λ {$r (Referents Entity)}
+(Bind {$dogs :: Referents Entity}                       ; chapter 3: lo introduces…
+      (Refer (λ {$r :: Referents Entity}
         {(∧ (gerku $r)
-            (= (CardBasis $r (λ {$x Entity} {(gerku $x)})) 3))})) ; …three dogs
+            (= (CardBasis $r (λ {$x :: Entity} {(gerku $x)})) 3))})) ; …three dogs
   {(Do
-    (Bind {$occ1 Time} (Context)                       ; chapter 2: the occasion —
-      {(Let {$a1 (Act Assertion)}                      ; outside the negation
+    (Bind {$occ1 :: Time} (Context)                       ; chapter 2: the occasion —
+      {(Let {$a1 :: Act Assertion}                      ; outside the negation
             (Assert
               (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
-                (¬ (Exactly 2 (λ {$x Entity} {(prenu $x)}) ; chapter 5: a two-person
-                     (λ {$ppl (Referents Entity)}          ; witness
-                       {(∃ (λ {$e (Referents Eventuality)}
+                (¬ (Exactly 2 (λ {$x :: Entity} {(prenu $x)}) ; chapter 5: a two-person
+                     (λ {$ppl :: Referents Entity}          ; witness
+                       {(∃ (λ {$e :: Referents Eventuality}
                           {(∧ (Close (batci $dogs $ppl :Eventuality $e))
                               (cabna $e $occ1))}))})))))
         {(Perform $a1)})})                             ; chapter 6: …and say it
-    (Bind {$occ2 Time} (Context)
-      {(Let {$a2 (Act Assertion)}
+    (Bind {$occ2 :: Time} (Context)
+      {(Let {$a2 :: Act Assertion}
             (Assert
-              (∃ (λ {$e (Referents Eventuality)}       ; chapter 4: ri = $dogs
+              (∃ (λ {$e :: Referents Eventuality}       ; chapter 4: ri = $dogs
                 {(∧ (Close (tatpi $dogs :Eventuality $e))
                     (cabna $e $occ2))})))
         {(Do (Perform $a2)
