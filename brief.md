@@ -56,6 +56,10 @@ At the repository root:
    examples.
 4. **`samples.md`** — worked specimens: Lojban sentences with their full
    core terms, organized to walk the specification's chapters.
+5. **`catalog.md`** — one entry per named identifier: informal
+   definition, formal definition where one exists, purpose with an
+   example, and links — split into true primitives (defined only by
+   prose and axioms) and the forms defined in terms of them.
 
 ## Hard constraints
 

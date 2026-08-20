@@ -571,4 +571,7 @@ a rebuilt vocabulary; the architecture
 this project borrowed) and Toaq's refgram (<https://toaq.net/refgram/>)
 with the Kuna semantic
 implementation (the same problems, solved with algebraic effects). Then
-the [specification](spec.md), which you are now equipped to read.
+the [specification](spec.md), which you are now equipped to read — with
+the [catalog](catalog.md) beside it as the per-name reference (every
+operator: plain-language definition, formal definition, example, and
+where the details live).

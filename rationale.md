@@ -42,8 +42,13 @@ must exist semantically. **Why not a primitive relation type distinct
 from functions?** No witness separates two extensionally equal
 row-functions, so `PredTerm<ρ>` is a *transparent alias* for
 `Record ρ → Content`: the name and machinery of labels with the ontology
-of functions. **Cost.** The type theory needs labelled records — which it
-needs for `fi'a` anyway.
+of functions. **Shape of filling.** One former: the single-place `At`
+(itself record partial application), with all multi-fill notation
+desugaring to nested single fills (spec §4.1). Fills are values, so
+distinct-label fills commute — which is the semantic fact that makes
+FA reordering and `se`-conversion pure notation: the order of fills
+never was part of the meaning. **Cost.** The type theory needs
+labelled records — which it needs for `fi'a` anyway.
 
 ### 1.2 `Close` as a defined operation
 
@@ -300,6 +305,45 @@ group formation, discourse joining as `Do`, and the genuinely
 unspecified connection as a `Vague` relation (spec §6.1). **Cost.**
 None found; the decomposition is pure simplification.
 
+### 1.14 `Bind`
+
+**Job.** Run an effectful computation once and use its result under a
+binder — the seam between the pure λ-fragment and the dynamics.
+**Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
+*once*, with its witness reused across two performed acts —
+`(Bind ((x (Refer P))) (Do a₁ a₂))`. **Why not ordinary
+λ-application?** Under call-by-value they would coincide — and that is
+the honest gloss: `Bind` *is* application under mandatory call-by-value
+at computation types, made visible. Making application itself carry
+that behavior would fracture the λ-fragment's equational theory:
+β-substitution copies the argument's *text*, so an effectful argument
+would re-run per use site unless every effectful application were
+specially marked — and that marking is `Bind`, demoted from syntax to a
+side condition. The core prefers the discipline visible: β-equality
+holds unconditionally in the pure fragment, and every
+effect-sequencing point is a `Bind` node the accessibility table can
+name (witness-export width is stated in terms of it). **Why not the
+CPS/state encoding?** `Bind` is famously λ-definable if `RefComp<T>` is
+spelled as its state-threading function type — but then information
+states and continuations become first-class term values, and the term
+language acquires meanings no Lojban sentence has: state inspection,
+double-shot continuations (backtracking), and truth-capture-without-
+effects — the reflection operator §1.5 deliberately refuses — all free
+of charge and all requiring ban-conditions to re-exclude. It also
+freezes §5.1's carrier into the definition (any model refinement — the
+`da'i` gap entry already commits to adding a world index — would
+rewrite the type of every term ever written) and turns the definition
+from an interface with many models into a description of one machine.
+**Comparative note.** Kuna, the one loglang implementation with real
+dynamics, makes the same choice: its expression language is a typed
+λ-calculus plus named effect constructors and named combinators
+(`and_then` — monadic bind — among its built-in constants), not a CPS
+expansion; exactly one of its effects (`Cont`, scope-taking) is
+deliberately continuation-typed. Eberban has no `Bind` because it has
+no computation layer at all — see §2.4. **Cost.** Two binder forms
+(`Let`/`Bind`) where one calculus habit expects one; the distinction
+is load-bearing and must be taught.
+
 ## 2. Design essays
 
 ### 2.1 Why not plain predicate logic
@@ -356,6 +400,39 @@ Kuna demonstrates the algebraic surface working for Toaq, and also
 demonstrates its cost (a composition search and ten wrapper types between
 the reader and the meaning). One content, two presentations; the
 definition shows the readable one and states the equivalence.
+
+Worth stating once, because it locates this whole design: **dynamic
+semantics is static semantics at a higher type**, twice over. A whole
+discourse's truth conditions are always classically statable — the
+donkey normalization's output *is* a classical formula; normalization
+is the desugaring, performed by the mapping. And sentence meanings are
+statable statically too, at the state-transformer type — §5.1's
+carrier is a plain set-theoretic function space. What cannot be
+recovered by any desugaring is *compositional locality*: no assignment
+of ordinary truth-condition-type meanings to sentences makes `.i`
+conjunction and lets `su'o gerku cu klama .i ri melbi` come out right,
+because the witness closes inside sentence one before sentence two
+exists. A semantics of Lojban discourse must either raise the sentence
+type (the transformer model) or globalize the translation (per-
+configuration normalization); this core does the second in the mapping
+for the supported fragment and justifies those rules uniformly with the
+first in the model — with `Bind` as the visible seam (§1.14).
+
+The comparison with Eberban sharpens here. Eberban is a *sentence*
+logic with a threaded context parameter: its binding particles desugar,
+in its own refgram's equations, to conjunction, ∃-closure, and argument
+routing in static HOL, and its cross-sentence references are
+context-resolved named variables — retrieval, like this core's keyed
+KOhA, not binding. Nothing propositional is thereby inexpressible
+(HOL states any classical truth condition, given restructuring into
+one sentence with shared variables); what is absent is the anaphoric
+route — binding into a closed existential across a sentence boundary,
+covariant donkey pronouns — and the two-dimensional layer (projective
+vs at-issue commitment). Lojban's grammar makes exactly those things
+core (`ri`, `go'i`, witness export, `noi`), so its definition cannot
+decline the discourse level; the day Eberban takes on discourse, it
+faces the same fork, and the fork is a fact about the phenomena, not a
+house style.
 
 ### 2.5 Why there is no distributivity parameter
 

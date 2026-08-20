@@ -21,8 +21,11 @@ semantics: typed lambda calculi, generalized quantifiers, dynamic semantics,
 multidimensional/projective meaning, and speech-act theory. A companion
 [primer](primer.md) presents the same content for fluent Lojbanists who are
 not semanticians; a [rationale](rationale.md) argues, construct by
-construct, why the core is shaped as it is and not otherwise; and
-[samples](samples.md) gives worked specimens with their Lojban sources.
+construct, why the core is shaped as it is and not otherwise;
+[samples](samples.md) gives worked specimens with their Lojban sources;
+and the [catalog](catalog.md) carries one reference entry per named
+form — primitives and defined forms, each with prose, formal
+definition, example, and links.
 
 Two other engineered languages have formally specified fragments of their
 semantics and are cited as comparative anchors where instructive: Eberban
@@ -675,7 +678,11 @@ world* (hypothetical mood) would be a sibling index-shift operator —
 binds its result for `body`, sequencing effects left to right. `Bind` is
 the eliminator for `RefComp` and cannot be β-reduced away: the computation
 may introduce referents, consult context, or project obligations. `Let`
-(§4.4) is its pure degenerate case.
+(§4.4) is its pure degenerate case. The honest gloss: `Bind` is
+function application under mandatory call-by-value at computation
+types, made visible — the λ-fragment stays pure so that β-equality
+holds unconditionally, and every effect-sequencing point is a `Bind`
+node the accessibility table can see (rationale §1.14).
 
 `Bind` is **uniform across the result categories**: `Act<F>` and
 `Discourse` denote computations in the same carrier as `Content` (§5.1 —
@@ -1090,10 +1097,22 @@ different operators.
 with its facts — ordinary predicates, assertable and embeddable:
 `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`,
 `DeicticPlaceOf`, `TextOf`, `Realizes` (token realizes act), `Utters`
-(agent utters token). Token binding is reference introduction at the token
-sort — the binder form exists for legibility, not as a new kind of
-binding. Transcript entries (quoted utterances, §7.5) carry unperformed
-acts.
+(agent utters token). The binder form is **defined**, not primitive —
+reference introduction at the token sort, kept for legibility:
+
+```lisp
+(Utterance ((u UtteranceToken)) fact…)
+  ≝ (Bind (($u (Referents UtteranceToken)
+            (Refer (λ (($t (Referents UtteranceToken)))
+                     (∧ fact…[$t/u])))))
+      …)
+```
+
+— freshness from `Refer` (every introduction is new), veridicality of
+the facts from the description, accessibility from the table; nothing
+token-specific remains. The `Sign` binder of §7.5 is the same defined
+form at the sign-token sort. Transcript entries (quoted utterances,
+§7.5) carry unperformed acts.
 
 ### 7.5 Signs and quotation
 
@@ -1104,7 +1123,8 @@ Constructors: `(OpaqueQuote text)` (`lo'u…le'u`, `zoi`),
 `(StructuredQuote entry)` (`lu…li'u` — a transcript entry, unperformed),
 `(NameSign text)`, `(SentenceSign content)`, `(LetteralSign text)`,
 `(WordSign text)`. `(Sign ((s (SignToken K))) fact…)` binds sign tokens
-with facts (`TextOf`, `Quotes`, `Denotes`). Interpretation is explicit and
+with facts (`TextOf`, `Quotes`, `Denotes`) — the defined binder form of
+§7.4, at the sign-token sort. Interpretation is explicit and
 typed: `(InterpretContent sign) : Content` and
 `(InterpretAct sign) : Act<F>` (force-indexed; a sign does not carry its
 force) — the `la'e` crossings; `lu'e` is the inverse sign-of crossing.
@@ -1134,7 +1154,7 @@ target — no dedicated operator is needed:
   first-order object — for content, its reification — and whose side is
   the indicator predication of that object. The content occurs **once**,
   under a pure `Reify` shared by `Let`, and is evaluated through the
-  library's `Holds` (the model-theoretic inverse of `Reify`):
+  primitive `Holds` (`Reify`'s inverse, §9.1):
 
   ```lisp
   (Let (($p Proposition (Reify c)))
@@ -1177,7 +1197,8 @@ names. Each indicator's lexicon entry (§10) provides:
   is constituted by its performance);
 - for **evidentials** (`za'a`, `ti'e`, `ka'u`, `se'o`, `ba'a`, `pe'i`,
   `ju'a`): the relation experiencer × target × basis-kind — the
-  basis-kind values are a closed enumeration declared with the family
+  basis-kind values are the closed `BasisKind` enumeration declared
+  with the family
   (`Observation`, `Hearsay`, `CulturalKnowledge`, `InternalExperience`,
   `Expectation`, `Opinion`, `BareAssertion`) — with the family
   force clause: when the target is the content of the enclosing performed
@@ -1261,7 +1282,10 @@ question machinery exists beyond typed domains.
 `(Reify c) : Proposition` is the single primitive content-to-object
 crossing — `du'u`. A proposition is a first-order object standing in a
 representation relation to the content's intension; it is what `djuno`,
-`krici`, `cusku` embed, quantify over, and identify.
+`krici`, `cusku` embed, quantify over, and identify. Its inverse is the
+primitive `(Holds p) : Content` — the content the proposition object
+represents — with the axiom that evaluating `(Holds (Reify c))` is
+evaluating `c`. The pair is the only bridge in either direction.
 
 ### 9.2 The abstraction relations
 
@@ -1607,10 +1631,9 @@ so the `fa'u` specimen expands completely:
                 ; base (lo'i/loi, Every's export). Models must supply
                 ; this reference for each inhabited lexical restrictor
                 ; (a model condition: plural comprehension for P).
-(Holds p)       : Content — the content the proposition object p
-                  represents (the model-theoretic inverse of Reify;
-                  evaluating Holds(Reify c) is evaluating c)
 ```
+
+(`Holds`, `Reify`'s primitive inverse, is declared with it in §9.1.)
 
 **Events and tags:** the adjacent-sort crossings of P13 —
 `EventOfContent : Content → Referents<Eventuality>` (the eventuality of a
@@ -1648,8 +1671,9 @@ displayed act-level per §7.6; the `na'i` objection ≝
 for a bound prior target `t` (`DefectKind` — wording, form, implication,
 presupposition, register — is declared with the objection relation); COI
 schemas ≝ performative `Express` of the COI lexical relation
-(`coi-greeting`, `ki'e-thanks`, …); `(Ground b a)` ≝ the act-level
-evidential spelling of §7.6 applied to act `a` with basis `b`; focus for
+(`coi-greeting`, `ki'e-thanks`, …); `(GroundedBy b a)` ≝ the act-level
+evidential spelling of §7.6 applied to act `a` with basis `b` (named to
+avoid the `Ground` sort, §5.1); focus for
 a host `H[·]` with focused constituent `f`:
 `(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ y. (∧ (¬ (CoRef y f)) H[y])))))`
 (`po'o`), and `(Additive f H) ≝ (Presuppose (∃ (λ y. (∧ (¬ (CoRef y f))
@@ -1852,21 +1876,29 @@ gap entry is a defect in this document.
 
 ### Appendix: the kernel
 
-The primitive inventory, for reference (everything else is library or
-lexicon): the type formers of §3; `λ`, application, `Let`, `Bind`;
-lexical predication with labelled fills (all fill notation desugars to
-the single-place `At`, §4.1, itself record partial application);
-`DropPlace`; `¬ ∧ ∨ → ↔ ⊕ ∀ ∃
-=`; `Combine`, `Among`, `SetOf`, `Card`, `∈`, the arithmetic base;
-`Refer`, `Context`, `Vague`, the `Select` family; `Presuppose`,
-`Supplement` (display is its §7.6 spelling); `Generic`; `Reify`;
-`Tanru`, `Scalar`; the
-force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; token and
-sign binders with the fact vocabulary, the sign constructors,
-`InterpretContent`/`InterpretAct`; the deictic projections, `Deictic`,
-`ShiftedGround`, `InContext`; `Polar`, `OpenQ`, `Answer` with its
-selection values; `Close` and `At` are normatively defined forms (§4.6,
-§4.7) and the library defines the rest. Each kernel and library name's
+The primitive inventory, for reference — audited so that nothing sits
+here by historical accident; the criterion is that a primitive has no
+term-language expansion, only its prose-and-axiom definition. The
+primitives: the type formers of §3 (except `PredTerm`, a transparent
+alias); `λ` and application over labelled records; `Bind`; lexical
+predication (dictionary relations as constants); `DropPlace`;
+`¬ ∧ ∨ → ↔ ⊕ ∀ ∃ =`; `Combine`, `Among`; `SetOf`, `Card`, `∈`, the
+arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
+`Presuppose`, `Supplement` (display is its §7.6 spelling); `Generic`;
+`Reify`/`Holds`; `Tanru` (with `TanruAdmissible`), `Scalar`; the
+force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the sign
+constructors, `InterpretContent`/`InterpretAct`, and the token/sign
+fact relations; `Deictic`, `ShiftedGround`, `InContext`, and the
+context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with its
+selection values; the abstraction relations (§9.2, minus the derived
+`DuhuRel`) and the numeric crossings; and the axiomatic admissibility
+predicates (§12). **Defined forms** (term-language expansions;
+everything else is library or lexicon): `Close`, `At` with all fill
+notation, `Let`, the demonstratives, the token and sign binder forms
+(§7.4), `PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
+`ContextualAnswer`, and the library of §12. The
+[catalog](catalog.md) carries one entry per name — prose, formal
+definition where one exists, purpose, example, and links; each name's
 content-word status is in §16.
 
 ## 16. The content-word program
