@@ -337,7 +337,10 @@ a degree on an intensity scale — displayed alongside its host:
 
 (`Unhappiness` is capitalized because it is one of the spec's
 placeholder relations — §0's naming note — awaiting its Lojban content
-word; the dictionary's emotion gismu are the candidates.)
+word. The candidates are the dictionary's `-nmo` words — `uinmo`
+"feels happy about", built as *indicator* + `cinmo`, a pattern that
+extends to every indicator — with the emotion gismu like `badri` as
+runners-up.)
 
 Note the three moving parts, all decided by rulings you can look up:
 `nai` did **not** logically negate anything — `.uinai` is the *paired

@@ -630,8 +630,13 @@ intensity region → `Content`, and
 `EvidentialBasis` : experiencer × `Target` × `BasisKind` → `Content`
 (`Target` the closed union of §7.6: a `Proposition` — content targets
 go through `Reify` — an act value, a plural reference, or a sign) —
-with the §16.5 audit mapping them to the UI emotion gismu (`gleki`,
-`badri`, `djica`, …) as committee-pending fits. The discourse
+with the §16.5 audit mapping them to the `-nmo` indicator-emotion
+family (*indicator* `zei cinmo`: `uinmo`, `u'inmo`, `le'onmo`, …, the
+generic `inmo`; one word per indicator, mechanically extensible to
+every UI and both `nai` poles) as its sole near-fit — the unofficial
+rows carry experiencer × target, and the intensity place is the
+proposed extension; the emotion gismu (`gleki`, `badri`, `djica`, …)
+are see-alsos. The discourse
 relations — `Contrast`, `Addition`, `Parallel`, `Elaboration` : two
 act values → `Content` (audit: `frica`/`simsa` for contrast and
 parallel). The named tanru-link precisification constants —

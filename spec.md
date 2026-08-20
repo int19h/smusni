@@ -1247,7 +1247,8 @@ Indicators (UI) are **lexical relations in the displayed-content family**,
 not generated wrappers. (The specimens' placeholder names for these
 relations — `Happiness`, `Unhappiness`, `Desire`, `EvidentialBasis` —
 are §16 placeholders like any other PascalCase name; the audit maps
-them to the UI emotion gismu.) Display has two spellings, by the level of its
+them to the `-nmo` indicator-emotion family, §16.5.) Display has two
+spellings, by the level of its
 target — no dedicated operator is needed:
 
 - **Act-level** (the target is a performed act — the top-level case): the
@@ -2307,9 +2308,11 @@ a binder relates a scoped sign to a closure, a force constructor relates
 an act to its content); **status** (exact-fit / near-fit / no-fit /
 machinery); **see-also** — nearby existing words with verified official
 rows and the reason each does or does not serve; **proposed
-redefinition** (near-fit only; none currently exist — the present audit
-found every candidate repairable by the standard combinators, which
-makes them exact fits by this chapter's own definition); and the
+redefinition** (near-fit only; the sole current near-fit is the
+`-nmo` indicator-emotion family, §16.5, whose rows need the intensity
+place — every other candidate proved repairable by the standard
+combinators, which makes them exact fits by this chapter's own
+definition); and the
 formal fields the reduction needs: *semantic class* (content-producing,
 value-producing, computation-producing, binder-producing, act-producing,
 type/index — determining what a definition may claim), *effect profile
@@ -2426,9 +2429,24 @@ definability:
   `pruce` for `PuhuRel` (delete inputs/outputs); `mintu` for `CoRef`
   (delete the standard); `frica`/`simsa` for `Contrast`/`Parallel`
   (act-typed relata); `smuni` for the interpretation crossings;
-  `sinxa`/`cusku`/`tavla` projections for the token-fact vocabulary;
-  the UI emotion gismu (`gleki`, `badri`, `djica`, `ganse`, …) for the
-  indicator relations, with `nai`-poles paired systematically.
+  `sinxa`/`cusku`/`tavla` projections for the token-fact vocabulary.
+- **Near-fit (proposed extension):** the **`-nmo` indicator-emotion
+  family** for the indicator relations: community fu'ivla of the form
+  *indicator* `zei cinmo` — `uinmo`
+  ("feels happy about", glossed synonym of `gleki`), `u'inmo`,
+  `le'onmo`, `fi'inmo`, `ue'inmo`, `uu'inmo`, `a'anmo`, … — one word
+  per indicator by a mechanical derivation that extends to every UI
+  and both `nai` poles, where the emotion gismu cover only a
+  scattering. The generic `inmo` — "feels the emotions expressed by
+  indicators x2 (text) about x3" — is the family's schema, and a
+  dictionary-attested relation with a sign-typed place: exactly the
+  shape §16.3 predicts. The near-fit delta, recorded per §16.2: the
+  jbovlaste rows are
+  unofficial and carry experiencer × target only, so this
+  specification's intensity place is an extension to propose (the
+  `le'onmo` entry's own `no'e`/`to'e` note shows the family already
+  composes with the scalar operators); the emotion gismu (`gleki`,
+  `badri`, `djica`, `ganse`, …) remain see-alsos.
 - **No-fit (coinage owed; placeholder carries the definition):**
   `Among`, `Combine` (the plural algebra — `pagbu`/`cmima`/`gripau` all
   cross the plurality/object line and are rejected), `ZuhoRel`,

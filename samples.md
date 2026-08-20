@@ -16,7 +16,8 @@ referred back to, specimens abbreviate `lo du'u c` to its object former
 `(Reify c)` directly; the full `Refer` lowering (§9 below) differs only
 in exporting the unused referent. The capitalized indicator relations
 (`Happiness`, `Unhappiness`, `Desire`, `EvidentialBasis`) are §16
-placeholders — see-also the UI emotion gismu the audit adopts.
+placeholders — see-also the `-nmo` indicator-emotion family the
+audit adopts (spec §16.5).
 CLL and dictionary citations follow the editions listed in the
 specification's References section.
 
