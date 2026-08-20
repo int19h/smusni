@@ -27,7 +27,8 @@ This is a *definition*, not a description:
 - xorlo is baseline (<https://mw.lojban.org/papri/How_to_use_xorlo>); CLL's
   pre-xorlo gadri semantics is superseded where they conflict.
 - Sources — CLL, the official dictionary, the xorlo page, guskant's gadri
-  commentary, Brismu — are *guides*, not authorities; the specification's
+  commentary, Brismu (<https://brismu.systems/>) — are *guides*, not
+  authorities; the specification's
   doctrine chapter states how they are weighed, and the compatibility
   principle that governs departures: a practical speaker of CLL Lojban
   must never have the rug pulled without strong, recorded motivation.

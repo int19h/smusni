@@ -189,8 +189,17 @@ The other gadri, briefly:
 - `loi P` / `lo'i P` — reference to a *group object* / a *set object*
   built from P-things. A crowd can surround a building though no person
   does; the group is a thing in its own right.
-- `lo'e P` / `le'e P` — generic talk ("the typical P…") — chapter 9's
-  `Generic` operator, not a reference to any particular P at all.
+- `lo'e P` / `le'e P` — generic talk ("the typical P…") — not a
+  reference to any particular P at all. The core gives these their own
+  operator, `Generic`: a typicality claim through a normality ordering,
+  with no "typical specimen" in the term. Why no specimen? Because
+  `lo'e cinfo cu se kerfa lo clani` (maned — that's normal *males*) and
+  `lo'e cinfo cu se jbena lo cinfo` (bears cubs — normal *females*) are
+  both true, and no single lion, however typical, could verify both.
+  `le'e` is the same with the speaker as the stereotype's holder. The
+  operator is frankly axiomatic — genericity is an open problem in
+  semantics at large, and the core says so rather than pretending
+  (spec §5.8).
 
 > **Not the same as!** plurality (`lo re prenu`, some two people) /
 > group (`loi re prenu`, a twosome as a unit) / set (`lo'i re prenu`, an
@@ -256,9 +265,13 @@ Quantifiers sit *on top of* reference. Three shapes to keep apart:
 ```
 
 (One honesty note the spec records as a pin: the printed CLL (ch. 16)
-glosses bare numbers globally — "exactly two, no more or less". The core sides
-with modern usage: `ci gerku` picks its three and stays silent about
-others, and the global "and no more" reading is there when you mark it.)
+glosses bare numbers globally — "exactly two things, no more or less" —
+and distributively, each thing separately. The core sides
+with modern usage on both counts: `ci gerku` picks its three and stays
+silent about others, says nothing about together-or-separately — which
+is how `su'o prenu cu jmaji`, "some people are gathering", can be true
+at all, though no single person gathers — and the global "and no more"
+reading is there when you mark it.)
 
 Two pins worth knowing. First, `ro broda` **imports**: saying "every
 broda" commits you to broda existing — and that commitment survives
@@ -271,7 +284,7 @@ termset section (ch. 16) glosses it exactly so ("picks out two groups …
 every one of the dogs bites each of the men") and stops there; the "and nobody
 else" reading is available, but you have to say it.
 
-Vague numbers get chapter 10's treatment. Two different shapes hide
+Vague numbers get chapter 9's treatment. Two different shapes hide
 here: `so'i` "many" has *no* exact threshold — not even a secret one
 context knows — while `ji'i re no` "about twenty" states its number and
 leaves the *tolerance* fuzzy.
@@ -319,16 +332,22 @@ a degree on an intensity scale — displayed alongside its host:
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
 (Let (($a (Act Assertion) (Assert (Close (tatpi $dogs)))))
   (Do (Perform $a)
-      (Express (Close (unhappiness Speaker $a Intense)))))
+      (Express (Close (Unhappiness Speaker $a Intense)))))
 ```
+
+(`Unhappiness` is capitalized because it is one of the spec's
+placeholder relations — §0's naming note — awaiting its Lojban content
+word; the dictionary's emotion gismu are the candidates.)
 
 Note the three moving parts, all decided by rulings you can look up:
 `nai` did **not** logically negate anything — `.uinai` is the *paired
 emotion*, unhappiness, a word of its own; `cai` intensified *that*
 (intense unhappiness, not "intensely other-than-happy"); and the target —
 what the feeling is about — is the assertion it follows. And one thing
-that did *not* happen: `.ui`-family words never change what is claimed.
-`.ui do klama` claims you're going and displays joy about it.
+that did *not* happen: pure-emotion indicators like `.ui` never change
+what is claimed — `.ui do klama` claims you're going and displays joy
+about it. (Whether an indicator's host stays claimed is exactly what
+the host-force profile below decides, per word.)
 
 Two special indicator families:
 
@@ -445,11 +464,16 @@ Notice what the negation *did* block: the two people are trapped inside
 it, inaccessible to any later anaphor — which is exactly why `ri` skips
 them and lands on the dogs, introduced outside. `tatpi` claims they're
 tired; the sentence-initial `.uinai cai` displays the speaker's intense
-unhappiness about that whole claim. And what was left open, on purpose:
-when any of this happened; whether the dogs are tired jointly or
-severally; and nothing else — everything other than these was said.
+unhappiness about that whole claim. The tenseless sentences are read
+episodically here, so *when* is not open but handed to context — the
+biting denial targets the contextually relevant occasion, like
+chapter 2's stove. What was left open, on purpose: whether the dogs act
+jointly or severally; and nothing else — everything other than that
+was said.
 
-And here is that story written down — the sentence's full core term:
+And here is that story written down — the sentence's full core term, on
+its episodic readings (each sentence's occasion contextually anchored,
+the way chapter 2 anchored the stove):
 
 ```lisp
 (Bind (($dogs (Referents Entity)                       ; chapter 3: lo introduces…
@@ -457,15 +481,24 @@ And here is that story written down — the sentence's full core term:
           (∧ (gerku $r)
              (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3)))))) ; …three dogs
   (Do
-    (Let (($a1 (Act Assertion)                         ; chapter 6: build the act…
-            (Assert
-              (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
-                (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))  ; chapter 5: a two-person
-                     (λ (($x Entity)) (Close (batci $dogs $x))))))))) ; witness set
-      (Perform $a1))                                   ; …and actually say it
-    (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs))))) ; chapter 4: ri = $dogs
-      (Do (Perform $a2)
-          (Express (Close (unhappiness Speaker $a2 Intense))))))) ; chapter 7
+    (Bind (($occ1 Time (Context)))                     ; chapter 2: the occasion —
+      (Let (($a1 (Act Assertion)                       ; outside the negation
+              (Assert
+                (Supplement $dogs (Close (blabi $dogs)) ; the noi aside, outside the ¬
+                  (¬ (Exactly 2 (λ (($x Entity)) (prenu $x)) ; chapter 5: a two-person
+                       (λ (($ppl (Referents Entity)))        ; witness
+                         (∃ (λ (($e (Referents Eventuality)))
+                           (∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1)))))))))) ; bitten AT that occasion
+        (Perform $a1)))                                ; chapter 6: …and say it
+    (Bind (($occ2 Time (Context)))
+      (Let (($a2 (Act Assertion)
+              (Assert
+                (∃ (λ (($e (Referents Eventuality)))   ; chapter 4: ri = $dogs
+                  (∧ (Close (tatpi $dogs :Eventuality $e))
+                     (cabna $e $occ2)))))))
+        (Do (Perform $a2)
+            (Express (Close (Unhappiness Speaker $a2 Intense)))))))) ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.
@@ -473,8 +506,11 @@ Three names appear here that earlier chapters only gestured at.
 counts a plural referent *by a unit predicate* — these, counted as
 dogs, number three (so a plurality can be three dogs and one pack
 without contradiction). `Exactly n P body` is chapter 5's witness
-selection as one operator: pick an n-membered P witness set and run the
-body over it. And `Supplement` is `noi` itself: it attaches the aside
+selection as one operator: pick an n-unit P witness and run the
+body on it — on the witness *as a plurality*, which is why the body's
+variable `$ppl` is reference-typed: whether the dogs bit the two
+together or one by one is not part of what was said (chapter 3's
+together-or-separately, again). And `Supplement` is `noi` itself: it attaches the aside
 (the whiteness) to its anchor (`$dogs`) alongside the at-issue claim —
 the aside is new information, committed by the speaker — but it
 *projects* the way chapter 5's presuppositions do, sitting structurally

@@ -133,16 +133,19 @@ the table is the single normative statement, so surface and model can
 never drift apart. **Why are `↔`/`⊕` primitive?** Their classical
 rewrites evaluate operands twice; under effects, twice-evaluated
 introductions and supplements are real differences, not stylistic ones.
-**Why not share the operands instead of duplicating them?** `Let` cannot
-do it: `Let` shares the *term*, not the *evaluation* (spec §4.4 — it is
-immediate application), so `(Let (($p Content a)) ((→ $p $q) ∧ (→ $q
-$p)))` still evaluates each operand once per use site — two `Context`
-sites where the original had one (an omitted place may resolve
-*differently* in the two copies, satisfying the rewrite where the
-original fails), supplements and presupposition triggers committed per
-copy, introductions doubled. `Bind` shares an evaluation but shares its
-*returned value*, and `Content` returns unit — the meaning is the state
-transformation, and no boolean comes back to reuse. The derivation
+**Why not share the operands instead of duplicating them?** No sharing
+route exists. The classical rewrite `(A → B) ∧ (B → A)` *textually
+copies* each operand: two syntactic occurrences are two `Context` sites
+(site identity is per occurrence, spec §5.3), two supplement handlers
+committing the side twice (handler placement is a fact about term
+structure — VC4), and a reshaped accessibility structure (in the
+rewrite, the second conjunct sees the first's introductions through
+`∧`, which the original `↔` never granted). `Let` cannot rescue it:
+`Let` is the *pure* sharing form — spec §4.4 forbids binding an
+effectful computation with it, precisely so that sharing a term never
+silently shares an evaluation. `Bind` shares an evaluation but shares
+its *returned value*, and `Content` returns unit — the meaning is the
+state transformation, and no boolean comes back to reuse. The derivation
 could be forced through by minting a truth-capture operator
 (`TruthOf : Content → RefComp<Bool>` — run once, reify the truth
 outcome), but that is not a reduction: it is a general
@@ -201,7 +204,7 @@ selbri negation "asserts that a relationship exists other than that
 stated" and "remains an assertion of some specific truth", so `na'e P`
 denies P's stated region *and* positively asserts an admissible
 alternative on the recovered scale; `to'e` asserts the antipode, `no'e`
-the midpoint. A reading urged in design review had `na'e` weaker than
+the midpoint. An earlier analysis had `na'e` weaker than
 `¬`; the primary text overruled it, and the King-of-France passage of
 CLL 15.4 — selbri negations "still make affirmative claims" — is the
 decisive witness). Why not lexicalize scalar forms per predicate? The
@@ -269,7 +272,8 @@ independently witnessed.
 *subordinated* — no sleeping asserted: host-force profiles are real and
 lexical); `.uinai cai` (intense *unhappiness* — `nai` selects the paired
 emotion, then degree applies: pairing must precede degree, so pairing is
-lexical, with `Scalar OtherThan` only as documented fallback); `mi jinvi
+lexical, with `Scalar Opposite` only as documented fallback — CLL 15.7's
+opposite-end rule); `mi jinvi
 lo du'u ti'e do klama` (hearsay marked on *embedded* content — so
 evidentials cannot be an operand on assertion force; they are targeted
 display whose force-grounding effect fires when the target is the
@@ -301,12 +305,14 @@ None found; the decomposition is pure simplification.
 ### 2.1 Why not plain predicate logic
 
 FOL loses, in order: cross-sentence anaphora (no discourse referents —
-spec §5.6), donkey readings (no dynamic binding — §5.6), projective
+spec §5.6), donkey readings (no compositional dynamic binding — the
+truth conditions are classically statable, the anaphoric route to them
+is not; §5.6), projective
 content (one dimension of meaning — §5.5), force (assertion only —
 §7.1), plurals (singular terms — §3.2/§4.8), vagueness-as-meaning
 (bivalent atoms only — §6), and use/mention (no signs — §7.5).
 Each loss above is a witnessed Lojban phenomenon. The core is exactly
-FOL's spine — typed λ, connectives, quantifiers — plus the six
+FOL's spine — typed λ, connectives, quantifiers — plus the
 disciplined extensions those witnesses force.
 
 ### 2.2 Why two truth values (against Eberban's three)
@@ -338,7 +344,7 @@ transparency, which is this project's trade everywhere.
 
 De re/de dicto and opacity are real (`mi djica lo nu mi pilno lo karce`
 has two readings), so the model theory is world-indexed. But no Lojban
-sentence *binds* a world: design review hunted (attitudes, CAhA, `da'i`,
+sentence *binds* a world: the candidates were hunted down (attitudes, CAhA, `da'i`,
 property-internal descriptions — `lo ka viska lo pavyseljirna` included)
 and every candidate resolves by binder placement plus lexical
 intensional-place marking, evaluated in the world-indexed model. So terms
@@ -360,10 +366,15 @@ and a parameter is not unspecification, it is a question the sentence
 now silently asks. Second, plural logic's lesson ("the rocks rained
 down" hides no quantifier over ways-of-raining) — the predicate holds of
 the plurality, and *how* it holds is the predicate's lexical business, which
-the lexicon interface records per place. Third, the precisifications of a
-cover parameter would have different truth conditions (each-carried vs
-together-carried), which makes it an *ambiguity* parameter, and ambiguity
-lives upstream, in readings — not in meanings. So: neutral predication is
+the lexicon interface records per place. Third, the cover readings fail
+the vagueness test from the other side: each-carried and
+together-carried are things speakers separately *mean* and hearers
+recover — reading-level choices, which live upstream in
+disambiguation — while the unmarked sentence's configurations (the
+piano carried, however the three shared the load) verify it without any
+cover fact existing at all. A covert parameter would turn every
+unmarked plural sentence into that upstream question, silently asked.
+So: neutral predication is
 the reading; `lu'a`, `Distrib`, and the group gadri are the marked forms.
 Absence means absence.
 
@@ -382,12 +393,14 @@ lujvo; there is no CLL gloss) already takes its members as x2; both are
 adopted with plural-reference x2. The defective gloss in this area is
 official `cmima`'s x2-as-set, which the library simply avoids.
 The `le`-description analysis deserves its history spelled out, since
-it was contested in review. `skicu`'s official definition — "x1 tells
-about/describes x2 to audience x3 with description x4 (property)" —
+it was contested during drafting. `skicu`'s official definition — "x1 tells
+about/describes x2 (object/event/state) to audience x3 with description
+x4 (property)" —
 makes its x4 a property, so a `skicu`-based `le` (the property applied
 to x2 by `skicu`'s own definition) is expressively adequate. The
-question closed when review surfaced guskant's own `le` expansion —
-`zo'e noi mi ke'a do skicu lo ka ce'u broda` — showing the community's
+question closed when guskant's own `le` expansion surfaced —
+`zo'e noi mi ke'a do skicu lo ka ce'u broda` (the commentary's gadri
+definitions) — showing the community's
 formal analysis was the `skicu` analysis all along, and the one
 surviving concern (that `skicu` names a describing *event*) is
 answered by the anchoring clause: the describing event is this
@@ -425,11 +438,12 @@ survives passing a subset — refgram, "Dictionary conventions") and as
 Brismu's foundations choose ("sets are free over a universe of
 individuals … an inevitable structure" — Brismu, "Sets, not Masses").
 The pre-xorlo dictionary ran a partial version of the same experiment:
-in the baselined gismu list (1994), about thirty official places are
-glossed "(set)", usually with a completeness side condition (`sisku`
-x3 "complete specification of set"; `kampu`, `simxu` x1, `cuxna` x3,
-the `-mei`/`cmima` cluster).
-This section records what a full design review established, so the
+in the baselined gismu list (1994), roughly thirty places carry
+set-typed annotations — the word "set" in the place gloss, usually with
+a completeness side condition; the literal "(set)" marker on about a
+dozen entries (`sisku` x3 "complete specification of set"; `kampu`,
+`simxu` x1, `cuxna` x3, the `-mei`/`cmima` cluster).
+This section records what a full examination established, so the
 choice is never again defended with less than its real argument.
 
 **First, the concession.** Under the discipline a working set-typed
@@ -462,8 +476,8 @@ satisfy it (refgram, "Dictionary conventions": the `bure` example).
 
 2. *Inside D the re-spec is relabeling plus obligations.* The plural
    axioms do not disappear; they return as side conditions —
-   nonemptiness at every place (Eberban's `tce` is the same exclusion
-   as our type, enforced by fiat rather than typing), ur-element
+   nonemptiness at every place (Eberban's `tce` states it in the
+   argument's type just as our reference type does), ur-element
    legislation, the member-wise reading imposed per place, and
    provenance labels re-creating the co-reference/introduction
    distinction that extensional sets collapse. Meanwhile lists, groups,
@@ -509,7 +523,8 @@ satisfy it (refgram, "Dictionary conventions": the `bure` example).
 
 5. *Brismu's second-order objection does not weigh here.* "Plural
    logic is equiconsistent with monadic second-order logic, given a
-   predicate for masses" ("Sets, not Masses") is true and idle: equiconsistency is far
+   predicate for masses" ("Sets, not Masses" — an assertion the chapter
+   supplies without proof) is, even granted, idle: equiconsistency is far
    weaker than equivalence of designs, the hedge concedes that plural
    quantification is present either way, and second-orderness is no
    incremental cost in a core that is already a typed λ-calculus with
@@ -519,10 +534,12 @@ satisfy it (refgram, "Dictionary conventions": the `bure` example).
 
 **Third, what was adopted from the set side.** The sharpest thing in
 Eberban's conventions is the star's definition, and the lexicon
-interface now uses it: the plurality-behavior field's "distributive"
-value means *satisfaction preserved under subreference* (`Among`),
-"collective" its explicit failure — a checkable lexical criterion, per
-P4 never a reading parameter. Not imported: the cumulative default
+interface now uses it: the plurality-behavior field's
+subreference-monotonicity value means *satisfaction preserved under
+subreference* (`Among`) — a checkable lexical criterion — with
+collective capability recorded as an independent fact (a satisfying
+plurality need not satisfy in its parts, which is an absent guarantee,
+not a counter-entailment); per P4, never a reading parameter. Not imported: the cumulative default
 Eberban writes into definitions like its eating verb (everyone eats at
 least one; every apple is eaten) — that is a resolved cover reading,
 which P4 declines as a default and Lojban marks when it means.
@@ -583,7 +600,7 @@ genuinely fought:
   presuppositions or explicit markers. The parallel with tenselessness
   and distributivity is exact, and deliberate.
 - **P10 (`le`).** The two supports for a dedicated description
-  relation fell in review (§2.6), guskant's expansion supplied the
+  relation fell (§2.6), guskant's expansion supplied the
   precedent, and the anchoring clause answered act-vs-identification:
   `le` lowers through `skicu` with the describing event anchored to
   this utterance's locution — performative, true by construction.
@@ -599,24 +616,30 @@ genuinely fought:
   ("and no other dog bites them") makes the sentence false in situations
   speakers plainly use it for, so it is a named optional profile, not
   the default. The bare-PA half is pinned *against* the letter of CLL
-  ch. 16 §6, whose gloss of bare numeric quantification is global
-  ("exactly two, no more or less"): this specification takes witness-set
+  ch. 16 §6, whose account of bare numeric quantification is global
+  ("exactly two things, no more or less" — Example 16.34) and
+  distributive (`PA broda` as `PA da poi broda`): this specification
+  takes neutral witness-set
   exactness — the xorlo-era reading, the one consistent with termset
-  composition and witness export — and keeps the CLL-literal reading as
+  composition and witness export — and keeps the CLL-literal global
+  reading as
   the named `GlobalExactly`. The divergence is documented, not
-  smuggled — and compatibility review supplied the positive argument
-  it needed: witness-set semantics is what dynamic anaphora *forces*.
-  If bare PA meant global exactness, `ci gerku cu bajra .i ri tatpi`
-  would have no specific three-dog referent to export — only a size
-  claim about a maximal set — so the pin is motivated by composition,
-  not preference. Independent convergence:
+  smuggled — and it carries a positive compositional argument:
+  witness-set semantics is what composes *directly* with dynamic
+  anaphora — the selection's witness is the referent `ri` binds —
+  where the global reading exports at best the maximal extension of a
+  size claim, making the non-exclusion facts (§4.10's fourth runner)
+  and termset composition awkward; and neutrality is what keeps
+  collective predicates expressible under quantifiers at all (`su'o
+  prenu cu jmaji` — a reading a distributive default cannot state).
+  Motivation by composition and coverage, not preference. Independent convergence:
   solpahi's "A Simpler Quantifier Logic" derives the same reading from
   plural logic alone (bare PA = plural-existential over a PA-membered
   witness), and notes the bonus this specification inherits: witness
   existentials commute, so `ci gerku cu batci re remna` and its
   `se`-conversion agree — the scope asymmetry of globally-exact
   quantifiers was an artifact.
-- **P8 vs the present-tense temptation — amended in review.** CLL
+- **P8 vs the present-tense temptation.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone
   reflex, not a rule. But pure absence was also wrong, as compatibility
   review showed: CLL 10.1 itself enumerates the readings of
@@ -635,13 +658,12 @@ genuinely fought:
 ## 4. What would change our minds
 
 A design-record note first, owed to accuracy: several of this document's
-positions were contested in design review and settled by concession
-rather than initial consensus — the drops of the closure and witness
+positions were genuinely contested before they settled — the drops of the closure and witness
 primitives, the sort-hierarchy trims, the tanru/scalar formers' survival,
 `Generic` over fixed typical references, termset non-maximality, and the
-`kau` representation among them; the project's review record preserves
-who argued what, and one proposed reading (`na'e` weaker than `¬`) was
-overruled by primary text in draft review (§1.8). One separation *was* found during
+`kau` representation among them; this document records the losing
+alternatives beside the winners, and one proposed reading (`na'e`
+weaker than `¬`) was overruled by primary text (§1.8). One separation *was* found during
 the rounds: the dependent-witness sentence `ro prenu cu ponse ci gerku
 .i ri tatpi` genuinely separates an embedded quantifier's witness from
 any single top-level plural — and was absorbed by generalizing the

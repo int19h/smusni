@@ -10,6 +10,13 @@ expansions are the same meaning, and no spelling here is "canonical".
 Fragments (terms meant to appear inside a document) are marked; everything
 else is a complete meaning, with `Assert`/`Ask` and closure written out
 where they matter and elided (per spec §2 notation) where they don't.
+A specimen displayed as a bare act denotes the one-act discourse
+performing it (spec §7.1). Where a description's referent is never
+referred back to, specimens abbreviate `lo du'u c` to its object former
+`(Reify c)` directly; the full `Refer` lowering (§9 below) differs only
+in exporting the unused referent. The capitalized indicator relations
+(`Happiness`, `Unhappiness`, `Desire`, `EvidentialBasis`) are §16
+placeholders — see-also the UI emotion gismu the audit adopts.
 CLL and dictionary citations follow the editions listed in the
 specification's References section.
 
@@ -37,7 +44,7 @@ four contextual places and the event:
 
 Contrast: under negation the contextual places stay put — `mi na klama`
 denies the going-to-the-contextual-place, and is not `¬∃destination…`
-(pin P15; rationale §1.3).
+(pin P15; rationale §1.2).
 
 ```lisp
 ; klama fe ti tu — labelled fills, x1 left contextual
@@ -107,8 +114,20 @@ stipulated (rationale §1.13, the facet-decomposition entry).
        (fasnu $e)))))
 ```
 
-Tenseless `mi citka` carries no temporal conjunct at all — absence, not a
-default present (pin P8).
+Tenseless `mi citka` is **reading-multiple** (pin P8), never a default
+present. Its episodic reading carries a `Context`-anchored occasion —
+
+```lisp
+; mi citka — the episodic reading: at the contextually relevant occasion
+(Assert
+  (Bind (($occ Time (Context)))
+    (∃ (λ (($e (Referents Eventuality)))
+      (∧ (Close (citka Speaker :Eventuality $e))
+         (cabna $e $occ))))))
+```
+
+— while the habitual/gnomic reading carries no temporal conjunct at
+all. Which reading was meant is resolved upstream, like any ambiguity.
 
 ## 3. Reference and descriptions
 
@@ -145,7 +164,10 @@ non-veridical (the "cat" may be a raccoon), speaker-specific — lowered
 through `skicu` itself (official x4 is the description property;
 guskant's own `le` expansion is this term in Lojban), with the describing
 event anchored to this very utterance's locution by the mapping clause:
-saying `le mlatu` *is* the describing.
+saying `le mlatu` *is* the describing. (`Close` above is the brief
+spelling; the anchoring clause identifies the describing event with the
+utterance token's locution, §7.4, rather than closing it
+existentially.)
 
 ```lisp
 ; la .alis. klama
@@ -195,7 +217,7 @@ classes, which no single referent could verify (rationale §1.9).
 ```
 
 ```lisp
-: le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
+; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
 (Bind (($dog (Referents Entity)
         (Refer (λ (($x (Referents Entity)))
           (∧ (Close (skicu Speaker $x Audience            ; the le-head:
@@ -245,10 +267,13 @@ value per key, so `ko'a du ko'a` is reflexively true.
 (Bind (($dogs (Referents Entity)
         (SelectExactly 3 (λ (($x Entity)) (gerku $x)))))
   (Do
-    (Assert (Distrib (λ (($x Entity)) (Close (bajra $x))) $dogs))
+    (Assert (Close (bajra $dogs)))
     (Assert (Close (tatpi $dogs)))))
 ; the selection introduces and BINDS the witness; the anaphor is an
 ; ordinary bound occurrence — no free names, no retrieval operator.
+; the nuclear predication is NEUTRAL (P4): each-ran comes from bajra's
+; lexicon row, not from the quantifier — contrast ci prenu cu jmaji,
+; where the three gather TOGETHER, same shape.
 ```
 
 There is no retrieval operator: the exported witness *is* the three-dog
@@ -257,17 +282,28 @@ reference the selection binds, and nothing else is needed
 
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
+; (one content, abbreviating the two performed assertions)
 (Assert
   (Presuppose (∃ (λ (($x Entity)) (prenu $x)))
-    (∀ (λ (($p Entity) ($d (Referents Entity)))
-      (→ (∧ (prenu $p)
-            (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
-            (Close (ponse $p $d)))
-         (Close (tatpi $d)))))))
+    (∧
+      ; sentence 1's own claim — the ownership, never erased:
+      (∀ (λ (($p Entity))
+        (→ (prenu $p)
+           (∃ (λ (($d (Referents Entity)))
+             (∧ (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
+                (Close (ponse $p $d))))))))
+      ; the anaphoric continuation at the joint locus (strong reading):
+      (∀ (λ (($p Entity) ($d (Referents Entity)))
+        (→ (∧ (prenu $p)
+              (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
+              (Close (ponse $p $d)))
+           (Close (tatpi $d))))))))
 ```
 
-Pinned reading: each person's three dogs are tired — the anaphor
-normalizes into a joint locus with the governing quantifier. The
+Pinned reading: each person owns three dogs, and each person's dogs are
+tired — the anaphor normalizes into a joint locus with the governing
+quantifier, and the normalization keeps the first sentence's assertion
+(a bare conditional would be vacuously true of a dogless person). The
 summed reading ("all the dogs together") requires explicit collection.
 
 ```lisp
@@ -301,7 +337,10 @@ presupposition.
 ; which lowers through the zero-count special case, never Refer:
 (Assert
   (No (λ (($x Entity)) (prenu $x))
-      (λ (($x Entity)) (Close (jmaji $x)))))
+      (λ (($w (Referents Entity))) (Close (jmaji $w)))))
+; the nuclear scope is reference-typed (spec §12): "no people-witness
+; gathers" — the collective reading a distributive quantifier could not
+; state at all.
 ; answer substitution into the question's frame works; anaphora to
 ; the form is inaccessible (No exports nothing — nothing to refer to).
 ```
@@ -327,8 +366,21 @@ maximality**: a fourth dog also liking them does not falsify this. The
 coordinate-closed strengthening ("and they are exactly the participating
 dogs/people") is a distinct, marked meaning, never the
 default. Referential termsets (`le ci gerku ce'e
-le re prenu`) need no termset semantics at all: fixed referents, product
-predication.
+le re prenu`) need no termset semantics at all: constants take no part
+in scope distinctions (CLL 16.7), so the members predicate neutrally —
+the full product there needs explicit `ro…ro` (CLL Example 16.46).
+
+```lisp
+; ci jbopre cu simxu lo ka tavla — a reciprocal    [spec §12]
+(Bind (($trio (Referents Entity)
+        (SelectExactly 3 (λ (($x Entity)) (jbopre $x)))))
+  (Assert
+    (Reciprocate $trio
+      (λ (($a (Referents Entity)) ($b (Referents Entity)))
+        (Close (tavla $a $b))))))
+; simxu's lexicon row consumes the library's Reciprocate schema:
+; pairwise both ways among the witness.
+```
 
 ```lisp
 ; so'i prenu cu klama — vague quantity    [spec §6.4]
@@ -336,7 +388,7 @@ predication.
         (Vague (AdmissibleThreshold Many (λ (($x Entity)) (prenu $x))))))
   (Assert
     (AtLeast $n (λ (($x Entity)) (prenu $x))
-                (λ (($x Entity)) (Close (klama $x))))))
+                (λ (($w (Referents Entity))) (Close (klama $w))))))
 ```
 
 No exact count hides here: the term denotes the family over admissible
@@ -392,23 +444,23 @@ own lexical presupposition, never from `kau`.
 ; .ui do klama — pure emotion: host asserted, joy displayed
 (Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
   (Do (Perform $a)
-      (Express (Close (happiness Speaker $a Moderate)))))
+      (Express (Close (Happiness Speaker $a Moderate)))))
 
-; .au mi sipna — propositional attitude: host subordinated  [R6]
-(Express (Close (desire Speaker (Reify (Close (sipna Speaker))))))
+; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
+(Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
 ; no assertion of sleeping occurs — the host-force profile of .au.
 
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
 (Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
   (Do (Perform $a)
-      (Express (Close (unhappiness Speaker $a Intense)))))
+      (Express (Close (Unhappiness Speaker $a Intense)))))
 ```
 
 ```lisp
-; za'a do cadzu — evidential grounding the act        [R5]
+; za'a do cadzu — evidential grounding the act        [spec §7.6]
 (Let (($a (Act Assertion) (Assert (Close (cadzu Audience)))))
   (Do (Perform $a)
-      (Express (Close (evidential-basis Speaker $a Observation)))))
+      (Express (Close (EvidentialBasis Speaker $a Observation)))))
 ; act-level display: an Express beside the bound host act; the family
 ; force clause grounds the assertion (a mode of commitment);
 ; na za'a do cadzu negates the walking, never the basis.
@@ -420,7 +472,7 @@ own lexical presupposition, never from `kau`.
       (Reify
         (Let (($p Proposition (Reify (Close (klama Audience)))))
           (Supplement $p
-            (Close (evidential-basis Speaker $p Hearsay))
+            (Close (EvidentialBasis Speaker $p Hearsay))
             (Holds $p)))))))
 ; content-level display: the content occurs ONCE, under a pure Reify
 ; shared by Let; Holds evaluates that same proposition object, so the
@@ -505,7 +557,7 @@ would admit nearly anything.
                   (λ (($x Entity)) (gerku $x)) $purpose))))
   (Assert
     (MoreThan $n (λ (($x Entity)) (gerku $x))
-                 (λ (($x Entity)) (Close (klama $x))))))
+                 (λ (($w (Referents Entity))) (Close (klama $w))))))
 
 ; mi co'e do — elliptical selbri: Context, not Vague   [spec §6.1]
 (Bind (($r (PredTerm ⟨x1:(Referents Entity), x2:(Referents Entity)⟩)
@@ -528,12 +580,16 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; stays first-order; Reify is pure and lifts to a singleton reference.
 
 ; lo se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
-(Bind (($s (Referents (Sign Sentence))
-        (Refer (λ (($x (Referents (Sign Sentence))))
-          (Close ((DuhuRel (Close (klama Speaker))) :2 $x))))))
-  (Mention $s))
+(Let (($p Proposition (Reify (Close (klama Speaker)))))
+  (Bind (($s (Referents (Sign Sentence))
+          (Refer (λ (($x (Referents (Sign Sentence))))
+            ((DuhuRel (Close (klama Speaker))) $p :2 $x)))))
+    (Mention $s)))
+; x1 is filled with the reified content itself — the relation
+; identifies it, so leaving x1 to contextual closure would add a
+; retrieval the Lojban does not contain.
 
-; lo ni mi klama — an abstraction relation, reference outside  [R2]
+; lo ni mi klama — an abstraction relation, reference outside  [spec §9.2]
 (Bind (($a (Referents Amount)
         (Refer (λ (($x (Referents Amount)))
           (Close ((NiRel (Close (klama Speaker))) $x))))))
@@ -543,8 +599,8 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ; abstractions: all inherited from ordinary reference.
 
 ; lo su'u mi klama kei be lo fasnu — explicit categorizer (CLL 11.9)
-(Bind (($kind (Referents Entity)
-        (Refer (λ (($k (Referents Entity))) (fasnu $k)))))
+(Bind (($kind (Referents Eventuality)
+        (Refer (λ (($k (Referents Eventuality))) (fasnu $k)))))
   (Bind (($a (Referents AbstractNature)
           (Refer (λ (($x (Referents AbstractNature)))
             (Close ((SuhuRel (Close (klama Speaker))) $x $kind))))))
@@ -578,6 +634,8 @@ The recovery test draws this line: `co'e` expects the hearer to recover
     (StructuredQuote
       (Utterance (($u UtteranceToken))
         (Realizes $u (Assert (Close (klama Speaker))))))))
+; defined because the realized act is an assertion: InterpretContent is
+; the content projection on assertion-realizing entries (spec §7.5).
 
 ; li re te'a ci du li bi — MEX with te'a (library)
 (Assert (= (te'a 2 3) 8))
@@ -613,20 +671,30 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 
 ```lisp
 ; lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
+; (episodic readings: each sentence's occasion is Context-anchored, P8)
 (Bind (($dogs (Referents Entity)
         (Refer (λ (($r (Referents Entity)))
           (∧ (gerku $r)
              (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3))))))
   (Do
-    (Let (($a1 (Act Assertion)
-            (Assert
-              (Supplement $dogs (Close (blabi $dogs))
-                (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))
-                     (λ (($x Entity)) (Close (batci $dogs $x)))))))))
-      (Perform $a1))
-    (Let (($a2 (Act Assertion) (Assert (Close (tatpi $dogs)))))
-      (Do (Perform $a2)
-          (Express (Close (unhappiness Speaker $a2 Intense)))))))
+    (Bind (($occ1 Time (Context)))       ; the biting's occasion — bound
+      (Let (($a1 (Act Assertion)         ; OUTSIDE the negation, so na
+              (Assert                    ; denies biting AT that occasion
+                (Supplement $dogs (Close (blabi $dogs))
+                  (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))
+                       (λ (($ppl (Referents Entity)))
+                         (∃ (λ (($e (Referents Eventuality)))
+                           (∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1)))))))))))
+        (Perform $a1)))
+    (Bind (($occ2 Time (Context)))
+      (Let (($a2 (Act Assertion)
+              (Assert
+                (∃ (λ (($e (Referents Eventuality)))
+                  (∧ (Close (tatpi $dogs :Eventuality $e))
+                     (cabna $e $occ2)))))))
+        (Do (Perform $a2)
+            (Express (Close (Unhappiness Speaker $a2 Intense))))))))
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
@@ -634,11 +702,17 @@ grammatical target is the whole second assertion, per the CLL attachment
 rule the mapping annex carries; placed after `ri` it would instead
 display unhappiness about the dogs.) Everything committed: three real
 dogs, introduced; their whiteness, as a projective aside the negation
-never touches; the denial that a two-person witness set exists whom they
-bit; their tiredness; and the speaker's displayed intense unhappiness
-about that last claim. Everything open, on purpose: when; jointly or
-severally; and which precisification of nothing — because nothing else
-here is vague.
+never touches; the denial that any two-person witness was bitten at the
+contextually relevant occasion — the occasion binder sits outside the
+`¬`, which is exactly the tenseless-denial semantics of P8 ("I didn't
+turn off the stove" denies one particular failure); their tiredness at
+its own occasion; and the speaker's displayed intense unhappiness
+about that last claim. Everything open, on purpose: whether the biting
+denial and the tiredness hold of the dogs jointly or severally (P4);
+and which precisification of nothing — because nothing else
+here is vague. The occasions are not open but *recovered*: `Context`,
+not absence — the habitual readings, which would drop the temporal
+conjuncts entirely, are the other members of P8's reading family.
 
 ## 12. Meanings without analyses
 
