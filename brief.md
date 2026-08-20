@@ -136,5 +136,7 @@ normative dynamic-accessibility table; abstraction relations and their
 numeric crossings; questions and answerhood; de re / de dicto; quotation,
 signs, and utterance tokens; speech acts and discourse structure;
 indicators and evidentials; typed vagueness (the tanru former, scalar
-operators, contextual computations, supplements); and mex to the extent
-Lojban ties it to meaning.
+operators, contextual computations, supplements); core reflection
+(quotation of the core's own notation, with binders as sign-consuming
+words — the basis of the language's self-description); and mex to the
+extent Lojban ties it to meaning.

@@ -714,7 +714,43 @@ here is vague. The occasions are not open but *recovered*: `Context`,
 not absence — the habitual readings, which would drop the temporal
 conjuncts entirely, are the other members of P8's reading family.
 
-## 12. Meanings without analyses
+## 12. Reflection
+
+The braced spelling (spec §7.7): quotes of core notation, with binders
+as ordinary words applied to them. Each pair below is two spellings of
+one term (the reflection law).
+
+```lisp
+; lo ka se klama — a property, in both spellings
+(λ (($x (Referents Entity))) (Close (klama :2 $x)))       ; legacy
+(MakeLambda {$x (Referents Entity)}                        ; braced —
+  {(Close (klama :2 $x))})                                 ; λ ≡ MakeLambda
+```
+
+```lisp
+; lo mlatu cu blabi .i ri jbena — cross-sentence reference, braced Bind
+(Bind {$cat (Referents Entity)}
+      (Refer (λ (($x (Referents Entity))) (mlatu $x)))     ; active operand:
+  {(Do (Assert (Close (blabi $cat)))                       ; a computation,
+       (Assert (Close (jbena $cat))))})                    ; consumed as a
+                                                           ; value; body inert
+```
+
+```lisp
+; the reflective application word — for talking about application itself
+(MakeApply {(MakeLambda {$x (Referents Entity)} {(mlatu $x)})}
+           {This})
+; ≡ ((λ (($x (Referents Entity))) (mlatu $x)) This) — each quoted
+; operand interpreted exactly once (spec §7.7)
+```
+
+Contrast, one more time: `{(Close (klama Speaker))}` is quoted *core
+notation* — code, evaluable one stage up; `lu mi klama li'u` is quoted
+*Lojban* — a linguistic sign, interpreted only through the §7.5
+crossings. Different kinds; the braces are core-only notation and no
+Lojban word ever gains active-eval semantics.
+
+## 13. Meanings without analyses
 
 Gap-register illustrations (spec §14) — sentences the core deliberately
 does not yet analyze, kept as obligations:

@@ -201,6 +201,22 @@ Core terms are written as S-expressions:
   convention a specimen's first comment line is its Lojban source.
 - `"…"` — `Text` literals (used by name signs, quoted text, and sign
   facts).
+- `{…}` — **quotation of core notation** (§7.7): an `Expression` sign —
+  elaborated, scoped, α-classed core syntax — or, holding one or more
+  `($x T)` binder pairs, a **telescope** (`{$x T}` may flatten a single
+  pair). Braces are reserved for these quotes; set-builder and
+  record displays are metalanguage and use words or `⟨…⟩`. Parentheses
+  *inside* braces are mentioned syntax, not application.
+- In the braced spelling, the binder names are **aliases** of the
+  reflection words (§7.7): `(λ {$x T} {body})` ≡
+  `(MakeLambda {$x T} {body})`, and likewise `Let`/`Bind` per their
+  definitions — so in that spelling `()` is function application and
+  nothing else. The legacy binder notation elaborates to it:
+  `(λ (($x T)) body) ↦ (λ {$x T} {body})`,
+  `(Let (($x T v)) body) ↦ (Let {$x T} v {body})`,
+  `(Bind (($x T c)) body) ↦ (Bind {$x T} c {body})` — two spellings of
+  one term; this document set keeps the legacy spelling in ordinary
+  specimens and uses the braced spelling where reflection is the topic.
 
 Notation conventions — elision of inferable types, the writing of `Close`
 (§4.6), currying conventions, pretty-printing — are non-semantic: two
@@ -541,8 +557,8 @@ extensional identity by units (discourse-introduction identity carried
 outside the extension), every nonempty unit set represented (with the
 infinite joins that requires), natural under subsorts — the quotient
 `Referents<T>/CoRef` is isomorphic to the nonempty sets over `T`:
-`Combine` is union, `Among` is subset, the singleton lift is
-`x ↦ {x}`. A set-backed implementation of that fragment is therefore
+`Combine` is union, `Among` is subset, the singleton lift sends each
+individual to its singleton set. A set-backed implementation of that fragment is therefore
 legitimate, and set-typed lexicons (Eberban's nonempty `tce` places)
 are intertranslatable with this one inside D. The specification does
 not adopt D: atomistic generation is exactly what the no-atoms clause
@@ -1267,6 +1283,134 @@ attitude or degree; `ba'e` is sign-level focus. Indicator target selection
 is a text-to-reading rule (mapping annex; `FUhE`/`FUhO` delimit extended
 scope).
 
+### 7.7 Core reflection
+
+The core can quote its own notation. This section is the term-language
+semantics of that ability; the content-word consequences live in §16.
+
+**Types.** `Expression<Γ, A, ε>` is the sign kind of **elaborated,
+scoped core expressions**: α-equivalence classes of core syntax with
+resolved binding, open in the typed context Γ, of result type `A`, with
+effect class ε ∈ {`Pure`, `Effectful`} (the class that decides whether
+an abstraction over the code is `Fn` or `EFn`). `Telescope<Γ; Δ>` is
+the quoted binder-extension category (`{($x T) …}`). Both are quoted
+*categories*, formed only by writing braces — quote formation is a
+typing judgment over already-elaborated notation, applying after all
+text-to-reading resolution (readings, anaphora, donkey normalization),
+never to raw Lojban text: `{(Close (klama Speaker))}` is code;
+`lu mi klama li'u` is a linguistic quotation sign (§7.5) — different
+kinds, never interchangeable. Γ, `A`, and ε are derivable from the
+elaborated body (free variables and their binders; constants never
+enter Γ) and are elided in ordinary notation.
+
+**Elaboration discipline.** A quote is elaborated *at its written
+occurrence*, against the lexical context it is written in — a quote is
+code plus the context it was written under, and evaluation never
+consults the evaluator's ambient context (the closure clause). Site
+identities (`Context`/`Vague`, §5.3) are assigned at elaboration on
+α-invariant, name-independent keys, so α-equivalent quotes have
+identical site and dependency structure; two written occurrences of an
+α-equal quote carry *distinct* site instances, while sharing one bound
+`Expression` value shares one elaboration. Elaboration is **stable**
+(law S8): an Expression's binding resolution, site identities, and
+reading resolutions are fixed at its written occurrence; no later
+evaluation re-elaborates or re-resolves. Notation desugaring (fills to
+`At`, sugar expansion per S1–S7) happens at elaboration; β-reduction
+does not — rewriting inside a quote changes which sign it is.
+
+**Interpretation.** The typed, stage-indexed family
+`Interpret : Expression<Γ, A, ε> × Env<Γ> ⇀ A` interprets code against
+a typed environment for its free variables; interpretation for stage-n
+code is a stage-(n+1) operation, there is no untyped universal `Eval`,
+and **the family is bootstrap floor and unreflectable** — no
+`MakeEval`, ever (a same-stage self-interpreter is the liar row of
+§16.4). When `A` is a computation type, interpretation *returns* the
+computation as a value; running it remains the job of `Bind`, the
+dynamic operators, or `Perform`. Values cross stages only through
+binding — an environment or an application supplies them — never
+through splicing: **there is no anti-quotation** and no
+`Persist : A → Expression`; reflection is schematic (code with
+variables, values flowing in at use), which is the accepted price of
+the discipline below.
+
+**The no-reification discipline (D3).** Mitchell Wand's theorem — the
+theory of fexprs is trivial — shows that a language whose operators can
+observe the syntax of ordinary operands has no equational theory: with
+unrestricted reflection, observational equivalence collapses to
+syntactic identity. The core stays on the right side of that cliff by
+five clauses: (i) no operator turns a running value, continuation, or
+evaluation state into an `Expression` — quotes are only ever written;
+(ii) an unbraced (active) operand is consumed as its semantic value —
+no word can request the caller's operand syntax or environment;
+(iii) `Expression` values are **constructive-only**: no destructors, no
+pattern-matching, no structural observation, and no `=` at the
+`Expression` kind — code is built, composed, and interpreted, never
+inspected; (iv) only the typed, staged `Interpret` family exists —
+stage polymorphism of the vocabulary is a metalanguage schema, never an
+object-language universal evaluator; (v) the transition to syntax is
+always visible — braces in the source are the only place any word
+receives code. This is the code-level twin of the refused truth-capture
+reflection (rationale §1.5): no dynamic-to-static reflection, at the
+truth level or the syntax level.
+
+**The one primitive sign-function.** The kernel is already applicative —
+its operators consume values — so exactly one word needs to consume
+code:
+
+```text
+MakeLambda : Telescope<Γ; Δ> × Expression<Γ·Δ, B, ε> → Arrow_ε<(Δ), B>
+```
+
+where `Arrow_Pure` is `Fn` and `Arrow_Effectful` is `EFn`. Its clause:
+`(MakeLambda {Δ} {b})` is the function that, applied to values for Δ,
+interprets `b` in its elaboration environment extended with those
+values. `λ` **is** `MakeLambda` — the glyph is an alias (and, like
+every PascalCase name, `MakeLambda` is a §16 placeholder awaiting its
+content word). The other binder spellings are **defined**:
+
+```text
+(Let {$x T} v {b})  ≝ ((MakeLambda {$x T} {b}) v)         ; v pure
+(Bind {$x T} c {b}) ≝ (Bind c (MakeLambda {$x T} {b}))    ; c a computation,
+                      ; consumed as a value; the result is itself a
+                      ; computation — nothing runs at construction
+```
+
+(the right-hand `Bind` is the ordinary §5.1 carrier operation
+`Comp<A> × (A → Comp<B>) → Comp<B>`, which the binder syntax always
+abbreviated). A reflective application spelling exists as a defined
+form over the floor family — `(MakeApply {f} {a}) ≝
+((Interpret {f}) (Interpret {a}))`, each operand interpreted once —
+for contexts (notably the self-description program, §16) that need
+application as a *word*; `(f a)` itself remains grammar. Facades for
+the remaining operators follow one generic schema and are materialized
+only on demand: for a binder-consuming operator, compose with
+`MakeLambda` (`(MakeForall {Δ} {b}) ≝ (∀ (MakeLambda {Δ} {b}))`, and
+likewise `MakeExists`, `MakeRefer`, `MakeSetOf`, `MakeOpenQ`, …); for
+an ordinary operator `O`, `(MakeO {a₁} … {aₙ}) ≝
+(O (Interpret {a₁}) … (Interpret {aₙ}))`, one interpretation per
+operand, left to right. No facade exists for the sign constructors
+(their operands are already inert by kind), for `Perform`'s host
+commitment, or for `Interpret` itself.
+
+**The reflection law.** For every binder form, elaboration is a
+homomorphism onto the Make-spelling —
+`elab[(B pattern… body)] ≡ MakeB(elab[pattern…], elab[body])` — with
+`≡` contextual equivalence at the result type, never equality of signs.
+Each law preserves S1–S7: one interpretation per operand, sites mapped
+one-to-one, no policy or typing change. One consequence is stated
+rather than left to inference: evaluating one `Expression` value twice
+runs its retrievals twice — a quote is code, and each run is a run;
+site identity governs occurrences within one elaboration, not across
+evaluations.
+
+**Why this section exists** (the design's point, argued in the
+rationale): with binding delegated to one sign-consuming word and the
+grammar reduced to atoms, braces, and application, every operator of
+the core is a *nameable function* — a content-word candidate with
+sign-typed places — and the same stage-schematic vocabulary lets one
+text describe the stage below it, which is what makes a Lojban
+description of Lojban's own semantics well-founded (§16; rationale).
+
 ## 8. Questions and answers
 
 ### 8.1 Query formation
@@ -1741,7 +1885,7 @@ relabelled x1 and x1 relabelled `fai`,
 ```text
 (JaiPromote R ℓ) : PredTerm<ρ'> ≝
   (λ (($r (Record ρ')))
-    (R {ℓ = $r.x1, x1 = $r.fai, rest unchanged}))
+    (R ⟨the ρ-record with ℓ = $r.x1, x1 = $r.fai, rest unchanged⟩))
 ```
 
 — the promoted role becomes x1 and the old x1 becomes the labelled,
@@ -1965,8 +2109,8 @@ the gap register §14 with its reason. The coverage matrix:
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval` | bases, arrays, indefinite operators | §10 |
 | plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | — | §3, §5 |
-| hypothetical mood | — | — | `da'i` | §12 |
-| repair, prosody | §11 ⊳ | — | registered | §12 |
+| hypothetical mood | — | — | `da'i` | §13 |
+| repair, prosody | §11 ⊳ | — | registered | §13 |
 
 A claim of coverage that cannot cite a schema, a library definition, or a
 gap entry is a defect in this document.
@@ -1985,7 +2129,9 @@ arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `Scalar`; the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the sign
-constructors (where quotation's opacity lives),
+constructors (where quotation's opacity lives), the quote former with
+`Expression<Γ,A,ε>`/`Telescope` and the floor `Interpret` family, and
+`MakeLambda` (§7.7 — `λ` is its alias);
 `InterpretContent`/`InterpretAct<F>`, and the token/sign
 fact relations; `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
@@ -1994,7 +2140,9 @@ derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`/
 `EventOfContent`, `InnatelyCapable`, `MotionVector`; and the axiomatic
 admissibility predicates (§12). **Defined forms** (term-language
 expansions; everything else is library or lexicon): `Close`, `At` with
-all fill notation, `Let`, the demonstratives, `Tanru` (§6.2),
+all fill notation, `Let` and the braced binder spellings with
+`MakeBind`/`MakeLet`/`MakeApply` and the facade schema (§7.7), the
+demonstratives, `Tanru` (§6.2),
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
 `PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
 `ContextualAnswer`, and the library of §12. The
@@ -2069,14 +2217,22 @@ dependency-order discipline).
 ### 16.3 Evaluation over signs: the adopted architecture
 
 Signs stratify. Raw `Text` and the opaque sign kinds (§7.5) remain what
-they are — quoted material, never auto-interpreted. A new sign kind
-**`Expression`** covers elaborated, *scoped* core expressions: `{…}` is
-this specification's notation for an `Expression` sign, and it is
+they are — quoted material, never auto-interpreted. The sign kind
+**`Expression`** covers elaborated, *scoped* core expressions, with its
+full term-language semantics — types, elaboration, interpretation, the
+no-reification discipline, and the `MakeLambda` basis — in **§7.7**;
+`{…}` is this specification's notation for it, and it is
 **core-only notation** — no surface cmavo has, or may ever acquire,
 active-eval semantics (reassigning `lu…li'u`, `la'e`, or `me'o` to
 active evaluation would make quotation commit its speakers to quoted
 referents: the paradigm rug-pull). Any future *spoken* evaluation word
-is a new coinage through the lexicon program.
+is a new coinage through the lexicon program. What §7.7 adds to this
+program: the binder words themselves (`MakeLambda` and its defined
+kin) are sign-consuming *functions* — Class-O operators with
+sign-typed places, content-word candidates like any other — and the
+stage-schematic vocabulary is what makes a Lojban self-description of
+these semantics well-founded (one text, meaningful at every stage,
+describing the stage below).
 
 Two evaluations, not one:
 
@@ -2122,11 +2278,11 @@ the doctrine sentence of §1.2 exempts them by design:
 
 | Floor item | Why no content word can be it |
 |---|---|
-| scope and hygiene (elaborated, scoped expressions; environments; capture-avoiding instantiation) | raw text carries no capture-free binding; textual substitution into signs is capture-prone and must skip nested inert quotations |
-| staged, partial evaluation | a same-stage total evaluator yields the liar diagonal; evaluation is defined at the stage above its operand, and elaboration is partial |
+| scope and hygiene — now realized as §7.7's quote former (elaboration, environments, capture-avoiding instantiation) | relocated, not discharged: raw text carries no capture-free binding; the quote former is where the machinery lives, and it remains machinery |
+| staged, partial evaluation (`Interpret`, §7.7 — unreflectable: no `MakeEval`) | a same-stage total evaluator yields the liar diagonal; evaluation is defined at the stage above its operand, and elaboration is partial |
 | the lexical basis interpretation | definitions bottom out: some words' meanings are model-given, or the dictionary is a cycle |
 | effect sequencing | ordering of introductions, retrievals, and obligations is an operation, not a truth condition — a predicate's extension cannot carry it |
-| effect-flow policy | active vs inert consumption is not at-issue content; it is declared per consuming word and enforced by the semantics |
+| effect-flow policy | active vs inert consumption is not at-issue content; it is declared per consuming word and enforced by the semantics — the braced spelling (§7.7) makes it visible in the syntax, which is display, not discharge |
 | force performance | if asserting were predication, describing or quoting an assertion would perform it; `Perform` stays external |
 | typing judgments | well-formedness is decided before terms denote; as at-issue predication it would turn undefinedness into mere falsity (S7) |
 
@@ -2248,6 +2404,21 @@ chapter/section or dictionary entry.
   Philosophy* 81(8), 1984, pp. 430–449.
 - **Oliver & Smiley** — Oliver, Alex and Smiley, Timothy, *Plural
   Logic*, 2nd edition, Oxford University Press, 2016.
+- **Wand** — Wand, Mitchell, "The Theory of Fexprs is Trivial",
+  *Lisp and Symbolic Computation* 10(3), 1998, pp. 189–199 (the ground
+  for §7.7's no-reification discipline).
+- **Nanevski, Pfenning & Pientka** — "Contextual Modal Type Theory",
+  *ACM Transactions on Computational Logic* 9(3), 2008 (the contextual
+  type `[Γ ⊢ A]` is §7.7's `Expression<Γ, A>`).
+- **Harper** — Harper, Robert, *Practical Foundations for Programming
+  Languages*, 2nd edition, Cambridge University Press, 2016 (abstract
+  binding trees — the formulation behind elaborated, α-classed quotes).
+- **Taha & Sheard** — "MetaML and Multi-stage Programming with
+  Explicit Annotations", *Theoretical Computer Science* 248, 2000
+  (typed staging with open code).
+- **Davies & Pfenning** — "A Modal Analysis of Staged Computation",
+  *Journal of the ACM* 48(3), 2001 (staging as modal logic — the
+  evaluation-above-stage discipline).
 - **Heim & Kratzer** — Heim, Irene and Kratzer, Angelika, *Semantics in
   Generative Grammar*, Blackwell, 1998.
 - **Groenendijk & Stokhof** — Groenendijk, Jeroen and Stokhof, Martin,

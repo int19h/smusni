@@ -648,6 +648,64 @@ jmaji` inexpressible) was the price of xorlo's no-rewrite move, and
 this core pays the other half of that bill with plural selections and
 joint loci — a repair orthogonal to sets.
 
+### 2.9 The reflection layer: why quote-and-apply, and why not fexprs
+
+Spec §7.7 reduces the term grammar, in its braced spelling, to atoms,
+quotes, and application, with one primitive sign-function
+(`MakeLambda`) and everything else vocabulary. Four arguments shaped
+it.
+
+**Why at all.** The content-word program's end state — only content
+words as predicates — stalled at the binder operators: a binder is not
+a relation over individuals, so no gismu row could be its fit. Making
+each binder a *function on quoted expressions* dissolves the obstacle:
+a sign-consuming function has an ordinary place structure (its x2 a
+`{}`-sign, like `tanru`'s official text-typed operands), and so has a
+content-word fate like everything else. The same move grounds the
+self-description goal: because the vocabulary is stage-schematic, one
+Lojban text can state the semantics of the stage below it — the
+definition of Lojban in Lojban is a tower of one repeated text, never
+a level defining itself (Tarski respected, not refuted), floating on
+the model-given lexical basis that no language escapes.
+
+**Why explicit quotes and not fexprs.** The lazy road to "operators on
+unevaluated operands" is the fexpr: every word receives its operands'
+syntax. Wand's theorem is why that road is closed — with unrestricted
+access to operand syntax, observational equivalence collapses to
+syntactic identity and the language has *no* equational theory. The
+core takes the disciplined road instead: the transition to syntax is
+always visible (braces in the source are the only place code enters),
+active operands are consumed as values only, `Expression` values are
+constructive-only (no destructors, no code equality), evaluation is
+typed and staged with no same-stage interpreter, and quotes close over
+the environment they were written in (evaluation never reads the
+evaluator's ambient context — the second ingredient of the fexpr
+collapse). This is the same refusal as `TruthOf` (§1.5), made twice:
+no dynamic-to-static reflection at the truth level or the syntax
+level. The accepted price is stated in §7.7 rather than discovered
+later: there is no anti-quotation — reflection is schematic, code with
+variables, values flowing in at use.
+
+**Why one primitive sign-function.** The kernel was already
+applicative — quantifiers, connectives, the triad, the force
+constructors all consume *values* — so the only place surface syntax
+genuinely binds text is λ itself. `MakeBind` is `Bind` composed with
+`MakeLambda`; `MakeLet` is application composed with it; the facades
+for everything else are one generic schema, materialized on demand.
+The alternative — a `Make*` twin for every operator — would recreate
+the duplication the catalog audit just removed, with no semantic
+witness for any pair.
+
+**Why the legacy binder notation survives.** The braced spelling makes
+inert positions visible and reduces the grammar to three formers; the
+legacy spelling reads better in worked specimens whose topic is
+semantics, not staging. The reflection law makes them two spellings of
+one term — the same doctrine §2 has always held for notation — so the
+document set keeps the legacy spelling in ordinary specimens and the
+braced spelling where reflection is the topic, and a future mechanical
+migration remains available if the community prefers the braces once
+the semantics is frozen.
+
 ## 3. Pin arguments
 
 Condensed; each pin's full context is in spec §13. The ones that were

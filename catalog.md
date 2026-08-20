@@ -635,7 +635,44 @@ recorded fit becomes a definition only when the committee adopts it.
 [primer ch. 0, ch. 7](primer.md); the indicator instances appear in
 [samples §7, §11](samples.md).
 
-### 1.47 `InnatelyCapable` and `MotionVector`
+### 1.47 `Expression<Γ, A, ε>`, `Telescope`, and the quote former
+
+**Informally.** The reflection types: an `Expression` is an
+elaborated, scoped, α-classed piece of core notation — code — open in
+the typed context Γ, of result type A, with effect class ε deciding
+`Fn` vs `EFn` under abstraction; a `Telescope` is a quoted binder
+extension (`{($x T) …}`, flat for a single pair). The quote former
+`{…}` is bootstrap floor: quotes are only ever written, elaborate at
+their written occurrence against the context they are written in
+(closure), carry α-invariant site identities fixed at elaboration
+(law S8), and are constructive-only — no destructors, no code
+equality, no reification of running values, no anti-quotation, and no
+`MakeEval` (Wand's fexpr-triviality theorem is the cited reason).
+`{}` quotes core notation only — never Lojban text, which is `lu`/
+`zoi` territory (§1.10, §1.38).
+**For.** `{(Close (klama Speaker))}` — code; compare
+`lu mi klama li'u` — a linguistic sign.
+**See.** [Spec §7.7, §2, §16.3–16.4](spec.md);
+[rationale §2.9](rationale.md).
+
+### 1.48 `MakeLambda`
+
+**Informally.** The one primitive sign-function: applied to a
+telescope and a body quote, it produces the function that, given
+values for the telescope, interprets the body in its elaboration
+environment extended with them — suspension from the quote,
+hygiene from elaboration, purity class from the body (`Fn` if pure,
+`EFn` otherwise). **`λ` is its alias**: `(λ {$x T} {body})` is an
+ordinary application, and in the braced spelling `()` is application
+and nothing else. Like every PascalCase name, a §16 placeholder
+awaiting its content word — the move that makes binders nameable
+vocabulary at all.
+**For.** `lo ka se klama` → `(MakeLambda {$x (Referents Entity)}
+{(Close (klama :2 $x))})`.
+**See.** [Spec §7.7](spec.md); [rationale §2.9](rationale.md);
+[samples §12](samples.md).
+
+### 1.49 `InnatelyCapable` and `MotionVector`
 
 **Informally.** Two lexically grounded primitives declared with the
 §12 helpers they serve. `InnatelyCapable : Referents<Entity> ×
@@ -1014,7 +1051,32 @@ UtteranceToken)) (Realizes $u (Assert (Close (klama Speaker))))))`.
 **See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
 [samples §6, §10](samples.md).
 
-### 2.28 `te'a`, `gei`, and `xi` indexing
+### 2.28 `MakeBind`, `MakeLet`, `MakeApply`, and the facade schema
+
+**Informally.** The defined reflection vocabulary over `MakeLambda`
+and the floor `Interpret` family: the braced binder spellings, the
+reflective application word, and the generic facade schema by which
+any operator acquires a sign-consuming form on demand.
+**Formally.**
+
+```text
+(Let {$x T} v {b})   ≝ ((MakeLambda {$x T} {b}) v)
+(Bind {$x T} c {b})  ≝ (Bind c (MakeLambda {$x T} {b}))
+(MakeApply {f} {a})  ≝ ((Interpret {f}) (Interpret {a}))
+(MakeForall {Δ} {b}) ≝ (∀ (MakeLambda {Δ} {b}))     ; and MakeExists,
+                                                     ; MakeRefer, … alike
+(MakeO {a₁} … {aₙ})  ≝ (O (Interpret {a₁}) … (Interpret {aₙ}))
+```
+
+— one interpretation per operand; each law preserves S1–S7; no facade
+for the sign constructors, `Perform`'s commitment, or `Interpret`
+itself. Nothing runs at construction: `Bind`'s braced spelling returns
+a computation value, inert until performed.
+**For.** The self-description program: with these words, core terms
+and their semantics are statable as sentences about quoted code.
+**See.** [Spec §7.7](spec.md); [rationale §2.9](rationale.md).
+
+### 2.29 `te'a`, `gei`, and `xi` indexing
 
 **Informally.** MEX helpers by metalanguage recursion: integer
 exponentiation, order-of-magnitude, and subscripting as list

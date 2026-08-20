@@ -448,6 +448,20 @@ leaks through a quotation boundary. This entire family is what keeps
 use/mention straight, and it is why the core can talk about Lojban in
 Lojban without paradox.
 
+> **Advanced box: the core can quote itself.** Beside the Lojban
+> quotes above, the core has braces — `{…}` — which quote *the core's
+> own notation*, not Lojban text. A quoted piece of notation is held
+> back, unevaluated, and special words operate on it: the λ you have
+> seen everywhere is really such a word — `(λ {$x T} {body})` applies
+> it to a quoted parameter and a quoted body and *produces* the
+> function, so the braces show at a glance which parts are held back
+> and parentheses only ever mean "apply". One rule keeps this safe:
+> braces are only ever *written* — nothing running can be turned back
+> into its own code. This is advanced, optional machinery (spec §7.7);
+> its payoff is that every operator becomes an ordinary word — which
+> is how, one day, Lojban gets to describe Lojban's own semantics in
+> Lojban.
+
 ## 11. The whole example
 
 ```
