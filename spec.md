@@ -418,8 +418,8 @@ express. A lexical entry states which deletions are meaningful (§10).
 
 ### 4.4 Functions and binding
 
-`(λ ((x T) …) body)` forms functions; application is juxtaposition.
-`(Let ((x T v)) body)` is inert sharing — definable as immediate
+`(λ (($x T) …) body)` forms functions; application is juxtaposition.
+`(Let (($x T v)) body)` is inert sharing — definable as immediate
 application, retained for legibility and for expressing identity of one
 value used twice (`goi` aliasing). `Let` bodies may not smuggle effects
 into shared positions: an effectful computation is shared by `Bind`
@@ -634,7 +634,10 @@ Bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (uniform; §5.2)
 
 where `Obligations` collects the pending projective commitments
 (presupposition conditions, supplement sides with their anchors and
-handlers) accumulated but not yet discharged. A computation, run on a
+handlers) accumulated but not yet discharged, and information states
+additionally carry the discourse-segment structure (the current
+segment and the suspended-topic stack) that keyed retrieval (§5.3)
+and the §7.2 transitions consult. A computation, run on a
 state, yields the possible output states (nondeterminism carries plural
 and witness selection — success of *some* branch is success), each with
 a returned value and its obligations; lexical truth at a world filters
@@ -691,13 +694,13 @@ world* (hypothetical mood) would be a sibling index-shift operator —
 
 ### 5.2 Effectful binding
 
-`(Bind ((x T comp)) body)` runs the computation `comp : RefComp<T>` and
+`(Bind (($x T comp)) body)` runs the computation `comp : RefComp<T>` and
 binds its result for `body`, sequencing effects left to right. `Bind` is
 the eliminator for `RefComp` and cannot be β-reduced away: the computation
 may introduce referents, consult context, or project obligations. `Let`
 (§4.4) is its pure degenerate case. A multi-binding
-`(Bind ((x₁ T₁ c₁) (x₂ T₂ c₂) …) body)` is left-to-right nesting —
-`(Bind ((x₁ T₁ c₁)) (Bind ((x₂ T₂ c₂)) …))` — so later computations
+`(Bind (($x₁ T₁ c₁) ($x₂ T₂ c₂) …) body)` is left-to-right nesting —
+`(Bind (($x₁ T₁ c₁)) (Bind (($x₂ T₂ c₂)) …))` — so later computations
 may consume earlier results. The honest gloss: `Bind` is
 function application under mandatory call-by-value at computation
 types, made visible — the λ-fragment stays pure so that β-equality
@@ -1104,11 +1107,14 @@ li'u` describes a directive without issuing it); only `Perform` executes.
 
 `NewTopic, Resume : Discourse → Discourse` are the `ni'o`/`no'i`
 transitions — discourse-structural operations with no truth
-conditions but with stated effects: `NewTopic` **closes the current
-discourse segment** — keyed `Context` retrievals (§5.3) are
-per-segment, so keys re-retrieve after it, and the segment-bounded
-⊳ rules (`ki` stickiness, `go'i` reach) reset — while `Resume`
-reopens the suspended prior topic's segment for keyed retrieval. Discourse
+conditions but with stated effects on the **segment structure** the
+information state carries (§5.1): a state holds the current discourse
+segment and a stack of suspended ones. `NewTopic` suspends the
+current segment onto the stack and opens a fresh one — keyed
+`Context` retrievals (§5.3) are per-segment, so keys re-retrieve
+after it, and the segment-bounded ⊳ rules (`ki` stickiness, `go'i`
+reach) reset — while `Resume` pops the most recently suspended
+segment and reopens it for keyed retrieval. Discourse
 *relations* (contrast `ku'i`, addition `ji'a`, parallel `si'a`,
 elaboration `no'u`, …) are library relations over acts; the prior act is
 an ordinary `Let`-bound value in `Do` (no prior/following-discourse
@@ -1129,8 +1135,9 @@ different operators.
 `(Utterance ((u UtteranceToken)) fact…)` is the **transcript-entry
 former**: it packages a fresh token variable with facts about it —
 ordinary predicates: `SpeakerOf`, `AudienceOf`, `LocutionOf`,
-`DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Realizes` (token
-realizes act), `Utters` (agent utters token) — into an unperformed,
+`DeicticTimeOf`, `DeicticPlaceOf`, `TextOf`, `Realizes` (the token realizes an act
+value of whatever force — the force index is existential here),
+`Utters` (agent utters token) — into an unperformed,
 dynamically opaque **transcript entry**, the value `StructuredQuote`
 (§7.5) consumes. The former is primitive because its result is a
 *value* (an entry inside a sign boundary), not a content computation:
@@ -1199,9 +1206,11 @@ target — no dedicated operator is needed:
 Targets are always bound terms or pure object-formers — never free
 names. Each indicator's lexicon entry (§10) provides:
 
-- its relation with typed roles — for attitudes: experiencer, first-class
-  **target** (content, act, referent, or sign, resolved by the mapping),
-  and a **degree** place on the library's intensity scale, whose named
+- its relation with typed roles — for attitudes: experiencer, a
+  first-class **target** at the closed union type `Target` — a
+  `Proposition` (content targets go through `Reify`), an act value, a
+  plural reference, or a sign, with the mapping resolving which — and
+  a **degree** place on the library's intensity scale, whose named
   regions are `Intense` (`cai`), `Strong` (`sai`), `Moderate`
   (unmarked), `Weak` (`ru'e`), and `Neutral` (`cu'i`);
 - its **`nai`-pair**: `nai` selects the lexically paired polar indicator
@@ -1299,7 +1308,7 @@ contextual retrieval explicit:
 
 ```text
 (Answer q ContextualAnswer) ≝
-  (Bind ((a A (Context))) (Answer q (TupleAnswer a)))
+  (Bind (($a A (Context))) (Answer q (TupleAnswer $a)))
 ```
 
 (no exhaustivity marker: absence, per P9). `Answer` yields `Content` and
@@ -1542,12 +1551,13 @@ neutral plural predication, per P4; `Every`'s nuclear scope is
 member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
 
 ```text
-(Exactly n P Q)  ≝ (Bind ((w (SelectExactly n P))) (Q w))
-(AtLeast n P Q)  ≝ (Bind ((w (SelectAtLeast n P))) (Q w))
-(Some P Q)       ≝ (Bind ((w (SelectSome P)))      (Q w))
+(Exactly n P Q)  ≝ (Bind (($w (Referents T) (SelectExactly n P))) (Q $w))
+(AtLeast n P Q)  ≝ (Bind (($w (Referents T) (SelectAtLeast n P))) (Q $w))
+(Some P Q)       ≝ (Bind (($w (Referents T) (SelectSome P)))      (Q $w))
 (Every P Q)      ≝ (Presuppose (∃ P)            ; import emitted FIRST —
-                     (Bind ((w (MaxRefer P)))    ; else an empty restrictor
-                       (Distrib Q w)))          ; would fail the selection
+                     (Bind (($w (Referents T)   ; else an empty restrictor
+                             (MaxRefer P)))
+                       (Distrib Q $w)))         ; would fail the selection
                                                 ; instead of failing the
                                                 ; presupposition; exports w
 (No P Q)         ≝ (¬ (Some P Q))                          ; no export
@@ -1593,21 +1603,21 @@ admissible region — the gradable analogue, consumed by `Grade`'s
 `Vague` region):
 
 ```text
-(Many P Q)   ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold ManyK P))))
-                 (AtLeast θ P Q))
-(Few P Q)    ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold FewK P))))
-                 (FewerThan θ P Q))
+(Many P Q)   ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold ManyK P))))
+                 (AtLeast $θ P Q))
+(Few P Q)    ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold FewK P))))
+                 (FewerThan $θ P Q))
 (Most P Q)   ≝ (> (Card (SetOf (λ x. (∧ (P x) (Q x)))))
                   (Card (SetOf (λ x. (∧ (P x) (¬ (Q x)))))))
-(TooMany P Q)≝ (Bind ((σ (Referents Entity) (Context))          ; purpose
-                      (θ Natural (Vague (AdmissibleThreshold TooManyK P σ))))
-                 (MoreThan θ P Q))
-(TooFew P Q) ≝ (Bind ((σ (Referents Entity) (Context))
-                      (θ Natural (Vague (AdmissibleThreshold TooFewK P σ))))
-                 (FewerThan θ P Q))
-(Enough P Q) ≝ (Bind ((σ (Referents Entity) (Context))
-                      (θ Natural (Vague (AdmissibleThreshold EnoughK P σ))))
-                 (AtLeast θ P Q))
+(TooMany P Q)≝ (Bind (($σ (Referents Entity) (Context))          ; purpose
+                      ($θ Natural (Vague (AdmissibleThreshold TooManyK P $σ))))
+                 (MoreThan $θ P Q))
+(TooFew P Q) ≝ (Bind (($σ (Referents Entity) (Context))
+                      ($θ Natural (Vague (AdmissibleThreshold TooFewK P $σ))))
+                 (FewerThan $θ P Q))
+(Enough P Q) ≝ (Bind (($σ (Referents Entity) (Context))
+                      ($θ Natural (Vague (AdmissibleThreshold EnoughK P $σ))))
+                 (AtLeast $θ P Q))
 ```
 
 Gradable predication: a `GradableRel<ρ,ℓ>` is a lexical relation whose
@@ -1731,8 +1741,8 @@ displayed act-level per §7.6; the `na'i` objection ≝
 
 ```lisp
 (NahiObjection t) ≝
-  (Bind ((d DefectKind (Context)))
-    (Express (Close (MetalinguisticallyDefective t d))))
+  (Bind (($d DefectKind (Context)))
+    (Express (Close (MetalinguisticallyDefective t $d))))
 ```
 
 for a bound prior target `t` (`DefectKind` — wording, form, implication,

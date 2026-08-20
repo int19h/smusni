@@ -479,10 +479,15 @@ introductions inside an unperformed act do not escape.
 
 ### 1.37 `NewTopic` and `Resume`
 
-**Informally.** The `ni'o`/`no'i` transitions: discourse-structural
-operations with no truth conditions — topic break and topic
-resumption over performed discourse.
-**See.** [Spec §7.2](spec.md).
+**Informally.** The `ni'o`/`no'i` transitions,
+`Discourse → Discourse`: discourse-structural operations with no
+truth conditions but with stated effects on the information state's
+segment structure — `NewTopic` suspends the current discourse segment
+onto the suspended-topic stack and opens a fresh one (keyed `Context`
+retrievals are per-segment, so keys re-retrieve; segment-bounded
+text-to-reading rules like `ki` stickiness and `go'i` reach reset);
+`Resume` pops the most recently suspended segment and reopens it.
+**See.** [Spec §7.2, §5.1, §5.3](spec.md).
 
 ### 1.38 The sign constructors
 
@@ -520,9 +525,10 @@ under the §16 program. Signatures (u an `UtteranceToken`, s a
 speaker`, `AudienceOf u audience` (both at `Referents<Entity>`);
 `LocutionOf u locution` (`Referents<Locution>`); `DeicticTimeOf u t`
 (`Time`); `DeicticPlaceOf u l` (`Location`); `TextOf u|s text`
-(`Text`); `Realizes u a` (an act value); `Utters agent u`;
-`Quotes s x` and `Denotes s x` (a sign token and what it quotes /
-denotes).
+(`Text`); `Realizes u a` (`a` an act value of whatever force — the
+force index is existential); `Utters agent u`; `Quotes s x` (`x` the
+quoted material: a sign or `Text`); `Denotes s x` (`x` a value of any
+sort — denotation is sort-polymorphic).
 **For.** Transcript entries, reported speech, the `le`-anchoring
 clause (the describing event is this utterance's locution).
 **See.** [Spec §7.4–7.5, §10–11](spec.md).
@@ -606,9 +612,11 @@ regions (`Intense`/`cai`, `Strong`/`sai`, `Moderate`/unmarked,
 
 **Informally.** Relations the core uses that await their Lojban
 content words under the §16 program. The indicator relations —
-`Happiness`, `Unhappiness`, `Desire` : experiencer × target
-(content, act, referent, or sign) × intensity region → `Content`, and
-`EvidentialBasis` : experiencer × target × `BasisKind` → `Content` —
+`Happiness`, `Unhappiness`, `Desire` : experiencer × `Target` ×
+intensity region → `Content`, and
+`EvidentialBasis` : experiencer × `Target` × `BasisKind` → `Content`
+(`Target` the closed union of §7.6: a `Proposition` — content targets
+go through `Reify` — an act value, a plural reference, or a sign) —
 with the §16.5 audit mapping them to the UI emotion gismu (`gleki`,
 `badri`, `djica`, …) as committee-pending fits. The discourse
 relations — `Contrast`, `Addition`, `Parallel`, `Elaboration` : two
@@ -694,7 +702,7 @@ literal fills.
 immediate application, retained for legibility and for identity of one
 value used twice (`goi` aliasing, act targets). May not bind an
 effectful computation; that is `Bind`'s job, by type.
-**Formally.** `(Let ((x T v)) body) ≝ ((λ ((x T)) body) v)`.
+**Formally.** `(Let (($x T v)) body) ≝ ((λ (($x T)) body) v)`.
 **For.** `(Let (($a (Act Assertion) (Assert …))) (Do (Perform $a)
 (Express (… $a …))))` — the display targets *that* act.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
@@ -819,10 +827,11 @@ presuppose the restrictor inhabited, export the maximal base,
 distribute (`ro` is each). The negative/bounded forms contain their
 selection under `¬` and export nothing.
 **Formally.**
-`(Exactly n P Q) ≝ (Bind ((w (SelectExactly n P))) (Q w))`;
+`(Exactly n P Q) ≝ (Bind (($w (Referents T) (SelectExactly n P)))
+(Q $w))`;
 `(AtLeast n P Q)` / `(Some P Q)` likewise over their selections;
-`(Every P Q) ≝ (Presuppose (∃ P) (Bind ((w (MaxRefer P))) (Distrib Q
-w)))`; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
+`(Every P Q) ≝ (Presuppose (∃ P) (Bind (($w (Referents T) (MaxRefer
+P))) (Distrib Q $w)))`; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
 P Q))`; `(MoreThan n P Q) ≝ (AtLeast n+1 P Q)`; `(FewerThan n P Q) ≝
 (¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ x.
 (∧ (P x) (Q x))))) n)` (pure operands; the marked global reading).
@@ -841,19 +850,19 @@ enough.
 kinds from `ThresholdKind`, §1.34; `P`, `Q` pure for `Most`.)
 
 ```text
-(Many P Q)    ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold ManyK P))))
-                  (AtLeast θ P Q))
-(Few P Q)     ≝ (Bind ((θ Natural (Vague (AdmissibleThreshold FewK P))))
-                  (FewerThan θ P Q))
-(TooMany P Q) ≝ (Bind ((σ (Referents Entity) (Context))
-                       (θ Natural (Vague (AdmissibleThreshold TooManyK P σ))))
-                  (MoreThan θ P Q))
-(TooFew P Q)  ≝ (Bind ((σ (Referents Entity) (Context))
-                       (θ Natural (Vague (AdmissibleThreshold TooFewK P σ))))
-                  (FewerThan θ P Q))
-(Enough P Q)  ≝ (Bind ((σ (Referents Entity) (Context))
-                       (θ Natural (Vague (AdmissibleThreshold EnoughK P σ))))
-                  (AtLeast θ P Q))
+(Many P Q)    ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold ManyK P))))
+                  (AtLeast $θ P Q))
+(Few P Q)     ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold FewK P))))
+                  (FewerThan $θ P Q))
+(TooMany P Q) ≝ (Bind (($σ (Referents Entity) (Context))
+                       ($θ Natural (Vague (AdmissibleThreshold TooManyK P $σ))))
+                  (MoreThan $θ P Q))
+(TooFew P Q)  ≝ (Bind (($σ (Referents Entity) (Context))
+                       ($θ Natural (Vague (AdmissibleThreshold TooFewK P $σ))))
+                  (FewerThan $θ P Q))
+(Enough P Q)  ≝ (Bind (($σ (Referents Entity) (Context))
+                       ($θ Natural (Vague (AdmissibleThreshold EnoughK P $σ))))
+                  (AtLeast $θ P Q))
 (Most P Q)    ≝ (> (Card (SetOf (λ x. (∧ (P x) (Q x)))))
                    (Card (SetOf (λ x. (∧ (P x) (¬ (Q x)))))))
 ```
@@ -917,8 +926,8 @@ reifies the same content.
 **Informally.** Bare `kau`'s answerhood: the answer tuple is retrieved
 from context, with the exhaustivity slot absent (pin P9) — the weakest
 reading, strengthened only lexically or by explicit marker.
-**Formally.** `(Answer q ContextualAnswer) ≝ (Bind ((a A (Context)))
-(Answer q (TupleAnswer a)))`.
+**Formally.** `(Answer q ContextualAnswer) ≝ (Bind (($a A (Context)))
+(Answer q (TupleAnswer $a)))`.
 **For.** `mi djuno lo du'u ma kau klama`.
 **See.** [Spec §8.2](spec.md); [primer ch. 6](primer.md).
 
@@ -964,8 +973,8 @@ as the weakest member of the selection family.
 **Informally.** The `na'i` act: express, of a bound prior target, that
 it is metalinguistically defective in a contextually recovered
 dimension — performing nothing, negating nothing.
-**Formally.** `(NahiObjection t) ≝ (Bind ((d DefectKind (Context)))
-(Express (Close (MetalinguisticallyDefective t d))))`.
+**Formally.** `(NahiObjection t) ≝ (Bind (($d DefectKind (Context)))
+(Express (Close (MetalinguisticallyDefective t $d))))`.
 **See.** [Spec §12, §7.3](spec.md); [primer ch. 7](primer.md).
 
 ### 2.24 `GroundedBy`
