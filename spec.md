@@ -198,12 +198,18 @@ Core terms are written as S-expressions:
   `::` is the **type-ascription keyword** — a member of the keyword
   family below, marking that its operand is a type — and every form
   that requires a type annotation requires it. A compound type is a
-  **generic instantiation** — generic types are functions from sorts
-  to sorts — and after `::` the application spine is written flat:
-  `{$r :: Referents Entity}` applies the `Referents` former to
+  **generic instantiation** — a type constructor applied to indices of
+  its declared kinds: sorts (`Referents Entity`), rows (`Record ρ`,
+  `PredTerm ρ(H)`), forces (`Act Assertion`), sign kinds
+  (`SignToken K`), place labels (`Label klama`) — and after `::` the
+  application spine is written flat: `{$r :: Referents Entity}`
+  applies the `Referents` former to
   `Entity` (the type the metalanguage displays as `Referents<Entity>`),
   and parentheses appear only to group a *nested* instantiation
-  (`{$sets :: Referents (Set Entity)}`). Thus `{$x :: Entity}` binds
+  (`{$sets :: Referents (Set Entity)}`). Row expressions — `ρ`,
+  `ρ−ℓ`, `ρ(H)` — are stated metalanguage (a row name, a row minus a
+  label, the row of a relation) and keep that spelling inside
+  schematic ascriptions; they are not term-level parentheses. Thus `{$x :: Entity}` binds
   over single individuals while `{$r :: Referents Entity}` binds a
   plural reference (§3.2): different types, one notation. (Should a
   function type ever be needed in this position, an `Fn`/`EFn`
@@ -456,7 +462,9 @@ express. A lexical entry states which deletions are meaningful (§10).
 
 ### 4.4 Functions and binding
 
-`(λ {{$x :: T} …} {body})` forms functions; application is juxtaposition.
+`(λ {$x :: T} {body})` forms functions — the telescope may be any §2
+telescope: a shared-run group (`{$x $y :: T}`) or a concatenation
+(`{{$x :: T} {$y :: S}}`) — and application is juxtaposition.
 `(Let {$x :: T} v {body})` is inert sharing — definable as immediate
 application, retained for legibility and for expressing identity of one
 value used twice (`goi` aliasing). `Let` bodies may not smuggle effects
@@ -1331,7 +1339,8 @@ exactly the typed context Γ**, of result type `A`, with effect class
 ε ∈ ⟨`Pure`, `Effectful`⟩ deciding whether an abstraction over the
 code is `Fn` or `EFn` (write `Arrow_Pure = Fn`,
 `Arrow_Effectful = EFn`). `Telescope<Γ; Δ>` is the quoted
-binder-extension category (`{{$x :: T} …}`), the indexed refinement of
+binder-extension category (`{$x :: T}`, concatenated
+`{{$x :: T} {$y :: S} …}`), the indexed refinement of
 the `Telescope` sign kind. Both are formed only by writing braces —
 quote formation is a typing judgment over already-elaborated notation,
 applying after all text-to-reading resolution (readings, anaphora,
@@ -1611,8 +1620,9 @@ types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 content, its x2 sentence signs whose interpretation reifies the same
 (CLL 11.7's x2 and `se du'u`); the others are the
 family proper. Reference applies **outside** the relation, exactly as for
-any selbri: `lo ni mi klama` is `Refer` over `λ($a : Referents<Amount>).
-Close((NiRel …) $a)` — so the `lo`/`le` contrast, outer quantification,
+any selbri: `lo ni mi klama` is `Refer` over
+`(λ {$a :: Referents Amount} {(Close ((NiRel …) $a))})` — so the
+`lo`/`le` contrast, outer quantification,
 and relative clauses all work on abstractions for free, and an omitted x2
 is ordinary closure into `Context` (the `su'u` categorizer's contextual
 default — CLL 11.9's "type x2" — is this general rule, not a special

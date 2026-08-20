@@ -453,9 +453,10 @@ Lojban without paradox.
 > own notation*, not Lojban text. A quoted piece of notation is held
 > back, unevaluated, and special words operate on it: the λ you have
 > seen everywhere is really such a word — `(λ {$x :: T} {body})` applies
-> it to a quoted parameter and a quoted body and *produces* the
+> it to a quoted parameter (`$x :: T` reads "variable `$x` of type
+> `T`") and a quoted body and *produces* the
 > function, so the braces show at a glance which parts are held back
-> and parentheses only ever mean "apply". One rule keeps this safe:
+> and, in ordinary term syntax, parentheses only ever mean "apply". One rule keeps this safe:
 > braces are only ever *written* — nothing running can be turned back
 > into its own code. This is advanced, optional machinery (spec §7.7);
 > its payoff is that the binder words become ordinary vocabulary —

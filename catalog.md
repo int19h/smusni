@@ -653,7 +653,8 @@ elaborated, scoped, α-classed piece of core notation — code — open in
 the typed context Γ, of result type A, with effect class ε deciding
 `Fn` vs `EFn` under abstraction; a `Telescope` is a quoted binder
 extension: one flat group (`{$x :: T}`, `{$x $y :: T}`) or a
-left-scoping concatenation of groups (`{{$x :: T} …}`). The quote former
+left-scoping concatenation of two or more groups
+(`{{$x :: T} {$y :: S} …}`). The quote former
 `{…}` is bootstrap floor: quotes are only ever written, elaborate at
 their written occurrence against the context they are written in
 (closure — free names a consuming word's telescope designates as open
@@ -679,8 +680,9 @@ values for the telescope, interprets the body in its elaboration
 environment extended with them — suspension from the quote,
 hygiene from elaboration, purity class from the body (`Fn` if pure,
 `EFn` otherwise). **`λ` is its alias**: `(λ {$x :: T} {body})` is an
-ordinary application, and in the braced spelling `()` is application
-and nothing else. Like every PascalCase name, a §16 placeholder
+ordinary application, and in term-expression syntax `()` is
+application and nothing else (telescopes and the types after `::`
+carry the §2 subgrammar). Like every PascalCase name, a §16 placeholder
 awaiting its content word — the move that makes binders nameable
 vocabulary at all.
 **For.** `lo ka se klama` → `(MakeLambda {$x :: Referents Entity}
