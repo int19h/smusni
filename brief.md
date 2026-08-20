@@ -70,8 +70,11 @@ At the repository root:
   only to serve an implementation, it is out; where a construct's shape
   could only be explained by an internal model detail, it is reshaped on
   semantic merits.
-- **The S-expression notation** (typed binders, PascalCase operators,
-  lowercase lexical predicates, `$variables`, `;` comments) is a vehicle,
+- **The S-expression notation** — `()` for function application and
+  nothing else, `{…}` quoting the core's own notation (binder telescopes
+  and bodies included, so binders are ordinary sign-consuming words),
+  PascalCase operators, lowercase lexical predicates, `$variables`,
+  `;` comments — is a vehicle,
   not the subject. It is kept because it is readable and avoids
   bikeshedding; the PascalCase operators are explicit placeholders under
   the specification's content-word program.
@@ -117,6 +120,21 @@ predications; Kuna's effect rows vs our explicit binders and force
 constructors)? What do they *fail* to cover that Lojban needs? Which of
 their formal devices would make our core smaller or crisper without
 smuggling in an implementation?
+
+## Derived artifacts (future)
+
+The documents are the definition; anything executable or machine-checked
+is a **derived artifact**, never the authority. Two lines look
+promising once the core stabilizes. A **Lean 4** mechanization: Lean's
+`Expr`-and-elaborator architecture is the same staged, typed,
+no-reification shape as the core's reflection layer, and its extensible
+syntax means elaborator macros could plausibly *interpret the core
+notation directly* — or even normalized Lojban text (normalization is
+roughly: spaces between words, no dots or commas) — making sample terms
+type-checked objects rather than prose. A **Metamath cross-check**
+against Brismu's derivations would test the pin list from the opposite
+direction. Both are future work items, started only on explicit
+decision; neither may ever become a place where the definition lives.
 
 ## Coverage
 

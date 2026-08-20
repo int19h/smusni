@@ -34,12 +34,12 @@ four contextual places and the event:
 ```lisp
 ; mi klama — Close expanded
 (Assert
-  (Bind (($to   (Referents Entity) (Context))
-         ($from (Referents Entity) (Context))
-         ($via  (Referents Entity) (Context))
-         ($by   (Referents Entity) (Context)))
-    (∃ (λ (($e (Referents Eventuality)))
-      (klama Speaker $to $from $via $by :Eventuality $e)))))
+  (Bind {$to   (Referents Entity)} (Context)
+         {$from (Referents Entity)} (Context)
+         {$via  (Referents Entity)} (Context)
+         {$by   (Referents Entity)} (Context)
+    {(∃ (λ {$e (Referents Eventuality)}
+      {(klama Speaker $to $from $via $by :Eventuality $e)}))}))
 ```
 
 Contrast: under negation the contextual places stay put — `mi na klama`
@@ -64,8 +64,8 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 ```lisp
 ; lo ka se klama — a converted relation escaping as a function
 (Mention
-  (λ (($x (Referents Entity)))
-    (Close (klama :2 $x))))
+  (λ {$x (Referents Entity)}
+    {(Close (klama :2 $x))}))
 ```
 
 ## 2. Events, tense, facets
@@ -77,26 +77,26 @@ variable already says everything one would say:
 ```lisp
 ; mi pu citka
 (Assert
-  (∃ (λ (($e (Referents Eventuality)))
-    (∧ (Close (citka Speaker :Eventuality $e))
-       (purci $e Now)))))
+  (∃ (λ {$e (Referents Eventuality)}
+    {(∧ (Close (citka Speaker :Eventuality $e))
+       (purci $e Now))})))
 ```
 
 ```lisp
 ; mi pu pu citka — a tense path: past of a past reference point
 (Assert
-  (∃ (λ (($e (Referents Eventuality)) ($m (Referents Eventuality)))
-    (∧ (Close (citka Speaker :Eventuality $e))
+  (∃ (λ {($e (Referents Eventuality)) ($m (Referents Eventuality))}
+    {(∧ (Close (citka Speaker :Eventuality $e))
        (purci $m Now)
-       (purci $e $m)))))
+       (purci $e $m))})))
 ```
 
 ```lisp
 ; mi klama ti sepi'o ti — an instrumental facet, same event
 (Assert
-  (∃ (λ (($e (Referents Eventuality)))
-    (∧ (Close (klama Speaker This :Eventuality $e))
-       (Close (pilno :2 This :3 $e))))))
+  (∃ (λ {$e (Referents Eventuality)}
+    {(∧ (Close (klama Speaker This :Eventuality $e))
+       (Close (pilno :2 This :3 $e)))})))
 ; the host event fills pilno x3 (purpose) — the tag row's licensed link
 ; per the official row: x1 uses x2 for purpose x3.
 ```
@@ -109,9 +109,9 @@ stipulated (rationale §1.13, the facet-decomposition entry).
 ```lisp
 ; mi ca'a citka — actuality as a facet
 (Assert
-  (∃ (λ (($e (Referents Eventuality)))
-    (∧ (Close (citka Speaker :Eventuality $e))
-       (fasnu $e)))))
+  (∃ (λ {$e (Referents Eventuality)}
+    {(∧ (Close (citka Speaker :Eventuality $e))
+       (fasnu $e))})))
 ```
 
 Tenseless `mi citka` is **reading-multiple** (pin P8), never a default
@@ -120,10 +120,10 @@ present. Its episodic reading carries a `Context`-anchored occasion —
 ```lisp
 ; mi citka — the episodic reading: at the contextually relevant occasion
 (Assert
-  (Bind (($occ Time (Context)))
-    (∃ (λ (($e (Referents Eventuality)))
-      (∧ (Close (citka Speaker :Eventuality $e))
-         (cabna $e $occ))))))
+  (Bind {$occ Time} (Context)
+    {(∃ (λ {$e (Referents Eventuality)}
+      {(∧ (Close (citka Speaker :Eventuality $e))
+         (cabna $e $occ))}))}))
 ```
 
 — while the habitual/gnomic reading carries no temporal conjunct at
@@ -133,9 +133,9 @@ all. Which reading was meant is resolved upstream, like any ambiguity.
 
 ```lisp
 ; lo mlatu cu blabi              [pin P1]
-(Bind (($cat (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (mlatu $x)))))
-  (Assert (Close (blabi $cat))))
+(Bind {$cat (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(mlatu $x)}))
+  {(Assert (Close (blabi $cat)))})
 ```
 
 Pinned reading: a new referent — one or more real cats, number-neutral,
@@ -145,18 +145,18 @@ quantificational force at all.
 
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
-(Bind (($cat (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (mlatu $x)))))
-  (Assert (¬ (Close (jbena $cat)))))
+(Bind {$cat (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(mlatu $x)}))
+  {(Assert (¬ (Close (jbena $cat))))})
 ```
 
 ```lisp
 ; le mlatu cu blabi              [pin P10]
-(Bind (($it (Referents Entity)
-        (Refer (λ (($x (Referents Entity)))
-          (Close (skicu Speaker $x Audience
-            (λ (($y (Referents Entity))) (mlatu $y))))))))
-  (Assert (Close (blabi $it))))
+(Bind {$it (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)}
+          {(Close (skicu Speaker $x Audience
+            (λ {$y (Referents Entity)} {(mlatu $y)})))}))
+  {(Assert (Close (blabi $it)))})
 ```
 
 Pinned reading: reference through the speaker's identifying description —
@@ -171,20 +171,20 @@ existentially.)
 
 ```lisp
 ; la .alis. klama
-(Bind (($alis (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (Named "alis" $x)))))
-  (Assert (Close (klama $alis))))
+(Bind {$alis (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(Named "alis" $x)}))
+  {(Assert (Close (klama $alis)))})
 ```
 
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: x2 = members) [P5]
-(Bind (($base (Referents Entity)
-        (MaxRefer (λ (($x Entity)) (gerku $x)))))   ; the maximal base:
+(Bind {$base (Referents Entity)}
+        (MaxRefer (λ {$x Entity} {(gerku $x)}))   ; the maximal base:
                                                     ; THE dogs, not some
-  (Bind (($sets (Referents (Set Entity))
-          (Refer (λ (($s (Referents (Set Entity))))
-            (Close (selcmi $s $base))))))
-    (Mention $sets)))
+  {(Bind {$sets (Referents (Set Entity))}
+          (Refer (λ {$s (Referents (Set Entity))}
+            {(Close (selcmi $s $base))}))
+    {(Mention $sets)})})
 ```
 
 `loi gerku` is the same shape through `gunma` at `Group`. Neither object
@@ -194,8 +194,8 @@ unwraps to its members implicitly.
 ; lo'e mlatu cu cinri            [pin P11]
 (Assert
   (Generic Typical
-    (λ (($x Entity)) (mlatu $x))
-    (λ (($x Entity)) (Close (cinri $x)))))
+    (λ {$x Entity} {(mlatu $x)})
+    (λ {$x Entity} {(Close (cinri $x))})))
 ```
 
 Pinned reading: a generic claim through a normality ordering — no
@@ -210,21 +210,21 @@ classes, which no single referent could verify (rationale §1.9).
 
 ```lisp
 ; lo mlatu poi blabi cu jbena — restrictive: inside the property
-(Bind (($cat (Referents Entity)
-        (Refer (λ (($x (Referents Entity)))
-          (∧ (mlatu $x) (blabi $x))))))
-  (Assert (Close (jbena $cat))))
+(Bind {$cat (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)}
+          {(∧ (mlatu $x) (blabi $x))}))
+  {(Assert (Close (jbena $cat)))})
 ```
 
 ```lisp
 ; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
-(Bind (($dog (Referents Entity)
-        (Refer (λ (($x (Referents Entity)))
-          (∧ (Close (skicu Speaker $x Audience            ; the le-head:
-               (λ (($y (Referents Entity))) (gerku $y)))) ; "my dog"
+(Bind {$dog (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)}
+          {(∧ (Close (skicu Speaker $x Audience            ; the le-head:
+               (λ {$y (Referents Entity)} {(gerku $y)}))) ; "my dog"
              (Close ((DropPlace skicu 3) Speaker $x       ; the voi
-               (λ (($y (Referents Entity))) (blabi $y)))))))))   ; restriction
-  (Assert (Close (jbena $dog))))
+               (λ {$y (Referents Entity)} {(blabi $y)}))))}))   ; restriction
+  {(Assert (Close (jbena $dog)))})
 ; the voi conjunct's audience place is DELETED, not omitted — a voi
 ; description has no audience role; the le-head keeps its audience.
 ; Three-way contrast: poi (veridical restriction, in the property),
@@ -234,11 +234,11 @@ classes, which no single referent could verify (rationale §1.9).
 
 ```lisp
 ; lo gerku noi blabi cu na melbi     [pin P7]
-(Bind (($dog (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (gerku $x)))))
-  (Assert
+(Bind {$dog (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(gerku $x)}))
+  {(Assert
     (Supplement $dog (Close (blabi $dog))
-      (¬ (Close (melbi $dog))))))
+      (¬ (Close (melbi $dog)))))})
 ```
 
 Pinned reading: whiteness is a projective side commitment — the negation
@@ -249,11 +249,11 @@ the description.
 
 ```lisp
 ; mi tavla le pendo goi ko'a — aliasing is shared binding
-(Bind (($friend (Referents Entity)
-        (Refer (λ (($x (Referents Entity)))
-          (Close (skicu Speaker $x Audience
-            (λ (($y (Referents Entity))) (pendo $y))))))))
-  (Assert (Close (tavla Speaker $friend))))
+(Bind {$friend (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)}
+          {(Close (skicu Speaker $x Audience
+            (λ {$y (Referents Entity)} {(pendo $y)})))}))
+  {(Assert (Close (tavla Speaker $friend)))})
 ; later ko'a occurrences consume the same binding.  [pin P16]
 ```
 
@@ -264,11 +264,11 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ```lisp
 ; ci gerku cu bajra .i ri tatpi      [spec §5.6]
-(Bind (($dogs (Referents Entity)
-        (SelectExactly 3 (λ (($x Entity)) (gerku $x)))))
-  (Do
+(Bind {$dogs (Referents Entity)}
+        (SelectExactly 3 (λ {$x Entity} {(gerku $x)}))
+  {(Do
     (Assert (Close (bajra $dogs)))
-    (Assert (Close (tatpi $dogs)))))
+    (Assert (Close (tatpi $dogs))))})
 ; the selection introduces and BINDS the witness; the anaphor is an
 ; ordinary bound occurrence — no free names, no retrieval operator.
 ; the nuclear predication is NEUTRAL (P4): each-ran comes from bajra's
@@ -284,20 +284,20 @@ reference the selection binds, and nothing else is needed
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
 ; (one content, abbreviating the two performed assertions)
 (Assert
-  (Presuppose (∃ (λ (($x Entity)) (prenu $x)))
+  (Presuppose (∃ (λ {$x Entity} {(prenu $x)}))
     (∧
       ; sentence 1's own claim — the ownership, never erased:
-      (∀ (λ (($p Entity))
-        (→ (prenu $p)
-           (∃ (λ (($d (Referents Entity)))
-             (∧ (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
-                (Close (ponse $p $d))))))))
+      (∀ (λ {$p Entity}
+        {(→ (prenu $p)
+           (∃ (λ {$d (Referents Entity)}
+             {(∧ (= (CardBasis $d (λ {$x Entity} {(gerku $x)})) 3)
+                (Close (ponse $p $d)))})))}))
       ; the anaphoric continuation at the joint locus (strong reading):
-      (∀ (λ (($p Entity) ($d (Referents Entity)))
-        (→ (∧ (prenu $p)
-              (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
+      (∀ (λ {($p Entity) ($d (Referents Entity))}
+        {(→ (∧ (prenu $p)
+              (= (CardBasis $d (λ {$x Entity} {(gerku $x)})) 3)
               (Close (ponse $p $d)))
-           (Close (tatpi $d))))))))
+           (Close (tatpi $d)))})))))
 ```
 
 Pinned reading: each person owns three dogs, and each person's dogs are
@@ -309,12 +309,12 @@ summed reading ("all the dogs together") requires explicit collection.
 ```lisp
 ; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
 (Assert
-  (Presuppose (∃ (λ (($x Entity))
-                (∧ (prenu $x)
-                   (∃ (λ (($y Entity)) (∧ (xasli $y) (Close (ponse $x $y))))))))
-    (∀ (λ (($p Entity) ($d (Referents Entity)))
-      (→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-         (Close (darxi $p $d)))))))
+  (Presuppose (∃ (λ {$x Entity}
+                {(∧ (prenu $x)
+                   (∃ (λ {$y Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
+    (∀ (λ {($p Entity) ($d (Referents Entity))}
+      {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+         (Close (darxi $p $d)))}))))
 ; $d at the plural type: the witness donkeys; the atomic-pair spelling
 ; is the distributive strengthening.
 ```
@@ -323,8 +323,8 @@ summed reading ("all the dogs together") requires explicit collection.
 ; ro gerku cu blabi — importing universal   [pin P2]
 (Assert
   (Presuppose
-    (∃ (λ (($x Entity)) (gerku $x)))
-    (∀ (λ (($x Entity)) (→ (gerku $x) (Close (blabi $x)))))))
+    (∃ (λ {$x Entity} {(gerku $x)}))
+    (∀ (λ {$x Entity} {(→ (gerku $x) (Close (blabi $x)))}))))
 ```
 
 Contrast: `naku ro gerku cu blabi` — the nonemptiness presupposition
@@ -336,8 +336,8 @@ presupposition.
 ; the answer "no" is elliptical lo no prenu cu jmaji (guskant),
 ; which lowers through the zero-count special case, never Refer:
 (Assert
-  (No (λ (($x Entity)) (prenu $x))
-      (λ (($w (Referents Entity))) (Close (jmaji $w)))))
+  (No (λ {$x Entity} {(prenu $x)})
+      (λ {$w (Referents Entity)} {(Close (jmaji $w))})))
 ; the nuclear scope is reference-typed (spec §12): "no people-witness
 ; gathers" — the collective reading a distributive quantifier could not
 ; state at all.
@@ -348,15 +348,15 @@ presupposition.
 ```lisp
 ; ci gerku ce'e re prenu cu nelci    [pin P17]
 (Assert
-  (∃ (λ (($dogs (Set Entity)) ($people (Set Entity)))
-    (∧ (= (Card $dogs) 3)
+  (∃ (λ {($dogs (Set Entity)) ($people (Set Entity))}
+    {(∧ (= (Card $dogs) 3)
        (= (Card $people) 2)
-       (∀ (λ (($d Entity))
-         (→ (∈ $d $dogs)
+       (∀ (λ {$d Entity}
+         {(→ (∈ $d $dogs)
             (∧ (gerku $d)
-               (∀ (λ (($p Entity))
-                 (→ (∈ $p $people)
-                    (∧ (prenu $p) (Close (nelci $d $p)))))))))))))
+               (∀ (λ {$p Entity}
+                 {(→ (∈ $p $people)
+                    (∧ (prenu $p) (Close (nelci $d $p))))}))))})))}))
 ```
 
 Pinned reading (CLL ch. 16 §7's own gloss): two picked witness sets,
@@ -372,23 +372,23 @@ the full product there needs explicit `ro…ro` (CLL Example 16.46).
 
 ```lisp
 ; ci jbopre cu simxu lo ka tavla — a reciprocal    [spec §12]
-(Bind (($trio (Referents Entity)
-        (SelectExactly 3 (λ (($x Entity)) (jbopre $x)))))
-  (Assert
+(Bind {$trio (Referents Entity)}
+        (SelectExactly 3 (λ {$x Entity} {(jbopre $x)}))
+  {(Assert
     (Reciprocate $trio
-      (λ (($a (Referents Entity)) ($b (Referents Entity)))
-        (Close (tavla $a $b))))))
+      (λ {($a (Referents Entity)) ($b (Referents Entity))}
+        {(Close (tavla $a $b))})))})
 ; simxu's lexicon row consumes the library's Reciprocate schema:
 ; pairwise both ways among the witness.
 ```
 
 ```lisp
 ; so'i prenu cu klama — vague quantity    [spec §6.4]
-(Bind (($n Natural
-        (Vague (AdmissibleThreshold ManyK (λ (($x Entity)) (prenu $x))))))
-  (Assert
-    (AtLeast $n (λ (($x Entity)) (prenu $x))
-                (λ (($w (Referents Entity))) (Close (klama $w))))))
+(Bind {$n Natural}
+        (Vague (AdmissibleThreshold ManyK (λ {$x Entity} {(prenu $x)})))
+  {(Assert
+    (AtLeast $n (λ {$x Entity} {(prenu $x)})
+                (λ {$w (Referents Entity)} {(Close (klama $w))})))})
 ```
 
 No exact count hides here: the term denotes the family over admissible
@@ -401,15 +401,15 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
 (Ask (Polar (Close (klama Speaker))))
 
 ; ma klama
-(Ask (OpenQ (λ (($x (Referents Entity))) (Close (klama $x)))))
+(Ask (OpenQ (λ {$x (Referents Entity)} {(Close (klama $x))})))
 
 ; ti mo — an open relation question
-(Ask (OpenQ (λ (($r (PredTerm ⟨x1:(Referents Entity)⟩)))
-  (Close ($r This)))))
+(Ask (OpenQ (λ {$r (PredTerm ⟨x1:(Referents Entity)⟩)}
+  {(Close ($r This))})))
 
 ; klama fi'a ti — a place question           [spec §4.7]
-(Ask (OpenQ (λ (($p (Label klama)))
-  (Close (At klama $p This)))))
+(Ask (OpenQ (λ {$p (Label klama)}
+  {(Close (At klama $p This))})))
 ```
 
 ```lisp
@@ -418,9 +418,9 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
   (Close
     (cusku Speaker
       (StructuredQuote
-        (Utterance (($u UtteranceToken))
-          (SpeakerOf $u Speaker)
-          (Realizes $u (Assert (Close (klama Speaker)))))))))
+        (Utterance {$u UtteranceToken}
+          {(∧ (SpeakerOf $u Speaker)
+          (Realizes $u (Assert (Close (klama Speaker)))))})))))
 ```
 
 ```lisp
@@ -430,7 +430,7 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
     (djuno Speaker
       (Reify
         (Answer
-          (OpenQ (λ (($x (Referents Entity))) (Close (klama $x))))
+          (OpenQ (λ {$x (Referents Entity)} {(Close (klama $x))}))
           ContextualAnswer)))))
 ```
 
@@ -442,25 +442,25 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; .ui do klama — pure emotion: host asserted, joy displayed
-(Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
-  (Do (Perform $a)
-      (Express (Close (Happiness Speaker $a Moderate)))))
+(Let {$a (Act Assertion)} (Assert (Close (klama Audience)))
+  {(Do (Perform $a)
+      (Express (Close (Happiness Speaker $a Moderate))))})
 
 ; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
 (Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
 ; no assertion of sleeping occurs — the host-force profile of .au.
 
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
-(Let (($a (Act Assertion) (Assert (Close (klama Audience)))))
-  (Do (Perform $a)
-      (Express (Close (Unhappiness Speaker $a Intense)))))
+(Let {$a (Act Assertion)} (Assert (Close (klama Audience)))
+  {(Do (Perform $a)
+      (Express (Close (Unhappiness Speaker $a Intense))))})
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [spec §7.6]
-(Let (($a (Act Assertion) (Assert (Close (cadzu Audience)))))
-  (Do (Perform $a)
-      (Express (Close (EvidentialBasis Speaker $a Observation)))))
+(Let {$a (Act Assertion)} (Assert (Close (cadzu Audience)))
+  {(Do (Perform $a)
+      (Express (Close (EvidentialBasis Speaker $a Observation))))})
 ; act-level display: an Express beside the bound host act; the family
 ; force clause grounds the assertion (a mode of commitment);
 ; na za'a do cadzu negates the walking, never the basis.
@@ -470,10 +470,10 @@ own lexical presupposition, never from `kau`.
   (Close
     (jinvi Speaker
       (Reify
-        (Let (($p Proposition (Reify (Close (klama Audience)))))
-          (Supplement $p
+        (Let {$p Proposition} (Reify (Close (klama Audience)))
+          {(Supplement $p
             (Close (EvidentialBasis Speaker $p Hearsay))
-            (Holds $p)))))))
+            (Holds $p))})))))
 ; content-level display: the content occurs ONCE, under a pure Reify
 ; shared by Let; Holds evaluates that same proposition object, so the
 ; anchor, the displayed basis, and the evaluated body all carry one set
@@ -486,20 +486,20 @@ own lexical presupposition, never from `kau`.
 ```lisp
 ; .i mi klama .i ku'i do stali — a discourse relation
 (Do
-  (Let (($a1 (Act Assertion) (Assert (Close (klama Speaker)))))
-    (Do (Perform $a1)
-        (Let (($a2 (Act Assertion) (Assert (Close (stali Audience)))))
-          (Do (Perform $a2)
-              (Express (Close (Contrast Speaker $a2 $a1))))))))
+  (Let {$a1 (Act Assertion)} (Assert (Close (klama Speaker)))
+    {(Do (Perform $a1)
+        (Let {$a2 (Act Assertion)} (Assert (Close (stali Audience)))
+          {(Do (Perform $a2)
+              (Express (Close (Contrast Speaker $a2 $a1))))}))}))
 ```
 
 ```lisp
 ; na'i — metalinguistic objection             [spec §7.3]
-(Let (($prior (Act Assertion) …))          ; the objected act, bound
+(Let {$prior (Act Assertion)} …          ; the objected act, bound
                                            ; earlier in the discourse
-  (Bind (($defect DefectKind (Context)))
-    (Express
-      (Close (MetalinguisticallyDefective $prior $defect)))))
+  {(Bind {$defect DefectKind} (Context)
+    {(Express
+      (Close (MetalinguisticallyDefective $prior $defect)))})})
 ; the defect dimension is contextually recovered; nothing is negated
 ; and the objected content is not performed.
 ```
@@ -510,10 +510,10 @@ own lexical presupposition, never from `kau`.
 ; sutra klama — the tanru link is Vague       [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
-; ≗ (Bind (($link (PredTerm ρ(klama))
-;           (Vague (λ (($r (PredTerm ρ(klama))))
-;                    (TanruAdmissible sutra klama $r)))))
-;     … (∧ (klama …) ($link …)))
+; ≗ (Bind {$link (PredTerm ρ(klama))}
+;         (Vague (λ {$r (PredTerm ρ(klama))}
+;                  {(TanruAdmissible sutra klama $r)}))
+;     {… (∧ (klama …) ($link …))})
 ```
 
 ```lisp
@@ -528,14 +528,14 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; mi djica tu'a lo cukta                      [pin P14]
-(Bind (($book (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (cukta $x)))))
-  (Bind (($a (Referents Eventuality)          ; sort from djica's x2
-          (Vague (λ (($v (Referents Eventuality)))
-            (∧ (∃ (λ (($c Content))
-                 (CoRef $v (EventOfContent $c)))) ; shape: an abstraction
-               (Close (srana $v $book)))))))      ; ... about the book
-    (Assert (Close (djica Speaker $a)))))
+(Bind {$book (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(cukta $x)}))
+  {(Bind {$a (Referents Eventuality)}          ; sort from djica's x2
+          (Vague (λ {$v (Referents Eventuality)}
+            {(∧ (∃ (λ {$c Content}
+                 {(CoRef $v (EventOfContent $c))})) ; shape: an abstraction
+               (Close (srana $v $book)))}))      ; ... about the book
+    {(Assert (Close (djica Speaker $a)))})})
 ```
 
 Pinned reading: some eventuality-sorted abstraction — its content
@@ -545,24 +545,24 @@ would admit nearly anything.
 
 ```lisp
 ; ta barda — gradable predication: Context scale, Vague cutoff  [spec §6.4]
-(Bind (($s Scale (Context))                    ; which size-scale: recoverable
-       ($reg (Region Scale)
-         (Vague (λ (($r (Region Scale))) (AdmissibleCutoff $s $r)))))
-  (Assert (Close ((Grade barda $s $reg) That))))
+(Bind {$s Scale} (Context)                    ; which size-scale: recoverable
+       {$reg (Region Scale)}
+         (Vague (λ {$r (Region Scale)} {(AdmissibleCutoff $s $r)}))
+  {(Assert (Close ((Grade barda $s $reg) That)))})
 
 ; du'e gerku cu klama — Vague threshold, Context purpose  [spec §6.4]
-(Bind (($purpose (Referents Entity) (Context))  ; too many FOR WHAT: recoverable
-       ($n Natural
+(Bind {$purpose (Referents Entity)} (Context)  ; too many FOR WHAT: recoverable
+       {$n Natural}
          (Vague (AdmissibleThreshold TooManyK
-                  (λ (($x Entity)) (gerku $x)) $purpose))))
-  (Assert
-    (MoreThan $n (λ (($x Entity)) (gerku $x))
-                 (λ (($w (Referents Entity))) (Close (klama $w))))))
+                  (λ {$x Entity} {(gerku $x)}) $purpose))
+  {(Assert
+    (MoreThan $n (λ {$x Entity} {(gerku $x)})
+                 (λ {$w (Referents Entity)} {(Close (klama $w))})))})
 
 ; mi co'e do — elliptical selbri: Context, not Vague   [spec §6.1]
-(Bind (($r (PredTerm ⟨x1:(Referents Entity), x2:(Referents Entity)⟩)
-        (Context)))
-  (Assert (Close ($r Speaker Audience))))
+(Bind {$r (PredTerm ⟨x1:(Referents Entity), x2:(Referents Entity)⟩)}
+        (Context)
+  {(Assert (Close ($r Speaker Audience)))})
 ```
 
 The recovery test draws this line: `co'e` expects the hearer to recover
@@ -572,46 +572,46 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 
 ```lisp
 ; lo du'u mi klama cu se djuno do
-(Bind (($p (Referents Proposition)
-        (Refer (λ (($q (Referents Proposition)))
-          (CoRef $q (Reify (Close (klama Speaker))))))))
-  (Assert (Close (djuno Audience $p))))
+(Bind {$p (Referents Proposition)}
+        (Refer (λ {$q (Referents Proposition)}
+          {(CoRef $q (Reify (Close (klama Speaker))))}))
+  {(Assert (Close (djuno Audience $p)))})
 ; CoRef (library) is plural co-reference — mutual Among — since typed =
 ; stays first-order; Reify is pure and lifts to a singleton reference.
 
 ; lo se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
-(Let (($p Proposition (Reify (Close (klama Speaker)))))
-  (Bind (($s (Referents (Sign Sentence))
-          (Refer (λ (($x (Referents (Sign Sentence))))
-            ((DuhuRel (Close (klama Speaker))) $p :2 $x)))))
-    (Mention $s)))
+(Let {$p Proposition} (Reify (Close (klama Speaker)))
+  {(Bind {$s (Referents (Sign Sentence))}
+          (Refer (λ {$x (Referents (Sign Sentence))}
+            {((DuhuRel (Close (klama Speaker))) $p :2 $x)}))
+    {(Mention $s)})})
 ; x1 is filled with the reified content itself — the relation
 ; identifies it, so leaving x1 to contextual closure would add a
 ; retrieval the Lojban does not contain.
 
 ; lo ni mi klama — an abstraction relation, reference outside  [spec §9.2]
-(Bind (($a (Referents Amount)
-        (Refer (λ (($x (Referents Amount)))
-          (Close ((NiRel (Close (klama Speaker))) $x))))))
-  (Mention $a))
+(Bind {$a (Referents Amount)}
+        (Refer (λ {$x (Referents Amount)}
+          {(Close ((NiRel (Close (klama Speaker))) $x))}))
+  {(Mention $a)})
 ; the omitted scale x2 closed contextually — the same rule as any
 ; omitted place; le ni …, quantified ni, relative clauses on
 ; abstractions: all inherited from ordinary reference.
 
 ; lo su'u mi klama kei be lo fasnu — explicit categorizer (CLL 11.9)
-(Bind (($kind (Referents Eventuality)
-        (Refer (λ (($k (Referents Eventuality))) (fasnu $k)))))
-  (Bind (($a (Referents AbstractNature)
-          (Refer (λ (($x (Referents AbstractNature)))
-            (Close ((SuhuRel (Close (klama Speaker))) $x $kind))))))
-    (Mention $a)))
+(Bind {$kind (Referents Eventuality)}
+        (Refer (λ {$k (Referents Eventuality)} {(fasnu $k)}))
+  {(Bind {$a (Referents AbstractNature)}
+          (Refer (λ {$x (Referents AbstractNature)}
+            {(Close ((SuhuRel (Close (klama Speaker))) $x $kind))}))
+    {(Mention $a)})})
 
 ; lo nu mi pu klama — event abstraction: Refer at the event sort
-(Bind (($ev (Referents Eventuality)
-        (Refer (λ (($e (Referents Eventuality)))
-          (∧ (Close (klama Speaker :Eventuality $e))
-             (purci $e Now))))))
-  (Mention $ev))
+(Bind {$ev (Referents Eventuality)}
+        (Refer (λ {$e (Referents Eventuality)}
+          {(∧ (Close (klama Speaker :Eventuality $e))
+             (purci $e Now))}))
+  {(Mention $ev)})
 ```
 
 ## 10. Signs and mention
@@ -619,8 +619,8 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ```lisp
 ; lu mi klama li'u
 (Mention (StructuredQuote
-  (Utterance (($u UtteranceToken))
-    (Realizes $u (Assert (Close (klama Speaker)))))))
+  (Utterance {$u UtteranceToken}
+    {(Realizes $u (Assert (Close (klama Speaker))))})))
 
 ; lo'u mi klama le'u — text, uninterpreted
 (Mention (OpaqueQuote "mi klama"))
@@ -632,37 +632,37 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 (Mention
   (InterpretContent
     (StructuredQuote
-      (Utterance (($u UtteranceToken))
-        (Realizes $u (Assert (Close (klama Speaker))))))))
+      (Utterance {$u UtteranceToken}
+        {(Realizes $u (Assert (Close (klama Speaker))))}))))
 ; defined because the realized act is an assertion: InterpretContent is
 ; the content projection on assertion-realizing entries (spec §7.5).
 
 ; li re te'a ci du li bi — MEX with te'a (library)
 (Assert (= (te'a 2 3) 8))
 ; contrast: me'o re te'a ci mentions the EXPRESSION sign, not 8:
-; (Mention (Sign (($s (SignToken MathExpression))) (TextOf $s "re te'a ci")))
+; (Mention (Sign {$s (SignToken MathExpression)} {(TextOf $s "re te'a ci")}))
 
 ; li pa vu'u mo'e lo ni mi klama — the numeric crossing (CLL 11.5)
-(Bind (($scale (Referents Scale) (Context)))      ; ONE scale, hoisted:
-  (Bind (($amt (Referents Amount)                 ; it fills NiRel's x2
-          (Refer (λ (($a (Referents Amount)))     ; AND reads the value
-            ((NiRel (Close (klama Speaker))) $a $scale)))))
-    (Mention (− 1 (AmountValue $amt $scale)))))
+(Bind {$scale (Referents Scale)} (Context)      ; ONE scale, hoisted:
+  {(Bind {$amt (Referents Amount)}                 ; it fills NiRel's x2
+          (Refer (λ {$a (Referents Amount)}     ; AND reads the value
+            {((NiRel (Close (klama Speaker))) $a $scale)}))
+    {(Mention (− 1 (AmountValue $amt $scale)))})})
 ; mo'e = AmountValue: the amount's numeric value on the SAME scale that
 ; defined it (distinct Context sites would allow a mismatch — pin P15).
 
 ; lo jei mi klama — fuzzy truth degree (CLL 11.6)
-(Bind (($ep (Referents Epistemology) (Context)))
-  (Bind (($tv (Referents TruthValue)
-          (Refer (λ (($v (Referents TruthValue)))
-            ((JeiRel (Close (klama Speaker))) $v $ep)))))
-    (Mention (TruthValueDegree $tv))))   ; a Number in [0,1]
+(Bind {$ep (Referents Epistemology)} (Context)
+  {(Bind {$tv (Referents TruthValue)}
+          (Refer (λ {$v (Referents TruthValue)}
+            {((JeiRel (Close (klama Speaker))) $v $ep)}))
+    {(Mention (TruthValueDegree $tv))})})   ; a Number in [0,1]
 
 ; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
-(Bind (($bob (Referents Entity)
-        (Refer (λ (($x (Referents Entity))) (Named "bab" $x)))))
-  (Do (Assert (Close (klama $bob)))
-      (Assert (Close (prami $bob)))))
+(Bind {$bob (Referents Entity)}
+        (Refer (λ {$x (Referents Entity)} {(Named "bab" $x)}))
+  {(Do (Assert (Close (klama $bob)))
+      (Assert (Close (prami $bob))))})
 ; the letteral by. is a binding KEY resolved at the mapping layer;
 ; both occurrences consume the one binding.
 ```
@@ -672,29 +672,29 @@ The recovery test draws this line: `co'e` expects the hearer to recover
 ```lisp
 ; lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
 ; (episodic readings: each sentence's occasion is Context-anchored, P8)
-(Bind (($dogs (Referents Entity)
-        (Refer (λ (($r (Referents Entity)))
-          (∧ (gerku $r)
-             (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3))))))
-  (Do
-    (Bind (($occ1 Time (Context)))       ; the biting's occasion — bound
-      (Let (($a1 (Act Assertion)         ; OUTSIDE the negation, so na
-              (Assert                    ; denies biting AT that occasion
-                (Supplement $dogs (Close (blabi $dogs))
-                  (¬ (Exactly 2 (λ (($x Entity)) (prenu $x))
-                       (λ (($ppl (Referents Entity)))
-                         (∃ (λ (($e (Referents Eventuality)))
-                           (∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1)))))))))))
-        (Perform $a1)))
-    (Bind (($occ2 Time (Context)))
-      (Let (($a2 (Act Assertion)
-              (Assert
-                (∃ (λ (($e (Referents Eventuality)))
-                  (∧ (Close (tatpi $dogs :Eventuality $e))
-                     (cabna $e $occ2)))))))
-        (Do (Perform $a2)
-            (Express (Close (Unhappiness Speaker $a2 Intense))))))))
+(Bind {$dogs (Referents Entity)}
+      (Refer (λ {$r (Referents Entity)}
+        {(∧ (gerku $r)
+            (= (CardBasis $r (λ {$x Entity} {(gerku $x)})) 3))}))
+  {(Do
+    (Bind {$occ1 Time} (Context)          ; the biting's occasion — bound
+      {(Let {$a1 (Act Assertion)}         ; OUTSIDE the negation, so na
+            (Assert                       ; denies biting AT that occasion
+              (Supplement $dogs (Close (blabi $dogs))
+                (¬ (Exactly 2 (λ {$x Entity} {(prenu $x)})
+                     (λ {$ppl (Referents Entity)}
+                       {(∃ (λ {$e (Referents Eventuality)}
+                          {(∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1))}))})))))
+        {(Perform $a1)})})
+    (Bind {$occ2 Time} (Context)
+      {(Let {$a2 (Act Assertion)}
+            (Assert
+              (∃ (λ {$e (Referents Eventuality)}
+                {(∧ (Close (tatpi $dogs :Eventuality $e))
+                    (cabna $e $occ2))})))
+        {(Do (Perform $a2)
+             (Express (Close (Unhappiness Speaker $a2 Intense))))})}))})
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
@@ -716,21 +716,21 @@ conjuncts entirely, are the other members of P8's reading family.
 
 ## 12. Reflection
 
-The braced spelling (spec §7.7): quotes of core notation, with binders
-as ordinary words applied to them. Each pair below is two spellings of
-one term (the reflection law).
+Quotes of core notation, with binders as ordinary words applied to
+them (spec §7.7) — the notation every specimen in this book uses,
+shown here with its reflection made explicit.
 
 ```lisp
-; lo ka se klama — a property, in both spellings
-(λ (($x (Referents Entity))) (Close (klama :2 $x)))       ; legacy
-(MakeLambda {$x (Referents Entity)}                        ; braced —
-  {(Close (klama :2 $x))})                                 ; λ ≡ MakeLambda
+; lo ka se klama — λ IS MakeLambda: one word, two names
+(λ {$x (Referents Entity)} {(Close (klama :2 $x))})
+(MakeLambda {$x (Referents Entity)}
+  {(Close (klama :2 $x))})
 ```
 
 ```lisp
-; lo mlatu cu blabi .i ri jbena — cross-sentence reference, braced Bind
+; lo mlatu cu blabi .i ri jbena — cross-sentence reference
 (Bind {$cat (Referents Entity)}
-      (Refer (λ (($x (Referents Entity))) (mlatu $x)))     ; active operand:
+      (Refer (λ {$x (Referents Entity)} {(mlatu $x)}))     ; active operand:
   {(Do (Assert (Close (blabi $cat)))                       ; a computation,
        (Assert (Close (jbena $cat))))})                    ; consumed as a
                                                            ; value; body inert
@@ -740,7 +740,7 @@ one term (the reflection law).
 ; the reflective application word — for talking about application itself
 (MakeApply {(MakeLambda {$x (Referents Entity)} {(mlatu $x)})}
            {This})
-; ≡ ((λ (($x (Referents Entity))) (mlatu $x)) This) — each quoted
+; ≡ ((λ {$x (Referents Entity)} {(mlatu $x)}) This) — each quoted
 ; operand interpreted exactly once (spec §7.7)
 ```
 

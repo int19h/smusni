@@ -89,9 +89,9 @@ whose content the hearer is expected to recover from the situation:
 
 ```
 (Assert
-  (Bind (($destination (Referents Entity) (Context)))
-    (∃ (λ (($e (Referents Eventuality)))
-      (klama Speaker $destination … :Eventuality $e)))))
+  (Bind {$destination (Referents Entity)} (Context)
+    {(∃ (λ {$e (Referents Eventuality)}
+      {(klama Speaker $destination … :Eventuality $e)}))}))
 ```
 
 (Only the destination slot is shown — the origin, route, and means each
@@ -126,9 +126,9 @@ going by me, and that going is earlier than now:
 ```
 ; mi pu klama
 (Assert
-  (∃ (λ (($e (Referents Eventuality)))
-    (∧ (klama Speaker :Eventuality $e)
-       (purci $e Now)))))
+  (∃ (λ {$e (Referents Eventuality)}
+    {(∧ (klama Speaker :Eventuality $e)
+       (purci $e Now))})))
 ```
 
 That's the whole theory of tense. `pu` is not a verb inflection; it is a
@@ -156,8 +156,8 @@ core adopts wholesale —
 
 ```
 ; lo ci gerku
-(Refer (λ (($r (Referents Entity)))
-  (∧ (gerku $r) …exactly-three-units…)))
+(Refer (λ {$r (Referents Entity)}
+  {(∧ (gerku $r) …exactly-three-units…)}))
 ```
 
 `lo P` does one thing: it **introduces a referent** — one-or-more things
@@ -229,9 +229,9 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ (λ (($p Entity) ($d (Referents Entity)))
-  (→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
-     (darxi $p $d))))
+(∀ (λ {($p Entity) ($d (Referents Entity))}
+  {(→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
+     (darxi $p $d))}))
 ```
 
 (The donkey variable is a *plural* one — if someone owns several donkeys,
@@ -300,7 +300,7 @@ witness export).
 
 ```
 (Ask (Polar (Close (klama Speaker))))                          ; xu mi klama
-(Ask (OpenQ (λ (($x (Referents Entity))) (Close (klama $x))))) ; ma klama
+(Ask (OpenQ (λ {$x (Referents Entity)} {(Close (klama $x))}))) ; ma klama
 (Command Audience (Close (klama Audience)))                    ; ko klama
 (Express …)                            ; .ui and friends — chapter 7
 (Vocative Audience)                    ; doi (addressing the listener)
@@ -330,9 +330,9 @@ a degree on an intensity scale — displayed alongside its host:
 
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
-(Let (($a (Act Assertion) (Assert (Close (tatpi $dogs)))))
-  (Do (Perform $a)
-      (Express (Close (Unhappiness Speaker $a Intense)))))
+(Let {$a (Act Assertion)} (Assert (Close (tatpi $dogs)))
+  {(Do (Perform $a)
+      (Express (Close (Unhappiness Speaker $a Intense))))})
 ```
 
 (`Unhappiness` is capitalized because it is one of the spec's
@@ -458,7 +458,9 @@ Lojban without paradox.
 > and parentheses only ever mean "apply". One rule keeps this safe:
 > braces are only ever *written* — nothing running can be turned back
 > into its own code. This is advanced, optional machinery (spec §7.7);
-> its payoff is that every operator becomes an ordinary word — which
+> its payoff is that the binder words become ordinary vocabulary —
+> functions with places, like any other word, though a small bootstrap
+> floor (quoting and interpreting themselves) always remains — which
 > is how, one day, Lojban gets to describe Lojban's own semantics in
 > Lojban.
 
@@ -490,29 +492,29 @@ its episodic readings (each sentence's occasion contextually anchored,
 the way chapter 2 anchored the stove):
 
 ```lisp
-(Bind (($dogs (Referents Entity)                       ; chapter 3: lo introduces…
-        (Refer (λ (($r (Referents Entity)))
-          (∧ (gerku $r)
-             (= (CardBasis $r (λ (($x Entity)) (gerku $x))) 3)))))) ; …three dogs
-  (Do
-    (Bind (($occ1 Time (Context)))                     ; chapter 2: the occasion —
-      (Let (($a1 (Act Assertion)                       ; outside the negation
-              (Assert
-                (Supplement $dogs (Close (blabi $dogs)) ; the noi aside, outside the ¬
-                  (¬ (Exactly 2 (λ (($x Entity)) (prenu $x)) ; chapter 5: a two-person
-                       (λ (($ppl (Referents Entity)))        ; witness
-                         (∃ (λ (($e (Referents Eventuality)))
-                           (∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1)))))))))) ; bitten AT that occasion
-        (Perform $a1)))                                ; chapter 6: …and say it
-    (Bind (($occ2 Time (Context)))
-      (Let (($a2 (Act Assertion)
-              (Assert
-                (∃ (λ (($e (Referents Eventuality)))   ; chapter 4: ri = $dogs
-                  (∧ (Close (tatpi $dogs :Eventuality $e))
-                     (cabna $e $occ2)))))))
-        (Do (Perform $a2)
-            (Express (Close (Unhappiness Speaker $a2 Intense)))))))) ; chapter 7
+(Bind {$dogs (Referents Entity)}                       ; chapter 3: lo introduces…
+      (Refer (λ {$r (Referents Entity)}
+        {(∧ (gerku $r)
+            (= (CardBasis $r (λ {$x Entity} {(gerku $x)})) 3))})) ; …three dogs
+  {(Do
+    (Bind {$occ1 Time} (Context)                       ; chapter 2: the occasion —
+      {(Let {$a1 (Act Assertion)}                      ; outside the negation
+            (Assert
+              (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
+                (¬ (Exactly 2 (λ {$x Entity} {(prenu $x)}) ; chapter 5: a two-person
+                     (λ {$ppl (Referents Entity)}          ; witness
+                       {(∃ (λ {$e (Referents Eventuality)}
+                          {(∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1))}))})))))
+        {(Perform $a1)})})                             ; chapter 6: …and say it
+    (Bind {$occ2 Time} (Context)
+      {(Let {$a2 (Act Assertion)}
+            (Assert
+              (∃ (λ {$e (Referents Eventuality)}       ; chapter 4: ri = $dogs
+                {(∧ (Close (tatpi $dogs :Eventuality $e))
+                    (cabna $e $occ2))})))
+        {(Do (Perform $a2)
+             (Express (Close (Unhappiness Speaker $a2 Intense))))})}))}) ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.

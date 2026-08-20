@@ -187,7 +187,7 @@ the nonempty, atomistic, member-wise fragment the two designs are
 intertranslatable — the honest answer is an equivalence-plus-choice,
 argued in full in §2.8. The short form: sets used the way a set-typed
 lexicon actually uses them (nonempty, predication reading the members,
-never the set-object) are a plurality wearing `{}` clothing, and the
+never the set-object) are a plurality wearing set-notation clothing, and the
 clothing costs more than it carries — the plural axioms return as
 side conditions, the member-wise/object-wise distinction moves from
 the type system into per-place convention, and coverage is lost where
@@ -312,7 +312,7 @@ None found; the decomposition is pure simplification.
 binder — the seam between the pure λ-fragment and the dynamics.
 **Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
 *once*, with its witness reused across two performed acts —
-`(Bind (($cat (Referents Entity) (Refer P))) (Do a₁ a₂))`. **Why not
+`(Bind {$cat (Referents Entity)} (Refer P) {(Do a₁ a₂)})`. **Why not
 ordinary λ-application?** In the calculus as typed, application simply
 *cannot* consume a computation where a value is demanded — `Bind` is
 `RefComp`'s eliminator, and that type mismatch is the primary
@@ -547,7 +547,8 @@ places reading the *members*, never the set-object; extensional
 identity, with discourse-introduction identity carried separately;
 representation sets kept distinct from first-order set objects — the
 two designs are intertranslatable. `Combine` is union, `Among` is
-subset, the singleton lift is `x ↦ {x}`, and
+subset, the singleton lift sends each individual to the set
+containing exactly it, and
 `Referents<T>/CoRef ≅ NonEmptySet<T>` is a theorem. Inside D nothing
 expressible distinguishes the designs; "the crowd is large while the
 set is abstract" is no objection there, because under D largeness is
@@ -660,7 +661,7 @@ words as predicates — stalled at the binder operators: a binder is not
 a relation over individuals, so no gismu row could be its fit. Making
 each binder a *function on quoted expressions* dissolves the obstacle:
 a sign-consuming function has an ordinary place structure (its x2 a
-`{}`-sign, like `tanru`'s official text-typed operands), and so has a
+quoted-notation sign, like `tanru`'s official text-typed operands), and so has a
 content-word fate like everything else. The same move grounds the
 self-description goal: because the vocabulary is stage-schematic, one
 Lojban text can state the semantics of the stage below it — the
@@ -670,9 +671,12 @@ the model-given lexical basis that no language escapes.
 
 **Why explicit quotes and not fexprs.** The lazy road to "operators on
 unevaluated operands" is the fexpr: every word receives its operands'
-syntax. Wand's theorem is why that road is closed — with unrestricted
-access to operand syntax, observational equivalence collapses to
-syntactic identity and the language has *no* equational theory. The
+syntax. Wand's result is why that road is closed: in his fexpr
+calculus, contextual equivalence collapses to α-congruence — no two
+distinct programs are interchangeable, so the theory of terms is
+trivial. The design inference (motivating, not identical to, the
+theorem): grant unrestricted access to operand syntax and the
+equational theory is forfeit. The
 core takes the disciplined road instead: the transition to syntax is
 always visible (braces in the source are the only place code enters),
 active operands are consumed as values only, `Expression` values are
@@ -689,22 +693,24 @@ variables, values flowing in at use.
 **Why one primitive sign-function.** The kernel was already
 applicative — quantifiers, connectives, the triad, the force
 constructors all consume *values* — so the only place surface syntax
-genuinely binds text is λ itself. `MakeBind` is `Bind` composed with
+genuinely binds text is λ itself. `MakeBind` is the carrier's
+sequencing operation `bind` composed with
 `MakeLambda`; `MakeLet` is application composed with it; the facades
 for everything else are one generic schema, materialized on demand.
 The alternative — a `Make*` twin for every operator — would recreate
 the duplication the catalog audit just removed, with no semantic
 witness for any pair.
 
-**Why the legacy binder notation survives.** The braced spelling makes
-inert positions visible and reduces the grammar to three formers; the
-legacy spelling reads better in worked specimens whose topic is
-semantics, not staging. The reflection law makes them two spellings of
-one term — the same doctrine §2 has always held for notation — so the
-document set keeps the legacy spelling in ordinary specimens and the
-braced spelling where reflection is the topic, and a future mechanical
-migration remains available if the community prefers the braces once
-the semantics is frozen.
+**Why one spelling.** The braced spelling makes inert positions
+visible at a glance and reduces the grammar to exactly three formers —
+atoms, braces, application. An earlier draft kept the parenthesized
+binder lists beside it as a second spelling; that dual was dropped: a
+definition gains more from one canonical notation than from continuity
+with its own first fortnight, and the familiar binder names survive as
+the aliases (`λ`, `Let`, `Bind`), so nothing readable was lost. The
+braces themselves carry teaching weight — the primer's hardest points
+(inertness, constructing-without-performing, held-back scope) are now
+visible in the notation itself.
 
 ## 3. Pin arguments
 

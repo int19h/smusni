@@ -194,7 +194,7 @@ Core terms are written as S-expressions:
   ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators (`⊤` is
   the trivially true content — the empty conjunction, `∧`'s unit).
 - `$name` — variables, always introduced by a binder with an explicit
-  type: `(λ (($x Entity)) …)`, `(Let (($p T v)) …)`.
+  type: `(λ {$x Entity} {…})`, `(Let {$p T} v {…})`.
 - `:label value` — a labelled place fill inside a predication (§4.2);
   `:2` names the second lexical place, `:Eventuality` the event place.
 - `; text` — comments, to end of line; consumed as whitespace. By
@@ -207,16 +207,14 @@ Core terms are written as S-expressions:
   pair). Braces are reserved for these quotes; set-builder and
   record displays are metalanguage and use words or `⟨…⟩`. Parentheses
   *inside* braces are mentioned syntax, not application.
-- In the braced spelling, the binder names are **aliases** of the
-  reflection words (§7.7): `(λ {$x T} {body})` ≡
-  `(MakeLambda {$x T} {body})`, and likewise `Let`/`Bind` per their
-  definitions — so in that spelling `()` is function application and
-  nothing else. The legacy binder notation elaborates to it:
-  `(λ (($x T)) body) ↦ (λ {$x T} {body})`,
-  `(Let (($x T v)) body) ↦ (Let {$x T} v {body})`,
-  `(Bind (($x T c)) body) ↦ (Bind {$x T} c {body})` — two spellings of
-  one term; this document set keeps the legacy spelling in ordinary
-  specimens and uses the braced spelling where reflection is the topic.
+- The binder names are **aliases** of the reflection words (§7.7):
+  `λ` *is* `MakeLambda`, and `(λ {$x T} {body})` is an ordinary
+  application — `Let` and `Bind` likewise per their definitions — so
+  `()` is function application and **nothing else**. A binder form is
+  always a word applied to a telescope quote, its active operands, and
+  a body quote: `(λ {$x T} {body})`; `(Let {$x T} v {body})`;
+  `(Bind {$x T} c {body})`, variadic by alternation
+  (`(Bind {$x T} c₁ {$y S} c₂ … {body})`, §5.2).
 
 Notation conventions — elision of inferable types, the writing of `Close`
 (§4.6), currying conventions, pretty-printing — are non-semantic: two
@@ -339,8 +337,8 @@ and appear freely in variable annotations, λ parameter lists, and
 ```text
 Content            evaluable (dynamic) propositional content
 RefComp<T>         reference/contextual computations returning T
-Act<F>             speech acts of force F ∈ {Assertion, Question,
-                   Directive, Expressive, Address}
+Act<F>             speech acts of force F ∈ ⟨Assertion, Question,
+                   Directive, Expressive, Address⟩
 Discourse          performed discourse (sequences of acts and transitions)
 Query<A>           questions with answer domain A
 ```
@@ -406,7 +404,8 @@ term the mapping produces, while never changing what any one term
 means. And `At` itself is no
 new primitive: with `PredTerm` a transparent alias (§3.3), the literal
 fill is partial application of the row function —
-`(At R ℓ v) ≝ (λ ((rest (Record ρ−ℓ))) (R rest∪{ℓ=v}))` — so the
+`(At R ℓ v) ≝ (λ {$rest (Record ρ−ℓ)} {(R ⟨$rest extended with
+ℓ = v⟩)})` — so the
 whole fill apparatus bottoms out in λ and labelled records.
 
 ### 4.2 Place conversion
@@ -418,8 +417,8 @@ places. A converted relation escaping into a function position is the
 
 ```lisp
 ; se tavla, as a first-class binary relation
-(λ (($new-x1 (Referents Entity)) ($new-x2 (Referents Entity)))
-  (tavla $new-x2 $new-x1))
+(λ {($new-x1 (Referents Entity)) ($new-x2 (Referents Entity))}
+  {(tavla $new-x2 $new-x1)})
 ```
 
 No `Se` operator exists in the core.
@@ -434,8 +433,8 @@ express. A lexical entry states which deletions are meaningful (§10).
 
 ### 4.4 Functions and binding
 
-`(λ (($x T) …) body)` forms functions; application is juxtaposition.
-`(Let (($x T v)) body)` is inert sharing — definable as immediate
+`(λ {($x T) …} {body})` forms functions; application is juxtaposition.
+`(Let {$x T} v {body})` is inert sharing — definable as immediate
 application, retained for legibility and for expressing identity of one
 value used twice (`goi` aliasing). `Let` bodies may not smuggle effects
 into shared positions: an effectful computation is shared by `Bind`
@@ -448,7 +447,7 @@ The logical operators are `¬ ∧ ∨ → ↔ ⊕` over `Content` and the
 quantifiers `∀ ∃` over typed λ-bodies, with (multi-parameter) joint loci:
 
 ```lisp
-(∀ (λ (($x Entity) ($y Entity)) …))
+(∀ (λ {($x Entity) ($y Entity)} {…}))
 ```
 
 Statically they have classical truth conditions. Dynamically each carries
@@ -458,7 +457,9 @@ and duplication re-runs dynamic effects. Multi-parameter loci are the
 normal form of donkey configurations (§5.6) and simultaneous termsets
 (ruling P17).
 
-Equality `=` is primitive at every first-order sort and at the
+Equality `=` is primitive at every first-order sort **except the
+constructive-only syntax kinds** (`Expression`/`Telescope` signs —
+no code equality, §7.7's discipline) and at the
 discrete index types (`Bool`, place labels, the closed enumerations);
 it is never available at the plural reference type, where `CoRef`
 (mutual `Among`) is the equivalence. `du` maps to `=` between
@@ -475,9 +476,9 @@ an event place:
 
 ```lisp
 (Close P)  ≝
-(Bind (($v1 T1 (Context)) … ($vk Tk (Context)))
-  (∃ (λ (($e (Referents Eventuality)))
-    (P :p1 $v1 … :pk $vk :Eventuality $e))))
+(Bind {$v1 T1} (Context) … {$vk Tk} (Context)
+  {(∃ (λ {$e (Referents Eventuality)}
+    {(P :p1 $v1 … :pk $vk :Eventuality $e)}))})
 ```
 
 Each omitted place is a *distinct* contextual computation (ruling P15),
@@ -597,9 +598,9 @@ predicates running of it —
 
 ```lisp
 ; ci gerku cu bajra — the default (witness-set) reading
-(Bind (($w (Referents Entity)
-        (SelectExactly 3 (λ (($x Entity)) (gerku $x)))))
-  (Close (bajra $w)))
+(Bind {$w (Referents Entity)}
+        (SelectExactly 3 (λ {$x Entity} {(gerku $x)}))
+  {(Close (bajra $w))})
 ```
 
 — the shape the library's `Exactly n` (§12) realizes. Two things about
@@ -617,7 +618,7 @@ exactly three, and no others" —
 
 ```lisp
 ; the marked global strengthening (not the bare-PA default)
-(= (Card (SetOf (λ (($x Entity)) (∧ (gerku $x) (bajra $x))))) 3)
+(= (Card (SetOf (λ {$x Entity} {(∧ (gerku $x) (bajra $x))}))) 3)
 ```
 
 is a distinct, stronger meaning, named `GlobalExactly` in the library and
@@ -645,7 +646,9 @@ Comp<A>    =  InformationState → P( InformationState × A × Obligations )
 Content    =  Comp<Unit>          RefComp<T> = Comp<T>
 Act<F>, Discourse : Comp<Unit> at the performance level (their effect
                     vocabulary adds commitment/performance operations)
-Bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (uniform; §5.2)
+bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (the carrier's
+              sequencing operation — the surface `Bind` word, §5.2/§7.7,
+              is its telescope-spelled face)
 ```
 
 where `Obligations` collects the pending projective commitments
@@ -657,7 +660,7 @@ and the §7.2 transitions consult. A computation, run on a
 state, yields the possible output states (nondeterminism carries plural
 and witness selection — success of *some* branch is success), each with
 a returned value and its obligations; lexical truth at a world filters
-states; assignment extension is referent introduction; `Bind` sequences,
+states; assignment extension is referent introduction; `bind` sequences,
 threading state and unioning obligations. `Vague` parameters are **not**
 this nondeterminism: a term with `Vague` parameters denotes the *family*
 of computations indexed by admissible precisification profiles (§6.5,
@@ -710,13 +713,16 @@ world* (hypothetical mood) would be a sibling index-shift operator —
 
 ### 5.2 Effectful binding
 
-`(Bind (($x T comp)) body)` runs the computation `comp : RefComp<T>` and
-binds its result for `body`, sequencing effects left to right. `Bind` is
+`(Bind {$x T} comp {body})` runs the computation `comp : RefComp<T>` and
+binds its result for `body`, sequencing effects left to right. (As a
+word, `Bind` is the alias of `MakeBind`, §7.7, which expands to the
+carrier operation `bind` of §5.1 over `MakeLambda`; this section states
+the semantics that expansion delivers.) The sequencing is
 the eliminator for `RefComp` and cannot be β-reduced away: the computation
 may introduce referents, consult context, or project obligations. `Let`
 (§4.4) is its pure degenerate case. A multi-binding
-`(Bind (($x₁ T₁ c₁) ($x₂ T₂ c₂) …) body)` is left-to-right nesting —
-`(Bind (($x₁ T₁ c₁)) (Bind (($x₂ T₂ c₂)) …))` — so later computations
+`(Bind {$x₁ T₁} c₁ {$x₂ T₂} c₂ … {body})` is left-to-right nesting —
+`(Bind {$x₁ T₁} c₁ {(Bind {$x₂ T₂} c₂ {…})})` — so later computations
 may consume earlier results. The honest gloss: `Bind` is
 function application under mandatory call-by-value at computation
 types, made visible — the λ-fragment stays pure so that β-equality
@@ -729,7 +735,7 @@ their effects include performance and commitment), so `body` may be
 `Content`, an act, or a discourse, and the binding scopes the referent
 over the whole body either way. This is what lets a description or
 selection introduced before an act sequence remain bound across it
-(`(Bind (($x (Referents T) (Refer P))) (Do a₁ a₂))` — the ordinary
+(`(Bind {$x (Referents T)} (Refer P) {(Do a₁ a₂)})` — the ordinary
 spelling of
 cross-sentence reference).
 
@@ -822,10 +828,10 @@ content then predicates of it:
 
 ```lisp
 ; ci gerku cu bajra .i ri tatpi
-(Bind (($dogs (Referents Entity)
-        (SelectExactly 3 (λ (($x Entity)) (gerku $x)))))
-  (Do (Assert (Close (bajra $dogs)))
-      (Assert (Close (tatpi $dogs)))))
+(Bind {$dogs (Referents Entity)}
+        (SelectExactly 3 (λ {$x Entity} {(gerku $x)}))
+  {(Do (Assert (Close (bajra $dogs)))
+      (Assert (Close (tatpi $dogs))))})
 ```
 
 The library's GQ forms (`Exactly`, `AtLeast`, `Some`, … — §12) are
@@ -852,20 +858,20 @@ gerku .i ri tatpi` normalizes to
 
 ```lisp
 ; one content, abbreviating the two performed assertions
-(Presuppose (∃ (λ (($x Entity)) (prenu $x)))
+(Presuppose (∃ (λ {$x Entity} {(prenu $x)}))
   (∧
     ; sentence 1's claim, preserved:
-    (∀ (λ (($p Entity))
-      (→ (prenu $p)
-         (∃ (λ (($d (Referents Entity)))
-           (∧ (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
-              (Close (ponse $p $d))))))))
+    (∀ (λ {$p Entity}
+      {(→ (prenu $p)
+         (∃ (λ {$d (Referents Entity)}
+           {(∧ (= (CardBasis $d (λ {$x Entity} {(gerku $x)})) 3)
+              (Close (ponse $p $d)))})))}))
     ; the anaphoric continuation, at the joint locus (strong reading):
-    (∀ (λ (($p Entity) ($d (Referents Entity)))
-      (→ (∧ (prenu $p)
-            (= (CardBasis $d (λ (($x Entity)) (gerku $x))) 3)
+    (∀ (λ {($p Entity) ($d (Referents Entity))}
+      {(→ (∧ (prenu $p)
+            (= (CardBasis $d (λ {$x Entity} {(gerku $x)})) 3)
             (Close (ponse $p $d)))
-         (Close (tatpi $d)))))))
+         (Close (tatpi $d)))}))))
 ```
 
 — each person owns three dogs, and each person's dogs are tired; no
@@ -886,11 +892,11 @@ indefinite's variable at the plural type (its witness is a plural
 reference; the atomic-pair spelling is the distributive strengthening):
 
 ```lisp
-(Presuppose (∃ (λ (($x Entity)) (∧ (prenu $x)
-              (∃ (λ (($y Entity)) (∧ (xasli $y) (Close (ponse $x $y)))))))
-  (∀ (λ (($p Entity) ($d (Referents Entity)))
-    (→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-       (Close (darxi $p $d))))))
+(Presuppose (∃ (λ {$x Entity} {(∧ (prenu $x)
+              (∃ (λ {$y Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))})
+  (∀ (λ {($p Entity) ($d (Referents Entity))}
+    {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+       (Close (darxi $p $d)))})))
 ```
 
 The restrictor's relational conjunct ties the parameters; no E-type
@@ -921,7 +927,7 @@ distinction denotational rather than merely structural.
 ### 5.8 Genericity
 
 `(Generic mode holder? restrictor nuclear) : Content`, with
-`mode ∈ {Typical, Stereotypical}` and `holder` present exactly for the
+`mode ∈ ⟨Typical, Stereotypical⟩` and `holder` present exactly for the
 stereotype reading (`le'e`: the Speaker, grammatically fixed), is the
 axiomatic generic quantifier: it relates a pure restrictor and nuclear
 scope through a normality ordering **that may depend on the nuclear
@@ -979,9 +985,9 @@ modification link relates `M` to that predication —
 
 ```lisp
 ((Tanru M H) fills…) ≝
-(Bind (($link (PredTerm ρ(H))
-        (Vague (λ (($r (PredTerm ρ(H)))) (TanruAdmissible M H $r)))))
-  (∧ (H fills…) ($link fills…)))
+(Bind {$link (PredTerm ρ(H))}
+        (Vague (λ {$r (PredTerm ρ(H))} {(TanruAdmissible M H $r)}))
+  {(∧ (H fills…) ($link fills…))})
 ```
 
 `TanruAdmissible` is part of tanru's meaning, not a lookup: it requires
@@ -998,7 +1004,7 @@ si'o concept" — inert operands in the program's sense (§16.2).
 
 ### 6.3 Scalar operators
 
-`(Scalar k P)`, `k ∈ {OtherThan, Opposite, Neutral}`, is the `na'e`/
+`(Scalar k P)`, `k ∈ ⟨OtherThan, Opposite, Neutral⟩`, is the `na'e`/
 `to'e`/`no'e` family: an operation on `P` relative to a scale or
 admissible-alternative set. The scale dimension is `Context` (lexically
 fixed when the dictionary provides one); soritical region boundaries are
@@ -1149,7 +1155,7 @@ different operators.
 
 ### 7.4 Utterance tokens
 
-`(Utterance ((u UtteranceToken)) fact…)` is the **transcript-entry
+`(Utterance {u UtteranceToken} {fact…})` is the **transcript-entry
 notation**: a token variable with facts about it — ordinary
 predicates: `SpeakerOf`, `AudienceOf`, `LocutionOf`, `DeicticTimeOf`,
 `DeicticPlaceOf`, `TextOf`, `Realizes` (the token realizes an act
@@ -1158,8 +1164,8 @@ value of whatever force — the force index is existential here),
 is a λ, not a computation:
 
 ```lisp
-(Utterance ((u UtteranceToken)) fact…)
-  ≝ (λ (($u (Referents UtteranceToken))) (∧ fact…))
+(Utterance {u UtteranceToken} {fact…})
+  ≝ (λ {$u (Referents UtteranceToken)} {(∧ fact…)})
 ```
 
 — a *pure token-description property*. The λ suspends the facts by
@@ -1180,13 +1186,15 @@ acts.
 
 `Sign<K>` classifies signs by kind `K` (Name, Sentence, Word, Letteral,
 Quotation, MathExpression, Structured, Opaque, Text, Connective — and
-`Expression`, the elaborated-core-expression kind of §16.3).
+`Expression` and `Telescope`, the elaborated-core-notation kinds whose
+term-language semantics is §7.7, with the program consequences in
+§16.3).
 Constructors: `(OpaqueQuote text)` (`lo'u…le'u`, `zoi`),
 `(StructuredQuote entry)` (`lu…li'u` — the operand a pure
 token-description property, §7.4; the constructor supplies the opaque
 boundary),
 `(NameSign text)`, `(SentenceSign content)`, `(LetteralSign text)`,
-`(WordSign text)`. `(Sign ((s (SignToken K))) fact…)` describes sign
+`(WordSign text)`. `(Sign {s (SignToken K)} {fact…})` describes sign
 tokens with facts (`TextOf`, `Quotes`, `Denotes`) — the §7.4 defined
 entry notation at the sign-token sort. Interpretation is explicit and
 typed: `(InterpretContent sign) : Content` and the force-indexed
@@ -1225,8 +1233,8 @@ target — no dedicated operator is needed:
   primitive `Holds` (`Reify`'s inverse, §9.1):
 
   ```lisp
-  (Let (($p Proposition (Reify c)))
-    (Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p)))
+  (Let {$p Proposition} (Reify c)
+    {(Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p))})
   ```
 
   so anchor, side, and evaluated body all speak of the same content with
@@ -1288,20 +1296,36 @@ scope).
 The core can quote its own notation. This section is the term-language
 semantics of that ability; the content-word consequences live in §16.
 
-**Types.** `Expression<Γ, A, ε>` is the sign kind of **elaborated,
-scoped core expressions**: α-equivalence classes of core syntax with
-resolved binding, open in the typed context Γ, of result type `A`, with
-effect class ε ∈ {`Pure`, `Effectful`} (the class that decides whether
-an abstraction over the code is `Fn` or `EFn`). `Telescope<Γ; Δ>` is
-the quoted binder-extension category (`{($x T) …}`). Both are quoted
-*categories*, formed only by writing braces — quote formation is a
-typing judgment over already-elaborated notation, applying after all
-text-to-reading resolution (readings, anaphora, donkey normalization),
-never to raw Lojban text: `{(Close (klama Speaker))}` is code;
-`lu mi klama li'u` is a linguistic quotation sign (§7.5) — different
-kinds, never interchangeable. Γ, `A`, and ε are derivable from the
-elaborated body (free variables and their binders; constants never
-enter Γ) and are elided in ordinary notation.
+**Types.** `Expression<Γ, A, ε>` is the indexed refinement of the
+`Expression` sign kind (`Expression<Γ, A, ε> <: Sign<Expression>`,
+§7.5): **elaborated, scoped core expressions** — α-equivalence classes
+of core syntax with resolved binding (Harper's abstract binding trees,
+analogically; the context-indexed code type is Contextual Modal Type
+Theory's `[Γ ⊢ A]`, likewise analogically — this core inherits neither
+system's metatheorems, notably rejecting anti-quotation) — **open in
+exactly the typed context Γ**, of result type `A`, with effect class
+ε ∈ ⟨`Pure`, `Effectful`⟩ deciding whether an abstraction over the
+code is `Fn` or `EFn` (write `Arrow_Pure = Fn`,
+`Arrow_Effectful = EFn`). `Telescope<Γ; Δ>` is the quoted
+binder-extension category (`{($x T) …}`), the indexed refinement of
+the `Telescope` sign kind. Both are formed only by writing braces —
+quote formation is a typing judgment over already-elaborated notation,
+applying after all text-to-reading resolution (readings, anaphora,
+donkey normalization), never to raw Lojban text:
+`{(Close (klama Speaker))}` is code; `lu mi klama li'u` is a
+linguistic quotation sign (§7.5) — different kinds, never
+interchangeable. Γ, `A`, and ε are derivable and elided in ordinary
+notation. **The capture/open split fixes Γ**: a quote's free names
+divide into those a consuming word's telescope operand designates as
+open — exactly Γ, bound later through interpretation — and all others,
+which must be bound at the write site and are **captured**: a quote
+literal forms its value where it is evaluated, packaging the code with
+the values its captured variables then have (binding *resolution* is
+fixed at elaboration, S8 below; value *capture* happens when the
+literal's position is evaluated — so a quote written under an outer λ
+captures that λ's argument on each application). A bare quote consumed
+by no telescope is closed: Γ = ∅. Constants never enter Γ and are
+never captured — they are stage-schematic vocabulary.
 
 **Elaboration discipline.** A quote is elaborated *at its written
 occurrence*, against the lexical context it is written in — a quote is
@@ -1319,25 +1343,30 @@ evaluation re-elaborates or re-resolves. Notation desugaring (fills to
 does not — rewriting inside a quote changes which sign it is.
 
 **Interpretation.** The typed, stage-indexed family
-`Interpret : Expression<Γ, A, ε> × Env<Γ> ⇀ A` interprets code against
-a typed environment for its free variables; interpretation for stage-n
-code is a stage-(n+1) operation, there is no untyped universal `Eval`,
-and **the family is bootstrap floor and unreflectable** — no
-`MakeEval`, ever (a same-stage self-interpreter is the liar row of
-§16.4). When `A` is a computation type, interpretation *returns* the
-computation as a value; running it remains the job of `Bind`, the
-dynamic operators, or `Perform`. Values cross stages only through
+`Interpret : Expression<Γ, A, ε> × Env<Γ> ⇀ A` interprets code: the
+captured part of the quote's environment rides inside the value, and
+`Env<Γ>` — the typed record of values for exactly the open context Γ —
+supplies the rest. For a closed quote (Γ = ∅) the environment operand
+is empty and elided: `(Interpret {a})` is the stated elision of
+`Interpret({a}, ⟨⟩)`. Evaluation never reads the evaluator's ambient
+context — everything comes from the package or the typed operand.
+Interpretation for stage-n code is a stage-(n+1) operation, there is
+no untyped universal `Eval`, and **the family is bootstrap floor and
+unreflectable** — no `MakeEval`, ever (a same-stage self-interpreter
+is the liar row of §16.4). When `A` is a computation type,
+interpretation *returns* the computation as a value; running it
+remains the job of `Bind`, the dynamic operators, or `Perform`. Values cross stages only through
 binding — an environment or an application supplies them — never
 through splicing: **there is no anti-quotation** and no
 `Persist : A → Expression`; reflection is schematic (code with
 variables, values flowing in at use), which is the accepted price of
 the discipline below.
 
-**The no-reification discipline (D3).** Mitchell Wand's theorem — the
-theory of fexprs is trivial — shows that a language whose operators can
-observe the syntax of ordinary operands has no equational theory: with
-unrestricted reflection, observational equivalence collapses to
-syntactic identity. The core stays on the right side of that cliff by
+**The no-reification discipline (D3).** In Wand's fexpr calculus,
+contextual equivalence collapses to α-congruence — the theory of terms
+is trivial. The design inference drawn here (motivating, not identical
+to, the theorem): a language whose operators can observe the syntax of
+ordinary operands forfeits its equational theory. The core stays on the right side of that cliff by
 five clauses: (i) no operator turns a running value, continuation, or
 evaluation state into an `Expression` — quotes are only ever written;
 (ii) an unbraced (active) operand is consumed as its semantic value —
@@ -1361,23 +1390,30 @@ code:
 MakeLambda : Telescope<Γ; Δ> × Expression<Γ·Δ, B, ε> → Arrow_ε<(Δ), B>
 ```
 
-where `Arrow_Pure` is `Fn` and `Arrow_Effectful` is `EFn`. Its clause:
-`(MakeLambda {Δ} {b})` is the function that, applied to values for Δ,
-interprets `b` in its elaboration environment extended with those
-values. `λ` **is** `MakeLambda` — the glyph is an alias (and, like
-every PascalCase name, `MakeLambda` is a §16 placeholder awaiting its
-content word). The other binder spellings are **defined**:
+Its clause: `(MakeLambda {Δ} {b})` — the telescope designates Δ as
+`b`'s open part, ambient Γ being captured per the split above — is the
+function that, applied to values `v̄` for Δ, is
+`Interpret(b, ⟨Δ ↦ v̄⟩)` — the captured part of `b` rides in the quote
+value, the arguments fill the open part. `λ` **is** `MakeLambda` — the
+glyph is an alias (and, like every PascalCase name, `MakeLambda` is a
+§16 placeholder awaiting its content word). Two further sign-functions
+are **defined**, with `Bind` and `Let` their aliases:
 
 ```text
-(Let {$x T} v {b})  ≝ ((MakeLambda {$x T} {b}) v)         ; v pure
-(Bind {$x T} c {b}) ≝ (Bind c (MakeLambda {$x T} {b}))    ; c a computation,
-                      ; consumed as a value; the result is itself a
+MakeLet  : Telescope<Γ; ($x:A)> × A × Expression<Γ·($x:A), B, ε> → B
+(MakeLet {$x A} v {b})  ≝ ((MakeLambda {$x A} {b}) v)     ; v pure
+
+MakeBind : Telescope<Γ; ($x:A)> × Comp<A>
+           × Expression<Γ·($x:A), Comp<B>, ε> → Comp<B>
+(MakeBind {$x A} c {b}) ≝ (bind c (MakeLambda {$x A} {b}))
+                      ; c consumed as a value; the result is itself a
                       ; computation — nothing runs at construction
 ```
 
-(the right-hand `Bind` is the ordinary §5.1 carrier operation
-`Comp<A> × (A → Comp<B>) → Comp<B>`, which the binder syntax always
-abbreviated). A reflective application spelling exists as a defined
+where `bind` is the §5.1 carrier's sequencing operation (the model-
+level `Comp<A> × (A → Comp<B>) → Comp<B>`, of which the surface `Bind`
+word is the readable face); the variadic `Bind` spelling nests per
+§5.2. A reflective application spelling exists as a defined
 form over the floor family — `(MakeApply {f} {a}) ≝
 ((Interpret {f}) (Interpret {a}))`, each operand interpreted once —
 for contexts (notably the self-description program, §16) that need
@@ -1392,11 +1428,12 @@ operand, left to right. No facade exists for the sign constructors
 (their operands are already inert by kind), for `Perform`'s host
 commitment, or for `Interpret` itself.
 
-**The reflection law.** For every binder form, elaboration is a
-homomorphism onto the Make-spelling —
-`elab[(B pattern… body)] ≡ MakeB(elab[pattern…], elab[body])` — with
-`≡` contextual equivalence at the result type, never equality of signs.
-Each law preserves S1–S7: one interpretation per operand, sites mapped
+**The reflection law.** Every binder form *is* its Make-word applied
+to quotes — the aliases and definitions above — so the grammar has
+exactly three formers: atoms, braces, application. For the derived
+facades the law is stated once: each facade equals its definition,
+with `≡` contextual equivalence at the result type, never equality of
+signs. Each law preserves S1–S7: one interpretation per operand, sites mapped
 one-to-one, no policy or typing change. One consequence is stated
 rather than left to inference: evaluating one `Expression` value twice
 runs its retrievals twice — a quote is code, and each run is a run;
@@ -1465,7 +1502,7 @@ contextual retrieval explicit:
 
 ```text
 (Answer q ContextualAnswer) ≝
-  (Bind (($a A (Context))) (Answer q (TupleAnswer $a)))
+  (Bind {$a A} (Context) {(Answer q (TupleAnswer $a))})
 ```
 
 (no exhaustivity marker: absence, per P9). `Answer` yields `Content` and
@@ -1520,8 +1557,8 @@ types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 ```
 
 `DuhuRel` is derived — formally: `((DuhuRel c) x1 x2) ≝
-(∧ (CoRef x1 (Reify c)) (Distrib (λ (($s (Sign Sentence))) (CoRef
-(Reify (InterpretContent $s)) (Reify c))) x2))` — its x1 the reified
+(∧ (CoRef x1 (Reify c)) (Distrib (λ {$s (Sign Sentence)} {(CoRef
+(Reify (InterpretContent $s)) (Reify c))}) x2))` — its x1 the reified
 content, its x2 sentence signs whose interpretation reifies the same
 (CLL 11.7's x2 and `se du'u`); the others are the
 family proper. Reference applies **outside** the relation, exactly as for
@@ -1708,21 +1745,21 @@ neutral plural predication, per P4; `Every`'s nuclear scope is
 member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
 
 ```text
-(Exactly n P Q)  ≝ (Bind (($w (Referents T) (SelectExactly n P))) (Q $w))
-(AtLeast n P Q)  ≝ (Bind (($w (Referents T) (SelectAtLeast n P))) (Q $w))
-(Some P Q)       ≝ (Bind (($w (Referents T) (SelectSome P)))      (Q $w))
+(Exactly n P Q)  ≝ (Bind {$w (Referents T)} (SelectExactly n P) {(Q $w)})
+(AtLeast n P Q)  ≝ (Bind {$w (Referents T)} (SelectAtLeast n P) {(Q $w)})
+(Some P Q)       ≝ (Bind {$w (Referents T)} (SelectSome P)      {(Q $w)})
 (Every P Q)      ≝ (Presuppose (∃ P)            ; import emitted FIRST —
-                     (Bind (($w (Referents T)   ; else an empty restrictor
-                             (MaxRefer P)))
-                       (Distrib Q $w)))         ; would fail the selection
+                     (Bind {$w (Referents T)}   ; else an empty restrictor
+                             (MaxRefer P)
+                       {(Distrib Q $w)}))         ; would fail the selection
                                                 ; instead of failing the
                                                 ; presupposition; exports w
 (No P Q)         ≝ (¬ (Some P Q))                          ; no export
 (AtMost n P Q)   ≝ (¬ (AtLeast n+1 P Q))                   ; no export
 (MoreThan n P Q) ≝ (AtLeast n+1 P Q)
 (FewerThan n P Q)≝ (¬ (AtLeast n P Q))                     ; total at n = 0
-(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ (($x T)) (∧ (P $x) (Q $x))))) n)
-(Distrib Q r)    ≝ (∀ (λ (($x T)) (→ (Among $x r) (Q $x))))
+(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x T} {(∧ (P $x) (Q $x))}))) n)
+(Distrib Q r)    ≝ (∀ (λ {$x T} {(→ (Among $x r) (Q $x))}))
                    ; T the member type of r; $x lifts to a singleton
                    ; reference for Among — Distrib is unit distribution
 ```
@@ -1733,7 +1770,7 @@ scope's contextual sites and introductions out of the comprehension
 first (site identity, §5.3, makes the hoist meaning-preserving), and
 an unhoistable nuclear scope simply has no global reading.
 
-`no prenu cu jmaji` is `(No prenu-property (λ w. (Close (jmaji w))))` —
+`no prenu cu jmaji` is `(No prenu-property (λ {$w (Referents Entity)} {(Close (jmaji $w))}))` —
 "no people-witness gathers", the reading a distributive quantifier
 could not express at all (§4.10).
 
@@ -1760,21 +1797,21 @@ admissible region — the gradable analogue, consumed by `Grade`'s
 `Vague` region):
 
 ```text
-(Many P Q)   ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold ManyK P))))
-                 (AtLeast $θ P Q))
-(Few P Q)    ≝ (Bind (($θ Natural (Vague (AdmissibleThreshold FewK P))))
-                 (FewerThan $θ P Q))
-(Most P Q)   ≝ (> (Card (SetOf (λ x. (∧ (P x) (Q x)))))
-                  (Card (SetOf (λ x. (∧ (P x) (¬ (Q x)))))))
-(TooMany P Q)≝ (Bind (($σ (Referents Entity) (Context))          ; purpose
-                      ($θ Natural (Vague (AdmissibleThreshold TooManyK P $σ))))
-                 (MoreThan $θ P Q))
-(TooFew P Q) ≝ (Bind (($σ (Referents Entity) (Context))
-                      ($θ Natural (Vague (AdmissibleThreshold TooFewK P $σ))))
-                 (FewerThan $θ P Q))
-(Enough P Q) ≝ (Bind (($σ (Referents Entity) (Context))
-                      ($θ Natural (Vague (AdmissibleThreshold EnoughK P $σ))))
-                 (AtLeast $θ P Q))
+(Many P Q)   ≝ (Bind {$θ Natural} (Vague (AdmissibleThreshold ManyK P))
+                 {(AtLeast $θ P Q)})
+(Few P Q)    ≝ (Bind {$θ Natural} (Vague (AdmissibleThreshold FewK P))
+                 {(FewerThan $θ P Q)})
+(Most P Q)   ≝ (> (Card (SetOf (λ {$x T} {(∧ (P $x) (Q $x))})))
+                  (Card (SetOf (λ {$x T} {(∧ (P $x) (¬ (Q $x)))}))))
+(TooMany P Q)≝ (Bind {$σ (Referents Entity)} (Context)          ; purpose
+                      {$θ Natural} (Vague (AdmissibleThreshold TooManyK P $σ))
+                 {(MoreThan $θ P Q)})
+(TooFew P Q) ≝ (Bind {$σ (Referents Entity)} (Context)
+                      {$θ Natural} (Vague (AdmissibleThreshold TooFewK P $σ))
+                 {(FewerThan $θ P Q)})
+(Enough P Q) ≝ (Bind {$σ (Referents Entity)} (Context)
+                      {$θ Natural} (Vague (AdmissibleThreshold EnoughK P $σ))
+                 {(AtLeast $θ P Q)})
 ```
 
 Gradable predication: a `GradableRel<ρ,ℓ>` is a lexical relation whose
@@ -1794,7 +1831,7 @@ whole document). Then
 
 ```text
 (Grade R s reg) : PredTerm<ρ> ≝
-  (λ (($rec (Record ρ))) (InRegion (deg_R $rec s) reg))
+  (λ {$rec (Record ρ)} {(InRegion (deg_R $rec s) reg)})
 ```
 
 — the relation holding of a row record exactly when its degree
@@ -1802,15 +1839,16 @@ on scale `s` lies in region `reg`. No `…` remains in this chapter.
 
 **Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
 distribution over members (`Distrib` at the use site);
-`(Overlap a b)` ≝ `(∃ (λ c. (∧ (Among c a) (Among c b))))`;
-`(Interval a b k₁ k₂)` ≝ `(SetOf (λ x. (∧ (cmp₁ a x) (cmp₂ x b))))` with
+`(Overlap a b)` ≝ `(∃ (λ {$c (Referents T)} {(∧ (Among $c a) (Among $c b))}))`;
+`(Interval a b k₁ k₂)` ≝ `(SetOf (λ {$x T} {(∧ (cmp₁ a $x) (cmp₂ $x b))}))` with
 `cmpᵢ` strict/nonstrict per the `ga'o`/`ke'i` endpoint kinds. The
 reciprocal schema (consumed by `simxu`'s and `soi`'s lexicon rows):
 
 ```text
-(Reciprocate r P) ≝ (∀ (λ (x y). (→ (∧ (Among x r) (Among y r)
-                                       (¬ (CoRef x y)))
-                                    (P x y))))     ; pairwise, both ways
+(Reciprocate r P) ≝
+  (∀ (λ {($x (Referents T)) ($y (Referents T))}
+       {(→ (∧ (Among $x r) (Among $y r) (¬ (CoRef $x $y)))
+           (P $x $y))}))                           ; pairwise, both ways
 ```
 
 **Lists and `fa'u`** — the mandated full expansion. `ZipWith` is defined
@@ -1826,8 +1864,8 @@ so the `fa'u` specimen expands completely:
 
 ```lisp
 ; mi fa'u do tavla do fa'u mi
-(ZipWith (λ (($s (Referents Entity)) ($l (Referents Entity)))
-           (Close (tavla $s $l)))
+(ZipWith (λ {($s (Referents Entity)) ($l (Referents Entity))}
+           {(Close (tavla $s $l))})
   (List Speaker Audience)
   (List Audience Speaker))
 ; ≡ (∧ (Close (tavla Speaker Audience))
@@ -1843,10 +1881,12 @@ so the `fa'u` specimen expands completely:
                                                  ; the lexicon's cmene row
 (MaxRefer P)    : RefComp<Referents<T>> ≝
   (Presuppose (∃ P)                       ; defined only when P is
-    (Refer (λ (r. (∧ (Distrib P r)        ; inhabited
-                     (∀ (λ x. (→ (P x) (Among x r))))
-                     (∀ (λ r'. (→ (Among r' r)
-                                  (∃ (λ x. (∧ (P x) (Overlap x r'))))))))))))
+    (Refer (λ {$r (Referents T)}          ; inhabited
+      {(∧ (Distrib P $r)
+          (∀ (λ {$x T} {(→ (P $x) (Among $x $r))}))
+          (∀ (λ {$r' (Referents T)}
+               {(→ (Among $r' $r)
+                   (∃ (λ {$x T} {(∧ (P $x) (Overlap $x $r'))})))})))})))
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
@@ -1872,8 +1912,8 @@ motion with `farna` direction). The defined forms over them, with
 `P : Fn<(Referents<Entity>, Referents<Eventuality>), Content>`:
 
 ```text
-(Realized b P) ≝ (∃ (λ (($e (Referents Eventuality)))
-                    (∧ (P b $e) (fasnu $e))))
+(Realized b P) ≝ (∃ (λ {$e (Referents Eventuality)}
+                    {(∧ (P b $e) (fasnu $e))}))
 (nu'o b P)     ≝ (∧ (InnatelyCapable b P) (¬ (Realized b P)))
 (pu'i b P)     ≝ (∧ (InnatelyCapable b P) (Realized b P))
 ```
@@ -1884,8 +1924,8 @@ relabelled x1 and x1 relabelled `fai`,
 
 ```text
 (JaiPromote R ℓ) : PredTerm<ρ'> ≝
-  (λ (($r (Record ρ')))
-    (R ⟨the ρ-record with ℓ = $r.x1, x1 = $r.fai, rest unchanged⟩))
+  (λ {$r (Record ρ')}
+    {(R ⟨the ρ-record with ℓ = $r.x1, x1 = $r.fai, rest unchanged⟩)})
 ```
 
 — the promoted role becomes x1 and the old x1 becomes the labelled,
@@ -1898,8 +1938,8 @@ displayed act-level per §7.6; the `na'i` objection ≝
 
 ```lisp
 (NahiObjection t) ≝
-  (Bind (($d DefectKind (Context)))
-    (Express (Close (MetalinguisticallyDefective t $d))))
+  (Bind {$d DefectKind} (Context)
+    {(Express (Close (MetalinguisticallyDefective t $d)))})
 ```
 
 for a bound prior target `t` (`DefectKind` — wording, form, implication,
@@ -1912,9 +1952,9 @@ performative host-force profile; `(GroundedBy b a)` ≝
 the act-level evidential spelling of §7.6 (named to
 avoid the `Ground` sort, §5.1); focus for
 a host `H[·]` with focused constituent `f`:
-`(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ y. (∧ (¬ (CoRef y f)) H[y])))))`
-(`po'o`), and `(Additive f H) ≝ (Presuppose (∃ (λ y. (∧ (¬ (CoRef y f))
-H[y]))) H[f])` (constituent `ji'a`).
+`(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ {$y T} {(∧ (¬ (CoRef $y f)) H[$y])}))))`
+(`po'o`), and `(Additive f H) ≝ (Presuppose (∃ (λ {$y T} {(∧ (¬ (CoRef
+$y f)) H[$y])})) H[f])` (constituent `ji'a`).
 
 **MEX:** by metalanguage recursion over `Natural` and lists:
 `(te'a x 0) ≝ 1`, `(te'a x (n+1)) ≝ (× x (te'a x n))`;
@@ -2121,7 +2161,11 @@ The primitive inventory, for reference — audited so that nothing sits
 here by historical accident; the criterion is that a primitive has no
 term-language expansion, only its prose-and-axiom definition. The
 primitives: the type formers of §3 (except `PredTerm`, a transparent
-alias); `λ` and application over labelled records; `Bind`; lexical
+alias); function types and application over labelled records (the
+pure λ-substrate — the binder *word* `λ` is `MakeLambda`'s alias,
+§7.7, counted once there); `bind`, the computation carrier's
+sequencing operation (the surface `Bind` binder word is defined,
+§7.7); lexical
 predication (dictionary relations as constants); `DropPlace`;
 `¬ ∧ ∨ → ↔ ⊕ ∀ ∃ =`; `Combine`, `Among`; `SetOf`, `Card`, `∈`, the
 arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
@@ -2236,12 +2280,13 @@ describing the stage below).
 
 Two evaluations, not one:
 
-- **Inert evaluation** — sign to value, no effects — is the existing
-  `InterpretContent`/`InterpretAct` family (§7.5), extended to
-  `Expression` signs per syntactic category (a sentence-expression
-  interprets at `Content`, a sumti-expression at `RefComp`, a
-  property-expression at a function type; one untyped `Eval` is not
-  typable).
+- **Inert evaluation** — sign to value, no effects — has two typed
+  homes: *linguistic* signs interpret through the
+  `InterpretContent`/`InterpretAct` family (§7.5), while
+  *core-expression* signs interpret through the staged, typed
+  `Interpret` family of §7.7, per category (a sentence-expression at
+  `Content`, a sumti-expression at `RefComp`, a property-expression at
+  a function type; one untyped `Eval` is not typable).
 - **Active evaluation** — effects flowing into the host — exists at act
   level already: `Perform` of an interpreted act re-issues quoted
   discourse *with* its dynamics. Sub-sentential active evaluation (a
