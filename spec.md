@@ -1827,7 +1827,20 @@ obedience gloss is a remark, not machinery.
 **Descriptions** (P1, P10, P11). `lo P` → `(Refer P)`, veridical,
 number-neutral. `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)`
 with the anchoring clause — the describing event is this utterance's own
-locution (performative by construction; §7.4 supplies the event) — and
+locution. The anchored reference property, in full, conjoins the
+locution fact at the utterance's own token u₀ (the `dei` value, §7.4):
+
+```text
+(λ {$r :: Referents Entity}
+  {(∃ (λ {$e :: Referents Locution}
+    {(∧ (LocutionOf $e u₀)
+       (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))}))})
+```
+
+for which `(Close (skicu Speaker $r Audience P))` is the **licensed
+display abbreviation** (P10; the samples book's brief spelling) — an
+abbreviation of this term, not a local reinterpretation of `Close` —
+and
 the speaker's commitment that the audience can identify the referent is
 a cooperative-use commitment stated here in prose, not machinery;
 non-veridical, speaker-identifying. `la N` → `Refer` via naming
@@ -2553,7 +2566,9 @@ the components compose into the group (mass, team, aggregate, …) — is
 AdmissibleMixture : Referents<T>
    → Fn<(PredTerm⟨x1:Referents<Group<T>>, x2:Referents<T>⟩), Content>
    ; admissible values: composition relations refining gunma for the
-   ; given components — the §6.1 mixture vagueness, typed
+   ; given components — the §6.1 mixture vagueness, typed; nonempty
+   ; by construction (gunma itself is the trivial refinement — the
+   ; VC1 witness)
 ```
 
 The sumti-`joi` group formation binds one:

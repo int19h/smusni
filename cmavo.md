@@ -53,13 +53,13 @@ The fill tag for the place `jai` demotes the old x1 into.
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
         {(Close (klama :1 Audience :Eventuality $e))}))
-  {(Bind {$cause :: Referents Eventuality}
-        (Refer (λ {$e :: Referents Eventuality}
-          {(Bind {$w :: Referents Entity}
-                (Refer (λ {$r :: Referents Entity} {(bitmu $r)}))
-            {(Close (darxi :1 Speaker :2 $w :Eventuality $e))})}))
-    {(Close ((JaiPromote rinka gau-role)
-             :1 Speaker :2 $eff 👉:fai $cause👈))})})
+  {(Bind {$w :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity} {(bitmu $r)}))
+    {(Bind {$cause :: Referents Eventuality}
+          (Refer (λ {$e :: Referents Eventuality}
+            {(Close (darxi :1 Speaker :2 $w :Eventuality $e))}))
+      {(Close ((JaiPromote rinka gau-role)
+               :1 Speaker :2 $eff 👉:fai $cause👈))})})})
 ; gau-role: the agent label gau's tag reduction supplies
 ```
 
@@ -177,10 +177,12 @@ clause — the describing event is this very utterance (P10).
   {(Close (bajra $x))})
 ```
 
-`Close` here is the brief spelling the samples book fixes: the
-anchoring clause identifies the describing event with this
-utterance's own locution (§7.4) rather than closing it
-existentially — saying `le gerku` *is* the describing (P10).
+`Close` here is the **licensed display abbreviation** of the fully
+anchored term — the reference property conjoining
+`(LocutionOf $e u₀)` at the utterance's own token, printed in full at
+the spec's §11 `le` row — saying `le gerku` *is* the describing
+(P10). An abbreviation of a real term, not a reinterpretation of
+`Close`.
 
 **See.** [Spec §11](spec.md), pin P10; [rationale §2.6](rationale.md).
 

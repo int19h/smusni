@@ -461,13 +461,16 @@ aesthetic standing. Also the `nai`-fallback for unpaired indicators
 **See.** [Spec §6.3, §7.6](spec.md); [primer ch. 7](primer.md);
 [rationale §1.8](rationale.md).
 
-### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleCutoff`, `InRegion`, `deg_R`
+### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleMixture`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
 **Informally.** The gradable/vague-quantity interface: the axiomatic
 admissibility predicates. `AdmissibleTolerance : Number × Precision →
 Fn<(Number), Content>` and its rounding sibling `AdmissibleRounding`
 serve `ji'i` (the tolerance/rounding-preimage regions about an anchor
 at the numeral's precision, nonempty by VC1 — spec §12, pin P37);
+`AdmissibleMixture` serves sumti-`joi` (the composition relations
+refining `gunma` — nonempty by construction, `gunma` the trivial
+refinement; spec §12);
 the threshold predicates serve the degree quantifiers (indexed by
 the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
 TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
