@@ -1601,6 +1601,30 @@ returns for it. The pair is the sole Proposition↔Content bridge (the
 sign and event crossings — `SentenceSign`, `EventOfContent` — cross
 to *other* sorts).
 
+**The bridge's shape generalizes** — a reservation, not a baseline
+commitment. Nothing in the pair is special to the empty row: for any
+row ρ one can posit a reified-predicate sort with its own
+crossing pair and row-wise round-trip axiom, making `Proposition` the
+row-⟨⟩ member of a family rather than a one-off (Chierchia & Turner's
+nominalization pair, analogically) — this is what property *objects*
+(referents for `lo ka` where discourse-referent behavior is wanted,
+property anaphora, predicate quantification) would be. The baseline
+defines only row ⟨⟩; the rest is a registered gap (§14). The
+experimental cmavo pair `me'ei`/`me'au` (turn a selbri into an
+abstract-predicate sumti; use such a sumti as a selbri of the
+referent's arity) is the attested surface exponent of the two
+directions — and at the propositional case `me'au` is exactly `Holds`
+in selbri position: for `abu` naming a prior `lo du'u c`, `me'au abu`
+is `(Holds abu)`, so `me'au abu gi'a me'au by` is
+`(∨ (Holds abu) (Holds by))`, the content-level disjunction of the
+two claims (contrast `abu jetnu gi'a by jetnu`, two truth-predicate
+claims *about* the objects — truth-conditionally aligned by the axiom
+pair, structurally distinct). Identity within any reified row beyond
+the round-trip axiom — in particular, how much finer than logical
+equivalence proposition identity is — is model-supplied and
+deliberately open, at row ⟨⟩ today exactly as it would be at any
+other.
+
 ### 9.2 The abstraction relations
 
 Every other abstractor is a **named abstraction relation with a labelled
@@ -1756,9 +1780,16 @@ bound variable; unassigned → keyed `Context`; ⊳ `go'i`-family → expansion
 with the antecedent's resolved context; `ra'o` → re-resolution under
 `InContext`/`ShiftedGround` (§5.1).
 
-**Abstractions** (§9, P13, P14). `du'u` → `Reify`; `nu` + sorts → `Refer`
+**Abstractions** (§9, P13, P14). `du'u` → `Reify`; an explicit `ce'u`
+inside `du'u` (or any `ce'u`-capable abstractor) extracts λ exactly as
+in `ka` — `lo du'u ce'u klama` is the goer property — so the
+community's arity doctrine (n `ce'u` = n-adic; bare `du'u` the 0-adic
+case, whose extracted relation *is* the content, `PredTerm<⟨⟩>` ≅
+`Content`, then reified) holds as a theorem of this mapping; `nu` +
+sorts → `Refer`
 over event properties; `ka` → `λ` (⊳ implicit `ce'u` at first unfilled
-place, counting converted places; P12); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
+place, counting converted places; P12 — the experimental lambda-prenex
+`ce'ai` names binder order explicitly where multiple readings arise); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
 the abstraction relations with reference outside; `mo'e` → the
 `AmountValue` numeric crossing; `tu'a X` → `Vague` abstraction
 constrained by shape + `srana`-aboutness, **sort selected by the host
@@ -2187,6 +2218,14 @@ approximate:
 - **Termset witness export** (joint anaphora to termset selections) and
   mixed-quantifier termsets where no coherent product reading exists
   (P17).
+- **Reified predicates above row ⟨⟩** (§9.1's reservation): property
+  and relation *objects* — referents for `lo ka` with
+  discourse-referent behavior (`lo ka ce'u klama goi ko'a`, anaphora
+  and quantification over properties), the non-propositional readings
+  of the experimental `me'ei`/`me'au` pair, and the identity
+  granularity question a family makes expressible (β/η-variants,
+  `se`-relabelings, cross-row `du`). The baseline lowers `lo ka`
+  directly to the λ and defines reification at row ⟨⟩ only.
 - **MEX beyond the library fragment**: non-decimal bases, arrays,
   indefinite operators.
 - **Prosody and stress** as meaning carriers; conversational repair as
@@ -2451,7 +2490,8 @@ definability:
   `Among`, `Combine` (the plural algebra — `pagbu`/`cmima`/`gripau` all
   cross the plurality/object line and are rejected), `ZuhoRel`,
   `SuhuRel`, `JeiRel`, `Reify`/`Holds` (one coinage, two directions via
-  `se`), `UnitSet`/`CardBasis` (see-also `zilkancu`, which carries two
+  `se`; see-also the experimental `me'ei`/`me'au` pair, the attested
+  surface exponents of the two directions — §9.1), `UnitSet`/`CardBasis` (see-also `zilkancu`, which carries two
   competing community definitions and guskant's own vagueness warning —
   the unsettled record supports placeholder status), `InRegion`,
   `AdmissibleThreshold`, `Addition`, `MetalinguisticallyDefective`,
@@ -2526,6 +2566,13 @@ chapter/section or dictionary entry.
   implementation, <https://github.com/toaq/kuna> (the effect-constructor
   inventory cited in the charter is Kuna's semantics modules as of the
   Delta-era implementation, 2026).
+- **And Rosta et al.** — "ka, du'u, si'o, ce'u, zo'e", Lojban Wiki,
+  <https://mw.lojban.org/papri/ka,_du%27u,_si%27o,_ce%27u,_zo%27e>
+  (the n-adic abstraction doctrine discussed in rationale §2.10).
+- **Chierchia & Turner** — Chierchia, Gennaro and Turner, Raymond,
+  "Semantics and Property Theory", *Linguistics and Philosophy* 11(3),
+  1988 (the nominalization/predicativization pair behind §9.1's
+  reservation).
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
   (or to Be Some Values of Some Variables)", *The Journal of
   Philosophy* 81(8), 1984, pp. 430–449.

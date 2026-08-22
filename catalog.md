@@ -418,9 +418,13 @@ proposition, however introduced, represents exactly the content
 `Holds` returns for it. The pair is the sole Proposition↔Content
 bridge (the sign and event crossings target other sorts).
 **For.** `du'u`; attitude objects; single-evaluation display
-(`Let`-shared `Reify` with `Holds` as the evaluated body).
-**See.** [Spec §9.1, §7.6](spec.md); [primer ch. 8](primer.md);
-[rationale §1.10](rationale.md).
+(`Let`-shared `Reify` with `Holds` as the evaluated body). The shape
+generalizes row by row to reified predicates — a §9.1 reservation
+(registered gap), with the experimental `me'ei`/`me'au` pair as the
+attested surface exponents; at the propositional case `me'au` is
+exactly `Holds` in selbri position.
+**See.** [Spec §9.1, §7.6, §14](spec.md); [primer ch. 8](primer.md);
+[rationale §1.10, §2.10](rationale.md).
 
 ### 1.32 `TanruAdmissible`
 

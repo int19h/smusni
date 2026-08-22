@@ -712,6 +712,68 @@ braces themselves carry teaching weight — the primer's hardest points
 (inertness, constructing-without-performing, held-back scope) are now
 visible in the notation itself.
 
+
+### 2.10 du'u, nullary ka, and the reserved reification family
+
+The community's abstraction doctrine — stated on the Lojban Wiki's
+"ka, du'u, si'o, ce'u, zo'e" page and echoed by the BPFK's proposed
+`ce'u` definition — holds that `du'u`, `ka`, and `si'o` "are logically
+identical: they all express n-adic relations, where n is the number of
+overt or covert `ce'u`. A proposition is a 0-adic relation." The
+abstractors differ only in what elided sumti default to. Is this core
+wrong to give `du'u` its own primitive?
+
+No — because the doctrine and the primitive answer different
+questions, and the core asserts both answers. As a claim about
+**abstraction syntax** the doctrine is correct, and it holds here as a
+theorem: `ce'u`-marking extracts λ in any `ce'u`-capable abstractor
+(the §13 mapping), arity is `ce'u` count, and the bare-`du'u` case is
+the 0-adic one — whose extracted "relation" is the content itself,
+since `PredTerm<⟨⟩>` applied at the empty record *is* `Content`
+(§3.3). Abstracting nothing out of a bridi leaves its content; in that
+exact sense `du'u` *is* nullary `ka`. What the doctrine never had the
+machinery to ask is the **object** question: what sort of first-class
+thing fills `djuno`'s x2, gets counted, identified, and anaphorically
+retrieved. `Content` cannot be that thing in this model — it is
+computation-typed, deliberately without equality, and putting it in
+the domain of individuals would make effects quantifiable objects. So
+the crossing the untyped doctrine leaves implicit gets a name:
+`Reify`, with `Holds` its inverse and the round trip as axiom (§9.1).
+A proposition is the *reification of* a 0-adic relation — the
+doctrine's slogan, plus the bridge it needed all along.
+
+The asymmetry with `ka` is then principled, not accidental. Property
+places (`kakne`, `mutce`) are consumed by *application* — the selbri
+applies the property — so they take function-typed operands directly
+and `lo ka` lowers straight to the λ. Proposition places are consumed
+by *aboutness* — nothing applies them — so they take the reified
+object, and all the sumti machinery (descriptions, anaphora,
+quantification, `du` as `CoRef`) runs on it.
+
+The experimental pair `me'ei`/`me'au` shows where this design is
+deliberately unfinished. `me'au` uses an abstract-predicate sumti as
+a selbri of the referent's arity; at the propositional case the model
+already covers it exactly — `me'au abu` for a proposition-valued `abu`
+is `(Holds abu)`, disquotation rather than the truth-predicate
+(`abu jetnu` claims *about* the object; the axiom pair aligns their
+truth conditions without conflating their shapes). Above arity zero,
+`me'au`'s inverse `me'ei` manufactures property *objects* — and this
+baseline has none: `lo ka` is a transparent λ, so there is no referent
+for `goi` to bind and no domain for property quantification. Rather
+than either building the full family now or foreclosing it, §9.1
+records the reservation: the `Reify`/`Holds` shape generalizes row by
+row (Chierchia and Turner's nominalization/predicativization pair is
+the standing prior art), `Proposition` is the row-⟨⟩ member, and the
+rest is a registered gap. The one question a family would force — how
+fine reified-predicate identity is, given that β/η-convertible λs are
+the same function while attitude contexts want propositions finer
+than logical equivalence — is left model-supplied at every row,
+exactly as proposition identity beyond the round-trip axiom already
+is today. Leaving the granularity open is what makes the reservation
+cheap: adopting the family later fills a declared hole instead of
+reopening the bridge.
+
+
 ## 3. Pin arguments
 
 Condensed; each pin's full context is in spec §13. The ones that were
