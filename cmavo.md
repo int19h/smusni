@@ -407,41 +407,89 @@ Structure only — see §13.
 Logical connection at the term locus: `∨ ∧ ↔ ∨`-of-left ("whether or
 not") over the joint predication, with surface grammar fixing
 structure and each connective carrying its accessibility row (P18).
+The rest of the bridi is **shared, not copied**: a description
+elsewhere in the sentence is introduced once, scoping over the
+connective, and elided places keep one shared `Context` site across
+both expansions (§5.3's site identity — `mi .e ti klama` names one
+shared destination, not two).
 
 ```lisp
-; mi .e do klama
-(∧ (Close (klama Speaker)) (Close (klama Audience)))
+; mi .e do nelci lo gerku — one dog-referent, both conjuncts see it
+(Bind {$d :: Referents Entity} (Refer gerku-prop)
+  {(∧ (Close (nelci Speaker $d))
+     (Close (nelci Audience $d)))})
 ```
 
-**See.** [Spec §4.5, §5.4, §11](spec.md), pin P18. Compounds (`na.a`,
-`se.u`, `.anai`): §14.
+```lisp
+; mi .a do klama lo zarci — ∨ instead; the store is still introduced
+; once, outside the disjunction
+(Bind {$z :: Referents Entity} (Refer zarci-prop)
+  {(∨ (Close (klama Speaker $z))
+     (Close (klama Audience $z)))})
+```
+
+**See.** [Spec §4.5, §5.3–5.4, §11](spec.md), pin P18. Compounds
+(`na.a`, `se.u`, `.anai`): §14.
 
 ### ja / je / jo / ju (JA) — tanru-internal and general connectives
 
 Same logical operators at their locus (tanru-unit joining, tag
-joining); `je` inside tanru conjoins modifier admissibilities.
+joining); `je` inside tanru conjoins the modifications — the head is
+one predication, modified under both conjuncts, with its own fills
+intact.
+
+```lisp
+; ta blabi je cmalu zdani be mi — one zdani predication, two modifiers
+(Close ((Tanru blabi ((Tanru cmalu zdani-be-mi))) ta-ref))
+; ≡ admissibility conjunction over the same modified head (§6.2);
+; zdani's x2 fill (be mi) rides inside the head unit either way
+```
 
 **See.** [Spec §4.5, §6.2, §11](spec.md).
 
 ### gi'a / gi'e / gi'o / gi'u (GIhA) — bridi-tail connectives
 
-Logical connection of bridi tails sharing terms — one shared
-`Bind`/selection scope, connective over the closed tails.
+Logical connection of bridi tails: the shared head terms scope over
+the connective (they are one introduction, one selection), each tail
+closes separately, and tail-terms after the last tail are shared by
+all tails.
 
 ```lisp
-; mi nelci lo gerku gi'e bajra
+; mi nelci lo gerku gi'e bajra — Speaker shared, dog in one tail only
 (Bind {$d :: Referents Entity} (Refer gerku-prop)
   {(∧ (Close (nelci Speaker $d)) (Close (bajra Speaker)))})
 ```
 
-**See.** [Spec §4.5, §5.4, §11](spec.md).
+```lisp
+; mi dunda le cukta gi'e lebna lo jdini vau do — CLL 14.54: the
+; tail-term do applies to both tails (dunda x3 and lebna x3)
+(Bind {$b :: Referents Entity} (Refer le-cukta-prop)
+  {(Bind {$m :: Referents Entity} (Refer jdini-prop)
+    {(∧ (Close (dunda Speaker $b Audience))
+       (Close (lebna Speaker $m Audience)))})})
+```
+
+Elided places in *different* tails stay distinct sites (CLL 14.58's
+route argument: two goers' unspecified routes are not one route) —
+contrast the sumti-connective case above, where one shared tail keeps
+one site.
+
+**See.** [Spec §4.5, §5.4, §11](spec.md); CLL 14.9.
 
 ### ga … gi …, gu'a … gi … (GA/GUhA) — forethought
 
 Forethought spellings of the same operators (selbri-level for GUhA);
-no separate semantics — structure resolved by surface grammar.
+no separate semantics — structure resolved by surface grammar, with
+the same tail-sharing discipline as the afterthought forms.
 
-**See.** [Spec §4.5, §11](spec.md); §14 for the gek/guhek units.
+```lisp
+; ga mi gi do citka lo plise — forethought ∨, apple introduced once
+(Bind {$p :: Referents Entity} (Refer plise-prop)
+  {(∨ (Close (citka Speaker $p))
+     (Close (citka Audience $p)))})
+```
+
+**See.** [Spec §4.5, §5.3, §11](spec.md); §14 for the gek/guhek units.
 
 ### na (NA)
 
