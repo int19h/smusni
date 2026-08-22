@@ -1624,12 +1624,22 @@ reference type `lo du'u` actually yields, under a **singleton
 condition** with singularity projective. The remark's precise shape:
 
 ```text
-(Meau0 r) ≝ (Presuppose (∃ (λ {$p :: Proposition} {(CoRef r $p)}))
-              (∃ (λ {$p :: Proposition} {(∧ (CoRef r $p) (Holds $p))})))
+(Meau0 r) ≝
+(Presuppose
+  (∃ (λ {$p :: Proposition}
+    {(∧ (CoRef r $p)
+       (∀ (λ {$q :: Proposition} {(→ (CoRef r $q) (= $q $p))})))}))
+  (∃ (λ {$p :: Proposition}
+    {(∧ (CoRef r $p)
+       (∀ (λ {$q :: Proposition} {(→ (CoRef r $q) (= $q $p))}))
+       (Holds $p))})))
 ```
 
 (the member `$p` singleton-lifts at the referential `CoRef`
-positions, §3.2). For `abu` a singleton
+positions, §3.2; the uniqueness conjunct makes the representative
+single-valued outright — §4.8 deliberately assumes no atomicity, so
+bare co-reference with *some* proposition would not by itself
+guarantee one). For `abu` a singleton
 reference to a prior `lo du'u c`, `(Meau0 abu)` is extensionally
 `(Holds p)` at the sole member, so `me'au abu gi'a me'au by` is the
 content-level disjunction of the two claims (contrast
@@ -2292,12 +2302,10 @@ approximate:
   of the experimental `me'ei`/`me'au` pair, the plural-reference
   `me'au` case (§9.1's singleton condition; the universal reading is
   the recorded candidate), `se du'u` under `ce'u` extraction (§9.2),
-  explicit-`ce'u` readings of the non-`ka`/`du'u` abstractors (each
-  needing a result-specific typed analysis — an argument-indexed
-  amount abstraction for `ni`, and per-abstractor codomains likewise —
-  not a blanket reduction to reified `PredTerm`s), the Rosta
+  the Rosta
   all-`ce'u` `si'o` (a genuine predicate nominalization into concept
-  objects — the one member that is reserved-family territory proper),
+  objects — the one explicit-`ce'u` reading outside `ka`/`du'u` that
+  is reserved-family territory proper),
   and the open design points a
   family raises: row-isomorphism under `se`-relabeling, and typed
   cross-row operators (identity *within* a row is already fixed
@@ -2313,6 +2321,13 @@ approximate:
   `me'au` consumes through the row's `Holds`, plurality rule as at
   row ⟨⟩) — so adoption fills this declared hole without retyping
   any baseline place or reopening the bridge.
+- **Explicit `ce'u` in the non-`ka`/`du'u` abstractors** (§11): each
+  needs a **result-specific typed analysis** — an argument-indexed
+  amount abstraction for `ni`, and per-abstractor codomains for
+  `jei`/`li'i`/the event abstractors likewise — none of them a
+  reified `PredTerm<ρ>`, so this is its own gap, not part of the
+  reservation above (whose one member from this territory is the
+  all-`ce'u` `si'o` listed there).
 - **MEX beyond the library fragment**: non-decimal bases, arrays,
   indefinite operators.
 - **Prosody and stress** as meaning carriers; conversational repair as

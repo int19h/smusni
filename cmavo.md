@@ -420,7 +420,7 @@ full product, no coordinate maximality (P17).
 
 ```lisp
 ; ci gerku ce'e re prenu cu batci
-(∃ (λ {{$dogs :: Set Entity} {$people :: Set Entity}}
+(∃ (λ {$dogs $people :: Set Entity}
   {(∧ (= (Card $dogs) 3) (= (Card $people) 2) …)}))
 ```
 
@@ -464,18 +464,13 @@ shared destination, not two).
 ### ja / je / jo / ju (JA) — tanru-internal and general connectives
 
 Same logical operators at their locus (tanru-unit joining, tag
-joining); `je` inside tanru conjoins the modifications — the head is
-one predication, modified under both conjuncts, with its own fills
-intact.
+joining). At the *tag* locus the connective is the ordinary operator
+over the tag conjuncts (§11's facet joining). At the *tanru-unit*
+locus — `blabi je cmalu zdani` — the spec's §6.2 defines only
+single-modifier `Tanru`, and the connected-modifier lowering is
+**pending its spec row (hole H15)**.
 
-```lisp
-; ta blabi je cmalu zdani be mi — one zdani predication, two modifiers
-(Close ((Tanru blabi ((Tanru cmalu zdani-be-mi))) ta-ref))
-; ≡ admissibility conjunction over the same modified head (§6.2);
-; zdani's x2 fill (be mi) rides inside the head unit either way
-```
-
-**See.** [Spec §4.5, §6.2, §11](spec.md).
+**See.** [Spec §4.5, §6.2, §14](spec.md); hole H15.
 
 ### gi'a / gi'e / gi'o / gi'u (GIhA) — bridi-tail connectives
 
@@ -1355,9 +1350,12 @@ also admits `joik GI` (forethought non-logical connection) and
 ### Connective + BO / KE grouping (ek/jek/joik/gihek + bo, + ke…ke'e)
 
 Grouping-decorated connectives (`.e bo`, `.i je bo` aside, `ja ke …
-ke'e`, …): the BO/KE part is ⊳ text-to-reading grouping — it fixes
+ke'e`, …), including the EBNF variants with an intervening simple tag
+(`ek/jek/joik/gihek + stag + BO/KE`, e.g. `.e ba bo`): the BO/KE part
+is ⊳ text-to-reading grouping — it fixes
 association tightness and contributes no constructor; the semantics
-is the base connective's.
+is the base connective's, with an intervening tag adding its relation
+per the I+stag+BO pattern (whose row is hole H15).
 
 **See.** [Spec §11 ¶1, §4.5](spec.md).
 
@@ -1385,12 +1383,13 @@ associated relation.
 
 ### number + ROI (re roi, so'i roi …)
 
-Occurrence-count tense as one unit: the count of event
+Occurrence-count tense as one unit — **pending its spec row (hole
+H13)**; the evident shape is a cardinality condition on event
 instantiations.
 
-**See.** [Spec §11](spec.md).
+**See.** [Spec §14](spec.md); hole H13.
 
-### number + MOI (moi/mei/si'e/cu'o)
+### number + MOI (moi/mei/si'e/cu'o/va'e)
 
 Ordinal/cardinal/portion/probability selbri from a number — a single
 selbri former. **Hole H4 (§15): no mapping row yet.**
@@ -1452,7 +1451,9 @@ none licenses improvisation (§14's discipline).
 - **H15 connective residue**: the §11 rows for I+jek/joik
   (`.i je` — the index's single-performance analysis pending), the
   I+stag+BO unit (`.i ba bo` — exposed event binders and the tag
-  conjunct pending), and `nai` on joiks are unstated.
+  conjunct pending), `nai` on joiks, and jek/joik at the
+  **tanru-unit locus** (`blabi je cmalu zdani` — §6.2 defines only
+  single-modifier `Tanru`) are unstated.
 - **H16 MAI enumerators** (`mai`, `mo'o` with numbers/letterals):
   discourse enumeration, no structural or semantic mapping.
 - **H17 `vu'o`**: relative-clause attachment to connected sumti
