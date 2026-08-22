@@ -464,11 +464,11 @@ aesthetic standing. Also the `nai`-fallback for unpaired indicators
 ### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
 **Informally.** The gradable/vague-quantity interface: the axiomatic
-admissibility predicates for degree-quantifier thresholds and for
-`ji'i` approximation regions (`AdmissibleTolerance : Number ×
-Precision → Fn<(Number), Content>` — the tolerance region about an
-anchor at the numeral's precision, nonempty by VC1; spec §12, pin
-P37) (thresholds indexed by
+admissibility predicates. `AdmissibleTolerance : Number × Precision →
+Fn<(Number), Content>` and its rounding sibling `AdmissibleRounding`
+serve `ji'i` (the tolerance/rounding-preimage regions about an anchor
+at the numeral's precision, nonempty by VC1 — spec §12, pin P37);
+the threshold predicates serve the degree quantifiers (indexed by
 the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
 TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
 sort) and gradable
@@ -769,6 +769,32 @@ position via the degree projection). Lexical families, not term
 expansions.
 **For.** `lei mi ratcu cu cimei`; `ti pamoi le'i mi ratcu`.
 **See.** [Spec §12, §11](spec.md), pin P29.
+
+### 1.53 The declared partial projections and crossings
+
+**Informally.** Declared, definedness projective (§5.5):
+`RealizedAct<F>` / `RealizedDiscourse` (the act or act-sequence a
+transcript token/span realizes — utterance anaphora's crossing, P28)
+with the total `ActContent` (an assertion's packaged content); and
+the MEX conversions `RelToOp<ρ>` (`na'u`, at Number-rowed relations,
+functional in x1), `OpToRel` (`nu'a`, total), `OperandToOp` (`ma'o`,
+the function a `Context` recovery — P36), `AmountOperand<ρ>` (`ni'e`,
+the Number-result computation at a Number-rowed relation). `se` on
+operators is pure argument permutation.
+**See.** [Spec §7.4, §12, §11](spec.md), pins P28, P36.
+
+### 1.54 `EnumerationOrdinal`
+
+**Informally.** MAI's declared display relation: the
+attachment-selected constituent bears ordinal n in a
+`SequenceKey`-identified enumeration at the closed
+`EnumerationLevel` (`Item` for `mai`, `Section` for `mo'o`);
+non-at-issue — placed by §7.6's machinery (`Supplement` at a
+constituent target, `Express` beside an act-level target); no
+temporal ordering of denoted events implied (CLL 19.7 numbers sumti
+inside one bridi).
+**For.** `mi klama pamai le zarci .e remai le zdani`.
+**See.** [Spec §12, §11](spec.md).
 
 ## 2. Defined forms
 
@@ -1211,30 +1237,6 @@ together with the GAhO kinds). Endpoint/center references take the
 projective singular condition (the §9.2 pattern).
 **For.** `la .uacintyn. mi'i lo minli be li muno`.
 **See.** [Spec §12, §11](spec.md).
-
-### 2.33 `EnumerationOrdinal`
-
-**Informally.** MAI's display fact: the attachment-selected
-constituent bears ordinal n in a Context-keyed enumeration sequence,
-at the closed `EnumerationLevel` (`Item` for `mai`, `Section` for
-`mo'o`); non-at-issue — placed by §7.6's machinery (a `Supplement`
-anchored at a constituent target, an `Express` beside an act-level
-target); no temporal ordering of denoted events implied (CLL 19.7
-numbers sumti inside one bridi).
-**For.** `mi klama pamai le zarci .e remai le zdani`.
-**See.** [Spec §12, §11](spec.md).
-
-### 2.34 The MEX conversion interfaces (declared crossings)
-
-**Informally.** Declared partial crossings, row-indexed with
-projective definedness (spec §12): `RelToOp<ρ>` (`na'u` — defined
-where the relation is functional in x1), `OpToRel` (`nu'a`, total),
-`OperandToOp` (`ma'o` — the intended function a `Context` recovery,
-P36), `AmountOperand<ρ>` (`ni'e` — its own crossing, not `NiRel`);
-`se` on operators is pure argument permutation. Everything beyond —
-including general `mo'e` past `AmountValue` — stays in the §14 MEX
-gap.
-**See.** [Spec §12, §11](spec.md), pin P36.
 
 ## Appendix: model-theory symbols
 

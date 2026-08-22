@@ -349,12 +349,13 @@ compose — order-insensitive truth-conditionally, with bindings and
 supplements keeping source order at the effect level.
 
 ```lisp
-; le gerku poi blabi zi'e noi le mi pendo cu ponse ke'a — CLL 8.39
+; le gerku poi blabi zi'e noi le mi pendo cu ponse ke'a cu klama
+; — CLL Example 8.39
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         {(∧ (le-gerku-base $r) (blabi $r))}))
   {(Supplement $d (Close (ponse pendo-ref $d))
-     …)})
+     (Close (klama $d)))})
 ```
 
 **See.** [Spec §11](spec.md); CLL 8.4.
@@ -703,8 +704,9 @@ Set operators: `∩` / `∪` / `×` on set objects.
 ### bi'i / bi'o / mi'i (BIhI), ga'o / ke'i (GAhO)
 
 Intervals and regions: `bi'o` → the ordered `Interval` (a Set
-object); `bi'i` → ⊳ symmetrization of the same (endpoint order
-normalized with the GAhO kinds); `mi'i` → `MetricBall`
+object); `bi'i` → ⊳ symmetrization of the same at ordered domains,
+and the `SpanRegion` betweenness span at metric domains; `mi'i` →
+`MetricBall`
 (center-radius, Context metric — no endpoint arithmetic); `bi'o nai`
 → `RegionComplement` in a Context universe; the region object fills
 the host place. At tanru and sentence loci BIhI has **no standard
@@ -919,9 +921,9 @@ current `InContext`/`ShiftedGround`.
 Utterance anaphora at `Referents<UtteranceToken>`: ⊳ recency over the
 transcript at three distances, past and future; `dei` = the current
 entry's own bound token; `do'i` = `Context` at the salient token/span
-(P28). `la'e` on these crosses through the token's realized act
-(`Realizes` + `InterpretAct`) into the host-sorted crossing — no
-universal coercion.
+(P28). `la'e` on these crosses through the token's realized act —
+`(ActContent (RealizedAct u))`, both projections partial (spec §7.4)
+— into the host-sorted crossing; no universal coercion.
 
 ```lisp
 ; di'u jitfa jufra — the previous utterance is a false sentence
@@ -1277,7 +1279,7 @@ Enumeration ordinals: `EnumerationOrdinal` display facts at the
 one bridi), item and section level; sequence key Context-recovered;
 no temporal order implied.
 
-**See.** [Spec §11, §12](spec.md); [catalog 2.33](catalog.md).
+**See.** [Spec §11, §12](spec.md); [catalog 1.54](catalog.md).
 
 ### sei … se'u (SEI)
 
@@ -1443,7 +1445,7 @@ functional), operator→relation (`nu'a`, total), operand→operator
 amount-operand crossing (`ni'e`); `te'u` structural; `se` on
 operators permutes.
 
-**See.** [Spec §12, §11](spec.md), pin P36; [catalog 2.34](catalog.md).
+**See.** [Spec §12, §11](spec.md), pin P36; [catalog 1.53](catalog.md).
 
 ### la'o (ZOI), zo'oi (experimental)
 
