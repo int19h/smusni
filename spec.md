@@ -302,7 +302,12 @@ operator or lexical relation.
 The hierarchy is open at the leaves in one deliberate way: `Entity` admits
 kind-like referents where a model and the lexicon's kind-admitting places
 allow them. There is no `Kind` sort and no automatic kind reading of any
-description; see ruling P3.
+description; see ruling P3. One further opening is **reserved**, not
+present: §9.1's reified-predicate family would, if adopted, add an
+indexed first-order sort family beside `Set<T>`/`Sign<K>`, each member
+an ordinary first-order domain for equality, `Referents`,
+descriptions, and typed quantifiers, with `Proposition` retrospectively
+its row-⟨⟩ member; in the baseline only `Proposition` exists.
 
 ### 3.2 Plural reference
 
@@ -1613,17 +1618,38 @@ defines only row ⟨⟩; the rest is a registered gap (§14). The
 experimental cmavo pair `me'ei`/`me'au` (turn a selbri into an
 abstract-predicate sumti; use such a sumti as a selbri of the
 referent's arity) is the attested surface exponent of the two
-directions — and at the propositional case `me'au` is exactly `Holds`
-in selbri position: for `abu` naming a prior `lo du'u c`, `me'au abu`
-is `(Holds abu)`, so `me'au abu gi'a me'au by` is
-`(∨ (Holds abu) (Holds by))`, the content-level disjunction of the
-two claims (contrast `abu jetnu gi'a by jetnu`, two truth-predicate
+directions. At the propositional case `me'au` is `Holds` in selbri
+position, defined — like the numeric crossings of §9.2 — at the
+reference type `lo du'u` actually yields, under a **singleton
+condition** with singularity projective: for `abu` a singleton
+reference to a prior `lo du'u c`, `me'au abu` presupposes the sole
+member `p` and is `(Holds p)`, so `me'au abu gi'a me'au by` is the
+content-level disjunction of the two claims (contrast
+`abu jetnu gi'a by jetnu`, two truth-predicate
 claims *about* the objects — truth-conditionally aligned by the axiom
-pair, structurally distinct). Identity within any reified row beyond
-the round-trip axiom — in particular, how much finer than logical
-equivalence proposition identity is — is model-supplied and
-deliberately open, at row ⟨⟩ today exactly as it would be at any
-other.
+pair, structurally distinct). A non-singleton proposition reference
+has **no baseline reading**: silent distribution would violate P4's
+no-default-distributivity stance, so the plural case is registered in
+§14 (the universal reading — `Holds` distributed over the members —
+is the recorded candidate). Conversely `me'ei` at the propositional
+case is `Reify` in the sumti-forming direction; beyond arity zero
+both belong to the reserved family.
+
+**What the axioms fix, and what stays open.** The round-trip pair
+makes `Reify` and `Holds` mutual inverses at row ⟨⟩: proposition
+identity is exactly content identity — identity of the model's
+state-transformer denotations, intensional and dynamic, finer than
+logical equivalence (contents differing only in presuppositions or
+effects reify distinctly) — and this is **fixed by the axioms, not
+model-supplied**. Likewise any future row's crossing is a function
+over the extensional `PredTerm<ρ>` (§3.3 identifies relations equal
+on every row record), so β/η- and pointwise-equal predicates would
+reify identically — the family is extensional over `PredTerm` by
+construction. What remains open is only the adoption-shape question:
+whether each reserved row takes the same bijective shape, and the
+design of any row-isomorphism or cross-row operators (cross-row
+identity is not even formable until typed). No normative statement
+decides those today.
 
 ### 9.2 The abstraction relations
 
@@ -1648,7 +1674,14 @@ types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 (Reify (InterpretContent $s)) (Reify c))}) x2))` — its x1 the reified
 content, its x2 sentence signs whose interpretation reifies the same
 (CLL 11.7's x2 and `se du'u`); the others are the
-family proper. Reference applies **outside** the relation, exactly as for
+family proper. `DuhuRel` — and with it `se du'u` — is defined only
+for the 0-adic case: under explicit-`ce'u` extraction (§11) the
+`du'u` abstraction is a λ, not a content, and sentence signs express
+closed sentences (`InterpretContent` is defined for sentence signs,
+not open properties), so `se du'u` under extraction has no baseline
+reading; the natural future x2 witnesses for an n-adic `du'u` are
+`Expression` signs under the §7.7 `Interpret` family — reserved-family
+territory (§14). Reference applies **outside** the relation, exactly as for
 any selbri: `lo ni mi klama` is `Refer` over
 `(λ {$a :: Referents Amount} {(Close ((NiRel …) $a))})` — so the
 `lo`/`le` contrast, outer quantification,
@@ -1780,15 +1813,34 @@ bound variable; unassigned → keyed `Context`; ⊳ `go'i`-family → expansion
 with the antecedent's resolved context; `ra'o` → re-resolution under
 `InContext`/`ShiftedGround` (§5.1).
 
-**Abstractions** (§9, P13, P14). `du'u` → `Reify`; an explicit `ce'u`
-inside `du'u` (or any `ce'u`-capable abstractor) extracts λ exactly as
-in `ka` — `lo du'u ce'u klama` is the goer property — so the
-community's arity doctrine (n `ce'u` = n-adic; bare `du'u` the 0-adic
-case, whose extracted relation *is* the content, `PredTerm<⟨⟩>` ≅
-`Content`, then reified) holds as a theorem of this mapping; `nu` +
+**Abstractions** (§9, P13, P14). The `ce'u`-capable abstractors of
+this baseline are exactly **`ka` and `du'u`**. The `du'u` case split:
+
+```text
+du'u body, extracted row ⟨⟩    ↦ (Reify closed-body)
+du'u body, extracted row ρ ≠ ⟨⟩ ↦ the λ over ρ, exactly as ka
+                                  (no DuhuRel, no se du'u — §9.2, §14)
+```
+
+so `lo du'u ce'u klama` is the goer property, and the Rosta
+n-adic doctrine (n distinct extracted variables = n-adic; bare `du'u`
+the 0-adic case, whose extracted relation *is* the content,
+`PredTerm<⟨⟩>` ≅ `Content`, then reified) holds as a theorem of this
+mapping over `ka`/`du'u`. Elided places inside `du'u` close
+ordinarily (`zo'e` ≡ omission, P15); only explicit `ce'u` extracts.
+Arity counts **distinct extracted variables**: ⊳ `ce'u goi` aliasing
+identifies occurrences and `ce'u xi` indexing selects the extracting
+abstraction, both resolved at the text-to-reading layer. Explicit
+`ce'u` in the other abstractors — and the Rosta all-`ce'u` reading
+of `si'o` — would need n-adic concept/nature *objects*: the reserved
+family's territory (§9.1, §14), not this baseline; baseline `si'o`
+has no covert `ce'u`, closes its inner bridi normally, and maps
+through `SihoRel` with the conceptualizing mind at x2 (CLL 11.9) —
+a stated divergence from the Rosta proposal's clause 7. `nu` +
 sorts → `Refer`
 over event properties; `ka` → `λ` (⊳ implicit `ce'u` at first unfilled
-place, counting converted places; P12 — the experimental lambda-prenex
+place, counting converted places; P12, a rule of `ka` alone — the
+experimental lambda-prenex
 `ce'ai` names binder order explicitly where multiple readings arise); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
 the abstraction relations with reference outside; `mo'e` → the
 `AmountValue` numeric crossing; `tu'a X` → `Vague` abstraction
@@ -2222,10 +2274,25 @@ approximate:
   and relation *objects* — referents for `lo ka` with
   discourse-referent behavior (`lo ka ce'u klama goi ko'a`, anaphora
   and quantification over properties), the non-propositional readings
-  of the experimental `me'ei`/`me'au` pair, and the identity
-  granularity question a family makes expressible (β/η-variants,
-  `se`-relabelings, cross-row `du`). The baseline lowers `lo ka`
-  directly to the λ and defines reification at row ⟨⟩ only.
+  of the experimental `me'ei`/`me'au` pair, the plural-reference
+  `me'au` case (§9.1's singleton condition; the universal reading is
+  the recorded candidate), `se du'u` under `ce'u` extraction (§9.2),
+  explicit-`ce'u` readings of the non-`ka`/`du'u` abstractors
+  including the Rosta all-`ce'u` `si'o`, and the open design points a
+  family raises: row-isomorphism under `se`-relabeling, and typed
+  cross-row operators (identity *within* a row is already fixed
+  extensional over `PredTerm`, §9.1). The baseline lowers `lo ka`
+  directly to the λ and defines reification at row ⟨⟩ only. The
+  **adoption contract**: adding the family is additive — an indexed
+  first-order sort family beside `Set<T>`/`Sign<K>` (§3.1's reserved
+  opening) whose members are ordinary domains for `Refer`, anaphora,
+  descriptions, and typed quantifiers; application-consuming lexical
+  places stay `Fn`-typed and `lo ka` keeps its direct-λ lowering
+  there, reified objects entering at referent positions with the
+  row's crossing pair mediating (`me'ei P` ↦ the row's reification;
+  `me'au` consumes through the row's `Holds`, plurality rule as at
+  row ⟨⟩) — so adoption fills this declared hole without retyping
+  any baseline place or reopening the bridge.
 - **MEX beyond the library fragment**: non-decimal bases, arrays,
   indefinite operators.
 - **Prosody and stress** as meaning carriers; conversational repair as
@@ -2247,7 +2314,7 @@ the gap register §14 with its reason. The coverage matrix:
 | quantifiers, termsets, negation scope | §11 ¶4 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
 | anaphora, KOhA, `ra'o` | §11 ¶6 | — | exotic donkeys | §4, §5 |
-| abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | abstraction relations, `AmountValue`, `JaiPromote` | — | §8–§10 |
+| abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
@@ -2571,8 +2638,13 @@ chapter/section or dictionary entry.
   (the n-adic abstraction doctrine discussed in rationale §2.10).
 - **Chierchia & Turner** — Chierchia, Gennaro and Turner, Raymond,
   "Semantics and Property Theory", *Linguistics and Philosophy* 11(3),
-  1988 (the nominalization/predicativization pair behind §9.1's
-  reservation).
+  1988, pp. 261–302 (the nominalization/predicativization pair behind
+  §9.1's reservation).
+- **BPFK Abstractors** — "BPFK Section: Abstractors", Lojban Wiki,
+  <https://mw.lojban.org/papri/BPFK_Section:_Abstractors> (the
+  proposed `ce'u` definition discussed in rationale §2.10 — a
+  proposed, partial extension: `ce'u` "almost solely used in `ka`",
+  with `si'o`/`du'u`/`su'u` noted as able to "make some sense").
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
   (or to Be Some Values of Some Variables)", *The Journal of
   Philosophy* 81(8), 1984, pp. 430–449.

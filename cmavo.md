@@ -837,7 +837,9 @@ family is a §9.1 reservation (§14 gap).
 
 ```lisp
 ; me'au .abu gi'a me'au by.  — A or B, as claims
-(∨ (Holds abu-ref) (Holds by-ref))
+(∨ (Holds abu-p) (Holds by-p))   ; singleton condition (spec §9.1):
+                                 ; abu-p/by-p the presupposed sole
+                                 ; members; no plural baseline reading
 ```
 
 **See.** [Spec §9.1, §14, §16.5](spec.md); [rationale §2.10](rationale.md).

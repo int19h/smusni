@@ -422,7 +422,8 @@ bridge (the sign and event crossings target other sorts).
 generalizes row by row to reified predicates — a §9.1 reservation
 (registered gap), with the experimental `me'ei`/`me'au` pair as the
 attested surface exponents; at the propositional case `me'au` is
-exactly `Holds` in selbri position.
+`Holds` in selbri position under §9.1's singleton condition
+(singularity projective; no plural baseline reading).
 **See.** [Spec §9.1, §7.6, §14](spec.md); [primer ch. 8](primer.md);
 [rationale §1.10, §2.10](rationale.md).
 
