@@ -10,7 +10,8 @@ Cmavo sequences that form a single grammatical unit — a unit at one
 level of the EBNF grammar, not a composition of its parts (`.i je` is
 not `.i` + `je`) — are indexed in §14. Cmavo that contribute pure
 structure and no term constructor (terminators, grouping) are listed
-once in §13. Coverage holes this index exposes are collected in §15.
+once in §13. The record of the ledger of coverage holes this index
+originally exposed — resolved in the round-14 cycle — is §15.
 
 In the examples, the first comment line is the Lojban source; `…`
 elides material irrelevant to the entry; some lowerings are shown in
@@ -193,6 +194,15 @@ components/members are the **maximal** plurality of the description
 
 **See.** [Spec §4.8–4.9, §11](spec.md), pin P5; [rationale §2.8](rationale.md).
 
+### lei / le'i / lai / la'i (LE/LA)
+
+The speaker-description and name counterparts of `loi`/`lo'i`: the
+P10 `skicu` (or naming) base bound first, then `Refer` to the
+`gunma` group / `selcmi` set object over it; inner PA constrains the
+base, outer PA counts the objects.
+
+**See.** [Spec §11](spec.md), pins P5, P10.
+
 ### Inner PA (`lo ci gerku`)
 
 Unit count of the selected base under a counting basis:
@@ -230,7 +240,8 @@ X refers to; `lu'e X` a sign for X.
 ```lisp
 ; mi djuno la'e by — by bound to a sentence-sign referent
 (Close (djuno Speaker (Reify (InterpretContent by-sign))))
-; (la'e di'u likewise, once the di'u series lands — hole H6)
+; la'e di'u crosses through the token's realized act instead:
+; Realizes + InterpretAct, host-sorted (P28)
 ```
 
 **See.** [Spec §7.5, §11](spec.md).
@@ -313,11 +324,34 @@ rest of the discourse (P16).
 
 ### vu'o (VUhO)
 
-Attaches a relative clause to a whole connected-sumti group rather
-than the last conjunct. **No mapping row and no gap entry — hole
-H17.**
+### pe / ne / po / po'e / po'u / no'u (GOI)
 
-**See.** hole H17 below.
+The associator family, by CLL 8.3's own expansions (nested as CLL
+nests them): `pe` → restrictive `srana` conjunct; `ne` → the
+incidental (`Supplement`) counterpart; `po` → restrictive
+`se steci srana`; `po'e` → restrictive `jinzi ke se steci srana`;
+`po'u` → restrictive P23 identity; `no'u` → incidental identity. The
+associated sumti is bound before the pure restriction forms.
+
+```lisp
+; le stizu pe mi cu blanu — CLL 8.18
+(Bind {$s :: Referents Entity}
+      (Refer (λ {$r :: Referents Entity}
+        {(∧ (le-stizu-base $r) (srana $r Speaker))}))
+  {(Close (blanu $s))})
+```
+
+**See.** [Spec §11](spec.md); CLL 8.3.
+
+### vu'o (VUhO)
+
+Attaches the relative clause to the whole connected sumti (P34): an
+incidental clause anchors at the joint unit and predicates **once of
+each immediate connectee**; a restrictive clause restricts each
+operand under the connective's structure; a group-forming joik takes
+the clause on the resultant object.
+
+**See.** [Spec §11](spec.md), pin P34.
 
 ## 4. Quantifiers, numbers, termsets
 
@@ -379,11 +413,12 @@ a `Vague`-parameterized region on the count scale.
 
 ### ji'i (PA)
 
-Approximation: `ji'i n` is `Vague` tolerance about `n` (a soritical
-region — no fact fixes the boundary; spec §4.10, §6.4). The exact
-tolerance-region former is unstated — see hole H19.
+Approximation, position-indexed (P37): prefix/medial `ji'i`
+approximate through `AdmissibleTolerance` (`Vague`, nonempty by VC1);
+suffix `ji'i` rounds (a definedness condition on the numeral),
+directionally under `ma'u`/`ni'u`.
 
-**See.** [Spec §4.10, §6.4](spec.md).
+**See.** [Spec §4.10, §6.4, §12](spec.md), pin P37.
 
 ### du'e / rau / mo'a (PA)
 
@@ -408,10 +443,62 @@ restricted only by `poi` (P20).
 ```lisp
 ; da gerku
 (∃ (λ {$x :: Entity} {(gerku $x)}))
-; (a prenexed spelling — da zo'u da gerku — awaits H1's zo'u row)
+; da zo'u da gerku — the prenexed spelling; prenex order is scope
+; order (P26)
 ```
 
 **See.** [Spec §4.5, §11](spec.md), pin P20.
+
+### zo'u (ZOhU)
+
+Prenex and topic separator (P26). Quantifier prenex: prenexed terms
+lower to the quantifier/selection prefix in surface order — prenex
+order is scope order. Topic use: the topic binds, and a `Vague`
+`TopicResolution` fills an admissible place of the open comment frame
+or bears `srana`-aboutness to the closed comment (CLL 19.4's fish =
+the place choice); `tu'e…tu'u` extends one topic over a sequence.
+
+```lisp
+; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL 19.8
+(Presuppose (∃ prenu-prop)
+  (∀ (λ {$x :: Entity} {(→ (prenu $x)
+     (∃ (λ {$y :: Entity} {(Close (patfu $y $x))})))})))
+```
+
+**See.** [Spec §11, §12](spec.md), pin P26; [catalog 1.51](catalog.md).
+
+### da'a (PA)
+
+All-but-n (default one): the `SelectAllBut` selection — a neutral
+witness set whose remainder counts exactly n; the omitted
+individuals are not a parameter and may vary under distributive
+scope.
+
+**See.** [Spec §12, §11](spec.md); [catalog 2.31](catalog.md).
+
+### xo'e (experimental PA)
+
+Elliptical number: `Context` at `Number` — P15's analogue, referenced
+per the experimental-cmavo policy.
+
+**See.** [Spec §11](spec.md), pin P15.
+
+### bu'a / bu'e / bu'i (GOhA), cei + broda-series
+
+Relation variables: **typed quantification at `PredTerm<ρ>`** (P30) —
+predicate-typed variables, no reified objects; bare `bu'a` carries
+implicit `su'o`, other quantifiers are prenex-only; the row is fixed
+across occurrences; only pure higher-order restrictions type.
+`cei`/`broda`-series: ⊳ **bridi-template** binding — fills, tense,
+and negation stored, later fills override (the `go'i` machinery);
+unassigned brodV are CLL's schematic sample predicates.
+
+```lisp
+; su'o bu'a zo'u la .djim. bu'a la .djan. — CLL 16.105
+(∃ (λ {$F :: PredTerm ρ} {(Close ($F jim-ref jan-ref))}))
+```
+
+**See.** [Spec §11](spec.md), pin P30.
 
 ### ce'e (CEhE), nu'i / nu'u (NUhI/NUhU)
 
@@ -463,14 +550,20 @@ shared destination, not two).
 
 ### ja / je / jo / ju (JA) — tanru-internal and general connectives
 
-Same logical operators at their locus (tanru-unit joining, tag
-joining). At the *tag* locus the connective is the ordinary operator
-over the tag conjuncts (§11's facet joining). At the *tanru-unit*
-locus — `blabi je cmalu zdani` — the spec's §6.2 defines only
-single-modifier `Tanru`, and the connected-modifier lowering is
-**pending its spec row (hole H15)**.
+Same logical operators at their locus. At the *tag* locus: the
+operator over the tag conjuncts (§11's facet joining). At the
+*tanru-unit* locus: `TanruLinkConnect` (P33) — shared head asserted
+once, one `Vague` link per conjunct, connective over the link
+applications; distinct-head units connect as whole predications.
 
-**See.** [Spec §4.5, §6.2, §14](spec.md); hole H15.
+```lisp
+; ta blabi ja cmalu zdani — one house; the modification link is
+; white-flavored or small-flavored
+(Close ((TanruLinkConnect ∨ blabi cmalu zdani) ta-ref))
+```
+
+**See.** [Spec §6.2, §12, §11](spec.md), pin P33;
+[catalog 2.32](catalog.md).
 
 ### gi'a / gi'e / gi'o / gi'u (GIhA) — bridi-tail connectives
 
@@ -593,17 +686,21 @@ Set operators: `∩` / `∪` / `×` on set objects.
 
 ### bi'i / bi'o / mi'i (BIhI), ga'o / ke'i (GAhO)
 
-Intervals: the library `Interval` former is the evident target
-(endpoints ordered for `bi'o`, GAhO choosing endpoint kinds), but
-**no surface mapping row exists — hole H14** (nor for `mi'i`,
-center-and-radius).
+Intervals and regions: `bi'o` → the ordered `Interval` (a Set
+object); `bi'i` → ⊳ symmetrization of the same (endpoint order
+normalized with the GAhO kinds); `mi'i` → `MetricBall`
+(center-radius, Context metric — no endpoint arithmetic); `bi'o nai`
+→ `RegionComplement` in a Context universe; the region object fills
+the host place. At tanru and sentence loci BIhI has **no standard
+resolved mapping** (CLL 14.16: no meanings found) — a documented
+no-mapping.
 
 ```lisp
-; li pa bi'i li mu — the evident target, pending H14
+; li pa bi'i li mu
 (Interval 1 5 k₁ k₂)   ; endpoint kinds k₁ k₂ chosen by ga'o/ke'i
 ```
 
-**See.** [Spec §4.9, §12, §14](spec.md); hole H14 below.
+**See.** [Spec §11, §12](spec.md); [catalog 2.33](catalog.md).
 
 ## 6. Tense, aspect, modals
 
@@ -654,11 +751,14 @@ event bears the mover's `muvdu` motion in the `farna` direction);
 
 ### roi (ROI)
 
-Occurrence count (number + `roi`). **No spec row yet — hole H13**;
-the evident shape (a cardinality condition on the event
-instantiations) awaits its normative statement.
+Occurrence count: `n roi` **replaces** the single-event existential
+closure with the counted instantiation-set schema — the set of
+distinct eventualities satisfying the host event property within the
+reference interval has cardinality n (P35); `roi nai` negates the
+count; subjective counts use the threshold GQs; the default interval
+is a Context anchor with Vague extent.
 
-**See.** [Spec §14](spec.md); hole H13 below.
+**See.** [Spec §11](spec.md), pin P35.
 
 ### ta'e / ru'i / di'i / na'o (TAhE)
 
@@ -732,6 +832,21 @@ speaker⊕others, …).
 
 **See.** [Spec §5.1](spec.md).
 
+### ko (KOhA)
+
+Imperative `do` (P27): fills its place with the **active addressee**
+(the `doi`-updated `do`, falling back to the utterance's Audience)
+and ⊳ marks the nearest **performed** clause as the command force —
+no force extrusion through `Reify` or quotation (`lo nu ko klama`
+constructs content, commands nothing).
+
+```lisp
+; ko klama
+(Command Audience (Close (klama Audience)))
+```
+
+**See.** [Spec §11, §7.1](spec.md), pin P27.
+
 ### ti / ta / tu (KOhA)
 
 Demonstratives: `Deictic` at proximal/medial/distal against the
@@ -780,6 +895,31 @@ Re-resolution: the expanded bridi's deictics re-resolve under the
 current `InContext`/`ShiftedGround`.
 
 **See.** [Spec §5.1, §11](spec.md).
+
+### di'u / de'u / da'u / di'e / de'e / da'e / dei / do'i (KOhA)
+
+Utterance anaphora at `Referents<UtteranceToken>`: ⊳ recency over the
+transcript at three distances, past and future; `dei` = the current
+entry's own bound token; `do'i` = `Context` at the salient token/span
+(P28). `la'e` on these crosses through the token's realized act
+(`Realizes` + `InterpretAct`) into the host-sorted crossing — no
+universal coercion.
+
+```lisp
+; di'u jitfa jufra — the previous utterance is a false sentence
+(Close (jitfa-jufra dihu-token))   ; dihu-token ⊳ bound by recency
+```
+
+**See.** [Spec §11, §7.4](spec.md), pin P28.
+
+### da'o (DAhO)
+
+Assignment cancellation: ⊳ clears all resolver stores (KOhA,
+letteral, pro-bridi); `ni'o` levels imply it per depth — single
+(spoken) / double (written) clear assignments, triple also resets
+tense and indicator stickiness, `no'i` resumes (spec §7.1).
+
+**See.** [Spec §11, §7.1](spec.md).
 
 ### ce'u (KOhA)
 
@@ -1091,11 +1231,18 @@ the performative host-force profile — the greeting *is* the act.
 
 ### doi (DOI)
 
-Vocative address: the machinery is §7.1's
-`Vocative : Referents<Entity> → Act<Address>`, but no spec row names
-`doi` — hole H18.
+Vocative address: the `Vocative` act beside the host, **plus** ⊳
+binding of the active `do` (P27) — `do` and `ko` consult the active
+binding before falling back to the utterance's Audience, which is
+never mutated.
 
-**See.** [Spec §7.1, §14](spec.md); hole H18 below.
+```lisp
+; doi .djan. ko klama — the vocative act, then the command to John
+(Do (Vocative jan-ref)
+    (Command jan-ref (Close (klama jan-ref))))
+```
+
+**See.** [Spec §11, §7.1](spec.md), pin P27.
 
 ### mi'e (COI)
 
@@ -1103,6 +1250,15 @@ Performative self-naming: the act that makes the speaker bear the
 name.
 
 **See.** [Spec §11](spec.md).
+
+### mai / mo'o (MAI)
+
+Enumeration ordinals: `EnumerationOrdinal` display facts at the
+**attachment-selected** constituent (CLL 19.7 numbers sumti inside
+one bridi), item and section level; sequence key Context-recovered;
+no temporal order implied.
+
+**See.** [Spec §11, §12](spec.md); [catalog 2.34](catalog.md).
 
 ### sei … se'u (SEI)
 
@@ -1222,6 +1378,52 @@ The numeric crossing: a sumti's value as an operand
 
 **See.** [Spec §9.2, §11](spec.md).
 
+### me … me'u (ME/MEhU)
+
+Sumti to selbri: the Among-property `MePred` — x1 is among the
+referents (CLL 5.10; the ratified gadri definitions expand `lo PA
+sumti` through it).
+
+```lisp
+; la .baltazar. cu me le ci nolraitru
+(Close ((MePred le-ci-nolraitru-ref) baltazar-ref))
+```
+
+**See.** [Spec §12, §11](spec.md); [catalog 2.30](catalog.md).
+
+### mei / moi / si'e / cu'o / va'e (MOI)
+
+Number selbri: the MOI relation families — `MeiRel` (group from an
+n-membered set), `MoiRel` (n-th under a Context-recovered pure
+ordering), `SiheRel` (portion), `CuhoRel` (opaque probability,
+0 ≤ n ≤ 1, no probability calculus — P29), `VaheRel` (scale
+position). `me X me'u MOI` composes.
+
+```lisp
+; lei mi ratcu cu cimei — CLL 18.81
+(Close ((MeiRel 3) ratcu-group set-ref members-ref))
+```
+
+**See.** [Spec §12, §11](spec.md), pin P29; [catalog 1.52](catalog.md).
+
+### na'u / nu'a / ma'o / ni'e / te'u (MEX conversions)
+
+The §12 partial interfaces: relation→operator (`na'u`, where
+functional), operator→relation (`nu'a`, total), operand→operator
+(`ma'o`, the function a `Context` recovery — P36), the
+amount-operand crossing (`ni'e`); `te'u` structural; `se` on
+operators permutes.
+
+**See.** [Spec §12, §11](spec.md), pin P36; [catalog 2.35](catalog.md).
+
+### la'o (ZOI), zo'oi (experimental)
+
+Foreign names: naming through `(ForeignName t)` over the opaque
+payload; `zo'oi` quotes one non-Lojban word as a word-level opaque
+sign.
+
+**See.** [Spec §12, §11](spec.md); [catalog 2.36](catalog.md).
+
 ## 12. Scalar and tanru operators
 
 ### na'e / no'e / to'e (NAhE)
@@ -1236,12 +1438,22 @@ Opposite — the na'e-family contraries, not `¬` (P18 handles `na`).
 
 **See.** [Spec §6.3, §11](spec.md); [catalog](catalog.md).
 
+### je'a (NAhE), ja'a (NA)
+
+Affirmers: transparent identities at their loci (`na je'a broda` ≡
+`na broda`) that ⊳ **override inherited negation** in pro-bridi
+expansions — `ja'a go'i` over a negative template removes the `na`
+(P31). No fourth `Scalar` kind; emphasis is absence or `ba'e` focus.
+
+**See.** [Spec §11](spec.md), pin P31.
+
 ### bo (tanru), ke / ke'e (KE/KEhE), co (CO)
 
 Tanru grouping and inversion: ⊳ text-to-reading structure — they fix
 which `Tanru M H` applications form, and contribute no constructor.
-(`co` swaps modifier/head order — stated here pending its spec row,
-hole H12.)
+`co`: `A co B` ≡ `ke B ke'e A`, trailing sumti routed to the seltau's
+places as `be`-fills (hence invisible to `vo'a`/`go'i`); multiple
+`co` right-group (spec §6.2; CLL 5.8).
 
 **See.** [Spec §6.2, §11](spec.md).
 
@@ -1273,10 +1485,10 @@ separator); the elidable terminators `ku`, `kei`, `vau`, `be'o`,
 `boi`, `ke'e`, `ge'u`, `ku'o`, `li'u`, `le'u`, `lo'o`, `me'u`,
 `se'u`, `toi`, `fe'u`, `nu'u`, `ku'e`, `ve'o`, `do'u`; grouping `bo`
 (connective/tense grouping), `ke`/`ke'e` at their non-tanru loci;
-`tu'e`/`tu'u` (text grouping — scope width for connectives over
-sentence sequences); `fa'o` (end of text); `zo'u` separates a prenex
-(the prenex itself is scope structure: §15 hole H1); `y` (hesitation —
-morphology-level noise, no sign).
+`tu'e`/`tu'u` (text grouping — scope width for connectives and for a
+`zo'u` topic over sentence sequences); `fa'o` (end of text); `y`
+(hesitation — morphology-level noise, no sign). (`zo'u` itself is
+meaningful — see its entry in §4.)
 
 **See.** [Spec §11 ¶1](spec.md).
 
@@ -1308,34 +1520,43 @@ the accessibility row of the base connective.
 The same decoration pattern at the other loci: `na ja`, `se gi'a`,
 `joi nai`, `se joi` — one unit per EBNF `jek`/`gihek`/`joik`
 production; `se` on a non-logical connective swaps the (ordered)
-operands; `nai` on a joik marks a contrary connection, whose exact
-lowering awaits its spec row (hole H15).
+operands; `nai` on a joik is per-locus: truth-table for logical
+loci, `RegionComplement` for BIhI, and for mixture joiks the `Vague`
+mixture kind constrained to admissible alternatives other than the
+named one (§11).
 
 **See.** [Spec §4.5, §4.8, §11](spec.md).
 
 ### .i je / .i ja / .i joi … — I + jek/joik
 
 Sentence-level connection as one unit — NOT `.i` followed by an
-independent `je`: one performance of the *connected content* (for
-`.i ja` there is no pair of assertions to fall back on), with `∧`'s
-accessibility row shared with `Do`'s (spec §5.4). The §11 row for
-I+connective is not yet stated — hole H15.
+independent `je`: **one performance of the connected content** (P32 —
+forced by `.i ja`, where no pair of assertions exists), the host's
+single force shared by the connection, with `∧`'s accessibility row
+shared with `Do`'s (spec §5.4).
 
 ```lisp
 ; mi klama .i je do stali — one act asserting the conjunction
 (Assert (∧ (Close (klama Speaker)) (Close (stali Audience))))
 ```
 
-**See.** [Spec §5.4, §7.1, §14](spec.md); hole H15 below.
+**See.** [Spec §11, §5.4, §7.1](spec.md), pin P32.
 
 ### .i ba bo / .i pu bo … — I + stag + BO
 
-Sequenced performance with the tag relating the two events: both
-event binders must be exposed and the tag conjunct
-(`(balvi e₂ e₁)` for `ba bo`) joined inside the second content — the
-precise row is not yet stated (hole H15).
+One performance with the tag relating the two events — both event
+binders exposed, the tag conjunct inside (P32):
 
-**See.** [Spec §5.4, §14](spec.md); hole H15 below.
+```lisp
+; mi klama .i ba bo mi citka
+(Assert (∃ (λ {$e1 :: Referents Eventuality}
+  {(∧ (Close (klama :1 Speaker :Eventuality $e1))
+     (∃ (λ {$e2 :: Referents Eventuality}
+       {(∧ (Close (citka :1 Speaker :Eventuality $e2))
+          (balvi $e2 $e1))})))})))
+```
+
+**See.** [Spec §11](spec.md), pin P32.
 
 ### ge … gi …, gu'e … gi (gek/guhek units)
 
@@ -1355,7 +1576,7 @@ ke'e`, …), including the EBNF variants with an intervening simple tag
 is ⊳ text-to-reading grouping — it fixes
 association tightness and contributes no constructor; the semantics
 is the base connective's, with an intervening tag adding its relation
-per the I+stag+BO pattern (whose row is hole H15).
+per the I+stag+BO pattern (P32).
 
 **See.** [Spec §11 ¶1, §4.5](spec.md).
 
@@ -1383,86 +1604,33 @@ associated relation.
 
 ### number + ROI (re roi, so'i roi …)
 
-Occurrence-count tense as one unit — **pending its spec row (hole
-H13)**; the evident shape is a cardinality condition on event
-instantiations.
+Occurrence-count tense as one unit: the counted instantiation-set
+schema (P35) — see the `roi` entry in §6.
 
-**See.** [Spec §14](spec.md); hole H13.
+**See.** [Spec §11](spec.md), pin P35.
 
 ### number + MOI (moi/mei/si'e/cu'o/va'e)
 
-Ordinal/cardinal/portion/probability selbri from a number — a single
-selbri former. **Hole H4 (§15): no mapping row yet.**
+Ordinal/cardinal/portion/probability/scale selbri from a number — a
+single selbri former: the MOI relation families (see the MOI entry in
+§11; [catalog 1.52](catalog.md)).
 
-## 15. Coverage holes this index exposes
+## 15. Ledger record
 
-Cmavo-centric enumeration surfaced these baseline-relevant cmavo with
-no mapping row in spec §11 (and no gap-register entry unless noted).
-Each awaits either a mapping row, a library form, or a registered gap;
-none licenses improvisation (§14's discipline).
+The nineteen coverage holes this index originally exposed (H1–H19:
+`zo'u`, `ko`, the GOI associators, `me`/MOI, `lei`/`le'i`/`lai`/
+`la'i`, the `di'u` series, `zi'e`, `je'a`, `bu'a`/`cei`, `da'o`, the
+MEX conversions, `co`, ROI, BIhI, the connective residue, MAI,
+`vu'o`, `doi`, and the number-notation/quote residue) were resolved
+by the round-14 design cycle: mapping rows in spec §11 (with §6.2 and
+§7.1 additions), library forms in §12, and pins P26–P37 in §13. Each
+former hole's cmavo now carries a real entry above. Two records
+survive the ledger:
 
-- **H1 `zo'u`** (prenex). The prenex is scope structure — quantifier
-  and topic ordering — and P20's `da` examples presuppose it, but no
-  mapping row states how prenexed terms lower (scope order, topic-
-  comment for non-quantifier prenexes).
-- **H2 `ko`** (imperative). The Directive force machinery exists
-  (§7.1), but no rule states `ko` = Audience with directive force over
-  the host bridi.
-- **H3 GOI associators `pe` / `ne` / `po` / `po'e` / `po'u` /
-  `no'u`** —
-  restrictive/incidental association and possession. Presumably
-  `srana`-family conjuncts/supplements parallel to `poi`/`noi`/`goi`,
-  but nothing is stated.
-- **H4 `me` and MOI (`moi` / `mei` / `si'e` / `cu'o` / `va'e`)** —
-  sumti-to-
-  selbri (`me` — natural candidate: `Among` the referents) and number
-  selbri (ordinal, cardinality — `mei` vs `CardBasis`, portion,
-  probability). No treatment.
-- **H5 `lei` / `le'i` / `lai` / `la'i`** — the speaker-description and
-  name counterparts of `loi`/`lo'i`. The composition (P10's `skicu` /
-  naming + P5's group/set objects) is evident but unstated.
-- **H6 the `di'u` series (`di'u` / `de'u` / `da'u` / `dei` / `di'e` /
-  `de'e` / `da'e` / `do'i`)** — utterance anaphora. §7.4's
-  `UtteranceToken` sort and transcript machinery are exactly the
-  needed substrate (and `la'e di'u` motivated the §9.1 `me'au`
-  remark), but the pro-sumti themselves have no mapping.
-- **H7 `zi'e`** — relative-clause joining (`poi … zi'e noi …`):
-  conjunction of clause properties / supplement stacking; unstated.
-- **H8 `je'a`** (scalar affirmer). `Scalar` has OtherThan / Opposite /
-  Neutral and no affirmation arm; `je'a` (and its interaction with
-  `na'e`-family under negation) is unmapped.
-- **H9 `bu'a` / `bu'e` / `bu'i`** (predicate variables) and **`cei` +
-  `broda`-series** (selbri assignment). Quantification and anaphora
-  at relation type — directly implicated in the §9.1 reified-predicate
-  reservation; currently nothing.
-- **H10 `da'o`** (assignment cancellation) — P16 gives assignments
-  discourse scope; `da'o`'s explicit release is unstated.
-- **H11 MEX conversions `nu'a` / `na'u` / `ma'o` / `ni'e`**
-  (operator ↔ selbri ↔ operand)
-  — beyond the library fragment; arguably covered by the §14 MEX gap
-  entry, but not named there.
-- **H12 `co`** (tanru inversion) is stated here as ⊳ reordering
-  (§12 above) but the spec itself never names it.
-- **H13 ROI** (`roi`, number + `roi`): no spec row; the evident shape
-  is a cardinality condition on event instantiations.
-- **H14 BIhI intervals** (`bi'i` / `bi'o` / `mi'i` with GAhO
-  endpoints): the library `Interval` former exists but no surface row
-  maps the cmavo to it (nor states `mi'i`'s center-radius form).
-- **H15 connective residue**: the §11 rows for I+jek/joik
-  (`.i je` — the index's single-performance analysis pending), the
-  I+stag+BO unit (`.i ba bo` — exposed event binders and the tag
-  conjunct pending), `nai` on joiks, and jek/joik at the
-  **tanru-unit locus** (`blabi je cmalu zdani` — §6.2 defines only
-  single-modifier `Tanru`) are unstated.
-- **H16 MAI enumerators** (`mai`, `mo'o` with numbers/letterals):
-  discourse enumeration, no structural or semantic mapping.
-- **H17 `vu'o`**: relative-clause attachment to connected sumti
-  groups — no row, no gap entry.
-- **H18 `doi`**: §7.1's `Vocative` act constructor exists; no row
-  names the cmavo.
-- **H19 number-notation and quote residue**: `xo'e` (elliptical
-  number — the `Context`-at-`Number` analogue of P15), `da'a`
-  (all-but-n), `ji'i`'s exact tolerance former (§4.10 classifies it
-  `Vague`, no former named), MEX punctuation (`fi'u`, `pi'e`, `ki'o`,
-  `ra'e`, `ce'i` — absorbed by the §14 MEX gap, now named), and the
-  further quote members `la'o` / `zo'oi`.
+- **Documented no-mapping**: BIhI at tanru and sentence loci — CLL
+  14.16 records that no meanings have been found; the mapping states
+  no row and implementations must not invent one.
+- **Reserved-family adjacencies** (spec §14, unchanged): ordinary
+  first-order restrictive clauses on `bu'a`-variables, and
+  explicit-`ce'u` in the non-`ka`/`du'u` abstractors, remain
+  registered gaps.

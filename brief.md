@@ -61,10 +61,10 @@ At the repository root:
    example, and links — split into true primitives (defined only by
    prose and axioms) and the forms defined in terms of them.
 6. **`cmavo.md`** — the cmavo-centric index: one entry per treated
-   cmavo (and per non-compositional cmavo sequence) with a Lojban
-   example, its core term, and links into the specification; the
-   coverage holes the cmavo-centric view exposes are listed at its
-   end.
+   cmavo (and per multi-cmavo grammatical unit) with a Lojban
+   example, its core term, and links into the specification; its
+   final section records the coverage-hole ledger the cmavo-centric
+   view exposed and its resolution.
 
 ## Hard constraints
 
