@@ -430,10 +430,11 @@ a `Vague`-parameterized region on the count scale.
 
 ### ji'i (PA)
 
-Approximation, position-indexed (P37): prefix/medial `ji'i`
-approximate through `AdmissibleTolerance` (`Vague`, nonempty by VC1);
-suffix `ji'i` rounds (a definedness condition on the numeral),
-directionally under `ma'u`/`ni'u`.
+Approximation, position-indexed (P37): both positions denote
+`Vague`-selected `Number`s — prefix/medial over the
+`AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
+preimage (stated digits exact by construction), directionally under
+`ma'u`/`ni'u`.
 
 **See.** [Spec §4.10, §6.4, §12](spec.md), pin P37.
 
@@ -922,8 +923,8 @@ Utterance anaphora at `Referents<UtteranceToken>`: ⊳ recency over the
 transcript at three distances, past and future; `dei` = the current
 entry's own bound token; `do'i` = `Context` at the salient token/span
 (P28). `la'e` on these crosses through the token's realized act —
-`(ActContent (RealizedAct u))`, both projections partial (spec §7.4)
-— into the host-sorted crossing; no universal coercion.
+`(ActContent (RealizedAct u))`, the partiality `RealizedAct`'s alone
+(spec §7.4) — into the host-sorted crossing; no universal coercion.
 
 ```lisp
 ; di'u jitfa jufra — the previous utterance is a false sentence

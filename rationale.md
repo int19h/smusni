@@ -957,9 +957,11 @@ genuinely fought:
   anchor (`Context`) with genuinely loose extent (`Vague`).
 - **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform
   tolerance would erase the rounding reading (suffix `ji'i` with
-  `ma'u`/`ni'u` direction) that CLL states. Approximation is a
-  `Vague`-selected Number (admissible region nonempty by VC1);
-  rounding is a formation condition, not a computation.
+  `ma'u`/`ni'u` direction) that CLL states. Both positions denote
+  `Vague`-selected Numbers over different regions — tolerance about
+  the anchor vs the rounding preimage of the stated numeral (each
+  nonempty by VC1) — so the underlying quantity is always the bound
+  Number, never an unconstrained "true value".
 
 ## 4. What would change our minds
 

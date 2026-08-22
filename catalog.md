@@ -745,9 +745,10 @@ motion tags.
 ### 1.51 `TopicAdmissible` and `TopicResolution`
 
 **Informally.** The typed interface for `zo'u` topic-comment (P26):
-`TopicResolution<ρ>` is the closed union indexed by the comment's
-row — fill an admissible unfilled, sort-compatible place
-(`PlaceFill ℓ`, ℓ : `Label<ρ>`), or
+`TopicResolution<ρ,T>` is the closed union indexed by the comment's
+row and the topic's sort — fill an unfilled compatible place
+(`PlaceFill ℓ`, ℓ : `CompatibleLabel<ρ,T>` — the refinement that
+makes the fill branch type statically), or
 bear `srana`-aboutness to the closed comment (`About`) — and
 `TopicAdmissible` is the axiomatic admissibility predicate over
 resolutions, `TanruAdmissible`'s sibling. The `Topic` schema binds a
@@ -775,7 +776,9 @@ expansions.
 **Informally.** Declared, definedness projective (§5.5):
 `RealizedAct<F>` / `RealizedDiscourse` (the act or act-sequence a
 transcript token/span realizes — utterance anaphora's crossing, P28)
-with the total `ActContent` (an assertion's packaged content); and
+with the total `ActContent` (an assertion's packaged content);
+`During` (an eventuality's temporal extent within an interval — the
+ROI count schema's restriction, P35); and
 the MEX conversions `RelToOp<ρ>` (`na'u`, at Number-rowed relations,
 functional in x1), `OpToRel` (`nu'a`, total), `OperandToOp` (`ma'o`,
 the function a `Context` recovery — P36), `AmountOperand<ρ>` (`ni'e`,

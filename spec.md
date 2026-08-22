@@ -1961,7 +1961,8 @@ anaphora at `Referents<UtteranceToken>` (a selected transcript span):
 current entry's own bound token; `do'i` → `Context` for the salient
 token/span — `Vague` only in the span's boundaries (pin P28). `la'e`
 on an utterance anaphor crosses through the token's realized act —
-`(ActContent (RealizedAct u))`, both projections partial (§7.4) —
+`(ActContent (RealizedAct u))`, the force partiality in
+`RealizedAct` alone (§7.4; `ActContent` is total at assertions) —
 into the **host-sorted** crossing: `EventOfContent` for the
 state-of-affairs reading, `Reify` only where a proposition is
 demanded; no universal coercion (P13), and a non-assertion antecedent
@@ -2705,8 +2706,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   never mutated — each utterance's ctx carries its own audience.
 - **P28** `do'i` is `Context` at the salient transcript token/span
   (`Vague` only in span boundaries); `la'e` over utterance anaphors
-  crosses host-sorted through the partial `RealizedAct`/`ActContent`
-  projections (§7.4) — no universal coercion (P13 applied at the
+  crosses host-sorted through `ActContent ∘ RealizedAct` (§7.4 — the
+  partiality is `RealizedAct`'s; `ActContent` is total at
+  assertions) — no universal coercion (P13 applied at the
   token sort).
 - **P29** `cu'o` is an opaque lexical relation with a `Number` place
   in [0,1]; the model supplies the measure; **no probability
@@ -2745,10 +2747,11 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P36** `ma'o`'s operand-to-operator reading is a `Context`
   recovery of the intended function — never a constant-function
   default.
-- **P37** `ji'i` is position-indexed: prefix/medial approximate
-  through `AdmissibleTolerance` (`Vague`, VC1-nonempty); suffix
-  rounds (a definedness condition on the numeral), directionally
-  under `ma'u`/`ni'u`.
+- **P37** `ji'i` is position-indexed, and both positions denote
+  `Vague`-selected `Number`s: prefix/medial over the
+  `AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
+  preimage (the stated digits exact by the region's construction),
+  directionally under `ma'u`/`ni'u`; both regions VC1-nonempty.
 
 ## 14. Gap register
 
@@ -2821,6 +2824,9 @@ approximate:
   reified `PredTerm<ρ>`, so this is its own gap, not part of the
   reservation above (whose one member from this territory is the
   all-`ce'u` `si'o` listed there).
+- **The non-numeric `me … me'u MOI` composite** (CLL Example 18.94's
+  `cu'o` snowball): its reading would need value-indexed MOI families
+  beyond the `Number` index (§12); no analysis is assigned.
 - **MEX beyond the library fragment**: non-decimal bases, arrays,
   indefinite operators.
 - **Prosody and stress** as meaning carriers; conversational repair as
@@ -2880,8 +2886,10 @@ constructors (where quotation's opacity lives), the quote former with
 `Expression<Γ,A,ε>`/`Telescope` and the floor `Interpret` family, and
 `MakeLambda` (§7.7 — `λ` is its alias);
 `InterpretContent`/`InterpretAct<F>`, the partial
-`RealizedAct<F>`/`ActContent` projections and the token/sign
-fact relations; the declared MEX conversion crossings and the
+`RealizedAct<F>`/`RealizedDiscourse` projections with the total
+`ActContent`, and the token/sign
+fact relations; the declared MEX conversion crossings, `During`,
+`EnumerationOrdinal`, and the
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
