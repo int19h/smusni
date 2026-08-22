@@ -20,7 +20,8 @@ larger than its point, the salient part is bracketed 👉 like this 👈 —
 a formatting convention of this index only, **never** part of the
 notation itself. Three kinds of names are not omissions: values bound
 by earlier discourse or by ⊳ text-to-reading resolution (letteral and
-KOhA assignments, transcript tokens, deictic directions — written as
+KOhA assignments, transcript tokens, deictic values (directions, demonstrative
+referents) — written as
 plain names like `jan`, `dihu`, with their resolution noted, since
 their binders live outside any single term by nature); lexicon-
 supplied constants (relation names like `coi-greeting`, tag-supplied
@@ -48,15 +49,15 @@ fills at distinct labels commute).
 The fill tag for the place `jai` demotes the old x1 into.
 
 ```lisp
-; mi jai gau rinka lo nu do klama kei fai lo nu mi darxi le bitmu
+; mi jai gau rinka lo nu do klama kei fai lo nu mi darxi lo bitmu
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(klama :1 Audience :Eventuality $e)}))
+        {(Close (klama :1 Audience :Eventuality $e))}))
   {(Bind {$cause :: Referents Eventuality}
         (Refer (λ {$e :: Referents Eventuality}
-          {(∃ (λ {$w :: Referents Entity}
-            {(∧ (bitmu $w)
-               (darxi :1 Speaker :2 $w :Eventuality $e))}))}))
+          {(Bind {$w :: Referents Entity}
+                (Refer (λ {$r :: Referents Entity} {(bitmu $r)}))
+            {(Close (darxi :1 Speaker :2 $w :Eventuality $e))})}))
     {(Close ((JaiPromote rinka gau-role)
              :1 Speaker :2 $eff 👉:fai $cause👈))})})
 ; gau-role: the agent label gau's tag reduction supplies
@@ -113,9 +114,10 @@ typical filler for the place.
   {(Close (klama Speaker $dest))})
 ```
 
-The typicality constraint is part of the retrieval's admissibility —
-`zu'i`'s key demands the *typical* filler for the place (P15) — not a
-term-level conjunct; the term is identical to `zo'e`'s, the key
+The typicality is an **admissibility condition on the retrieval** —
+only the place's typical filler is an admissible recovery — now
+stated normatively in P15 (part of the site's key, §5.3), not a
+term-level conjunct: the term is identical to `zo'e`'s, the key
 differs.
 
 **See.** [Spec §5.3, §11](spec.md), pin P15.
@@ -170,12 +172,15 @@ clause — the describing event is this very utterance (P10).
 ; le gerku cu bajra
 (Bind {$x :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∃ (λ {$e :: Referents Locution}
-          {👉(skicu :1 Speaker :2 $r :3 Audience
-                  :4 (λ {$y :: Referents Entity} {(gerku $y)})
-                  :Eventuality $e)👈}))}))
+        {👉(Close (skicu Speaker $r Audience
+             (λ {$y :: Referents Entity} {(gerku $y)})))👈}))
   {(Close (bajra $x))})
 ```
+
+`Close` here is the brief spelling the samples book fixes: the
+anchoring clause identifies the describing event with this
+utterance's own locution (§7.4) rather than closing it
+existentially — saying `le gerku` *is* the describing (P10).
 
 **See.** [Spec §11](spec.md), pin P10; [rationale §2.6](rationale.md).
 
@@ -218,8 +223,8 @@ components/members are the **maximal** plurality of the description
 ; loi gerku cu sruri lo zdani — the maximal base bound first
 (Bind {$base :: Referents Entity}
       👉(MaxRefer (λ {$r :: Referents Entity} {(gerku $r)}))👈
-  {(Bind {$g :: Referents Entity}
-        👉(Refer (λ {$r :: Referents Entity} {(gunma $r $base)}))👈
+  {(Bind {$g :: Referents (Group Entity)}
+        👉(Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))👈
     {(Bind {$z :: Referents Entity}
           (Refer (λ {$r :: Referents Entity} {(zdani $r)}))
       {(Close (sruri $g $z))})})})
@@ -290,10 +295,8 @@ members — `Distrib` at the use site (the explicit each-reading; spec
 ; lu'a le prenu cu bevri — each of them carries
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∃ (λ {$e :: Referents Locution}
-          {(skicu :1 Speaker :2 $r :3 Audience
-                  :4 (λ {$y :: Referents Entity} {(prenu $y)})
-                  :Eventuality $e)}))}))
+        {(Close (skicu Speaker $r Audience
+           (λ {$y :: Referents Entity} {(prenu $y)})))}))
   {👉(Distrib (λ {$x :: Entity} {(Close (bevri $x))}) $p)👈})
 ```
 
@@ -330,8 +333,8 @@ beside the at-issue claim; negation and questioning never touch it
 ; lo gerku noi blabi cu bajra
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(Supplement $d (Close (blabi $d))👈
-     (Close (bajra $d))👉)👈})
+  {👉(Supplement $d (Close (blabi $d))
+     (Close (bajra $d)))👈})
 ```
 
 **See.** [Spec §5.5, §11](spec.md), pin P7; [primer ch. 5](primer.md).
@@ -378,11 +381,9 @@ associated sumti is bound before the pure restriction forms.
 ; le stizu pe mi cu blanu — CLL Example 8.18
 (Bind {$s :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (∃ (λ {$e :: Referents Locution}
-             {(skicu :1 Speaker :2 $r :3 Audience
-                     :4 (λ {$y :: Referents Entity} {(stizu $y)})
-                     :Eventuality $e)}))
-           👉(srana $r Speaker)👈)}))
+        {(∧ (Close (skicu Speaker $r Audience
+             (λ {$y :: Referents Entity} {(stizu $y)})))
+           👉(Close (srana $r Speaker))👈)}))
   {(Close (blanu $s))})
 ```
 
@@ -397,16 +398,20 @@ supplements keeping source order at the effect level.
 
 ```lisp
 ; le gerku poi blabi zi'e noi le mi pendo cu ponse ke'a cu klama
-; — CLL Example 8.39; pendo ⊳-bound by its own le-description
+; — CLL Example 8.39
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (∃ (λ {$e :: Referents Locution}
-             {(skicu :1 Speaker :2 $r :3 Audience
-                     :4 (λ {$y :: Referents Entity} {(gerku $y)})
-                     :Eventuality $e)}))
+        {(∧ (Close (skicu Speaker $r Audience
+             (λ {$y :: Referents Entity} {(gerku $y)})))
            👉(blabi $r)👈)}))
-  {👉(Supplement $d (Close (ponse pendo $d))👈
-     (Close (klama $d))👉)👈})
+  {👉(Supplement $d
+     (Bind {$p :: Referents Entity}
+           (Refer (λ {$r :: Referents Entity}
+             {(∧ (Close (skicu Speaker $r Audience
+                  (λ {$y :: Referents Entity} {(pendo $y)})))
+                (Close (srana $r Speaker)))}))   ; le MI pendo (CLL 8.7)
+       {(Close (ponse $p $d))})
+     (Close (klama $d)))👈})
 ```
 
 **See.** [Spec §11](spec.md); CLL 8.4.
@@ -517,9 +522,10 @@ restricted only by `poi` (P20).
 ```lisp
 ; da gerku
 (∃ (λ {$x :: Entity} {(gerku $x)}))
-; da zo'u da gerku — the prenexed spelling; prenex order is scope
-; order (P26)
 ```
+
+The prenexed spelling `da zo'u da gerku` denotes the same term;
+prenex order is scope order (P26).
 
 **See.** [Spec §4.5, §11](spec.md), pin P20.
 
@@ -673,10 +679,8 @@ all tails.
 ; the tail-term do applies to both tails (dunda x3 and lebna x3)
 (Bind {$b :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∃ (λ {$e :: Referents Locution}
-          {(skicu :1 Speaker :2 $r :3 Audience
-                  :4 (λ {$y :: Referents Entity} {(cukta $y)})
-                  :Eventuality $e)}))}))
+        {(Close (skicu Speaker $r Audience
+           (λ {$y :: Referents Entity} {(cukta $y)})))}))
   {(Bind {$m :: Referents Entity}
         (Refer (λ {$r :: Referents Entity} {(jdini $r)}))
     {(∧ (Close (dunda Speaker $b 👉Audience👈))
@@ -734,14 +738,17 @@ genuinely-unspecified connection → `Vague` over the connecting
 relation.
 
 ```lisp
-; mi joi do bevri lo pipno — the mixture kind rides Vague in gunma's
-; lexical content
-(Bind {$g :: Referents Entity}
-      👉(Refer (λ {$r :: Referents Entity}
-        {(gunma $r (Combine Speaker Audience))}))👈
-  {(Bind {$p :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
-    {(Close (bevri $g $p))})})
+; mi joi do bevri lo pipno — the mixture kind bound Vague (§12)
+(Bind {$mix :: PredTerm ρ}   ; ρ = the composition row of §12's
+                             ; AdmissibleMixture signature
+      (Vague (AdmissibleMixture (Combine Speaker Audience)))
+  {(Bind {$g :: Referents (Group Entity)}
+        👉(Refer (λ {$r :: Referents (Group Entity)}
+          {(∧ (gunma $r (Combine Speaker Audience))
+             ($mix $r (Combine Speaker Audience)))}))👈
+    {(Bind {$p :: Referents Entity}
+          (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
+      {(Close (bevri $g $p))})})})
 ```
 
 **See.** [Spec §4.8, §11](spec.md).
@@ -848,10 +855,8 @@ event bears the mover's `muvdu` motion in the `farna` direction);
 ; ⊳-resolved against the ground
 (Bind {$v :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∃ (λ {$e :: Referents Locution}
-          {(skicu :1 Speaker :2 $r :3 Audience
-                  :4 (λ {$y :: Referents Entity} {(verba $y)})
-                  :Eventuality $e)}))}))
+        {(Close (skicu Speaker $r Audience
+           (λ {$y :: Referents Entity} {(verba $y)})))}))
   {(∃ (λ {$e :: Referents Eventuality}
     {(∧ (Close (cadzu :1 $v :Eventuality $e))
        👉(MotionVector $e $v rightward)👈)}))})
@@ -1062,7 +1067,7 @@ abstraction-relation family instead (next entry; spec §9.2).
 ; lo nu mi klama cu nandu
 (Bind {$ev :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(klama :1 Speaker :Eventuality $e)}))
+        {👉(Close (klama :1 Speaker :Eventuality $e))👈}))
   {(Close (nandu $ev))})
 ```
 
@@ -1153,7 +1158,7 @@ of the abstraction-x1 with the role `Vague`.
 ; mi jai gau rinka lo nu do klama
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(klama :1 Audience :Eventuality $e)}))
+        {(Close (klama :1 Audience :Eventuality $e))}))
   {(Close (👉(JaiPromote rinka gau-role)👈 :1 Speaker :2 $eff))})
 ; the unfilled fai place closes contextually; gau-role is the label
 ; gau's tag reduction supplies
@@ -1535,17 +1540,15 @@ referents (CLL 5.10; the ratified gadri definitions expand `lo PA
 sumti` through it).
 
 ```lisp
-; la .baltazar. cu me le ci nolraitru
-(Bind {$k :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity}
-        {(∧ (∃ (λ {$e :: Referents Locution}
-             {(skicu :1 Speaker :2 $r :3 Audience
-                     :4 (λ {$y :: Referents Entity} {(nolraitru $y)})
-                     :Eventuality $e)}))
-           (= (CardBasis $r (λ {$y :: Referents Entity}
-                              {(nolraitru $y)})) 3))}))
-  {(Bind {$b :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(Named "baltazar" $r)}))
+; la .baltazar. cu me le ci nolraitru — bindings in source order
+(Bind {$b :: Referents Entity}
+      (Refer (λ {$r :: Referents Entity} {(Named "baltazar" $r)}))
+  {(Bind {$k :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity}
+          {(∧ (Close (skicu Speaker $r Audience
+               (λ {$y :: Referents Entity} {(nolraitru $y)})))
+             (= (CardBasis $r (λ {$y :: Referents Entity}
+                                {(nolraitru $y)})) 3))}))
     {(Close (👉(MePred $k)👈 $b))})})
 ```
 
@@ -1560,17 +1563,16 @@ ordering), `SiheRel` (portion), `CuhoRel` (opaque probability,
 position). `me X me'u MOI` composes.
 
 ```lisp
-; lei mi ratcu cu cimei — CLL Example 18.81; the unfilled set and
-; member places close contextually
+; lei mi ratcu cu cimei — CLL Example 18.81; le MI ratcu = the
+; pe-associator restriction (CLL 8.7); unfilled MeiRel places close
+; contextually
 (Bind {$base :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∃ (λ {$e :: Referents Locution}
-          {(skicu :1 Speaker :2 $r :3 Audience
-                  :4 (λ {$y :: Referents Entity}
-                       {(ratcu $y Speaker)})
-                  :Eventuality $e)}))}))
-  {(Bind {$g :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(gunma $r $base)}))
+        {(∧ (Close (skicu Speaker $r Audience
+             (λ {$y :: Referents Entity} {(ratcu $y)})))
+           (Close (srana $r Speaker)))}))
+  {(Bind {$g :: Referents (Group Entity)}
+        (Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))
     {(Close (👉(MeiRel 3)👈 :1 $g))})})
 ```
 
@@ -1636,7 +1638,7 @@ categorizer's `be` in `lo su'u … kei be lo fasnu` likewise).
 
 ```lisp
 ; ta blanu zdani be mi — the be-fill rides inside the head unit
-(Close ((Tanru blanu 👉(At zdani 2 Speaker)👈) That))
+(Close ((Tanru blanu 👉(At zdani x2 Speaker)👈) That))
 ```
 
 **See.** [Spec §6.2, §4.2](spec.md).

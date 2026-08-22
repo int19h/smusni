@@ -1838,7 +1838,10 @@ plurality of the description** (`lo'i gerku` is the set of the dogs, not
 of some dogs — the library's maximal-base form supplies it). Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
 selection / subreference selection (P1, §4.10). Inner `no` → the
-zero-count schema, never `Refer` (special case, P22). `lei`/`le'i` →
+zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
+in a description (`le mi ratcu`) is the `pe`-associator restriction
+(CLL 8.7: `le mi ratcu` ≈ `le ratcu pe mi`) — a restrictive `srana`
+conjunct beside the description head. `lei`/`le'i` →
 the P10 `skicu` base bound first, then `Refer` to the `gunma` group /
 `selcmi` set object over it; `lai`/`la'i` → the naming base likewise
 — `Group<T>`, `Set<T>`, and `Referents<T>` stay distinct, inner PA
@@ -1924,7 +1927,8 @@ sentence loci: **no standard resolved mapping exists** (CLL 14.16
 says no meanings have been found) — a documented no-mapping, and an
 implementation must not invent one. Non-logical: `jo'u` → `Combine`; `ce` → set;
 `ce'o` → list; `fa'u` → `ZipWith`; `joi` **by syntactic position** —
-sumti `joi` → group formation with `Vague` mixture kind; tag/facet
+sumti `joi` → group formation with the mixture kind a **visible**
+`Vague` bind over `AdmissibleMixture` (§12); tag/facet
 joining → `∧`; discourse joining → `Do`; residual genuinely-unspecified
 connection → `Vague` over the connecting relation; `ku'a`/`jo'e`/`pi'u`
 → `∩`/`∪`/`×`.
@@ -2541,6 +2545,21 @@ CLL's fish (`le finpe zo'u citka`) is the `PlaceFill` choice — eater
 or eaten; `tu'e…tu'u` scopes one topic binder over the sequence's
 `Do`.
 
+**Mixture admissibility** (sumti `joi`). The mixture kind — *how*
+the components compose into the group (mass, team, aggregate, …) — is
+`Vague`, bound visibly:
+
+```text
+AdmissibleMixture : Referents<T>
+   → Fn<(PredTerm⟨x1:Referents<Group<T>>, x2:Referents<T>⟩), Content>
+   ; admissible values: composition relations refining gunma for the
+   ; given components — the §6.1 mixture vagueness, typed
+```
+
+The sumti-`joi` group formation binds one:
+`(Bind {$mix :: PredTerm⟨…⟩} (Vague (AdmissibleMixture base))
+{… (∧ (gunma $g base) ($mix $g base)) …})`.
+
 **Tanru link connection** (jek at the tanru-unit locus; pin P33).
 `TanruLinkConnect`: for a shared head, bind one `Vague` link per
 conjunct (each with its own admissibility), assert the head
@@ -2633,7 +2652,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P14** `tu'a` = `Vague` abstraction (shape conjunct + `srana`
   aboutness, host-place sort); `co'e`/`do'e` = `Context` at their types.
 - **P15** `zo'e` ≡ omission; distinct sites distinct; `zu'i` adds
-  typicality.
+  typicality as an **admissibility condition on the retrieval** (part
+  of the site's key, §5.3): only the place's typical filler is an
+  admissible recovery — the term is `Context`, the key differs.
 - **P16** Anaphora resolution is text-to-reading; calculus sees bindings;
   `goi` discourse-scoped; unassigned KOhA = keyed `Context` (one value per
   key — `ko'a du ko'a` is reflexively true).
