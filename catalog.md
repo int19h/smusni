@@ -353,7 +353,7 @@ mixture kind, bare `jai`'s role.
 **See.** [Spec §5.3, §6](spec.md); [primer ch. 9](primer.md);
 [rationale §1.3](rationale.md).
 
-### 1.27 `SelectExactly`, `SelectAtLeast`, `SelectSome` — the selections
+### 1.27 `SelectExactly`, `SelectAtLeast`, `SelectAllBut`, `SelectSome` — the selections
 
 **Informally.** The quantifier-strength members of the `Refer`
 family: introduce a witness reference of the stated cardinal strength,
@@ -368,6 +368,11 @@ re-evaluates a selection; distinct selections have distinct witnesses.
 `SelectSome` is **defined** (§2.22).
 **For.** Bare-PA terms: `ci gerku cu bajra` selects a three-dog
 witness and predicates running of it, neutrally.
+`SelectAllBut n P` (`da'a`; default n = 1) is the complement-count
+member: its witness satisfies P member-wise (`Distrib P w`) and
+leaves exactly n P-individuals behind, spelled by `SetOf`
+comprehension (spec §12); the omitted individuals are not a
+parameter.
 **See.** [Spec §5.6, §4.10](spec.md); [primer ch. 5](primer.md);
 [rationale §1.6](rationale.md).
 
@@ -459,7 +464,11 @@ aesthetic standing. Also the `nai`-fallback for unpaired indicators
 ### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
 **Informally.** The gradable/vague-quantity interface: the axiomatic
-admissibility predicates for degree-quantifier thresholds (indexed by
+admissibility predicates for degree-quantifier thresholds and for
+`ji'i` approximation regions (`AdmissibleTolerance : Number ×
+Precision → Fn<(Number), Content>` — the tolerance region about an
+anchor at the numeral's precision, nonempty by VC1; spec §12, pin
+P37) (thresholds indexed by
 the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
 TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
 sort) and gradable
@@ -736,8 +745,9 @@ motion tags.
 ### 1.51 `TopicAdmissible` and `TopicResolution`
 
 **Informally.** The typed interface for `zo'u` topic-comment (P26):
-`TopicResolution` is the closed union — fill an admissible unfilled,
-sort-compatible place of the *open* comment frame (`PlaceFill ℓ`), or
+`TopicResolution<ρ>` is the closed union indexed by the comment's
+row — fill an admissible unfilled, sort-compatible place
+(`PlaceFill ℓ`, ℓ : `Label<ρ>`), or
 bear `srana`-aboutness to the closed comment (`About`) — and
 `TopicAdmissible` is the axiomatic admissibility predicate over
 resolutions, `TanruAdmissible`'s sibling. The `Topic` schema binds a
@@ -1177,18 +1187,7 @@ ratified gadri definitions expand `lo PA sumti` through `me`.
 **For.** `la .baltazar. cu me le ci nolraitru`.
 **See.** [Spec §12, §11](spec.md).
 
-### 2.31 `SelectAllBut`
-
-**Informally.** The `da'a` selection (default n = 1): a neutral
-witness set satisfying the property whose left-behind remainder
-counts exactly n — spelled by `SetOf` comprehension (the plural
-kernel has no difference operator and needs none). Which individuals
-are omitted is not a parameter (P17 neutrality); under distributive
-scope they may vary per instance.
-**For.** `da'a re gerku cu bajra`.
-**See.** [Spec §12, §11](spec.md).
-
-### 2.32 `TanruLinkConnect`
+### 2.31 `TanruLinkConnect`
 
 **Informally.** Jek at the tanru-unit locus (P33): for a shared head,
 bind one `Vague` link per conjunct and join the link applications
@@ -1199,45 +1198,43 @@ whole predications; joiks route to the mixture semantics.
 **For.** `ta blabi je cmalu zdani`.
 **See.** [Spec §12, §6.2, §11](spec.md), pin P33.
 
-### 2.33 `MetricBall` and `RegionComplement`
+### 2.32 The region formers
 
-**Informally.** The BIhI region formers beyond ordered `Interval`:
-`mi'i` is a metric neighborhood (center, radius, Context metric —
-locations support no endpoint arithmetic), and `bi'o nai` is region
-complement within a Context universe. `bi'i` is ⊳ symmetrization of
-the ordered form (endpoint order normalized together with the GAhO
-kinds).
+**Informally.** The BIhI region formers beyond ordered `Interval`,
+all defined by `SetOf` comprehension over a Context-recovered
+`Metric<T>` (spec §12): `MetricBall` (`mi'i` — center, radius,
+GAhO boundary kind; no endpoint arithmetic), `SpanRegion` (`bi'i` at
+metric domains — metric betweenness), `RegionComplement` (`bi'o nai`
+— complement in a Context universe). `bi'i` at ordered domains is ⊳
+symmetrization of the ordered `Interval` (endpoint order normalized
+together with the GAhO kinds). Endpoint/center references take the
+projective singular condition (the §9.2 pattern).
 **For.** `la .uacintyn. mi'i lo minli be li muno`.
 **See.** [Spec §12, §11](spec.md).
 
-### 2.34 `EnumerationOrdinal`
+### 2.33 `EnumerationOrdinal`
 
 **Informally.** MAI's display fact: the attachment-selected
-constituent bears ordinal n in a Context-recovered enumeration
-sequence, at item (`mai`) or section (`mo'o`) level; non-at-issue,
-no temporal ordering of denoted events implied (CLL 19.7 numbers
-sumti inside one bridi).
+constituent bears ordinal n in a Context-keyed enumeration sequence,
+at the closed `EnumerationLevel` (`Item` for `mai`, `Section` for
+`mo'o`); non-at-issue — placed by §7.6's machinery (a `Supplement`
+anchored at a constituent target, an `Express` beside an act-level
+target); no temporal ordering of denoted events implied (CLL 19.7
+numbers sumti inside one bridi).
 **For.** `mi klama pamai le zarci .e remai le zdani`.
 **See.** [Spec §12, §11](spec.md).
 
-### 2.35 The MEX conversion interfaces
+### 2.34 The MEX conversion interfaces (declared crossings)
 
-**Informally.** `na'u` (relation→operator, defined where functional
-in x1), `nu'a` (operator→relation, total), `ma'o` (operand→operator —
-the intended function is a `Context` recovery, P36), `ni'e` (the
-amount-operand crossing, its own interface, not `NiRel`); `se` on
-operators is pure argument permutation. Partial, definedness
-projective; everything beyond stays in the §14 MEX gap.
+**Informally.** Declared partial crossings, row-indexed with
+projective definedness (spec §12): `RelToOp<ρ>` (`na'u` — defined
+where the relation is functional in x1), `OpToRel` (`nu'a`, total),
+`OperandToOp` (`ma'o` — the intended function a `Context` recovery,
+P36), `AmountOperand<ρ>` (`ni'e` — its own crossing, not `NiRel`);
+`se` on operators is pure argument permutation. Everything beyond —
+including general `mo'e` past `AmountValue` — stays in the §14 MEX
+gap.
 **See.** [Spec §12, §11](spec.md), pin P36.
-
-### 2.36 `ForeignName`
-
-**Informally.** `la'o`'s naming route: an opaque text payload yields
-a derived name value in `NameSign` position (never an `OpaqueQuote`
-passed to `Named` directly); `zo'oi` (experimental) is the
-word-level opaque sign.
-**For.** `la'o gy. Smith .gy.`
-**See.** [Spec §12, §7.5, §11](spec.md).
 
 ## Appendix: model-theory symbols
 

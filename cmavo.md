@@ -322,8 +322,6 @@ rest of the discourse (P16).
 
 **See.** [Spec §5.6, §11](spec.md), pin P16.
 
-### vu'o (VUhO)
-
 ### pe / ne / po / po'e / po'u / no'u (GOI)
 
 The associator family, by CLL 8.3's own expansions (nested as CLL
@@ -342,6 +340,24 @@ associated sumti is bound before the pure restriction forms.
 ```
 
 **See.** [Spec §11](spec.md); CLL 8.3.
+
+### zi'e (ZIhE)
+
+Relative-clause joining: restrictives conjoin in the reference
+property, incidentals stack as separate `Supplement`s; mixed kinds
+compose — order-insensitive truth-conditionally, with bindings and
+supplements keeping source order at the effect level.
+
+```lisp
+; le gerku poi blabi zi'e noi le mi pendo cu ponse ke'a — CLL 8.39
+(Bind {$d :: Referents Entity}
+      (Refer (λ {$r :: Referents Entity}
+        {(∧ (le-gerku-base $r) (blabi $r))}))
+  {(Supplement $d (Close (ponse pendo-ref $d))
+     …)})
+```
+
+**See.** [Spec §11](spec.md); CLL 8.4.
 
 ### vu'o (VUhO)
 
@@ -459,7 +475,7 @@ or bears `srana`-aboutness to the closed comment (CLL 19.4's fish =
 the place choice); `tu'e…tu'u` extends one topic over a sequence.
 
 ```lisp
-; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL 19.8
+; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL Example 19.8
 (Presuppose (∃ prenu-prop)
   (∀ (λ {$x :: Entity} {(→ (prenu $x)
      (∃ (λ {$y :: Entity} {(Close (patfu $y $x))})))})))
@@ -474,7 +490,7 @@ witness set whose remainder counts exactly n; the omitted
 individuals are not a parameter and may vary under distributive
 scope.
 
-**See.** [Spec §12, §11](spec.md); [catalog 2.31](catalog.md).
+**See.** [Spec §12, §11](spec.md); [catalog 1.27](catalog.md).
 
 ### xo'e (experimental PA)
 
@@ -563,7 +579,7 @@ applications; distinct-head units connect as whole predications.
 ```
 
 **See.** [Spec §6.2, §12, §11](spec.md), pin P33;
-[catalog 2.32](catalog.md).
+[catalog 2.31](catalog.md).
 
 ### gi'a / gi'e / gi'o / gi'u (GIhA) — bridi-tail connectives
 
@@ -700,7 +716,7 @@ no-mapping.
 (Interval 1 5 k₁ k₂)   ; endpoint kinds k₁ k₂ chosen by ga'o/ke'i
 ```
 
-**See.** [Spec §11, §12](spec.md); [catalog 2.33](catalog.md).
+**See.** [Spec §11, §12](spec.md); [catalog 2.32](catalog.md).
 
 ## 6. Tense, aspect, modals
 
@@ -843,6 +859,8 @@ constructs content, commands nothing).
 ```lisp
 ; ko klama
 (Command Audience (Close (klama Audience)))
+; Audience here = the fallback; after doi X the active addressee X
+; fills both positions (see the doi entry)
 ```
 
 **See.** [Spec §11, §7.1](spec.md), pin P27.
@@ -915,11 +933,12 @@ universal coercion.
 ### da'o (DAhO)
 
 Assignment cancellation: ⊳ clears all resolver stores (KOhA,
-letteral, pro-bridi); `ni'o` levels imply it per depth — single
-(spoken) / double (written) clear assignments, triple also resets
-tense and indicator stickiness, `no'i` resumes (spec §7.1).
+letteral, pro-bridi); `ni'o` levels imply it per depth — the
+assignment-clearing level (`ni'o` spoken / `ni'o ni'o` written), with
+the drastic level (one more) also resetting tenses and indicators,
+and `no'i` resuming what its `ni'o` dropped (spec §7.2).
 
-**See.** [Spec §11, §7.1](spec.md).
+**See.** [Spec §11, §7.2](spec.md).
 
 ### ce'u (KOhA)
 
@@ -1258,7 +1277,7 @@ Enumeration ordinals: `EnumerationOrdinal` display facts at the
 one bridi), item and section level; sequence key Context-recovered;
 no temporal order implied.
 
-**See.** [Spec §11, §12](spec.md); [catalog 2.34](catalog.md).
+**See.** [Spec §11, §12](spec.md); [catalog 2.33](catalog.md).
 
 ### sei … se'u (SEI)
 
@@ -1363,6 +1382,16 @@ The MEX fragment: operators as typed functions over `Number`;
 
 **See.** [Spec §4.9, §12, §14](spec.md).
 
+### Numeral punctuation: fi'u, pi'e, ki'o, ra'e, ce'i (PA)
+
+⊳ numeral syntax producing `Number` constants: fractions (`fi'u`),
+mixed radix with base data (`pi'e`), digit grouping with zero-padding
+(`ki'o`), repeating digits (`ra'e`), percent (`ce'i`); with `pi`,
+`ni'u`/`ma'u` (above) they are the numeral grammar, not term-level
+operators.
+
+**See.** [Spec §11](spec.md).
+
 ### te'a / gei, xi (VUhU/XI)
 
 Exponentiation and order-of-magnitude by metalanguage recursion;
@@ -1414,15 +1443,16 @@ functional), operator→relation (`nu'a`, total), operand→operator
 amount-operand crossing (`ni'e`); `te'u` structural; `se` on
 operators permutes.
 
-**See.** [Spec §12, §11](spec.md), pin P36; [catalog 2.35](catalog.md).
+**See.** [Spec §12, §11](spec.md), pin P36; [catalog 2.34](catalog.md).
 
 ### la'o (ZOI), zo'oi (experimental)
 
-Foreign names: naming through `(ForeignName t)` over the opaque
-payload; `zo'oi` quotes one non-Lojban word as a word-level opaque
-sign.
+Foreign names: the ordinary naming route at the opaque text payload —
+`(NameSign t)` and `Named` unchanged (the payload's being non-Lojban
+is a fact about the text, not a type); `zo'oi` quotes one non-Lojban
+word as a word-level opaque sign.
 
-**See.** [Spec §12, §11](spec.md); [catalog 2.36](catalog.md).
+**See.** [Spec §12, §11, §7.5](spec.md).
 
 ## 12. Scalar and tanru operators
 
@@ -1527,13 +1557,15 @@ named one (§11).
 
 **See.** [Spec §4.5, §4.8, §11](spec.md).
 
-### .i je / .i ja / .i joi … — I + jek/joik
+### .i je / .i ja … — I + jek
 
-Sentence-level connection as one unit — NOT `.i` followed by an
-independent `je`: **one performance of the connected content** (P32 —
-forced by `.i ja`, where no pair of assertions exists), the host's
-single force shared by the connection, with `∧`'s accessibility row
-shared with `Do`'s (spec §5.4).
+Sentence-level logical connection as one unit — NOT `.i` followed by
+an independent `je`: **one performance of the connected content**
+(P32 — forced by `.i ja`, where no pair of assertions exists), the
+host's single force shared by the connection (content-taking forces;
+an interrogative host queries the connected content), with `∧`'s
+accessibility row shared with `Do`'s (spec §5.4). `.i joi` and the
+non-logical ijoiks stay in `joi`'s discourse-joining `Do` arm.
 
 ```lisp
 ; mi klama .i je do stali — one act asserting the conjunction

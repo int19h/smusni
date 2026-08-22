@@ -1183,10 +1183,13 @@ current segment onto the stack and opens a fresh one — keyed
 after it, and the segment-bounded ⊳ rules (`ki` stickiness, `go'i`
 reach) reset — while `Resume` pops the most recently suspended
 segment and reopens it for keyed retrieval. NIhO depth grades the
-reset (CLL 19.3): a single `ni'o` (spoken) or `ni'o ni'o` (written)
-clears the resolver's assignment stores with the new segment — the ⊳
-face of `da'o` — while the triple additionally resets tense and
-indicator stickiness; the spoken/written difference is ⊳
+reset (CLL 19.3): the assignment-clearing level — `ni'o` spoken,
+`ni'o ni'o` written — clears the resolver's assignment stores with
+the new segment (the ⊳ face of `da'o`), and the next level up
+(CLL's "drastic change") additionally resets tenses and indicators;
+further depth marks larger topic scale only. `no'i` resumes what its
+`ni'o` dropped — assignments and, at the drastic level, tense — along
+with the suspended segment. The spoken/written level shift is ⊳
 text-to-reading. Discourse
 *relations* (contrast `ku'i`, addition `ji'a`, parallel `si'a`,
 elaboration `no'u`, …) are library relations over acts; the prior act is
@@ -1216,6 +1219,20 @@ is a λ, not a computation:
 ```lisp
 (Utterance {$u :: UtteranceToken} {fact…})
   ≝ (λ {$u :: Referents UtteranceToken} {(∧ fact…)})
+```
+
+Two **declared partial projections** serve utterance anaphora (§11):
+
+```text
+RealizedAct<F> : Referents<UtteranceToken> ⇀ Act<F>
+   ; the act the selected token/span realizes — defined (projectively,
+   ; §5.5) where the span realizes exactly one act, of force F; a span
+   ; realizing an act sequence is served by the Discourse-valued
+   ; sibling RealizedDiscourse.
+ActContent : Act<Assertion> ⇀ Content
+   ; the assertion's content — the constituent its constructor
+   ; packaged (no evaluation; the access InterpretContent already
+   ; exercises for signs); assertion-only, partial per P21.
 ```
 
 — a *pure token-description property*. The λ suspends the facts by
@@ -1792,8 +1809,8 @@ force boundary. FA/conversion → labelled fills / row routing (§4.2).
 quantifier/selection prefix in **surface order — prenex order is scope
 order** (P18's surface-scope doctrine; CLL 16.2), scoping across an
 I-connected tail and across a `tu'e…tu'u` group when the syntax makes
-that group the matrix; bare selbri variables take the H-implicit
-`su'o` (see the `bu'a` row). Topic `zo'u` → the `Topic` schema (§12):
+that group the matrix; bare selbri variables take the implicit
+`su'o` of the `bu'a` row. Topic `zo'u` → the `Topic` schema (§12):
 the topic binds normally, and a `Vague` `TopicResolution` — fill an
 admissible unfilled place of the open comment frame, or
 `srana`-aboutness to the closed comment — resolves the deliberately
@@ -1878,12 +1895,16 @@ transparent (`na je'a broda` ≡ `na broda`) — except that an affirmer
 ⊳ **overrides inherited negation** in a pro-bridi expansion
 (`ja'a go'i` over a negative template removes the `na`; pin P31);
 `Scalar` gains no fourth kind, emphasis is absence or `ba'e` focus.
-Sentence-level connection (`.i je`, `.i ja`, `.i joi …`) → **one
+Sentence-level **logical** connection (`.i je`, `.i ja`, …) → **one
 performance of the connected content** — `(Assert (∨ c₁ c₂))` for
 `.i ja`, which forces the uniform rule; the host's single force is
 shared by the connection (a force conflict has no resolved reading);
+the schema is stated for the content-taking forces (`Assert`,
+`Command`) — an interrogative host queries the connected content;
 UI targeting distinguishes the compound act from its clauses (pin
-P32). `.i TAG bo` → the same single performance with both event
+P32). `.i joi` and the non-logical ijoiks stay in the
+discourse-joining arm (`Do`) of the `joi` row — one act per sentence,
+the established reading. `.i TAG bo` → the same single performance with both event
 binders exposed and the tag conjunct inside:
 `(Assert (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))` — never
 closed contents beside free event variables. Jek at the tanru-unit
@@ -1939,22 +1960,23 @@ anaphora at `Referents<UtteranceToken>` (a selected transcript span):
 (`di'u`/`de'u`/`da'u`) and future (`di'e`/`de'e`/`da'e`); `dei` → the
 current entry's own bound token; `do'i` → `Context` for the salient
 token/span — `Vague` only in the span's boundaries (pin P28). `la'e`
-on an utterance anaphor crosses through the token's realized act
-(`Realizes`, then `InterpretAct`) into the **host-sorted** crossing —
-`EventOfContent` for the state-of-affairs reading, `Reify` only where
-a proposition is demanded; no universal coercion (P13), and a
-non-assertion antecedent yields partiality where content is demanded
-(P21). `doi X` → the `Vocative X` act beside the host **plus** ⊳
+on an utterance anaphor crosses through the token's realized act —
+`(ActContent (RealizedAct u))`, both projections partial (§7.4) —
+into the **host-sorted** crossing: `EventOfContent` for the
+state-of-affairs reading, `Reify` only where a proposition is
+demanded; no universal coercion (P13), and a non-assertion antecedent
+yields partiality where content is demanded (P21). `doi X` → the `Vocative X` act beside the host **plus** ⊳
 binding of the active `do` (CLL 2.14 — `do` "now refers to" X): `do`
 and `ko` consult the active binding before falling back to the
 utterance's Audience, which itself is never mutated (each utterance's
 ctx carries its own audience as a fact about it; pin P27). `da'o` →
 ⊳ cancellation of **all** resolver assignments (KOhA, letteral, and
 pro-bridi stores); `ni'o` levels are segment-stack transitions with
-per-level cleared registers — a single `ni'o` (spoken) or `ni'o ni'o`
-(written) clears assignments, the triple also resets tense and
-indicator stickiness, and `no'i` resumes the suspended frame — never
-a destructive `da'o` alias (CLL 7.13, 19.3).
+per-level cleared registers — the assignment-clearing level (`ni'o`
+spoken, `ni'o ni'o` written) clears assignments, the drastic level
+(one more `ni'o`) also resets tenses and indicators, and `no'i`
+resumes what its `ni'o` dropped along with the suspended frame —
+never a destructive `da'o` alias (CLL 7.13, 19.3).
 
 **Abstractions** (§9, P13, P14). The `ce'u`-capable abstractors of
 this baseline are exactly **`ka` and `du'u`**. The `du'u` case split:
@@ -2038,8 +2060,9 @@ with `ki'o` zero-padding, repeating digits, percent); `xo'e`
 (experimental) → `Context` at `Number` (P15's analogue); `ji'i` → the
 §12 approximation schemas by position — prefix/medial approximate
 (`AdmissibleTolerance`), suffix rounds, directional under
-`ma'u`/`ni'u` (pin P37). `la'o` → naming through `(ForeignName t)`
-over the opaque payload; `zo'oi` (experimental) → the word-level
+`ma'u`/`ni'u` (pin P37). `la'o` → the ordinary naming route at
+the opaque text payload (`(NameSign t)`/`Named` unchanged, §12);
+`zo'oi` (experimental) → the word-level
 opaque sign.
 
 ## 12. Library
@@ -2152,41 +2175,48 @@ whole document). Then
 on scale `s` lies in region `reg`. No `…` remains in this chapter.
 
 **Complement selection** (`da'a`, CLL 18.8; default n = 1). A
-selection computation in the §5.6 family — neutral witness sets,
+**declared** primitive member of the §5.6 selection family (like its
+siblings, its witness law is its axiom) — neutral witness sets,
 ordinary export:
 
 ```text
-(SelectAllBut n P) : RefComp<Referents<T>>   ; witness law: a witness w
-   ; satisfies P member-wise and leaves exactly n behind —
-   ; (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Among $x w)))}))) n)
-   ; — spelled by comprehension: the plural kernel has no difference
-   ; operator and needs none. Which individuals are left out is not a
-   ; semantic parameter (neutral witness selection, P17); under
-   ; distributive scope the omitted individuals may vary per instance
-   ; (CLL's ro ratcu cu citka da'a re …). Nonemptiness of the witness
-   ; follows from the reference type; model-side existence of a
-   ; qualifying witness is the selection's success condition.
+(SelectAllBut n P) : RefComp<Referents<T>>   ; witness law:
+   ; (∧ (Distrib P w)
+   ;    (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Among $x w)))}))) n))
+   ; — the witness satisfies P member-wise AND leaves exactly n
+   ; P-individuals behind, spelled by comprehension: the plural kernel
+   ; has no difference operator and needs none. Which individuals are
+   ; left out is not a semantic parameter (neutral witness selection,
+   ; P17); under distributive scope they may vary per instance (CLL's
+   ; ro ratcu cu citka da'a re …). Nonemptiness of the witness follows
+   ; from the reference type; model-side existence of a qualifying
+   ; witness is the selection's success condition.
 ```
 
 **Approximation** (`ji'i`, CLL 18.9; completes §6.4's classification).
-`AdmissibleTolerance` is the `Vague` former for approximate number
-regions, `AdmissibleThreshold`'s sibling:
+`Precision` is the numeral's ⊳-supplied precision descriptor (which
+digits/places are stated — an index sort of numeral syntax, never a
+term-level computation). `AdmissibleTolerance` is the `Vague`
+admissibility former for approximate number regions,
+`AdmissibleThreshold`'s sibling:
 
 ```text
 AdmissibleTolerance : Number × Precision → Fn<(Number), Content>
-   ; admissible values: numbers within the (Vague) tolerance region
-   ; about the anchor at the given precision; nonempty by VC1.
-(Approx n)  ≝ (Bind {$m :: Number} (Vague (AdmissibleTolerance n prec))
-                {…$m…})            ; prefix/medial ji'i: the numeral's
-                                   ; constrained part varies
-(Rounded n) ≝ the suffix-ji'i schema: the stated digits are exact and
-   the continuation is the rounded tail — a definedness condition on
-   the numeral, directional under ma'u/ni'u (rounding up/down).
+   ; admissible values: numbers within the tolerance region about the
+   ; anchor at the given precision; the region's boundary is the Vague
+   ; dimension; nonempty by VC1.
 ```
 
-Position matters (CLL 18.9): prefix and medial `ji'i` approximate,
-suffix `ji'i` rounds; the three schemas are ⊳ numeral syntax feeding
-these formers (pin P37).
+Position matters (CLL 18.9), and the numeral's value is what changes:
+a prefix or medial `ji'i` numeral **denotes the computation**
+`(Vague (AdmissibleTolerance n prec))` — a Vague-selected `Number`,
+bound at its use site like any effectful operand (`prec` the
+numeral's own precision descriptor); a suffix-`ji'i` numeral denotes
+its stated value under a **rounding formation condition** — the true
+quantity lies within one unit of the stated precision's last place,
+on the side `ma'u`/`ni'u` orients (upward/downward; both sides when
+unmarked) — a projective definedness condition (§5.5), not a
+computation (pin P37).
 
 **Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
 distribution over members (`Distrib` at the use site);
@@ -2322,102 +2352,152 @@ this form retroactively grounds the P1 inner-PA machinery.
 indexed by the number `n`, catalogued with exact rows — not term
 expansions (their content is lexical):
 
+`Ordering<T>` is the pure comparison type `Fn<(T, T), Content>`
+(total and transitive as a definedness condition on its uses).
+The rows, labelled and typed (P25's referential discipline; the
+`Ordering` place is function-typed, the `InnatelyCapable` precedent):
+
 ```text
-(MeiRel n)  : x1 Group<T> object formed (gunma) from set x2 : Set<T>
-              with (= (Card x2) n), members x3 : Referents<T> among
-              x2's members; objective-indefinite n adds the comparison
-              set x4 : Set<T>; subjective n adds the by-standard place
-              (the ThresholdKind σ discipline).
-(MoiRel n)  : x1 is the n-th member of x2 : Set<T> under ordering
-              x3 : Ordering<T> — a pure comparison Fn, Context-recovered
-              when unstated.
-(SiheRel n) : x1 is an n-fraction portion of x2 (a typed portion
-              relation; the fraction an Amount).
-(CuhoRel n) : event x1 has probability n under conditions x2 — an
-              opaque lexical relation; formation condition 0 ≤ n ≤ 1;
-              the model supplies the measure. NO probability calculus
-              enters the core (pin P29).
-(VaheRel n) : x1 is at scale position n on x2 : Scale — the degree
-              projection of x1 on x2 falls in the position's region
-              (InRegion inside the definition, not in the row).
+(MeiRel n)  : PredTerm⟨ x1:Referents<Group<T>>, x2:Referents<Set<T>>,
+                        x3:Referents<T> ⟩
+   ; lexical content: x1 is the gunma-group over x2's members,
+   ; (= (Card x2) n) at the sole set, x3 among x2's members.
+   ; Objective-indefinite n extends the row with the comparison set
+   ; x4:Referents<Set<T>>; subjective n extends it with the standard
+   ; place (the degree quantifiers' σ, a Referents<Entity>).
+(MoiRel n)  : PredTerm⟨ x1:Referents<T>, x2:Referents<Set<T>>,
+                        x3:Ordering<T> ⟩
+   ; x1 is the n-th member of x2 under x3; x3 Context-recovered when
+   ; unstated; definedness: n within x2's cardinality.
+(SiheRel n) : PredTerm⟨ x1:Referents<Entity>, x2:Referents<Entity> ⟩
+   ; x1 is an n-fraction portion of the mass x2 (CLL: portion of
+   ; mass); the fraction n a Number in (0, 1].
+(CuhoRel n) : PredTerm⟨ x1:Referents<Eventuality>,
+                        x2:Referents<Eventuality> ⟩
+   ; event x1 has probability n under conditions x2 — an opaque
+   ; lexical relation; formation condition 0 ≤ n ≤ 1; the model
+   ; supplies the measure. NO probability calculus enters the core
+   ; (pin P29).
+(VaheRel n) : PredTerm⟨ x1:Referents<Entity>, x2:Referents<Scale> ⟩
+   ; x1's degree on x2 (through the gradable projection its lexical
+   ; content names) lies in position n's region.
 ```
 
-The `me X me'u MOI` composite (CLL Example 18.93) is `MoiRel`-family
-application at the `MePred`-derived number.
+The `me X me'u MOI` composite (CLL Examples 18.93–18.94) applies the
+family the MOI cmavo selects at the number the `me`-complement
+supplies — `li ny. su'i pa` supplies its numeric referent (18.93);
+a non-numeric complement (18.94's `cu'o` composite) takes the family
+at the value the complement denotes; never a property in the number
+index.
 
-**Regions and intervals** (BIhI, CLL 14.16). `Interval` (above) covers
-ordered endpoints (`bi'o`); `bi'i` is its symmetrization — ⊳ normalize
-endpoint order together with their GAhO kinds before forming. `mi'i`
-is metric, not arithmetic:
+**Regions and intervals** (BIhI, CLL 14.16). `Metric<T>` is the pure
+distance type `Fn<(T, T), Number>`, Context-recovered (spatial
+distance, duration, …). Endpoint and center sumti are references;
+each former below is defined — like the §9.2 numeric crossings — at
+the reference type under the projective singular condition (the sole
+member is what the definition consumes). `bi'o` takes the ordered
+`Interval` (above) at ordered domains, endpoint kinds per GAhO;
+`bi'i` at an ordered domain is its symmetrization (⊳ normalize
+endpoint order together with their GAhO kinds), and at a metric
+domain it is the betweenness span; `mi'i` is metric, never endpoint
+arithmetic:
 
 ```text
-MetricBall : T × Amount × Metric → Set<T>   ; center, radius, metric;
-   ; the metric is Context-recovered (spatial distance, duration, …);
-   ; boundary kind per GAhO. Locations support no endpoint arithmetic —
-   ; this is a neighborhood, not an endpoint interval.
-RegionComplement : Set<T> × Set<T> → Set<T>  ; complement within a
-   ; Context-recovered universe — the bi'o-nai reading.
+(MetricBall c rad d k) ≝ (SetOf (λ {$x :: T} {(cmpₖ (d c $x) rad)}))
+   ; cmpₖ = ≤ or < per the GAhO kind k
+(SpanRegion a b d k₁ k₂) ≝
+   (SetOf (λ {$x :: T} {(= (+ (d a $x) (d $x b)) (d a b))}))
+   ; metric betweenness, endpoints kept or dropped per k₁/k₂
+(RegionComplement U A) ≝ (SetOf (λ {$x :: T} {(∧ (∈ $x U) (¬ (∈ $x A)))}))
+   ; U the Context-recovered universe — the bi'o-nai reading
 ```
 
-**MEX conversions** (CLL 18.18, 18.21): narrowly typed **partial**
-interfaces with projective definedness (§5.5) — the core supplies no
-totality or unique-result guarantees, so each crossing carries its
-own conditions:
+**MEX conversions** (CLL 18.18, 18.19, 18.21): **declared partial
+crossings**, row-indexed, each with a projective definedness
+condition (§5.5) — the core supplies no totality or unique-result
+guarantees:
 
 ```text
-RelToOp  (na'u P) : the operator whose result is P's x1 and whose
-   operands fill the subsequent places — defined where the relation is
-   functional in x1 at the given operands (definedness projective).
-OpToRel  (nu'a op) : the relation relating op's result to its
-   operands — total.
-OperandToOp (ma'o X) : Context resolves the intended function — the
-   constant-function ambiguity CLL 18.21 records is a recovery, not a
-   default (pin P36).
-AmountOperand (ni'e P) : the amount-operand crossing — its own
-   interface, NOT `NiRel` (which reifies an abstraction); defined
-   where P's degree projection at the operands exists.
+RelToOp<ρ>  : PredTerm<ρ> ⇀ Fn<(Number …), Number>     ; na'u
+   ; the operator whose result is the relation's x1 and whose operands
+   ; fill the subsequent (Number-sorted) places; defined where the
+   ; relation is functional in x1 at the given operands.
+OpToRel     : Fn<(Number …), Number> → PredTerm⟨x1:Number, x2…:Number⟩
+   ; nu'a — total: x1 is the operator's result at x2….
+OperandToOp : Number ⇀ Fn<(Number …), Number>          ; ma'o
+   ; the intended function is a Context recovery — the
+   ; constant-function ambiguity CLL 18.21 records is a recovery, not
+   ; a default (pin P36).
+AmountOperand<ρ> : PredTerm<ρ> ⇀ Number                ; ni'e
+   ; its own crossing, NOT `NiRel` (which reifies an abstraction):
+   ; defined where the relation's lexical content names a
+   ; Number-valued result place at the given operands.
 ```
 
 `se` on operators = argument permutation (a pure λ rewrite at the
-known arity). Everything beyond these crossings remains in the §14
-MEX gap.
+known arity). Everything beyond these crossings — including `mo'e`'s
+general sumti-to-operand cases past the §9.2 `AmountValue` route —
+remains in the §14 MEX gap.
 
 **Foreign names** (`la'o`; `zo'oi` experimental): parsing yields an
-opaque text payload; naming derives from it —
-
-```text
-(ForeignName t) : the name value derived from opaque text t; `la'o`
-   = the naming route of §11 with (ForeignName t) in NameSign
-   position. `zo'oi` quotes one non-Lojban word as an opaque
-   word-level sign.
-```
+opaque text payload `t : Text`, and `la'o` is simply the §11 naming
+route at that text — `(NameSign t)` and the `Named` relation apply
+unchanged (no new former; the payload's being non-Lojban is a fact
+about the text, not a type). `zo'oi` quotes one non-Lojban word as an
+opaque word-level sign.
 
 **Enumeration ordinals** (MAI, CLL 19.7): a non-at-issue metadata
-relation on the display channel —
+relation, displayed through the §7.6 machinery.
+`EnumerationLevel = Item | Section` is a closed index type; the
+sequence key is a keyed-`Context` key (§5.3's key sort), recovered
+with its reset behavior from context; the target is the
+⊳ attachment-selected constituent's bound value (a referent, sign, or
+act — CLL 19.7 numbers sumti within one bridi, so the target is NOT
+always the containing utterance):
 
 ```text
-EnumerationOrdinal : Target × Number × SequenceKey × Level → Content
-   ; Target = the attachment-selected sign/token or text constituent
-   ; (CLL 19.7 numbers sumti within one bridi — the target is NOT
-   ; always the containing utterance); the sequence key and reset
-   ; behavior are Context-recovered; `mai` = item level, `mo'o` =
-   ; section level; NO temporal ordering of denoted events is implied.
+EnumerationOrdinal : Target × Number × Key × EnumerationLevel → Content
+   ; Target the union of the attachable values; `mai` = Item,
+   ; `mo'o` = Section; NO temporal ordering of denoted events implied.
 ```
 
-**Topic resolution** (`zo'u`, CLL 19.4). The typed interface for the
-deliberately vague topic-comment link (pin P26):
+Display placement is §7.6's exactly: a constituent target takes one
+`Supplement` anchored at the bound target with the ordinal fact as
+side content; an act-level target takes an `Express` beside the
+shared host act.
+
+**Topic resolution** (`zo'u`, CLL 19.4). The comment frame is a
+**mapping-level schematic** — the comment's open predication with its
+row ρ, never a term-language object; `TopicResolution<ρ>` is the
+closed union indexed by that row:
 
 ```text
-TopicResolution = PlaceFill(ℓ) | About        ; a closed union
-TopicAdmissible : Referents<T> × CommentFrame → Fn<(TopicResolution), Content>
-   ; admissible resolutions: PlaceFill(ℓ) for ℓ an unfilled,
-   ; sort-compatible place of the OPEN comment frame — the topic fills
-   ; ℓ before Close (CLL's fish: eater or eaten — a place choice) —
-   ; and About, srana-aboutness of the topic to the closed comment.
-(Topic t frame) ≝ (Bind {$res :: TopicResolution}
-                        (Vague (TopicAdmissible t frame))
-                    {the frame closed per $res})
+TopicResolution<ρ> = PlaceFill(ℓ : Label<ρ>) | About
+TopicAdmissible : Referents<T> × PredTerm<ρ> → Fn<(TopicResolution<ρ>), Content>
+   ; declared admissibility predicate (TanruAdmissible's sibling):
+   ; PlaceFill(ℓ) is admissible for ℓ an unfilled, sort-compatible
+   ; place; About is admissible when srana-aboutness holds.
 ```
+
+The lowering (pin P26), for topic `t` and open comment `R` with
+unfilled row ρ:
+
+```text
+topic zo'u comment ↦
+(Bind {$res :: TopicResolution<ρ>} (Vague (TopicAdmissible t R))
+  {case $res of
+     PlaceFill(ℓ) → (Close ((At R ℓ t) …))    ; the topic fills ℓ
+     About        → (Let {$p :: Proposition} (Reify (Close (R …)))
+                      {(∧ (Holds $p)
+                         (Close (srana t $p)))})})
+   ; the About arm shares one reification (single evaluation, the
+   ; catalog 1.31 display) — the comment holds AND the topic pertains
+   ; to it; the case split is the §4.7 label-case precedent.
+```
+
+CLL's fish (`le finpe zo'u citka`) is the `PlaceFill` choice — eater
+or eaten; `tu'e…tu'u` scopes one topic binder over the sequence's
+`Do`.
 
 **Tanru link connection** (jek at the tanru-unit locus; pin P33).
 `TanruLinkConnect`: for a shared head, bind one `Vague` link per
@@ -2584,8 +2664,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   never mutated — each utterance's ctx carries its own audience.
 - **P28** `do'i` is `Context` at the salient transcript token/span
   (`Vague` only in span boundaries); `la'e` over utterance anaphors
-  crosses host-sorted through the realized act — no universal
-  coercion (P13 applied at the token sort).
+  crosses host-sorted through the partial `RealizedAct`/`ActContent`
+  projections (§7.4) — no universal coercion (P13 applied at the
+  token sort).
 - **P29** `cu'o` is an opaque lexical relation with a `Number` place
   in [0,1]; the model supplies the measure; **no probability
   calculus** enters the core (the `JeiRel`/`TruthValueDegree`
@@ -2722,8 +2803,12 @@ the gap register §14 with its reason. The coverage matrix:
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
-| MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval` | bases, arrays, indefinite operators | §10 |
+| MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e` | §10 |
 | plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | — | §3, §5 |
+| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent` (§7.4) | — | — |
+| associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
+| utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
+| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, region formers, `SelectAllBut` | non-`su'o` `bu'a` restrictions (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
 | repair, prosody | §11 ⊳ | — | registered | §13 |
 
@@ -2751,8 +2836,10 @@ force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the sign
 constructors (where quotation's opacity lives), the quote former with
 `Expression<Γ,A,ε>`/`Telescope` and the floor `Interpret` family, and
 `MakeLambda` (§7.7 — `λ` is its alias);
-`InterpretContent`/`InterpretAct<F>`, and the token/sign
-fact relations; `Deictic`, `ShiftedGround`, `InContext`, and the
+`InterpretContent`/`InterpretAct<F>`, the partial
+`RealizedAct<F>`/`ActContent` projections and the token/sign
+fact relations; the declared MEX conversion crossings and the
+`SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
 derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`/
@@ -2761,7 +2848,9 @@ admissibility predicates (§12). **Defined forms** (term-language
 expansions; everything else is library or lexicon): `Close`, `At` with
 all fill notation, `Let` and the braced binder spellings with
 `MakeBind`/`MakeLet`/`MakeApply` and the facade schema (§7.7), the
-demonstratives, `Tanru` (§6.2),
+demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `MePred`, the
+region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
+`Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
 `PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
 `ContextualAnswer`, and the library of §12. The

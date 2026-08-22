@@ -895,6 +895,72 @@ genuinely fought:
   places)** — subsumes the x1 tradition, matches practice, and declares
   multi-candidate cases distinct readings rather than vagueness.
 
+- **P26 (prenex scope; topic resolution).** The prenex half is
+  CLL 16.2 read at face value plus the P18 surface-scope doctrine —
+  the losing alternative (scope normalization independent of prenex
+  order) contradicts CLL's own donkey examples. The topic half's
+  evidence is CLL 19.4's fish (`le finpe zo'u citka` — "the sentence
+  doesn't say" whether it eats or is eaten): the vagueness is a
+  *place choice*, so a closed-comment aboutness link alone (the first
+  draft) cannot represent it; the adopted `TopicResolution<ρ>` union
+  makes place-fill the primary arm with `srana`-aboutness (CLL 19.10's
+  money topic) as the other. Rejected: reusing the Tanru link (types
+  don't fit — a topic is a referent, not a modifier over the head's
+  row) and any segment-state effect (`ni'o` owns segments).
+- **P27 (imperatives, vocatives, the active addressee).** CLL 2.14
+  says `doi` *sets* `do` — binding language, exactly the `goi`
+  mechanism — and mutating the ctx `Audience` instead would make
+  "addressee of this utterance" ambiguous with "current do-value" and
+  retroactively falsify utterance facts. The active-`do` binding with
+  Audience fallback also makes `doi djan. ko klama` command John with
+  no extra machinery — the objection that pure binding under-serves
+  `ko` dissolves once `ko` reads the same active value. Force marks
+  the nearest *performed* clause only: `lo nu ko klama` constructs
+  content (the alternative — force extrusion from abstractions —
+  would make `Reify` perform).
+- **P30 (relation variables; templates).** `bu'a` needs second-order
+  *quantification*, not second-order *objects*: the core's
+  quantifiers are typed, so `∃` at `PredTerm<ρ>` expresses CLL 16.13
+  directly, while reified predicate objects (§9.1's reserved family)
+  would bring the identity-granularity questions along for nothing —
+  no identity claims occur. The prenex constraint is CLL 16.107
+  verbatim. `cei` stores more than a relation (CLL 7.5: fills, tense,
+  negation ride along, later fills override), so the binding is a
+  bridi template at the ⊳ layer — a `PredTerm` value would wrongly
+  make `go'i`-style override inexpressible.
+- **P32 (one performance).** `.i ja` decides it: a disjunction is one
+  claim, not two acts, and uniformity carries the rule to `.i je`
+  (harmless there — asserting a conjunction commits to both, and `∧`
+  shares `Do`'s accessibility row, §5.4). The losing alternative (two
+  acts plus a cross-act connective) has no act to carry `∨` at all.
+  `.i joi` stays a discourse `Do` — one act per sentence — because
+  mixture forming at the act level was never attested or needed.
+- **P33 (tanru-unit jeks).** With a shared head, connecting whole
+  units would duplicate the head predication (two houses from one
+  `zdani`); binding one `Vague` link per conjunct and connecting the
+  link applications keeps one head and distributes classically
+  (`H ∧ (l₁ ∨ l₂)` ≡ the unit-level disjunction) while keeping one
+  discourse site per referent. Distinct heads have nothing to share,
+  so they connect as whole predications.
+- **P34 (`vu'o`).** CLL 8.8's own gloss ("both Frank and George are
+  claimed to be men") is per-connectee; predicating collectively of
+  the `Combine` would change collective predicates' truth conditions,
+  and distributing to *members* would over-distribute into plural
+  connectees. Immediate-connectee distribution is the only reading
+  that preserves both the CLL claim and the connective's structure;
+  the restrictive extension is recorded as ours.
+- **P35 (ROI).** Conjoining a count onto the ordinary single-event
+  closure leaves an uncounted existential event in scope — the count
+  must *replace* the closure, over distinct eventualities in the
+  interval. The interval default follows CLL 10.9's own words
+  ("unspecified size, at least part … in the past"): a recoverable
+  anchor (`Context`) with genuinely loose extent (`Vague`).
+- **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform
+  tolerance would erase the rounding reading (suffix `ji'i` with
+  `ma'u`/`ni'u` direction) that CLL states. Approximation is a
+  `Vague`-selected Number (admissible region nonempty by VC1);
+  rounding is a formation condition, not a computation.
+
 ## 4. What would change our minds
 
 A design-record note first, owed to accuracy: several of this document's
