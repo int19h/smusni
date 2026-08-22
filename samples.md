@@ -491,7 +491,7 @@ own lexical presupposition, never from `kau`.
     {(Do (Perform $a1)
         (Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
           {(Do (Perform $a2)
-              (Express (Close (Contrast Speaker $a2 $a1))))}))}))
+              (Express (Close (Contrast $a2 $a1))))}))}))
 ```
 
 ```lisp

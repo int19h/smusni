@@ -1621,9 +1621,17 @@ referent's arity) is the attested surface exponent of the two
 directions. At the propositional case `me'au` is `Holds` in selbri
 position, defined — like the numeric crossings of §9.2 — at the
 reference type `lo du'u` actually yields, under a **singleton
-condition** with singularity projective: for `abu` a singleton
-reference to a prior `lo du'u c`, `me'au abu` presupposes the sole
-member `p` and is `(Holds p)`, so `me'au abu gi'a me'au by` is the
+condition** with singularity projective. The remark's precise shape:
+
+```text
+(Meau0 r) ≝ (Presuppose (∃ (λ {$p :: Proposition} {(CoRef r $p)}))
+              (∃ (λ {$p :: Proposition} {(∧ (CoRef r $p) (Holds $p))})))
+```
+
+(the member `$p` singleton-lifts at the referential `CoRef`
+positions, §3.2). For `abu` a singleton
+reference to a prior `lo du'u c`, `(Meau0 abu)` is extensionally
+`(Holds p)` at the sole member, so `me'au abu gi'a me'au by` is the
 content-level disjunction of the two claims (contrast
 `abu jetnu gi'a by jetnu`, two truth-predicate
 claims *about* the objects — truth-conditionally aligned by the axiom
@@ -1831,9 +1839,15 @@ ordinarily (`zo'e` ≡ omission, P15); only explicit `ce'u` extracts.
 Arity counts **distinct extracted variables**: ⊳ `ce'u goi` aliasing
 identifies occurrences and `ce'u xi` indexing selects the extracting
 abstraction, both resolved at the text-to-reading layer. Explicit
-`ce'u` in the other abstractors — and the Rosta all-`ce'u` reading
-of `si'o` — would need n-adic concept/nature *objects*: the reserved
-family's territory (§9.1, §14), not this baseline; baseline `si'o`
+`ce'u` in the other abstractors is unmapped at baseline, and not by
+blanket referral to the reserved family: each would need a
+**result-specific typed analysis** — `lo ni ce'u clani` calls for an
+argument-indexed amount abstraction, and `jei`/`li'i`/the event
+abstractors likewise have their own codomains, none of them a
+reified `PredTerm<ρ>` (§14). The Rosta all-`ce'u` reading of `si'o`,
+which genuinely nominalizes a predicate into a concept *object*, is
+the one reading that belongs to the reserved family (§9.1). Baseline
+`si'o`
 has no covert `ce'u`, closes its inner bridi normally, and maps
 through `SihoRel` with the conceptualizing mind at x2 (CLL 11.9) —
 a stated divergence from the Rosta proposal's clause 7. `nu` +
@@ -2166,7 +2180,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   rationale §2.6).
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
-- **P12** Implicit `ce'u`: exactly one, first unfilled place, counting
+- **P12** Implicit `ce'u` — a rule of `ka` alone (§11): exactly one,
+  first unfilled place, counting
   converted places; multiple candidates are distinct readings.
 - **P13** No implicit coercions among abstraction sorts; named explicit
   crossings; dictionary adjudicates sort drift.
@@ -2277,8 +2292,13 @@ approximate:
   of the experimental `me'ei`/`me'au` pair, the plural-reference
   `me'au` case (§9.1's singleton condition; the universal reading is
   the recorded candidate), `se du'u` under `ce'u` extraction (§9.2),
-  explicit-`ce'u` readings of the non-`ka`/`du'u` abstractors
-  including the Rosta all-`ce'u` `si'o`, and the open design points a
+  explicit-`ce'u` readings of the non-`ka`/`du'u` abstractors (each
+  needing a result-specific typed analysis — an argument-indexed
+  amount abstraction for `ni`, and per-abstractor codomains likewise —
+  not a blanket reduction to reified `PredTerm`s), the Rosta
+  all-`ce'u` `si'o` (a genuine predicate nominalization into concept
+  objects — the one member that is reserved-family territory proper),
+  and the open design points a
   family raises: row-isomorphism under `se`-relabeling, and typed
   cross-row operators (identity *within* a row is already fixed
   extensional over `PredTerm`, §9.1). The baseline lowers `lo ka`
