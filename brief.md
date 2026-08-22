@@ -60,6 +60,11 @@ At the repository root:
    definition, formal definition where one exists, purpose with an
    example, and links — split into true primitives (defined only by
    prose and axioms) and the forms defined in terms of them.
+6. **`cmavo.md`** — the cmavo-centric index: one entry per treated
+   cmavo (and per non-compositional cmavo sequence) with a Lojban
+   example, its core term, and links into the specification; the
+   coverage holes the cmavo-centric view exposes are listed at its
+   end.
 
 ## Hard constraints
 

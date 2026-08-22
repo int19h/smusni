@@ -727,7 +727,7 @@ No — because the doctrine and the primitive answer different
 questions, and the core asserts both answers. As a claim about
 **abstraction syntax** the doctrine is correct, and it holds here as a
 theorem: `ce'u`-marking extracts λ in any `ce'u`-capable abstractor
-(the §13 mapping), arity is `ce'u` count, and the bare-`du'u` case is
+(the §11 mapping annex), arity is `ce'u` count, and the bare-`du'u` case is
 the 0-adic one — whose extracted "relation" is the content itself,
 since `PredTerm<⟨⟩>` applied at the empty record *is* `Content`
 (§3.3). Abstracting nothing out of a bridi leaves its content; in that
