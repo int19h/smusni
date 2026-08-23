@@ -91,7 +91,9 @@ pure/effectful seam).
 places; `Record ρ` is the type of complete fills for it; `Label<ρ>` is
 the finite type of its place labels. Labels are semantically real:
 Lojban reorders, deletes, and *asks about* places by label.
-**For.** `klama fi'a ti` is a question over `Label<ρ(klama)>`; the
+**For.** `klama fi'a ti` is a question over the compatible-label
+refinement of `Label<ρ(klama)>` (spec §4.7 — sort-incompatible places
+and the event place contribute no branch); the
 fill notation computes labels (spec §4.1). `PredTerm<ρ>` (defined
 section) is the row-function alias over these. (`Record` and `Label`
 are type constructors of the record theory, not first-order sorts —
@@ -123,7 +125,9 @@ witness is bound.
 **Informally.** An `Act<F>` value is a force-tagged content package —
 force `F` (Assertion, Question, Directive, Expressive, Address) plus
 the content computation — built inertly: constructing an act runs
-nothing. `Discourse` is performed discourse: sequences of performed
+nothing. An act is a pure value, not a computation — only `Perform`
+(§1.36) injects it into the dynamic carrier. `Discourse` is performed
+discourse: sequences of performed
 acts and transitions. A document denotes one `Discourse`.
 **For.** Quotation and report: `mi cusku lu ko klama li'u` mentions a
 directive without issuing it, because only `Perform` executes.
@@ -196,11 +200,11 @@ sequencing its effects before the continuation, and pass its *result*
 — never the computation. It is function application under mandatory
 call-by-value at computation types, made visible: the pure λ-fragment
 keeps unconditional β-equality, and every effect-sequencing point is a
-`bind` node the accessibility table can name. Uniform across result
-categories: the continuation may yield content, a reference
-computation, an act, or a discourse, so a referent introduced before
-an act sequence stays bound
-across it. The surface binder word `Bind` — `(Bind {$x :: T} comp
+`bind` node the accessibility table can name. Uniform across the
+computation categories: the continuation may yield content, a
+reference computation, or a discourse (a bare act body stands for its
+performing one-act discourse — spec §7.1's display coercion), so a
+referent introduced before an act sequence stays bound across it. The surface binder word `Bind` — `(Bind {$x :: T} comp
 {body})` — is the *defined* telescope-spelled face: it is the alias of
 `MakeBind` (§2.28), which expands to `bind` over `MakeLambda`.
 **For.** Cross-sentence reference: `(Bind {$cat :: Referents Entity}
@@ -242,7 +246,9 @@ same as!"); [rationale §1.8](rationale.md).
 accessibility row each: `∧` passes introductions left to right and
 lets both survive; `∨` keeps them branch-local; `¬` lets nothing
 escape; `→` feeds the antecedent's introductions to the consequent and
-exports nothing. The rows are part of the meaning.
+exports nothing. The rows are part of the meaning. (`⊤` — the
+trivially true content, `∧`'s unit, spec §2 — is the defined empty
+conjunction, not a further primitive.)
 **For.** `ganai da mlatu gi da ciska` (donkey feeding), `.ija`
 (branch-local), `naku` (blocking) — three policies no truth table
 derives.
@@ -353,19 +359,22 @@ mixture kind, bare `jai`'s role.
 **See.** [Spec §5.3, §6](spec.md); [primer ch. 9](primer.md);
 [rationale §1.3](rationale.md).
 
-### 1.27 `SelectExactly`, `SelectAtLeast`, `SelectAllBut`, `SelectSome` — the selections
+### 1.27 `SelectExactly`, `SelectAtLeast`, `SelectAllBut` — the primitive selections
 
 **Informally.** The quantifier-strength members of the `Refer`
 family: introduce a witness reference of the stated cardinal strength,
-with the restrictor pure. The witness laws: `(Distrib P w)` holds, and
+with the restrictor pure and the strength n ≥ 1 (the zero floor, spec
+§12: a witness reference is nonempty by type, so no zero-strength
+selection forms). The witness laws: `(Distrib P w)` holds, and
 `(CardBasis w P)` is `= n` (`SelectExactly`) or `≥ n`
 (`SelectAtLeast`). Unlike `Refer`, a selection under a governing
 quantifier is *dependent* — one witness per value of the governor (the
 dependence law) — which is what dependent anaphora normalizes over,
 and why no `Refer`-plus-cardinality spelling can replace them (a
 `Refer` is a governor-invariant constant). Binding a witness never
-re-evaluates a selection; distinct selections have distinct witnesses.
-`SelectSome` is **defined** (§2.22).
+re-evaluates a selection; distinct selections introduce distinct
+discourse referents (introduction identity — the witness values may
+still co-refer). `SelectSome` is **defined** (§2.22).
 **For.** Bare-PA terms: `ci gerku cu bajra` selects a three-dog
 witness and predicates running of it, neutrally.
 `SelectAllBut n P` (`da'a`; default n = 1) is the complement-count
@@ -381,7 +390,9 @@ parameter.
 **Informally.** Impose a projective condition: it must hold at the
 nearest boundary that can commit it (or be accommodated there), and it
 survives negation, disjunction, conditionals, and question force.
-Introductions inside the condition stay local to it.
+Introductions inside the condition stay local to it. Polymorphic over
+the computation categories —
+`Presuppose : Content × Comp<A> → Comp<A>` (the §2.10 `MaxRefer` use).
 **For.** `ro`-import (pin P2), definedness of partial operations,
 lexical presuppositions. `naku ro gerku cu blabi` still grants dogs.
 **See.** [Spec §5.5](spec.md); [primer ch. 5](primer.md);
@@ -406,7 +417,9 @@ restrictor and nuclear scope through a normality ordering that may
 depend on the nuclear predicate; mode Typical or Stereotypical (the
 latter with the Speaker as holder). Not `∀`, not `∃`, no referent
 introduced; its normality structure is constrained, not defined —
-frankly axiomatic.
+frankly axiomatic (and currently inference-free beyond typing — the
+spec §14 gap entry). Restrictor and nuclear scope are member-level:
+`Fn<(T), Content>` and `EFn<(T), Content>` (spec §5.8).
 **For.** `lo'e`/`le'e`. The split-normality witness (maned male lions,
 birthing female lions) kills every fixed-specimen theory.
 **See.** [Spec §5.8](spec.md); [primer ch. 3](primer.md);
@@ -422,6 +435,9 @@ axiom pair: evaluating `(Holds (Reify c))` is evaluating `c`, and
 proposition, however introduced, represents exactly the content
 `Holds` returns for it. The pair is the sole Proposition↔Content
 bridge (the sign and event crossings target other sorts).
+Construction is inert — nothing runs at `Reify` — while `(Holds p)`
+runs the represented content at its own occurrence, escapes governed
+by the surrounding operators (spec §5.4, §9.1).
 **For.** `du'u`; attitude objects; single-evaluation display
 (`Let`-shared `Reify` with `Holds` as the evaluated body). The shape
 generalizes row by row to reified predicates — a §9.1 reservation
@@ -467,7 +483,9 @@ aesthetic standing. Also the `nai`-fallback for unpaired indicators
 admissibility predicates. `AdmissibleTolerance : Number × Precision →
 Fn<(Number), Content>` and its rounding sibling `AdmissibleRounding`
 serve `ji'i` (the tolerance/rounding-preimage regions about an anchor
-at the numeral's precision, nonempty by VC1 — spec §12, pin P37);
+at the numeral's precision, nonempty by VC1 — spec §12, pin P37;
+`Direction` — the closed `Up | Down | Either` — is declared with the
+rounding former);
 `AdmissibleMixture` serves sumti-`joi` (the composition relations
 refining `gunma` — nonempty by construction, `gunma` the trivial
 refinement; spec §12);
@@ -554,7 +572,9 @@ as objects — ordinary assertable relations, placeholder content words
 under the §16 program. Signatures (u an `UtteranceToken`, s a
 `SignToken<K>`, each relation `Content`-valued): `SpeakerOf u
 speaker`, `AudienceOf u audience` (both at `Referents<Entity>`);
-`LocutionOf u locution` (`Referents<Locution>`); `DeicticTimeOf u t`
+`LocutionOf locution u` (the locution first, at
+`Referents<Locution>` — the order the §11 anchoring clause writes);
+`DeicticTimeOf u t`
 (`Time`); `DeicticPlaceOf u l` (`Location`); `TextOf u|s text`
 (`Text`); `Realizes u a` (`a` an act value of whatever force — the
 force index is existential); `Utters agent u`; `Quotes s x` (`x` the
@@ -784,7 +804,8 @@ with the total `ActContent` (an assertion's packaged content);
 ROI count schema's restriction, P35); and
 the MEX conversions `RelToOp<ρ>` (`na'u`, at Number-rowed relations,
 functional in x1), `OpToRel` (`nu'a`, total), `OperandToOp` (`ma'o`,
-the function a `Context` recovery — P36), `AmountOperand<ρ>` (`ni'e`,
+computation-typed: the function is a `Context` recovery — P36),
+`AmountOperand<ρ>` (`ni'e`,
 the Number-result computation at a Number-rowed relation). `se` on
 operators is pure argument permutation.
 **See.** [Spec §7.4, §12, §11](spec.md), pins P28, P36.
@@ -941,19 +962,21 @@ among it, every part overlaps a P-unit. Defined only for inhabited P
                  (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r'))})))})))})))
 ```
 
-Models must supply this reference for each inhabited lexical
-restrictor (plural comprehension — a model condition).
+Models must supply this reference for each inhabited pure restrictor
+the mapping can form (plural comprehension — a model condition).
 **For.** The `lo'i`/`loi` base ("the set of *the* dogs") and `Every`'s
 witness export.
 **See.** [Spec §12, §11](spec.md).
 
 ### 2.11 `Reciprocate`
 
-**Informally.** The reciprocal schema: every two non-co-referent
-subreferences of the witness stand in the relation, both ways.
+**Informally.** The reciprocal schema: every two distinct members of
+the witness stand in the relation, both ways (member-wise; vacuous on
+a unitless reference — mass reciprocity needs an explicit basis).
 Consumed by `simxu`'s and `soi`'s lexicon rows.
-**Formally.** `(Reciprocate r P) ≝ (∀ (λ {$x $y :: Referents T} {(→ (∧ (Among $x r) (Among $y r) (¬ (CoRef $x $y)))
-(P $x $y))}))`.
+**Formally.** `(Reciprocate r P) ≝ (∀ (λ {$x $y :: T} {(→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
+(P $x $y))}))` — `T` the member sort; the units singleton-lift at
+`Among` and at `P`'s places.
 **For.** `ci jbopre cu simxu lo ka tavla` — pairwise mutual talk.
 **See.** [Spec §12](spec.md); [samples §5](samples.md).
 
@@ -970,10 +993,13 @@ selection under `¬` and export nothing.
 `(Exactly n P Q) ≝ (Bind {$w :: Referents T} (SelectExactly n P)
 {(Q $w)})`;
 `(AtLeast n P Q)` / `(Some P Q)` likewise over their selections;
-`(Every P Q) ≝ (Presuppose (∃ P) (Bind {$w :: Referents T} (MaxRefer
-P) {(Distrib Q $w)}))`; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
+`(Every P Q) ≝ (Bind {$w :: Referents T} (MaxRefer P) {(Distrib Q
+$w)})` — the import is `MaxRefer`'s own presupposition; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
 P Q))`; `(MoreThan n P Q) ≝ (AtLeast n+1 P Q)`; `(FewerThan n P Q) ≝
 (¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (Q $x))}))) n)` (pure operands; the marked global reading).
+Zero floor (spec §12): the selections form only at n ≥ 1;
+`(AtLeast 0 P Q) ≝ ⊤` and `(Exactly 0 P Q) ≝ (No P Q)`, with the
+bounded forms following from the definitions.
 **For.** `ci gerku cu bajra .i ri tatpi` (witness export); `no prenu
 cu jmaji` (the collective reading a distributive default cannot say).
 **See.** [Spec §12, §4.10, §5.6](spec.md); [primer ch. 5](primer.md);
@@ -1065,7 +1091,9 @@ reifies the same content.
 from context, with the exhaustivity slot absent (pin P9) — the weakest
 reading, strengthened only lexically or by explicit marker.
 **Formally.** `(Answer q ContextualAnswer) ≝ (Bind {$a :: A} (Context)
-{(Answer q (TupleAnswer $a))})`.
+{(Answer q (TupleAnswer $a))})` at open domains; at `Query<Bool>` the
+retrieval is at `Bool` and the selection is `(PolarAnswer $a)` — the
+`xu kau` case (spec §8.2).
 **For.** `mi djuno lo du'u ma kau klama`.
 **See.** [Spec §8.2](spec.md); [primer ch. 6](primer.md).
 
@@ -1179,7 +1207,8 @@ any operator acquires a sign-consuming form on demand.
                                                      ; §1.14 carrier op
 (MakeApply {f} {a})  ≝ ((Interpret {f}) (Interpret {a}))
 (MakeForall {Δ} {b}) ≝ (∀ (MakeLambda {Δ} {b}))     ; and MakeExists,
-                                                     ; MakeRefer, … alike
+                                                     ; MakeRefer, MakeSetOf,
+                                                     ; MakeOpenQ, … alike
 (MakeO {a₁} … {aₙ})  ≝ (O (Interpret {a₁}) … (Interpret {aₙ}))
 ```
 
@@ -1250,8 +1279,9 @@ Not term-language forms — the denotational metalanguage of
 [spec §5.1](spec.md), listed so no named symbol goes unaccounted:
 `Comp<A> = InformationState → P(InformationState × A × Obligations)`
 is the computation carrier (`Content = Comp<Unit>`,
-`RefComp<T> = Comp<T>`; acts and discourse denote at the same carrier
-with their commitment effects); an `InformationState` is a set of
+`RefComp<T> = Comp<T>`; discourse denotes at the same carrier with
+its commitment effects, while an act value is the pure force-tagged
+package only `Perform` injects — spec §5.1, §7.1); an `InformationState` is a set of
 world–assignment pairs over the model's world set W; `Obligations`
 collects pending projective commitments; `Unit` is the one-value
 return type of contentful computations; and `ctx` is the utterance

@@ -209,8 +209,8 @@ as holder for `le'e`); no prototype individual (P11).
 
 ```lisp
 ; lo'e gerku cu batci
-(👉Generic Typical👈 (λ {$r :: Referents Entity} {(gerku $r)})
-  (λ {$x :: Referents Entity} {(Close (batci $x))}))
+(👉Generic Typical👈 (λ {$x :: Entity} {(gerku $x)})
+  (λ {$x :: Entity} {(Close (batci $x))}))
 ```
 
 **See.** [Spec §5.8, §11](spec.md), pin P11.
@@ -224,7 +224,7 @@ components/members are the **maximal** plurality of the description
 ```lisp
 ; loi gerku cu sruri lo zdani — the maximal base bound first
 (Bind {$base :: Referents Entity}
-      👉(MaxRefer (λ {$r :: Referents Entity} {(gerku $r)}))👈
+      👉(MaxRefer (λ {$x :: Entity} {(gerku $x)}))👈
   {(Bind {$g :: Referents (Group Entity)}
         👉(Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))👈
     {(Bind {$z :: Referents Entity}
@@ -253,7 +253,7 @@ Unit count of the selected base under a counting basis:
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         {(∧ (gerku $r)
-           👉(= (CardBasis $r (λ {$y :: Referents Entity}
+           👉(= (CardBasis $r (λ {$y :: Entity}
                                {(gerku $y)})) 3)👈)}))
   {(Close (bajra $d))})
 ```
@@ -463,7 +463,9 @@ At-least-one selection: the weakest member of the selection family
 Outer numeric quantifiers select witness sets of that cardinality
 under a counting basis — neutral witness-set selection, not
 distributive and not global (P17's documented divergence; the
-CLL-literal readings are `GlobalExactly` and `Distrib`).
+CLL-literal readings are `GlobalExactly` and `Distrib`). Outer `no`
+is not a selection: it lowers through the zero-count test `No`, which
+exports nothing (spec §12's zero floor; P22).
 
 ```lisp
 ; re prenu cu bevri lo pipno
@@ -478,8 +480,11 @@ CLL-literal readings are `GlobalExactly` and `Distrib`).
 
 ### su'e / za'u / me'i (PA)
 
-At-most / more-than / fewer-than selections — the bounded members of
-the selection family, same witness-set discipline.
+At-most / more-than / fewer-than: `za'u n` is the exporting
+`MoreThan` (an `AtLeast n+1` selection, same witness-set discipline);
+`su'e n` and `me'i n` are the bounded *tests* `AtMost`/`FewerThan`
+(spec §12) — negations of selections, which select nothing and export
+nothing.
 
 **See.** [Spec §4.10, §5.6](spec.md).
 
@@ -593,17 +598,18 @@ Termsets: co-selected witness sets at one joint multi-parameter locus,
 full product, no coordinate maximality (P17).
 
 ```lisp
-; ci gerku ce'e re prenu cu batci — the full product at one joint
-; locus (P17)
-(∃ (λ 👉{$dogs $people :: Set Entity}👈
-  {(∧ (= (Card $dogs) 3)
-     (= (Card $people) 2)
-     (∀ (λ {$d :: Entity}
-       {(→ (∈ $d $dogs)
-          (∧ (gerku $d)
-             (∀ (λ {$p :: Entity}
-               {(→ (∈ $p $people)
-                  (∧ (prenu $p) (Close (batci $d $p))))}))))})))}))
+; ci gerku ce'e re prenu cu batci — co-selected witnesses, full
+; product (P17)
+(Bind 👉{$dogs :: Referents Entity}
+        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
+        {$people :: Referents Entity}
+        (SelectExactly 2 (λ {$x :: Entity} {(prenu $x)}))👈
+  {(Distrib (λ {$d :: Entity}
+     {(Distrib (λ {$p :: Entity}
+        {(Close (batci $d $p))}) $people)}) $dogs)})
+; the selections commute (one joint locus); the member-wise Distrib
+; nest is CLL's full product — every dog bites each person — with the
+; plural witnesses exported and no coordinate maximality
 ```
 
 **See.** [Spec §4.10, §11](spec.md), pin P17; [samples §5](samples.md).
@@ -1549,7 +1555,7 @@ sumti` through it).
         (Refer (λ {$r :: Referents Entity}
           {(∧ (Close (skicu Speaker $r Audience
                (λ {$y :: Referents Entity} {(nolraitru $y)})))
-             (= (CardBasis $r (λ {$y :: Referents Entity}
+             (= (CardBasis $r (λ {$y :: Entity}
                                 {(nolraitru $y)})) 3))}))
     {(Close (👉(MePred $k)👈 $b))})})
 ```

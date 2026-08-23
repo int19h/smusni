@@ -11,7 +11,9 @@ meaning from syntax construct by construct, we ask: **what meanings should a
 Lojban utterance be able to convey**, and **what minimal set of typed
 building blocks suffices to express all of them** — however verbose the
 result, since syntactic sugar can always be layered on later. Every Lojban
-utterance, under a resolved reading, denotes a term of this core; the core is
+utterance, under a resolved reading, is to denote a term of this core —
+the specification's adequacy chapter states how far that claim presently
+reaches, with its gap register bounding the remainder; the core is
 the definition, and Lojban surface syntax becomes one (privileged) way to
 spell its terms.
 
@@ -110,7 +112,8 @@ both repay study even where their solutions do not transfer:
   Sentences, Logical primitives, Predicate transformations, Default
   arguments, Dictionary conventions, Eberban from scratch.
 - **Toaq** (Delta; <https://toaq.net/>, refgram
-  <https://toaq.net/refgram/>) and its reference implementation **Kuna**
+  <https://toaq.net/refgram/introduction/>) and its reference
+  implementation **Kuna**
   (<https://github.com/toaq/kuna>). Kuna's semantics is a simply-typed
   λ-calculus with an inventory of *effect* type constructors composed
   algebraically: intension `Int`, scope-taking continuation `Cont`,

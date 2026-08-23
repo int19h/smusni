@@ -291,11 +291,13 @@ reference the selection binds, and nothing else is needed
       (∀ (λ {$p :: Entity}
         {(→ (prenu $p)
            (∃ (λ {$d :: Referents Entity}
-             {(∧ (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
+             {(∧ (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
+                (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
                 (Close (ponse $p $d)))})))}))
       ; the anaphoric continuation at the joint locus (strong reading):
       (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
         {(→ (∧ (prenu $p)
+              (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
               (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
               (Close (ponse $p $d)))
            (Close (tatpi $d)))})))))
@@ -314,10 +316,14 @@ summed reading ("all the dogs together") requires explicit collection.
                 {(∧ (prenu $x)
                    (∃ (λ {$y :: Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
     (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-      {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+      {(→ (∧ (prenu $p)
+            (Distrib (λ {$z :: Entity} {(xasli $z)}) $d)
+            (Close (ponse $p $d)))
          (Close (darxi $p $d)))}))))
-; $d at the plural type: the witness donkeys; the atomic-pair spelling
-; is the distributive strengthening.
+; $d at the plural type: the witness donkeys — the Distrib conjunct
+; is the selection's own witness law, so the locus ranges over
+; donkey-witness pluralities only; the atomic-pair spelling is the
+; distributive strengthening.
 ```
 
 ```lisp
@@ -348,16 +354,17 @@ presupposition.
 
 ```lisp
 ; ci gerku ce'e re prenu cu nelci    [pin P17]
-(Assert
-  (∃ (λ {$dogs $people :: Set Entity}
-    {(∧ (= (Card $dogs) 3)
-       (= (Card $people) 2)
-       (∀ (λ {$d :: Entity}
-         {(→ (∈ $d $dogs)
-            (∧ (gerku $d)
-               (∀ (λ {$p :: Entity}
-                 {(→ (∈ $p $people)
-                    (∧ (prenu $p) (Close (nelci $d $p))))}))))})))})))
+(Bind {$dogs :: Referents Entity}
+        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
+        {$people :: Referents Entity}
+        (SelectExactly 2 (λ {$x :: Entity} {(prenu $x)}))
+  {(Assert
+    (Distrib (λ {$d :: Entity}
+      {(Distrib (λ {$p :: Entity}
+         {(Close (nelci $d $p))}) $people)}) $dogs))})
+; co-selected plural witnesses (the selections commute — one joint
+; locus, P25's referential discipline); the member-wise Distrib nest
+; is the full product
 ```
 
 Pinned reading (CLL ch. 16 §7's own gloss): two picked witness sets,
@@ -409,8 +416,10 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
   {(Close ($r This))})))
 
 ; klama fi'a ti — a place question           [spec §4.7]
-(Ask (OpenQ (λ {$p :: Label klama}
+(Ask (OpenQ (λ {$p :: CompatibleLabel klama (Referents Entity)}
   {(Close (At klama $p This))})))
+; the computed-label domain is the compatible refinement (§4.7): the
+; event place and any sort-incompatible place contribute no branch
 ```
 
 ```lisp
@@ -495,14 +504,14 @@ own lexical presupposition, never from `kau`.
 ```
 
 ```lisp
-; na'i — metalinguistic objection             [spec §7.3]
-(Let {$prior :: Act Assertion} …          ; the objected act, bound
-                                           ; earlier in the discourse
-  {(Bind {$defect :: DefectKind} (Context)
-    {(Express
-      (Close (MetalinguisticallyDefective $prior $defect)))})})
-; the defect dimension is contextually recovered; nothing is negated
-; and the objected content is not performed.
+; do klama .i na'i — metalinguistic objection         [spec §7.3]
+(Let {$prior :: Act Assertion} (Assert (Close (klama Audience)))
+  {(Do (Perform $prior)
+      (Bind {$defect :: DefectKind} (Context)
+        {(Express
+          (Close (MetalinguisticallyDefective $prior $defect)))}))})
+; the defect dimension is contextually recovered; nothing is negated,
+; and the objection itself performs nothing beyond the display.
 ```
 
 ## 8. Vagueness

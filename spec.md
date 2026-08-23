@@ -5,7 +5,9 @@ language.*
 
 This document defines a semantic core for Lojban: a typed language of
 meanings such that every Lojban utterance, under a resolved reading,
-denotes a term of the core. It is a **definition**, not a description: where
+denotes a term of the core — within the analyzed coverage §15 states,
+the gap register (§14) bounding the remainder. It is a **definition**,
+not a description: where
 the Complete Lojban Language (CLL) is explicit that a meaning is vague, the
 core represents that vagueness with typed machinery; where CLL is merely
 underspecified — vague by accident rather than by design — this document
@@ -383,7 +385,46 @@ embedded. Its denotation (§5.1) is a world-indexed context-change
 potential; the world index never appears in the term language. `Act<F>`
 values are first-class: constructing an act and performing it are
 different things (§7.1), which is what keeps quotation and reported speech
-from performing their contents.
+from performing their contents. An act is a pure *value*, not a
+computation: only `Perform` injects it into the dynamic carrier
+(§5.1, §7.1).
+
+### 3.5 Index and composite types
+
+Beside the sorts and the function space, the type language carries a
+small stock of **index and composite formers**, each already used by a
+named construct and normative for exactly those uses:
+
+- **Closed enumerations** — finite, equality-bearing index types,
+  declared with their constructs: `Bool` (§3.1), `Proximity` (§5.1),
+  the force index of `Act<F>`, the effect classes of §7.7,
+  `ThresholdKind`, `Direction`, `BasisKind`, `DefectKind`,
+  `EnumerationLevel`, the intensity regions (§7.6), and the
+  place-label types `Label<ρ>`. `=` is available at every enumeration
+  (§4.5); the eliminator is the finite equality-guarded disjunction —
+  the §4.7 computed-label case split.
+- **Closed unions** — finitely-tagged sums declared with their
+  constructs: `TopicResolution<ρ,T>` (§12) and the indicator target
+  type `Target` (§7.6). A union value is built by its named injection
+  and consumed by the same finite equality-guarded disjunction.
+  `Target` is fixed here once: a `Proposition`, an act value of
+  *some* force (the force index existential and erased — recoverable
+  only through the partial `InterpretAct<F>`/`RealizedAct<F>`
+  family), a plural reference at *some* sort, or a sign of *some*
+  kind. The same force-erasure reading types `Realizes u a` (§7.4):
+  its act operand is force-existential. Sort-polymorphic fact
+  relations (`Denotes`, §7.5) are metalanguage families — one
+  relation per sort — not union-typed operators.
+- **Tuples** — finite products: multi-parameter quantifier loci
+  (§4.5), open-question answer domains (§8.1), `TupleAnswer`
+  payloads (§8.2). Projection is positional and total.
+- **List construction** — `(List a …)` builds `List<T>` values
+  (§4.9); elimination is metalanguage recursion over list structure
+  (§12's `ZipWith` and `xi`), never a term-level recursion former
+  (§4.4).
+
+Nothing else is composite: `Record ρ` stays the row-record theory of
+§3.3, and set-builder or record displays remain metalanguage (§2).
 
 ## 4. The static core
 
@@ -533,9 +574,10 @@ notation (§2), not semantics.
 `Label<ρ>` (§3.3) types questions over places. `At` is the
 single-place fill former: with a **literal** label, `(At R ℓ v)` is
 partial application of the row function at field ℓ (§4.1 — every fill
-notation desugars to it). With a **computed** label — `$p : Label<ρ>`,
-the `fi'a` case — `(At R $p v)` abbreviates the finite case split over
-ρ's labels, each branch a literal fill:
+notation desugars to it). With a **computed** label —
+`$p : CompatibleLabel<ρ,T>` for a fill `v : T`, the `fi'a` case —
+`(At R $p v)` abbreviates the finite case split over the compatible
+labels, each branch a literal fill:
 
 ```lisp
 (∨ (∧ (= $p ℓ₁) C[(At R ℓ₁ v)]) … (∧ (= $p ℓₙ) C[(At R ℓₙ v)]))
@@ -543,13 +585,21 @@ the `fi'a` case — `(At R $p v)` abbreviates the finite case split over
 
 (`C[·]` the containing predication through its closure — the
 computed-label form is licensed exactly where that closed context
-exists, so every branch is `Content`). When **two or more** computed
-fills occur in one predication, their candidate value domains must be
-disjoint (else which value answers which label would be ill-posed);
-a single computed fill — the ordinary `fi'a` — carries no such
-condition. `(Label R)` abbreviates `Label<ρ(R)>`. `fi'a` maps to an open question
-over `Label<ρ>` (§8.3); an open relation question (`mo`) binds a
-`PredTerm`-typed variable directly and needs no special row machinery.
+exists, so every branch is `Content`). The domain is the
+**compatible-label refinement** `CompatibleLabel<ρ,T>` (declared with
+the topic interface, §12): the labels whose place sort accepts the
+fill — a heterogeneous row contributes no ill-typed branch — and the
+event place is excluded (no FA tag reaches it; surface place
+questions ask over the lexical x-places). When **two or more**
+computed fills occur in one predication, the case split ranges over
+the assignments in which the computed labels are **pairwise
+distinct** (two fills never answer one place); a single computed
+fill — the ordinary `fi'a` — carries no such condition. `(Label R)`
+abbreviates `Label<ρ(R)>`, and a computed-fill domain
+`(CompatibleLabel R T)` likewise. `fi'a` maps to an open question
+over its compatible-label domain (§8.3); an open relation question
+(`mo`) binds a `PredTerm`-typed variable directly and needs no
+special row machinery.
 
 ### 4.8 The plural algebra
 
@@ -611,7 +661,10 @@ Collection *objects* are first-order individuals distinct from plural
 references:
 
 - `(SetOf P) : Set<T>` for pure `P : Fn<(T), Content>` — extensional
-  comprehension; `∈` is membership; `Card : Set<T> → Cardinal`.
+  comprehension; `∈` is membership; `Card : Set<T> ⇀ Cardinal` is
+  defined at the finite sets, its definedness projective (§5.5) — the
+  comparisons built on it (`Most`, `GlobalExactly`, the ROI schema)
+  inherit the finiteness condition.
   (`CardBasis`, §4.8, is the corresponding operation for plural
   references: it counts units under a description within a reference.)
 - `Group<T>` objects are related to their components by the lexical
@@ -681,8 +734,11 @@ pairs. The dynamic layer is one algebraic computation type. Its carrier:
 ```text
 Comp<A>    =  InformationState → P( InformationState × A × Obligations )
 Content    =  Comp<Unit>          RefComp<T> = Comp<T>
-Act<F>, Discourse : Comp<Unit> at the performance level (their effect
-                    vocabulary adds commitment/performance operations)
+Discourse  =  Comp<Unit> at the performance level (its effect
+              vocabulary adds commitment/performance operations);
+              Act<F> is NOT a computation — it is the pure
+              force-tagged package of §7.1, entering this carrier
+              only through Perform
 bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (the carrier's
               sequencing operation — the surface `Bind` word, §5.2/§7.7,
               is its telescope-spelled face)
@@ -701,8 +757,11 @@ states; assignment extension is referent introduction; `bind` sequences,
 threading state and unioning obligations. `Vague` parameters are **not**
 this nondeterminism: a term with `Vague` parameters denotes the *family*
 of computations indexed by admissible precisification profiles (§6.5,
-VC2–VC3), and truth simpliciter, where invoked, is supertruth over the
-family — existential collapse of precisifications into branches would
+VC2–VC3) — formally, the denotation function is profile-indexed,
+⟦t⟧π : Comp, with π assigning one admissible precisification to each
+`Vague` site (VC3's consistency), and the unindexed ⟦t⟧ abbreviating
+the π-family — and truth simpliciter, where invoked, is supertruth
+over the family — existential collapse of precisifications into branches would
 make one admissible reading's success suffice, which VC1 forbids. Each named operation of this chapter (`Refer`,
 `Context`, `Vague`, `Presuppose`, `Supplement`, the selections of §5.6,
 the connectives' state-passing) is an operation of this algebra, and its
@@ -766,12 +825,16 @@ types, made visible — the λ-fragment stays pure so that β-equality
 holds unconditionally, and every effect-sequencing point is a `Bind`
 node the accessibility table can see (rationale §1.14).
 
-`Bind` is **uniform across the result categories**: `Act<F>` and
-`Discourse` denote computations in the same carrier as `Content` (§5.1 —
-their effects include performance and commitment), so `body` may be
-`Content`, a reference computation, an act, or a discourse, and the
-binding scopes the referent
-over the whole body either way. This is what lets a description or
+`Bind` is **uniform across the computation categories**: `Discourse`
+denotes in the same carrier as `Content` (§5.1 — its effects include
+performance and commitment), so `body` may be `Content`, a reference
+computation, or a discourse, and the binding scopes the referent over
+the whole body either way. An act is a pure *value* (§7.1), not a
+computation: a bare act written as a `Bind` body stands, by §7.1's
+display coercion, for the one-act discourse performing it, and a
+computation that returns an act package as a value is typed
+`RefComp<Act F>` like any other value-returning computation. This is
+what lets a description or
 selection introduced before an act sequence remain bound across it
 (`(Bind {$x :: Referents T} (Refer P) {(Do a₁ a₂)})` — the ordinary
 spelling of
@@ -822,14 +885,17 @@ binders (§7.4).
 | `Presuppose` | See §5.5: the condition projects to the nearest legal commitment boundary; the at-issue operand sees the incoming state. Introductions inside the condition are local to the condition check; nothing escapes from it. |
 | `Supplement` | See §5.5: side content is committed once at its handler, projectively; the at-issue operand's value passes through. |
 | Force constructors, `Perform` | Act boundaries close force segments: referents introduced inside a constructed-but-unperformed act are not accessible outside it; performed acts in `Do` chain normally. |
-| Quotation, `Reify` | Opaque: nothing crosses a sign boundary; reified content's internal introductions are not discourse-accessible. |
+| Quotation, `Reify` | Opaque at construction: nothing crosses a sign boundary, and `Reify` runs nothing — no introduction, retrieval, or obligation occurs at the reification site. `Holds` (§9.1) evaluates the represented content at its own occurrence site, and what escapes *that* evaluation is governed by the operators around the `Holds`, exactly as for any content — never retroactively by the `Reify` site. |
 
 ### 5.5 Projective content
 
 `(Presuppose π body)` imposes `π` as a projective condition: it must hold
 at the nearest boundary that can commit it (accommodating contexts may add
-it), and it survives `¬`, `∨`, `→`, and question force. It is the
-mechanism of quantifier import (ruling P2), definedness of partial
+it), and it survives `¬`, `∨`, `→`, and question force. Its type is
+polymorphic over the computation categories —
+`Presuppose : Content × Comp<A> → Comp<A>`: the condition is content,
+the body any computation (§12's `MaxRefer` uses it at a reference
+computation). It is the mechanism of quantifier import (ruling P2), definedness of partial
 operations (§1.7), and lexically triggered presuppositions.
 
 `(Supplement anchor side body)` contributes `side` as a **non-at-issue
@@ -876,8 +942,9 @@ The library's GQ forms (`Exactly`, `AtLeast`, `Some`, … — §12) are
 defined over selections; forms whose success is grounded in absence or an
 upper bound (`No`, `AtMost`, `FewerThan`) select nothing and export
 nothing. `Every` exports the full restrictor reference. Binding a witness
-never re-evaluates a selection; witnesses of distinct selections are
-distinct; and a witness is accessible exactly where the accessibility
+never re-evaluates a selection; distinct selections introduce
+**distinct discourse referents** (introduction identity — their
+witness *values* may still co-refer); and a witness is accessible exactly where the accessibility
 table lets its `Bind` scope reach (so nothing here is a free-variable
 convention — the binder is visible in the term).
 
@@ -902,11 +969,13 @@ gerku .i ri tatpi` normalizes to
     (∀ (λ {$p :: Entity}
       {(→ (prenu $p)
          (∃ (λ {$d :: Referents Entity}
-           {(∧ (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
+           {(∧ (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
+              (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
               (Close (ponse $p $d)))})))}))
     ; the anaphoric continuation, at the joint locus (strong reading):
     (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
       {(→ (∧ (prenu $p)
+            (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
             (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
             (Close (ponse $p $d)))
          (Close (tatpi $d)))}))))
@@ -933,11 +1002,16 @@ reference; the atomic-pair spelling is the distributive strengthening):
 (Presuppose (∃ (λ {$x :: Entity} {(∧ (prenu $x)
               (∃ (λ {$y :: Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
   (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-    {(→ (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+    {(→ (∧ (prenu $p)
+          (Distrib (λ {$z :: Entity} {(xasli $z)}) $d)
+          (Close (ponse $p $d)))
        (Close (darxi $p $d)))})))
 ```
 
-The restrictor's relational conjunct ties the parameters; no E-type
+(The `Distrib` conjunct restores the indefinite selection's own
+witness law — the joint locus quantifies exactly the donkey-witness
+pluralities, not references with non-donkey residue.) The
+restrictor's relational conjunct ties the parameters; no E-type
 description or choice function is invoked. Bare mathematical `ro da`
 normalizes without the `Presuppose` — the import belongs to description
 quantifiers only (pin P2). Configurations beyond the supported fragment
@@ -967,7 +1041,9 @@ distinction denotational rather than merely structural.
 `(Generic mode holder? restrictor nuclear) : Content`, with
 `mode ∈ ⟨Typical, Stereotypical⟩` and `holder` present exactly for the
 stereotype reading (`le'e`: the Speaker, grammatically fixed), is the
-axiomatic generic quantifier: it relates a pure restrictor and nuclear
+axiomatic generic quantifier — restrictor `Fn<(T), Content>` and
+nuclear scope `EFn<(T), Content>`, both member-level like the library
+GQ restrictors (§12): it relates the pure restrictor and nuclear
 scope through a normality ordering **that may depend on the nuclear
 predicate**. It is not `∀`, not `∃`, and yields no referent: `lo'e cinfo
 cu se kerfa lo clani` and `lo'e cinfo cu jbena lo cinfo` are supported by
@@ -1163,7 +1239,8 @@ identity is term identity — acts compared, quoted, or anaphorically
 targeted are the `Let`-bound values the terms visibly share.
 
 A document denotes one `Discourse`, whose top-level `Do` sequence is
-called the **spine**; an `Act` written directly in a `Do` operand is
+called the **spine**; an `Act` written directly in a `Do` operand —
+or anywhere a `Discourse` is required, a `Bind` body included — is
 notation for its `Perform` (the coercion is notational, §2, never
 semantic), and a specimen displayed as a bare act denotes the one-act
 discourse performing it. `Do` sequences with the `∧`-row's accessibility. `Discourse`
@@ -1221,7 +1298,10 @@ is a λ, not a computation:
   ≝ (λ {$u :: Referents UtteranceToken} {(∧ fact…)})
 ```
 
-Two **declared partial projections** serve utterance anaphora (§11):
+(The entry notation ascribes the token *sort*; the definition binds at
+the singleton-lifted reference type, §3.2 — specimens keep the sort
+spelling.) Two **declared partial projections** serve utterance
+anaphora (§11):
 
 ```text
 RealizedAct<F> : Referents<UtteranceToken> ⇀ Act<F>
@@ -1599,11 +1679,16 @@ operand, and the *composite* is the defined form making the
 contextual retrieval explicit:
 
 ```text
-(Answer q ContextualAnswer) ≝
+(Answer q ContextualAnswer) ≝                     ; open q : Query<A>
   (Bind {$a :: A} (Context) {(Answer q (TupleAnswer $a))})
+(Answer q ContextualAnswer) ≝                     ; polar q : Query<Bool>
+  (Bind {$a :: Bool} (Context) {(Answer q (PolarAnswer $a))})
 ```
 
-(no exhaustivity marker: absence, per P9). `Answer` yields `Content` and
+— the retrieval is at the query's answer domain, and the selection
+constructor follows that domain: `TupleAnswer` at open domains,
+`PolarAnswer` at `Bool` (the `xu kau` case); no exhaustivity marker
+either way (absence, per P9). `Answer` yields `Content` and
 so embeds under `Reify` as any content does. **The exhaustivity operand is optional and its
 absence is meaningful** (ruling P9): unmarked answerhood carries no
 exhaustivity conjunct — truth-conditionally the weakest (mention-some-
@@ -1616,7 +1701,8 @@ silence, not vagueness.
 
 ### 8.3 Place and relation questions
 
-`fi'a` asks over `Label<ρ>` (§4.7); `mo` binds a `PredTerm`-typed
+`fi'a` asks over the compatible-label refinement of `Label<ρ>`
+(§4.7); `mo` binds a `PredTerm`-typed
 variable; both are ordinary `OpenQ` at their domains. No dedicated
 question machinery exists beyond typed domains.
 
@@ -1634,7 +1720,12 @@ is evaluating `c`, and `(= (Reify (Holds p)) p)` for every
 proposition: each proposition represents exactly the content `Holds`
 returns for it. The pair is the sole Proposition↔Content bridge (the
 sign and event crossings — `SentenceSign`, `EventOfContent` — cross
-to *other* sorts).
+to *other* sorts). The axiom pair speaks at evaluation: `Reify`
+itself is inert — constructing the object runs nothing and introduces
+nothing (the §5.4 opacity row) — while evaluating `(Holds p)` runs
+the represented content at the `Holds` occurrence, its contextual
+sites those fixed at the content's elaboration (§5.3) and its dynamic
+escapes governed by the operators around the `Holds`.
 
 **The bridge's shape generalizes** — a reservation, not a baseline
 commitment. Nothing in the pair is special to the empty row: for any
@@ -1753,7 +1844,12 @@ TruthValueDegree: Referents<TruthValue> → Number      ; fuzzy jei ∈ [0,1]
 (defined at the reference types `lo ni`/`lo jei` actually yield, with the
 singular-reading condition their lexicon rows state; CLL 11.5: a `ni`
 sumti is semantically a number, and `mo'e` maps to `AmountValue`, so
-`li pa vu'u mo'e le ni …` type-checks; CLL 11.6 for fuzzy `jei`).
+`li pa vu'u mo'e le ni …` type-checks. The `jei` crossing carries a
+sourcing caveat: CLL 11.6 records the numeric [0,1] reading as a
+proposed convention that never became established practice — adopting
+`TruthValueDegree` is this specification's own ruling, a documented
+divergence pending a dedicated pin, and a conforming reading may
+decline the crossing).
 
 ## 10. The lexicon interface
 
@@ -1775,8 +1871,10 @@ must provide for the core to interpret predications over it:
 | indicator entries | for UI: relation, roles, degree place, `nai`-pair (with `Scalar Opposite` fallback where unpaired — §7.6, §6.3), host-force profile, evidential basis-kind where applicable (§7.6) |
 
 Adopted collection entries (P5): official `gunma` already takes its
-components as x2, and `selcmi` — a community lujvo (xorxes), not a CLL
-gloss — already takes its members as x2; both are adopted with plural
+components as x2, and `selcmi` — a community lujvo (xorxes), which
+the Contemporary CLL edition itself now uses and glosses in its
+set-descriptor expansion (ch. 6) — already takes its members as x2;
+both are adopted with plural
 x2 read as plural references. (The genuine defect in this area is
 official `cmima`'s x2 being glossed as a *set*; the library avoids
 `cmima`, and the lexicon program may propose broadening its x2.) The
@@ -2103,12 +2201,11 @@ member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
 (Exactly n P Q)  ≝ (Bind {$w :: Referents T} (SelectExactly n P) {(Q $w)})
 (AtLeast n P Q)  ≝ (Bind {$w :: Referents T} (SelectAtLeast n P) {(Q $w)})
 (Some P Q)       ≝ (Bind {$w :: Referents T} (SelectSome P)      {(Q $w)})
-(Every P Q)      ≝ (Presuppose (∃ P)            ; import emitted FIRST —
-                     (Bind {$w :: Referents T}   ; else an empty restrictor
-                             (MaxRefer P)
-                       {(Distrib Q $w)}))         ; would fail the selection
-                                                ; instead of failing the
-                                                ; presupposition; exports w
+(Every P Q)      ≝ (Bind {$w :: Referents T} (MaxRefer P)
+                     {(Distrib Q $w)})          ; the import is MaxRefer's
+                                                ; own presupposition (below),
+                                                ; emitted before any witness
+                                                ; can fail; exports w
 (No P Q)         ≝ (¬ (Some P Q))                          ; no export
 (AtMost n P Q)   ≝ (¬ (AtLeast n+1 P Q))                   ; no export
 (MoreThan n P Q) ≝ (AtLeast n+1 P Q)
@@ -2118,6 +2215,21 @@ member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
                    ; T the member type of r; $x lifts to a singleton
                    ; reference for Among — Distrib is unit distribution
 ```
+
+**Zero and the selection floor.** The selections are formed only at
+n ≥ 1: `SelectExactly 0` and `SelectAtLeast 0` are ill-formed — a
+witness reference is nonempty by type (§3.2), so there is no
+zero-strength witness to select. The boundary GQ cases are defined
+directly, with no selection and no export:
+
+```text
+(AtLeast 0 P Q)  ≝ ⊤                ; trivially satisfied, exports nothing
+(Exactly 0 P Q)  ≝ (No P Q)         ; the zero count is absence (P22)
+```
+
+The rest follow from the definitions: `MoreThan 0` = `AtLeast 1`;
+`AtMost 0` = `No`; and `FewerThan 0` = `(¬ ⊤)` — never true, as
+arithmetic demands.
 
 `GlobalExactly` and `Most` place their operands inside `SetOf`, so
 **both operands must be pure there**: the mapping hoists a nuclear
@@ -2247,9 +2359,14 @@ reciprocal schema (consumed by `simxu`'s and `soi`'s lexicon rows):
 
 ```text
 (Reciprocate r P) ≝
-  (∀ (λ {$x $y :: Referents T}
-       {(→ (∧ (Among $x r) (Among $y r) (¬ (CoRef $x $y)))
-           (P $x $y))}))                           ; pairwise, both ways
+  (∀ (λ {$x $y :: T}
+       {(→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
+           (P $x $y))}))    ; member-wise, both ways: T is r's member
+                            ; sort; the units singleton-lift at Among
+                            ; and at P's places (§3.2). Vacuous on a
+                            ; unitless (atomless) reference —
+                            ; reciprocity of unstructured stuff needs
+                            ; an explicit basis and is not claimed.
 ```
 
 **Lists and `fa'u`** — the mandated full expansion. `ZipWith` is defined
@@ -2292,8 +2409,9 @@ so the `fa'u` specimen expands completely:
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
                 ; base (lo'i/loi, Every's export). Models must supply
-                ; this reference for each inhabited lexical restrictor
-                ; (a model condition: plural comprehension for P).
+                ; this reference for each inhabited pure restrictor the
+                ; mapping can form (a model condition: plural
+                ; comprehension for P).
 ```
 
 (`Holds`, `Reify`'s primitive inverse, is declared with it in §9.1.)
@@ -2372,7 +2490,8 @@ performative host-force profile; `(GroundedBy b a)` ≝
 `(Do (Perform a) (Express (Close (EvidentialBasis Speaker a b))))` —
 the act-level evidential spelling of §7.6 (named to
 avoid the `Ground` sort, §5.1); focus for
-a host `H[·]` with focused constituent `f`:
+a host content frame `H[·]` and focused sumti `f : Referents<T>`
+(the alternatives `$y` singleton-lift into `CoRef` at `f`'s type):
 `(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ {$y :: T} {(∧ (¬ (CoRef $y f)) H[$y])}))))`
 (`po'o`), and `(Additive f H) ≝ (Presuppose (∃ (λ {$y :: T} {(∧ (¬ (CoRef
 $y f)) H[$y])})) H[f])` (constituent `ji'a`).
@@ -2475,10 +2594,10 @@ OpToRel : Fn<(Number …), Number> → PredTerm⟨x1:Referents<Number>,
    ; nu'a — total: x1's sole member is the operator's result at the
    ; operands' sole members (P25's referential places; singular
    ; conditions formation-level).
-OperandToOp : Number ⇀ Fn<(Number …), Number>           ; ma'o
-   ; the intended function is a Context recovery — the
-   ; constant-function ambiguity CLL 18.21 records is a recovery, not
-   ; a default (pin P36).
+OperandToOp : Number → RefComp<Fn<(Number …), Number>>  ; ma'o
+   ; the intended function is a Context recovery — hence the
+   ; computation type; the constant-function ambiguity CLL 18.21
+   ; records is a recovery, not a default (pin P36).
 AmountOperand<ρ> : PredTerm<ρ> ⇀ RefComp<Number>        ; ni'e
    ; its own crossing, NOT `NiRel` (which reifies an abstraction):
    ; defined where the row names a Number-sorted result place; the
@@ -2543,15 +2662,18 @@ unfilled row ρ:
 ```text
 topic zo'u comment ↦
 (Bind {$res :: TopicResolution<ρ,T>} (Vague (TopicAdmissible t R))
-  {case $res of
-     PlaceFill(ℓ) → (Close (At R ℓ t))        ; the topic fills ℓ;
-                                              ; Close handles the rest
-     About        → (Let {$p :: Proposition} (Reify (Close R))
-                      {(∧ (Holds $p)
-                         (Close (srana t $p)))})})
-   ; the About arm shares one reification (single evaluation, the
-   ; catalog 1.31 display) — the comment holds AND the topic pertains
-   ; to it; the case split is the §4.7 label-case precedent.
+  {(∨ (∧ (= $res (PlaceFill ℓ₁)) (Close (At R ℓ₁ t)))
+      …one disjunct per ℓ ∈ CompatibleLabel<ρ,T>…
+      (∧ (= $res About)
+         (Let {$p :: Proposition} (Reify (Close R))
+           {(∧ (Holds $p)
+              (Close (srana t $p)))})))})
+   ; the closed union eliminates by the finite equality-guarded
+   ; disjunction (§3.5 — the §4.7 label-case precedent): one disjunct
+   ; per compatible label (the topic fills ℓ; Close handles the rest)
+   ; plus the About arm, whose single shared reification is the
+   ; catalog 1.31 display — the comment holds AND the topic pertains
+   ; to it.
 ```
 
 CLL's fish (`le finpe zo'u citka`) is the `PlaceFill` choice — eater
@@ -2817,6 +2939,12 @@ approximate:
   intension is hypothetical); inside attitude complements it composes
   with the attitude's worlds; inside quotation it shifts nothing.
 - **Generic anaphora** to `Generic` predications (§5.8).
+- **`Generic`'s inference theory.** The operator is typed and its
+  normality reading stated (§5.8), but no entailment axioms are yet
+  fixed, so `Generic` currently licenses no inferences beyond typing;
+  candidate axioms are under review, and until they land the operator
+  is an interface with a stated intended reading, not a source of
+  consequences.
 - **ZAhO contours** pending their lexicon rows (P24); habituals (TAhE)
   likewise.
 - **Exotic donkey configurations**: anaphora out of disjunctive
@@ -2873,7 +3001,10 @@ approximate:
 The coverage claim of this specification: every meaning expressible by a
 Lojban utterance under a resolved reading either (a) denotes a core term
 by the schemas of §11, (b) is a library form of §12, or (c) appears in
-the gap register §14 with its reason. The coverage matrix:
+the gap register §14 with its reason. Clause (c) is an accounting of
+honesty, not a denotation: a gap-registered meaning has no core term
+yet, and the header's every-utterance-denotes claim holds exactly over
+(a) and (b) — the analyzed coverage. The coverage matrix:
 
 | Construct family | Schema | Library | Gap | Samples |
 |---|---|---|---|---|
@@ -2932,7 +3063,8 @@ answer-selection values; the abstraction relations (§9.2, minus the
 derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`/
 `EventOfContent`, `InnatelyCapable`, `MotionVector`; and the axiomatic
 admissibility predicates (§12). **Defined forms** (term-language
-expansions; everything else is library or lexicon): `Close`, `At` with
+expansions; everything else is library or lexicon): `Close`, `⊤` (the
+empty conjunction, §2), `At` with
 all fill notation, `Let` and the braced binder spellings with
 `MakeBind`/`MakeLet`/`MakeApply` and the facade schema (§7.7), the
 demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `MePred`, the
@@ -2996,9 +3128,9 @@ machinery); **see-also** — nearby existing words with verified official
 rows and the reason each does or does not serve; **proposed
 redefinition** (near-fit only; the sole current near-fit is the
 `-nmo` indicator-emotion family, §16.5, whose rows need the intensity
-place — every other candidate proved repairable by the standard
-combinators, which makes them exact fits by this chapter's own
-definition); and the
+place — the remaining candidates are recorded with the combinator
+route their adoption would take, §16.5's audit note stating which
+routes still owe their expansion equations); and the
 formal fields the reduction needs: *semantic class* (content-producing,
 value-producing, computation-producing, binder-producing, act-producing,
 type/index — determining what a definition may claim), *effect profile
@@ -3109,13 +3241,23 @@ definability:
   double as the named tanru-link relations (`tadji` manner, `mukti`
   purpose, `krasi` source, `marji` material, `pilno` instrument, `simsa`
   resemblance).
-- **Exact fit through combinators (no redefinitions proposed):** `klani`
-  for `NiRel`/`AmountValue` (bake the measured place; its scale place is
-  the crossing's x2); `se lifri` for `LihiRel`; `sidbo` for `SihoRel`;
-  `pruce` for `PuhuRel` (delete inputs/outputs); `mintu` for `CoRef`
-  (delete the standard); `frica`/`simsa` for `Contrast`/`Parallel`
-  (act-typed relata); `smuni` for the interpretation crossings;
-  `sinxa`/`cusku`/`tavla` projections for the token-fact vocabulary.
+- **Candidate fits through combinators (adoption blocked on displayed
+  equations):** `klani` for `NiRel`/`AmountValue` (bake the measured
+  place; its scale place is the crossing's x2); `se lifri` for
+  `LihiRel`; `sidbo` for `SihoRel`; `pruce` for `PuhuRel` (delete
+  inputs/outputs); `mintu` for `CoRef` (delete the standard);
+  `frica`/`simsa` for `Contrast`/`Parallel` (act-typed relata);
+  `smuni` for the interpretation crossings; `sinxa`/`cusku`/`tavla`
+  projections for the token-fact vocabulary. **Audit note:** for the
+  content-parameterized relations (`NiRel`, `LihiRel`, `PuhuRel`,
+  `SihoRel`) the official rows carry no place for the abstracted
+  content `c`, so place surgery alone cannot derive `XRel(c)` — each
+  candidate owes the displayed equation linking its row to `c` (e.g.
+  through `EventOfContent` or an explicit realization conjunct)
+  before it can be called exact; `smuni` and the token-fact
+  projections likewise stand as shadows until their crossings are
+  derived rather than described. Until those equations exist these
+  are see-also candidates, not adopted fits.
 - **Near-fit (proposed extension):** the **`-nmo` indicator-emotion
   family** for the indicator relations: community fu'ivla of the form
   *indicator* `zei cinmo` — `uinmo`
@@ -3173,7 +3315,9 @@ definability:
 
 Works cited across this document set (specification, primer, rationale,
 samples). Inline citations name the work and, where applicable, the
-chapter/section or dictionary entry.
+chapter/section or dictionary entry. Living sources (wiki pages,
+jbovlaste) were last verified 2026-08-22; the repository snapshots
+used for source verification are noted per entry.
 
 - **CLL** — Cowan, John Woldemar, *The Complete Lojban Language*,
   Logical Language Group, 1997. Chapter/section citations ("CLL 15.4" =
@@ -3185,7 +3329,8 @@ chapter/section or dictionary entry.
   the community calls 'xorlo', after the nickname of its principal
   author; it is now the ratified standard"). The original text is also
   served at <https://lojban.github.io/cll/>; its section and example
-  numbering differ in places from the citation edition.
+  numbering differ in places from the citation edition. (Snapshot:
+  fork commit `82f72ae5e19bd4ea5cd9b800433e6a301e7aa0d4`, 2026-08-17.)
 - **The official dictionary (jbovlaste)** —
   <https://jbovlaste.lojban.org/>. "Official" place structures and
   definitions are the entries credited to *officialdata*; entries are
@@ -3207,12 +3352,14 @@ chapter/section or dictionary entry.
   <https://eberban.github.io/eberban/> (source:
   <https://github.com/eberban/eberban>); chapters cited by title
   ("Logic framework", "Dictionary conventions", "Eberban from
-  scratch").
+  scratch"). (Snapshot: commit
+  `65a4bc1d64bf7aaf2ed6b11d8758c10e301f605d`, 2026-08-15.)
 - **Toaq / Kuna** — Toaq Delta reference grammar,
-  <https://toaq.net/refgram/>; Kuna, its reference semantic
+  <https://toaq.net/refgram/introduction/>; Kuna, its reference semantic
   implementation, <https://github.com/toaq/kuna> (the effect-constructor
   inventory cited in the charter is Kuna's semantics modules as of the
-  Delta-era implementation, 2026).
+  Delta-era implementation, 2026; snapshot: commit
+  `91b20daaac683f568557cc1badc085f8901d64f4`).
 - **And Rosta et al.** — "ka, du'u, si'o, ce'u, zo'e", Lojban Wiki,
   <https://mw.lojban.org/papri/ka,_du%27u,_si%27o,_ce%27u,_zo%27e>
   (the n-adic abstraction doctrine discussed in rationale §2.10).
@@ -3261,6 +3408,7 @@ chapter/section or dictionary entry.
 - **Karttunen** — Karttunen, Lauri, "Syntax and Semantics of Questions",
   *Linguistics and Philosophy* 1(1), 1977, pp. 3–44.
 - **Potts** — Potts, Christopher, *The Logic of Conventional
-  Implicatures*, Oxford University Press, 2005.
+  Implicatures*, Oxford University Press, 2005 (published online
+  December 2004).
 - **Searle** — Searle, John R., *Speech Acts: An Essay in the Philosophy
   of Language*, Cambridge University Press, 1969.

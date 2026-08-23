@@ -436,15 +436,17 @@ first in the model — with `Bind` as the visible seam (§1.14).
 The comparison with Eberban sharpens here. Eberban is a *sentence*
 logic with a threaded context parameter: its binding particles desugar,
 in its own refgram's equations, to conjunction, ∃-closure, and argument
-routing in static HOL, and its cross-sentence references are
-context-resolved named variables — retrieval, like this core's keyed
-KOhA, not binding. Its conversation context is genuinely carried
+routing in static HOL, and its `ze` family gives latest-instance
+cross-sentence anaphora that reaches even a preceding existential's
+witness (the refgram equates the follow-up sentence with the first
+sentence's witness, and marks the multiply-evaluated/donkey cases as
+an open TODO). Its conversation context is genuinely carried
 between sentences and updated by dedicated predicates (the refgram's
-`an` family), so what it lacks is not conversational state but a
-*distinct computation type* with dynamic witness export — binding into
-a closed existential across a sentence boundary, covariant donkey
-pronouns — and a formal projective-commitment layer (at-issue vs
-aside). Nothing propositional is thereby inexpressible
+`an` family), so what it lacks is neither conversational state nor
+simple witness anaphora but the general case: a *distinct computation
+type* with compositional witness export — covariant (donkey)
+dependence across binders — and a formal projective-commitment layer
+(at-issue vs aside). Nothing propositional is thereby inexpressible
 (HOL states any classical truth condition, given restructuring into
 one sentence with shared variables); the anaphoric route is what is
 absent. Lojban's grammar makes exactly that route
@@ -485,7 +487,8 @@ that ignored it would be unusable. The core's answer is a typed interface
 is curated data. No collection entry needed legislating after all —
 source verification showed
 official `gunma` x2 is already the components and `selcmi` (a xorxes
-lujvo; there is no CLL gloss) already takes its members as x2; both are
+lujvo, now also glossed and used by the Contemporary CLL edition's
+set-descriptor expansion) already takes its members as x2; both are
 adopted with plural-reference x2. The defective gloss in this area is
 official `cmima`'s x2-as-set, which the library simply avoids.
 The `le`-description analysis deserves its history spelled out, since
@@ -711,7 +714,9 @@ spelling might look like harmless convenience, but a dual costs more
 than it carries: every reader must learn both, every tool must accept
 both, and the sole benefit — familiarity of the binder names — is
 already delivered by the aliases (`λ`, `Let`, `Bind`). A definition
-gains more from one canonical notation than from a courtesy variant.
+gains more from a single notation than from a courtesy variant (no
+canonical *spelling* of terms is thereby defined — spec §2; it is the
+binder syntax that is single).
 The braces themselves carry teaching weight — the primer's hardest
 points (inertness, constructing-without-performing, held-back scope)
 are visible in the notation itself.

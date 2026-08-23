@@ -588,7 +588,8 @@ Conventional Implicatures*, for supplements and expressives; Searle,
 *Speech Acts*, for chapter 6. Comparative: Eberban's reference grammar
 (<https://eberban.github.io/eberban/> — a loglang with a formal core and
 a rebuilt vocabulary; the architecture
-this project borrowed) and Toaq's refgram (<https://toaq.net/refgram/>)
+this project borrowed) and Toaq's refgram
+(<https://toaq.net/refgram/introduction/>)
 with the Kuna semantic
 implementation (the same problems, solved with algebraic effects). Then
 the [specification](spec.md), which you are now equipped to read — with
