@@ -210,9 +210,11 @@ Core terms are written as S-expressions:
   `Entity` (the type the metalanguage displays as `Referents<Entity>`),
   and parentheses appear only to group a *nested* instantiation
   (`{$sets :: Referents (Set Entity)}`). Row expressions — `ρ`,
-  `ρ−ℓ`, `ρ(H)` — are stated metalanguage (a row name, a row minus a
-  label, the row of a relation) and keep that spelling inside
-  schematic ascriptions; they are not term-level parentheses. Thus `{$x :: Entity}` binds
+  `ρ−ℓ`, `ρ(H)`, and explicit row literals `⟨x1:…, …⟩` where no row
+  name serves — are stated metalanguage (a row name, a row minus a
+  label, the row of a relation, a row spelled out) and keep that
+  spelling inside schematic ascriptions; they are not term-level
+  parentheses. Thus `{$x :: Entity}` binds
   over single individuals while `{$r :: Referents Entity}` binds a
   plural reference (§3.2): different types, one notation. (Should a
   function type ever be needed in this position, an `Fn`/`EFn`
@@ -321,7 +323,9 @@ above its members), not a mereological sum, and not a group. Its algebra
 (`Among`); no atomicity, no distributivity, and no covers are assumed.
 `Referents<T>` is covariant in `T`, and a single `T` lifts implicitly to a
 singleton `Referents<T>` at referential positions (a typing rule, not an
-operator).
+operator). The same lift reads binder ascriptions in the §7.4/§7.5
+entry notations, which ascribe the token *sort* while their
+definitions bind at the singleton-lifted reference type.
 
 Nonemptiness is part of the type: there is no empty plural reference.
 (Consequences for `lo no broda` are drawn in ruling P22.)
@@ -368,6 +372,13 @@ table governing what escapes. This is the whole of the purity discipline:
 a typing fact, not an algorithm. `PredTerm<ρ>`, `Fn`, and `EFn` are types
 and appear freely in variable annotations, λ parameter lists, and
 `Context`/`Vague` type arguments.
+
+One signature convention holds document-wide: `→` marks total
+operations; `⇀` marks partial ones, whose definedness condition
+projects (§5.5); and a `RefComp`/`Comp` result type marks the
+operations that consult context or otherwise carry effects. The three
+spellings are exclusive — a signature never expresses contextual
+recovery with `⇀` or projective partiality with `→`.
 
 ### 3.4 Control types
 
@@ -1567,7 +1578,8 @@ MakeLet  : Telescope<Γ; ($x:A)> × A × Expression<($x:A), B, ε> → B
 MakeBind : Telescope<Γ; ($x:T)> × RefComp<T>
            × Expression<($x:T), C, ε> → C
     ; a schematic family, one member per computation-denoting term
-    ; category C — Content, RefComp<S>, Act<F>, Discourse (§5.2)
+    ; category C — Content, RefComp<S>, Discourse (§5.2; a bare act
+    ; body stands for its performing one-act discourse, §7.1)
 (MakeBind {$x :: T} c {b}) ≝ (bind c (MakeLambda {$x :: T} {b}))
                       ; c consumed as a value; the result is itself a
                       ; computation — nothing runs at construction
