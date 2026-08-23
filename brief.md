@@ -63,8 +63,8 @@ At the repository root:
 6. **`cmavo.md`** — the cmavo-centric index: one entry per treated
    cmavo (and per multi-cmavo grammatical unit) with a Lojban
    example, its core term, and links into the specification; its
-   final section records the coverage-hole ledger the cmavo-centric
-   view exposed and its resolution.
+   final section collects the documented no-mappings and the open
+   adjacencies the cmavo-centric view makes visible.
 
 ## Hard constraints
 

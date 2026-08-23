@@ -292,18 +292,20 @@ instances. **Cost.** The lexicon carries real semantic load — by design
 
 ### 1.13 Why facet joining is plain conjunction
 
-**Job (dissolved).** An earlier design kept a dedicated non-logical
-joining operator for tense/modal facets sharing an event. **Why it
-died.** No witness separates it from dynamic `∧`: the shared event is an
-explicit variable, so "locus identity" is carried by binding, not by a
-connector; and the tag-negation paradigm *derives* from `∧`-placement
-what a dedicated operator would have to stipulate — `mi klama ti
+**Why not a dedicated operator.** A dedicated non-logical joining
+operator for tense/modal facets sharing an event might look necessary
+— surely "same locus" needs a connector — but no witness separates it
+from dynamic `∧`: the shared event is an explicit variable, so locus
+identity is carried by binding, not by a connector; and the
+tag-negation paradigm *derives* from `∧`-placement what a dedicated
+operator would have to stipulate — `mi klama ti
 sepi'onai ti` negates just the instrument conjunct (`klama ∧ ¬pilno`)
 while bridi `na` negates the whole (`¬(klama ∧ pilno)`), and tense
 chains (`pu pu`) need precisely `∧`'s left-to-right accessibility for
-their anchor anaphora. What survives of the old operator: sumti `joi` as
-group formation, discourse joining as `Do`, and the genuinely
-unspecified connection as a `Vague` relation (spec §6.1). **Cost.**
+their anchor anaphora. The jobs such an operator would claim
+distribute cleanly: sumti `joi` is
+group formation, discourse joining is `Do`, and the genuinely
+unspecified connection is a `Vague` relation (spec §6.1). **Cost.**
 None found; the decomposition is pure simplification.
 
 ### 1.14 `Bind`
@@ -500,12 +502,13 @@ surviving concern (that `skicu` names a describing *event*) is
 answered by the anchoring clause: the describing event is this
 utterance's own locution, true by construction, with the token
 machinery already there to say it. So `le` lowers through `skicu`,
-exact official fit, no dictionary change. (Review history worth
-keeping: a dedicated `DescribedBy` relation was the draft analysis
-until two supports for keeping it fell — a false claim that `skicu`'s
-x4 was a "medium of expression", and a spurious requirement that core
-relations be definable independently of the dictionary, which nothing
-imposes, since the lexicon program defines gismu semantics.)
+exact official fit, no dictionary change. (Why not a dedicated
+`DescribedBy` relation: it might look cleaner than reusing a
+dictionary word, but both of its would-be supports fail — reading
+`skicu`'s x4 as a "medium of expression" misreads the official row,
+and requiring core relations to be definable independently of the
+dictionary imposes a constraint nothing needs, since the lexicon
+program defines gismu semantics.)
 
 ### 2.7 Alternatives shaped like implementations
 
@@ -703,14 +706,15 @@ witness for any pair.
 
 **Why one spelling.** The braced spelling makes inert positions
 visible at a glance and reduces the grammar to exactly three formers —
-atoms, braces, application. An earlier draft kept the parenthesized
-binder lists beside it as a second spelling; that dual was dropped: a
-definition gains more from one canonical notation than from continuity
-with its own first fortnight, and the familiar binder names survive as
-the aliases (`λ`, `Let`, `Bind`), so nothing readable was lost. The
-braces themselves carry teaching weight — the primer's hardest points
-(inertness, constructing-without-performing, held-back scope) are now
-visible in the notation itself.
+atoms, braces, application. A second, parenthesized binder-list
+spelling might look like harmless convenience, but a dual costs more
+than it carries: every reader must learn both, every tool must accept
+both, and the sole benefit — familiarity of the binder names — is
+already delivered by the aliases (`λ`, `Let`, `Bind`). A definition
+gains more from one canonical notation than from a courtesy variant.
+The braces themselves carry teaching weight — the primer's hardest
+points (inertness, constructing-without-performing, held-back scope)
+are visible in the notation itself.
 
 
 ### 2.10 du'u, nullary ka, and the reserved reification family
@@ -813,9 +817,10 @@ genuinely fought:
   the description's property and the bridi frame: substitution into
   question frames works, nothing touches the nonemptiness of the
   reference type, and anaphora to the form is correctly inaccessible
-  because `No` exports no witness. (An earlier revision ruled the form
-  defective outright and leaned on an unverified claim that usage
-  avoids it; the claim is withdrawn and the special case adopted.)
+  because `No` exports no witness. (Ruling the form defective outright
+  might look simpler, but it would rest on the unverifiable premise
+  that usage avoids it — and it breaks the answer-substitution pattern
+  that motivates the reading; hence the special case.)
 - **P2 (`ro` imports).** Saying `ro gerku cu blabi` commits the speaker
   to there being dogs, and the commitment survives wrapping: `naku ro
   gerku cu blabi` denies the universal while still granting dogs, and
@@ -901,12 +906,14 @@ genuinely fought:
   order) contradicts CLL's own donkey examples. The topic half's
   evidence is CLL 19.4's fish (`le finpe zo'u citka` — "the sentence
   doesn't say" whether it eats or is eaten): the vagueness is a
-  *place choice*, so a closed-comment aboutness link alone (the first
-  draft) cannot represent it; the adopted `TopicResolution<ρ>` union
+  *place choice*, so an aboutness link beside a closed comment —
+  though it might look sufficient — cannot represent it; the
+  `TopicResolution<ρ>` union
   makes place-fill the primary arm with `srana`-aboutness (CLL 19.10's
-  money topic) as the other. Rejected: reusing the Tanru link (types
-  don't fit — a topic is a referent, not a modifier over the head's
-  row) and any segment-state effect (`ni'o` owns segments).
+  money topic) as the other. Why not the Tanru link: types don't fit —
+  a topic is a referent, not a modifier over the head's
+  row. Why no segment-state effect: `ni'o` owns segments, and two
+  owners of one state need an adjudication nothing asks for.
 - **P27 (imperatives, vocatives, the active addressee).** CLL 2.14
   says `doi` *sets* `do` — binding language, exactly the `goi`
   mechanism — and mutating the ctx `Audience` instead would make

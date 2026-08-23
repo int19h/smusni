@@ -3076,7 +3076,7 @@ the doctrine sentence of §1.2 exempts them by design:
 
 | Floor item | Why no content word can be it |
 |---|---|
-| scope and hygiene — now realized as §7.7's quote former (elaboration, environments, capture-avoiding instantiation) | relocated, not discharged: raw text carries no capture-free binding; the quote former is where the machinery lives, and it remains machinery |
+| scope and hygiene — realized as §7.7's quote former (elaboration, environments, capture-avoiding instantiation) | relocated, not discharged: raw text carries no capture-free binding; the quote former is where the machinery lives, and it remains machinery |
 | staged, partial evaluation (`Interpret`, §7.7 — unreflectable: no `MakeEval`) | a same-stage total evaluator yields the liar diagonal; evaluation is defined at the stage above its operand, and elaboration is partial |
 | the lexical basis interpretation | definitions bottom out: some words' meanings are model-given, or the dictionary is a cycle |
 | effect sequencing | ordering of introductions, retrievals, and obligations is an operation, not a truth condition — a predicate's extension cannot carry it |

@@ -10,8 +10,8 @@ Cmavo sequences that form a single grammatical unit — a unit at one
 level of the EBNF grammar, not a composition of its parts (`.i je` is
 not `.i` + `je`) — are indexed in §14. Cmavo that contribute pure
 structure and no term constructor (terminators, grouping) are listed
-once in §13. The record of the ledger of coverage holes this index
-originally exposed — resolved in the round-14 cycle — is §15.
+once in §13. The documented no-mappings and open adjacencies the
+cmavo-centric view makes visible are collected in §15.
 
 In the examples, the first comment line is the Lojban source, and
 every example is a **complete term** — no elision, and no comment ever
@@ -115,8 +115,8 @@ typical filler for the place.
 ```
 
 The typicality is an **admissibility condition on the retrieval** —
-only the place's typical filler is an admissible recovery — now
-stated normatively in P15 (part of the site's key, §5.3), not a
+only the place's typical filler is an admissible recovery (P15; part
+of the site's key, §5.3), not a
 term-level conjunct: the term is identical to `zo'e`'s, the key
 differs.
 
@@ -1792,22 +1792,14 @@ Ordinal/cardinal/portion/probability/scale selbri from a number — a
 single selbri former: the MOI relation families (see the MOI entry in
 §11; [catalog 1.52](catalog.md)).
 
-## 15. Ledger record
+## 15. Documented no-mappings and open adjacencies
 
-The nineteen coverage holes this index originally exposed (H1–H19:
-`zo'u`, `ko`, the GOI associators, `me`/MOI, `lei`/`le'i`/`lai`/
-`la'i`, the `di'u` series, `zi'e`, `je'a`, `bu'a`/`cei`, `da'o`, the
-MEX conversions, `co`, ROI, BIhI, the connective residue, MAI,
-`vu'o`, `doi`, and the number-notation/quote residue) were resolved
-by the round-14 design cycle: mapping rows in spec §11 (with §6.2 and
-§7.1 additions), library forms in §12, and pins P26–P37 in §13. Each
-former hole's cmavo now carries a real entry above. Two records
-survive the ledger:
+Every cmavo the baseline treats carries an entry above; what remains
+is exactly what the specification itself marks open:
 
 - **Documented no-mapping**: BIhI at tanru and sentence loci — CLL
   14.16 records that no meanings have been found; the mapping states
   no row and implementations must not invent one.
-- **Reserved-family adjacencies** (spec §14, unchanged): ordinary
-  first-order restrictive clauses on `bu'a`-variables, and
-  explicit-`ce'u` in the non-`ka`/`du'u` abstractors, remain
-  registered gaps.
+- **Registered gaps** (spec §14): ordinary first-order restrictive
+  clauses on `bu'a`-variables; explicit-`ce'u` in the non-`ka`/`du'u`
+  abstractors; the non-numeric `me … me'u MOI` composite.
