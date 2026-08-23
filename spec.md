@@ -57,6 +57,30 @@ This is the same architecture Eberban's "from scratch" chapter demonstrates:
 a deliberately small logical core, with the practical vocabulary
 reconstructed over it as definitions.
 
+**Expressive direction.** The core is an intermediate semantic
+language, not an alternative surface syntax with exactly Lojban's
+expressive image. Two guarantees are normative: **lowering
+totality/soundness** — every supported resolved Lojban reading maps
+to a well-typed core term (the analyzed coverage of §15) — and
+**semantic definition** — every well-typed core term has defined
+semantics. The converse surface direction is **not** guaranteed:
+well-typed core terms may have no Lojban spelling, and generic
+formers are admitted where they factor shared semantic structure
+across constructs or substantially simplify the model — each still
+owing its necessity-or-factorization argument in the rationale. Core
+typability never establishes Lojban expressibility. This names
+existing practice as much as it grants new license: the joint-locus
+normal forms of §5.6 and the library's metalanguage (§12) already
+live outside the surface image. Absence of a Lojban spelling creates,
+by itself, no content-word obligation: surface reachability is
+tracked independently of §16.1's semantic classes, and a generic
+former remains predicate-, operator-, act-, computation-, or
+metalanguage-classed by what it denotes — Class M's exemption covers
+exactly the metalanguage items, as before, while an unreachable
+former of any other class simply acquires no coinage duty from its
+unreachability. The catalog shall mark each form as
+surface-reachable, lowering-only, or generic infrastructure.
+
 ### 1.2 Sources, compatibility, and the two programs
 
 **Guides, not authorities.** This specification is the normative
