@@ -36,8 +36,8 @@ specification's References section.
 ; core composition, not a default imposed on the surface.
 ```
 
-Fully expanded once, so the notation convention is grounded (spec §4.6) —
-four contextual places and the event:
+Expanded once to the primitive closure boundary, so the notation convention
+is grounded (spec §4.6) — four contextual places and the event:
 
 ```lisp
 ; mi klama — Close expanded
@@ -46,10 +46,15 @@ four contextual places and the event:
          {$from :: Referents Entity} (Context)
          {$via :: Referents Entity} (Context)
          {$by :: Referents Entity} (Context)
-    {(∃ (λ {$e :: Referents Eventuality}
-      {(∧ (klama Speaker $to $from $via $by :Eventuality $e)
-         (fasnu $e))}))}))
+    {(CloseClause
+      (λ {$e :: Referents Eventuality}
+        {(∧ (klama Speaker $to $from $via $by :Eventuality $e)
+           (fasnu $e))}))}))
 ```
+
+Replacing `CloseClause` here with bare `∃e` would preserve the run
+projection but discard the fact that the same `$e` is this assertion's
+clause eventuality; it is therefore not a full-Content expansion.
 
 Contrast: under negation the contextual places stay put — `mi na klama`
 denies the going-to-the-contextual-place, and is not `¬∃destination…`

@@ -69,12 +69,19 @@ rather than eliminate machinery; those twins do exactly the job
 brivla unless it retained the same direct-vs-holding distinction. The type
 `ClauseContent = EFn<Eventuality,Content>` instead leaves one event open:
 `DirectClause` uses the lexical event, `StateClause` supplies a holding state
-only when no single lexical event survives, and `CloseClause` existentially
-closes the common interface. `Close` is the convenient actual-CAhA composition
-of these defined steps; it is a core form for that reading, not a claim that
-surface omission defaults to actual. **Why is only `StateClause` primitive?** The
-direct and closing routes are λ and ∃, but no existing operation constructs a
-state of arbitrary complete content holding. **Cost.** Logical and quantified
+only when no single lexical event survives, and `CloseClause` closes the
+common interface with the same run as existential closure while retaining the
+selected witness as the structured Content's event. `Close` is the convenient
+actual-CAhA composition of these steps; it is a core form for that reading,
+not a claim that surface omission defaults to actual. **Why are
+`StateClause` and `CloseClause` primitive?** No existing operation constructs
+a state of arbitrary complete content holding, so `StateClause` is primitive.
+Plain ∃ reproduces `CloseClause`'s run but loses which local witness is the
+closed Content's event. Making every application at the transparent
+`ClauseContent` function alias overwrite the result's event would instead
+break ordinary β-equality: `((λ e. ⊤) x)` must equal `⊤`, not acquire x as
+extra structured identity. `CloseClause` is the one semantically meaningful
+constructor that records the closure witness. **Cost.** Logical and quantified
 composition must say whether it preserves, joins, branches, or replaces
 component events; §9.3 states that ledger rather than hiding it.
 This argument assumes neither that every `du` claim is true nor that every
@@ -407,9 +414,12 @@ holding/joint states, disjunction is branch-relative, and negation takes a
 negative state.
 
 **Why this model interface?** `StateClause` is a content-to-event-open
-constructor, while `EventOfContent` is its inert object projection; neither is
-a truth-capture operator. The operand runs exactly once only when the clause
-is evaluated, no `Bool` is returned, and no syntax is exposed. `Reify` already
+constructor, `CloseClause` binds that interface while retaining the branch
+witness, and `EventOfContent` is the inert object projection; none is a
+truth-capture operator. `CloseClause` has the run of ordinary existential
+closure but is not reducible to it because Content identity also contains the
+event intension. The operand runs only when the clause is evaluated, no
+`Bool` is returned, and no syntax is exposed. `Reify` already
 provides the only route from content to a first-order proposition and `Holds`
 the route back, so the event projection adds no hidden evaluation power.
 Fine's truthmaker semantics is a useful comparative model here: conjunctive

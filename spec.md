@@ -656,9 +656,17 @@ The distinguished parameter is then closed only when ordinary content is
 needed:
 
 ```lisp
-(CloseClause C) : Content ≝
-  (∃ (λ {$e :: Referents Eventuality} {(C $e)}))
+CloseClause : ClauseContent → Content
 ```
+
+The **run projection** of `(CloseClause C)` is exactly the run of
+`(∃ (λ {$e :: Referents Eventuality} {(C $e)}))`. Its structured
+Content denotation additionally carries that branch's locally bound `$e` as
+the clause-event projection (§9.3). `CloseClause` is therefore primitive:
+plain `∃` can reproduce its truth and dynamic effects but cannot attach the
+chosen witness to Content without an additional event-construction operation.
+The witness remains local, and each candidate branch evaluates `(C $e)` with
+the ordinary quantifier discipline.
 
 `Close` remains the convenient derived spelling at predication sites, now
 with three type-directed cases:
@@ -667,11 +675,21 @@ with three type-directed cases:
 (Close P)                         ≝
   (CloseClause (ActualClause (DirectClause P)))
   ; event-licensed row, resolved actual CAhA mode
-(Close (P :Eventuality e))        ≝ ((ActualClause (DirectClause P)) e)
+(Close (P :Eventuality e))        ≝
+  (CloseClause
+    (λ {$e' :: Referents Eventuality}
+      {(∧ (CoRef $e' e) ((ActualClause (DirectClause P)) e))}))
   ; explicit/shared lexical event; no second event is introduced
 (Close P_eventless)               ≝
   Bind ordinary defaults, then CloseClause(ActualClause(StateClause(P_filled)))
 ```
+
+In the explicit-event case, the local closure witness `$e'` is constrained to
+co-refer with the already supplied e; it therefore records that same event in
+the structured Content without adding another event. Plain application
+`((ActualClause …) e)` has the same at-issue run but, because
+`ClauseContent` is a transparent function alias, does not itself overwrite
+the returned Content's independently composed event (§9.3).
 
 The last case is what lets `du`, mathematical relations, and genuinely
 eventless lexical rows form clauses; it does not retype the underlying relation
@@ -1997,11 +2015,12 @@ decline the crossing).
 
 ### 9.3 Clause eventualities and `EventOfContent`
 
-`StateClause` and `EventOfContent` are the coupled primitive interface that
-makes §3.4's universal clause eventuality substantive:
+`StateClause`, `CloseClause`, and `EventOfContent` are the coupled primitive
+interface that makes §3.4's universal clause eventuality substantive:
 
 ```text
 StateClause   : Content → ClauseContent
+CloseClause   : ClauseContent → Content
 EventOfContent: Content → Referents<Eventuality>
 ```
 
@@ -2015,17 +2034,48 @@ evaluates its Content operand exactly once and exposes a `State` of that
 content holding. Neither operation returns truth, inspects syntax, or permits
 same-stage evaluation. The names `hold_M` and `joint_M` below are model-level
 semantic operations, not extra term forms; `StateClause` is their sole term
-interface. Their laws are:
+interface for constructing a holding-state clause.
+
+The event projection is constructed compositionally by the following
+**precedence-ordered table**. Write `event(c)` for the world-, profile-, and
+branch-relative eventuality intension carried by `c`; its projection as a
+term is `EventOfContent c`. Defined forms use their expansions, and ordinary
+β-reduction and `Let` substitution remain valid. The first applicable row
+wins:
+
+| Content-producing form | Clause-event intension |
+|---|---|
+| `(CloseClause C)` | On each candidate/event branch, the locally bound witness `$e` used to evaluate `(C $e)`. Truth filtering may reject the branch; it does not replace its described event. |
+| `((StateClause c) e)` | `$e` on the sole possible satisfying co-reference class; a non-`hold_M(c)` candidate has no satisfying lineage and does not evaluate `c`. |
+| `(Bind {$x} computation {body})` when the body returns Content | The event of the selected continuation body on that outcome branch. `Let` is already covered by ordinary application/β. |
+| `(Presuppose π body)`; `(Supplement anchor side body)` when the body is Content | The at-issue body's event. Projective conditions and side commitments remain part of Content identity but do not replace the at-issue eventuality. |
+| `(InContext c g)` | `event(c)` evaluated with the same shifted utterance ground `g`; this shifts the projection rather than constructing a new holding state. |
+| `(Holds p)`; `(ActContent a)`; `(InterpretContent s)` | The event of the represented, packaged, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7. |
+| `(Answer q selection)` | The event of the answer-content selected by q. If `Exhaustive` adds a completeness conjunct, the conjunction row below applies to that defined result. |
+| `(∧ c₁ … cₙ)`, n > 0 | `joint_M(event(c₁), …, event(cₙ))`, in source association order and up to `CoRef`. |
+| `(∨ c₁ … cₙ)` | Branch-relative: a cᵢ-lineage carries `event(cᵢ)`; no fused event or exported choice is added. |
+| `(¬ c)` | The negative State `hold_M(¬ c)`, not `event(c)`. |
+| Ordinary `Fn`/`EFn` application returning Content | The event of the returned Content, with no type-directed overwrite; apply the appropriate row to that result. This includes functions whose exact type is the transparent `ClauseContent` alias: the alias imposes no hidden refinement, so `((λ e. ⊤) x)` has the same event as `⊤`, as ordinary β-equality requires. Surface clause closure gets its argument event from the explicit `CloseClause` row, not from application. |
+| Atomic predication, `=`, `⊤`, the remaining Boolean forms, ordinary `∀`/`∃` and GQs, `Generic`, and every other Content constructor not assigned a preserving or composing row above | Its own holding State `hold_M(c)`. In particular, an ordinary quantified claim does not inherit one arbitrary instantiation's event. Every new Content-producing primitive must either state an explicit row or affirm this default. |
+
+This table closes F1's otherwise ambiguous case deliberately: application at
+the transparent function alias is ordinary application. Giving every such
+application its argument as event would make
+`((λ {$e} {⊤}) x)` and its β-reduct `⊤` differ in Content identity,
+contradicting §4.4. `CloseClause` is the semantically explicit point at which
+the locally selected clause witness becomes the event of the closed Content.
+
+The table is exhaustive; the following laws constrain its nontrivial rows:
 
 1. **Closure witness / no double indexing.** On each live evaluation lineage
    of `(CloseClause C)`, `EventOfContent (CloseClause C)` co-refers with that
    closure's local event witness. If C came from `DirectClause`, this is the
    lexical event itself — no state-of-the-event-occurring is added. The
-   Content produced by applying any `C : ClauseContent` to e carries e as its
-   projection; facet conjunctions inside that application therefore preserve
-   e rather than invoking the joint-clause rule. The witness remains locally
-   quantified and is not thereby discourse-accessible. “One” means one
-   distinguished witness per live outcome lineage, not a uniqueness claim
+   closure row carries e regardless of the independently compositional event
+   of `(C e)`; facet conjunctions therefore still target that same explicit e
+   without changing the closed clause's projection. The witness remains
+   locally quantified and is not thereby discourse-accessible. “One” means
+   one distinguished witness per live outcome lineage, not a uniqueness claim
    that only one matching event exists in the model.
 2. **Holding state.** `(StateClause c)` has the uniform `ClauseContent`
    parameter type `Referents<Eventuality>`, but only arguments lying in the
@@ -2052,7 +2102,10 @@ interface. Their laws are:
    rather than leave two rival notions of joint state. To preserve the
    existing source-ordered associativity law for `∧`, `joint_M` is associative
    up to `CoRef` and has the holding state of `⊤` as unit; no commutativity of
-   dynamic evaluation is inferred.
+   dynamic evaluation is inferred. Consequently GitHub #4's complete
+   constitution must treat `hold_M(⊤)` as an absorbable/null component:
+   adjoining it to a complete event basis leaves the constituted whole
+   unchanged up to `CoRef`, rather than adding an ordinary nontrivial part.
 4. **Disjunction.** The event of `(CloseClause (ClauseOr C D))` is
    branch-relative: a live C-lineage carries C's event and a live D-lineage
    carries D's. If both disjuncts hold, both lineages are available; no covert
@@ -2734,6 +2787,13 @@ These are respectively `ca'a`, `ka'e`, `nu'o`, and `pu'i`. The last three
 make the capability claim's holding-state their outer clause eventuality; the
 possible/demonstrating C-events remain inside. Missing CAhA selects one of
 these same modes upstream under P24, never an unstated fifth default.
+For every lowering-produced direct or holding-state C, `ActualClause`'s
+`fasnu` conjunct is extensionally redundant: the direct route has §5.1's
+lexical occurrence law, and a satisfying `StateClause` candidate is already
+actual. It remains overt because it records the selected CAhA mode uniformly.
+The redundancy is not an axiom about arbitrary values inhabiting the
+transparent `ClauseContent` function type; for example, a generic core
+function `λe.⊤` supplies no occurrence claim until a caller adds one.
 
 Tense helpers per the lexicon's tag-reduction rows. Tagged `jai`: for
 a lexical row ρ with promoted role ℓ, writing ρ' for ρ with ℓ
@@ -3412,8 +3472,8 @@ arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
 `Presuppose`, `Supplement` (display is its §7.6 spelling); `Generic`;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
-`Scalar`; `StateClause` and the constrained `EventOfContent` projection
-(§9.3); the
+`Scalar`; `StateClause`, `CloseClause`, and the constrained
+`EventOfContent` projection (§9.3); the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
 `InterpretContent`/`InterpretAct<F>`, the partial
@@ -3427,8 +3487,8 @@ answer-selection values; the abstraction relations (§9.2, minus the
 derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`,
 `InnatelyCapable`, `MotionVector`; and the axiomatic
 admissibility predicates (§12). **Defined forms** (term-language
-expansions; everything else is library or lexicon): `DirectClause`,
-`CloseClause`, the six clause-connective lifts, `Close`, `⊤` (the
+expansions; everything else is library or lexicon): `DirectClause`, the six
+clause-connective lifts, `Close`, `⊤` (the
 empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
 demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`, the

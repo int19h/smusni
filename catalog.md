@@ -115,8 +115,9 @@ ever appears in a term. Its structured denotation also carries the §9.3
 clause-event intension projected by `EventOfContent`. `ClauseContent` is the transparent alias
 `EFn<(Referents<Eventuality>), Content>`: one distinguished clause
 eventuality remains open for tense, tags, CAhA, ROI, and `nu`, then
-`CloseClause` supplies ordinary Content. It is a function type, not a
-first-order event or proposition sort. Where ROI needs a pure comprehension,
+`CloseClause` supplies ordinary Content and records its locally selected
+argument as that Content's clause-event intension. `ClauseContent` is a
+function type, not a first-order event or proposition sort. Where ROI needs a pure comprehension,
 the mapping binds effects before using the ordinary `Fn` refinement.
 **For.** `mi pu klama` exposes its going event; `ta pu du lo mi zdani`
 exposes a holding State while `du` remains binary identity.
@@ -894,8 +895,9 @@ owed for this sharing syntax.
 
 **Informally.** `DirectClause` turns an event-licensed row into
 `ClauseContent`, contextually filling ordinary omitted places while leaving
-the lexical event open. `CloseClause` existentially closes that common event
-interface. `Close` is the type-directed **actual-mode** predication
+the lexical event open. `CloseClause` has the run of existentially closing
+that common event interface and additionally retains the local witness as the
+closed Content's event. `Close` is the type-directed **actual-mode** predication
 abbreviation; eventless
 rows go through primitive `StateClause`. The six `Clause*` connective lifts
 preserve the event discipline: conjunction joint state, disjunction branch
@@ -904,9 +906,11 @@ event, negation negative state, other Boolean compounds holding states.
 
 ```text
 (DirectClause P) ≝ λe. Bind ordinary omitted places, then P(…, e)
-(CloseClause C)  ≝ ∃e. C(e)
+CloseClause : ClauseContent → Content
+run(CloseClause(C)) = run(∃e. C(e)); event(CloseClause(C)) = e per branch
 (Close P)        ≝ CloseClause(ActualClause(DirectClause P))
-(Close (P :Eventuality e)) ≝ ActualClause(DirectClause P)(e)
+(Close (P :Eventuality e)) ≝
+  CloseClause(λe'.(CoRef(e', e) ∧ ActualClause(DirectClause P)(e)))
 (Close P_eventless) ≝ bind ordinary omissions, then
                        CloseClause(ActualClause(StateClause(P_filled)))
 
