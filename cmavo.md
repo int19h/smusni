@@ -1163,7 +1163,10 @@ does not assert that any X-related abstraction will do.
 With tag: explicit role promotion — the tagged role to x1, old x1 to
 the fillable `fai` place (`JaiPromote`). Bare: participant raising out
 of the abstraction-x1 with one intended admissible role retrieved by
-constrained `Context` (P14).
+constrained `Context` (P14). In a resolved bare reading, raised sort T and
+old-x1 sort A fix the role type
+`Fn<(Referents<T>, Referents<A>), Content>`; `JaiRaise` conjoins the role
+between the new x1 and the old abstraction at `fai`.
 
 ```lisp
 ; mi jai gau rinka lo nu do klama
@@ -1173,6 +1176,19 @@ constrained `Context` (P14).
   {(Close (👉(JaiPromote rinka gau-role)👈 :1 Speaker :2 $eff))})
 ; the unfilled fai place closes contextually; gau-role is the label
 ; gau's tag reduction supplies
+```
+
+```lisp
+; mi jai rinka lo nu do morsi — bare jai, common agent-role resolution
+(Bind {$death :: Referents Eventuality}
+      (Refer (λ {$e :: Referents Eventuality}
+        {(Close (morsi :1 Audience :Eventuality $e))}))
+  {(Bind {$role :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+        (Context
+          (λ {$k :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+            {(JaiRoleAdmissible rinka $k)}))
+    {(Close ((JaiRaise rinka $role) :1 Speaker :2 $death))})})
+; Close recovers the old rinka x1 at fai; $role relates Speaker to it.
 ```
 
 **See.** [Spec §11, §12](spec.md); [catalog 2.20](catalog.md).

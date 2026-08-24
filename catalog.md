@@ -349,6 +349,9 @@ value; a listener is expected to recover a value equivalent enough for the
 discourse purpose, not an identical private articulation. A site may carry a
 pure admissibility constraint and an explicit dependency profile; it covaries
 only with the listed binders and never all enclosing governors by default.
+Every externally bound variable free in the constraint must be listed; an
+omission is ill-formed, while extra dependencies may express covariation not
+mentioned by the constraint.
 Site/key identity gives one retrieval per site/dependency tuple per
 performance; keyed uses retrieve once per key. A failed exact guess may be
 repairable, while failure to recover any discourse-sufficient value leaves no
@@ -790,13 +793,30 @@ supplies its relevant universe, the cell occupied by a predicate, region
 membership, and relative complement; it may add polarity and betweenness
 structure for `Opposite`/`Neutral`. Cell membership agrees with the predicate
 inside the domain universe, and complement is exact relative complement, so
-`OtherThan` requires no partition into fine alternatives. The applicable
+`OtherThan` requires no partition into fine alternatives. On a declared polar
+pair, opposite is extensionally involutive; the between-region is symmetric
+between the poles and disjoint from the opposite pole. These are membership
+laws, not an undeclared equality on region values. The applicable
 domain is lexically fixed or retrieved through constrained `Context`, and
 soritical boundaries inside its regions may remain `Vague`.
 **For.** `na'e melbi` uses the complement of beauty's region in the intended
 aesthetic domain; `to'e` and `no'e` additionally require an antipode or
 between-region.
 **See.** [Spec §3.5, §6.3](spec.md); [rationale §1.8](rationale.md).
+
+### 1.56 `JaiRoleAdmissible`
+
+**Informally.** The pure axiomatic constraint behind bare-`jai` raising. For
+a host R whose old x1 has sort `Referents<A>` and a resolved raised-sumti sort
+T, it admits role relations of type
+`Fn<(Referents<T>, Referents<A>), Content>` that relate the promoted
+participant to the abstraction moved to `fai`. Ordinary inner-place roles and
+exact tag-reduction roles may be admissible; the constraint does not inspect
+an abstraction AST. The type is indexed by T and A rather than hard-coded to
+Entity/Eventuality, preserving the no-implicit-crossing rule.
+**For.** Bare `jai rinka`: recover the intended role (commonly agent) between
+the raised participant and the hidden cause event.
+**See.** [Spec §6.1, §12](spec.md), pin P14; [rationale §3](rationale.md).
 
 ## 2. Defined forms
 
@@ -1075,16 +1095,22 @@ retrieval is at `Bool` and the selection is `(PolarAnswer $a)` — the
 **For.** `mi djuno lo du'u ma kau klama`.
 **See.** [Spec §8.2](spec.md); [primer ch. 6](primer.md).
 
-### 2.20 `JaiPromote`
+### 2.20 `JaiPromote` and `JaiRaise`
 
 **Informally.** Tagged `jai`: promote the tagged role to x1 and move
 the old x1 to the labelled, fillable `fai` place (closing contextually
-when unfilled — CLL 9.12). Bare `jai` is the mapping's
-constrained-`Context` role raising instead: one intended admissible role, with
-dependencies declared by the resolved reading.
+when unfilled — CLL 9.12). Bare `jai` instead fixes raised sort T and old-x1
+sort A in the resolved reading, retrieves one intended
+`Fn<(Referents<T>, Referents<A>), Content>` role through constrained
+`Context`, and uses `JaiRaise` to conjoin that role between the new x1 and the
+old x1 at `fai`.
 **Formally.** Writing ρ' for ρ with ℓ relabelled x1 and x1 relabelled
 `fai`: `(JaiPromote R ℓ) ≝ (λ {$r :: Record ρ'} {(R ⟨ℓ = $r.x1,
-x1 = $r.fai, rest unchanged⟩)})`.
+x1 = $r.fai, rest unchanged⟩)})`. For bare `jai`, ρ' instead replaces x1
+by `Referents<T>` and adds `fai:Referents<A>`:
+`(JaiRaise R K) ≝ (λ {$r :: Record ρ'} {(∧ (R ⟨x1 = $r.fai,
+rest unchanged⟩) (K $r.x1 $r.fai))})`; the mapping binds K from
+`Context (JaiRoleAdmissible R)` before applying it.
 **For.** `mi jai gau rinka` patterns; `fai` fills.
 **See.** [Spec §12, §6.1, §11](spec.md).
 

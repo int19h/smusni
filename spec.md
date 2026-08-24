@@ -925,7 +925,12 @@ Three primitive computations answer §1.4:
   covary only with the listed binders and never inherits every enclosing
   governor automatically. Thus a `tu'a` under `ro prenu` may be governor-
   invariant (empty profile) or person-dependent (the person listed), according
-  to the resolved reading. **Site/key identity:** each syntactic occurrence
+  to the resolved reading. As a formation condition, every variable bound
+  outside the site and occurring free in `P` must appear in `deps…`; omitting
+  such a variable does not create an invariant reading but an ill-formed term.
+  Extra dependencies are permitted when the intended value may covary even
+  though the admissibility property does not mention the governor.
+  **Site/key identity:** each syntactic occurrence
   is one site; it retrieves once per distinct dependency tuple per performance
   (once total for an empty profile), so re-applications of a shared λ reuse the
   value exactly when their listed dependencies agree. Keyed uses (unassigned KOhA,
@@ -1168,7 +1173,7 @@ The normative classification:
 | vague-quantity thresholds (`so'i`, `so'e`, …; `ji'i` tolerance) | `Vague` | sorites: no fact fixes the boundary |
 | `du'e` / `mo'a` / `rau` | `Vague` threshold **constrained by** a `Context` standard/purpose | two parameters; the purpose is recoverable, the boundary is not |
 | `na'i`'s defect dimension | `Context` | the hearer is expected to see what is defective |
-| bare `jai` (no tag) | constrained `Context` | retrieves the intended admissible raised role; `jai`+tag specifies the role exactly (P14) |
+| bare `jai` (no tag) | constrained `Context` | retrieves the intended admissible raised-role relation at `Fn<(Referents<T>, Referents<A>), Content>`, with raised sort T and old-x1 sort A fixed by the resolved reading; `jai`+tag specifies the role exactly (P14) |
 | bare-`kau` exhaustivity; unmarked distributivity | **absence** | no hole, no parameter (P9, P4) |
 | tenselessness | reading-multiple (P8) | episodic readings carry a `Context` time; habitual/gnomic readings carry nothing; never a default — the reading is chosen upstream |
 
@@ -1259,14 +1264,20 @@ member_D(r, complement_D(A)) ↔ (universe_D(r) ∧ ¬ member_D(r, A))
 ```
 
 and, whenever the optional operations are defined, their regions are
-contained in `complement_D(A)`, and `opposite_D` is involutive on the
-declared polar pair:
+contained in `complement_D(A)`. On a declared polar pair, opposite is
+involutive extensionally, the between-region is pole-symmetric, and it is
+separate from the opposite pole:
 
 ```text
-member_D(r, opposite_D(A)) → member_D(r, complement_D(A))
-member_D(r, between_D(A))  → member_D(r, complement_D(A))
-opposite_D(opposite_D(A))   = A
+member_D(r, opposite_D(A))            → member_D(r, complement_D(A))
+member_D(r, between_D(A))             → member_D(r, complement_D(A))
+member_D(r, between_D(A))             → ¬ member_D(r, opposite_D(A))
+member_D(r, opposite_D(opposite_D(A))) ↔ member_D(r, A)
+member_D(r, between_D(A))              ↔ member_D(r, between_D(opposite_D(A)))
 ```
+
+These are membership laws; the core neither assumes nor needs equality at
+`ContrastRegion<ρ>`.
 
 `OtherThan` therefore needs neither an ordering nor a partition into fine
 alternatives. `Opposite` requires the polarity operation and `Neutral` the
@@ -2135,9 +2146,12 @@ event-sorted abstraction). The resolved reading declares which governors, if
 any, the site depends on; enclosing binders are not inherited automatically.
 `jai`+tag →
 explicit role promotion, old x1 to the fillable `fai` place (library
-expansion); bare `jai` → participant raising out of the abstraction-x1 with
-the intended admissible role retrieved by constrained `Context` under the same
-declared-dependency rule (P14); `la'e`/`lu'e` → interpretation /
+expansion); bare `jai` → `JaiRaise` (§12): for resolved raised sort T and
+old-x1 sort A, retrieve the intended admissible role at
+`Fn<(Referents<T>, Referents<A>), Content>` through constrained `Context`,
+then conjoin that role between the new x1 and the old x1 at `fai`. The
+dependency profile follows §5.3, and a missing `fai` closes contextually like
+any other place (P14). `la'e`/`lu'e` → interpretation /
 sign-of crossings.
 
 **Questions and answers** (§8, P9). `xu` → `Polar`; `ma`/`mo`/`fi'a`/
@@ -2472,7 +2486,48 @@ relabelled x1 and x1 relabelled `fai`,
 
 — the promoted role becomes x1 and the old x1 becomes the labelled,
 *fillable* `fai` place (closing contextually like any place when
-unfilled — CLL 9.12); bare `jai` per §6.1.
+unfilled — CLL 9.12).
+
+**Bare `jai` role raising.** Let R have old x1 type `Referents<A>`, and let
+the resolved reading select raised-sumti sort T. The pure axiomatic
+admissibility family
+
+```text
+JaiRoleAdmissible :
+  PredTerm<ρ> × Fn<(Referents<T>, Referents<A>), Content> → Content
+```
+
+holds of exactly the relations that interpret a T-sumti's admissible role in
+an A-valued abstraction occupying R's old x1. This is an interface constraint,
+not reflection over an abstraction's syntax: ordinary place roles and exact
+tag-reduction roles may satisfy it, while the baseline exposes no AST from
+which to enumerate them. For a role K it defines the pure relation former
+
+```text
+(JaiRaise R K) : PredTerm<ρ'> ≝
+  (λ {$r :: Record ρ'}
+    {(∧ (R ⟨the ρ-record with x1 = $r.fai, rest unchanged⟩)
+        (K $r.x1 $r.fai))})
+```
+
+where ρ' replaces R's x1 by `x1:Referents<T>` and adds the labelled,
+fillable `fai:Referents<A>` place. Bare `jai` binds K visibly at the applied
+predicate locus:
+
+```text
+((jai R) fills…) ↦
+(Bind {$role :: Fn<(Referents<T>, Referents<A>), Content>}
+      (Context
+        (λ {$k :: Fn<(Referents<T>, Referents<A>), Content>}
+          {(JaiRoleAdmissible R $k)})
+        deps…)
+  {((JaiRaise R $role) fills…)})
+```
+
+T and A are indices of one resolved typed reading, not members of a union;
+the profile must include every governor free in R or its constraint under
+§5.3. CLL 9.12 supplies the x1/`fai` routing, while CLL 11.10 leaves which
+underlying argument was raised unstated. Tagged `jai` remains `JaiPromote`.
 
 **Acts and discourse:** discourse relations `Contrast`, `Addition`,
 `Parallel`, `Elaboration` — lexical relations over two act values,
@@ -2790,8 +2845,10 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   host-sorted abstraction through `Context`, constrained by abstraction shape
   and `srana`-aboutness to X. The speaker need not articulate it exactly; a
   cooperative hearer is expected to recover a discourse-sufficient value.
-  Bare `jai` likewise retrieves the intended admissible raised role; tagged
-  `jai` fixes the role exactly. Each site declares its governor dependencies;
+  Bare `jai` likewise retrieves the intended admissible raised-role relation
+  at `Fn<(Referents<T>, Referents<A>), Content>`, where one resolved reading
+  fixes the raised-sumti sort T and old-x1 sort A; tagged `jai` fixes the role
+  exactly. Each site declares its governor dependencies;
   none are inherited automatically. `co'e`/`do'e` remain ordinary `Context`
   retrievals at their types.
 - **P15** `zo'e` ≡ omission; distinct sites distinct; `zu'i` adds
@@ -3087,7 +3144,8 @@ predication (dictionary relations as constants); `DropPlace`;
 arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
 `Presuppose`, `Supplement` (display is its §7.6 spelling); `Generic`;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
-defined, §6.2), `Scalar`; the
+defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
+`Scalar`; the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
 `InterpretContent`/`InterpretAct<F>`, the partial
@@ -3104,7 +3162,7 @@ admissibility predicates (§12). **Defined forms** (term-language
 expansions; everything else is library or lexicon): `Close`, `⊤` (the
 empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
-demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `MePred`, the
+demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`, the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),

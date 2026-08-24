@@ -576,6 +576,21 @@ existential search for a truth-making alternative and no negative universal
 denial of all admissible alternatives.
 
 ```lisp
+; mi jai rinka lo nu do morsi — a typed bare-jai role site [spec §12]
+(Bind {$death :: Referents Eventuality}
+      (Refer (λ {$e :: Referents Eventuality}
+        {(Close (morsi :1 Audience :Eventuality $e))}))
+  {(Bind {$role :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+        (Context
+          (λ {$k :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+            {(JaiRoleAdmissible rinka $k)}))
+    {(Assert
+      (Close ((JaiRaise rinka $role) :1 Speaker :2 $death)))})})
+; T = Entity and A = Eventuality in this reading. The unfilled fai place
+; retrieves the hidden cause event; the intended role relates Speaker to it.
+```
+
+```lisp
 ; ta barda — gradable predication: Context scale, Vague cutoff  [spec §6.4]
 (Bind {$s :: Scale} (Context)                    ; which size-scale: recoverable
        {$reg :: Region Scale}

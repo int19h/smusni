@@ -913,6 +913,15 @@ genuinely fought:
   pins both as occurrence-specific intended values retrieved through
   admissibility-constrained `Context`, with recovery required only to
   discourse relevance-equivalence and dependencies declared per reading.
+  Bare `jai`'s value is a role relation from the raised sumti to the old-x1
+  abstraction moved to `fai`: `Fn<(Referents<T>, Referents<A>), Content>`,
+  with T and A fixed by the resolved typed reading. CLL says “one of the
+  sumti” and “an abstraction,” not specifically Entity and Eventuality, so
+  hard-coding those two sorts would violate P13; `JaiRoleAdmissible` is the
+  axiomatic constraint because the reflection-free core exposes no
+  abstraction AST from which to enumerate inner roles. CLL 9.12 fixes the
+  x1/`fai` routing, CLL 11.10 leaves the inner argument unstated, and the BPFK
+  place-structure record independently describes the same raising.
   The rejected `Vague` analysis has the wrong negation and truth conditions:
   it ranges over every admissible abstraction/role rather than the one meant.
   A genuinely no-particular-value use would reopen the separate
