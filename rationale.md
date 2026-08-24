@@ -655,71 +655,60 @@ jmaji` inexpressible) was the price of xorlo's no-rewrite move, and
 this core pays the other half of that bill with plural selections and
 joint loci — a repair orthogonal to sets.
 
-### 2.9 The reflection layer: why quote-and-apply, and why not fexprs
+### 2.9 Why the reflection layer was tried and withdrawn
 
-Spec §7.7 reduces the term grammar, in its braced spelling, to atoms,
-quotes, and application, with one primitive sign-function
-(`MakeLambda`) and everything else vocabulary. Four arguments shaped
-it.
+An earlier design made every binder a function over quoted core syntax.
+The attraction was real: atoms, quotation, and application would have
+given the notation one uniform grammar; binders and control operators
+could have been named like other vocabulary; and a stage-indexed tower
+might eventually have let Lojban describe the semantics of the stage
+below it. R's uniform call syntax and typed multi-stage calculi were useful
+inspirations rather than commitments (Nanevski, Pfenning & Pientka; Taha
+& Sheard; Davies & Pfenning).
 
-**Why at all.** The content-word program's end state — only content
-words as predicates — stalled at the binder operators: a binder is not
-a relation over individuals, so no gismu row could be its fit. Making
-each binder a *function on quoted expressions* dissolves the obstacle:
-a sign-consuming function has an ordinary place structure (its x2 a
-quoted-notation sign, like `tanru`'s official text-typed operands), and so has a
-content-word fate like everything else. The same move grounds the
-self-description goal: because the vocabulary is stage-schematic, one
-Lojban text can state the semantics of the stage below it — the
-definition of Lojban in Lojban is a tower of one repeated text, never
-a level defining itself (Tarski respected, not refuted), floating on
-the model-given lexical basis that no language escapes.
+The proposal did not earn its cost. No current Lojban construction
+requires executable quotation of core notation. To make binder operands
+safe, the design added `Expression<Γ,A,ε>`, telescope signs,
+elaboration environments, capture rules, site-preservation laws, a
+partial staged `Interpret` family, `MakeLambda`, and facades for the
+remaining operators. The displayed type still omitted the very stage
+index on which the safety argument depended, while captured outer values
+already constituted cross-stage flow. Most importantly, a
+predicate-style row for a binder or force constructor could only
+*describe* the resulting function or act; it could not perform binding or
+force. The programme had conflated executing operators with their useful
+shadow predicates.
 
-**Why explicit quotes and not fexprs.** The lazy road to "operators on
-unevaluated operands" is the fexpr: every word receives its operands'
-syntax. Wand's result is why that road is closed: in his fexpr
-calculus, contextual equivalence collapses to α-congruence — no two
-distinct programs are interchangeable, so the theory of terms is
-trivial. The design inference (motivating, not identical to, the
-theorem): grant unrestricted access to operand syntax and the
-equational theory is forfeit. The
-core takes the disciplined road instead: the transition to syntax is
-always visible (braces in the source are the only place code enters),
-active operands are consumed as values only, `Expression` values are
-constructive-only (no destructors, no code equality), evaluation is
-typed and staged with no same-stage interpreter, and quotes close over
-the environment they were written in (evaluation never reads the
-evaluator's ambient context — the second ingredient of the fexpr
-collapse). This is the same refusal as `TruthOf` (§1.5), made twice:
-no dynamic-to-static reflection at the truth level or the syntax
-level. The accepted price is stated in §7.7 rather than discovered
-later: there is no anti-quotation — reflection is schematic, code with
-variables, values flowing in at use.
+Unrestricted fexpr-style access to operand syntax was never acceptable:
+Wand's collapse result remains a warning that observation of arbitrary
+caller syntax destroys useful contextual equivalence. The attempted layer
+avoided the full fexpr problem, but doing so required almost all of the
+machinery just listed. With no Lojban necessity witness, that was
+complexity in service of the notation rather than the semantics.
 
-**Why one primitive sign-function.** The kernel was already
-applicative — quantifiers, connectives, the triad, the force
-constructors all consume *values* — so the only place surface syntax
-genuinely binds text is λ itself. `MakeBind` is the carrier's
-sequencing operation `bind` composed with
-`MakeLambda`; `MakeLet` is application composed with it; the facades
-for everything else are one generic schema, materialized on demand.
-The alternative — a `Make*` twin for every operator — would recreate
-the duplication the catalog audit just removed, with no semantic
-witness for any pair.
+The baseline therefore uses direct `λ`, `Let`, and `Bind` formation.
+Scope, α-equivalence, capture-avoiding substitution, and inert binder
+positions are structural judgments (§4.4/§5.2), as they are in ordinary
+typed calculi and proof assistants (Harper). Braces remain visible scope
+punctuation; they are not term-valued quotation. The carrier-level
+`bind` operation remains indispensable — this decision removes only its
+reflective facade, not effect sequencing.
 
-**Why one spelling.** The braced spelling makes inert positions
-visible at a glance and reduces the grammar to exactly three formers —
-atoms, braces, application. A second, parenthesized binder-list
-spelling might look like harmless convenience, but a dual costs more
-than it carries: every reader must learn both, every tool must accept
-both, and the sole benefit — familiarity of the binder names — is
-already delivered by the aliases (`λ`, `Let`, `Bind`). A definition
-gains more from a single notation than from a courtesy variant (no
-canonical *spelling* of terms is thereby defined — spec §2; it is the
-binder syntax that is single).
-The braces themselves carry teaching weight — the primer's hardest
-points (inertness, constructing-without-performing, held-back scope)
-are visible in the notation itself.
+Nothing needed for linguistic use/mention is lost. Lojban quotations,
+signs, utterance tokens, `InterpretContent`/`InterpretAct`, and explicit
+`Perform` remain. Shadow relations such as `xusra`, `danfu`, and
+`smuni` remain valuable vocabulary for talking about acts and meanings,
+but they do not execute the operators they describe. The refusal of a
+general `TruthOf` dynamic-to-static crossing likewise remains (§1.5).
+
+A future core-self-description extension is not forbidden. Reconsider it
+only if an independently witnessed meaning requires executable core code,
+and then require an explicit stage index, a complete hygiene/capture
+theory, a nontrivial equational theory, and a proof that ordinary terms
+cannot be reified or inspected implicitly. Such an extension would be an
+additive proposal, outside the normative baseline until separately
+adopted; Lean macros or another host may implement convenient syntax
+without making reflection part of the semantic core.
 
 
 ### 2.10 du'u, nullary ka, and the reserved reification family

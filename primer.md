@@ -41,10 +41,14 @@ Three promises the core makes, which this primer keeps returning to:
    implement it; nobody has to.
 
 One naming note: the CapitalizedWords you'll see in core terms are
-*placeholders*. The project's end state is that every predicate is an
-ordinary Lojban content word — many already are (`purci`, `gunma`,
-`skicu`), and the rest carry dictionary-style definitions awaiting an
-existing word or a new coinage (the spec's §16 tracks each one).
+provisional core names. The project's end state is that every
+*predicate* is an ordinary Lojban content word — many already are
+(`purci`, `gunma`, `skicu`), and the rest carry dictionary-style
+definitions awaiting an existing word or a new coinage. Executing
+operators and structural forms such as `Bind` keep their semantic role;
+a Lojban predicate may describe their results, but cannot perform their
+work merely by having a dictionary row. The spec's §16 tracks the
+distinction.
 
 **How to read this primer.** Each chapter takes Lojban you already know,
 shows the core term for it, and introduces the few formal ideas involved —
@@ -451,22 +455,14 @@ leaks through a quotation boundary. This entire family is what keeps
 use/mention straight, and it is why the core can talk about Lojban in
 Lojban without paradox.
 
-> **Advanced box: the core can quote itself.** Beside the Lojban
-> quotes above, the core has braces — `{…}` — which quote *the core's
-> own notation*, not Lojban text. A quoted piece of notation is held
-> back, unevaluated, and special words operate on it: the λ you have
-> seen everywhere is really such a word — `(λ {$x :: T} {body})` applies
-> it to a quoted parameter (`$x :: T` reads "variable `$x` of type
-> `T`") and a quoted body and *produces* the
-> function, so the braces show at a glance which parts are held back
-> and, in ordinary term syntax, parentheses only ever mean "apply". One rule keeps this safe:
-> braces are only ever *written* — nothing running can be turned back
-> into its own code. This is advanced, optional machinery (spec §7.7);
-> its payoff is that the binder words become ordinary vocabulary —
-> functions with places, like any other word, though a small bootstrap
-> floor (quoting and interpreting themselves) always remains — which
-> is how, one day, Lojban gets to describe Lojban's own semantics in
-> Lojban.
+> **Notation box: why the braces?** In `(λ {$x :: T} {body})`,
+> `{$x :: T}` is the binder telescope — “introduce variable `$x` of
+> type `T`” — and `{body}` marks its scope. `Let` and `Bind` use the
+> same punctuation. These are direct binding forms, not functions that
+> receive quoted source code, and the braces do not create signs. Lojban
+> quotation remains the `lu`/`zoi`/`zo` family above. A staged extension
+> for quoting the core's own notation was explored and set aside; nothing
+> in the baseline depends on it.
 
 ## 11. The whole example
 

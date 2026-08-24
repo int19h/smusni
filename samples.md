@@ -724,41 +724,37 @@ here is vague. The occasions are not open but *recovered*: `Context`,
 not absence — the habitual readings, which would drop the temporal
 conjuncts entirely, are the other members of P8's reading family.
 
-## 12. Reflection
+## 12. Direct binding notation
 
-Quotes of core notation, with binders as ordinary words applied to
-them (spec §7.7) — the notation every specimen in this book uses,
-shown here with its reflection made explicit.
+The three binder forms are part of the core syntax. Their telescopes and
+bodies use braces to show scope; the braces do not quote core code.
 
 ```lisp
-; lo ka se klama — λ IS MakeLambda: one word, two names
-(λ {$x :: Referents Entity} {(Close (klama :2 $x))})
-(MakeLambda {$x :: Referents Entity}
+; lo ka se klama — direct function abstraction
+(λ {$x :: Referents Entity}
   {(Close (klama :2 $x))})
 ```
 
 ```lisp
-; lo mlatu cu blabi .i ri jbena — cross-sentence reference
+; lo mlatu cu blabi .i ri jbena — effectful binding across a discourse
 (Bind {$cat :: Referents Entity}
-      (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))     ; active operand:
-  {(Do (Assert (Close (blabi $cat)))                       ; a computation,
-       (Assert (Close (jbena $cat))))})                    ; consumed as a
-                                                           ; value; body inert
+      (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))
+  {(Do (Assert (Close (blabi $cat)))
+       (Assert (Close (jbena $cat))))})
 ```
 
 ```lisp
-; the reflective application word — for talking about application itself
-(MakeApply {(MakeLambda {$x :: Referents Entity} {(mlatu $x)})}
-           {This})
-; ≡ ((λ {$x :: Referents Entity} {(mlatu $x)}) This) — each quoted
-; operand interpreted exactly once (spec §7.7)
+; one act value, performed and then targeted by a display
+(Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
+  {(Do (Perform $a)
+       (Express (Close (Happiness Speaker $a Moderate))))})
 ```
 
-Contrast, one more time: `{(Close (klama Speaker))}` is quoted *core
-notation* — code, evaluable one stage up; `lu mi klama li'u` is quoted
-*Lojban* — a linguistic sign, interpreted only through the §7.5
-crossings. Different kinds; the braces are core-only notation and no
-Lojban word ever gains active-eval semantics.
+`λ` binds pure or effectful function bodies according to their type;
+`Let` shares a value without running a computation; `Bind` runs one
+reference computation and sequences its effects before the body. The
+linguistic quotation `lu mi klama li'u` remains a sign (§7.5); there is
+no baseline constructor for quoted core notation.
 
 ## 13. Meanings without analyses
 

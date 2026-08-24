@@ -16,6 +16,11 @@ constructors, the abstraction relations, the cardinal quantifiers)
 share one subsection with per-name coverage inside it, so that their
 common story is told once.
 
+Section numbers 1.47–1.49 and 2.28 are retired. They belonged to the
+withdrawn staged-reflection design; later numbers are deliberately left
+unchanged so existing cross-references remain stable. The design history
+is recorded in rationale §2.9 and the review archive.
+
 The scope is the **term language**: model-theory symbols
 (`Comp`, `InformationState`, `Obligations`, `Unit`, the `ctx` record,
 the world set W) are not forms and live in the short appendix at the
@@ -150,9 +155,7 @@ a query as a `Question` object for question-object-selecting places.
 
 **Informally.** Signs are quoted or mentioned linguistic material,
 classified by kind `K` (Name, Sentence, Word, Letteral, Quotation,
-MathExpression, Structured, Opaque, Text, Connective — and
-`Expression` and `Telescope`, the elaborated-core-notation kinds,
-§1.47);
+MathExpression, Structured, Opaque, Text, and Connective);
 sign tokens and utterance tokens are the concrete occurrences facts
 attach to. Sign boundaries are opaque: no referent, presupposition, or
 introduction crosses them.
@@ -183,9 +186,11 @@ with juxtaposition as application — the pure functional substrate:
 function types, application, and the laws (β-reduction, substitution,
 α-conversion are unconditionally meaning-preserving here, which is
 exactly what the effectful fragment must not silently inherit — see
-`bind`). The binder *word* `λ` is not a second primitive: it is the
-alias of `MakeLambda` (§1.48), the one primitive sign-function, and
-this entry's abstraction notation is that word's application.
+`bind`). `λ` is the direct binding form: its telescope introduces
+typed parameters and its brace-delimited body fixes their scope. The
+braces are punctuation, not quoted signs.
+**Content-word status.** Class M structural machinery: no Lojban word is
+owed merely to rename function formation.
 **For.** Properties (`ka` with `ce'u` = λ, pin P12), quantifier
 bodies, everything higher-order.
 **Example.** `lo ka se klama` →
@@ -204,9 +209,13 @@ keeps unconditional β-equality, and every effect-sequencing point is a
 computation categories: the continuation may yield content, a
 reference computation, or a discourse (a bare act body stands for its
 performing one-act discourse — spec §7.1's display coercion), so a
-referent introduced before an act sequence stays bound across it. The surface binder word `Bind` — `(Bind {$x :: T} comp
-{body})` — is the *defined* telescope-spelled face: it is the alias of
-`MakeBind` (§2.28), which expands to `bind` over `MakeLambda`.
+referent introduced before an act sequence stays bound across it. The
+surface form `(Bind {$x :: T} comp {body})` is a direct effectful binder;
+its denotation applies carrier `bind` to `comp` and the scoped body
+continuation.
+**Content-word status.** Both carrier `bind` and the direct `Bind` form
+are Class M structural machinery. A predicate may describe a binding or
+its result, but does not sequence the computation.
 **For.** Cross-sentence reference: `(Bind {$cat :: Referents Entity}
 (Refer mlatu-prop) {(Do (Assert …) (Assert …))})` — the
 introduction runs once, the witness is reused in both acts.
@@ -277,10 +286,8 @@ quantifiers are built from selections, not from bare `∃`.
 
 ### 1.20 `=` — typed equality
 
-**Informally.** Primitive identity at every first-order sort — except
-the constructive-only syntax kinds (`Expression`/`Telescope` signs: no
-code equality, §1.47) — and at
-the discrete index types (`Bool`, place labels, the closed
+**Informally.** Primitive identity at every first-order sort and at the
+discrete index types (`Bool`, place labels, the closed
 enumerations); never at the plural reference type, where co-reference
 (`CoRef`, mutual `Among`) does the work; plural-sumti `du` lowers to
 `CoRef` (P23).
@@ -689,67 +696,6 @@ recorded fit becomes a definition only when the committee adopts it.
 [primer ch. 0, ch. 7](primer.md); the indicator instances appear in
 [samples §7, §11](samples.md).
 
-### 1.47 `Expression<Γ, A, ε>`, `Telescope`, and the quote former
-
-**Informally.** The reflection types: an `Expression` is an
-elaborated, scoped, α-classed piece of core notation — code — open in
-the typed context Γ, of result type A, with effect class ε deciding
-`Fn` vs `EFn` under abstraction; a `Telescope` is a quoted binder
-extension: one flat group (`{$x :: T}`, `{$x $y :: T}`) or a
-left-scoping concatenation of two or more groups
-(`{{$x :: T} {$y :: S} …}`). The quote former
-`{…}` is bootstrap floor: quotes are only ever written, elaborate at
-their written occurrence against the context they are written in
-(closure — free names a consuming word's telescope designates as open
-form exactly Γ; all others are captured, packaged with their values
-when the literal's position is evaluated), carry α-invariant site
-identities fixed at elaboration
-(law S8), and are constructive-only — no destructors, no code
-equality, no reification of running values, no anti-quotation, and no
-`MakeEval` (the design inference from Wand's fexpr result — contextual
-equivalence collapses to α-congruence — is the cited reason).
-`{}` quotes core notation only — never Lojban text, which is `lu`/
-`zoi` territory (§1.10, §1.38).
-**For.** `{(Close (klama Speaker))}` — code; compare
-`lu mi klama li'u` — a linguistic sign.
-**See.** [Spec §7.7, §2, §16.3–16.4](spec.md);
-[rationale §2.9](rationale.md).
-
-### 1.48 `MakeLambda`
-
-**Informally.** The one primitive sign-function: applied to a
-telescope and a body quote, it produces the function that, given
-values for the telescope, interprets the body in its elaboration
-environment extended with them — suspension from the quote,
-hygiene from elaboration, purity class from the body (`Fn` if pure,
-`EFn` otherwise). **`λ` is its alias**: `(λ {$x :: T} {body})` is an
-ordinary application, and in term-expression syntax `()` is
-application and nothing else (telescopes and the types after `::`
-carry the §2 subgrammar). Like every PascalCase name, a §16 placeholder
-awaiting its content word — the move that makes binders nameable
-vocabulary at all.
-**For.** `lo ka se klama` → `(MakeLambda {$x :: Referents Entity}
-{(Close (klama :2 $x))})`.
-**See.** [Spec §7.7](spec.md); [rationale §2.9](rationale.md);
-[samples §12](samples.md).
-
-### 1.49 `Interpret`, `Env<Γ>`, and `Arrow_ε`
-
-**Informally.** The bootstrap-floor interpretation family:
-`Interpret : Expression<Γ, A, ε> × Env<Γ> ⇀ A` interprets a code value
-against `Env<Γ>`, the typed record of values for exactly its open
-context Γ (the captured part rides inside the value; for closed code
-the empty environment is elided — `(Interpret {a})`). Stage-indexed:
-interpreting stage-n code is a stage-(n+1) operation; there is no
-untyped `Eval` and no `MakeEval`, ever. `Arrow_ε` names the effect
-class's arrow — `Arrow_Pure = Fn`, `Arrow_Effectful = EFn` — deciding
-what abstraction over code produces. When A is a computation type,
-interpretation *returns* the computation; running it stays with
-`bind`, the dynamic operators, or `Perform`.
-**For.** `(MakeApply {f} {a}) ≝ ((Interpret {f}) (Interpret {a}))` —
-the family is what the defined reflection vocabulary (§2.28) bottoms
-out in.
-**See.** [Spec §7.7, §16.3–16.4](spec.md); [rationale §2.9](rationale.md).
 
 ### 1.50 `InnatelyCapable` and `MotionVector`
 
@@ -864,6 +810,8 @@ immediate application, retained for legibility and for identity of one
 value used twice (`goi` aliasing, act targets). May not bind an
 effectful computation; that is `Bind`'s job, by type.
 **Formally.** `(Let {$x :: T} v {body}) ≝ ((λ {$x :: T} {body}) v)`.
+**Content-word status.** Class M structural machinery: no content word is
+owed for this sharing syntax.
 **For.** `(Let {$a :: Act Assertion} (Assert …) {(Do (Perform $a)
 (Express (… $a …)))})` — the display targets *that* act.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
@@ -1192,34 +1140,6 @@ at `SignToken<K>`.
 **See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
 [samples §6, §10](samples.md).
 
-### 2.28 `MakeBind`, `MakeLet`, `MakeApply`, and the facade schema
-
-**Informally.** The defined reflection vocabulary over `MakeLambda`
-and the floor `Interpret` family: the braced binder spellings, the
-reflective application word, and the generic facade schema by which
-any operator acquires a sign-consuming form on demand.
-**Formally.**
-
-```text
-(MakeLet {$x :: A} v {b})  ≝ ((MakeLambda {$x :: A} {b}) v)    ; Let is its alias
-(MakeBind {$x :: A} c {b}) ≝ (bind c (MakeLambda {$x :: A} {b})) ; Bind is its
-                                                     ; alias; bind is the
-                                                     ; §1.14 carrier op
-(MakeApply {f} {a})  ≝ ((Interpret {f}) (Interpret {a}))
-(MakeForall {Δ} {b}) ≝ (∀ (MakeLambda {Δ} {b}))     ; and MakeExists,
-                                                     ; MakeRefer, MakeSetOf,
-                                                     ; MakeOpenQ, … alike
-(MakeO {a₁} … {aₙ})  ≝ (O (Interpret {a₁}) … (Interpret {aₙ}))
-```
-
-— one interpretation per operand; each law preserves S1–S7; no facade
-for the sign constructors, `Perform`'s commitment, or `Interpret`
-itself. Nothing runs at construction: `MakeBind` returns
-a computation value, inert until consumed by the relevant dynamic
-operator or `Perform`.
-**For.** The self-description program: with these words, core terms
-and their semantics are statable as sentences about quoted code.
-**See.** [Spec §7.7](spec.md); [rationale §2.9](rationale.md).
 
 ### 2.29 `te'a`, `gei`, and `xi` indexing
 

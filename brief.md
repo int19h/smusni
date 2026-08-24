@@ -77,14 +77,13 @@ At the repository root:
   only to serve an implementation, it is out; where a construct's shape
   could only be explained by an internal model detail, it is reshaped on
   semantic merits.
-- **The S-expression notation** — `()` for function application and
-  nothing else, `{…}` quoting the core's own notation (binder telescopes
-  and bodies included, so binders are ordinary sign-consuming words),
-  PascalCase operators, lowercase lexical predicates, `$variables`,
-  `;` comments — is a vehicle,
-  not the subject. It is kept because it is readable and avoids
-  bikeshedding; the PascalCase operators are explicit placeholders under
-  the specification's content-word program.
+- **The S-expression notation** — parenthesized application/operator
+  forms, direct `λ`/`Let`/`Bind` forms with brace-delimited telescopes and
+  bodies, PascalCase named core forms, lowercase lexical predicates,
+  `$variables`, and `;` comments — is a vehicle, not the subject. Braces
+  in binder positions are punctuation, not quoted core code. The notation
+  is kept because it is readable and avoids bikeshedding; PascalCase names
+  mark the placeholder status the specification assigns them.
 - **Core vs sugar.** The core may be verbose. Anything derivable stays out
   of the core (or is explicitly marked as a derived form with its
   definition). Necessity arguments belong in the rationale.
@@ -132,18 +131,14 @@ smuggling in an implementation?
 ## Derived artifacts (future)
 
 The documents are the definition; anything executable or machine-checked
-is a **derived artifact**, never the authority. Two lines look
-promising once the core stabilizes. A **Lean 4** mechanization: Lean
-supplies a staged, typed syntax-elaboration-and-kernel-checking host,
-and its extensible syntax means elaborator macros could plausibly
-*interpret the core notation directly* — though a mechanization must
-separately enforce the core's written-only, constructive-only
-reflection discipline, which Lean's own syntax and `Expr` APIs
-(inspection, antiquotation) do not impose. Even Lojban text could be
-fed in, given an independently specified parsing and reading-resolution
-layer in front (mere normalization — spaces between words, no dots or
-commas — only makes the text lexable). The result would make sample
-terms type-checked objects rather than prose. A **Metamath cross-check**
+is a **derived artifact**, never the authority. Two lines look promising
+once the core stabilizes. A **Lean 4** mechanization can host the core as
+an extensible typed DSL: direct core binders elaborate to Lean binding
+syntax, and sample terms become checked objects rather than prose. Even
+Lojban text could be fed in through an independently specified parsing and
+reading-resolution layer. Redex can separately execute and test reduction
+and accessibility rules before stable fragments earn Lean proofs. A
+**Metamath cross-check**
 against Brismu's derivations would test the pin list from the opposite
 direction. Both are future work items, started only on explicit
 decision; neither may ever become a place where the definition lives.
@@ -165,8 +160,8 @@ counting basis; termsets; logical and non-logical connectives with a
 normative dynamic-accessibility table; abstraction relations and their
 numeric crossings; questions and answerhood; de re / de dicto; quotation,
 signs, and utterance tokens; speech acts and discourse structure;
-indicators and evidentials; typed vagueness (the tanru former, scalar
-operators, contextual computations, supplements); core reflection
-(quotation of the core's own notation, with binders as sign-consuming
-words — the basis of the language's self-description); and mex to the
-extent Lojban ties it to meaning.
+indicators and evidentials; typed vagueness (the tanru former and scalar
+operators), contextual computations, and supplements; linguistic quotation
+and signs; and mex to the extent Lojban ties it to meaning. A staged
+core-self-description extension was designed and set aside; it is future
+design history, not baseline coverage.
