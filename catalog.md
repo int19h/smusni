@@ -175,9 +175,10 @@ the specifications grounds are constructed from.
 ### 1.12 `Region<Scale>` — scale regions
 
 **Informally.** Regions of a scale — poles, midpoints, intervals — the
-values gradable cutoffs and scalar operators work over.
-**For.** `Grade`'s vague cutoff and the `na'e`/`to'e`/`no'e` regions.
-**See.** [Spec §6.3–6.4, §12](spec.md).
+values gradable cutoffs work over. Scalar contrast uses the distinct
+`ContrastDomain<ρ>` / `ContrastRegion<ρ>` interface.
+**For.** `Grade`'s vague cutoff.
+**See.** [Spec §6.4, §12](spec.md).
 
 ### 1.13 The pure function substrate
 
@@ -343,12 +344,18 @@ the cat outlives its sentence and survives negation.
 ### 1.25 `Context`
 
 **Informally.** Retrieve a contextually salient value of the declared
-type: nothing asserted, nothing introduced, recovery *expected* — if
-the hearer cannot find the value, communication failed. Site/key
-identity: one retrieval per syntactic site per performance; keyed uses
-(unassigned KOhA) retrieve once per key.
-**For.** Omitted places, `zo'e`, `co'e`, `do'e`, `zu'i`, salient
-scales, episodic tenseless time (pin P8).
+type: nothing asserted, nothing introduced. The occurrence has one intended
+value; a listener is expected to recover a value equivalent enough for the
+discourse purpose, not an identical private articulation. A site may carry a
+pure admissibility constraint and an explicit dependency profile; it covaries
+only with the listed binders and never all enclosing governors by default.
+Site/key identity gives one retrieval per site/dependency tuple per
+performance; keyed uses retrieve once per key. A failed exact guess may be
+repairable, while failure to recover any discourse-sufficient value leaves no
+resolved reading.
+**For.** Omitted places, `zo'e`, `co'e`, `do'e`, `zu'i`, tanru links,
+`tu'a`, bare `jai`, topics, contrast domains, salient scales, and episodic
+tenseless time (pin P8/P14/P26).
 **Example.** `mi klama` — the destination is a `Context` slot; `mi na
 klama` denies going *there*, not existence of a destination.
 **See.** [Spec §5.3](spec.md); [primer ch. 1, ch. 9](primer.md);
@@ -357,12 +364,14 @@ klama` denies going *there*, not existence of a destination.
 ### 1.26 `Vague`
 
 **Informally.** Denote the nonempty family of admissible
-precisifications, with *no fact of the matter* selecting one — the
-speaker waives specificity. Composition is by the VC law: pointwise
+sharpenings of one soritical concept or boundary, with *no fact of the matter*
+fixing one cutoff. Arbitrary discrete alternatives do not form a `Vague`
+domain. Composition is by the VC law: pointwise
 lifting, one precisification per parameter per binding site, truth
 simpliciter as supertruth. Never resolved by context, never coerced.
-**For.** The tanru link, `tu'a`, soritical thresholds (`so'i`), `joi`'s
-mixture kind, bare `jai`'s role.
+**For.** Soritical thresholds (`so'i`), gradable cutoffs, `ji'i`
+tolerance/rounding boundaries, loose temporal/spatial extents, and neutral-
+region width.
 **See.** [Spec §5.3, §6](spec.md); [primer ch. 9](primer.md);
 [rationale §1.3](rationale.md).
 
@@ -464,8 +473,8 @@ modification link exactly when it makes the modifier bear on
 *something* in the head predication (the event's manner, a
 participant, a purpose, …) and nothing stronger — no x1-sharing, no
 intersectivity. Nonempty by axiom: some link always exists,
-discharging the `Vague` formation obligation. The `Tanru` operator
-that consumes it is **defined** (§2.6).
+so the constrained `Context` site always has an admissible recovery domain.
+The `Tanru` operator that consumes it is **defined** (§2.6).
 **For.** Constraining `sutra klama`'s open modification relation
 (CLL ch. 5).
 **See.** [Spec §6.2](spec.md); [primer ch. 9](primer.md);
@@ -473,18 +482,22 @@ that consumes it is **defined** (§2.6).
 
 ### 1.33 `Scalar`
 
-**Informally.** `(Scalar k P)`, `k ∈ ⟨OtherThan, Opposite, Neutral⟩`:
-deny `P`'s stated region on a contextually recovered scale *and*
-positively assert an alternative region — some admissible other
-(`na'e`), the antipode (`to'e`), the midpoint (`no'e`). Stronger than
-`¬`, never weaker.
-**For.** `ta na'e melbi` denies beauty and asserts an alternative
-aesthetic standing. Also the `nai`-fallback for unpaired indicators
+**Informally.** `(Scalar k D P)`, with `D : ContrastDomain<ρ>` and
+`k ∈ ⟨OtherThan, Opposite, Neutral⟩`:
+deny `P`'s stated region in a contextually recovered `ContrastDomain` *and*
+positively assert a directly denoted region — the domain complement
+(`na'e`), antipode (`to'e`), or between-region (`no'e`). No fine
+alternative is selected; opposite/neutral are projectively partial when the
+domain lacks their required structure. Stronger than `¬`, never weaker.
+The Lojban mapping binds a lexically fixed or constrained-`Context` D before
+applying the pure relation former. **For.** `ta na'e melbi` denies beauty and
+asserts membership in the coarse other-than-beautiful region. Also the
+`nai`-fallback for unpaired indicators
 (`Opposite`).
 **See.** [Spec §6.3, §7.6](spec.md); [primer ch. 7](primer.md);
 [rationale §1.8](rationale.md).
 
-### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleMixture`, `AdmissibleCutoff`, `InRegion`, `deg_R`
+### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
 **Informally.** The gradable/vague-quantity interface: the axiomatic
 admissibility predicates. `AdmissibleTolerance : Number × Precision →
@@ -493,9 +506,6 @@ serve `ji'i` (the tolerance/rounding-preimage regions about an anchor
 at the numeral's precision, nonempty by VC1 — spec §12, pin P37;
 `Direction` — the closed `Up | Down | Either` — is declared with the
 rounding former);
-`AdmissibleMixture` serves sumti-`joi` (the composition relations
-refining `gunma` — nonempty by construction, `gunma` the trivial
-refinement; spec §12);
 the threshold predicates serve the degree quantifiers (indexed by
 the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
 TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
@@ -720,9 +730,11 @@ row and the topic's sort — fill an unfilled compatible place
 makes the fill branch type statically), or
 bear `srana`-aboutness to the closed comment (`About`) — and
 `TopicAdmissible` is the axiomatic admissibility predicate over
-resolutions, `TanruAdmissible`'s sibling. The `Topic` schema binds a
-`Vague` resolution: CLL 19.4's fish is exactly the place choice
-(eater or eaten), typed.
+resolutions, `TanruAdmissible`'s sibling. The `Topic` schema retrieves one
+intended resolution through constrained `Context`: CLL 19.4's fish has
+distinct eater/eaten `Context` resolutions, while `About` is the available
+coarse intention. Place filling is defined only for a single open bridi;
+cross-clausal place-linking is a gap.
 **For.** `le finpe zo'u citka`.
 **See.** [Spec §12, §11](spec.md), pin P26.
 
@@ -768,6 +780,23 @@ temporal ordering of denoted events implied (CLL 19.7 numbers sumti
 inside one bridi).
 **For.** `mi klama pamai le zarci .e remai le zdani`.
 **See.** [Spec §12, §11](spec.md).
+
+### 1.55 `ContrastDomain<ρ>`, `ContrastRegion<ρ>`
+
+**Informally.** The typed domain interface against which a row-ρ predicate
+occupies an associated `ContrastRegion<ρ>` for scalar contrast. Neither type
+is a first-order set or a group of predicate terms. A domain interpretation
+supplies its relevant universe, the cell occupied by a predicate, region
+membership, and relative complement; it may add polarity and betweenness
+structure for `Opposite`/`Neutral`. Cell membership agrees with the predicate
+inside the domain universe, and complement is exact relative complement, so
+`OtherThan` requires no partition into fine alternatives. The applicable
+domain is lexically fixed or retrieved through constrained `Context`, and
+soritical boundaries inside its regions may remain `Vague`.
+**For.** `na'e melbi` uses the complement of beauty's region in the intended
+aesthetic domain; `to'e` and `no'e` additionally require an antipode or
+between-region.
+**See.** [Spec §3.5, §6.3](spec.md); [rationale §1.8](rationale.md).
 
 ## 2. Defined forms
 
@@ -844,15 +873,16 @@ spec §5.1).
 ### 2.6 `Tanru`
 
 **Informally.** Modification of a head by a modifier: the head's row,
-the head's predication, plus an admissible modification link — a
-`Vague` parameter ranging over the relations `TanruAdmissible`
-(§1.32) admits, with no fact of the matter selecting one.
+the head's predication, plus the occurrence's intended admissible
+modification link, retrieved by constrained `Context` from the relations
+`TanruAdmissible` (§1.32) admits. Convention changes resolver priors; it does
+not lexicalize the bare tanru or create a family of truth conditions.
 **Formally.** `((Tanru M H) fills…) ≝ (Bind {$link :: PredTerm ρ(H)}
-(Vague (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)}))
+(Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)}) deps…)
 {(∧ (H fills…) ($link fills…))})`.
 **For.** `sutra klama` — a goer, with `sutra` bearing on the going
-*somehow*; the library's named links are the common precisifications,
-a lujvo a lexicalized one.
+in the way intended here; the library's named links are common exact
+recoveries, and a lujvo lexicalizes one.
 **See.** [Spec §6.2](spec.md); [primer ch. 9](primer.md);
 [rationale §1.8](rationale.md).
 
@@ -1050,7 +1080,8 @@ retrieval is at `Bool` and the selection is `(PolarAnswer $a)` — the
 **Informally.** Tagged `jai`: promote the tagged role to x1 and move
 the old x1 to the labelled, fillable `fai` place (closing contextually
 when unfilled — CLL 9.12). Bare `jai` is the mapping's
-`Vague`-role raising instead.
+constrained-`Context` role raising instead: one intended admissible role, with
+dependencies declared by the resolved reading.
 **Formally.** Writing ρ' for ρ with ℓ relabelled x1 and x1 relabelled
 `fai`: `(JaiPromote R ℓ) ≝ (λ {$r :: Record ρ'} {(R ⟨ℓ = $r.x1,
 x1 = $r.fai, rest unchanged⟩)})`.
@@ -1171,11 +1202,12 @@ ratified gadri definitions expand `lo PA sumti` through `me`.
 ### 2.31 `TanruLinkConnect`
 
 **Informally.** Jek at the tanru-unit locus (P33): for a shared head,
-bind one `Vague` link per conjunct and join the link applications
+retrieve one intended admissible link per conjunct through constrained
+`Context` and join the link applications
 with the connective — the head asserted once
 (`blabi ja cmalu zdani`: a house, whose modification link is
 white-flavored or small-flavored). Distinct-head units connect as
-whole predications; joiks route to the mixture semantics.
+whole predications; constitution-bearing joiks remain gap-registered.
 **For.** `ta blabi je cmalu zdani`.
 **See.** [Spec §12, §6.2, §11](spec.md), pin P33.
 

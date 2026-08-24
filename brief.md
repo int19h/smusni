@@ -19,9 +19,15 @@ spell its terms.
 
 This is a *definition*, not a description:
 
-- Where CLL is **explicit** that meaning is vague (e.g. the tanru
-  modification relation), the core must contain machinery for *explicit,
-  typed* vagueness — the vagueness is represented, not ignored.
+- Where a meaning is genuinely **soritically vague** — no fact fixes a
+  threshold, cutoff, tolerance edge, or loose boundary — the core contains
+  explicit typed precisification machinery rather than pretending context
+  selects an exact value.
+- Where the surface leaves an **intended value underspecified** — tanru,
+  `tu'a`, bare `jai`, or topic links — the core uses constrained contextual
+  recovery. The listener need only recover a value equivalent enough for the
+  discourse purpose; surface underdetermination is not speaker-side
+  existential choice.
 - Where CLL is merely **underspecified** — where vagueness is an accident of
   the text, not a design intent — we pin the most useful interpretation and
   record why. The pin list and its justifications are first-class
@@ -160,8 +166,9 @@ counting basis; termsets; logical and non-logical connectives with a
 normative dynamic-accessibility table; abstraction relations and their
 numeric crossings; questions and answerhood; de re / de dicto; quotation,
 signs, and utterance tokens; speech acts and discourse structure;
-indicators and evidentials; typed vagueness (the tanru former and scalar
-operators), contextual computations, and supplements; linguistic quotation
-and signs; and mex to the extent Lojban ties it to meaning. A staged
+indicators and evidentials; typed soritical vagueness, intended-value
+contextual computations (including tanru and scalar contrast domains), and
+supplements; linguistic quotation and signs; and mex to the extent Lojban ties
+it to meaning. A staged
 core-self-description extension was designed and set aside; it is future
 design history, not baseline coverage.

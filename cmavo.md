@@ -498,7 +498,7 @@ a `Vague`-parameterized region on the count scale.
 ### ji'i (PA)
 
 Approximation, position-indexed (P37): both positions denote
-`Vague`-selected `Number`s — prefix/medial over the
+`Number`-valued `Vague` families — prefix/medial over the
 `AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
 preimage (stated digits exact by construction), directionally under
 `ma'u`/`ni'u`.
@@ -540,10 +540,11 @@ prenex order is scope order (P26).
 
 Prenex and topic separator (P26). Quantifier prenex: prenexed terms
 lower to the quantifier/selection prefix in surface order — prenex
-order is scope order. Topic use: the topic binds, and a `Vague`
-`TopicResolution` fills an admissible place of the open comment frame
-or bears `srana`-aboutness to the closed comment (CLL 19.4's fish =
-the place choice); `tu'e…tu'u` extends one topic over a sequence.
+order is scope order. Topic use: the topic binds, and constrained `Context`
+retrieves one intended `TopicResolution`: an admissible place of a single open
+bridi or coarse `srana`-aboutness to the closed comment. CLL 19.4's fish has
+distinct eater/eaten `Context` resolutions; `tu'e…tu'u` may extend a topic
+over a sequence, but cross-clausal place-linking is gap-registered.
 
 ```lisp
 ; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL Example 19.8
@@ -656,8 +657,8 @@ shared destination, not two).
 Same logical operators at their locus. At the *tag* locus: the
 operator over the tag conjuncts (§11's facet joining). At the
 *tanru-unit* locus: `TanruLinkConnect` (P33) — shared head asserted
-once, one `Vague` link per conjunct, connective over the link
-applications; distinct-head units connect as whole predications.
+once, one constrained-`Context` intended link per conjunct, connective over
+the link applications; distinct-head units connect as whole predications.
 
 ```lisp
 ; ta blabi ja cmalu zdani — one house; the modification link is
@@ -739,27 +740,27 @@ order; movement flips per ch. 16.
 
 ### joi (JOI)
 
-By syntactic position (the one non-logical connective with split
-lowering): sumti `joi` → group formation with `Vague` mixture kind;
-tag/facet joining → `∧`; discourse joining → `Do`; residual
-genuinely-unspecified connection → `Vague` over the connecting
-relation.
-
-```lisp
-; mi joi do bevri lo pipno — the mixture kind bound Vague (§12)
-(Bind {$mix :: PredTerm ρ}   ; ρ = the composition row of §12's
-                             ; AdmissibleMixture signature
-      (Vague (AdmissibleMixture (Combine Speaker Audience)))
-  {(Bind {$g :: Referents (Group Entity)}
-        👉(Refer (λ {$r :: Referents (Group Entity)}
-          {(∧ (gunma $r (Combine Speaker Audience))
-             ($mix $r (Combine Speaker Audience)))}))👈
-    {(Bind {$p :: Referents Entity}
-          (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
-      {(Close (bevri $g $p))})})})
-```
+Exact tag/facet `joi` that merely conjoins predications over an already shared
+event lowers to `∧`. Constitution-bearing sumti, tanru/property, and
+sentence/event uses are **gap-registered**: the prior `Vague` mixture/connecting
+relation and `.i joi = Do` fallbacks are rejected, while the adopted indexed
+`gunma` constitution and compound-performance laws are still being specified.
 
 **See.** [Spec §4.8, §11](spec.md).
+
+### ju'e (JOI)
+
+Officially “vague non-logical connective: analogous to plain `.i`.” This is a
+**registered gap**, not an invocation of `Vague`: neither CLL nor the dictionary
+states whether one use has an intended connection, succeeds through any
+admissible connection, merely sequences discourse, or varies by grammatical
+locus. Attested uses make it a real candidate for the gap-level
+`SomeAdmissible` analysis, but its negation, scope, accessibility, and
+cross-locus behavior require a separate pin before any baseline term is
+assigned.
+
+**See.** [Spec §14](spec.md); GitHub issue
+[#21](https://github.com/int19h/smusni/issues/21).
 
 ### jo'u (JOI)
 
@@ -1137,9 +1138,10 @@ Structure only — see §13.
 
 ### tu'a (LAhE)
 
-Vague abstraction: shape conjunct + `srana`-aboutness, sort selected
-by the host place (P14) — the deliberately underspecified "something
-about X".
+Intended abstraction retrieved through constrained `Context`: shape conjunct +
+`srana`-aboutness, sort selected by the host place, dependency profile declared
+by the resolved reading (P14). The speaker leaves the abstraction unspoken but
+does not assert that any X-related abstraction will do.
 
 ```lisp
 ; mi troci tu'a lo vorme — an event-sorted abstraction (the host
@@ -1147,10 +1149,10 @@ about X".
 (Bind {$door :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(vorme $r)}))
   {(Bind {$a :: Referents Eventuality}
-        👉(Vague (λ {$v :: Referents Eventuality}
+        👉(Context (λ {$v :: Referents Eventuality}
           {(∃ (λ {$c :: Content}
             {(∧ (CoRef $v (EventOfContent $c))
-               (Close (srana $v $door)))}))}))👈
+               (Close (srana $v $door)))}))}) $door)👈
     {(Close (troci Speaker $a))})})
 ```
 
@@ -1160,7 +1162,8 @@ about X".
 
 With tag: explicit role promotion — the tagged role to x1, old x1 to
 the fillable `fai` place (`JaiPromote`). Bare: participant raising out
-of the abstraction-x1 with the role `Vague`.
+of the abstraction-x1 with one intended admissible role retrieved by
+constrained `Context` (P14).
 
 ```lisp
 ; mi jai gau rinka lo nu do klama
@@ -1609,12 +1612,14 @@ word as a word-level opaque sign.
 
 ### na'e / no'e / to'e (NAhE)
 
-Scalar negation: `(Scalar k P)` with k = OtherThan / Neutral /
-Opposite — the na'e-family contraries, not `¬` (P18 handles `na`).
+Scalar negation: bind the intended `ContrastDomain` through `Context`, then
+apply `(Scalar k D P)` with k = OtherThan / Neutral / Opposite — the
+na'e-family contraries, not `¬` (P18 handles `na`).
 
 ```lisp
 ; mi na'e klama
-(Close ((Scalar OtherThan klama) :1 Speaker))
+(Bind {$d :: ContrastDomain ρ(klama)} (Context)
+  {(Close ((Scalar OtherThan $d klama) :1 Speaker))})
 ```
 
 **See.** [Spec §6.3, §11](spec.md); [catalog](catalog.md).
@@ -1702,9 +1707,8 @@ The same decoration pattern at the other loci: `na ja`, `se gi'a`,
 `joi nai`, `se joi` — one unit per EBNF `jek`/`gihek`/`joik`
 production; `se` on a non-logical connective swaps the (ordered)
 operands; `nai` on a joik is per-locus: truth-table for logical
-loci, `RegionComplement` for BIhI, and for mixture joiks the `Vague`
-mixture kind constrained to admissible alternatives other than the
-named one (§11).
+loci and `RegionComplement` for BIhI. Constitution-bearing `joi`/`joi nai`
+loci remain gap-registered; `nai` creates no hidden discrete-choice fallback.
 
 **See.** [Spec §4.5, §4.8, §11](spec.md).
 
@@ -1715,8 +1719,9 @@ an independent `je`: **one performance of the connected content**
 (P32 — forced by `.i ja`, where no pair of assertions exists), the
 host's single force shared by the connection (content-taking forces;
 an interrogative host queries the connected content), with `∧`'s
-accessibility row shared with `Do`'s (spec §5.4). `.i joi` and the
-non-logical ijoiks stay in `joi`'s discourse-joining `Do` arm.
+accessibility row shared with `Do`'s (spec §5.4). Constitution-bearing
+`.i joi` and non-logical ijoiks are gap-registered pending their event and
+compound-performance laws.
 
 ```lisp
 ; mi klama .i je do stali — one act asserting the conjunction
@@ -1808,4 +1813,6 @@ is exactly what the specification itself marks open:
   no row and implementations must not invent one.
 - **Registered gaps** (spec §14): ordinary first-order restrictive
   clauses on `bu'a`-variables; explicit-`ce'u` in the non-`ka`/`du'u`
-  abstractors; the non-numeric `me … me'u MOI` composite.
+  abstractors; the non-numeric `me … me'u MOI` composite;
+  constitution-bearing sumti/property/event `joi` and compound ijoiks;
+  the explicit vague connective `ju'e`; cross-clausal topic place-linking.

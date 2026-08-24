@@ -7,11 +7,12 @@ This document defines a semantic core for Lojban: a typed language of
 meanings such that every Lojban utterance, under a resolved reading,
 denotes a term of the core — within the analyzed coverage §15 states,
 the gap register (§14) bounding the remainder. It is a **definition**,
-not a description: where
-the Complete Lojban Language (CLL) is explicit that a meaning is vague, the
-core represents that vagueness with typed machinery; where CLL is merely
-underspecified — vague by accident rather than by design — this document
-pins an interpretation and records the pin as a numbered ruling. The
+not a description. When one resolved meaning has a genuinely soritical
+boundary, the core represents its admissible sharpenings with typed
+machinery. When an occurrence instead has an intended but unspoken value,
+the core represents one contextually recovered value. When the source record
+leaves the semantic rule itself unsettled, this document selects an
+interpretation and records the choice as a numbered ruling. The
 baseline for gadri and quantification is xorlo
 (<https://mw.lojban.org/papri/How_to_use_xorlo>) — which the
 Contemporary Lojban Language edition of CLL ratifies in-text (CLL 6.2;
@@ -147,14 +148,17 @@ characteristic mistake this core is designed to prevent:
   descriptive condition. A referent is new, veridically described (for
   `lo`), and available to subsequent anaphora.
 - **Contextual resolution** (`Context`): retrieve a contextually salient
-  value. Nothing is asserted about it and no referent is introduced; the
-  speaker expects a cooperative hearer to recover a *specific* value, and
-  communication fails if they cannot. Omitted places, `zo'e`, `co'e`,
-  `do'e`, deictic grounds, and salient scales are of this kind.
-- **Deliberate vagueness** (`Vague`): a typed, constrained set of
-  admissible precisifications with **no fact of the matter** as to which is
-  meant. The term never chooses. The tanru modification link, `tu'a`'s
-  withheld abstraction, and soritical thresholds are of this kind.
+  value. Nothing is asserted about it and no referent is introduced. The
+  speaker has an occurrence-specific intended value; a cooperative hearer is
+  expected to recover one equivalent enough for the discourse purpose, not
+  necessarily an identical private articulation. Omitted places, `zo'e`,
+  `co'e`, `do'e`, tanru links, `tu'a`, bare `jai`, topic links, deictic
+  grounds, and salient scales are of this kind.
+- **Soritical vagueness** (`Vague`): a typed, constrained family of
+  admissible sharpenings of one concept or boundary, with **no fact of the
+  matter** fixing the cutoff. The term never chooses. Vague quantity
+  thresholds, gradable cutoffs, approximate-number tolerances, and loose span
+  boundaries are of this kind; discrete alternative meanings are not.
 
 The operational test — the **recovery test** — is printed with the full
 classification in §6.1.
@@ -445,6 +449,13 @@ named construct and normative for exactly those uses:
   its act operand is force-existential. Sort-polymorphic fact
   relations (`Denotes`, §7.5) are metalanguage families — one
   relation per sort — not union-typed operators.
+- **Structured contrast domains** — `ContrastDomain<ρ>` and
+  `ContrastRegion<ρ>` (§6.3), the typed domain and region interfaces against
+  which a row-ρ predicate is contrasted. Domain and region values are not
+  first-order sets of predicates. A domain interpretation supplies universe
+  and region membership, relative complement, and optional
+  polarity/betweenness structure. (`Region<Scale>` is the separate gradable
+  region former used by `Grade`, §6.4.)
 - **Tuples** — finite products: multi-parameter quantifier loci
   (§4.5), open-question answer domains (§8.1), `TupleAnswer`
   payloads (§8.2). Projection is positional and total.
@@ -896,12 +907,28 @@ Three primitive computations answer §1.4:
   accessible to later anaphora per §5.4. This is the xorlo semantics of
   descriptions (ruling P1): no implicit outer quantifier, no uniqueness,
   no default cardinality.
-- `(Context deps…) : RefComp<T>` — retrieves a contextually salient value
-  of type `T`, constrained by an optional property and by its declared
-  dependencies (binders the choice may covary with). It asserts nothing
-  and introduces nothing. **Site/key identity:** each syntactic occurrence
-  is one site; a site retrieves once per performance, so re-applications
-  of a shared λ reuse the site's value; keyed uses (unassigned KOhA,
+- `(Context P? deps…) : RefComp<T>` — retrieves a contextually salient
+  value of type `T`, constrained by an optional pure admissibility property
+  `P : Fn<(T), Content>` and by its declared dependencies (the governing
+  binder values with which this occurrence may covary). The unconstrained,
+  dependency-free spelling is `(Context)`; a constrained site is written
+  `(Context P deps…)`. It asserts nothing and introduces nothing. The speaker
+  has one intended value at the occurrence, while successful communication
+  requires only recovery to relevance-equivalence for the discourse purpose.
+  The resolved core term nevertheless contains one exact returned value; the
+  pragmatic tolerance is not an object-language equivalence relation or a
+  family of semantic branches. Failure is graded in conversation, with repair
+  possible; only failure to recover any discourse-sufficient value leaves the
+  text without that resolved reading.
+
+  A resolved reading declares the dependency profile explicitly: a site may
+  covary only with the listed binders and never inherits every enclosing
+  governor automatically. Thus a `tu'a` under `ro prenu` may be governor-
+  invariant (empty profile) or person-dependent (the person listed), according
+  to the resolved reading. **Site/key identity:** each syntactic occurrence
+  is one site; it retrieves once per distinct dependency tuple per performance
+  (once total for an empty profile), so re-applications of a shared λ reuse the
+  value exactly when their listed dependencies agree. Keyed uses (unassigned KOhA,
   ruling P16) retrieve once per key per discourse segment, every
   occurrence of the key consuming the same value. Site keys are assigned
   by direct term formation, invariant under α-renaming and independent of
@@ -909,8 +936,11 @@ Three primitive computations answer §1.4:
   site; sharing one term through `λ` or `Let` preserves it. Resolution
   never rekeys a formed term.
 - `(Vague P) : RefComp<T>` — denotes the nonempty set of **admissible
-  precisifications** of type `T` satisfying the constraint `P`, with no
-  fact of the matter selecting one. Composition law: precisification sets
+  soritical precisifications** of type `T` satisfying the constraint `P`, with
+  no fact of the matter fixing one boundary. Formation is licensed only when
+  `P` is declared to structure sharpenings of one soritical concept; an
+  arbitrary family of discrete alternatives is not a `Vague` domain.
+  Composition law: precisification sets
   lift pointwise through all operators, and a complete interpretation
   chooses one precisification per parameter per binding site,
   consistently; truth simpliciter, where needed, is supertruth over
@@ -932,6 +962,7 @@ binders (§7.4).
 | `↔`, `⊕` | Each operand evaluated exactly once against the incoming state; nothing escapes. (Hence primitive: rewrites would duplicate evaluation.) |
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. **Witness export:** a successful evaluation of an exporting quantifier introduces its witness referent(s) — see §5.6, including the dependent case. |
 | `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). |
+| `Context` | Consults the incoming context and introduces nothing. Logical embedding never turns retrieval into quantification over admissible values: site/dependency identity is exactly §5.3's, while the consuming content—not the recovered value—is negated, questioned, or connected. |
 | `Presuppose` | See §5.5: the condition projects to the nearest legal commitment boundary; the at-issue operand sees the incoming state. Introductions inside the condition are local to the condition check; nothing escapes from it. |
 | `Supplement` | See §5.5: side content is committed once at its handler, projectively; the at-issue operand's value passes through. |
 | Force constructors, `Perform` | Act boundaries close force segments: referents introduced inside a constructed-but-unperformed act are not accessible outside it; performed acts in `Do` chain normally. |
@@ -1104,39 +1135,53 @@ axiomatic — its normality structure is constrained, not defined; the
 rationale records why this honesty beats both a fixed-prototype reference
 and a silent lexical relation.
 
-## 6. Explicit vagueness
+## 6. Intended underspecification and soritical vagueness
 
 ### 6.1 The recovery test and the classification
 
 The decision rule for §5.3's triad, applied to every underspecified
 construct in Lojban:
 
-> **The recovery test.** If a cooperative hearer is expected to arrive at
-> a *specific* value — and communication fails when they cannot — the
-> construct is `Context`. If the speaker waives specificity, so that
-> recovery yields at most an admissible family with no fact of the matter
-> selecting a member, it is `Vague`. If the meaning simply lacks the
-> dimension, it is **absence** (§1.4) and gets no machinery at all.
+> **The recovery test.** If the speaker has an occurrence-specific intended
+> value, the construct is `Context`: a cooperative hearer is expected to
+> recover a value equivalent enough for the discourse purpose. Exact
+> intersubjective identity is not required, and misunderstanding or repair is
+> graded and pragmatic. If there is instead one soritical concept whose cutoff
+> has no fact of the matter, the construct is `Vague`. If the meaning simply
+> lacks the dimension, it is **absence** (§1.4) and gets no machinery at all.
 
 The normative classification:
 
 | Construct | Class | Notes |
 |---|---|---|
 | omitted places, `zo'e` | `Context` | one distinct site per omission (P15) |
-| `co'e` (elliptical selbri), `do'e` (elliptical tag) | `Context` | the ellipsis family expects recovery; a deliberately waiving use is written with explicit `Vague` |
+| `co'e` (elliptical selbri), `do'e` (elliptical tag) | `Context` | the ellipsis family conveys an intended relation/tag; no baseline no-particular-value reading is generated |
 | `zu'i` | `Context` | with a typicality constraint |
 | deictic grounds; demonstrative grounds | `Context` | `ShiftedGround` values are constructed, never resolved |
-| scale **dimension** of gradable/scalar predication | `Context` | which scale (beauty, price, speed) is recoverable |
+| scale or `ContrastDomain` of gradable/scalar predication | `Context` | which dimension/universe (beauty, price, relevant alternatives) is intended and recoverable |
 | soritical **cutoffs/regions** on a scale | `Vague` | includes `no'e`'s neutral-region width, riding a `Context` scale |
-| tanru modification link | `Vague` | CLL ch. 5's constitutive vagueness; the library's named link values (manner, material, purpose, …) are precisification constants a resolved reading may commit to |
-| `tu'a` | `Vague` | admissible values are abstractions of some content (`∃c,k. a = the abstraction of c under k`) bearing `srana`-aboutness to the operand; the abstraction-shape conjunct is required — aboutness alone is too weak |
-| `joi`'s connecting relation; mixture kind | `Vague` | the exact non-logical connectives (`jo'u`, `ce`, `ce'o`, `fa'u`, `ku'a`, `jo'e`, `pi'u`) are exact |
+| loose temporal/spatial extent or span boundary | `Vague` | ZI/ZEhA magnitudes, ROI's default interval extent, and `do'i` token-span edges (P28/P35) |
+| tanru modification link | constrained `Context` | one intended admissible link per occurrence; convention supplies resolver priors, not lexicalization |
+| `tu'a` | constrained `Context` | intended host-sorted abstraction; shape + `srana`-aboutness constrain recovery (P14) |
+| topic `zo'u` link | constrained `Context` | one intended place fill or coarse `About` value for a single-bridi comment (P26); compound place-linking is a gap |
+| constitution-bearing `joi` loci | **gap** | the rejected mixture-choice analysis is removed; the adopted indexed-constitution programme awaits its complete clauses (§14) |
 | vague-quantity thresholds (`so'i`, `so'e`, …; `ji'i` tolerance) | `Vague` | sorites: no fact fixes the boundary |
 | `du'e` / `mo'a` / `rau` | `Vague` threshold **constrained by** a `Context` standard/purpose | two parameters; the purpose is recoverable, the boundary is not |
 | `na'i`'s defect dimension | `Context` | the hearer is expected to see what is defective |
-| bare `jai` (no tag) | `Vague` | raises a participant out of the abstraction filling the host's x1 (the abstraction moves to `fai`); *which role* the raised argument plays there is the vague dimension — `tu'a`'s raising inverted (CLL 9.12, 11.10); `jai`+tag specifies the role and is exact (library expansion) |
+| bare `jai` (no tag) | constrained `Context` | retrieves the intended admissible raised role; `jai`+tag specifies the role exactly (P14) |
 | bare-`kau` exhaustivity; unmarked distributivity | **absence** | no hole, no parameter (P9, P4) |
 | tenselessness | reading-multiple (P8) | episodic readings carry a `Context` time; habitual/gnomic readings carry nothing; never a default — the reading is chosen upstream |
+
+A `Vague` formation in the analyzed baseline must be licensed by one of the
+three families represented above (cutoff/region, loose extent/span, or vague
+quantity/approximation), together with the corresponding library predicate.
+Merely exhibiting a nonempty family of alternatives is insufficient.
+
+A coarse intention is still an intention: topic `About` and scalar
+`OtherThan` need not hide a finer selected relation. The baseline therefore
+contains no `SomeAdmissible` computation. Its existential-choice shape is
+recorded in §14 solely as a reopening path if evidence finds a construction
+whose speaker genuinely intends no particular discrete value.
 
 ### 6.2 Tanru
 
@@ -1150,15 +1195,23 @@ modification link relates `M` to that predication —
 ```lisp
 ((Tanru M H) fills…) ≝
 (Bind {$link :: PredTerm ρ(H)}
-        (Vague (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)}))
+        (Context
+          (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)})
+          deps…)
   {(∧ (H fills…) ($link fills…))})
 ```
+
+Here `deps…` is the dependency profile declared by the resolved reading; it
+may be empty and never defaults to all enclosing binders. One occurrence
+retrieves one intended link. A listener need only recover a link equivalent
+enough for the discourse purpose, but negation and questioning operate on that
+one recovered link—not existentially over every admissible relation.
 
 `TanruAdmissible` is part of tanru's meaning, not a lookup: it requires
 that the link make `M` modify *something* in the head predication (the
 event's manner, a participant, a purpose, a source, …) and nothing
 stronger — no x1-sharing, no intersectivity. The library's named links are
-the common precisifications; a lujvo is a lexicalized precisification.
+common exact recoveries; a lujvo lexicalizes a link.
 
 Surface grouping (`bo`, `ke…ke'e`) and inversion (`co`) are ⊳
 text-to-reading: `A co B` ≡ `ke B ke'e A`, with any trailing sumti
@@ -1169,26 +1222,82 @@ right-group. Jek-connected units lower through `TanruLinkConnect`
 
 The gismu `tanru` is this operator's shadow relation (§16.5), and an
 exact one: its official x4 ("giving meaning ⟨4⟩") and x5 ("in
-usage/instance ⟨5⟩") places state precisely this occasion-relative
-resolution, with operand places officially typed "both text or both
-si'o concept" — inert operands in the program's sense (§16.2).
+usage/instance ⟨5⟩") places support an occasion-specific intended meaning,
+rather than a fixed lexical link or a no-fact-of-the-matter family. Its
+operand places are officially typed "both text or both si'o concept" — inert
+operands in the program's sense (§16.2).
 
 ### 6.3 Scalar operators
 
-`(Scalar k P)`, `k ∈ ⟨OtherThan, Opposite, Neutral⟩`, is the `na'e`/
-`to'e`/`no'e` family: an operation on `P` relative to a scale or
-admissible-alternative set. The scale dimension is `Context` (lexically
-fixed when the dictionary provides one); soritical region boundaries are
-`Vague` per §6.1. Each operator **denies `P`'s stated region and
-positively asserts an alternative** — CLL 15.4: a selbri negation
+`ContrastDomain<ρ>` is the typed interface of relevant alternatives for a
+predicate row ρ: it supplies the universe against which a predicate's region
+is interpreted and, optionally, polarity and betweenness structure. It is a
+declared domain former with region/membership laws, not a first-order set or a
+`Group<PredTerm>` object. The applicable domain is lexically fixed where the
+dictionary provides one and otherwise recovered by constrained `Context`.
+Soritical boundaries inside its regions remain `Vague` per §6.1.
+
+More exactly, `ContrastRegion<ρ>` is the associated region type. Each model's
+interpretation of a value `D : ContrastDomain<ρ>` supplies the following
+*semantic-interface* operations; the subscripted notation here is
+metalanguage, not additional core syntax:
+
+```text
+universe_D(r)        : Content                         (r : Record ρ)
+cell_D(P)            : ContrastRegion<ρ>              (P : PredTerm<ρ>)
+member_D(r, A)       : Content                         (A : ContrastRegion<ρ>)
+complement_D(A)      : ContrastRegion<ρ>
+opposite_D(A)        : ContrastRegion<ρ>               (partial)
+between_D(A)         : ContrastRegion<ρ>               (partial)
+```
+
+It obeys, for every record `r`, predicate `P`, and region `A`,
+
+```text
+member_D(r, cell_D(P))       ↔ (universe_D(r) ∧ P(r))
+member_D(r, complement_D(A)) ↔ (universe_D(r) ∧ ¬ member_D(r, A))
+```
+
+and, whenever the optional operations are defined, their regions are
+contained in `complement_D(A)`, and `opposite_D` is involutive on the
+declared polar pair:
+
+```text
+member_D(r, opposite_D(A)) → member_D(r, complement_D(A))
+member_D(r, between_D(A))  → member_D(r, complement_D(A))
+opposite_D(opposite_D(A))   = A
+```
+
+`OtherThan` therefore needs neither an ordering nor a partition into fine
+alternatives. `Opposite` requires the polarity operation and `Neutral` the
+betweenness operation; absence of the required operation is a projective
+definedness condition under §4.9.
+
+`(Scalar k D P) : PredTerm<ρ>`, for `D : ContrastDomain<ρ>` and
+`k ∈ ⟨OtherThan, Opposite, Neutral⟩`, is the `na'e`/`to'e`/`no'e`
+family. The Lojban mapping binds a lexically fixed or constrained-`Context`
+domain before applying `Scalar`, so the retrieval site and dependencies stay
+visible. Its denotation at a complete record `r` is fixed by
+
+```text
+(Scalar OtherThan D P)(r) ↔ member_D(r, complement_D(cell_D(P)))
+(Scalar Opposite  D P)(r) ↔ member_D(r, opposite_D(cell_D(P)))
+(Scalar Neutral   D P)(r) ↔ member_D(r, between_D(cell_D(P)))
+```
+
+Thus each operator **denies `P`'s stated region and positively asserts a
+directly denoted contrasting region** — CLL 15.4: a selbri negation
 "asserts that a relationship exists other than that stated", and "the
 result of `na'e` negation remains an assertion of some specific truth" —
-so all three entail `¬P` at the stated region, differing in the region
-asserted: `OtherThan` some admissible alternative (chosen `Vague`-ly
-within the scale/set), `Opposite` the antipodal region, `Neutral` the
-midpoint region (excluding both extremes). Scalar negation is therefore
-*stronger* than `¬`, not weaker: `ta na'e melbi` denies beauty and
-asserts a contextually admissible alternative aesthetic standing. The
+so all three entail `¬P` at the stated region. In the denotational
+metalanguage, `OtherThan` is the recovered domain minus `P`'s region; this
+complement remains well-defined when fine alternatives overlap and requires no
+partition or hidden selected alternative. `Opposite` denotes the antipodal
+region and is projectively undefined where the domain supplies no polarity;
+`Neutral` denotes the between-region and is likewise partial where no
+betweenness structure exists. Scalar negation is therefore *stronger* than
+`¬`, not weaker: `ta na'e melbi` denies beauty and directly asserts location
+in the other-than-beautiful region of the intended aesthetic domain. The
 `Opposite` operator doubles as the documented fallback for indicator
 polarity where the lexicon names no `nai`-pole (§7.6; CLL 15.7 applies
 scalar negation's opposite-end rule to indicators).
@@ -1205,8 +1314,9 @@ Grade : GradableRel<ρ,ℓ> × Scale × Region<Scale> → PredTerm<ρ>
 with the scale obtained by `Context` when not lexical (which dimension —
 size, price, beauty — is recoverable) and the region boundary by `Vague`
 (no fact fixes the cutoff). `ta barda` is `Grade(barda, Context-scale,
-Vague-region)` applied; the `na'e` family (§6.3) operates on the same
-scale value.
+Vague-region)` applied. A gradable lexical entry may derive its
+`ContrastDomain` interpretation from that scale, but the domain and scale are
+distinct typed values and there is no implicit crossing between them.
 
 The degree quantifiers (`Many`, `Few`, `TooMany`, `TooFew`, `Enough`,
 `Most`; §12) are cardinal comparisons against thresholds whose
@@ -1219,7 +1329,7 @@ carries the same nonemptiness clause. `ji'i n` is `Vague` tolerance about
 a stated `n` — a different shape from `so'i`'s vague threshold. None of
 these rounds to an exact number, and none fails: `so'i prenu cu klama`
 has exactly the truth conditions its vagueness permits — the family of
-readings over admissible thresholds (§5.3, §6.5).
+precisified denotations over admissible thresholds (§5.3, §6.5).
 
 ### 6.5 The composition law for `Vague`
 
@@ -1227,13 +1337,16 @@ Normative, and complete — no operator interacts with precisification sets
 in any way not stated here:
 
 - **VC1 (Denotation).** A `Vague` computation denotes the nonempty set of
-  its admissible precisifications and no choice among them; a reading
+  its admissible soritical precisifications and no choice among them; a reading
   containing a `Vague` parameter denotes the family of precisified
-  readings. Nonemptiness is a **static proof obligation of the formation
+  denotations. Nonemptiness is a **static proof obligation of the formation
   judgment**: `(Vague P)` is well-formed at `A` only under a discharged
   judgment `⊢ ∃a:A. P(a)` — supplied by the construct's definition (the
   library's admissibility predicates are defined nonempty) or by the
-  mapping when it introduces the parameter; an empty admissibility set is
+  mapping when it introduces the parameter. The formation evidence must also
+  establish that `P` describes ordered or overlapping sharpenings of one
+  soritical concept rather than unrelated discrete alternatives; an empty
+  admissibility set is
   thereby a failure to form the term, never an evaluation outcome.
 - **VC2 (Pointwise lifting).** Every operator — application, `Bind`, the
   logical operators, quantifiers, force constructors, question formers,
@@ -1253,11 +1366,11 @@ in any way not stated here:
   content; handler placement is a fact about term structure, never about
   the precisification choice.
 - **VC5 (No resolution).** A `Vague` parameter is never resolved by
-  `Context` and never coerced inside the core. A reading that commits to
-  a precisification says so explicitly, with a library precisification
-  constant or an exact value — and the commitment must itself pass the
-  recovery test. Absence of commitment is `Vague`; absence of the
-  dimension is nothing at all (§1.4); the two are never conflated.
+  `Context` and never coerced inside the core. A reading that fixes a
+  soritical boundary says so explicitly, with an exact value that itself
+  passes the recovery test. Intended but underspecified discrete values use
+  constrained `Context`; a genuinely no-particular-value discrete use has no
+  baseline former (§14); absence of the dimension is nothing at all (§1.4).
 
 ## 7. Speech acts and discourse
 
@@ -1455,8 +1568,9 @@ names. Each indicator's lexicon entry (§10) provides:
   13.8) is polar: `nai` refers the indicator to the **opposite end of
   its scale**, and the pair lexeme is the lexicon *naming* that pole
   (`.uinai` = unhappiness). Where no pair is listed, the documented
-  fallback is therefore `Scalar Opposite` over the relation — the
-  antipode, exactly CLL's rule — and lexicon review prefers naming the
+  fallback is therefore `(Scalar Opposite D R)` over the relation and the
+  entry's fixed or contextually bound domain D — the antipode,
+  exactly CLL's rule — and lexicon review prefers naming the
   pole. Every grammatical `nai` attachment thus has a denotation, by
   named pole or antipode, exhaustively and exclusively.
   The pair carries its own host-force profile, inheriting the entry's
@@ -1785,10 +1899,13 @@ order** (P18's surface-scope doctrine; CLL 16.2), scoping across an
 I-connected tail and across a `tu'e…tu'u` group when the syntax makes
 that group the matrix; bare selbri variables take the implicit
 `su'o` of the `bu'a` row. Topic `zo'u` → the `Topic` schema (§12):
-the topic binds normally, and a `Vague` `TopicResolution` — fill an
-admissible unfilled place of the open comment frame, or
-`srana`-aboutness to the closed comment — resolves the deliberately
-vague link (CLL 19.4's fish; pin P26); no segment-state effect
+the topic binds normally, and a constrained `Context` retrieves one intended
+`TopicResolution` — an admissible unfilled place of a single-bridi open
+comment frame, or coarse `srana`-aboutness to the closed comment (CLL 19.4's
+fish; pin P26). The surface does not determine which resolution was intended;
+the core preserves it as one typed `Context` site, not an existential
+disjunction over every admissible resolution. Cross-clausal place-linking is
+gap-registered; no segment-state effect
 (`ni'o` owns segments). `ko` → fills its place with the **active
 addressee** (the `doi`-updated `do` binding, falling back to the
 utterance's Audience) and ⊳ marks the **nearest performed clause** as
@@ -1885,6 +2002,11 @@ transparent (`na je'a broda` ≡ `na broda`) — except that an affirmer
 ⊳ **overrides inherited negation** in a pro-bridi expansion
 (`ja'a go'i` over a negative template removes the `na`; pin P31);
 `Scalar` gains no fourth kind, emphasis is absence or `ba'e` focus.
+Applied `na'e`/`to'e`/`no'e P` bind the applicable domain visibly:
+`((NAhE P) fills…) ↦ (Bind {$d :: ContrastDomain ρ(P)}
+(Context domain-constraint deps…)
+{((Scalar OtherThan|Opposite|Neutral $d P) fills…)})`; the constraint and
+dependency profile come from the lexical entry and resolved reading (§6.3).
 Sentence-level **logical** connection (`.i je`, `.i ja`, …) → **one
 performance of the connected content** — `(Assert (∨ c₁ c₂))` for
 `.i ja`, which forces the uniform rule; the host's single force is
@@ -1892,17 +2014,17 @@ shared by the connection (a force conflict has no resolved reading);
 the schema is stated for the content-taking forces (`Assert`,
 `Command`) — an interrogative host queries the connected content;
 UI targeting distinguishes the compound act from its clauses (pin
-P32). `.i joi` and the non-logical ijoiks stay in the
-discourse-joining arm (`Do`) of the `joi` row — one act per sentence,
-the established reading. `.i TAG bo` → the same single performance with both event
+P32). Constitution-bearing `.i joi` and the other non-logical ijoik
+performance cases are gap-registered pending the indexed constitution and
+compound-performance clauses (§14). `.i TAG bo` → the same single performance with both event
 binders exposed and the tag conjunct inside:
 `(Assert (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))` — never
 closed contents beside free event variables. Jek at the tanru-unit
 locus → `TanruLinkConnect` (§12; pin P33): shared head asserted once,
-one `Vague` link per conjunct, connective over the link applications;
-distinct-head units connect as whole predications; joik at either
-tanru locus → the mixture semantics, `nai` there constraining the
-mixture kind to other-than-named alternatives. BIhI: `X bi'o Y` →
+one constrained-`Context` intended link per conjunct, connective over the link
+applications; distinct-head units connect as whole predications. Joiks at
+either tanru locus are gap-registered pending the constitution programme.
+BIhI: `X bi'o Y` →
 the ordered `Interval` (a `Set` object) with GAhO endpoint kinds;
 `bi'i` → ⊳ symmetrization (normalize endpoint order with their
 kinds) then the same; `mi'i` → `MetricBall` (§12 — no endpoint
@@ -1912,12 +2034,13 @@ host place, whose lexical semantics does the rest. BIhI at tanru and
 sentence loci: **no standard resolved mapping exists** (CLL 14.16
 says no meanings have been found) — a documented no-mapping, and an
 implementation must not invent one. Non-logical: `jo'u` → `Combine`; `ce` → set;
-`ce'o` → list; `fa'u` → `ZipWith`; `joi` **by syntactic position** —
-sumti `joi` → group formation with the mixture kind a **visible**
-`Vague` bind over `AdmissibleMixture` (§12); tag/facet
-joining → `∧`; discourse joining → `Do`; residual genuinely-unspecified
-connection → `Vague` over the connecting relation; `ku'a`/`jo'e`/`pi'u`
-→ `∩`/`∪`/`×`.
+`ce'o` → list; `fa'u` → `ZipWith`; exact tag/facet `joi` joining → `∧` where
+it merely conjoins facets over an already shared event. Sumti, tanru/property,
+and sentence/event `joi` uses that require a constituted whole have no baseline
+lowering until §14's adopted constitution programme is completed; there is no
+fallback `Vague` connecting relation. Official `ju'e` likewise has no baseline
+lowering pending its separate vague-connective adjudication (§14).
+`ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
 
 **Events, tense, modals** (P8, P24). Each bridi introduces its event
 existentially unless shared explicitly. Tense/aspect/spatial cmavo and BAI
@@ -2005,12 +2128,16 @@ place, counting converted places; P12, a rule of `ka` alone — the
 experimental lambda-prenex
 `ce'ai` names binder order explicitly where multiple readings arise); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
 the abstraction relations with reference outside; `mo'e` → the
-`AmountValue` numeric crossing; `tu'a X` → `Vague` abstraction
-constrained by shape + `srana`-aboutness, **sort selected by the host
-place** (an event place gets an event-sorted abstraction); `jai`+tag →
+`AmountValue` numeric crossing; `tu'a X` → constrained `Context`
+retrieval of the intended abstraction, constrained by shape +
+`srana`-aboutness, **sort selected by the host place** (an event place gets an
+event-sorted abstraction). The resolved reading declares which governors, if
+any, the site depends on; enclosing binders are not inherited automatically.
+`jai`+tag →
 explicit role promotion, old x1 to the fillable `fai` place (library
-expansion); bare `jai` → participant raising out of the abstraction-x1
-with the role `Vague` (§6.1); `la'e`/`lu'e` → interpretation /
+expansion); bare `jai` → participant raising out of the abstraction-x1 with
+the intended admissible role retrieved by constrained `Context` under the same
+declared-dependency rule (P14); `la'e`/`lu'e` → interpretation /
 sign-of crossings.
 
 **Questions and answers** (§8, P9). `xu` → `Polar`; `ma`/`mo`/`fi'a`/
@@ -2214,10 +2341,11 @@ AdmissibleTolerance : Number × Precision → Fn<(Number), Content>
 
 Position matters (CLL 18.9), and the numeral's value is what changes:
 a prefix or medial `ji'i` numeral **denotes the computation**
-`(Vague (AdmissibleTolerance n prec))` — a Vague-selected `Number`,
+`(Vague (AdmissibleTolerance n prec))` — a `Number`-valued
+precisification family,
 bound at its use site like any effectful operand (`prec` the
 numeral's own precision descriptor); a suffix-`ji'i` numeral likewise
-denotes a Vague-selected `Number`, over the **rounding preimage** —
+denotes a `Number`-valued precisification family over the **rounding preimage** —
 `AdmissibleRounding : Number × Precision × Direction → Fn<(Number),
 Content>` admits the numbers whose rounding at `prec` toward the
 `ma'u`/`ni'u` direction (both sides unmarked; `Direction` the closed
@@ -2536,7 +2664,8 @@ unfilled row ρ:
 
 ```text
 topic zo'u comment ↦
-(Bind {$res :: TopicResolution<ρ,T>} (Vague (TopicAdmissible t R))
+(Bind {$res :: TopicResolution<ρ,T>}
+      (Context (TopicAdmissible t R) deps…)
   {(∨ (∧ (= $res (PlaceFill ℓ₁)) (Close (At R ℓ₁ t)))
       …one disjunct per ℓ ∈ CompatibleLabel<ρ,T>…
       (∧ (= $res About)
@@ -2552,46 +2681,42 @@ topic zo'u comment ↦
 ```
 
 CLL's fish (`le finpe zo'u citka`) is the `PlaceFill` choice — eater
-or eaten; `tu'e…tu'u` scopes one topic binder over the sequence's
-`Do`.
+or eaten as distinct admissible `Context` resolutions; `About` is the
+available coarse intention. `deps…` is the occurrence's declared dependency profile. The
+schema is defined only for one open-bridi comment. `tu'e…tu'u` may scope a
+topic over a sequence, but cross-clausal place-linking within that sequence is
+gap-registered (§14); explicit anaphora and coarse `About` remain available.
 
-**Mixture admissibility** (sumti `joi`). The mixture kind — *how*
-the components compose into the group (mass, team, aggregate, …) — is
-`Vague`, bound visibly:
-
-```text
-AdmissibleMixture : Referents<T>
-   → Fn<(PredTerm⟨x1:Referents<Group<T>>, x2:Referents<T>⟩), Content>
-   ; admissible values: composition relations refining gunma for the
-   ; given components — the §6.1 mixture vagueness, typed; nonempty
-   ; by construction (gunma itself is the trivial refinement — the
-   ; VC1 witness)
-```
-
-The sumti-`joi` group formation binds one:
-`(Bind {$mix :: PredTerm⟨…⟩} (Vague (AdmissibleMixture base))
-{… (∧ (gunma $g base) ($mix $g base)) …})`.
+**Constitution-bearing `joi`** (reserved baseline gap). The prior
+`AdmissibleMixture`/`Vague` analysis is rejected: a positive use must not
+succeed through an unintended connecting relation, and no evidence requires a
+hidden mixture-kind value. The adopted direction is one indexed constitution
+programme over `gunma`-style relations for group, event, and compatible
+predicate results. Until its category-specific laws are stated, sumti,
+tanru/property, and sentence/event `joi` have no baseline library expansion
+(§14); exact tag/facet conjunction remains ordinary `∧`.
 
 **Tanru link connection** (jek at the tanru-unit locus; pin P33).
-`TanruLinkConnect`: for a shared head, bind one `Vague` link per
-conjunct (each with its own admissibility), assert the head
+`TanruLinkConnect`: for a shared head, retrieve one intended admissible link
+per conjunct through constrained `Context`, assert the head
 predication once, and join the link applications with the connective —
 
 ```text
 ((TanruLinkConnect ⊙ M₁ M₂ H) fills…) ≝
-(Bind {$l1 :: PredTerm ρ(H)} (Vague (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₁ H $r)}))
-      {$l2 :: PredTerm ρ(H)} (Vague (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₂ H $r)}))
+(Bind {$l1 :: PredTerm ρ(H)}
+        (Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₁ H $r)}) deps₁…)
+      {$l2 :: PredTerm ρ(H)}
+        (Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₂ H $r)}) deps₂…)
   {(∧ (H fills…) (⊙ ($l1 fills…) ($l2 fills…)))})
 ```
 
-with ⊙ the jek's operator; links bound first so the connective ranges
-over fixed precisifications; NA/SE/NAI decorate ⊙ as at any locus.
+with ⊙ the jek's operator and each dependency profile declared by the
+resolved reading; links bind first so the connective ranges over fixed
+intended values. NA/SE/NAI decorate ⊙ as at any locus.
 Distinct-head units connect as whole predications —
-`(⊙ ((Tanru M₁ H₁) fills…) ((Tanru M₂ H₂) fills…))` — and a joik at
-either locus routes to the mixture semantics (`joi`'s arm), with
-`nai` there constraining the Vague mixture kind to admissible
-alternatives other than the named one (§6.3's alternative-set
-discipline at the mixture domain).
+`(⊙ ((Tanru M₁ H₁) fills…) ((Tanru M₂ H₂) fills…))`. A joik at either
+tanru locus is constitution-bearing and gap-registered pending the indexed
+programme; `nai` supplies no fallback discrete-choice semantics.
 
 **MEX:** by metalanguage recursion over `Natural` and lists:
 `(te'a x 0) ≝ 1`, `(te'a x (n+1)) ≝ (× x (te'a x n))`;
@@ -2601,10 +2726,10 @@ n)` (undefined past the end — a projective definedness condition,
 §4.9); operators are functions and `me'o` mentions their
 expression signs (§7.5); `AmountValue` per §9.2.
 
-**Tanru links:** named precisification constants — `MannerLink`,
+**Tanru links:** named exact-link constants — `MannerLink`,
 `MaterialLink`, `PurposeLink`, `SourceLink`, `InstrumentLink`,
 `ResemblanceLink`, … — each a relation of the head row asserting the
-modifier's specific bearing; usable wherever a resolved reading commits
+modifier's specific bearing; usable wherever a resolved reading recovers
 (§6.2), each satisfying `TanruAdmissible` by construction.
 
 ## 13. Pin annex
@@ -2661,8 +2786,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   converted places; multiple candidates are distinct readings.
 - **P13** No implicit coercions among abstraction sorts; named explicit
   crossings; dictionary adjudicates sort drift.
-- **P14** `tu'a` = `Vague` abstraction (shape conjunct + `srana`
-  aboutness, host-place sort); `co'e`/`do'e` = `Context` at their types.
+- **P14** `tu'a X` retrieves the occurrence-specifically intended
+  host-sorted abstraction through `Context`, constrained by abstraction shape
+  and `srana`-aboutness to X. The speaker need not articulate it exactly; a
+  cooperative hearer is expected to recover a discourse-sufficient value.
+  Bare `jai` likewise retrieves the intended admissible raised role; tagged
+  `jai` fixes the role exactly. Each site declares its governor dependencies;
+  none are inherited automatically. `co'e`/`do'e` remain ordinary `Context`
+  retrievals at their types.
 - **P15** `zo'e` ≡ omission; distinct sites distinct; `zu'i` adds
   typicality as an **admissibility condition on the retrieval** (part
   of the site's key, §5.3): only the place's typical filler is an
@@ -2728,10 +2859,12 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   set-objecthood at a lexical place does work member-wise predication
   plus `SetOf` cannot.
 - **P26** Prenex order is scope order (CLL 16.2; the P18 surface
-  doctrine at the prenex); topic `zo'u` resolves by a `Vague`
-  `TopicResolution` — an admissible unfilled place of the open
-  comment frame, or `srana`-aboutness to the closed comment
-  (CLL 19.4's own vagueness, typed); no segment-state effect.
+  doctrine at the prenex); topic `zo'u` retrieves one intended
+  `TopicResolution` through constrained `Context` — an admissible unfilled
+  place of a single-bridi open comment frame, or coarse `srana`-aboutness to
+  the closed comment. CLL 19.4 establishes that the surface does not choose
+  the fish's place, not that one use asserts every admissible place. Compound
+  cross-clausal place-linking is gap-registered; no segment-state effect.
 - **P27** Imperative and address: `ko` = the active addressee with
   command force on the nearest **performed** clause — no force
   extrusion through `Reify` or quotation; `doi` performs `Vocative`
@@ -2759,13 +2892,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P32** Sentence-level **logical** connection is **one performance
   of the connected content** (forced by `.i ja`; stated for the
   content-taking forces, interrogative hosts querying the connected
-  content; `.i joi` stays in the discourse `Do` arm); `.i TAG bo`
+  content). Constitution-bearing `.i joi` is gap-registered pending the
+  indexed event/compound-performance programme; `.i TAG bo`
   exposes both event binders with the tag
   conjunct inside the performed content.
 - **P33** Jek at the tanru-unit locus = `TanruLinkConnect`: shared
-  head asserted once, one `Vague` link per conjunct, connective over
-  the link applications; distinct heads connect as whole
-  predications.
+  head asserted once, one constrained-`Context` intended link per conjunct,
+  connective over the link applications; distinct heads connect as whole
+  predications. Joiks at this locus remain constitution gaps.
 - **P34** `vu'o` distributes an incidental clause **once per
   immediate connectee** (never collectively over `Combine`, never
   member-distributed into a plural connectee); restrictives restrict
@@ -2781,7 +2915,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   recovery of the intended function — never a constant-function
   default.
 - **P37** `ji'i` is position-indexed, and both positions denote
-  `Vague`-selected `Number`s: prefix/medial over the
+  `Number`-valued `Vague` families: prefix/medial over the
   `AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
   preimage (the stated digits exact by the region's construction),
   directionally under `ma'u`/`ni'u`; both regions VC1-nonempty.
@@ -2792,6 +2926,39 @@ Meanings this specification currently assigns no analysis, each with the
 reason; a gap is an obligation on future revisions, never a license to
 approximate:
 
+- **No-particular-value discrete choice (`SomeAdmissible` candidate).** The
+  analyzed baseline has no construction whose speaker both intends no
+  particular discrete alternative and commits to existential success through
+  any admissible one. Tanru, `tu'a`, bare `jai`, and topic links have intended
+  values and use constrained `Context`; `na'e` denotes a direct coarse region;
+  constitution-bearing `joi` is the next gap below. Official `ju'e` (“vague
+  non-logical connective”) is a real surface candidate, but CLL and the
+  dictionary do not define whether its positive and negated uses have
+  existential-choice, contextual, or other truth conditions; it remains
+  unmapped pending its own source/usage adjudication. If that work or other
+  speaker evidence establishes a genuine counterexample, the recorded
+  candidate is a non-exporting
+  `RefComp<T>` with one ordinary nondeterministic branch per admissible value
+  (positive existential, negation denying all), never a `Vague`
+  precisification family. Until such a witness and pin exist, `co'e`/`do'e` or
+  any other form receives no exceptional weak reading.
+- **Constitution-bearing `joi` and non-logical sentence connection.** The
+  former `AdmissibleMixture`/`Vague` choice analysis is rejected. The adopted
+  design direction is an indexed `gunma` constitution family: non-exhaustive
+  base constitution plus a complete strengthening, with category-specific
+  group, event, and property laws and a typed compound-performance plan. Its
+  exact component bases, event trace/cause/participant laws, property
+  contribution basis, force/targeting clauses, and `nai` behavior are not yet
+  all stated. Therefore sumti `joi`, tanru/property joiks, `.i joi`, and other
+  constitution-bearing sentence ijoiks have no baseline lowering. Exact
+  tag/facet `joi` that merely conjoins predications over an already shared event
+  remains ordinary `∧`.
+- **Cross-clausal topic place-linking.** P26's `PlaceFill` arm is defined only
+  for one open bridi. A topic scoped over a conditional or `tu'e…tu'u` sequence
+  may bear different place relations to different clauses; no single residual
+  row represents that. Coarse `About` and explicit internal anaphora are
+  analyzed, while a typed comment-template treatment is the recorded future
+  candidate.
 - **`da'i` and counterfactual/hypothetical mood.** The discursive `da'i`
   marks content for evaluation under a hypothetical (possibly
   contrary-to-fact) scenario; CLL gives it no scope semantics, no
@@ -2895,11 +3062,11 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e` | §10 |
-| plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | — | §3, §5 |
-| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent` (§7.4) | — | — |
+| plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | constitution-bearing `joi` | §3, §5 |
+| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent` (§7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
-| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a` (§14); the non-numeric MOI composite | — |
+| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; constitution joiks/ijoiks; `ju'e`; the non-numeric MOI composite (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
 | repair, prosody | §11 ⊳ | — | registered | §13 |
 
@@ -3158,8 +3325,9 @@ definability:
   both si'o concept" (inert operands in §16.2's sense), x4 is the
   resolved
   reading `TanruAdmissible` admits, and x5 is the occasion that
-  resolves it: the dictionary itself records tanru meaning as
-  per-occasion, which is §6.1's Vague doctrine in an official row.
+  resolves it: the dictionary itself records an occasion-specific meaning,
+  supporting §6.1's constrained-`Context` doctrine rather than a fixed lexical
+  link or a no-fact-of-the-matter family.
   (`Tanru` the operator stays Class O — composition is an operator —
   but its shadow relation needs no coinage at all.) Further: `xusra`
   (assertion),

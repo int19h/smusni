@@ -76,38 +76,46 @@ collapsing any two produces wrong meanings:
   (`lo mlatu na jbena` keeps *the* cat; `∃` would not). Why not ι (the
   definite)? xorlo `lo` claims no uniqueness. This is the dynamic
   indefinite of DRT/DPL, plural from birth.
-- **`Context`** — *recover*. Witness: `mi klama` (destination), `co'e`
-  (the relation we both know), `zu'i` (the usual value). Why not `Refer`?
-  Nothing is introduced or described — `mi na dunda` denies the giving of
-  the contextual thing, not the existence of a describable gift. Why not
-  a free variable? Free variables have no discipline: `Context` declares
-  its type, its dependencies, and its site/key identity (one retrieval
-  per site per performance — which is exactly why `mi .e ti klama` shares
-  one destination, and why `ko'a du ko'a` is reflexively true under the
-  keyed rule).
-- **`Vague`** — *waive*. Witness: the tanru link (`sutra klama` — CLL
-  says the relation is constitutively open), `tu'a lo cukta`
-  ("something about the book" — deliberately withheld), `so'i` (no fact
-  fixes where "many" starts). Why not `Context`? The recovery test: no
-  cooperative hearer is expected to land on one value, and communication
-  has not failed when they don't. Why not ambiguity (several readings)?
-  The speaker uttered *one* reading whose meaning is the constrained
-  family; disambiguation upstream cannot help. The composition law
-  (spec §6.5) makes the family compute like a meaning: pointwise lifting,
-  consistent choice per binding site, supertruth where truth simpliciter
-  is needed.
+- **`Context`** — *intend and recover*. Witness: `mi klama`
+  (destination), `co'e` (the relation meant here), `zu'i` (the usual
+  value), `sutra klama` (the occurrence's intended modification link), and
+  `tu'a lo cukta` (the book-related abstraction meant but not spelled out).
+  Why not `Refer`? Nothing is introduced or described — `mi na dunda`
+  denies the giving of the contextual thing, not the existence of a
+  describable gift. Why not a free variable? Free variables have no
+  discipline: `Context` declares its type, admissibility constraint,
+  dependency profile, and site/key identity. Why not require exact recovery?
+  A speaker may be unable or unwilling to articulate the intended relation
+  more finely; successful communication requires only a recovered value whose
+  differences are irrelevant to the discourse. The resolved term still uses
+  one exact value, so this pragmatic tolerance adds no semantic branching.
+- **`Vague`** — *leave a soritical boundary unfixed*. Witness: `so'i`
+  (no fact fixes where "many" starts), a gradable cutoff, or `ji'i`'s
+  tolerance edge. Why not `Context`? There is no intended cutoff to recover,
+  even approximately. Why not use the same device for discrete tanru/topic
+  alternatives? Supertruth would require the fish to eat and be eaten and a
+  tanru to satisfy every admissible link. Existential choice fares no better
+  at intended-value constructs: an unintended link can make the positive true,
+  while negation denies all links. The composition law (spec §6.5) therefore
+  applies only to sharpenings of one soritical concept: pointwise lifting,
+  consistent precisification per site, and supertruth where invoked.
 
 The classification of each Lojban construct into this triad (or into
 **absence** — no machinery at all) is itself normative (spec §6.1), with
-the recovery test printed as the decision rule. The borderline entries
-were fought over and settled as follows: `co'e`/`do'e` sit with `zo'e` in
-`Context` because CLL presents them as the ellipsis family — recovery
-expected; the tanru link stays `Vague` because CLL's ch. 5 catalogue of
-"possible relations" is offered as examples, not as a recovery target —
-after context has done all it can, a family remains; gradable predication
-splits — *which scale* is `Context` (say the wrong scale and you've
-misunderstood), *where the cutoff sits* is `Vague` (sorites); and
-unmarked distributivity is **absence**, not a parameter (see §2.5).
+the recovery test printed as the decision rule. The disputed entries settle
+coherently: `co'e`/`do'e`, tanru, `tu'a`, bare `jai`, and topic links all
+convey occurrence-specific intended values through constrained `Context`;
+conventionality changes resolver priors, not semantic type. Gradable
+predication splits — *which scale/domain* is `Context` (say the wrong one and
+you have misunderstood), *where a soritical cutoff sits* is `Vague`; scalar
+`OtherThan` directly denotes the complement region, not a hidden finer choice;
+and unmarked distributivity is **absence**, not a parameter (see §2.5).
+No analyzed construction requires the possible `SomeAdmissible` existential
+choice former. Official `ju'e`, explicitly glossed as a vague non-logical
+connective but left without compositional truth conditions, is the concrete
+gap-level candidate; its source and usage adjudication must establish whether
+it has genuinely no particular intended connection before that former can
+enter the baseline.
 
 ### 1.4 Projective content: `Presuppose` and `Supplement`
 
@@ -203,13 +211,15 @@ group gadri) — which Lojban has.
 
 Three relation formers, three witnesses: `mi klama ti zi'o` (a relation
 with the role *gone* — neither `zo'e` nor closure can remove a role);
-`sutra klama` (constitutive modification vagueness — §1.3); `ta na'e
+`sutra klama` (an intended but underspecified modification link — §1.3);
+`ta na'e
 melbi` (scalar otherness is not `¬` — it is *stronger*: CLL 15.4, a
 selbri negation "asserts that a relationship exists other than that
 stated" and "remains an assertion of some specific truth", so `na'e P`
-denies P's stated region *and* positively asserts an admissible
-alternative on the recovered scale; `to'e` asserts the antipode, `no'e`
-the midpoint. An earlier analysis had `na'e` weaker than
+denies P's stated region *and* positively asserts the complementary coarse
+region of the recovered `ContrastDomain`; `to'e` asserts the antipode,
+`no'e` the midpoint. No hidden fine alternative is selected. An earlier
+analysis had `na'e` weaker than
 `¬`; the primary text overruled it, and the King-of-France passage of
 CLL 15.4 — selbri negations "still make affirmative claims" — is the
 decisive witness). Why not lexicalize scalar forms per predicate? The
@@ -218,8 +228,11 @@ thousands of entries.
 
 The `Tanru` analysis has independent lexical corroboration: the gismu
 `tanru`'s official row gives the compound its "meaning ⟨4⟩ in
-usage/instance ⟨5⟩" — occasion-relative resolution as a dictionary
-fact, adopted as the operator's shadow relation in spec §16.5.
+usage/instance ⟨5⟩" — occasion-specific intended resolution as a dictionary
+fact, adopted as the operator's shadow relation in spec §16.5. CLL 5.2's
+warning that a speaker risks being misunderstood likewise presupposes a
+speaker-side intention and fallible recovery; it does not make every listed
+link true at once.
 
 ### 1.9 `Generic`
 
@@ -302,11 +315,11 @@ operator would have to stipulate — `mi klama ti
 sepi'onai ti` negates just the instrument conjunct (`klama ∧ ¬pilno`)
 while bridi `na` negates the whole (`¬(klama ∧ pilno)`), and tense
 chains (`pu pu`) need precisely `∧`'s left-to-right accessibility for
-their anchor anaphora. The jobs such an operator would claim
-distribute cleanly: sumti `joi` is
-group formation, discourse joining is `Do`, and the genuinely
-unspecified connection is a `Vague` relation (spec §6.1). **Cost.**
-None found; the decomposition is pure simplification.
+their anchor anaphora. The one settled job in this neighborhood is exact
+facet conjunction. The constitution-bearing sumti/property/event `joi` cases
+are gap-registered until their indexed `gunma` laws land; no generic `Vague`
+connector fills the gap (spec §6.1, §14). **Cost.** Coverage is honestly
+narrower until that programme is complete.
 
 ### 1.14 `Bind`
 
@@ -893,18 +906,33 @@ genuinely fought:
 - **P12 (implicit `ce'u` at first unfilled place, counting converted
   places)** — subsumes the x1 tradition, matches practice, and declares
   multi-candidate cases distinct readings rather than vagueness.
+- **P14 (`tu'a`, bare `jai`, intended underspecification).** CLL 11.10 calls
+  `tu'a` a convenience that loses overt information, but its door example
+  conventionally recovers opening and its confusing cases invite repair; CLL
+  9.12/11.10 likewise leaves bare `jai`'s raised role unstated. The project
+  pins both as occurrence-specific intended values retrieved through
+  admissibility-constrained `Context`, with recovery required only to
+  discourse relevance-equivalence and dependencies declared per reading.
+  The rejected `Vague` analysis has the wrong negation and truth conditions:
+  it ranges over every admissible abstraction/role rather than the one meant.
+  A genuinely no-particular-value use would reopen the separate
+  `SomeAdmissible` candidate. Official `ju'e` is the registered surface
+  candidate, not yet a defined witness. Cost: the resolver carries real
+  semantic responsibility, and speaker and hearer may associate different
+  resolved terms with one utterance token.
 
 - **P26 (prenex scope; topic resolution).** The prenex half is
   CLL 16.2 read at face value plus the P18 surface-scope doctrine —
   the losing alternative (scope normalization independent of prenex
   order) contradicts CLL's own donkey examples. The topic half's
   evidence is CLL 19.4's fish (`le finpe zo'u citka` — "the sentence
-  doesn't say" whether it eats or is eaten): the vagueness is a
-  *place choice*, so an aboutness link beside a closed comment —
-  though it might look sufficient — cannot represent it; the
-  `TopicResolution<ρ>` union
-  makes place-fill the primary arm with `srana`-aboutness (CLL 19.10's
-  money topic) as the other. Why not the Tanru link: types don't fit —
+  doesn't say" whether it eats or is eaten): the surface leaves a place
+  choice unresolved, but that does not show that one speaker intends both or
+  neither. A constrained `Context` retrieves one intended member of the
+  `TopicResolution<ρ>` union; place-fill is available for a single open bridi,
+  with coarse `srana`-aboutness (CLL 19.10's money topic) as the other arm.
+  Cross-clausal place-linking remains a gap. Why not the Tanru link: types do
+  not fit —
   a topic is a referent, not a modifier over the head's
   row. Why no segment-state effect: `ni'o` owns segments, and two
   owners of one state need an adjudication nothing asks for.
@@ -934,12 +962,12 @@ genuinely fought:
   (harmless there — asserting a conjunction commits to both, and `∧`
   shares `Do`'s accessibility row, §5.4). The losing alternative (two
   acts plus a cross-act connective) has no act to carry `∨` at all.
-  `.i joi` stays a discourse `Do` — one act per sentence — because
-  mixture forming at the act level was never attested or needed.
+  The earlier `.i joi = Do` claim is withdrawn pending the adopted
+  constitution/compound-performance programme; it is a gap, not a fallback.
 - **P33 (tanru-unit jeks).** With a shared head, connecting whole
   units would duplicate the head predication (two houses from one
-  `zdani`); binding one `Vague` link per conjunct and connecting the
-  link applications keeps one head and distributes classically
+  `zdani`); binding one constrained-`Context` intended link per conjunct and
+  connecting the link applications keeps one head and distributes classically
   (`H ∧ (l₁ ∨ l₂)` ≡ the unit-level disjunction) while keeping one
   discourse site per referent. Distinct heads have nothing to share,
   so they connect as whole predications.
@@ -959,7 +987,7 @@ genuinely fought:
 - **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform
   tolerance would erase the rounding reading (suffix `ji'i` with
   `ma'u`/`ni'u` direction) that CLL states. Both positions denote
-  `Vague`-selected Numbers over different regions — tolerance about
+  `Number`-valued `Vague` families over different regions — tolerance about
   the anchor vs the rounding preimage of the stated numeral (each
   nonempty by VC1) — so the underlying quantity is always the bound
   Number, never an unconstrained "true value".

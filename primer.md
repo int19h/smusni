@@ -30,12 +30,12 @@ Three promises the core makes, which this primer keeps returning to:
 1. **It resolves what CLL left accidentally unsettled.** Where the text of
    CLL just never decided something, the core picks — openly, with the
    choice written down as a numbered "pin" and an argument for it.
-2. **It refuses to resolve what Lojban deliberately leaves open.** A tanru
-   really is vague; `zo'e` really does hand the matter to context; a bare
-   sentence really carries no tense marker, and which of its several
-   readings you meant is yours to have meant. The core has machinery to
-   *say precisely that something is left open, and in which way* — this
-   may be its most unusual feature.
+2. **It distinguishes intended underspecification from genuine vagueness.** A
+   tanru normally conveys one intended link without spelling it out; `zo'e`
+   hands an intended value to context; “many” has a cutoff with no fact of the
+   matter. A bare sentence carries no tense marker, and which of its several
+   readings you meant is yours to have meant. The core says precisely *how*
+   each dimension is left open instead of putting every case in one bucket.
 3. **It never depends on any program.** The core is a definition on paper.
    It mentions no parser, no software, no error messages. Anyone can
    implement it; nobody has to.
@@ -106,9 +106,11 @@ chapter 2.) Three different
 matters:
 
 > **Not the same as!**
-> - *omitted place / `zo'e`* — context supplies a specific value; if your
->   listener can't work out which, communication failed. (`mi klama` — to
->   the place we both know about.)
+> - *omitted place / `zo'e`* — context supplies the intended value; the
+>   listener needs to recover it accurately enough for this conversation, not
+>   read the speaker's mind exactly. If no discourse-sufficient value can be
+>   recovered, clarification or repair is needed. (`mi klama` — to the place
+>   we both know enough about.)
 > - *`zi'o`* — the place is surgically removed from the relation. `mi
 >   klama ti zi'o` isn't going-with-unknown-origin, it is a
 >   four-place going that has no origin at all.
@@ -400,25 +402,28 @@ of content c on scale s" — so all your gadri skills apply to them:
 and an omitted scale is the usual contextual slot. Nothing new to learn:
 that is the point.
 
-`tu'a X` deserves its own line: "something about X," with the something
-*deliberately withheld*. Not context-recoverable — withheld. It's our
-first honest meeting with the core's third specificity category, and it
-leads straight to:
+`tu'a X` deserves its own line: “the abstraction about X that I mean, without
+my spelling it out.” The speaker is being lazy or low-precision, not normally
+asserting that any X-related event will do. The host predicate fixes the
+abstraction's sort, its relation to X constrains recovery, and context supplies
+one intended value closely enough for the discourse.
 
-## 9. Being vague on purpose
+## 9. Intended values and vague boundaries
 
-The core sorts every "unspecific" construct in Lojban with one question,
-the **recovery test**: *is your listener supposed to work out the specific
-value?*
+The core sorts every “unspecific” construct in Lojban with the **recovery
+test**: *does this occurrence have an intended value, or is there genuinely no
+fact fixing a soritical boundary?*
 
-- Yes → **`Context`**. Omitted places, `zo'e`, `co'e` (the elliptical
-  selbri — "you know the relation I mean"), `zu'i`, which scale `na'e`
-  negates on. Communication fails if recovery fails.
-- No, and there is genuinely no fact of the matter → **`Vague`**. The
-  tanru link; `tu'a`'s abstraction; where exactly "many" starts. The
-  meaning itself is a *family* of admissible precisifications, and the
-  core computes with the whole family (negate a `Vague` claim and you get
-  the family of negations — nothing collapses).
+- Intended value → **`Context`**. Omitted places, `zo'e`, `co'e`, `zu'i`,
+  the link meant by a tanru, the abstraction meant by `tu'a`, bare `jai`'s
+  intended role, a topic's place/aboutness link, and the contrast domain for
+  `na'e`. Recovery need only be relevance-equivalent; misunderstanding is
+  possible and repairable. A site also says which enclosing variables it may
+  depend on, so an intended value can either stay constant or covary.
+- No fact fixes one soritical boundary → **`Vague`**. Where exactly “many”
+  starts, how wide a neutral region is, or how far “about twenty” extends. The
+  meaning is a family of sharpenings of *one concept*, and the core computes
+  pointwise with that family. Unrelated alternative meanings never go here.
 - There is no value to give because nothing was said → **absence**.
   Tenselessness, `kau`'s exhaustivity, together-or-separately.
 
@@ -426,22 +431,23 @@ The tanru, finally, in full honesty:
 
 ```
 ; sutra klama
-(Tanru sutra klama)   ; places = klama's; the LINK is Vague
+(Tanru sutra klama)   ; places = klama's; the intended LINK is Context
 ```
 
-A `sutra klama` is a goer, with `sutra` bearing on the going *somehow* —
-fast at going, in the common precisification, but CLL (ch. 5) is explicit
-that the relation is open (a fast-food courier? goes when fast things are
-needed?).
-The core keeps a constrained open slot: any link that makes the modifier
-genuinely modify the head predication is admissible; naming one (there's a
-library of named links: manner, material, purpose…) is what a lujvo does.
+A `sutra klama` is a goer, with `sutra` bearing on the going in the way meant
+on this occasion—fast at going is the strong conventional prior, but a context
+can support another link. CLL's alternatives and warning about
+misunderstanding show that the surface does not determine the link; they do not
+make every possible link part of one truth condition. The core retrieves one
+link constrained to genuinely modify the head predication. A lujvo lexicalizes
+a link that a tanru leaves for contextual recovery.
 
 Pleasingly, Lojban already knew. The official dictionary entry for the
 gismu `tanru` (jbovlaste) reads "x1 is a binary metaphor formed with x2
 modifying x3, **giving meaning x4 in usage/instance x5**" — the
-dictionary itself says a tanru's meaning is a per-occasion resolution,
-which is exactly the analysis above stated as a place structure.
+dictionary itself says a tanru has a meaning in an individual usage. That
+supports occurrence-specific recovery; conventionality biases the resolver
+without turning a bare tanru into a lexicalized expression.
 
 ## 10. Words about words
 
@@ -552,8 +558,8 @@ is the same story with the definitions filled in.
 | `RefComp` | a computation that refers/retrieves (what `Bind` runs) | — | §3.4 |
 | `Close` | fill remaining places from context, claim an event | unmarked bridi | §4.6 |
 | `Refer` | introduce things into the conversation | `lo`/`le`/`la` | §5.3 |
-| `Context` | context supplies the specific value | `zo'e`, omissions, `co'e` | §5.3 |
-| `Vague` | admissible family, no fact of the matter | tanru link, `tu'a`, `so'i` | §5.3, §6 |
+| `Context` | recover the occurrence's intended value closely enough | `zo'e`, omissions, `co'e`, tanru, `tu'a`, topic | §5.3, §6 |
+| `Vague` | family of soritical sharpenings; no cutoff fact | `so'i`, gradable cutoffs, `ji'i` tolerance | §5.3, §6 |
 | `Referents` / `Among` / `Combine` | one-or-more things; some-of; together-with | plural sumti, `jo'u` | §3.2, §4.8 |
 | accessibility table | what later text can refer back to | `ri` across `.i`/`ja`/`naku` | §5.4 |
 | `Presuppose` | claim that survives negation | `ro`-import | §5.5 |

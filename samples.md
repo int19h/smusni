@@ -514,26 +514,30 @@ own lexical presupposition, never from `kau`.
 ; and the objection itself performs nothing beyond the display.
 ```
 
-## 8. Vagueness
+## 8. Intended underspecification and soritical vagueness
 
 ```lisp
-; sutra klama — the tanru link is Vague       [spec §6.2]
+; sutra klama — one intended link recovered at this occurrence [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
 ; ≗ (Bind {$link :: PredTerm ρ(klama)}
-;         (Vague (λ {$r :: PredTerm ρ(klama)}
-;                  {(TanruAdmissible sutra klama $r)}))
+;         (Context (λ {$r :: PredTerm ρ(klama)}
+;                    {(TanruAdmissible sutra klama $r)}))
 ;     {… (∧ (klama …) ($link …))})
+; no governor dependencies in this reading. `na sutra klama` retrieves
+; one intended admissible link at that occurrence's site and negates that claim;
+; it does not quantify over every possible tanru link.
 ```
 
 ```lisp
 ; ta na'e melbi — scalar otherness            [spec §6.3]
-(Assert (Close ((Scalar OtherThan melbi) That)))
-; scale dimension: Context; region boundary: Vague.
-; DENIES beauty AND asserts an admissible alternative standing on the
-; recovered scale (CLL 15.4: a selbri negation "remains an assertion of
-; some specific truth") — stronger than na, not weaker; to'e asserts
-; the antipode, no'e the midpoint.
+(Bind {$d :: ContrastDomain ρ(melbi)} (Context)
+  {(Assert (Close ((Scalar OtherThan $d melbi) That)))})
+; contrast domain: visible Context site; any soritical boundary: Vague.
+; DENIES beauty AND directly asserts membership in the complement of
+; beauty's region in the recovered domain (CLL 15.4: selbri negation
+; "remains an assertion of some specific truth"). No finer alternative is
+; selected; to'e uses the domain's antipode, no'e its between-region.
 ```
 
 ```lisp
@@ -541,17 +545,35 @@ own lexical presupposition, never from `kau`.
 (Bind {$book :: Referents Entity}
         (Refer (λ {$x :: Referents Entity} {(cukta $x)}))
   {(Bind {$a :: Referents Eventuality}          ; sort from djica's x2
-          (Vague (λ {$v :: Referents Eventuality}
+          (Context (λ {$v :: Referents Eventuality}
             {(∧ (∃ (λ {$c :: Content}
                  {(CoRef $v (EventOfContent $c))})) ; shape: an abstraction
-               (Close (srana $v $book)))}))      ; ... about the book
+               (Close (srana $v $book)))})
+            $book)                               ; depends on this book
     {(Assert (Close (djica Speaker $a)))})})
 ```
 
-Pinned reading: some eventuality-sorted abstraction — its content
-deliberately withheld — pertaining to the book, the sort fixed by the
-host place (`djica` x2). The shape conjunct matters: aboutness alone
-would admit nearly anything.
+Pinned reading: the occurrence-specifically intended eventuality-sorted
+abstraction pertaining to the book, its sort fixed by the host place
+(`djica` x2). The speaker declines to spell it out; the hearer need only
+recover it closely enough for the discourse. The shape conjunct matters:
+aboutness alone would admit nearly anything, and negation must target this
+one intended abstraction rather than every book-related event.
+
+The positive/negative pattern is uniform for tanru links, `tu'a`
+abstractions, bare-`jai` roles, and topic resolutions (with `C` the at-issue
+content built from the recovered value):
+
+```lisp
+; positive                                  ; negative
+(Bind {$v :: T} (Context P deps…)           (Bind {$v :: T} (Context P deps…)
+  {C[$v]})                                    {(¬ C[$v])})
+```
+
+Within either resolved reading, the occurrence site produces one `$v`; the
+logical operator consumes a claim containing that value. There is no positive
+existential search for a truth-making alternative and no negative universal
+denial of all admissible alternatives.
 
 ```lisp
 ; ta barda — gradable predication: Context scale, Vague cutoff  [spec §6.4]
@@ -575,8 +597,11 @@ would admit nearly anything.
   {(Assert (Close ($r Speaker Audience)))})
 ```
 
-The recovery test draws this line: `co'e` expects the hearer to recover
-*the* relation; `tu'a` waives recovery.
+Both `co'e` and `tu'a` pass the intended-value recovery test. `co'e`
+retrieves the intended relation at relation type; `tu'a` retrieves a
+host-sorted abstraction under shape/aboutness and dependency constraints.
+Neither has a baseline no-particular-value reading. `Vague` begins only where
+there is no intended soritical boundary, as in the cutoff examples above.
 
 ## 9. Abstractions
 
