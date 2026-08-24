@@ -50,19 +50,40 @@ FA reordering and `se`-conversion pure notation: the order of fills
 never was part of the meaning. **Cost.** The type theory needs
 labelled records — which it needs for `fi'a` anyway.
 
-### 1.2 `Close` as a defined operation
+### 1.2 Clause formation and `Close`
 
-**Job.** An unmarked bridi with omitted places still makes a complete
-claim. **Witness.** `mi klama` — committed to a contextually recoverable
-destination and an event, not to "some destination" and not to nothing.
-**Why not existential closure of omitted places?** Negation: `mi na
-klama` does not mean "there is no destination I go to"; the contextual
-destination stays fixed under negation, an existential would not. **Why
-not a primitive?** Because its expansion — event quantification plus one
-`Context` per defaultable place — *is* its content; a primitive would
-just hide the expansion. The spec therefore defines it normatively and
-keeps the name for exposition. **Cost.** Fully explicit terms are
-verbose; that is the assembly-language bargain.
+**Job.** An unmarked bridi with omitted places still makes a complete claim,
+while tense and abstraction must see the clause eventuality before it closes.
+**Witnesses.** `mi klama` needs a contextually recoverable destination and a
+going event; `ta pu du lo mi zdani` needs a past state although `du` has no
+lexical event place. **Why not existential closure of omitted ordinary
+places?** Negation: `mi na klama` does not mean “there is no destination I go
+to”; the contextual destination stays fixed under negation. **Why not add an
+event/situation place to every row?** That is a coherent alternative, not a
+category error. It loses the factorization test here: binary `=` is also used
+in case splits, label guards, definitions, and proofs, and `+` is a
+value-producing function rather than a clause. Those ordinary signatures
+must remain, so event-indexing their declarative uses would add lifted twins
+rather than eliminate machinery; those twins do exactly the job
+`StateClause` factors once. It would also duplicate lexical events on ordinary
+brivla unless it retained the same direct-vs-holding distinction. The type
+`ClauseContent = EFn<Eventuality,Content>` instead leaves one event open:
+`DirectClause` uses the lexical event, `StateClause` supplies a holding state
+only when no single lexical event survives, and `CloseClause` existentially
+closes the common interface. `Close` is the convenient actual-CAhA composition
+of these defined steps; it is a core form for that reading, not a claim that
+surface omission defaults to actual. **Why is only `StateClause` primitive?** The
+direct and closing routes are λ and ∃, but no existing operation constructs a
+state of arbitrary complete content holding. **Cost.** Logical and quantified
+composition must say whether it preserves, joins, branches, or replaces
+component events; §9.3 states that ledger rather than hiding it.
+This argument assumes neither that every `du` claim is true nor that every
+mathematical sentence is necessary. The ordinary equality/arithmetic axioms
+decide each claim; a true mathematical holding State may be unbounded, and a
+false one remains described but nonactual.
+Reopen this factorization if a uniform situation-argument calculus can derive
+ordinary binary equality/value functions and every clause-event law from one
+signature family without duplicating the non-clausal operations.
 
 ### 1.3 The specificity triad: `Refer`, `Context`, `Vague`
 
@@ -366,6 +387,61 @@ deliberately continuation-typed. Eberban has no `Bind` because it has
 no distinct computation type to eliminate — see §2.4. **Cost.** Two binder forms
 (`Let`/`Bind`) where one calculus habit expects one; the distinction
 is load-bearing and must be taught.
+
+### 1.15 `ClauseContent`, `StateClause`, and `EventOfContent`
+
+**Job.** Give every declarative clause one available eventuality without
+pretending every predicate lexically has an event argument. **Coverage
+witnesses.** `ta pu du lo mi zdani`, `lo nu ta du lo mi zdani`, and `li re
+su'i re ca'a du li vo` are grammatical: tense, event abstraction, and CAhA
+all apply to equality, whose core meaning is plain `=`. The former model could
+not lower any of them. **Why not wrap every eventive clause in a state of its
+event occurring?** That double-indexes `mi klama`: tense and BAI should target
+the going itself, not a second state. `DirectClause` therefore preserves the
+lexical event; only eventless or scope-composed content uses `StateClause`.
+**Why not leave compounds untyped?** Quantifiers cannot share one event among
+all instantiations, conjunction needs both components, disjunction may be true
+through either, and negation has no positive component event. The clause
+forms make those decisions explicit: quantified and conjunctive claims take
+holding/joint states, disjunction is branch-relative, and negation takes a
+negative state.
+
+**Why this model interface?** `StateClause` is a content-to-event-open
+constructor, while `EventOfContent` is its inert object projection; neither is
+a truth-capture operator. The operand runs exactly once only when the clause
+is evaluated, no `Bool` is returned, and no syntax is exposed. `Reify` already
+provides the only route from content to a first-order proposition and `Holds`
+the route back, so the event projection adds no hidden evaluation power.
+Fine's truthmaker semantics is a useful comparative model here: conjunctive
+verification fuses component states, disjunctive verification takes an
+alternative, and negation requires an explicit policy. It does not decide
+Lojban. This project chooses negative holding states because the owner-adopted
+coverage includes negative clauses, and requires #4 to identify conjunctive
+joint states with its `GunmaEvent` constitution rather than proliferating
+notions of “joint.”
+
+**Actuality cost and repair.** The domain contains described nonactual
+eventualities; `fasnu` says which occur at a world. A direct episode is actual
+at its evaluation world, while `ka'e` evaluates its event property in
+capability worlds. Missing CAhA cannot simply mean actual: CLL 10.19 explicitly
+uses bare `ro datka cu flulimna` and `ta jelca` for capability and says context
+disambiguates an omitted CAhA. P24 therefore makes omission reading-multiple
+among the four overt CAhA modes, with no default. Explicit `ca'a` fixes the
+actual reading and is overtly contrastive even where its `fasnu` conjunct is
+extensionally redundant. A holding State need not be bounded: a mathematical
+truth may occupy an all-time/all-space state, after which `purci`/`cabna` have
+their ordinary relation-specific results rather than failing to type.
+
+**State-relative values.** Keeping binary identity does not force every
+quantity to be rigid. “The fine-structure parameter's value is X now and may
+differ later” either uses an explicit value-of relation, or forms the
+state-sensitive value description/projection *inside* each `StateClause`.
+Binding the quantity/value outside gives the de re reading; binding/evaluating
+it inside gives the state-relative reading. Arithmetic constants and `+`
+remain rigid, while the physical value interface may vary by time, location,
+world, or scale. **Cost.** Content denotations carry an event
+intension in addition to their dynamic run, and model construction must honor
+that congruence; issue #10 must include it in the term-model exercise.
 
 ## 2. Design essays
 
@@ -930,6 +1006,19 @@ genuinely fought:
   semantic responsibility, and speaker and hearer may associate different
   resolved terms with one utterance token.
 
+- **P24 (universal clause eventuality; missing CAhA).** CLL 11.2 says `nu`
+  captures the event or state of the bridi considered as a whole, while the
+  grammar permits tense, CAhA, ROI, and ZAhO on `du` and other eventless
+  selbri. `ClauseContent` supplies the common typed target. Direct lexical
+  episodes preserve their event; `StateClause` handles equality, negative,
+  quantified, generic, and compound claims; disjunction retains a successful
+  branch event. For actuality, the tempting “bare assertion always actual”
+  rule is too strong without a reading qualification: CLL 10.19 explicitly
+  says missing CAhA can be actual or potential and that context disambiguates.
+  The pin therefore treats omission as reading-multiple among the four named
+  CAhA modes. This preserves ordinary actual `mi citka`, CLL's capability
+  `ro datka cu flulimna`, and explicit `ca'a` as a mode-fixing contrast.
+
 - **P26 (prenex scope; topic resolution).** The prenex half is
   CLL 16.2 read at face value plus the P18 surface-scope doctrine —
   the losing alternative (scope normalization independent of prenex
@@ -967,7 +1056,9 @@ genuinely fought:
   bridi template at the ⊳ layer — a `PredTerm` value would wrongly
   make `go'i`-style override inexpressible.
 - **P32 (one performance).** `.i ja` decides it: a disjunction is one
-  claim, not two acts, and uniformity carries the rule to `.i je`
+  claim, not two acts. `ClauseOr` preserves the successful branch event and
+  the host closes that `ClauseContent` once; uniformity carries one-performance
+  force to `.i je`, whose `ClauseAnd` event is the joint State
   (harmless there — asserting a conjunction commits to both, and `∧`
   shares `Do`'s accessibility row, §5.4). The losing alternative (two
   acts plus a cross-act connective) has no act to carry `∨` at all.
@@ -990,7 +1081,10 @@ genuinely fought:
 - **P35 (ROI).** Conjoining a count onto the ordinary single-event
   closure leaves an uncounted existential event in scope — the count
   must *replace* the closure, over distinct eventualities in the
-  interval. The interval default follows CLL 10.9's own words
+  interval. Under universal clause eventuality the counted events remain the
+  component instances, while `StateClause` supplies the eventuality of the
+  count claim itself; confusing those two levels recreates the original bug.
+  The interval default follows CLL 10.9's own words
   ("unspecified size, at least part … in the past"): a recoverable
   anchor (`Context`) with genuinely loose extent (`Vague`).
 - **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform

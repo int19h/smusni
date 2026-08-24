@@ -636,8 +636,9 @@ shared destination, not two).
 ; mi .e do nelci lo gerku — one dog referent, both conjuncts see it
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(∧ (Close (nelci Speaker $d))
-     (Close (nelci Audience $d)))👈})
+  {👉(CloseClause
+      (ClauseAnd (DirectClause (nelci Speaker $d))
+                 (DirectClause (nelci Audience $d))))👈})
 ```
 
 ```lisp
@@ -645,8 +646,9 @@ shared destination, not two).
 ; once, outside the disjunction
 (Bind {$z :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(zarci $r)}))
-  {👉(∨ (Close (klama Speaker $z))
-     (Close (klama Audience $z)))👈})
+  {👉(CloseClause
+      (ClauseOr (DirectClause (klama Speaker $z))
+                (DirectClause (klama Audience $z))))👈})
 ```
 
 **See.** [Spec §4.5, §5.3–5.4, §11](spec.md), pin P18. Compounds
@@ -680,7 +682,9 @@ all tails.
 ; mi nelci lo gerku gi'e bajra — Speaker shared, dog in one tail only
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(∧ (Close (nelci Speaker $d)) (Close (bajra Speaker)))👈})
+  {👉(CloseClause
+      (ClauseAnd (DirectClause (nelci Speaker $d))
+                 (DirectClause (bajra Speaker))))👈})
 ```
 
 ```lisp
@@ -692,8 +696,9 @@ all tails.
            (λ {$y :: Referents Entity} {(cukta $y)})))}))
   {(Bind {$m :: Referents Entity}
         (Refer (λ {$r :: Referents Entity} {(jdini $r)}))
-    {(∧ (Close (dunda Speaker $b 👉Audience👈))
-       (Close (lebna Speaker $m 👉Audience👈)))})})
+    {(CloseClause
+      (ClauseAnd (DirectClause (dunda Speaker $b 👉Audience👈))
+                 (DirectClause (lebna Speaker $m 👉Audience👈))))})})
 ```
 
 Elided places in *different* tails stay distinct sites (CLL 14.58's
@@ -713,8 +718,9 @@ the same tail-sharing discipline as the afterthought forms.
 ; ga mi gi do citka lo plise — forethought ∨, apple introduced once
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(plise $r)}))
-  {👉(∨ (Close (citka Speaker $p))
-     (Close (citka Audience $p)))👈})
+  {👉(CloseClause
+      (ClauseOr (DirectClause (citka Speaker $p))
+                (DirectClause (citka Audience $p))))👈})
 ```
 
 **See.** [Spec §4.5, §5.3, §11](spec.md); §14 for the gek/guhek units.
@@ -726,7 +732,7 @@ CLL ch. 16's flip rules governing movement past quantifiers (P18).
 
 ```lisp
 ; mi na klama
-(¬ (Close (klama Speaker)))
+(CloseClause (ClauseNot (DirectClause (klama Speaker))))
 ```
 
 **See.** [Spec §4.5, §11](spec.md), pin P18.
@@ -831,9 +837,10 @@ anchor); chains (`pu pu`) compose as anchor paths.
 
 ```lisp
 ; mi pu klama
-(∃ (λ {$e :: Referents Eventuality}
-  {(∧ (Close (klama :1 Speaker :Eventuality $e))
-     (purci $e Now))}))
+(CloseClause
+  (λ {$e :: Referents Eventuality}
+    {(∧ ((DirectClause (klama Speaker)) $e)
+       (purci $e Now))}))
 ```
 
 **See.** [Spec §11 tense block](spec.md), pin P8/P24.
@@ -862,13 +869,14 @@ event bears the mover's `muvdu` motion in the `farna` direction);
 ```lisp
 ; le verba mo'i ri'u cadzu — rightward: the ri'u direction value,
 ; ⊳-resolved against the ground
-(Bind {$v :: Referents Entity}
+  (Bind {$v :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         {(Close (skicu Speaker $r Audience
            (λ {$y :: Referents Entity} {(verba $y)})))}))
-  {(∃ (λ {$e :: Referents Eventuality}
-    {(∧ (Close (cadzu :1 $v :Eventuality $e))
-       👉(MotionVector $e $v rightward)👈)}))})
+  {(CloseClause
+    (λ {$e :: Referents Eventuality}
+      {(∧ ((DirectClause (cadzu $v)) $e)
+         👉(MotionVector $e $v rightward)👈)}))})
 ```
 
 **See.** [Spec §11](spec.md); [catalog 1.50](catalog.md).
@@ -876,11 +884,12 @@ event bears the mover's `muvdu` motion in the `farna` direction);
 ### roi (ROI)
 
 Occurrence count: `n roi` **replaces** the single-event existential
-closure with the counted instantiation-set schema — the set of
-distinct eventualities satisfying the host event property within the
-reference interval has cardinality n (P35); `roi nai` negates the
-count; subjective counts use the threshold GQs; the default interval
-is a Context anchor with Vague extent.
+closure with `RoiClause`: the set of distinct component eventualities
+satisfying the host `ClauseContent` within the reference interval has
+cardinality n, and `StateClause` supplies the event of that count claim
+holding (P35). `roi nai` negates the count before the state lift; subjective
+counts use the threshold GQs; the default interval is a Context anchor with
+Vague extent.
 
 **See.** [Spec §11](spec.md), pin P35.
 
@@ -900,31 +909,32 @@ lexically — **gap-registered** until the rows land (P24).
 
 ### ca'a / ka'e / nu'o / pu'i (CAhA)
 
-Actuality and capability: `ca'a` → `fasnu` actuality conjunct; `ka'e`
-→ the capability schema over the primitive `InnatelyCapable`; `nu'o` =
-capable and unrealized; `pu'i` = capable and demonstrated.
+Actuality and capability over `C : ClauseContent`: `ca'a` →
+`ActualClause C`; `ka'e` → `CapableClause C`; `nu'o` →
+`UnrealizedClause C`; `pu'i` → `DemonstratedClause C`. Missing CAhA is
+reading-multiple among those four modes with no default (P24, CLL 10.19).
 
 ```lisp
 ; mi ka'e limna
-(InnatelyCapable Speaker (λ {{$b :: Referents Entity}
-                             {$e :: Referents Eventuality}}
-  {(Close (limna :1 $b :Eventuality $e))}))
+(CloseClause
+  (CapableClause (DirectClause (limna Speaker))))
 ```
 
 **See.** [Spec §12, §11](spec.md); [catalog 1.50, 2.21](catalog.md).
 
 ### BAI family (bai, gau, ri'a, mu'i, ki'u, ta'i, pi'o, ka'a, …)
 
-Modal tags: event-predicate conjuncts per the lexicon's tag
+Modal tags: clause-event-predicate conjuncts per the lexicon's tag
 reductions — each BAI names its gismu's relation between the tagged
-sumti and the host event, joined by `∧` at the tag locus. `se`/`te`
+sumti and the current clause event, joined by `∧` at the tag locus. `se`/`te`
 conversions apply to the underlying row (§14 sequences).
 
 ```lisp
 ; mi klama bai do
-(∃ (λ {$e :: Referents Eventuality}
-  {(∧ (Close (klama :1 Speaker :Eventuality $e))
-     (Close (bapli :1 Audience :2 $e)))}))
+(CloseClause
+  (λ {$e :: Referents Eventuality}
+    {(∧ ((DirectClause (klama Speaker)) $e)
+       (Close (bapli :1 Audience :2 $e)))}))
 ```
 
 **See.** [Spec §11](spec.md); [lexicon interface §10](spec.md).
@@ -1067,16 +1077,17 @@ readings arise.
 
 ### nu (NU) — with mu'e / za'i as sort refinements
 
-Event abstraction: `Refer` over event properties — the eventuality
-sort refined by the abstractor (Achievement `mu'e`, State `za'i`).
+Event abstraction: `Refer` directly over the inner `ClauseContent` — the
+lexical event for a direct episode, or the holding/joint/negative State of an
+eventless or composed bridi. The eventuality sort may be refined by the
+abstractor (Achievement `mu'e`, State `za'i`).
 `pu'u` and `zu'o`, which keep real x2 places, live in the
 abstraction-relation family instead (next entry; spec §9.2).
 
 ```lisp
 ; lo nu mi klama cu nandu
 (Bind {$ev :: Referents Eventuality}
-      (Refer (λ {$e :: Referents Eventuality}
-        {👉(Close (klama :1 Speaker :Eventuality $e))👈}))
+      (Refer 👉(ActualClause (DirectClause (klama Speaker)))👈)
   {(Close (nandu $ev))})
 ```
 
@@ -1086,7 +1097,8 @@ abstraction-relation family instead (next entry; spec §9.2).
 
 Proposition abstraction: `Reify` — content held still as a first-order
 `Proposition` object, with `Holds` the sole way back (round-trip
-axiom). With explicit `ce'u`, extracts λ exactly as `ka` (§11's arity
+axiom). The inner `ClauseContent` is first closed once with `CloseClause`;
+with explicit `ce'u`, `du'u` instead extracts λ exactly as `ka` (§11's arity
 theorem: n **distinct** extracted variables = n-adic; bare `du'u` is
 the 0-adic case). `se du'u`
 = the sentence place of the derived `DuhuRel` (defined only for the
@@ -1150,9 +1162,9 @@ does not assert that any X-related abstraction will do.
       (Refer (λ {$r :: Referents Entity} {(vorme $r)}))
   {(Bind {$a :: Referents Eventuality}
         👉(Context (λ {$v :: Referents Eventuality}
-          {(∃ (λ {$c :: Content}
-            {(∧ (CoRef $v (EventOfContent $c))
-               (Close (srana $v $door)))}))}) $door)👈
+          {(∧ (∃ (λ {$p :: Proposition}
+                {(CoRef $v (EventOfContent (Holds $p)))}))
+              (Close (srana $v $door)))}) $door)👈
     {(Close (troci Speaker $a))})})
 ```
 
@@ -1508,7 +1520,7 @@ object.
 
 ```lisp
 ; li re su'i re du li vo
-(= (+ 2 2) 4)
+(CloseClause (StateClause (= (+ 2 2) 4)))
 ```
 
 **See.** [Spec §4.9, §11](spec.md).
@@ -1516,13 +1528,17 @@ object.
 ### du (GOhA)
 
 Identity: `=` between first-order individuals; `CoRef` (mutual
-`Among`) between plural sumti (P23).
+`Among`) between plural sumti (P23). At the declarative layer the resulting
+eventless Content goes through `StateClause`, so tense, CAhA, ROI, ZAhO, and
+`nu` have a state to consume. `du` itself remains rigid; a description or
+physical value scoped inside the StateClause may vary with that state, while
+an outside binding gives the de re reading.
 
 ```lisp
 ; ko'a du ko'e — unassigned KOhA are keyed retrievals (P16)
 (Bind {$a :: Referents Entity} (Context)
   {(Bind {$b :: Referents Entity} (Context)
-    {👉(CoRef $a $b)👈})})
+    {👉(CloseClause (StateClause (CoRef $a $b)))👈})})
 ```
 
 **See.** [Spec §4.5, §11](spec.md), pin P23.
@@ -1712,7 +1728,9 @@ the accessibility row of the base connective.
 
 ```lisp
 ; mi na.enai do klama — neither I nor you
-(∧ (¬ (Close (klama Speaker))) (¬ (Close (klama Audience))))
+(CloseClause
+  (ClauseAnd (ClauseNot (DirectClause (klama Speaker)))
+             (ClauseNot (DirectClause (klama Audience)))))
 ```
 
 **See.** [Spec §4.5, §5.4, §11](spec.md), pin P18.
@@ -1731,7 +1749,7 @@ loci remain gap-registered; `nai` creates no hidden discrete-choice fallback.
 ### .i je / .i ja … — I + jek
 
 Sentence-level logical connection as one unit — NOT `.i` followed by
-an independent `je`: **one performance of the connected content**
+an independent `je`: **one performance of the connected ClauseContent**
 (P32 — forced by `.i ja`, where no pair of assertions exists), the
 host's single force shared by the connection (content-taking forces;
 an interrogative host queries the connected content), with `∧`'s
@@ -1741,7 +1759,10 @@ compound-performance laws.
 
 ```lisp
 ; mi klama .i je do stali — one act asserting the conjunction
-(Assert (∧ (Close (klama Speaker)) (Close (stali Audience))))
+(Assert
+  (CloseClause
+    (ClauseAnd (DirectClause (klama Speaker))
+               (DirectClause (stali Audience)))))
 ```
 
 **See.** [Spec §11, §5.4, §7.1](spec.md), pin P32.
@@ -1753,11 +1774,14 @@ binders exposed, the tag conjunct inside (P32):
 
 ```lisp
 ; mi klama .i ba bo mi citka
-(Assert (∃ (λ {$e1 :: Referents Eventuality}
-  {(∧ (Close (klama :1 Speaker :Eventuality $e1))
-     (∃ (λ {$e2 :: Referents Eventuality}
-       {(∧ (Close (citka :1 Speaker :Eventuality $e2))
-          (balvi $e2 $e1))})))})))
+(Assert
+  (CloseClause
+    (StateClause
+      (∃ (λ {$e1 :: Referents Eventuality}
+        {(∧ ((DirectClause (klama Speaker)) $e1)
+           (∃ (λ {$e2 :: Referents Eventuality}
+             {(∧ ((DirectClause (citka Speaker)) $e2)
+                (balvi $e2 $e1))})))})))))
 ```
 
 **See.** [Spec §11](spec.md), pin P32.

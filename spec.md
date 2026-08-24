@@ -280,6 +280,16 @@ meaning, and no unique canonical spelling is defined or required. This
 chapter is the only place notation is normative, and only to the extent
 that a reader must be able to parse the examples.
 
+One clause shorthand preserves older compact specimens: where a
+Content-taking force boundary is shown with a complete, eventless Content c
+and no `ClauseContent` wrapper, c stands for
+`(CloseClause (ActualClause (StateClause c)))` in that specimen's resolved
+actual CAhA mode. A displayed `Close P` uses §4.6's
+type-directed cases instead. This shorthand never wraps an already formed
+`ClauseContent`, never creates a second lexical event, and may always be
+expanded when the clause event matters. Other CAhA readings must show their
+own clause former; the shorthand creates no surface default.
+
 ## 3. Types
 
 ### 3.1 Sorts of individuals
@@ -364,8 +374,10 @@ A **place row** ρ is a finite sequence of labelled, typed places, e.g. for
              x5:Referents<Entity> ; ev:Referents<Eventuality> ⟩
 ```
 
-The event place `ev` is distinguished: it is present exactly on
-event-licensed lexical entries (§10) and is filled with `:Eventuality`.
+The event place `ev` is distinguished: it is present exactly on lexical
+entries whose §10 clause-event mode is `DirectEvent(ev)`, and is filled with
+`:Eventuality`. Holding-state entries have no such row field; their clause
+event comes from `StateClause` after ordinary fills.
 
 - `PredTerm<ρ>` — the type of relations over row ρ. It is a **transparent
   alias** for the row-function type `Record ρ → Content`: partial filling
@@ -407,6 +419,8 @@ recovery with `⇀` or projective partiality with `→`.
 
 ```text
 Content            evaluable (dynamic) propositional content
+ClauseContent      event-open declarative content, definitionally
+                   EFn<(Referents<Eventuality>), Content>
 RefComp<T>         reference/contextual computations returning T
 Act<F>             speech acts of force F ∈ ⟨Assertion, Question,
                    Directive, Expressive, Address⟩
@@ -415,13 +429,22 @@ Query<A>           questions with answer domain A
 ```
 
 `Content` is the type of what can be asserted, questioned, negated, and
-embedded. Its denotation (§5.1) is a world-indexed context-change
-potential; the world index never appears in the term language. `Act<F>`
+embedded. Its denotation (§5.1) has a world-indexed context-change run and
+the §9.3 clause-event intension; neither world nor lineage indices appear in
+the term language. `Act<F>`
 values are first-class: constructing an act and performing it are
 different things (§7.1), which is what keeps quotation and reported speech
 from performing their contents. An act is a pure *value*, not a
 computation: only `Perform` injects it into the dynamic carrier
 (§5.1, §7.1).
+
+`ClauseContent` is a transparent effectful-function alias, not a first-order
+sort and not a second proposition type. It is the stage at which one
+distinguished clause eventuality remains available to tense, aspect, tags,
+CAhA, ROI, and event abstraction. A consumer that needs ordinary `Content`
+uses `CloseClause` (§4.6). Thus every declarative clause has an eventuality
+while `=` and mathematical functions retain their reusable non-clausal
+signatures.
 
 ### 3.5 Index and composite types
 
@@ -600,31 +623,84 @@ it is never available at the plural reference type, where `CoRef`
 (mutual `Among`) is the equivalence. `du` maps to `=` between
 first-order individuals and to `CoRef` between plural sumti.
 
-### 4.6 Closure
+### 4.6 Clause formation and closure
 
-`Close` turns an open predication into `Content`: it existentially closes
-the event place (when the row licenses one and no explicit event fill or
-abstraction consumes it) and introduces one `Context` computation per
-remaining defaultable place. It is a **normatively defined derived
-operation** — schema, for a row with unfilled defaultable places p₁…pₖ and
-an event place:
+Every resolved declarative clause first forms `ClauseContent`. Two routes are
+required, and they must not be conflated:
+
+- `(DirectClause P) : ClauseContent` is the defined route for an
+  event-licensed row. It leaves the lexical event place as the clause
+  parameter and contextually fills only the other defaultable places.
+- `(StateClause c) : ClauseContent` is the primitive holding-state route for
+  already complete content with no surviving lexical event parameter —
+  identity, mathematics, negation, quantified/generic claims, and the
+  non-disjunctive compound forms below. It evaluates `c` exactly once and
+  exposes the state of that content holding. Its denotation and
+  `EventOfContent` laws are §9.3; it neither returns a truth value nor exposes
+  syntax.
+
+For an event-licensed row with unfilled defaultable places p₁…pₖ,
 
 ```lisp
-(Close P)  ≝
-(Bind {$v1 :: T1} (Context) … {$vk :: Tk} (Context)
-  {(∃ (λ {$e :: Referents Eventuality}
-    {(P :p1 $v1 … :pk $vk :Eventuality $e)}))})
+(DirectClause P) ≝
+(λ {$e :: Referents Eventuality}
+  {(Bind {$v1 :: T1} (Context) … {$vk :: Tk} (Context)
+    {(P :p1 $v1 … :pk $vk :Eventuality $e)})})
 ```
 
-Each omitted place is a *distinct* contextual computation (ruling P15),
-and the site/key identity rule of §5.3 applies: when a λ-abstracted
-predication containing closure sites is applied more than once within one
-performance, the closure sites keep their identity — `mi .e ti klama`
-shares one contextual destination across both conjuncts unless the reading
-expresses otherwise. `Close` is undefined at a row whose remaining places
-are not defaultable; such content must fill or abstract them explicitly.
-The surface convention that `Close` is implicit at force boundaries is
-notation (§2), not semantics.
+When k = 0 and P contains no other effects, this function refines to the pure
+`Fn` arrow. Otherwise it is effectful; no caller may
+silently use it in a pure `Refer` restrictor or `SetOf` comprehension.
+
+The distinguished parameter is then closed only when ordinary content is
+needed:
+
+```lisp
+(CloseClause C) : Content ≝
+  (∃ (λ {$e :: Referents Eventuality} {(C $e)}))
+```
+
+`Close` remains the convenient derived spelling at predication sites, now
+with three type-directed cases:
+
+```text
+(Close P)                         ≝
+  (CloseClause (ActualClause (DirectClause P)))
+  ; event-licensed row, resolved actual CAhA mode
+(Close (P :Eventuality e))        ≝ ((ActualClause (DirectClause P)) e)
+  ; explicit/shared lexical event; no second event is introduced
+(Close P_eventless)               ≝
+  Bind ordinary defaults, then CloseClause(ActualClause(StateClause(P_filled)))
+```
+
+The last case is what lets `du`, mathematical relations, and genuinely
+eventless lexical rows form clauses; it does not retype the underlying relation
+with a lexical event place. Each omitted ordinary place remains a *distinct* `Context` computation
+(P15), with §5.3 site/dependency identity. `Close` is undefined when a
+remaining place is not defaultable. `Close` names the common **actual-mode**
+closure, not a surface default: an unmarked bridi whose resolved CAhA mode is
+capable/unrealized/demonstrated uses the corresponding §12 clause former
+instead (P24).
+
+Logical composition at the clause layer is defined without losing the
+eventuality interface:
+
+```text
+(ClauseNot C)       ≝ (StateClause (¬ (CloseClause C)))
+(ClauseAnd C D)     ≝ (StateClause (∧ (CloseClause C) (CloseClause D)))
+(ClauseOr C D)      ≝ (λ {$e :: Referents Eventuality} {(∨ (C $e) (D $e))})
+(ClauseImp C D)     ≝ (StateClause (→ (CloseClause C) (CloseClause D)))
+(ClauseIff C D)     ≝ (StateClause (↔ (CloseClause C) (CloseClause D)))
+(ClauseXor C D)     ≝ (StateClause (⊕ (CloseClause C) (CloseClause D)))
+```
+
+Conjunction therefore has a jointly constituted state; disjunction retains
+the successful disjunct's event branch; negation has a negative holding state.
+The remaining Boolean compounds take the state of the complete truth-
+functional claim. Each operand occurs once, so contextual sites, dynamic
+accessibility, and projective emissions are exactly those of the underlying
+`Content` operator. Facet conjunction over one already shared event stays
+plain `∧` inside a single `ClauseContent`; it is not `ClauseAnd`.
 
 ### 4.7 Place questions
 
@@ -786,11 +862,17 @@ jmaji`).
 
 A model supplies a set of worlds W, sorted domains, world-indexed lexical
 interpretations, and **information states**: sets of world–assignment
-pairs. The dynamic layer is one algebraic computation type. Its carrier:
+pairs. The dynamic layer is built over one algebraic computation carrier;
+Content additionally carries the semantically required clause-event
+intension:
 
 ```text
 Comp<A>    =  InformationState → P( InformationState × A × Obligations )
-Content    =  Comp<Unit>          RefComp<T> = Comp<T>
+ContentRun =  Comp<Unit>          RefComp<T> = Comp<T>
+ClauseEventIntension
+           =  defined world/assignment/precisification/branch index
+              ⇀ Referents<Eventuality>
+Content    =  ⟨ run : ContentRun, event : ClauseEventIntension ⟩
 Discourse  =  Comp<Unit> at the performance level (its effect
               vocabulary adds commitment/performance operations);
               Act<F> is NOT a computation — it is the pure
@@ -821,12 +903,56 @@ the π-family — and truth simpliciter, where invoked, is supertruth
 over the family — existential collapse of precisifications into branches would
 make one admissible reading's success suffice, which VC1 forbids. Each named operation of this chapter (`Refer`,
 `Context`, `Vague`, `Presuppose`, `Supplement`, the selections of §5.6,
-the connectives' state-passing) is an operation of this algebra, and its
+the connectives' state-passing, and §9.3's `StateClause`/
+`EventOfContent` pair) is an operation of this algebra, and its
 clause consists of two parts with two homes: **what escapes and what is
 accessible is stated once, in the accessibility table (§5.4)** — nothing
 elsewhere may restate it — while return values, truth filtering, and
 obligation discharge are fixed by the carrier above and the operation's
 own paragraph.
+
+The displayed `ContentRun` equation is the **run projection** of content. A
+conforming Content algebra supplies the clause-event projection
+interpreted by `EventOfContent` (§9.3), world- and evaluation-branch-relative
+where disjunction branches. (A branch index exists even when its described
+event is nonactual; it is not restricted to successful outcomes.) This projection is semantic structure, not
+processor bookkeeping: content identity and hence `Reify` identity include
+both the dynamic run (including projective/site structure) and this event
+intension. `StateClause`, `CloseClause`, and the clause connectives of §4.6
+give the projection its laws. `EventOfContent` merely projects the object; it
+does not evaluate its Content operand, return `Bool`, or expose syntax.
+
+The eventuality domain contains described eventualities that need not be
+actual at the evaluation world. `fasnu e` is the world-relative claim that e
+occurs there. Each `State` supplies a partial situation within a world and the
+model's verification relation `s ⊩_w c` for c's at-issue facts; this index is
+what `StateClause` uses for state-scoped descriptions and value projections.
+It is neither a term-level world nor the hypothetical-world shift reserved for
+`da'i`. A direct episodic lexical interpretation obeys the occurrence
+law
+
+```text
+R_w(fills…, e) → fasnu_w(e)
+```
+
+at the world in which R is evaluated. Capability operators evaluate their
+event properties in capability worlds, so such an event may satisfy `fasnu`
+there while failing it at the actual world. A `StateClause c` similarly has
+an actual holding-state at a world when that state, at its own temporal/
+situational location, verifies c. This does **not** require c to hold at the
+utterance time. A temporally invariant equality may make the tense redundant
+or pragmatically odd, but a description/value projection scoped inside the
+state may vary there (§5.7); the grammar remains typed in either case.
+This names, rather than adds, the nonactual-event ontology already required by
+`nu'o` (§12).
+
+CLL 10.19 prevents one further overgeneralization: missing CAhA does not force
+the actual reading. It is reading-multiple among the four CAhA modes, selected
+upstream from context with no default (P24). Thus ordinary episodic `mi citka`
+may select the actual mode, while CLL's bare `ro datka cu flulimna` and `ta
+jelca` may select capability. Explicit `ca'a` fixes the actual mode and adds
+`fasnu` at issue; it is truth-conditionally near-redundant with an already
+resolved actual episode but contrasts overtly with the other modes.
 
 The world index supports the intensional facts of §5.7 (de re/de dicto,
 opacity) and the subordinated contents of §7.6; **no world variable or
@@ -968,10 +1094,11 @@ binders (§7.4).
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. **Witness export:** a successful evaluation of an exporting quantifier introduces its witness referent(s) — see §5.6, including the dependent case. |
 | `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). |
 | `Context` | Consults the incoming context and introduces nothing. Logical embedding never turns retrieval into quantification over admissible values: site/dependency identity is exactly §5.3's, while the consuming content—not the recovered value—is negated, questioned, or connected. |
+| `StateClause`, `CloseClause` | Applying `StateClause c` evaluates c exactly once on its one matching holding-state lineage; c's ordinary introductions and projectives obey their own rows. `CloseClause` keeps its event witness local: the witness is recoverable through `EventOfContent` but is not a discourse introduction. |
 | `Presuppose` | See §5.5: the condition projects to the nearest legal commitment boundary; the at-issue operand sees the incoming state. Introductions inside the condition are local to the condition check; nothing escapes from it. |
 | `Supplement` | See §5.5: side content is committed once at its handler, projectively; the at-issue operand's value passes through. |
 | Force constructors, `Perform` | Act boundaries close force segments: referents introduced inside a constructed-but-unperformed act are not accessible outside it; performed acts in `Do` chain normally. |
-| Quotation, `Reify` | Opaque at construction: nothing crosses a sign boundary, and `Reify` runs nothing — no introduction, retrieval, or obligation occurs at the reification site. `Holds` (§9.1) evaluates the represented content at its own occurrence site, and what escapes *that* evaluation is governed by the operators around the `Holds`, exactly as for any content — never retroactively by the `Reify` site. |
+| Quotation, `Reify`, `EventOfContent` | Opaque/inert at construction: nothing crosses a sign boundary; `Reify` and `EventOfContent` run no Content operand, so no introduction, retrieval, or obligation occurs at either projection site. `Holds` (§9.1) evaluates represented content at its own occurrence, governed by the surrounding operators — never retroactively by `Reify` or the event projection. |
 
 ### 5.5 Projective content
 
@@ -1121,6 +1248,17 @@ external binding at all. `mi djica lo nu mi pilno lo karce` receives both
 readings by binder placement alone; no world variables appear (§5.1). The
 lexicon's marks plus the world-indexed model are jointly what make the
 distinction denotational rather than merely structural.
+
+`StateClause` adds the analogous situation boundary. A description or
+state-sensitive value projection formed **inside** its Content operand is
+evaluated relative to the holding state; a value bound outside is de re and
+stays fixed. Purity means “no dynamic effects,” not “rigid across states.”
+Thus a physical quantity's value can equal X in a current state and differ in
+a future or distant state when its value description/projection is scoped
+inside each `StateClause`. If the compared operands are rigidly bound outside,
+binary `=` correctly cannot change. Numeric constants and the arithmetic
+operations themselves are rigid; variation belongs to the state-sensitive
+quantity/value interface, not to addition or identity.
 
 ### 5.8 Genericity
 
@@ -1775,11 +1913,12 @@ both belong to the reserved family.
 
 **What the axioms fix, and what stays open.** The round-trip pair
 makes `Reify` and `Holds` mutual inverses at row ⟨⟩: proposition
-identity is exactly content identity — identity of the model's
-state-transformer denotations, intensional and dynamic, finer than
-logical equivalence (contents differing only in presuppositions or
-effects reify distinctly) — and this is **fixed by the axioms, not
-model-supplied**. Likewise any future row's crossing is a function
+identity is exactly content identity — identity of the model's structured
+dynamic denotation: state transformation, projective/site structure, and the
+§9.3 clause-event intension. It is finer than logical equivalence (contents
+differing only in presuppositions, effects, or non-coreferent clause events
+reify distinctly) — and this is **fixed by the axioms, not model-supplied**.
+Likewise any future row's crossing is a function
 over the extensional `PredTerm<ρ>` (§3.3 identifies relations equal
 on every row record), so β/η- and pointwise-equal predicates would
 reify identically — the family is extensional over `PredTerm` by
@@ -1828,8 +1967,13 @@ and relative clauses all work on abstractions for free, and an omitted x2
 is ordinary closure into `Context` (the `su'u` categorizer's contextual
 default — CLL 11.9's "type x2" — is this general rule, not a special
 one). Event abstraction (`nu` and its one-place sort refinements
-`mu'e`/`za'i`) is `Refer` over a property of eventualities satisfying the
-clause; `pu'u`/`zu'o`, having real x2s, live in the relation family
+`mu'e`/`za'i`) is `Refer` directly over the inner `ClauseContent`: a direct
+lexical clause contributes its one lexical event, while an eventless or
+compound clause contributes its holding State. This is CLL 11.2's event or
+state of the bridi considered as a whole, and it handles `lo nu ta du …`
+without retyping the binary identity relation. Contextual/reference effects
+inside the ClauseContent keep their written sites and run under `Refer`'s
+ordinary effect sequencing. `pu'u`/`zu'o`, having real x2s, live in the relation family
 above, and `li'i` is its own abstractor (`LihiRel`), not an event
 refinement. `ka` is not in this family: property abstraction is `λ`
 (implicit `ce'u` pinned in P12). Sort discipline and no-coercion (P13)
@@ -1851,6 +1995,87 @@ proposed convention that never became established practice — adopting
 divergence pending a dedicated pin, and a conforming reading may
 decline the crossing).
 
+### 9.3 Clause eventualities and `EventOfContent`
+
+`StateClause` and `EventOfContent` are the coupled primitive interface that
+makes §3.4's universal clause eventuality substantive:
+
+```text
+StateClause   : Content → ClauseContent
+EventOfContent: Content → Referents<Eventuality>
+```
+
+`StateClause` preserves the operand's effect profile: with effect-free c its
+result refines to the pure `Fn` arrow; otherwise it is effectful.
+
+The Content operand of `EventOfContent` is **inert**: the crossing projects
+the eventuality intension carried by that content and does not run the
+content. `StateClause`, conversely, is active when its result is applied: it
+evaluates its Content operand exactly once and exposes a `State` of that
+content holding. Neither operation returns truth, inspects syntax, or permits
+same-stage evaluation. The names `hold_M` and `joint_M` below are model-level
+semantic operations, not extra term forms; `StateClause` is their sole term
+interface. Their laws are:
+
+1. **Closure witness / no double indexing.** On each live evaluation lineage
+   of `(CloseClause C)`, `EventOfContent (CloseClause C)` co-refers with that
+   closure's local event witness. If C came from `DirectClause`, this is the
+   lexical event itself — no state-of-the-event-occurring is added. The
+   Content produced by applying any `C : ClauseContent` to e carries e as its
+   projection; facet conjunctions inside that application therefore preserve
+   e rather than invoking the joint-clause rule. The witness remains locally
+   quantified and is not thereby discourse-accessible. “One” means one
+   distinguished witness per live outcome lineage, not a uniqueness claim
+   that only one matching event exists in the model.
+2. **Holding state.** `(StateClause c)` has the uniform `ClauseContent`
+   parameter type `Referents<Eventuality>`, but only arguments lying in the
+   `State` subdomain can satisfy it. A non-coreferent candidate fails without
+   evaluating c; at the unique co-reference class of the model's `hold_M(c)`
+   State, c's at-issue facts are evaluated relative to that state's situation,
+   while contextual/dynamic effects run exactly once on the current lineage.
+   A satisfying State is actual (`fasnu`) at that world. If no actual State
+   verifies c, a described nonactual counterpart may remain in the domain but
+   does not satisfy the clause. `EventOfContent (CloseClause (StateClause c))`
+   co-refers with `hold_M(c)`; content constructors with no direct, joint, or
+   branch event use the same holding-state projection by default. This is the
+   route for identity, mathematics, quantifier/generic results, implication,
+   and the other eventless cases.
+   No finiteness or boundedness law is imposed: a holding State may occupy an
+   unbounded temporal or spatial extent, including an all-time interval.
+   Tense on such a State remains well-typed; whether `purci`, `cabna`, or a
+   spatial facet holds follows the declared relation, not a ban on infinity.
+3. **Conjunction.** On a lineage where c and d hold,
+   `hold_M(∧ c d)` is the jointly constituted State of `EventOfContent c` and
+   `EventOfContent d`. A model supplies this `joint_M` operation as semantic
+   structure; it is actual exactly when both components are actual. GitHub #4
+   must exhibit `joint_M` as the complete `GunmaEvent`/constitution witness
+   rather than leave two rival notions of joint state. To preserve the
+   existing source-ordered associativity law for `∧`, `joint_M` is associative
+   up to `CoRef` and has the holding state of `⊤` as unit; no commutativity of
+   dynamic evaluation is inferred.
+4. **Disjunction.** The event of `(CloseClause (ClauseOr C D))` is
+   branch-relative: a live C-lineage carries C's event and a live D-lineage
+   carries D's. If both disjuncts hold, both lineages are available; no covert
+   choice is exported through §5.4 and no fused event is asserted. This is
+   exactly `ClauseOr`'s shared event parameter.
+5. **Negation and the remaining compounds.** `hold_M(¬ c)` is a State of c's
+   non-holding, actual exactly where c is false; it is not c's positive event
+   and negation is not partial merely to avoid negative states. Implication,
+   biconditional, exclusive-or, quantified claims, and other content with no
+   preserved single lexical event use their `StateClause`/`hold_M` state.
+6. **Congruence.** Content identity preserves the event projection: contents
+   with non-coreferent event intensions are not identical merely because their
+   at-issue world filters coincide. This event component therefore participates
+   in `Reify`/`Holds`'s §9.1 content identity and in the future carrier
+   construction, rather than being renderer metadata.
+
+These clauses borrow a useful architecture, not a linguistic conclusion,
+from truthmaker semantics: conjunction is constituted from both component
+states and disjunction is verified by an alternative, while negation requires
+an explicit falsity/negative-state policy. The project chooses the negative
+holding-state policy because its adopted coverage includes negative clauses;
+speaker compatibility, not that literature, is the authority for the choice.
+
 ## 10. The lexicon interface
 
 The core is parameterized over an external, curated lexicon. This chapter
@@ -1859,15 +2084,17 @@ must provide for the core to interpret predications over it:
 
 | Field | Content |
 |---|---|
-| row | the labelled, typed place row (§3.3), with the distinguished event place where licensed |
+| row | the labelled, typed place row (§3.3); a direct-event entry includes the distinguished event label, while a holding-state entry does not acquire one |
+| clause-event mode | `DirectEvent(ℓ)` identifies the clause parameter with lexical place ℓ; `HoldingState` routes the complete predication through `StateClause` (§4.6, §9.3) |
 | defaultability | per place: whether closure (§4.6) may introduce a `Context` there; non-defaultable places must be filled or abstracted |
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
+| situation behavior | whether the relation/value projection is rigid or is evaluated relative to a surrounding `StateClause` situation (§5.7); physical value-bearing entries must declare this, while numeric constants and arithmetic are rigid |
 | plurality behavior | optional, per place: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). Two independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed, denied, or left undeclared; the values state lexical entailments of the word, never a reading parameter (P4) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
 | degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
 | kind admission | whether a place admits kind-like referents (ruling P3) |
 | abstraction sorts | for places selecting abstractions: which sorts (§9), with drift cases adjudicated in the dictionary, not coerced |
-| tag reductions | for tense/modal cmavo: the event-predicate expansion (`pu` → `purci(e, anchor)`, BAI → their gismu relations with the licensed host-event link), consumed by the mapping annex |
+| tag reductions | for tense/modal cmavo: the clause-event-predicate expansion (`pu` → `purci(e, anchor)`, BAI → their gismu relations with the current clause-event link), consumed by the mapping annex |
 | indicator entries | for UI: relation, roles, degree place, `nai`-pair (with `Scalar Opposite` fallback where unpaired — §7.6, §6.3), host-force profile, evidential basis-kind where applicable (§7.6) |
 
 Adopted collection entries (P5): official `gunma` already takes its
@@ -1897,8 +2124,12 @@ Normative lowering schemas, one line each; the cited pins carry the
 arguments. Text-to-reading rules (marked ⊳) resolve before the calculus
 and contribute no term constructors.
 
-**Predication and places.** Bridi → lexical predication + `Close` at the
-force boundary. FA/conversion → labelled fills / row routing (§4.2).
+**Predication and places.** A bridi first forms `ClauseContent`: a
+direct-event lexical row uses `DirectClause`; an eventless row or `du`/MEX
+claim uses `StateClause` after its ordinary fills. Tense, tags, CAhA, ROI, and
+`nu` consume that open clause; an assertion or any other Content-taking
+consumer applies `CloseClause`. `Close` remains §4.6's abbreviation for the
+common resolved actual-mode predication-to-content cases. FA/conversion → labelled fills / row routing (§4.2).
 `zi'o` → `DropPlace`. `zo'e`/omission → per-site `Context` (P15). `fi'a` →
 `OpenQ` over `Label<ρ>`. `co'e`/`do'e` → `Context` at relation/tag type.
 ⊳ `si`/`sa`/`su` erase before reading; quoted text preserves them.
@@ -2006,9 +2237,14 @@ stores fills, tense, and negation, and expansion applies the
 documented later-fill override before lowering — the `go'i` machinery,
 not a bare `PredTerm` value; unassigned `broda`-series words are
 CLL's schematic sample predicates, not contextual retrievals.
-Logical connectives → `¬ ∧ ∨ → ↔ ⊕` with surface
-grammar fixing structure; `na` ≡ left-edge `naku`; `naku` movement flips
-quantifiers per CLL ch. 16; `ja'a`/`je'a` → identity at their loci —
+When a quantifier or `Generic` takes a nuclear `C_x : ClauseContent`, it
+closes each instantiation locally and lifts the complete quantified claim:
+`(StateClause (Q P (λ {$x} {(CloseClause C_x)})))`. It never passes one
+shared lexical event through all quantifier instantiations. Declarative
+logical connection uses `ClauseNot`/`ClauseAnd`/`ClauseOr`/`ClauseImp`/
+`ClauseIff`/`ClauseXor` (§4.6), whose underlying Content operators remain
+`¬ ∧ ∨ → ↔ ⊕` with the surface grammar fixing structure. `na` ≡ left-edge
+`naku`; `naku` movement flips quantifiers per CLL ch. 16; `ja'a`/`je'a` → identity at their loci —
 transparent (`na je'a broda` ≡ `na broda`) — except that an affirmer
 ⊳ **overrides inherited negation** in a pro-bridi expansion
 (`ja'a go'i` over a negative template removes the `na`; pin P31);
@@ -2019,18 +2255,19 @@ Applied `na'e`/`to'e`/`no'e P` bind the applicable domain visibly:
 {((Scalar OtherThan|Opposite|Neutral $d P) fills…)})`; the constraint and
 dependency profile come from the lexical entry and resolved reading (§6.3).
 Sentence-level **logical** connection (`.i je`, `.i ja`, …) → **one
-performance of the connected content** — `(Assert (∨ c₁ c₂))` for
-`.i ja`, which forces the uniform rule; the host's single force is
+performance of the connected clause** — `(Assert (CloseClause
+(ClauseOr C₁ C₂)))` for `.i ja`, which forces the uniform rule; the host's single force is
 shared by the connection (a force conflict has no resolved reading);
 the schema is stated for the content-taking forces (`Assert`,
 `Command`) — an interrogative host queries the connected content;
 UI targeting distinguishes the compound act from its clauses (pin
 P32). Constitution-bearing `.i joi` and the other non-logical ijoik
 performance cases are gap-registered pending the indexed constitution and
-compound-performance clauses (§14). `.i TAG bo` → the same single performance with both event
-binders exposed and the tag conjunct inside:
-`(Assert (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))` — never
-closed contents beside free event variables. Jek at the tanru-unit
+compound-performance clauses (§14). `.i TAG bo` → the same single performance,
+with component ClauseContents exposing both events inside an outer state:
+`(Assert (CloseClause (StateClause
+(∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))))` — never
+closed component contents beside free event variables. Jek at the tanru-unit
 locus → `TanruLinkConnect` (§12; pin P33): shared head asserted once,
 one constrained-`Context` intended link per conjunct, connective over the link
 applications; distinct-head units connect as whole predications. Joiks at
@@ -2053,26 +2290,34 @@ fallback `Vague` connecting relation. Official `ju'e` likewise has no baseline
 lowering pending its separate vague-connective adjudication (§14).
 `ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
 
-**Events, tense, modals** (P8, P24). Each bridi introduces its event
-existentially unless shared explicitly. Tense/aspect/spatial cmavo and BAI
-→ event-predicate conjuncts per the lexicon's tag reductions, joined by
-`∧` at the tag locus; tense chains (`pu pu`) compose as anchor paths.
+**Events, tense, modals** (P8, P24). Every declarative clause is
+`ClauseContent`. A direct lexical episode uses its lexical event as the clause
+parameter; identity, mathematics, negation, quantified/generic claims, and
+other eventless compositions use a holding state. Tense/aspect/spatial cmavo
+and BAI conjoin their event predicates to that current parameter:
+`C ↦ λe.(C(e) ∧ facet(e))`; no second event is introduced. Tense chains (`pu
+pu`) compose as anchor paths.
+
 Tenseless bridi → per the selected reading (P8): episodic → a
-`Context`-anchored temporal facet; habitual/gnomic → no temporal
-conjunct. ⊳ Reading selection is upstream; `ki` stickiness propagates
-resolved tense by source order; ⊳ story time (CLL 10.14) supplies
-narrative sequencing as reading inference, not semantics. CAhA: `ka'e` → the library's capability
-schema; `ca'a` → `fasnu` actuality conjunct. ZAhO → boundary relations per
-lexicon rows (gap-registered until filled). `n roi` → **replaces**
-the single-event existential closure with the counted
-instantiation-set schema of §12 (`Card` over the `During`-restricted
-event set = n; all surface arguments and the interval bound
-before the pure `SetOf`); `roi nai` negates the count condition;
-subjective counts reuse the threshold-GQ policy over the set's
-cardinality; the default interval is the Context-recovered anchor
-with `Vague` extent (CLL 10.9), overridable by explicit ZEhA/`ze'e`
-(whole-interval) forms (pin P35). `fi'o P` → `P` as tag with the
-lexicon's host-event link.
+`Context`-anchored temporal facet; habitual/gnomic → no temporal conjunct and
+an outer holding-state clause. ⊳ Reading selection is upstream; `ki`
+stickiness propagates resolved tense by source order; ⊳ story time (CLL 10.14)
+supplies narrative sequencing as reading inference, not semantics.
+
+CAhA applies the §12 ClauseContent formers: `ca'a` → `ActualClause`; `ka'e` →
+`CapableClause`; `nu'o` → `UnrealizedClause`; `pu'i` →
+`DemonstratedClause`. Missing CAhA is reading-multiple among these modes with
+no default (CLL 10.19; P24), so bare capability uses do not falsely assert an
+actual-world event. ZAhO boundary relations consume the same current clause
+event (gap-registered until their lexical rows are filled).
+
+`n roi` → `RoiClause` (§12), **replacing** `CloseClause C` with the holding
+state of the count over C-events in the `During` interval; all surface
+arguments and the interval bind before the pure `SetOf`. `roi nai` negates the
+count condition before the state lift; subjective counts reuse the threshold-
+GQ policy. The default interval is the Context-recovered anchor with `Vague`
+extent (CLL 10.9), overridable by explicit ZEhA/`ze'e` forms (P35). `fi'o P`
+uses P as a tag with the lexicon's current clause-event link.
 
 **Anaphora** (P16). ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible
 referents (§5.6); `vo'a`-series → bridi-place bindings; KOhA assigned →
@@ -2107,7 +2352,7 @@ never a destructive `da'o` alias (CLL 7.13, 19.3).
 this baseline are exactly **`ka` and `du'u`**. The `du'u` case split:
 
 ```text
-du'u body, extracted row ⟨⟩    ↦ (Reify closed-body)
+du'u body, extracted row ⟨⟩    ↦ (Reify (CloseClause body-ClauseContent))
 du'u body, extracted row ρ ≠ ⟨⟩ ↦ the λ over ρ, exactly as ka
                                   (no DuhuRel, no se du'u — §9.2, §14)
 ```
@@ -2130,19 +2375,23 @@ reified `PredTerm<ρ>` (§14). The Rosta all-`ce'u` reading of `si'o`,
 which genuinely nominalizes a predicate into a concept *object*, is
 the one reading that belongs to the reserved family (§9.1). Baseline
 `si'o`
-has no covert `ce'u`, closes its inner bridi normally, and maps
+has no covert `ce'u`, closes its inner ClauseContent normally, and maps
 through `SihoRel` with the conceptualizing mind at x2 (CLL 11.9) —
 a stated divergence from the Rosta proposal's clause 7. `nu` +
-sorts → `Refer`
-over event properties; `ka` → `λ` (⊳ implicit `ce'u` at first unfilled
+sorts → `Refer` directly over the ClauseContent event property (so eventless
+identity and mathematical bridi use their `StateClause` state); `ka` → `λ` (⊳ implicit `ce'u` at first unfilled
 place, counting converted places; P12, a rule of `ka` alone — the
 experimental lambda-prenex
 `ce'ai` names binder order explicitly where multiple readings arise); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
 the abstraction relations with reference outside; `mo'e` → the
-`AmountValue` numeric crossing; `tu'a X` → constrained `Context`
+`AmountValue` numeric crossing; the content parameter supplied to the other
+abstraction relations is `CloseClause` of the inner clause. `tu'a X` → constrained `Context`
 retrieval of the intended abstraction, constrained by shape +
 `srana`-aboutness, **sort selected by the host place** (an event place gets an
-event-sorted abstraction). The resolved reading declares which governors, if
+event-sorted abstraction). At that event sort the shape condition is
+`∃p:Proposition. CoRef(v, EventOfContent(Holds p))`; quantification remains at
+the first-order Proposition sort and `EventOfContent`'s operand is inert — no
+object-language quantifier ranges over dynamic `Content`. The resolved reading declares which governors, if
 any, the site depends on; enclosing binders are not inherited automatically.
 `jai`+tag →
 explicit role promotion, old x1 to the fillable `fai` place (library
@@ -2178,7 +2427,9 @@ order implied.
 **Quotation, signs, MEX** (§7.5, §4.9). `lu…li'u` → `StructuredQuote`;
 `lo'u…le'u`/`zoi` → `OpaqueQuote`; `zo` → `WordSign`; letterals →
 `LetteralSign` (⊳ letteral anaphora keys bindings); `me'o` → mention of a
-math-expression sign; `li` → the value; `du` → `=` / `CoRef` (P23);
+math-expression sign; `li` → the value; `du` → `=` / `CoRef` (P23), then
+`StateClause` at the declarative-clause layer (so tense, CAhA, ROI, ZAhO, and
+`nu` all have a state parameter);
 operators → typed
 functions; `xi` subscripts → application. `me X [me'u]` →
 `(MePred X)` (§12); number + MOI → the MOI relation families (§12);
@@ -2442,37 +2693,47 @@ During : Referents<Eventuality> × Set<Time> → Content
    ; relation the counted schema can restrict by
 ```
 
-The `n roi` schema, for host event property `P` (pure) and bound
-interval `I`:
+The `n roi` schema, for a host `C : ClauseContent` whose surface arguments and
+contextual effects have been bound so its event property is pure, and bound
+interval `I`, is itself an outer holding-state clause:
 
 ```text
-(= (Card (SetOf (λ {$e :: Eventuality} {(∧ (P $e) (During $e I))}))) n)
+(RoiClause n C I) ≝
+(StateClause
+  (= (Card (SetOf (λ {$e :: Eventuality} {(∧ (C $e) (During $e I))}))) n))
 ```
 
-— this **replaces** the single-event existential closure; `roi nai`
-negates the equation; subjective counts substitute the threshold-GQ
-condition for `=`.
+This **replaces** `CloseClause C`: the counted component events remain the
+members of the set, while the declarative clause eventuality is the state of
+the count claim holding. `roi nai` negates the equation before `StateClause`;
+subjective counts substitute the threshold-GQ condition for `=`.
 
-**Events and tags.** Two primitives are *declared* here beside the
-helpers they serve (they have no expansions — prose-and-axiom
-definitions like any primitive): the adjacent-sort crossing
-`EventOfContent : Content → Referents<Eventuality>` (the eventuality
-of a clause, used by `tu'a`'s shape conjunct and `nu`-recasting), and
-the modal relation `InnatelyCapable : Referents<Entity> ×
-Fn<(Referents<Entity>, Referents<Eventuality>), Content> → Content` —
-`jinzi`-grounded possibility of `P`-events with the bearer, evaluated
-at capability worlds (§5.1); likewise the lexical projection
+**Events and tags.** `EventOfContent` is declared and constrained in §9.3.
+The CAhA base is the primitive
+`InnatelyCapable : ClauseContent → Content`: the clause event property is
+realizable in worlds compatible with the relevant participants' innate
+natures, with participant roles supplied by the lexical predication rather
+than a hard-coded x1-only wrapper. Likewise the lexical projection
 `MotionVector : Referents<Eventuality> × Referents<Entity> ×
 Referents<Entity> → Content` (the `mo'i` heading: the event's `muvdu`
-motion with `farna` direction). The defined forms over them, with
-`P : Fn<(Referents<Entity>, Referents<Eventuality>), Content>`:
+motion with `farna` direction). The CAhA clause formers are:
 
 ```text
-(Realized b P) ≝ (∃ (λ {$e :: Referents Eventuality}
-                    {(∧ (P b $e) (fasnu $e))}))
-(nu'o b P)     ≝ (∧ (InnatelyCapable b P) (¬ (Realized b P)))
-(pu'i b P)     ≝ (∧ (InnatelyCapable b P) (Realized b P))
+(Realized C)           ≝ (∃ (λ {$e :: Referents Eventuality}
+                              {(∧ (C $e) (fasnu $e))}))
+(ActualClause C)       ≝ (λ {$e :: Referents Eventuality}
+                            {(∧ (C $e) (fasnu $e))})
+(CapableClause C)      ≝ (StateClause (InnatelyCapable C))
+(UnrealizedClause C)   ≝ (StateClause
+                            (∧ (InnatelyCapable C) (¬ (Realized C))))
+(DemonstratedClause C) ≝ (StateClause
+                            (∧ (InnatelyCapable C) (Realized C)))
 ```
+
+These are respectively `ca'a`, `ka'e`, `nu'o`, and `pu'i`. The last three
+make the capability claim's holding-state their outer clause eventuality; the
+possible/demonstrating C-events remain inside. Missing CAhA selects one of
+these same modes upstream under P24, never an unstated fifth default.
 
 Tense helpers per the lexicon's tag-reduction rows. Tagged `jai`: for
 a lexical row ρ with promoted role ℓ, writing ρ' for ρ with ℓ
@@ -2898,8 +3159,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   form.
 - **P23** `ba'e` = sign-level focus; `du` = `=` between first-order
   individuals and `CoRef` between plural sumti (§4.5).
-- **P24** Fresh event per bridi unless shared explicitly; ZAhO pinned as
-  boundary-relation shape, contours filled lexically.
+- **P24** Fresh clause eventuality per bridi unless shared explicitly; ZAhO pinned as
+  boundary-relation shape, contours filled lexically. More exactly, every
+  declarative lowering is `ClauseContent`: an unembedded direct lexical episode
+  identifies its clause eventuality with the lexical event; eventless,
+  negative, quantified/generic, and non-disjunctive compound claims take a
+  holding State; disjunction is branch-relative. Missing CAhA is
+  reading-multiple among `ca'a`/`ka'e`/`nu'o`/`pu'i` modes, with no default
+  (CLL 10.19); explicit CAhA fixes the mode.
 - **P25** Lexical argument rows take plural references, not sets. The
   set-typed alternative was examined in full: under the
   discipline of §4.8's representation note the two designs are
@@ -2946,9 +3213,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P31** `ja'a`/`je'a` are transparent identities that ⊳ override
   inherited negation in pro-bridi expansions (`ja'a go'i` over a
   negative template removes the negation); no fourth `Scalar` kind.
-- **P32** Sentence-level **logical** connection is **one performance
-  of the connected content** (forced by `.i ja`; stated for the
-  content-taking forces, interrogative hosts querying the connected
+- **P32** Sentence-level **logical** connection is **one performance of the
+  connected ClauseContent, closed once for force** (forced by `.i ja`; stated
+  for the content-taking forces, interrogative hosts querying the connected
   content). Constitution-bearing `.i joi` is gap-registered pending the
   indexed event/compound-performance programme; `.i TAG bo`
   exposes both event binders with the tag
@@ -2965,8 +3232,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   incidental case; the restrictive rule is this specification's
   extension.
 - **P35** `n roi` **replaces** the single-event existential closure
-  with the counted instantiation-set schema (Card over distinct
-  eventualities in the interval); the default interval is a
+  with `RoiClause`: Card over the distinct component eventualities in the
+  interval, then `StateClause` for the count claim itself; the default interval is a
   Context-recovered anchor with `Vague` extent.
 - **P36** `ma'o`'s operand-to-operator reading is a `Context`
   recovery of the intended function — never a constant-function
@@ -3107,14 +3374,14 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 
 | Construct family | Schema | Library | Gap | Samples |
 |---|---|---|---|---|
-| predication, places, `zi'o`, conversion | §11 ¶1 | — | — | §1 |
-| tense/aspect/space, BAI, CAhA | §11 ¶5 | tag helpers, `MotionVector`, capability, `nu'o`/`pu'i` | ZAhO contours, TAhE | §2 |
+| predication, places, `zi'o`, conversion | §11 ¶1 | `ClauseContent`, `DirectClause`/`StateClause`/`CloseClause` | — | §1–§2 |
+| tense/aspect/space, BAI, CAhA | §11 ¶5 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE | §2 |
 | gadri, descriptions, `lo'e`/`le'e` | §11 ¶2 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora | §3 |
 | relative clauses, `goi`, `voi` | §11 ¶3 | audience-deleted `skicu` (P10) | — | §4 |
 | quantifiers, termsets, negation scope | §11 ¶4 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
 | anaphora, KOhA, `ra'o` | §11 ¶6 | — | exotic donkeys | §4, §5 |
-| abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
+| abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
@@ -3145,7 +3412,8 @@ arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
 `Presuppose`, `Supplement` (display is its §7.6 spelling); `Generic`;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
-`Scalar`; the
+`Scalar`; `StateClause` and the constrained `EventOfContent` projection
+(§9.3); the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
 `InterpretContent`/`InterpretAct<F>`, the partial
@@ -3156,10 +3424,11 @@ fact relations; the declared MEX conversion crossings, `During`,
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
-derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`/
-`EventOfContent`, `InnatelyCapable`, `MotionVector`; and the axiomatic
+derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`,
+`InnatelyCapable`, `MotionVector`; and the axiomatic
 admissibility predicates (§12). **Defined forms** (term-language
-expansions; everything else is library or lexicon): `Close`, `⊤` (the
+expansions; everything else is library or lexicon): `DirectClause`,
+`CloseClause`, the six clause-connective lifts, `Close`, `⊤` (the
 empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
 demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`, the
@@ -3167,7 +3436,7 @@ region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
 `PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
-`ContextualAnswer`, and the library of §12. The
+`ContextualAnswer`, `RoiClause`, the CAhA clause formers, and the library of §12. The
 [catalog](catalog.md) carries one entry per name — prose, formal
 definition where one exists, purpose, example, and links; each name's
 content-word status is in §16.
@@ -3197,7 +3466,8 @@ inventory:
   never silently applied), or *no-fit* (a coinage is owed; until coined,
   the PascalCase placeholder carries the predicate-style definition).
 - **Class O — operators over content, computations, or signs** (`Refer`,
-  `Context`, `Vague`, `Close`, the force constructors, the
+  `Context`, `Vague`, the `DirectClause`/`StateClause`/`CloseClause`/clause-
+  connective family and `Close`, the force constructors, the
   question formers, `Presuppose`/`Supplement`, `Tanru`/`Scalar`,
   `DropPlace`, the selections — while defined machinery like `At`
   (record application) and library λs like `JaiPromote` are Class M
@@ -3450,6 +3720,11 @@ used for source verification are noted per entry.
   "Semantics and Property Theory", *Linguistics and Philosophy* 11(3),
   1988, pp. 261–302 (the nominalization/predicativization pair behind
   §9.1's reservation).
+- **Fine** — Fine, Kit, "A Theory of Truthmaker Content I: Conjunction,
+  Disjunction and Negation", *Journal of Philosophical Logic* 46(6), 2017,
+  pp. 625–674, <https://doi.org/10.1007/s10992-016-9413-y> (comparative
+  state-based composition for §9.3; evidence about the architecture, not
+  authority for Lojban's pins).
 - **BPFK Abstractors** — "BPFK Section: Abstractors", Lojban Wiki,
   <https://mw.lojban.org/papri/BPFK_Section:_Abstractors> (the
   proposed `ce'u` definition discussed in rationale §2.10 — a

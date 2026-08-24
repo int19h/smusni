@@ -105,15 +105,22 @@ are type constructors of the record theory, not first-order sorts —
 they do not appear in §3.1's hierarchy.)
 **See.** [Spec §3.3, §4.7](spec.md); [rationale §1.1](rationale.md).
 
-### 1.6 `Content` — dynamic propositional content
+### 1.6 `Content` and `ClauseContent`
 
 **Informally.** The type of what can be asserted, questioned, negated,
 and embedded. Its denotation is a world-indexed context-change
 potential: run against an information state, it filters and extends
 that state and accumulates projective obligations. No world variable
-ever appears in a term.
-**For.** Every bridi's meaning lands here before force applies.
-**See.** [Spec §3.4, §5.1](spec.md); [primer ch. 1, ch. 4](primer.md).
+ever appears in a term. Its structured denotation also carries the §9.3
+clause-event intension projected by `EventOfContent`. `ClauseContent` is the transparent alias
+`EFn<(Referents<Eventuality>), Content>`: one distinguished clause
+eventuality remains open for tense, tags, CAhA, ROI, and `nu`, then
+`CloseClause` supplies ordinary Content. It is a function type, not a
+first-order event or proposition sort. Where ROI needs a pure comprehension,
+the mapping binds effects before using the ordinary `Fn` refinement.
+**For.** `mi pu klama` exposes its going event; `ta pu du lo mi zdani`
+exposes a holding State while `du` remains binary identity.
+**See.** [Spec §3.4, §4.6, §5.1](spec.md); [primer ch. 1–2](primer.md).
 
 ### 1.7 `RefComp<T>` — reference computations
 
@@ -644,8 +651,9 @@ place at `Referents<·>`): `NiRel` ⟨x1: Amount, x2: Scale⟩ (`ni`);
 ⟨x1: AbstractNature, x2: Entity — category⟩ (`su'u`); `PuhuRel`
 ⟨x1: Process, x2: Eventuality — stages⟩ (`pu'u`); `ZuhoRel`
 ⟨x1: Activity, x2: Eventuality — repeated actions⟩ (`zu'o`). Event
-abstraction (`nu` and its sort refinements) is plain `Refer` at the
-event sort; `ka` is λ; `du'u` is `Reify`; `DuhuRel` is derived
+abstraction (`nu` and its sort refinements) is `Refer` over the inner
+`ClauseContent`, whose effects retain their written sites; `ka` is λ;
+`du'u` is `Reify`; `DuhuRel` is derived
 (defined section). Where the §16.5 audit records a combinator fit
 (`klani` for `NiRel`, `se lifri` for `LihiRel`, …), that is a
 committee-pending adoption plan: upon adoption the relation becomes a
@@ -663,9 +671,11 @@ implicit ones): `AmountValue : Referents<Amount> × Referents<Scale> →
 Number` — an amount's numeric value on its scale (`mo'e`; CLL 11.5);
 `TruthValueDegree : Referents<TruthValue> → Number` — a truth value's
 fuzzy degree in [0,1] (CLL 11.6); and `EventOfContent : Content →
-Referents<Eventuality>` — the eventuality of a clause's content (used
-by `tu'a`'s shape conjunct and `nu` recasting).
-**See.** [Spec §9.2, §12](spec.md).
+Referents<Eventuality>` — the inert projection of a clause's event
+intension. For direct closure it is the lexical witness; conjunction gives a
+joint State, disjunction is branch-relative, and negation gives a negative
+State. Its operand is never evaluated by the projection.
+**See.** [Spec §9.2–9.3](spec.md); [rationale §1.15](rationale.md).
 
 ### 1.45 `MetalinguisticallyDefective` and the named value enumerations
 
@@ -713,10 +723,10 @@ recorded fit becomes a definition only when the committee adopts it.
 ### 1.50 `InnatelyCapable` and `MotionVector`
 
 **Informally.** Two lexically grounded primitives declared with the
-§12 helpers they serve. `InnatelyCapable : Referents<Entity> ×
-Fn<(Referents<Entity>, Referents<Eventuality>), Content> → Content` —
-`jinzi`-grounded innate possibility of P-events with the bearer,
-evaluated at capability worlds (the CAhA base). `MotionVector :
+§12 helpers they serve. `InnatelyCapable : ClauseContent → Content` —
+the clause event property is realizable in worlds compatible with the
+relevant participants' innate natures, with roles supplied by its lexical
+predication (the CAhA base). `MotionVector :
 Referents<Eventuality> × Referents<Entity> × Referents<Entity> →
 Content` — the `mo'i` heading: the event carries the mover's `muvdu`
 motion in the `farna` direction.
@@ -818,6 +828,21 @@ Entity/Eventuality, preserving the no-implicit-crossing rule.
 the raised participant and the hidden cause event.
 **See.** [Spec §6.1, §12](spec.md), pin P14; [rationale §3](rationale.md).
 
+### 1.57 `StateClause`
+
+**Informally.** The primitive holding-state route
+`StateClause : Content → ClauseContent`. When applied it evaluates the
+at-issue facts relative to its State while running contextual/dynamic effects
+exactly once, and makes that State the clause parameter. It returns no truth
+value and exposes no syntax. Identity,
+mathematics, negation, quantified/generic claims, and non-disjunctive compound
+claims need this route; direct lexical episodes use the defined
+`DirectClause` instead. Its State may be temporally/spatially unbounded, and
+values scoped inside are evaluated relative to it (outside bindings stay de
+re).
+**For.** `ta pu du lo mi zdani`; the negative state of `mi na klama`.
+**See.** [Spec §4.6, §9.3](spec.md); [rationale §1.15](rationale.md).
+
 ## 2. Defined forms
 
 Everything below expands into the primitives (and other defined forms,
@@ -865,19 +890,38 @@ owed for this sharing syntax.
 (Express (… $a …)))})` — the display targets *that* act.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
 
-### 2.4 `Close`
+### 2.4 `DirectClause`, `CloseClause`, `Close`, and clause connectives
 
-**Informally.** Complete an open predication into content: close the
-event place existentially (where the row licenses one) and give each
-remaining defaultable place its own contextual slot — one distinct
-site per omission, staying put under negation.
-**Formally.** `(Close P) ≝ (Bind {$v1 :: T1} (Context) … {$vk :: Tk}
-(Context) {(∃ (λ {$e :: Referents Eventuality} {(P :p1 $v1 … :pk $vk
-:Eventuality $e)}))})`.
-**For.** Every unmarked bridi: `mi klama` commits to a contextually
-recoverable destination — not "some destination", not nothing.
-**See.** [Spec §4.6](spec.md); [primer ch. 1](primer.md);
-[rationale §1.2](rationale.md).
+**Informally.** `DirectClause` turns an event-licensed row into
+`ClauseContent`, contextually filling ordinary omitted places while leaving
+the lexical event open. `CloseClause` existentially closes that common event
+interface. `Close` is the type-directed **actual-mode** predication
+abbreviation; eventless
+rows go through primitive `StateClause`. The six `Clause*` connective lifts
+preserve the event discipline: conjunction joint state, disjunction branch
+event, negation negative state, other Boolean compounds holding states.
+**Formally.**
+
+```text
+(DirectClause P) ≝ λe. Bind ordinary omitted places, then P(…, e)
+(CloseClause C)  ≝ ∃e. C(e)
+(Close P)        ≝ CloseClause(ActualClause(DirectClause P))
+(Close (P :Eventuality e)) ≝ ActualClause(DirectClause P)(e)
+(Close P_eventless) ≝ bind ordinary omissions, then
+                       CloseClause(ActualClause(StateClause(P_filled)))
+
+ClauseNot C   ≝ StateClause(¬ CloseClause(C))
+ClauseAnd C D ≝ StateClause(CloseClause(C) ∧ CloseClause(D))
+ClauseOr C D  ≝ λe.(C(e) ∨ D(e))
+ClauseImp / ClauseIff / ClauseXor
+              ≝ StateClause of the corresponding closed Content operation
+```
+
+**For.** `mi klama`; `ta pu du lo mi zdani`; `.i ja` over two clauses.
+`Close` is not a surface default: the other resolved CAhA modes use their
+own §2.21 formers.
+**See.** [Spec §4.6, §9.3](spec.md); [primer ch. 1–2](primer.md);
+[rationale §1.2, §1.15](rationale.md).
 
 ### 2.5 `This`, `That`, `Yonder`
 
@@ -1114,22 +1158,24 @@ rest unchanged⟩) (K $r.x1 $r.fai))})`; the mapping binds K from
 **For.** `mi jai gau rinka` patterns; `fai` fills.
 **See.** [Spec §12, §6.1, §11](spec.md).
 
-### 2.21 `Realized`, `nu'o`, `pu'i` — the capability forms
+### 2.21 The CAhA clause formers
 
-**Informally.** Over the primitive `InnatelyCapable` (§1.50):
-`Realized` — an actual P-event of the bearer occurred; `nu'o` =
-capable and never realized; `pu'i` = capable and demonstrated. `P` is
-an event property of the bearer,
-`Fn<(Referents<Entity>, Referents<Eventuality>), Content>`.
+**Informally.** Over `C : ClauseContent`, `ca'a` keeps C's event and demands
+its world-relative actuality; `ka'e`, `nu'o`, and `pu'i` make the capability
+claim's holding State the outer clause event. `Realized` tests whether an
+actual C-event exists. Missing CAhA is reading-multiple among these four modes
+with no default (P24; CLL 10.19).
 **Formally.**
 
 ```text
-(Realized b P) ≝ (∃ (λ {$e :: Referents Eventuality}
-                    {(∧ (P b $e) (fasnu $e))}))
-(nu'o b P)     ≝ (∧ (InnatelyCapable b P) (¬ (Realized b P)))
-(pu'i b P)     ≝ (∧ (InnatelyCapable b P) (Realized b P))
+(Realized C)           ≝ ∃e.(C(e) ∧ fasnu(e))
+(ActualClause C)       ≝ λe.(C(e) ∧ fasnu(e))
+(CapableClause C)      ≝ StateClause(InnatelyCapable(C))
+(UnrealizedClause C)   ≝ StateClause(InnatelyCapable(C) ∧ ¬Realized(C))
+(DemonstratedClause C) ≝ StateClause(InnatelyCapable(C) ∧ Realized(C))
 ```
-**See.** [Spec §12, §11](spec.md).
+**For.** `mi ca'a citka`; `ro datka ka'e flulimna`.
+**See.** [Spec §5.1, §12, §11](spec.md), pin P24.
 
 ### 2.22 `SelectSome`
 
@@ -1251,17 +1297,35 @@ projective singular condition (the §9.2 pattern).
 **For.** `la .uacintyn. mi'i lo minli be li muno`.
 **See.** [Spec §12, §11](spec.md).
 
+### 2.33 `RoiClause`
+
+**Informally.** Count the host ClauseContent's component eventualities in a
+reference interval, replacing ordinary clause closure; then make the count
+claim's holding State the outer clause eventuality. This keeps “the two
+goings” distinct from “the state of there being two goings.”
+**Formally.** `(RoiClause n C I) ≝ (StateClause (= (Card (SetOf
+(λ {$e :: Eventuality} {(∧ (C $e) (During $e I))}))) n))`, after all
+surface arguments and contextual effects are bound so the comprehension is
+pure.
+**For.** `mi re roi klama`; `roi nai` negates the count before state lift.
+**See.** [Spec §12, §11](spec.md), pin P35.
+
 ## Appendix: model-theory symbols
 
 Not term-language forms — the denotational metalanguage of
 [spec §5.1](spec.md), listed so no named symbol goes unaccounted:
 `Comp<A> = InformationState → P(InformationState × A × Obligations)`
-is the computation carrier (`Content = Comp<Unit>`,
+is the computation carrier (`ContentRun = Comp<Unit>`;
+`ClauseEventIntension` is the defined world/assignment/precisification/branch-indexed event
+projection; `Content` pairs those two,
 `RefComp<T> = Comp<T>`; discourse denotes at the same carrier with
 its commitment effects, while an act value is the pure force-tagged
 package only `Perform` injects — spec §5.1, §7.1); an `InformationState` is a set of
 world–assignment pairs over the model's world set W; `Obligations`
-collects pending projective commitments; `Unit` is the one-value
+collects pending projective commitments; `hold_M` is `StateClause`'s model-
+level holding-state operation and `joint_M` its conjunctive instance that #4
+must exhibit through event constitution; `s ⊩_w c` is the at-issue
+verification relation for a State's partial situation; `Unit` is the one-value
 return type of contentful computations; and `ctx` is the utterance
 context record (speaker, audience, time, place, ground) whose
 projections §5.1 names. These symbols may change with the model (the

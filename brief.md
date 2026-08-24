@@ -17,6 +17,13 @@ reaches, with its gap register bounding the remainder; the core is
 the definition, and Lojban surface syntax becomes one (privileged) way to
 spell its terms.
 
+Every resolved declarative clause exposes one `ClauseContent` eventuality
+before force closes it. Event-licensed lexical clauses use their lexical
+event directly; identity, mathematics, negation, quantified/generic claims,
+and compound claims use typed holding/joint states. This is what lets tense,
+CAhA, ROI, ZAhO, and `nu` apply uniformly while identity and mathematical
+functions retain their ordinary reusable signatures.
+
 This is a *definition*, not a description:
 
 - Where a meaning is genuinely **soritically vague** — no fact fixes a
@@ -154,8 +161,9 @@ decision; neither may ever become a place where the definition lives.
 The specification's adequacy chapter carries the full coverage matrix —
 every CLL construct family mapped to its analysis or to an honest entry
 in the gap register. In outline, the core covers: predication over typed
-places with contextual defaulting; place conversion and deletion; event
-semantics with tense/modal facets as ordinary predicates over events;
+places with contextual defaulting; place conversion and deletion; universal
+clause eventualities with direct lexical events or holding states, and
+tense/modal facets as ordinary predicates over the current clause event;
 sorts (entities, eventualities and their subsorts, sets, groups, lists,
 signs, acts, utterances, amounts, scales, …) and functions; lambdas;
 inert `Let` vs effectful `Bind`; reference (descriptions, names,

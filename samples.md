@@ -18,6 +18,10 @@ in exporting the unused referent. The capitalized indicator relations
 (`Happiness`, `Unhappiness`, `Desire`, `EvidentialBasis`) are §16
 placeholders — see-also the `-nmo` indicator-emotion family the
 audit adopts (spec §16.5).
+At a force boundary, a displayed complete eventless Content may use spec §2's
+actual-reading shorthand for
+`CloseClause(ActualClause(StateClause(content)))`; examples in which the
+clause-event or CAhA choice matters expand it.
 CLL and dictionary citations follow the editions listed in the
 specification's References section.
 
@@ -27,6 +31,9 @@ specification's References section.
 ; mi klama
 (Assert
   (Close (klama Speaker)))
+; ≝ (Assert (CloseClause (ActualClause (DirectClause (klama Speaker)))))
+; this specimen selects the actual missing-CAhA reading; Close names that
+; core composition, not a default imposed on the surface.
 ```
 
 Fully expanded once, so the notation convention is grounded (spec §4.6) —
@@ -40,7 +47,8 @@ four contextual places and the event:
          {$via :: Referents Entity} (Context)
          {$by :: Referents Entity} (Context)
     {(∃ (λ {$e :: Referents Eventuality}
-      {(klama Speaker $to $from $via $by :Eventuality $e)}))}))
+      {(∧ (klama Speaker $to $from $via $by :Eventuality $e)
+         (fasnu $e))}))}))
 ```
 
 Contrast: under negation the contextual places stay put — `mi na klama`
@@ -78,26 +86,33 @@ variable already says everything one would say:
 ```lisp
 ; mi pu citka
 (Assert
-  (∃ (λ {$e :: Referents Eventuality}
-    {(∧ (Close (citka Speaker :Eventuality $e))
-       (purci $e Now))})))
+  (CloseClause
+    (ActualClause
+      (λ {$e :: Referents Eventuality}
+        {(∧ ((DirectClause (citka Speaker)) $e)
+           (purci $e Now))}))))
 ```
 
 ```lisp
 ; mi pu pu citka — a tense path: past of a past reference point
 (Assert
-  (∃ (λ {$e $m :: Referents Eventuality}
-    {(∧ (Close (citka Speaker :Eventuality $e))
-       (purci $m Now)
-       (purci $e $m))})))
+  (CloseClause
+    (ActualClause
+      (λ {$e :: Referents Eventuality}
+        {(∃ (λ {$m :: Referents Eventuality}
+          {(∧ ((DirectClause (citka Speaker)) $e)
+             (purci $m Now)
+             (purci $e $m))}))}))))
 ```
 
 ```lisp
 ; mi klama ti sepi'o ti — an instrumental facet, same event
 (Assert
-  (∃ (λ {$e :: Referents Eventuality}
-    {(∧ (Close (klama Speaker This :Eventuality $e))
-       (Close (pilno :2 This :3 $e)))})))
+  (CloseClause
+    (ActualClause
+      (λ {$e :: Referents Eventuality}
+        {(∧ ((DirectClause (klama Speaker This)) $e)
+           (Close (pilno :2 This :3 $e)))}))))
 ; the host event fills pilno x3 (purpose) — the tag row's licensed link
 ; per the official row: x1 uses x2 for purpose x3.
 ```
@@ -110,9 +125,8 @@ stipulated (rationale §1.13, the facet-decomposition entry).
 ```lisp
 ; mi ca'a citka — actuality as a facet
 (Assert
-  (∃ (λ {$e :: Referents Eventuality}
-    {(∧ (Close (citka Speaker :Eventuality $e))
-       (fasnu $e))})))
+  (CloseClause
+    (ActualClause (DirectClause (citka Speaker)))))
 ```
 
 Tenseless `mi citka` is **reading-multiple** (pin P8), never a default
@@ -122,13 +136,98 @@ present. Its episodic reading carries a `Context`-anchored occasion —
 ; mi citka — the episodic reading: at the contextually relevant occasion
 (Assert
   (Bind {$occ :: Time} (Context)
-    {(∃ (λ {$e :: Referents Eventuality}
-      {(∧ (Close (citka Speaker :Eventuality $e))
-         (cabna $e $occ))}))}))
+    {(CloseClause
+      (λ {$e :: Referents Eventuality}
+        {(∧ ((ActualClause (DirectClause (citka Speaker))) $e)
+           (cabna $e $occ))}))}))
 ```
 
 — while the habitual/gnomic reading carries no temporal conjunct at
 all. Which reading was meant is resolved upstream, like any ambiguity.
+
+Missing CAhA is independently reading-multiple (P24, CLL 10.19): the
+episodic specimen selected `ActualClause`; a capability reading selects
+`CapableClause` instead. Explicit `ca'a` fixes the former.
+
+```lisp
+; ro datka cu flulimna — CLL 10.19's bare capability reading
+(Assert
+  (CloseClause
+    (StateClause
+      (Every (λ {$x :: Entity} {(datka $x)})
+        (λ {$ducks :: Referents Entity}
+          {(CloseClause
+            (CapableClause (DirectClause (flulimna $ducks))))})))))
+; Each nuclear capability clause closes locally; the outer State is the
+; universal claim. No one event is shared by every duck.
+```
+
+```lisp
+; ta pu du lo mi zdani — tense on eventless identity [spec §4.6]
+(Assert
+  (CloseClause
+    (ActualClause
+      (λ {$s :: Referents Eventuality}
+        {(∧ ((StateClause
+               (Bind {$home :: Referents Entity}
+                     (Refer (λ {$x :: Referents Entity}
+                       {(zdani $x Speaker)}))
+                 {(CoRef That $home)})) $s)
+           (purci $s Now))}))))
+; The home description is inside StateClause, so its property is evaluated in
+; $s: That may have been the home then without being it now. Hoisting $home
+; outside gives the rigid de re reading. du/CoRef itself retains ordinary arity.
+```
+
+```lisp
+; fragment: a physical parameter has value $x now but not in a future state
+; $alpha :: Referents Entity
+; $valueOf :: Fn<(Referents<Entity>), Number>  (state-sensitive projection)
+; $x :: Number
+(CloseClause
+  (ActualClause
+    (ClauseAnd
+      (λ {$s :: Referents Eventuality}
+        {(∧ ((StateClause (= ($valueOf $alpha) $x)) $s)
+           (cabna $s Now))})
+      (λ {$t :: Referents Eventuality}
+        {(∧ ((StateClause (¬ (= ($valueOf $alpha) $x))) $t)
+           (balvi $t Now))}))))
+; The two applications of $valueOf are inside their StateClauses and may vary.
+; Binding the resulting Number outside instead would give the rigid de re case.
+```
+
+```lisp
+; li re su'i re ca'a du li vo — CAhA on mathematical identity
+(Assert
+  (CloseClause
+    (ActualClause
+      (StateClause (= (+ 2 2) 4)))))
+```
+
+```lisp
+; mi na klama — the negative State is the clause eventuality
+(Assert
+  (CloseClause
+    (ActualClause
+      (ClauseNot (DirectClause (klama Speaker))))))
+```
+
+```lisp
+; mi klama .ije do stali — joint State, one assertion
+(Assert
+  (CloseClause
+    (ActualClause
+      (ClauseAnd (DirectClause (klama Speaker))
+                 (DirectClause (stali Audience))))))
+
+; mi klama .ija do stali — branch-relative event, one assertion
+(Assert
+  (CloseClause
+    (ActualClause
+      (ClauseOr (DirectClause (klama Speaker))
+                (DirectClause (stali Audience))))))
+```
 
 ## 3. Reference and descriptions
 
@@ -148,7 +247,8 @@ quantificational force at all.
 ; lo mlatu na jbena — the referent scopes outside negation
 (Bind {$cat :: Referents Entity}
         (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))
-  {(Assert (¬ (Close (jbena $cat))))})
+  {(Assert
+    (CloseClause (ClauseNot (DirectClause (jbena $cat)))))})
 ```
 
 ```lisp
@@ -239,7 +339,7 @@ classes, which no single referent could verify (rationale §1.9).
         (Refer (λ {$x :: Referents Entity} {(gerku $x)}))
   {(Assert
     (Supplement $dog (Close (blabi $dog))
-      (¬ (Close (melbi $dog)))))})
+      (CloseClause (ClauseNot (DirectClause (melbi $dog))))))})
 ```
 
 Pinned reading: whiteness is a projective side commitment — the negation
@@ -546,8 +646,8 @@ own lexical presupposition, never from `kau`.
         (Refer (λ {$x :: Referents Entity} {(cukta $x)}))
   {(Bind {$a :: Referents Eventuality}          ; sort from djica's x2
           (Context (λ {$v :: Referents Eventuality}
-            {(∧ (∃ (λ {$c :: Content}
-                 {(CoRef $v (EventOfContent $c))})) ; shape: an abstraction
+            {(∧ (∃ (λ {$p :: Proposition}
+                 {(CoRef $v (EventOfContent (Holds $p)))})) ; clause-event shape
                (Close (srana $v $book)))})
             $book)                               ; depends on this book
     {(Assert (Close (djica Speaker $a)))})})
@@ -658,10 +758,25 @@ there is no intended soritical boundary, as in the cutoff examples above.
 
 ; lo nu mi pu klama — event abstraction: Refer at the event sort
 (Bind {$ev :: Referents Eventuality}
-        (Refer (λ {$e :: Referents Eventuality}
-          {(∧ (Close (klama Speaker :Eventuality $e))
-             (purci $e Now))}))
+      (Refer
+        (ActualClause
+          (λ {$e :: Referents Eventuality}
+            {(∧ ((DirectClause (klama Speaker)) $e)
+               (purci $e Now))})))
   {(Mention $ev)})
+; The omitted-place Context sites remain inside the event property with their
+; ordinary site identity; Refer sequences them rather than pretending purity.
+```
+
+```lisp
+; lo nu ta du lo mi zdani — event abstraction over eventless identity
+(Bind {$home :: Referents Entity}
+      (Refer (λ {$x :: Referents Entity} {(zdani $x Speaker)}))
+  {(Bind {$state :: Referents Eventuality}
+        (Refer (StateClause (CoRef That $home)))
+    {(Mention $state)})})
+; StateClause is already the event property nu needs; no event place is
+; added to CoRef/du and EventOfContent selects this same holding state.
 ```
 
 ## 10. Signs and mention

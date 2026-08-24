@@ -144,6 +144,32 @@ predicate (`purci`, "is earlier than") applied to the event. `ba` is
 trick with other predicates. Stacked tenses chain: `mi pu pu klama` says
 the going is before some point which is itself before now.
 
+But “the event” is not always a lexical action. Every declarative clause first
+has a `ClauseContent` slot:
+
+- an ordinary episode such as `mi klama` puts the going itself there;
+- `ta du lo mi zdani` puts the state of that identity holding there;
+- a negation has a negative state;
+- conjunction has a joint state, while disjunction keeps whichever branch
+  event makes it true;
+- a quantified or generic claim has a state of the whole claim holding, not
+  one impossible event shared by every quantified individual.
+
+So `ta pu du lo mi zdani` is entirely ordinary: `pu` says that identity-state
+is earlier than now. With the home-description evaluated inside that state,
+the building may have been my home then but not now; hoist its referent outside
+and strict identity gives the rigid de re reading. `lo nu ta du lo mi zdani`
+refers to the same kind of state. The core
+does not retype binary `du`; `StateClause`
+lifts its complete equality content, and `CloseClause` closes the uniform
+event slot only when assertion or another content-taking operation needs it.
+Nothing says those states must be short or finite: a mathematical holding
+state may span all time or space. And a physical quantity may have value X
+now and Y later: evaluate its value-description inside each state. Bind the
+value outside instead and you deliberately get the rigid, de re reading.
+Binary identity and arithmetic stay ordinary; state sensitivity belongs to
+the quantity/value expression being compared.
+
 And a bare, tenseless bridi? **There is no default tense** — but CLL
 (ch. 10) itself lists the readings: `mi klama` "can be understood as" I went, I'm
 going, I will go, I continually go — "context resolves which is
@@ -154,6 +180,13 @@ denies one particular relevant failure, not every stove-touching in
 history. On a habitual or timeless reading, there is genuinely no time
 claim at all. What never happens is the core inserting a tense you
 didn't choose. (Pin P8.)
+
+Actuality has the same explicit discipline. `ca'a` requires the clause event
+to occur (`fasnu`); `ka'e`, `nu'o`, and `pu'i` make capability claims. CLL
+10.19 says an omitted CAhA can be understood either way, so the resolved
+reading chooses among those four modes with no default. Bare episodic `mi
+citka` normally selects actual; bare `ro datka cu flulimna` can select innate
+capability without claiming that every duck is swimming now.
 
 ## 3. Things: reference
 
@@ -388,7 +421,8 @@ Lojban's abstractors each make a different *kind* of thing, and predicates
 select which kind they accept — you can know a `du'u` but not an event,
 attend a `nu` but not a proposition:
 
-- `nu` — an event: refer to eventualities satisfying the clause.
+- `nu` — the event or state of the clause as a whole: directly the lexical
+  event when one survives, otherwise its holding/joint/negative state.
 - `du'u` — a proposition: the reified content itself.
 - `ka` — a property: a function, with `ce'u` marking the open slot
   (unmarked: the first unfilled place — pin P12).
@@ -556,7 +590,9 @@ is the same story with the definitions filled in.
 | `PredTerm<ρ>` | the type of relations over place row ρ | a brivla's relation | §3.3 |
 | row ρ | the labelled place structure itself | x1…xn | §3.3 |
 | `RefComp` | a computation that refers/retrieves (what `Bind` runs) | — | §3.4 |
-| `Close` | fill remaining places from context, claim an event | unmarked bridi | §4.6 |
+| `ClauseContent` | a clause with its event/state still open | tense, tags, `nu` | §3.4, §4.6 |
+| `StateClause` / `CloseClause` | give eventless content a holding state / close the common event slot | `du`, negation, force | §4.6, §9.3 |
+| `Close` | actual-mode shorthand: fill omitted places and close a clause | an actual resolved bridi | §4.6 |
 | `Refer` | introduce things into the conversation | `lo`/`le`/`la` | §5.3 |
 | `Context` | recover the occurrence's intended value closely enough | `zo'e`, omissions, `co'e`, tanru, `tu'a`, topic | §5.3, §6 |
 | `Vague` | family of soritical sharpenings; no cutoff fact | `so'i`, gradable cutoffs, `ji'i` tolerance | §5.3, §6 |
