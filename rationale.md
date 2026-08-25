@@ -309,8 +309,39 @@ text, not meaning); `la'e lu mi klama li'u` (a sign and what it expresses
 are different things, and Lojban crosses between them explicitly).
 **Why opaque quotation boundaries?** Anaphora and presupposition must not
 leak out of mentioned material, or quotation collapses into use.
-**Cost.** Tokens and signs enlarge the ontology; every element is
-independently witnessed.
+**Why three performance layers?** A reusable act package cannot contain one
+performance's resolved speaker, deixis, or omitted-place values: the same
+`Act` may be quoted without performance and may be performed twice in two
+contexts. `ActContent` must therefore remain the raw package projection.
+Conversely, cross-performance default `go'i` and assertion-content `la'e di'u` must not run that
+raw package against the later caller's context; they need the content as
+resolved at the selected utterance. `RealizedContent` supplies that partial
+token-to-content crossing, while the `ActOccurrence` record/opaque handle is the semantic
+join point between one `Perform`, its token/span, its extensional context
+capture, and occurrence-relative grounding. `Perform` returns only an opaque
+handle to this record, so a UI can target one of two performances of the same
+act without inspecting the capture. Putting the capture inside the
+act would make repeat performance impossible; relying only on a
+hoist-before-construction convention would leave arbitrary deictic or
+`Context`-bearing packages undefined. The occurrence layer factors both
+problems once. **Why not target only the utterance token?** One token/span may
+realize a host plus displays/vocatives, or future compound components; the
+token does not identify which act was performed. The occurrence handle pairs
+token, act, and capture, while transcript attachment supplies its role,
+without identifying any two of them. **Why not
+target only the raw act?** Re-performing one package would make the two
+targets identical. It freezes contextual interpretation, not dynamic truth,
+reference outcomes, projective discharge, or a `Vague` sharpening.
+CLL 7.6 independently supplies the key minimal pair: ordinary GOhA keeps the
+antecedent pro-sumti meanings, whereas `ra'o` reinterprets them in the new
+context. That source does **not** license reopening every omitted place or
+tanru link. The mapping therefore merges the raw template with the occurrence
+capture: only the marked pro-assign sites are rebuilt, while unrelated
+`Context` values remain captured. A wholesale raw `ActContent` replay was
+considered and rejected as an overgeneralization of `ra'o`.
+**Cost.** Tokens and signs enlarge the ontology; the model also carries
+performance occurrences and semantic closures. None exposes resolver state
+to terms, and every element is independently witnessed.
 
 ### 1.12 Indicators: displayed content with lexicon discipline
 
@@ -357,9 +388,12 @@ binder — the seam between the pure λ-fragment and the dynamics.
 *once*, with its witness reused across two performed acts —
 `(Bind {$cat :: Referents Entity} (Refer P) {(Do a₁ a₂)})`. **Why not
 ordinary λ-application?** In the calculus as typed, application simply
-*cannot* consume a computation where a value is demanded — `Bind` is
-`RefComp`'s eliminator, and that type mismatch is the primary
-necessity witness. The live alternative is a different calculus: a
+*cannot* consume a computation where a value is demanded — `Bind` is the
+value-returning computation eliminator (`RefComp` and `PerfComp`), and that
+type mismatch is the primary
+necessity witness. The effect join is load-bearing: a performance operand
+keeps the result in `PerfComp`, so binding its occurrence handle cannot smuggle
+a performed act into `Content`. The live alternative is a different calculus: a
 direct-style call-by-value core where application itself sequences
 effectful arguments. There the two would coincide — the honest gloss
 is that `Bind` *is* application under mandatory call-by-value at

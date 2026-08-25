@@ -133,7 +133,7 @@ precisification families (`Vague`). Consumed by `Bind`.
 witness is bound.
 **See.** [Spec §3.4, §5.2–5.3](spec.md).
 
-### 1.8 `Act<F>` and `Discourse` — speech-act types
+### 1.8 `Act<F>`, `PerfComp<T>`, and `Discourse` — speech-act types
 
 **Informally.** An `Act<F>` value is a force-tagged content package —
 force `F` (Assertion, Question, Directive, Expressive, Address) plus
@@ -141,11 +141,32 @@ the content computation — built inertly: constructing an act runs
 nothing. An act is a pure value, not a computation — only `Perform`
 (§1.36) injects it into the dynamic carrier. `Discourse` is performed
 discourse: sequences of performed
-acts and transitions. A document denotes one `Discourse`.
+acts and transitions. A document denotes one `Discourse`. The package stays
+raw and reusable: performance-specific contextual capture belongs to the
+`ActOccurrence` handle returned by `Perform`, never to `Act<F>` or
+`ActContent`. `PerfComp<T>` is the performance computation category and
+`Discourse = PerfComp<Unit>`.
 **For.** Quotation and report: `mi cusku lu ko klama li'u` mentions a
 directive without issuing it, because only `Perform` executes.
 **See.** [Spec §3.4, §7.1](spec.md); [primer ch. 6](primer.md);
 [rationale §1.11](rationale.md).
+
+### 1.8a `ActOccurrence<F>` — opaque performance handle
+
+**Informally.** One execution of one reusable act package, associated with
+the current transcript token/span and the extensional semantic capture of
+that performance's utterance context and `Context` resolver. Re-performing
+one act creates another occurrence and may realize different content without
+mutating the package. **Semantic class:** Class M model infrastructure.
+**Surface reachability:** lowering-only generic infrastructure — `Perform`
+returns the handle and act-level UI lowerings `Bind` it, but there is no
+direct Lojban sumti spelling, pure constructor, or state inspector. Its factorization witness is the
+`ActContent`/`RealizedContent` distinction and occurrence-relative indicator
+grounding.
+**For.** Cross-performance default `go'i` and `la'e di'u` preserve the antecedent occurrence's
+resolved context; `ra'o` selectively rebuilds its marked pro-assign sites from
+the raw package while retaining other captured sites.
+**See.** [Spec §5.1, §7.1–7.4](spec.md); [rationale §1.11](rationale.md).
 
 ### 1.9 `Query<A>`, `Selection<A>`, `Bool` — question types
 
@@ -215,9 +236,11 @@ sequencing its effects before the continuation, and pass its *result*
 call-by-value at computation types, made visible: the pure λ-fragment
 keeps unconditional β-equality, and every effect-sequencing point is a
 `bind` node the accessibility table can name. Uniform across the
-computation categories: the continuation may yield content, a
-reference computation, or a discourse (a bare act body stands for its
-performing one-act discourse — spec §7.1's display coercion), so a
+computation categories at one carrier, with an explicit effect join:
+`RefComp` may sequence into content, reference, or performance; a
+`PerfComp` operand keeps the result performance-level and cannot disappear
+inside Content. A bare act body stands for its performing one-act discourse
+(§7.1's display coercion), so a
 referent introduced before an act sequence stays bound across it. The
 surface form `(Bind {$x :: T} comp {body})` is a direct effectful binder;
 its denotation applies carrier `bind` to `comp` and the scoped body
@@ -545,10 +568,15 @@ specimen fragments.
 ### 1.36 `Perform` and `Do`
 
 **Informally.** `Perform` injects an act into the performance level —
-the content's computation runs with the force's commitment effects;
+first creating a fresh `ActOccurrence` under `CurrentToken`, then running the
+force payload under that occurrence's capture, handling projectives, and
+applying the force's commitment effects; its `PerfComp` result is the opaque
+occurrence handle, which `Bind` may name. At a `Discourse` position the handle
+is discarded through carrier `bind` and empty `Do`;
 `Do` sequences performed discourse (flattening, associative, with
-`∧`'s accessibility row). Act boundaries close force segments:
-introductions inside an unperformed act do not escape.
+`∧`'s accessibility row; zero operands is the empty-discourse unit). Act boundaries close force segments:
+introductions inside an unperformed act do not escape. Re-performing an act
+creates another occurrence; it never changes the package.
 **For.** The discourse spine; `.i` sequencing.
 **See.** [Spec §7.1, §5.4](spec.md); [primer ch. 6](primer.md).
 
@@ -587,7 +615,10 @@ or the act it expresses. `InterpretAct<F>` is a force-indexed
 intended) act has force `F`, since a sign does not carry its force. On
 transcript entries, `InterpretAct` yields the realized act;
 `InterpretContent` is defined exactly when that act is an
-assertion (the content projection); a question, directive, or
+assertion (the raw `ActContent` projection — a quotation's `Realizes` fact is
+not a performance occurrence and does not invoke `RealizedContent`; the sign's
+own intended utterance context still governs its interpretation, not the later
+caller's); a question, directive, or
 expressive entry has no content projection and interprets only as an
 act.
 **For.** `la'e lu mi klama li'u` — the content, not the sentence.
@@ -605,22 +636,31 @@ speaker`, `AudienceOf u audience` (both at `Referents<Entity>`);
 `DeicticTimeOf u t`
 (`Time`); `DeicticPlaceOf u l` (`Location`); `TextOf u|s text`
 (`Text`); `Realizes u a` (`a` an act value of whatever force — the
-force index is existential); `Utters agent u`; `Quotes s x` (`x` the
+force index is existential; this fact alone does **not** say the act was
+performed); `Utters agent u`; `Quotes s x` (`x` the
 quoted material: a sign or `Text`); `Denotes s x` (`x` a value of any
 sort — denotation is sort-polymorphic).
 **For.** Transcript entries, reported speech, the `le`-anchoring
-clause (the describing event is this utterance's locution).
+clause (the describing event is this utterance's locution). Performed
+association lives in the model's `ActOccurrence` transcript; this separation
+is why quoted entries can carry `Realizes` without acquiring
+`RealizedContent`. Each `Perform a` entails `Realizes(CurrentToken,a)`, but
+not conversely.
 **See.** [Spec §7.4–7.5, §10–11](spec.md).
 
 ### 1.41 `Deictic`, `ShiftedGround`, `InContext`, and the context projections
 
 **Informally.** The utterance context is a typed record (speaker,
-audience, time, place, ground) with projections `Speaker`, `Audience`,
-`Now`, `Here`. `Deictic` picks referents at a proximity against a
+audience, time, place, ground, current token/span) with projections `Speaker`, `Audience`,
+`Now`, `Here`, and `CurrentToken`. `Deictic` picks referents at a proximity against a
 ground; `ShiftedGround` *constructs* a ground from a description
 (never a contextual resolution); `InContext` evaluates content with
 deictic projections from a given ground — the explicit context shift
 (`ra'o`), currently the sole member of the index-shift family.
+`CurrentToken` associates each `Perform` with its occurrence and is the model
+value surface `dei` binds; it is not a global last-utterance constant.
+Its `SpeakerOf`/`AudienceOf`/deictic time/place facts cohere with the matching
+context projections.
 **For.** `mi`/`do`, `ti`/`ta`/`tu` (via the defined demonstratives),
 narrative perspective shifts.
 **See.** [Spec §5.1](spec.md); [rationale §2.3](rationale.md).
@@ -698,7 +738,8 @@ content words under the §16 program. The indicator relations —
 intensity region → `Content`, and
 `EvidentialBasis` : experiencer × `Target` × `BasisKind` → `Content`
 (`Target` the closed union of §7.6: a `Proposition` — content targets
-go through `Reify` — an act value, a plural reference, or a sign) —
+go through `Reify` — an act value, an opaque `ActOccurrence` handle, a plural
+reference, or a sign) —
 with the §16.5 audit mapping them to the `-nmo` indicator-emotion
 family (*indicator* `zei cinmo`: `uinmo`, `u'inmo`, `le'onmo`, …, the
 generic `inmo`; one word per indicator, mechanically extensible to
@@ -707,7 +748,8 @@ rows carry experiencer × target, and the intensity place is the
 proposed extension; the emotion gismu (`gleki`, `badri`, `djica`, …)
 are see-alsos. The discourse
 relations — `Contrast`, `Addition`, `Parallel`, `Elaboration` : two
-act values → `Content` (audit: `frica`/`simsa` for contrast and
+performed `ActOccurrence` handles → `Content` by default, with raw act
+values available as explicit metalinguistic alternatives (audit: `frica`/`simsa` for contrast and
 parallel). The named tanru-link precisification constants —
 `MannerLink`, `MaterialLink`, `PurposeLink`, `SourceLink`,
 `InstrumentLink`, `ResemblanceLink` — each a relation of its head row
@@ -771,7 +813,16 @@ expansions.
 **Informally.** Declared, definedness projective (§5.5):
 `RealizedAct<F>` / `RealizedDiscourse` (the act or act-sequence a
 transcript token/span realizes — utterance anaphora's crossing, P28)
-with the total `ActContent` (an assertion's packaged content);
+with the total, inert `ActContent` (an assertion package's **raw** content),
+and partial, inert `RealizedContent` (the structured Content captured by the
+one eligible performed, context-resolved host assertion occurrence
+selected by transcript attachment/role; associated displays do not compete).
+`RealizedContent` is surface-reachable through default pro-bridi
+reuse and assertion-content `la'e` over utterance anaphors; `ActContent` is
+the raw route used by quotation interpretation and as the source template for
+selective `ra'o` re-resolution. Both are Class O content projections;
+the opaque `ActOccurrence` handle/capture interface is separately Class M,
+lowering-only generic infrastructure;
 `During` (an eventuality's temporal extent within an interval — the
 ROI count schema's restriction, P35); and
 the MEX conversions `RelToOp<ρ>` (`na'u`, at Number-rowed relations,
@@ -887,8 +938,10 @@ effectful computation; that is `Bind`'s job, by type.
 **Formally.** `(Let {$x :: T} v {body}) ≝ ((λ {$x :: T} {body}) v)`.
 **Content-word status.** Class M structural machinery: no content word is
 owed for this sharing syntax.
-**For.** `(Let {$a :: Act Assertion} (Assert …) {(Do (Perform $a)
-(Express (… $a …)))})` — the display targets *that* act.
+**For.** `(Let {$a :: Act Assertion} (Assert …)
+{(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+{(Express (… $o …))})})` — `Let` shares the raw act, while `Bind` names
+the one performance occurrence the display targets.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
 
 ### 2.4 `DirectClause`, `CloseClause`, `Close`, and clause connectives
@@ -1191,8 +1244,9 @@ as the weakest member of the selection family.
 
 ### 2.23 `NahiObjection`
 
-**Informally.** The `na'i` act: express, of a bound prior target, that
-it is metalinguistically defective in a contextually recovered
+**Informally.** The `na'i` act: express, of a bound prior target (normally the
+performed occurrence or utterance token; a raw act only when explicitly
+intended), that it is metalinguistically defective in a contextually recovered
 dimension — performing nothing, negating nothing.
 **Formally.** `(NahiObjection t) ≝ (Bind {$d :: DefectKind} (Context)
 {(Express (Close (MetalinguisticallyDefective t $d)))})`.
@@ -1200,11 +1254,12 @@ dimension — performing nothing, negating nothing.
 
 ### 2.24 `GroundedBy`
 
-**Informally.** The act-level evidential spelling: display, beside a
-performed act, the speaker's basis for it — a mode of commitment, not
+**Informally.** The act-level evidential spelling: bind one performed act's
+occurrence handle and display the speaker's basis for that occurrence — a mode of commitment, not
 a second claim.
-**Formally.** `(GroundedBy b a) ≝ (Do (Perform a) (Express (Close
-(EvidentialBasis Speaker a b))))`.
+**Formally.** for `a : Act<F>`, `(GroundedBy b a) ≝
+(Bind {$o :: ActOccurrence F} (Perform a)
+{(Express (Close (EvidentialBasis Speaker $o b)))})`.
 **For.** `za'a do cadzu` — the assertion grounded in observation;
 negation touches the walking, never the basis.
 **See.** [Spec §12, §7.6](spec.md); [primer ch. 7](primer.md).
@@ -1322,16 +1377,20 @@ Not term-language forms — the denotational metalanguage of
 is the computation carrier (`ContentRun = Comp<Unit>`;
 `ClauseEventIntension` is the defined world/assignment/precisification/branch-indexed event
 projection; `Content` pairs those two,
-`RefComp<T> = Comp<T>`; discourse denotes at the same carrier with
-its commitment effects, while an act value is the pure force-tagged
-package only `Perform` injects — spec §5.1, §7.1); an `InformationState` is a set of
+`RefComp<T> = Comp<T>`; `PerfComp<T>` is that carrier at the performance
+effect vocabulary and `Discourse = PerfComp<Unit>`, while an act value is the pure force-tagged
+package only `Perform` injects; every such injection creates a model-level
+`ActOccurrence<F>` pairing that package with `CurrentToken` and an extensional
+capture of the performance context/resolver; `RealizedContent` projects the
+assertion member's captured Content without running it — spec §5.1,
+§7.1–7.4); an `InformationState` is a set of
 world–assignment pairs over the model's world set W; `Obligations`
 collects pending projective commitments; `hold_M` is `StateClause`'s model-
 level holding-state operation and `joint_M` its conjunctive instance that #4
 must exhibit through event constitution; `s ⊩_w c` is the at-issue
 verification relation for a State's partial situation; `Unit` is the one-value
 return type of contentful computations; and `ctx` is the utterance
-context record (speaker, audience, time, place, ground) whose
+context record (speaker, audience, time, place, ground, current token/span) whose
 projections §5.1 names. These symbols may change with the model (the
 `da'i` gap entry anticipates a world-shift operation) without any term
 changing — which is the point of keeping them out of the term

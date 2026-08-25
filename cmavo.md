@@ -281,8 +281,8 @@ X refers to; `lu'e X` a sign for X.
 ```lisp
 ; mi djuno la'e by — by ⊳-bound to a sentence-sign referent
 (Close (djuno Speaker (Reify 👉(InterpretContent by)👈)))
-; la'e di'u crosses through the token's realized act instead:
-; (ActContent (RealizedAct dihu)), host-sorted (P28)
+; la'e di'u at performed assertion content crosses directly through:
+; (RealizedContent dihu), then the host-sorted crossing (P28)
 ```
 
 **See.** [Spec §7.5, §11](spec.md).
@@ -1019,16 +1019,26 @@ Bridi-place reflexives: bindings to the current bridi's fills.
 
 ### go'i family (go'i, go'e, go'a, go'o, nei, no'a) (GOhA)
 
-Bridi anaphora: ⊳ expansion with the antecedent's **resolved**
-context — closure sites keep their values; `go'i` as an answer is
-`Answer` with polar selection.
+Bridi anaphora: ⊳ cross-performance `go'i`/`go'e`/`go'a`/`go'o`
+expansion uses the antecedent's **resolved occurrence capture** —
+utterance-context projections and closure sites keep their values. Whole
+assertion-content reuse is `RealizedContent u`; template overrides operate on
+the same captured expansion. `nei`/`no'a`, and uses inside unperformed
+material, instead reuse the already resolved current/outer template
+environment: no occurrence is required. `go'i` as an answer is `Answer` with
+polar selection.
 
 **See.** [Spec §11, §8](spec.md), pin P16.
 
 ### ra'o (RAhO)
 
-Re-resolution: the expanded bridi's deictics re-resolve under the
-current `InContext`/`ShiftedGround`.
+Selective re-resolution: take the raw package/template (`ActContent
+(RealizedAct u)` at assertion force) as the source, but reopen only the
+antecedent pro-sumti/pro-bridi sites marked by `ra'o`. Interpret those in this
+new performance under the current `InContext`/`ShiftedGround`; omitted places,
+tanru links, and other unmarked `Context` sites retain the antecedent capture.
+This follows CLL 7.6's stated pro-assign update rather than treating `ra'o` as
+a wholesale raw-package replay.
 
 **See.** [Spec §5.1, §11](spec.md).
 
@@ -1036,10 +1046,10 @@ current `InContext`/`ShiftedGround`.
 
 Utterance anaphora at `Referents<UtteranceToken>`: ⊳ recency over the
 transcript at three distances, past and future; `dei` = the current
-entry's own bound token; `do'i` = `Context` at the salient token/span
-(P28). `la'e` on these crosses through the token's realized act —
-`(ActContent (RealizedAct u))`, the partiality `RealizedAct`'s alone
-(spec §7.4) — into the host-sorted crossing; no universal coercion.
+entry's own bound `CurrentToken`; `do'i` = `Context` at the salient token/span
+(P28). `la'e` on these uses partial `(RealizedContent u)` when performed assertion content is demanded
+(spec §7.4) — into the host-sorted crossing; an act-demanding host still
+uses `RealizedAct<F>`. No universal coercion.
 
 ```lisp
 ; di'u jitfa jufra — dihu ⊳-bound by transcript recency
@@ -1278,12 +1288,16 @@ emotion/attitude relation (§16.5 maps the placeholders to the `-nmo`
 family). ⊳ Target selection by grammatical attachment (P19).
 
 ```lisp
-; .uinai mi klama — the display targets the bound host act; degree
+; .uinai mi klama — the display targets the bound host occurrence; degree
 ; Moderate is the unmarked region (cai would make it Intense)
 (Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Do (Perform $a)
-      (Express (Close (Unhappiness Speaker $a Moderate))))})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (Unhappiness Speaker $o Moderate)))})})
 ```
+
+The occurrence handle makes the host-force/display target explicit after
+lowering; performing `$a` again returns a distinct handle that the earlier UI
+does not modify. A relation about the raw package may still target `$a`.
 
 **See.** [Spec §7.6, §11](spec.md), pin P19; [samples §7](samples.md).
 
@@ -1344,10 +1358,10 @@ dimension; performs nothing, negates nothing.
 
 ```lisp
 ; do klama .i na'i — the objected act Let-bound (§7.2: no
-; discourse constants)
+; discourse constants); its performance occurrence Bind-bound
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Do (Perform $a)
-      👉(NahiObjection $a)👈)})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {👉(NahiObjection $o)👈})})
 ```
 
 **See.** [Spec §7.3, §12](spec.md); [catalog 2.23](catalog.md).
@@ -1363,19 +1377,20 @@ the three things a treatment must define (spec §14's entry).
 
 ### Discursives (ku'i, ji'a, si'a, mi'u, ta'o, va'i, …) (UI)
 
-Library discourse relations between act values (`Contrast`,
+Library discourse relations between performed occurrence handles (`Contrast`,
 `Addition`, `Parallel`, `Elaboration`, …), displayed beside the host
-act. Constituent `ji'a` and `po'o` are focus derivations
+occurrence. Raw act values remain explicit metalinguistic alternatives.
+Constituent `ji'a` and `po'o` are focus derivations
 (`Additive`/`Only`).
 
 ```lisp
 ; .i mi klama .i ku'i do stali — no prior/following-discourse
-; constants exist (§7.2): both acts are Let-bound values
-(Do (Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Do (Perform $a1)
-      (Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-        {(Do (Perform $a2)
-            (Express (Close (Contrast $a2 $a1))))}))}))
+; constants exist (§7.2): raw acts are Let-bound, occurrences Bind-bound
+(Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
+  {(Bind {$o1 :: ActOccurrence Assertion} (Perform $a1)
+    {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
+      {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
+        {(Express (Close (Contrast $o2 $o1)))})})})})
 ```
 
 **See.** [Spec §7.2, §11](spec.md); [catalog 2.25](catalog.md).
@@ -1469,7 +1484,9 @@ rows it consumes.
 
 Structured quotation: `StructuredQuote` over the transcript entry —
 a pure token-description property (`Utterance` entry notation);
-quoted material introduces no discourse referents.
+quoted material introduces no discourse referents. Its `Realizes` fact names
+a raw act package, not a performance occurrence, so `InterpretContent` uses
+`ActContent` and no `RealizedContent` is available merely from quotation.
 
 ```lisp
 ; mi cusku lu mi klama li'u

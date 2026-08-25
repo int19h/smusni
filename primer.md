@@ -352,6 +352,21 @@ meaning does not leak through. Performing happens only on the discourse
 **spine** — the document's top-level sequence of acts, the things
 actually said (everything else is acts *talked about*).
 
+One package can be performed more than once. Each performance is a distinct
+**act occurrence**, tied to its utterance token and to the speaker, time,
+deictic ground, and omitted-place resolutions of that occasion. The package
+does not change: `ActContent` always returns its raw content.
+`RealizedContent` instead starts from a performed assertion's token and
+returns the content under that occurrence's captured context. This is why
+cross-utterance `go'i` keeps what the previous speaker/context meant, while `ra'o`
+asks for deliberate re-resolution of the antecedent pro-assigns now. It does
+not reopen unrelated omitted places or tanru links: those remain captured.
+A quoted `Realizes` fact has a package
+but no performance occurrence, so quotation interpretation correctly gets
+the raw content. The capture is semantic, not a replay log: truth evaluation,
+reference choices, projective commitments, and vagueness still obey their
+ordinary rules.
+
 Embedded questions: `mi djuno lo du'u ma kau klama` — "I know who came."
 What `kau` contributes is *answerhood*: my knowledge settles the question.
 Does it settle it exhaustively (I know of everyone whether they came)?
@@ -370,9 +385,13 @@ a degree on an intensity scale — displayed alongside its host:
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
 (Let {$a :: Act Assertion} (Assert (Close (tatpi $dogs)))
-  {(Do (Perform $a)
-      (Express (Close (Unhappiness Speaker $a Intense))))})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (Unhappiness Speaker $o Intense)))})})
 ```
+
+The bound `$o` is the performance occurrence. If `$a` is performed again, the
+new handle does not inherit the earlier indicator; a relation can still
+mention reusable `$a` explicitly when that is what the speaker targets.
 
 (`Unhappiness` is capitalized because it is one of the spec's
 placeholder relations — §0's naming note — awaiting its Lojban content
@@ -404,8 +423,8 @@ Two special indicator families:
   content. That's why the core treats evidentials as targeted display
   rather than as a feature of assertion.
 
-Discursives (`ku'i` "however", `ji'a` "also") relate the current act to a
-previous one; `na'i` objects to a prior utterance ("something's off about
+Discursives (`ku'i` "however", `ji'a` "also") relate the current performed
+occurrence to a previous one; `na'i` objects to a prior utterance ("something's off about
 saying that") without negating anything — which is why Lojban has three
 negation-flavored words, and the core gives them three unrelated meanings:
 
@@ -553,8 +572,8 @@ the way chapter 2 anchored the stove):
               (∃ (λ {$e :: Referents Eventuality}       ; chapter 4: ri = $dogs
                 {(∧ (Close (tatpi $dogs :Eventuality $e))
                     (cabna $e $occ2))})))
-        {(Do (Perform $a2)
-             (Express (Close (Unhappiness Speaker $a2 Intense))))})}))}) ; chapter 7
+        {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
+          {(Express (Close (Unhappiness Speaker $o2 Intense)))})})}))}) ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.
@@ -602,7 +621,8 @@ is the same story with the definitions filled in.
 | `Supplement` | aside, committed regardless | `noi`, `sei` | §5.5 |
 | witness export | a quantifier's picks stay referable | `ci gerku … .i ri` | §5.6 |
 | `Generic` | typical-talk without a specimen | `lo'e`/`le'e` | §5.8 |
-| `Act` / `Perform` | built speech act vs doing it | quoted vs spoken | §7.1 |
+| `Act` / `ActOccurrence` / `Perform` | reusable speech-act package / one contextualized performance / doing it | quoted vs spoken, `go'i`/`ra'o` | §7.1–7.4 |
+| `ActContent` / `RealizedContent` | raw package content / a performed assertion's captured content | quotation vs `la'e di'u` | §7.4 |
 | displayed content | shown, not claimed | UI family | §7.6 |
 | host-force profile | does the indicator's host stay claimed? | `.ui` vs `.au` | §7.6 |
 | `Reify` | content as a thing | `du'u` | §9.1 |

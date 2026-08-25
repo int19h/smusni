@@ -174,7 +174,8 @@ counting basis; termsets; logical and non-logical connectives with a
 normative dynamic-accessibility table; abstraction relations and their
 numeric crossings; questions and answerhood; de re / de dicto; quotation,
 signs, and utterance tokens; speech acts and discourse structure;
-indicators and evidentials; typed soritical vagueness, intended-value
+reusable act packages distinguished from token-specific realized performance
+content; indicators and evidentials; typed soritical vagueness, intended-value
 contextual computations (including tanru and scalar contrast domains), and
 supplements; linguistic quotation and signs; and mex to the extent Lojban ties
 it to meaning. A staged

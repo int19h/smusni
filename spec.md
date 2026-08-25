@@ -410,7 +410,7 @@ and appear freely in variable annotations, λ parameter lists, and
 
 One signature convention holds document-wide: `→` marks total
 operations; `⇀` marks partial ones, whose definedness condition
-projects (§5.5); and a `RefComp`/`Comp` result type marks the
+projects (§5.5); and a `RefComp`/`PerfComp`/`Comp` result type marks the
 operations that consult context or otherwise carry effects. The three
 spellings are exclusive — a signature never expresses contextual
 recovery with `⇀` or projective partiality with `→`.
@@ -424,7 +424,10 @@ ClauseContent      event-open declarative content, definitionally
 RefComp<T>         reference/contextual computations returning T
 Act<F>             speech acts of force F ∈ ⟨Assertion, Question,
                    Directive, Expressive, Address⟩
-Discourse          performed discourse (sequences of acts and transitions)
+ActOccurrence<F>   opaque handle for one performance of an Act<F>
+PerfComp<T>        performance-level computations returning T
+Discourse          definitionally PerfComp<Unit>: performed discourse
+                   (sequences of acts and transitions)
 Query<A>           questions with answer domain A
 ```
 
@@ -435,8 +438,10 @@ the term language. `Act<F>`
 values are first-class: constructing an act and performing it are
 different things (§7.1), which is what keeps quotation and reported speech
 from performing their contents. An act is a pure *value*, not a
-computation: only `Perform` injects it into the dynamic carrier
-(§5.1, §7.1).
+computation: only `Perform` injects it into the dynamic carrier and returns an
+opaque `ActOccurrence<F>` handle (§5.1, §7.1). The handle exposes no
+capture or evaluator state; it exists so occurrence-relative display can
+target the performance it modifies.
 
 `ClauseContent` is a transparent effectful-function alias, not a first-order
 sort and not a second proposition type. It is the stage at which one
@@ -464,10 +469,11 @@ named construct and normative for exactly those uses:
   constructs: `TopicResolution<ρ,T>` (§12) and the indicator target
   type `Target` (§7.6). A union value is built by its named injection
   and consumed by the same finite equality-guarded disjunction.
-  `Target` is fixed here once: a `Proposition`, an act value of
-  *some* force (the force index existential and erased — recoverable
-  only through the partial `InterpretAct<F>`/`RealizedAct<F>`
-  family), a plural reference at *some* sort, or a sign of *some*
+  `Target` is fixed here once: a `Proposition`, an act value or
+  `ActOccurrence` handle of *some* force (the force index existential and
+  erased; act members can be recovered through the partial
+  `InterpretAct<F>`/`RealizedAct<F>` family, while occurrence handles have no
+  baseline inspector), a plural reference at *some* sort, or a sign of *some*
   kind. The same force-erasure reading types `Realizes u a` (§7.4):
   its act operand is force-existential. Sort-polymorphic fact
   relations (`Denotes`, §7.5) are metalanguage families — one
@@ -891,11 +897,11 @@ ClauseEventIntension
            =  defined world/assignment/precisification/branch index
               ⇀ Referents<Eventuality>
 Content    =  ⟨ run : ContentRun, event : ClauseEventIntension ⟩
-Discourse  =  Comp<Unit> at the performance level (its effect
-              vocabulary adds commitment/performance operations);
-              Act<F> is NOT a computation — it is the pure
-              force-tagged package of §7.1, entering this carrier
-              only through Perform
+PerfComp<A> = Comp<A> at the performance level (its effect vocabulary
+              adds commitment/performance operations)
+Discourse  =  PerfComp<Unit>
+Act<F>      =  the pure force-tagged package of §7.1, NOT a
+              computation; it enters PerfComp only through Perform
 bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (the carrier's
               sequencing operation — the direct `Bind` form of §5.2
               supplies its scoped continuation)
@@ -921,13 +927,31 @@ the π-family — and truth simpliciter, where invoked, is supertruth
 over the family — existential collapse of precisifications into branches would
 make one admissible reading's success suffice, which VC1 forbids. Each named operation of this chapter (`Refer`,
 `Context`, `Vague`, `Presuppose`, `Supplement`, the selections of §5.6,
-the connectives' state-passing, and §9.3's `StateClause`/
-`EventOfContent` pair) is an operation of this algebra, and its
+the connectives' state-passing, §9.3's `StateClause`/`CloseClause`/
+`EventOfContent` interface, and §7's performance/realized-content
+interface) is an operation of this algebra, and its
 clause consists of two parts with two homes: **what escapes and what is
 accessible is stated once, in the accessibility table (§5.4)** — nothing
 elsewhere may restate it — while return values, truth filtering, and
 obligation discharge are fixed by the carrier above and the operation's
 own paragraph.
+
+The performance level additionally supplies a semantic transcript of
+**act occurrences**. Each execution of `Perform a` creates a fresh
+`ActOccurrence<F>` associated with the current transcript token/span and
+returns its opaque handle. The model record pairs the reusable act value a with an extensional capture of
+that performance's utterance context and contextual resolver. A capture is a
+semantic closure, not a trace, cache, or diagnostic record: it is identified
+only by the values it supplies to the package's context projections and
+`Context` sites at their declared dependency tuples; unrelated resolver
+behavior is ignored. The assertion member of such an occurrence therefore
+has a structured Content value interpreted under that capture. Performing the
+same a twice creates two occurrences and may yield two realized contents;
+neither performance mutates a or changes `(ActContent a)`. Section 7.1 fixes
+the performance law and §7.4 exposes only the partial `RealizedContent`
+projection needed by Lojban anaphora. The occurrence handle is lowering-only
+generic infrastructure: it may be passed as an indicator `Target`, but no term
+constructs one except `Perform` or inspects its act, token, or capture.
 
 The displayed `ContentRun` equation is the **run projection** of content. A
 conforming Content algebra supplies the clause-event projection
@@ -983,10 +1007,12 @@ in this index.
 ```text
 ctx = ⟨ speaker  : Referents<Entity>,   audience : Referents<Entity>,
         time     : Time,                place    : Location,
-        ground   : Ground ⟩
+        ground   : Ground,
+        token    : Referents<UtteranceToken> ⟩
 
 Speaker, Audience : ctx → Referents<Entity>
 Now : ctx → Time            Here : ctx → Location
+CurrentToken : ctx → Referents<UtteranceToken>
 Proximity          = Proximal | Medial | Distal   (a closed type)
 GroundDescription  : the sort of ground specifications (an orientation
                      center with its perspective facts; `Ground` values
@@ -1000,10 +1026,23 @@ Demonstratives (`This`/`That`/`Yonder`, i.e. `ti`/`ta`/`tu`) are
 `Deictic` at the three proximities against the context's ground:
 `This ≝ (Deictic Proximal g)`, `That ≝ (Deictic Medial g)`,
 `Yonder ≝ (Deictic Distal g)`, with `g` the `ctx` record's ground.
+`CurrentToken` is the current entry or compound span (the model value that
+surface `dei` binds); it lets `Perform` associate an occurrence without a
+global "last act" constant.
+For a current entry, the context projections cohere with its transcript facts:
+`SpeakerOf(CurrentToken,Speaker)`, `AudienceOf(CurrentToken,Audience)`,
+`DeicticTimeOf(CurrentToken,Now)`, and `DeicticPlaceOf(CurrentToken,Here)`
+hold (component entries supply the corresponding facts when `CurrentToken` is
+a compound span). A conforming current-entry interpretation requires this
+coherence; a conflicting transcript description cannot silently override the
+occurrence context.
+
 `ShiftedGround` **constructs** a ground (never a contextual resolution),
 and `InContext` evaluates content with deictic projections taken from the
 given ground — the explicit form of context shift (`ra'o`; §11).
-`InContext` shifts the *utterance* context only; shifting the *evaluation
+`InContext` shifts the utterance **ground** only; it does not change
+`CurrentToken`, occurrence identity, or the captured values of an already
+realized content. Shifting the *evaluation
 world* (hypothetical mood) would be a sibling index-shift operator —
 `InContext` is currently the sole member of that family — and awaits the
 `da'i` gap entry (§14).
@@ -1011,11 +1050,16 @@ world* (hypothetical mood) would be a sibling index-shift operator —
 ### 5.2 Effectful binding
 
 `(Bind {$x :: T} comp {body})` is the direct effectful binding form: it
-runs `comp : RefComp<T>` and binds its result for `body`, sequencing
-effects left to right. If `body` has computation category `C` under
-`$x:T`, the whole form has category `C`. Denotationally it is the computation carrier's
+runs a value-returning `comp : Comp<T>` in its declared computation category
+(`RefComp<T>` for reference/context effects, `PerfComp<T>` for performance)
+and binds its result for `body`, sequencing
+effects left to right. The whole form has the effect join of comp and body:
+a `RefComp` may sequence into Content, another reference computation, or a
+performance computation, while a `PerfComp` operand requires a
+performance-level body and keeps the whole `PerfComp`. Thus no performance
+effect can be hidden in Content. Denotationally `Bind` is the computation carrier's
 `bind` operation (§5.1) with the body as its continuation. The sequencing is
-the eliminator for `RefComp` and cannot be β-reduced away: the computation
+the eliminator for computation values and cannot be β-reduced away: the computation
 may introduce referents, consult context, or project obligations. `Let`
 (§4.4) is its pure degenerate case. A multi-binding
 `(Bind {$x₁ :: T₁} c₁ {$x₂ :: T₂} c₂ … {body})` is left-to-right nesting —
@@ -1026,11 +1070,10 @@ types, made visible — the λ-fragment stays pure so that β-equality
 holds unconditionally, and every effect-sequencing point is a `Bind`
 node the accessibility table can see (rationale §1.14).
 
-`Bind` is **uniform across the computation categories**: `Discourse`
-denotes in the same carrier as `Content` (§5.1 — its effects include
-performance and commitment), so `body` may be `Content`, a reference
-computation, or a discourse, and the binding scopes the referent over
-the whole body either way. An act is a pure *value* (§7.1), not a
+`Bind` is **uniform across the computation categories**: `PerfComp` and
+`RefComp` use the same carrier algebra as `Content` (§5.1; their effect
+vocabularies and admissible result categories differ), and the binding scopes
+the returned value over the compatible body. An act is a pure *value* (§7.1), not a
 computation: a bare act written as a `Bind` body stands, by §7.1's
 display coercion, for the one-act discourse performing it, and a
 computation that returns an act package as a value is typed
@@ -1115,7 +1158,8 @@ binders (§7.4).
 | `StateClause`, `CloseClause` | Applying `StateClause c` evaluates c exactly once on its one matching holding-state lineage; c's ordinary introductions and projectives obey their own rows. `CloseClause` keeps its event witness local: the witness is recoverable through `EventOfContent` but is not a discourse introduction. |
 | `Presuppose` | See §5.5: the condition projects to the nearest legal commitment boundary; the at-issue operand sees the incoming state. Introductions inside the condition are local to the condition check; nothing escapes from it. |
 | `Supplement` | See §5.5: side content is committed once at its handler, projectively; the at-issue operand's value passes through. |
-| Force constructors, `Perform` | Act boundaries close force segments: referents introduced inside a constructed-but-unperformed act are not accessible outside it; performed acts in `Do` chain normally. |
+| Force constructors, `Perform` | Constructing an act is inert. Each `Perform` takes a fresh occurrence capture, associates the occurrence with `CurrentToken`, runs that occurrence's force payload, and returns only its opaque handle; act boundaries close force segments. Binding the handle introduces no discourse referent and exposes no capture. Referents introduced inside a constructed-but-unperformed act are not accessible outside it; performed acts in `Do` chain normally. Re-performing one act creates a new occurrence and a new per-performance resolution, never a mutation of the act package. |
+| `ActContent`, `RealizedAct`, `RealizedContent`, `RealizedDiscourse` | Inert projections: they introduce nothing and run no projected payload. `ActContent` returns the raw package. The `Realized*` definedness conditions project; `RealizedContent` returns the selected occurrence's captured Content, not a re-evaluation in the caller's context. |
 | Quotation, `Reify`, `EventOfContent` | Opaque/inert at construction: nothing crosses a sign boundary; `Reify` and `EventOfContent` run no Content operand, so no introduction, retrieval, or obligation occurs at either projection site. `Holds` (§9.1) evaluates represented content at its own occurrence, governed by the surrounding operators — never retroactively by `Reify` or the event projection. |
 
 ### 5.5 Projective content
@@ -1555,18 +1599,83 @@ Mention : T → Act<Expressive>           (use/mention: displays a value)
 Constructing an act does not perform it. The typing discipline:
 
 ```text
-Perform : Act<F> → Discourse
-Do      : Discourse × Discourse × … → Discourse   (flattening, associative)
+Perform : Act<F> → PerfComp<ActOccurrence<F>>
+Do      : Discourse × Discourse × … → Discourse
+          (flattening, associative; zero operands = empty discourse)
 ```
 
 Denotationally, an `Act<F>` value is a **force-tagged content package**:
 the force `F` together with the content computation (for `Ask`, the
 query; for `Command`/`Vocative`, the addressee too), constructed
-inertly — building it runs nothing. `Perform` injects the package into
+inertly — building it runs nothing. In particular, context projections such
+as `Speaker`/`Now` and written `Context` sites inside the payload are not
+consulted by the force constructor; they are interpreted under a `Perform`
+occurrence's capture. `Perform` injects the package into
 the performance level: the content's computation runs there with `F`'s
 commitment effects (assertion commits, question raises, and so on). Act
 identity is term identity — acts compared, quoted, or anaphorically
 targeted are the `Let`-bound values the terms visibly share.
+
+Performance does not add captured values to that identity. At the model
+level, each execution creates
+
+```text
+ActOccurrence<F> = ⟨ act     : Act<F>,
+                     token   : Referents<UtteranceToken>,
+                     role    : Host | AttachedDisplay | AttachedAddress,
+                     capture : the extensional occurrence environment ⟩
+```
+
+where token is `CurrentToken` and capture fixes this performance's utterance
+context projections and `Context` resolver (including dependency-sensitive
+site values) for the package. For an assertion occurrence, interpreting the
+raw `(ActContent act)` under capture yields its **realized Content**. This is a
+semantic closure: creating or projecting it runs no content, and calling it
+later cannot substitute the caller's speaker, time, ground, or contextual
+answers. `Vague` remains the same profile-indexed family — capture does not
+choose a sharpening — and dynamic `Refer`/selection outcomes are not silently
+frozen. A referent meant to survive into a reusable act remains visibly bound
+outside that act, as the mapping and samples already require.
+
+The transcript role is semantic because it determines attachment and partial
+projection: the ordinary performed clause is `Host`; a UI/COI/vocative act
+introduced beside it is `AttachedDisplay`/`AttachedAddress`; a future
+compound plan still has one `Host` occurrence — its constructed component
+acts are not occurrences merely because component spans realize them.
+`RealizedContent` selects the `Host`, never an attached display merely because
+it shares the token. `RealizedAct` may independently select a raw component
+package through transcript structure; #6 owns any component-content projection
+inside the one compound occurrence. The surface-to-discourse coercion carries the grammatical
+role; an explicit generic `Perform` with no attached host defaults to `Host`.
+No term inspects role.
+
+`Perform` first creates the occurrence/capture, then runs that captured
+payload, handles its presuppositions and supplements, and only then applies
+the force update on each surviving lineage; its ordinary result is the same
+opaque occurrence handle for a `Bind` continuation. This fixes relative
+phasing without deciding #11's branch/Undef, occurrence-only continuation,
+and accommodation policies. An uttered but contextually uninterpretable
+act can therefore have a performance occurrence while lacking a defined
+realized Content. Two executions of one act value always create distinct
+occurrences, even when their captures happen to agree. Capture has no
+object-language inspector, and `ActOccurrence` has no pure constructor:
+only `Perform` effectfully produces a handle, which may be `Bind`-bound and
+passed as a `Target`. They factor performance identity and support the token projection
+of §7.4 without exposing evaluator state.
+
+The occurrence association entails the transcript fact
+`(Realizes CurrentToken a)`. The converse is deliberately false: a pure
+quoted/transcript-description `Realizes` fact can name a package without any
+`Perform` or occurrence. This one-way law is what lets `RealizedAct` serve
+both descriptions while `RealizedContent` remains performance-only.
+
+At a `Discourse` position, a value-returning performance computation p is
+notation for monadic discard,
+`(Bind {$ignored :: T} p {(Do)})`; the empty `Do` is the performance unit.
+Thus all existing `(Do (Perform a) …)` and bare-act spellings remain concise.
+Where the occurrence matters — notably an act-level indicator — the lowering
+instead writes `(Bind {$o :: ActOccurrence F} (Perform a) {body})` and targets
+`$o`. This is an exact expansion, not a mutable "last occurrence" lookup.
 
 A document denotes one `Discourse`, whose top-level `Do` sequence is
 called the **spine**; an `Act` written directly in a `Do` operand —
@@ -1599,15 +1708,19 @@ further depth marks larger topic scale only. `no'i` resumes what its
 with the suspended segment. The spoken/written level shift is ⊳
 text-to-reading. Discourse
 *relations* (contrast `ku'i`, addition `ji'a`, parallel `si'a`,
-elaboration `no'u`, …) are library relations over acts; the prior act is
-an ordinary `Let`-bound value in `Do` (no prior/following-discourse
-constants exist). Constituent-level additive/exclusive focus (`ji'a` on a
+elaboration `no'u`, …) are library relations over occurrence handles by
+default, because they relate performed discourse positions rather than every
+performance of a reusable package. Prior/current occurrences are ordinary
+`Bind`-bound results of `Perform` (no prior/following-discourse constants
+exist); a metalinguistic relation about a raw act can still target its
+`Let`-bound package explicitly. Constituent-level additive/exclusive focus (`ji'a` on a
 sumti, `po'o`) derives via `Presuppose` over alternatives (§12).
 
 ### 7.3 Metalinguistic rejection
 
 `na'i` is a derived discourse act: an objection targeting a prior
-utterance or act, predicating a defect whose dimension is a `Context`
+utterance token or performed occurrence by default (a raw act package may be
+chosen explicitly), predicating a defect whose dimension is a `Context`
 parameter (§6.1), with the objected content not performed. It is neither
 `¬` (no truth-conditional negation occurs) nor `Scalar` (no scale is
 invoked); the three-way `na`/`na'e`/`na'i` contrast is thereby three
@@ -1630,24 +1743,54 @@ is a λ, not a computation:
 
 (The entry notation ascribes the token *sort*; the definition binds at
 the singleton-lifted reference type, §3.2 — specimens keep the sort
-spelling.) Two **declared partial projections** serve utterance
-anaphora (§11):
+spelling.) The following projections serve utterance anaphora (§11):
 
 ```text
 RealizedAct<F> : Referents<UtteranceToken> ⇀ Act<F>
    ; the act the selected token/span realizes — defined (projectively,
-   ; §5.5) where the span realizes exactly one act, of force F: the
-   ; force partiality lives HERE.
+   ; §5.5) where transcript attachment/role selects exactly one act of
+   ; force F (default broad-span selection is Host; a component/display may
+   ; be explicitly selected): the force partiality lives HERE.
 RealizedDiscourse : Referents<UtteranceToken> ⇀ Discourse
    ; the sibling for spans realizing act sequences.
 ActContent : Act<Assertion> → Content
-   ; total at its assertion-indexed domain: the content the
-   ; constructor packaged (no evaluation; the access InterpretContent
-   ; already exercises for signs).
+   ; total and inert at its assertion-indexed domain: the RAW content
+   ; the constructor packaged, with no performance capture.
+RealizedContent : Referents<UtteranceToken> ⇀ Content
+   ; the captured content of the one performed, context-resolved
+   ; assertion occurrence selected by the token/span.
 ```
 
-— a *pure token-description property*. The λ suspends the facts by
-nature (nothing is performed, nothing introduced — quoted material
+`RealizedAct` returns the reusable package, whether the token describes an
+unperformed/quoted act or realizes a performed one; it never folds a
+performance context into act identity. `ActContent` is correspondingly the
+pure raw-package projection and never consults the transcript.
+
+`RealizedContent u` is defined projectively exactly when transcript
+attachment/role selects one performed host assertion occurrence
+whose capture determines the asserted payload. Associated expressive displays
+and vocatives do not compete with their host; two Host assertion occurrences
+with no narrower selected host span do. It returns that
+occurrence's structured Content under the captured utterance context and
+resolver. The projection itself is inert: it neither performs the act nor
+runs the Content. A token that merely occurs inside a quotation or transcript
+description with a `Realizes` fact has no performance occurrence and therefore
+no `RealizedContent`, even though its raw `RealizedAct`/`ActContent` route may
+be defined. Conversely, two tokens/spans may realize the same act value while
+their two `RealizedContent` values differ because the performances resolved
+speaker/deixis/`Context` sites differently.
+
+The capture boundary is deliberately narrower than a replay log. It fixes
+utterance-context projections and `Context` resolution, including the
+resolved clause template used by default `go'i`; it does not freeze dynamic
+truth filtering, `Refer` outcomes, projective discharge, or a single `Vague`
+sharpening. `ra'o` selectively reopens the antecedent pro-assign sites it
+marks: the mapping rebuilds those sites from the raw package/template under
+the new performance context while retaining the occurrence capture at every
+unmarked site (§11). It is not a wholesale raw-package replay.
+
+The `Utterance` λ above is a *pure token-description property*. It suspends
+the facts by nature (nothing is performed, nothing introduced — quoted material
 introduces no discourse referents), and `StructuredQuote` (§7.5)
 consumes exactly this property type, supplying the sign boundary's
 opacity itself: the primitivity in this neighborhood belongs to the
@@ -1679,8 +1822,13 @@ sign does not carry its force — the `la'e` crossings; `lu'e` is the inverse si
 On a transcript entry (a structured quote whose token realizes an act),
 `InterpretAct` yields that act, and `InterpretContent` is defined
 exactly when the realized act is an assertion, yielding its content —
-the content projection; other forces have no content projection and
-interpret only as acts. Quotation boundaries are opaque to dynamics
+the raw `ActContent` projection; other forces have no content projection and
+interpret only as acts. A quoted/transcript-description `Realizes` fact is not
+a performance, so interpretation never invokes `RealizedContent` merely
+because an act is represented. "Raw" here means *not occurrence-captured*:
+the sign interpretation still supplies the represented token's intended
+utterance context for its deictics/sites. It never substitutes the later
+caller's context merely because the package lacks a performance. Quotation boundaries are opaque to dynamics
 (§5.4).
 
 ### 7.6 Indicators: attitudes, evidentials, discursives
@@ -1693,14 +1841,21 @@ them to the `-nmo` indicator-emotion family, §16.5.) Display has two
 spellings, by the level of its
 target — no dedicated operator is needed:
 
-- **Act-level** (the target is a performed act — the top-level case): the
-  display is an `Express` act beside the host on the discourse spine,
-  its content the indicator relation applied to the bound host act:
-  `(Do (Perform $a) (Express (Close (i-rel Speaker $a degree))))`.
+- **Act-level** (the surface target is a performed act; the core target is its
+  occurrence — the top-level case): the
+  display is an `Express` act beside the host on the discourse spine. The
+  lowering binds the occurrence handle returned by the host performance and
+  applies the indicator relation to that handle:
+  `(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+     {(Express (Close (i-rel Speaker $o degree)))})`.
   Expressive force is itself non-at-issue commitment, and the family
   **force clause** holds: an evidential displayed this way *grounds* the
   host act — a mode of commitment, not a second claim — and a host-force
-  profile (below) may subordinate the host instead of performing it.
+  profile (below) may subordinate the host instead of performing it. The
+  bound `$o` makes the grammatical target survive lowering: re-performing
+  `$a` later creates another occurrence handle, and the earlier display does
+  not ground or modify it. A relation about the reusable act package can
+  still target `$a` explicitly; it is not the top-level UI default.
 - **Content-level** (the target is embedded content, a referent, or a
   sign): the display is a `Supplement` whose anchor is the target's
   first-order object — for content, its reification — and whose side is
@@ -1721,8 +1876,9 @@ names. Each indicator's lexicon entry (§10) provides:
 
 - its relation with typed roles — for attitudes: experiencer, a
   first-class **target** at the closed union type `Target` — a
-  `Proposition` (content targets go through `Reify`), an act value, a
-  plural reference, or a sign, with the mapping resolving which — and
+  `Proposition` (content targets go through `Reify`), an act value, an opaque
+  `ActOccurrence` handle, a plural reference, or a sign, with the mapping
+  resolving which — and
   a **degree** place on the library's intensity scale, whose named
   regions are `Intense` (`cai`), `Strong` (`sai`), `Moderate`
   (unmarked), `Weak` (`ru'e`), and `Neutral` (`cu'i`);
@@ -2050,7 +2206,7 @@ wins:
 | `(Bind {$x} computation {body})` when the body returns Content | The event of the selected continuation body on that outcome branch. `Let` is already covered by ordinary application/β. |
 | `(Presuppose π body)`; `(Supplement anchor side body)` when the body is Content | The at-issue body's event. Projective conditions and side commitments remain part of Content identity but do not replace the at-issue eventuality. |
 | `(InContext c g)` | `event(c)` evaluated with the same shifted utterance ground `g`; this shifts the projection rather than constructing a new holding state. |
-| `(Holds p)`; `(ActContent a)`; `(InterpretContent s)` | The event of the represented, packaged, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7. |
+| `(Holds p)`; `(ActContent a)`; `(RealizedContent u)`; `(InterpretContent s)` | The event of the represented, raw-packaged, occurrence-captured, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7; none of these projections constructs a new holding state. |
 | `(Answer q selection)` | The event of the answer-content selected by q. If `Exhaustive` adds a completeness conjunct, the conjunction row below applies to that defined result. |
 | `(∧ c₁ … cₙ)`, n > 0 | `joint_M(event(c₁), …, event(cₙ))`, in source association order and up to `CoRef`. |
 | `(∨ c₁ … cₙ)` | Branch-relative: a cᵢ-lineage carries `event(cᵢ)`; no fused event or exported choice is added. |
@@ -2374,21 +2530,45 @@ uses P as a tag with the lexicon's current clause-event link.
 
 **Anaphora** (P16). ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible
 referents (§5.6); `vo'a`-series → bridi-place bindings; KOhA assigned →
-bound variable; unassigned → keyed `Context`; ⊳ `go'i`-family → expansion
-with the antecedent's resolved context; `ra'o` → re-resolution under
-`InContext`/`ShiftedGround` (§5.1). The `di'u` series → utterance
+bound variable; unassigned → keyed `Context`; ⊳ cross-performance
+`go'i`/`go'e`/`go'a`/`go'o` expansion uses the antecedent occurrence's capture
+— the resolved template's utterance-context projections and `Context` answers
+stay fixed. For a whole-content assertion reuse this is
+`(RealizedContent u)`; place/negation overrides apply to the same captured
+template rather than reconstructing its sites. Other-force pro-bridi reuse has
+the analogous resolved template but no assertion-only `RealizedContent`
+projection. `nei`/`no'a`, and any pro-bridi inside unperformed material, have
+no prior performance requirement: they reuse the already resolved current or
+outer template environment directly. `ra'o` selectively discards the
+inherited capture only at the antecedent pro-assign sites it marks. For a
+performed assertion antecedent, the mapping obtains the raw source template
+through `ActContent (RealizedAct u)`, substitutes newly interpreted
+pro-sumti/pro-bridi at those sites under the new performance context, and
+retains the occurrence-captured values at omitted places, tanru links, and
+other unmarked `Context` sites. `InContext`/`ShiftedGround` makes any requested
+ground shift for the reopened material explicit (§5.1). Wholesale raw
+`ActContent` replay is valid only when every context-sensitive site in the
+template is marked for reopening. CLL 7.6 supplies the linguistic discriminator: ordinary
+GOhA repetition is of concepts, its antecedent pro-sumti normally keep their
+meanings, and `ra'o` repeats/reinterprets those pro-assigns in the new context.
+This specification preserves the rest of the resolved template rather than
+silently broadening `ra'o` to unrelated contextual omissions. The `di'u`
+series → utterance
 anaphora at `Referents<UtteranceToken>` (a selected transcript span):
 ⊳ recency resolution over the transcript at three distances, past
 (`di'u`/`de'u`/`da'u`) and future (`di'e`/`de'e`/`da'e`); `dei` → the
-current entry's own bound token; `do'i` → `Context` for the salient
+current entry's own bound `CurrentToken`; `do'i` → `Context` for the salient
 token/span — `Vague` only in the span's boundaries (pin P28). `la'e`
-on an utterance anaphor crosses through the token's realized act —
-`(ActContent (RealizedAct u))`, the force partiality in
-`RealizedAct` alone (§7.4; `ActContent` is total at assertions) —
-into the **host-sorted** crossing: `EventOfContent` for the
+on an utterance anaphor that demands assertion content uses
+`(RealizedContent u)` directly — its projective definedness requires one
+eligible performed, context-resolved host assertion occurrence
+(§7.4) — then applies the
+**host-sorted** crossing: `EventOfContent` for the
 state-of-affairs reading, `Reify` only where a proposition is
 demanded; no universal coercion (P13), and a non-assertion antecedent
-yields partiality where content is demanded (P21). `doi X` → the `Vocative X` act beside the host **plus** ⊳
+yields partiality where content is demanded (P21). Where the act package
+rather than performed content is requested, `RealizedAct<F>` remains the raw
+crossing. `doi X` → the `Vocative X` act beside the host **plus** ⊳
 binding of the active `do` (CLL 2.14 — `do` "now refers to" X): `do`
 and `ko` consult the active binding before falling back to the
 utterance's Audience, which itself is never mutated (each utterance's
@@ -2851,8 +3031,9 @@ the profile must include every governor free in R or its constraint under
 underlying argument was raised unstated. Tagged `jai` remains `JaiPromote`.
 
 **Acts and discourse:** discourse relations `Contrast`, `Addition`,
-`Parallel`, `Elaboration` — lexical relations over two act values,
-displayed act-level per §7.6; the `na'i` objection ≝
+`Parallel`, `Elaboration` — lexical relations over two performed
+`ActOccurrence` handles by default, displayed act-level per §7.6 (raw acts
+remain explicit alternative targets); the `na'i` objection ≝
 
 ```lisp
 (NahiObjection t) ≝
@@ -2865,8 +3046,9 @@ presupposition, register — is declared with the objection relation); COI
 schemas ≝ performative `Express` of the COI lexical relation
 (`coi-greeting`, `ki'e-thanks`, …), schematically `(COIExpress R
 addr) ≝ (Express (Close (R Speaker addr)))` with the entry's
-performative host-force profile; `(GroundedBy b a)` ≝
-`(Do (Perform a) (Express (Close (EvidentialBasis Speaker a b))))` —
+performative host-force profile; for `a : Act<F>`, `(GroundedBy b a)` ≝
+`(Bind {$o :: ActOccurrence F} (Perform a)
+   {(Express (Close (EvidentialBasis Speaker $o b)))})` —
 the act-level evidential spelling of §7.6 (named to
 avoid the `Ground` sort, §5.1); focus for
 a host content frame `H[·]` and focused sumti `f : Referents<T>`
@@ -3256,10 +3438,11 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   never mutated — each utterance's ctx carries its own audience.
 - **P28** `do'i` is `Context` at the salient transcript token/span
   (`Vague` only in span boundaries); `la'e` over utterance anaphors
-  crosses host-sorted through `ActContent ∘ RealizedAct` (§7.4 — the
-  partiality is `RealizedAct`'s; `ActContent` is total at
-  assertions) — no universal coercion (P13 applied at the
-  token sort).
+  that demand performed assertion content crosses host-sorted through
+  partial `RealizedContent` (§7.4); act-demanding uses retain
+  `RealizedAct<F>`, and raw package content for explicit re-resolution uses
+  total `ActContent` only after that force check. No universal coercion (P13
+  applied at the token sort).
 - **P29** `cu'o` is an opaque lexical relation with a `Number` place
   in [0,1]; the model supplies the measure; **no probability
   calculus** enters the core (the `JeiRel`/`TruthValueDegree`
@@ -3336,7 +3519,11 @@ approximate:
   all stated. Therefore sumti `joi`, tanru/property joiks, `.i joi`, and other
   constitution-bearing sentence ijoiks have no baseline lowering. Exact
   tag/facet `joi` that merely conjoins predications over an already shared event
-  remains ordinary `∧`.
+  remains ordinary `∧`. Any future compound-performance constructor is
+  constrained by §7.1: its one host `Perform` creates one `ActOccurrence`
+  with one capture. Component transcript spans may realize component act
+  packages for targeting, but do not become additional performed occurrences
+  unless the semantics explicitly performs them; #6 owns those span laws.
 - **Cross-clausal topic place-linking.** P26's `PlaceFill` arm is defined only
   for one open bridi. A topic scoped over a conditional or `tu'e…tu'u` sequence
   may bear different place relations to different clauses; no single residual
@@ -3447,7 +3634,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e` | §10 |
 | plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | constitution-bearing `joi` | §3, §5 |
-| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent` (§7.4) | cross-clausal topic place-linking | — |
+| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
 | relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; constitution joiks/ijoiks; `ju'e`; the non-numeric MOI composite (§14) | — |
@@ -3477,8 +3664,8 @@ defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
 `InterpretContent`/`InterpretAct<F>`, the partial
-`RealizedAct<F>`/`RealizedDiscourse` projections with the total
-`ActContent`, and the token/sign
+`RealizedAct<F>`/`RealizedDiscourse`/`RealizedContent` projections with the
+total `ActContent`, and the token/sign
 fact relations; the declared MEX conversion crossings, `During`,
 `EnumerationOrdinal`, and the
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
@@ -3528,7 +3715,8 @@ inventory:
 - **Class O — operators over content, computations, or signs** (`Refer`,
   `Context`, `Vague`, the `DirectClause`/`StateClause`/`CloseClause`/clause-
   connective family and `Close`, the force constructors, the
-  question formers, `Presuppose`/`Supplement`, `Tanru`/`Scalar`,
+  `ActContent`/`RealizedContent` projections, the question formers,
+  `Presuppose`/`Supplement`, `Tanru`/`Scalar`,
   `DropPlace`, the selections — while defined machinery like `At`
   (record application) and library λs like `JaiPromote` are Class M
   under §16.2's machinery status): not predicates over
@@ -3543,7 +3731,8 @@ inventory:
 - **Class M — structural and metalanguage machinery**: the direct
   `λ`/`Let`/`Bind` forms, record filling, type formers, rows, typing and
   formation judgments, the computation carrier's `bind`, the evaluator,
-  and metalanguage recursion in library definitions. **No content word is
+  opaque `ActOccurrence` handle/capture infrastructure, and metalanguage recursion
+  in library definitions. **No content word is
   owed**, and the committee should coin none merely to rename these forms:
   a sort *predicate* (`fasnu` for eventhood) is a content word; the sort
   *system* is not. A separately witnessed predicate that describes the
@@ -3658,7 +3847,8 @@ definability:
   place; its scale place is the crossing's x2); `se lifri` for
   `LihiRel`; `sidbo` for `SihoRel`; `pruce` for `PuhuRel` (delete
   inputs/outputs); `mintu` for `CoRef` (delete the standard);
-  `frica`/`simsa` for `Contrast`/`Parallel` (act-typed relata);
+  `frica`/`simsa` for `Contrast`/`Parallel` (occurrence-handle relata by
+  default, raw-act relata as the explicit alternative);
   `smuni` for the interpretation crossings; `sinxa`/`cusku`/`tavla`
   projections for the token-fact vocabulary. **Audit note:** for the
   content-parameterized relations (`NiRel`, `LihiRel`, `PuhuRel`,

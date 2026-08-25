@@ -538,6 +538,45 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
           (Realizes $u (Assert (Close (klama Speaker)))))})))))
 ```
 
+The `Realizes` fact above describes a raw act package inside quotation; it
+does not create a performance occurrence. Contrast the performance boundary:
+
+```lisp
+; one reusable package, two performance occurrences
+(Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
+  {(Do (Perform $a) (Perform $a))})
+```
+
+The two `Perform` nodes create distinct `ActOccurrence`s even if this
+fixture's contexts agree. In two transcript entries with different speakers,
+grounds, or `Context` answers, `(ActContent $a)` remains the same raw package
+while `RealizedContent(u₁)` and `RealizedContent(u₂)` may differ.
+
+```text
+E₁.ctx.speaker = Alice, E₂.ctx.speaker = Bob, oᵢ ∈ run(Perform_Eᵢ(a))
+o₁ = ⟨a,u₁,Host,capture(E₁)⟩ ≠ o₂ = ⟨a,u₂,Host,capture(E₂)⟩
+ActContent(a) is one raw value;
+RealizedContent(u₁) = content(a) closed under capture(E₁)
+RealizedContent(u₂) = content(a) closed under capture(E₂)
+```
+
+The lowercase operations in this display are model notation, not term-level
+inspectors; core terms receive only the opaque `$oᵢ` handles.
+
+```lisp
+; la'e do'i — proposition reading of a salient performed assertion
+(Bind {$u :: Referents UtteranceToken} (Context)
+  {(Mention (Reify (RealizedContent $u)))})
+```
+
+`RealizedContent` is partial and inert: `$u` must select one eligible
+performed, context-resolved host assertion occurrence; its attached
+UI acts do not compete. Cross-performance default whole-assertion `go'i` reuses
+that occurrence content. `go'i ra'o` instead starts from raw
+`(ActContent (RealizedAct<Assertion> $u))` as its source template, selectively
+reinterprets the marked pro-assign sites in the new utterance
+context/`ShiftedGround`, and retains every unrelated captured `Context` site.
+
 ```lisp
 ; mi djuno lo du'u ma kau klama      [pin P9]
 (Assert
@@ -558,8 +597,8 @@ own lexical presupposition, never from `kau`.
 ```lisp
 ; .ui do klama — pure emotion: host asserted, joy displayed
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Do (Perform $a)
-      (Express (Close (Happiness Speaker $a Moderate))))})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (Happiness Speaker $o Moderate)))})})
 
 ; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
 (Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
@@ -567,17 +606,18 @@ own lexical presupposition, never from `kau`.
 
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Do (Perform $a)
-      (Express (Close (Unhappiness Speaker $a Intense))))})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (Unhappiness Speaker $o Intense)))})})
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [spec §7.6]
 (Let {$a :: Act Assertion} (Assert (Close (cadzu Audience)))
-  {(Do (Perform $a)
-      (Express (Close (EvidentialBasis Speaker $a Observation))))})
-; act-level display: an Express beside the bound host act; the family
-; force clause grounds the assertion (a mode of commitment);
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (EvidentialBasis Speaker $o Observation)))})})
+; act-level display: Perform returns the bound occurrence handle; the family
+; force clause grounds THIS occurrence (a mode of commitment);
+; a later Perform $a returns a different, ungrounded occurrence;
 ; na za'a do cadzu negates the walking, never the basis.
 
 ; mi jinvi lo du'u ti'e do klama — evidential on embedded content
@@ -600,21 +640,20 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; .i mi klama .i ku'i do stali — a discourse relation
-(Do
-  (Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-    {(Do (Perform $a1)
-        (Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-          {(Do (Perform $a2)
-              (Express (Close (Contrast $a2 $a1))))}))}))
+(Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
+  {(Bind {$o1 :: ActOccurrence Assertion} (Perform $a1)
+    {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
+      {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
+        {(Express (Close (Contrast $o2 $o1)))})})})})
 ```
 
 ```lisp
 ; do klama .i na'i — metalinguistic objection         [spec §7.3]
 (Let {$prior :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Do (Perform $prior)
-      (Bind {$defect :: DefectKind} (Context)
-        {(Express
-          (Close (MetalinguisticallyDefective $prior $defect)))}))})
+  {(Bind {$prioro :: ActOccurrence Assertion} (Perform $prior)
+    {(Bind {$defect :: DefectKind} (Context)
+      {(Express
+        (Close (MetalinguisticallyDefective $prioro $defect)))})})})
 ; the defect dimension is contextually recovered; nothing is negated,
 ; and the objection itself performs nothing beyond the display.
 ```
@@ -805,7 +844,9 @@ there is no intended soritical boundary, as in the cutoff examples above.
       (Utterance {$u :: UtteranceToken}
         {(Realizes $u (Assert (Close (klama Speaker))))}))))
 ; defined because the realized act is an assertion: InterpretContent is
-; the content projection on assertion-realizing entries (spec §7.5).
+; the RAW ActContent projection on assertion-realizing entries (spec §7.5).
+; quotation supplies no ActOccurrence and therefore no RealizedContent, but
+; the represented token's own intended context still interprets its deictics.
 
 ; li re te'a ci du li bi — MEX with te'a (library)
 (Assert (= (te'a 2 3) 8))
@@ -863,8 +904,8 @@ there is no intended soritical boundary, as in the cutoff examples above.
               (∃ (λ {$e :: Referents Eventuality}
                 {(∧ (Close (tatpi $dogs :Eventuality $e))
                     (cabna $e $occ2))})))
-        {(Do (Perform $a2)
-             (Express (Close (Unhappiness Speaker $a2 Intense))))})}))})
+        {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
+          {(Express (Close (Unhappiness Speaker $o2 Intense)))})})}))})
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
@@ -906,13 +947,14 @@ bodies use braces to show scope; the braces do not quote core code.
 ```lisp
 ; one act value, performed and then targeted by a display
 (Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Do (Perform $a)
-       (Express (Close (Happiness Speaker $a Moderate))))})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+    {(Express (Close (Happiness Speaker $o Moderate)))})})
 ```
 
 `λ` binds pure or effectful function bodies according to their type;
 `Let` shares a value without running a computation; `Bind` runs one
-reference computation and sequences its effects before the body. The
+value-returning computation — reference/contextual or performance — and
+sequences its effects before the body. The
 linguistic quotation `lu mi klama li'u` remains a sign (§7.5); there is
 no baseline constructor for quoted core notation.
 
