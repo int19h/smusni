@@ -70,7 +70,8 @@ group (a concrete collective with its own properties — a crowd can
 surround a building), a list (order-bearing). Distinct from plural
 reference: none unwraps implicitly to its members.
 **For.** `lo'i gerku` denotes a `Set<Entity>`; `loi prenu` a group via
-`gunma`; `ce'o` builds lists. The two-sort split (reference vs object)
+complete `GunmaAt`; free `gunma` stays non-exhaustive; `ce'o` builds lists.
+The two-sort split (reference vs object)
 is what makes `lo selcmi cu simxu` unambiguous.
 **See.** [Spec §4.9](spec.md); [primer ch. 3](primer.md) ("Not the
 same as!"); [rationale §2.8](rationale.md).
@@ -267,7 +268,8 @@ statics/dynamics seam).
 
 **Informally.** Dictionary words (`klama`, `gerku`, …) are relation
 constants over their labelled rows, with the row, defaultability,
-scope policy, plurality behavior, meaningful deletions, and the rest
+scope policy, plurality and constitution behavior (including admissible
+basis/`ContributionBasis` clauses), meaningful deletions, and the rest
 supplied by the lexicon interface. The core is parameterized over the
 lexicon; a predication applied to fills for its row is `Content`.
 **For.** Every bridi. `(Close (klama Speaker This))` — the remaining
@@ -378,6 +380,22 @@ not covary (that is the selections' job).
 the cat outlives its sentence and survives negation.
 **See.** [Spec §5.3](spec.md); [primer ch. 3](primer.md);
 [rationale §1.3](rationale.md).
+
+### 1.24a `Local`
+
+**Informally.** Run one `RefComp<A>` normally and return the same branch
+value, truth filtering, contextual choices, and projective obligations, while
+projecting away only discourse-reference slots freshly introduced inside it.
+The value remains available to an enclosing `Bind`; later anaphora cannot see
+the hidden introduction. It cannot take `PerfComp`, hide an act, or make an
+effectful computation pure. Generic lowering infrastructure, not surface-
+reachable.
+**For.** The internal base of every group/set descriptor:
+`(Local (Refer P))`. CLL 6.52's `ri` then sees `lo'i ratcu`'s set, not an
+invisible second rat reference.
+**Status.** Class O; lowering-only.
+**See.** [Spec §5.2, §5.4, §11](spec.md); [rationale §1.7](rationale.md);
+[samples §3](samples.md).
 
 ### 1.25 `Context`
 
@@ -810,8 +828,10 @@ cross-clausal place-linking is a gap.
 ### 1.52 The MOI relation families
 
 **Informally.** Five lexical relation families indexed by a number
-(CLL 18.11), catalogued with exact rows: `MeiRel n` (group formed
-from an n-membered set, members among it; comparison set for
+(CLL 18.11), catalogued with exact rows: `MeiRel κ n` (κ hoisted from a
+constrained `Context`; group completely
+constituted through `CompleteGunmaAt` from an n-membered set, members among
+it; comparison set for
 objective-indefinite n; by-standard for subjective), `MoiRel n`
 (n-th under a pure `Ordering<T>`, Context-recovered), `SiheRel n`
 (typed portion), `CuhoRel n` (opaque probability, 0 ≤ n ≤ 1, the
@@ -819,6 +839,8 @@ model's measure — P29: no probability calculus), `VaheRel n` (scale
 position via the degree projection). Lexical families, not term
 expansions.
 **For.** `lei mi ratcu cu cimei`; `ti pamoi le'i mi ratcu`.
+`MeiRel κ 0`/experimental `nomei` is gap-registered: its proposed empty group
+has no component value at nonempty `Referents<T>`.
 **See.** [Spec §12, §11](spec.md), pin P29.
 
 ### 1.53 The declared partial projections and crossings
@@ -907,6 +929,28 @@ values scoped inside are evaluated relative to it (outside bindings stay de
 re).
 **For.** `ta pu du lo mi zdani`; the negative state of `mi na klama`.
 **See.** [Spec §4.6, §9.3](spec.md); [rationale §1.15](rationale.md).
+
+### 1.58 Constitution bases and their primitive relations
+
+**Informally.** `DecompositionBasis<W,C>` supplies a non-atomic peer-unit
+cover for C-components of W-wholes. Primitive `BasisUnitAt` exposes the
+cover's units and primitive `PeerUnitAt` the whole's total peer field.
+`ContributionBasis<ρ>` is the function-typed sibling: it states per row how a
+nonempty `Family⁺<PredTerm<ρ>>` jointly realizes a mixed predicate through
+primitive `MixAt`; the basis axioms require `ContributesAt` for every member
+and no additional peer contribution. These are typed semantic
+interfaces, not first-order sets or inspectable records.
+**Formally.** See spec §4.9 for the unit/cover laws, event trace/participant/
+cause obligations, and `GunmaPredAt`'s pointwise `MixAt` condition. Group and
+event component arguments remain `Referents<·>`; only predicate components
+need `Family⁺`.
+**For.** The defined constitution relations below; conjunction's canonical
+`joint_M` basis.
+**Status.** `BasisUnitAt`, `PeerUnitAt`, `MixAt`, and `ContributesAt`, the
+basis formers, event instance, and `Family⁺` are generic infrastructure with
+the factorization argument in rationale §1.7a; Class M, so no content word is
+owed.
+**See.** [Spec §3.5, §4.9, §10](spec.md); [rationale §1.7a](rationale.md).
 
 ## 2. Defined forms
 
@@ -1077,7 +1121,7 @@ among it, every part overlaps a P-unit. Defined only for inhabited P
 Models must supply this reference for each inhabited pure restrictor
 the mapping can form (plural comprehension — a model condition).
 **For.** `Every`'s witness export and explicitly/contextually maximal bases.
-Bare `loi`/`lo'i` use ordinary `Refer` instead (P5).
+Bare `loi`/`lo'i` use ordinary `(Local (Refer P))` instead (P5).
 **See.** [Spec §12, §11](spec.md).
 
 ### 2.11 `Reciprocate`
@@ -1352,7 +1396,10 @@ retrieve one intended admissible link per conjunct through constrained
 with the connective — the head asserted once
 (`blabi ja cmalu zdani`: a house, whose modification link is
 white-flavored or small-flavored). Distinct-head units connect as
-whole predications; constitution-bearing joiks remain gap-registered.
+whole predications. Constitution-bearing `joi` instead uses `JoiTanru` at a
+shared head (head once, mixed head-relative links) and `JoiPred` on
+already-lowered distinct-head common-row properties; only
+missing-row/missing-basis cases remain gaps.
 **For.** `ta blabi je cmalu zdani`.
 **See.** [Spec §12, §6.2, §11](spec.md), pin P33.
 
@@ -1383,6 +1430,46 @@ pure.
 **For.** `mi re roi klama`; `roi nai` negates the count before state lift.
 **See.** [Spec §12, §11](spec.md), pin P35.
 
+### 2.34 `GunmaAt`, `CompleteGunmaAt`, `GunmaPredAt`, and the `Joi*` forms
+
+**Informally.** `GunmaAt` matches the supplied basis cover to some of a
+whole's peer units. `CompleteGunmaAt` strengthens it by
+requiring the supplied cover to contain every peer component at κ.
+`ComponentAt` is only its singular non-exhaustive display abbreviation.
+`JoiGroup` and `JoiEvent` introduce a complete whole from all flattened
+operands; `JoiPred` constructs the intended common-row mixed predicate under a
+declared contribution basis; `JoiTanru` asserts a shared head once and mixes
+only its intended head-relative links; `JoiClause` evaluates two component clauses once
+and exposes their complete joint event as its clause parameter.
+**Formally.**
+
+```text
+(GunmaAt κ w Cs) ≝
+  ∀u.(BasisUnitAt κ u Cs →
+        ∃v.(PeerUnitAt κ v w ∧ CoRef u v))
+CompleteGunmaAt κ w Cs ≝ GunmaAt κ w Cs
+  ∧ ∀v.(PeerUnitAt κ v w →
+          ∃u.(BasisUnitAt κ u Cs ∧ CoRef u v))
+ComponentAt κ x w ≝ GunmaAt κ w x       ; x singleton-lifts
+GunmaPredAt κ R F ≝ ∀a : Record ρ.(R(a) ↔ MixAt κ F a)
+```
+
+`ComponentAt` is formed only for a non-null x; a basis-declared null remains
+absorbable rather than becoming an ordinary component of every whole.
+
+The five `Joi*` expansions are displayed in spec §12. Homogeneous chains
+flatten; `se joi` is symmetric; no property inheritance follows.
+**For.** `mi joi do bevri lo pipno`; event-sumti `joi`; `blanu joi xunre
+bolci`; the compound event inside `.i joi`.
+**Status.** Defined `GunmaAt` is surface-reachable through `gunma`;
+`JoiGroup`, `JoiEvent`, `JoiPred`, and `JoiTanru` are lowering-only;
+`JoiClause` is the semantic ingredient for a surface construction whose full
+performance remains gap-registered in #6. `GunmaAt` is Class P through the
+adopted lexical row; `JoiGroup`/`JoiEvent`/`JoiTanru`/`JoiClause` are Class O,
+while pure `JoiPred` and generic `GunmaPredAt` are Class M infrastructure.
+**See.** [Spec §4.9, §11–§14](spec.md); [samples §2–§3](samples.md);
+[rationale §1.7a](rationale.md).
+
 ## Appendix: model-theory symbols
 
 Not term-language forms — the denotational metalanguage of
@@ -1400,8 +1487,9 @@ assertion member's captured Content without running it — spec §5.1,
 §7.1–7.4); an `InformationState` is a set of
 world–assignment pairs over the model's world set W; `Obligations`
 collects pending projective commitments; `hold_M` is `StateClause`'s model-
-level holding-state operation and `joint_M` its conjunctive instance that #4
-must exhibit through event constitution; `s ⊩_w c` is the at-issue
+level holding-state operation and `joint_M` its conjunctive instance,
+exhibited in spec §4.9 as the unique complete event constitution at `κ∧`;
+`s ⊩_w c` is the at-issue
 verification relation for a State's partial situation; `Unit` is the one-value
 return type of contentful computations; and `ctx` is the utterance
 context record (speaker, audience, time, place, ground, current token/span) whose

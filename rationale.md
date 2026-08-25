@@ -239,12 +239,93 @@ the core. **Cost.** Marked readings need marks (`lu'a`, `Distrib`,
 group gadri) — which Lojban has.
 
 Collection gadri do not silently maximize their base. Bare `loi P`/`lo'i P`
-first use the same ordinary non-maximal `Refer P` as `lo P`, then refer to the
-group/set object constituted from that base. This matches CLL's contextual
-`lo'i ratcu` discussion and preserves P1's uniformity. The all-P base remains
-available through explicit `ro`/`MaxRefer` or a context that genuinely selects
-it; the cost is only that mathematical users must state maximality when the
-context does not already make it clear.
+first use the same ordinary non-maximal `Refer P` as `lo P`, under `Local`,
+then refer to the group/set object constituted from that base. `Local` is
+needed, not decorative: without projection of the hidden introduction,
+CLL 6.52's `lo'i ratcu … .i ku'i lu'a ri …` would leave both the rats and the
+set in the discourse store, while the text has introduced only the set sumti.
+It retains the selected base as a lexical `Bind` value and all truth/
+projective effects, hiding only its anaphoric slot. This matches CLL's
+contextual `lo'i ratcu` discussion and preserves P1's selection while making
+the surface boundary honest. The outer restriction is singular-object-valued:
+bare outer reference remains number-neutral, but each selected group/set must
+individually have the complete base. The all-P base remains available through
+explicit `ro`/`MaxRefer` or a context that genuinely selects it; the cost is
+only that mathematical users must state maximality when the context does not
+already make it clear.
+
+### 1.7a Constitution: why `joi` is not another plural join
+
+**Decision.** `joi` forms a constituted whole (`joi1`); `jo'u` remains the
+plain plural join. The official dictionary calls `joi` “mixed together,
+forming a mass” and `gunma` a whole composed of x2, while current CLL 14.14
+contrasts a group that acts as one object with `jo'u`'s still-plural result.
+The BPFK record is internally revealing: its English proposal describes
+unchanged referents plus non-distributivity (`joi2`), but its formal equation
+is `X joi Y = lo gunma be X .e Y` (`joi1`). The latter wins because the former
+adds no semantic content this core permits: `Combine` plus P4 already leaves
+collective/distributive behavior to the lexical predicate. A covert
+“do not distribute” flag would make `joi` a redundant `jo'u` plus the very
+reading parameter P4 rejects. Contrast `mi joi do bevri lo pipno` (a group
+whole carries) with `mi jo'u do bevri lo pipno` (the plural argument is
+neutral; `bevri` decides what configurations satisfy it).
+
+One universal mass constructor would be smaller on paper and wrong in type:
+a group of cats is not a cat, while a mass of events must remain an
+Eventuality and a mixed property must remain a common-row predicate. The
+indexed programme therefore has a `Group<T>` result, an Eventuality result,
+and a `PredTerm<ρ>` result. The predicate family cannot be packaged as
+`Group<PredTerm<ρ>>`: `Group<T>` is first-order while `PredTerm` is a function
+type, and reifying it would make ordinary `joi` depend on §9.1's reserved
+predicate-object family. `Family⁺` is admitted only at `GunmaPredAt`; that is
+the concrete factorization argument for this otherwise surface-unspellable
+carrier. At a shared-head tanru locus `JoiTanru` keeps the head outside that
+family and asserts it once; mixing two already-head-conjoined predicates would
+wrongly make the head itself a duplicated contribution.
+
+**Why the layers.** Official `gunma` now glosses itself as partially
+specified, the community `mulgunma` entry explicitly supplies the complete
+contrast, and actual IRC usage has `mi se gunma le mi lanzu` when the speaker
+is merely one family member (2010-08-14, `lojban-disc/irc/all_logs.txt`
+408817–408825). Making general x2 exhaustive would falsify that ordinary
+converted use. Thus `GunmaAt` is non-exhaustive, `CompleteGunmaAt` is its
+defined “no other peer at this basis” strengthening, and singular
+`ComponentAt` is only the ordinary singleton/argument-swapped abbreviation—
+never special `se` semantics. `joi`, group descriptors, and `MeiRel` use the
+complete layer because allowing an extra peer would make “X mixed with Y” or
+“the group of P” silently include Z. Free `gunma` remains partial-friendly.
+
+**Why a basis.** Components are not atoms. People may be team members;
+eventualities may have phases; a hybrid's lion/tiger contribution is by
+origin, not lion-only and tiger-only body parts; desire and fear can blend as
+aspects without pure subevents. `DecompositionBasis` therefore supplies
+non-atomic covers and peer units, while `ContributionBasis<ρ>` supplies a
+curated realization clause per common row. Every declared event basis must
+also state trace, role-participant, and causal aggregation; every property
+basis must make all operands contribute and jointly suffice. This moves the
+hard semantics to a typed, auditable interface rather than renaming it “the
+model's mixture”. No component property inherits automatically: the 1995
+mailing-list critique's reductio (`lei mlatu` would be a tail, or have been in
+the sun, because some material part was) is decisive.
+
+**Cross-locus payoff.** The same event instance gives `.i joi` its compound
+event and gives ordinary conjunction its model-level `joint_M`. The canonical
+conjunction basis is associative, transparent to its own nested wholes, and
+treats `hold_M(⊤)` as null, so the old event interface and the new connective
+do not proliferate rival “joint” objects. `JoiClause` supplies content but
+does not settle performance roles, UI targeting, or transcript spans; those
+remain #6. Property rows with no declared contribution basis, `pe'e joi`, and
+`joi nai` likewise remain honest bounded gaps.
+
+**Costs and source limits.** Contemporary CLL's clean group prose is partly
+this project's own amendment and cannot ratify the choice by itself. Original
+CLL supplies the blue/red and joint-cause phenomena but not a coherent
+polymorphic model; the 2018 wiki proposals likewise assume the hard event/
+property realization step. The indexed interfaces are therefore a
+prescriptive construction justified by coverage and type discipline, not a
+claim that the sources already contained it. Complete constitution is exact
+relative to the selected base; #8 still owns whether a count-noun `Refer P`
+base itself excludes P-external residue without breaking mass terms.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -400,10 +481,11 @@ sepi'onai ti` negates just the instrument conjunct (`klama ∧ ¬pilno`)
 while bridi `na` negates the whole (`¬(klama ∧ pilno)`), and tense
 chains (`pu pu`) need precisely `∧`'s left-to-right accessibility for
 their anchor anaphora. The one settled job in this neighborhood is exact
-facet conjunction. The constitution-bearing sumti/property/event `joi` cases
-are gap-registered until their indexed `gunma` laws land; no generic `Vague`
-connector fills the gap (spec §6.1, §14). **Cost.** Coverage is honestly
-narrower until that programme is complete.
+facet conjunction. Constitution-bearing sumti/property/event `joi` instead
+uses the indexed §4.9 programme; no generic `Vague` connector fills its
+remaining per-row/performance gaps (spec §6.1, §14). **Cost.** A use needs a
+declared result kind and basis, and unmapped loci stay gaps rather than
+borrowing facet conjunction.
 
 ### 1.14 `Bind`
 
@@ -485,9 +567,9 @@ Fine's truthmaker semantics is a useful comparative model here: conjunctive
 verification fuses component states, disjunctive verification takes an
 alternative, and negation requires an explicit policy. It does not decide
 Lojban. This project chooses negative holding states because the owner-adopted
-coverage includes negative clauses, and requires #4 to identify conjunctive
-joint states with its `GunmaEvent` constitution rather than proliferating
-notions of “joint.”
+coverage includes negative clauses, and §4.9 identifies conjunctive joint
+states with the canonical complete event `GunmaAt` constitution rather than
+proliferating notions of “joint.”
 
 **Actuality cost and repair.** The domain contains described nonactual
 eventualities; `fasnu` says which occur at a world. A direct episode is actual
@@ -643,7 +725,11 @@ answer, which emotion `.uinai` names, how `bevri` composes with plural
 carriers. A definition that inlined all of this would be a dictionary; one
 that ignored it would be unusable. The core's answer is a typed interface
 (spec §10): the *schema* of lexical knowledge is normative, its *content*
-is curated data. No collection entry needed legislating after all —
+is curated data. The constitution field follows the same discipline: a
+`gunma`/event row declares admissible decomposition bases and every supported
+property-`joi` row supplies a concrete `MixAt`/`ContributesAt` instance;
+absence is a coverage gap, not permission for a model to improvise. No
+collection **place-structure replacement** was needed —
 source verification showed
 official `gunma` x2 is already the components and `selcmi` (a xorxes
 lujvo, now also glossed and used by the Contemporary CLL edition's
@@ -987,6 +1073,21 @@ genuinely fought:
   Cost: universal claims over empty restrictors are presupposition
   failures rather than vacuous truths — the standard
   natural-language trade.
+- **P5 (collections and `joi`).** Three independent choices are bundled only
+  because they meet at the same boundary. Bare collection bases remain
+  non-maximal, as CLL 18.11 says explicitly; `Local` prevents that hidden
+  `Refer` from falsifying CLL 6.52's surface-anaphora count. General `gunma`
+  is non-exhaustive because its official gloss says “partially specified” and
+  attested uses of `se gunma` name only one family member; complete
+  descriptors and `joi` add the defined converse cover. Finally `joi1` beats
+  `joi2`: only the
+  whole-forming reading distinguishes it from `jo'u` without reviving covert
+  distributivity. `SelectExactly 1` chooses one result whole without asserting
+  global uniqueness; number-neutral group descriptors are unaffected.
+  Alternatives and the type/category costs are worked in
+  §1.7a; the reopening tests are a genuine `joi` use whose result must remain
+  the original plural reference, or a component-basis counterexample that
+  cannot be expressed by the indexed cover/contribution interfaces.
 - **P9 (`kau` exhaustivity is absent).** Three candidates fought:
   default-exhaustive (adds a claim CLL never makes), a `Vague`
   exhaustivity parameter (posits a decision point that *no Lojban
@@ -1138,8 +1239,9 @@ genuinely fought:
   (harmless there — asserting a conjunction commits to both, and `∧`
   shares `Do`'s accessibility row, §5.4). The losing alternative (two
   acts plus a cross-act connective) has no act to carry `∨` at all.
-  The earlier `.i joi = Do` claim is withdrawn pending the adopted
-  constitution/compound-performance programme; it is a gap, not a fallback.
+  The earlier `.i joi = Do` claim is withdrawn: `JoiClause` now supplies its
+  complete event/content contribution, while the surrounding structured
+  `ConnectionPlan` performance remains a gap rather than a `Do` fallback.
 - **P33 (tanru-unit jeks).** With a shared head, connecting whole
   units would duplicate the head predication (two houses from one
   `zdani`); binding one constrained-`Context` intended link per conjunct and

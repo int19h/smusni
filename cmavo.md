@@ -219,19 +219,24 @@ as holder for `le'e`); no prototype individual (P11).
 
 Group and set objects: `Refer` to the `gunma`/`selcmi` object whose
 components/members are an ordinary non-maximal `Refer` plurality of the
-description (P5); inner PA counts the base, outer PA counts groups/sets.
+description, delimited by `Local` because that base is not a second surface
+referent (P5). Group descriptors use `CompleteGunmaAt`; set membership is
+exact. Inner PA counts the base, outer PA counts groups/sets.
 Context or explicit `ro`/`MaxRefer` may supply the maximal base, but the bare
 gadri does not.
 
 ```lisp
 ; loi gerku cu sruri lo zdani — an ordinary base bound first
 (Bind {$base :: Referents Entity}
-      👉(Refer (λ {$x :: Entity} {(gerku $x)}))👈
-  {(Bind {$g :: Referents (Group Entity)}
-        👉(Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))👈
-    {(Bind {$z :: Referents Entity}
-          (Refer (λ {$r :: Referents Entity} {(zdani $r)}))
-      {(Close (sruri $g $z))})})})
+      👉(Local (Refer (λ {$x :: Entity} {(gerku $x)})))👈
+  {(Bind {$κ :: GroupBasis Entity}
+         (Context GroupBasisConstraint[loi,Entity] deps…)
+    {(Bind {$g :: Referents (Group Entity)}
+           👉(Refer (λ {$r :: Group Entity}
+             {(CompleteGunmaAt $κ $r $base)}))👈
+      {(Bind {$z :: Referents Entity}
+             (Refer (λ {$r :: Referents Entity} {(zdani $r)}))
+        {(Close (sruri $g $z))})})})})
 ```
 
 **See.** [Spec §4.8–4.9, §11](spec.md), pin P5; [rationale §2.8](rationale.md).
@@ -240,7 +245,8 @@ gadri does not.
 
 The speaker-description and name counterparts of `loi`/`lo'i`: the
 P10 `skicu` (or naming) base bound first, then `Refer` to the
-`gunma` group / `selcmi` set object over it; inner PA constrains the
+complete-`GunmaAt` group / exact-`selcmi` set object over it; `Local` keeps
+the internal base from exporting. Inner PA constrains the
 base, outer PA counts the objects.
 
 **See.** [Spec §11](spec.md), pins P5, P10.
@@ -749,12 +755,22 @@ order; movement flips per ch. 16.
 ### joi (JOI)
 
 Exact tag/facet `joi` that merely conjoins predications over an already shared
-event lowers to `∧`. Constitution-bearing sumti, tanru/property, and
-sentence/event uses are **gap-registered**: the prior `Vague` mixture/connecting
-relation and `.i joi = Do` fallbacks are rejected, while the adopted indexed
-`gunma` constitution and compound-performance laws are still being specified.
+event lowers to `∧`. Constitution-bearing uses select a typed §4.9 instance:
+`JoiGroup` for ordinary sumti, `JoiEvent` for Eventuality operands in an
+Eventuality-demanding place, `JoiPred` for pure common-row properties,
+`JoiTanru` when a shared head must be asserted once outside the mixed
+head-relative links, and `JoiClause` for the component content/event of
+afterthought or forethought clause connection. Every operand contributes and the flattened cover is
+complete at the intended constrained-`Context` basis; no component-property
+inheritance follows. The prior `Vague` connecting relation and `.i joi = Do`
+fallbacks are rejected.
 
-**See.** [Spec §4.8, §11](spec.md).
+`se joi` is symmetric; repeated co-referential sumti collapse through
+`Combine`. The remaining gaps are precise: a missing property-row basis,
+`pe'e joi` termsets, `joi nai`, and the structured performance/targeting plan
+for `.i joi` (#6).
+
+**See.** [Spec §4.9, §11–§14](spec.md); [catalog 1.58, 2.34](catalog.md).
 
 ### ju'e (JOI)
 
@@ -1635,24 +1651,35 @@ sumti` through it).
 
 ### mei / moi / si'e / cu'o / va'e (MOI)
 
-Number selbri: the MOI relation families — `MeiRel` (group from an
-n-membered set), `MoiRel` (n-th under a Context-recovered pure
+Number selbri: the MOI relation families — `MeiRel κ n` (group completely
+constituted at a constrained group basis from an n-membered set),
+`MoiRel` (n-th under a Context-recovered pure
 ordering), `SiheRel` (portion), `CuhoRel` (opaque probability,
 0 ≤ n ≤ 1, no probability calculus — P29), `VaheRel` (scale
 position). `me X me'u MOI` composes.
+
+The complete-member clause is defined for positive `mei` values. Experimental
+`nomei` proposes an empty mass/0-tuple, but the baseline's component carrier
+is nonempty `Referents<T>`; its null-group/empty-cover case is therefore an
+explicit §14 gap, not a covert empty plurality.
 
 ```lisp
 ; lei mi ratcu cu cimei — CLL Example 18.81; le MI ratcu = the
 ; pe-associator restriction (CLL 8.7); unfilled MeiRel places close
 ; contextually
 (Bind {$base :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity}
+      (Local (Refer (λ {$r :: Referents Entity}
         {(∧ (Close (skicu Speaker $r Audience
              (λ {$y :: Referents Entity} {(ratcu $y)})))
-           (Close (srana $r Speaker)))}))
-  {(Bind {$g :: Referents (Group Entity)}
-        (Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))
-    {(Close (👉(MeiRel 3)👈 :1 $g))})})
+           (Close (srana $r Speaker)))})))
+  {(Bind {$κg :: GroupBasis Entity}
+         (Context GroupBasisConstraint[lei,Entity] deps₁…)
+    {(Bind {$g :: Referents (Group Entity)}
+           (Refer (λ {$r :: Group Entity}
+             {(CompleteGunmaAt $κg $r $base)}))
+      {(Bind {$κmei :: GroupBasis Entity}
+             (Context GroupBasisConstraint[mei,Entity] deps₂…)
+        {(Close (👉(MeiRel $κmei 3)👈 :1 $g))})})})})
 ```
 
 **See.** [Spec §12, §11](spec.md), pin P29; [catalog 1.52](catalog.md).
@@ -1777,8 +1804,10 @@ The same decoration pattern at the other loci: `na ja`, `se gi'a`,
 `joi nai`, `se joi` — one unit per EBNF `jek`/`gihek`/`joik`
 production; `se` on a non-logical connective swaps the (ordered)
 operands; `nai` on a joik is per-locus: truth-table for logical
-loci and `RegionComplement` for BIhI. Constitution-bearing `joi`/`joi nai`
-loci remain gap-registered; `nai` creates no hidden discrete-choice fallback.
+loci and `RegionComplement` for BIhI. Plain constitution-bearing `joi` uses
+the typed `Joi*` dispatch above; `joi nai` remains gap-registered because
+“some other connection” supplies neither one intended alternative nor a
+contrast-domain/scope law. `nai` creates no hidden discrete-choice fallback.
 
 **See.** [Spec §4.5, §4.8, §11](spec.md).
 
@@ -1789,9 +1818,10 @@ an independent `je`: **one performance of the connected ClauseContent**
 (P32 — forced by `.i ja`, where no pair of assertions exists), the
 host's single force shared by the connection (content-taking forces;
 an interrogative host queries the connected content), with `∧`'s
-accessibility row shared with `Do`'s (spec §5.4). Constitution-bearing
-`.i joi` and non-logical ijoiks are gap-registered pending their event and
-compound-performance laws.
+accessibility row shared with `Do`'s (spec §5.4). `JoiClause` now supplies
+constitution-bearing `.i joi`'s component content and compound event;
+`ConnectionPlan` still owes its one-performance roles, targeting, transcript
+spans, and accessibility law, so the full surface ijoik remains a bounded gap.
 
 ```lisp
 ; mi klama .i je do stali — one act asserting the conjunction
@@ -1890,5 +1920,7 @@ is exactly what the specification itself marks open:
 - **Registered gaps** (spec §14): ordinary first-order restrictive
   clauses on `bu'a`-variables; explicit-`ce'u` in the non-`ka`/`du'u`
   abstractors; the non-numeric `me … me'u MOI` composite;
-  constitution-bearing sumti/property/event `joi` and compound ijoiks;
+  `joi nai`, `pe'e joi`, property `joi` without a declared basis, and compound
+  ijoik performance (plain sumti/event/property constitution and `JoiClause`
+  are mapped);
   the explicit vague connective `ju'e`; cross-clausal topic place-linking.

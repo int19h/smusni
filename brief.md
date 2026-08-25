@@ -170,8 +170,10 @@ inert `Let` vs effectful `Bind`; reference (descriptions, names,
 generics) and the specificity triad; relative clauses; generalized
 quantifiers with explicit import, witness export, and presupposition;
 plural reference with subreference and join; cardinality under a
-counting basis; termsets; logical and non-logical connectives with a
-normative dynamic-accessibility table; abstraction relations and their
+counting basis; termsets; logical connectives and typed `joi` constitution
+(with `joi nai`, termset connection, missing property bases, and compound
+performance honestly gap-registered), all with a normative dynamic-
+accessibility table; abstraction relations and their
 numeric crossings; questions and answerhood; de re / de dicto; quotation,
 signs, and utterance tokens; speech acts and discourse structure;
 reusable act packages distinguished from token-specific realized performance

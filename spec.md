@@ -486,6 +486,17 @@ named construct and normative for exactly those uses:
   and region membership, relative complement, and optional
   polarity/betweenness structure. (`Region<Scale>` is the separate gradable
   region former used by `Grade`, §6.4.)
+- **Constitution interfaces** — `DecompositionBasis<W,C>` (§4.9) is a
+  non-first-order interface whose values supply a granularity-relative cover
+  of `C`-components for `W`-wholes; `ContributionBasis<ρ>` is its
+  function-typed analogue for mixed row-`ρ` properties. Neither is an object,
+  set of objects, or inspectable implementation record. `Family⁺<A>` is the
+  nonempty finite family used only as
+  `Family⁺<PredTerm<ρ>>` by that property interface: `(Family a …)` constructs
+  one; permutation/rebracketing are immaterial, and at that sole baseline
+  instantiation duplicate predicates at §4.4 contextual equality collapse.
+  There is no general
+  eliminator or surface claim that arbitrary values can be massed.
 - **Tuples** — finite products: multi-parameter quantifier loci
   (§4.5), open-question answer domains (§8.1), `TupleAnswer`
   payloads (§8.2). Projection is positional and total.
@@ -825,10 +836,12 @@ references:
   inherit the finiteness condition.
   (`CardBasis`, §4.8, is the corresponding operation for plural
   references: it counts units under a description within a reference.)
-- `Group<T>` objects are related to their components by the lexical
-  relation `gunma` (x2 plural — ruling P5); `Set<T>` objects by `selcmi`.
-  `loi`/`lo'i` descriptions refer to such objects (§11); neither unwraps
-  implicitly to its members.
+- `Group<T>` objects are related to their components by the layered
+  constitution interface below. The official `gunma` row uses its
+  non-exhaustive layer (x2 plural — ruling P5); group-forming `joi` and
+  `loi`/`lei`/`lai` use the complete strengthening. `Set<T>` objects are
+  related to their members by exact `selcmi`. `loi`/`lo'i` descriptions
+  refer to those objects (§11); neither unwraps implicitly to its members.
 - `List<T>` objects carry order (`ce'o`); indexing and `ZipWith` (the
   `fa'u` analysis) are library forms over list recursion (§12).
 - `Number` and its subsorts carry the arithmetic operators
@@ -837,6 +850,204 @@ references:
   projective definedness conditions (§5.5). Intervals are comprehensions
   with endpoint conditions; further mathematics (exponentiation, bases,
   arrays) is library and gap-register material.
+
+#### Constitution at a decomposition basis
+
+One indexed programme supplies group, event, and compatible-property
+constitution without pretending that a group of `T`s is itself a `T`:
+
+```text
+DecompositionBasis<W,C>
+BasisUnitAt<W,C> : DecompositionBasis<W,C> × Referents<C>
+                     × Referents<C> → Content
+PeerUnitAt<W,C> : DecompositionBasis<W,C> × Referents<C>
+                    × Referents<W> → Content
+GunmaAt<W,C> : DecompositionBasis<W,C> × Referents<W>
+                 × Referents<C> → Content             (defined below)
+CompleteGunmaAt<W,C> : DecompositionBasis<W,C> × Referents<W>
+                         × Referents<C> → Content       (defined below)
+ComponentAt<W,C> : DecompositionBasis<W,C> × C
+                     × Referents<W> → Content           (defined below)
+
+ContributionBasis<ρ>
+MixAt<ρ> : ContributionBasis<ρ> × Family⁺<PredTerm<ρ>>
+             × Record ρ → Content
+ContributesAt<ρ> : ContributionBasis<ρ> × PredTerm<ρ>
+                     × Family⁺<PredTerm<ρ>> × Record ρ → Content
+GunmaPredAt<ρ> : ContributionBasis<ρ> × PredTerm<ρ>
+                   × Family⁺<PredTerm<ρ>> → Content   (defined below)
+```
+
+`W` and `C` are first-order sorts in the first three signatures. The two
+baseline instances are
+`DecompositionBasis<Group<T>,T>` and
+`DecompositionBasis<Eventuality,Eventuality>`; the component argument stays
+an ordinary plural reference in both. Predicate components are functions, so
+only `GunmaPredAt` uses the generic, non-first-order `Family⁺` carrier. This
+keeps `Group<PredTerm<ρ>>` out of the first-order hierarchy and creates no
+predicate objects (§9.1).
+
+A value `κ : DecompositionBasis<W,C>` is semantic structure consumed through
+two pure primitive interface relations:
+
+- `BasisUnitAt κ u Cs`: the nonempty reference `u : Referents<C>` is one peer unit
+  in κ's cover of the component reference `Cs`; and
+- `PeerUnitAt κ u w`: `u` is one peer component unit of the whole reference `w` at
+  that same basis.
+
+`PeerUnitAt` is the basis's total peer-component field, not an observation sample:
+every substantive component of `w` at κ is represented by at least one such
+unit, and co-referent wholes have the same field. A basis that cannot state
+that coverage is not admissible for `CompleteGunmaAt`.
+
+For every non-null `Cs`, its units are nonempty subreferences of `Cs`, stable
+under `CoRef`, and **cover without atomizing** it:
+
+```text
+BasisUnitAt(κ,u,Cs) → Among(u,Cs)
+Among(r,Cs) → ∃u.(BasisUnitAt(κ,u,Cs) ∧ Overlap(r,u))
+```
+
+Units need not be singletons, disjoint, minimal, or material parts. A basis
+may use people in a team, temporal phases in an event, or another declared
+peer granularity; arbitrary subreferences and logical consequences are not
+thereby components. A basis may declare a null component only with an
+explicit identity law; the conjunction basis below is the sole baseline
+case.
+
+`GunmaAt` is now an actual definition over that interface, deliberately
+**non-exhaustive** so `w` may have other peer units. The complete strengthening
+adds the converse:
+
+```text
+(GunmaAt κ w Cs) ≝
+  ∀u.(BasisUnitAt κ u Cs →
+        ∃v.(PeerUnitAt κ v w ∧ CoRef u v))
+
+(CompleteGunmaAt κ w Cs) ≝ (GunmaAt κ w Cs)
+  ∧ ∀v.(PeerUnitAt κ v w →
+          ∃u.(BasisUnitAt κ u Cs ∧ CoRef u v))
+
+(ComponentAt κ x w) ≝ (GunmaAt κ w x)
+```
+
+In the last line `x : C` takes §3.2's singleton lift. A plural surface x2,
+including ordinary converted `se gunma`, uses `GunmaAt` directly; conversion
+never changes the relation. Thus `mi se gunma le mi lanzu` can state partial
+componenthood without a `components(w)` projection or special `se`
+semantics. `ComponentAt` has the formation condition that x is not a
+basis-declared null component; the null is absorbable, not an ordinary
+component of everything. A complete construction rules out an unmentioned peer at
+the selected basis. Neither layer licenses component-to-whole or
+whole-to-component property inheritance.
+
+`GroupBasis<T>` abbreviates `DecompositionBasis<Group<T>,T>`. Each mapped
+group-forming occurrence retrieves a constrained `GroupBasis<T>` through
+`Context`, with the resolved reading declaring its dependency profile. The
+lexicon declares the admissible bases: “team”, “committee”, “material
+aggregate”, and the like are not an unconstrained choice left to a model.
+`GroupBasisConstraint[k,T]`, `EventBasisConstraint[k]`, and
+`ContributionBasisConstraint[k,ρ]` are metalanguage names for the pure
+constraint property supplied by the lexicon/mapping for construction class
+`k`; they are not term constructors or a closed enumeration of possible
+bases. A displayed `Context` uses the applicable property, whose free outer
+variables obey §5.3's dependency rule.
+General `gunma` lowers to `GunmaAt`; `joi`, the group descriptors, and the
+group clause of `MeiRel` lower to `CompleteGunmaAt` (§11–§12).
+
+An event basis additionally supplies total model-level aggregation clauses
+for temporal trace, participants by semantic role, and causal profile. For
+`CompleteGunmaAt κ j Es`:
+
+1. the trace and role-indexed participant profile of `j` are exactly κ's
+   declared aggregation of the peer events' traces and participants;
+2. every non-null peer event contributes to that aggregation, and no event
+   outside the complete cover contributes at the same peer level;
+3. κ's causal aggregation determines the whole's causal profile. A joint
+   cause may cause an outcome without any component causing it alone, and no
+   causal or participant fact is inherited in either direction unless that
+   basis's clause states it; and
+4. the complete whole is actual at a world exactly when all of its non-null
+   peer events are actual there.
+
+Every admitted event basis must state those three aggregation functions and
+their contribution laws; saying only “the model chooses a mixture” is not an
+instance. Temporal union/closure, joint causal contribution, and role-wise
+participant union are common admissible shapes, not one universal formula
+forced on every event kind. A basis admitted for `JoiEvent`/`JoiClause` also
+has **complete-cover existence and extensionality**: for every mapped operand
+cover it supplies a complete whole, and any two complete whole references for
+that cover co-refer. Thus the clause parameter is one joint whole up to
+reference identity rather than an accidental plurality of rival events.
+
+The model carries one distinguished event basis `κ∧` for conjunction.
+`joint_M(e₁,…,eₙ)` is, up to `CoRef`, the unique complete event whole under
+`κ∧` whose non-null peer cover is the flattened cover of `e₁,…,eₙ` and to
+which every non-null operand contributes. The basis is transparent to its
+own complete wholes. Its temporal trace is the union of the non-null peer
+traces, its participant value at each semantic role is their role-wise plural
+union, and its causal profile contains exactly the links licensed by the
+model's **joint-cause relation over that complete peer cover**—never a
+component link merely copied upward. The joint-cause relation must be
+permutation-invariant, require every listed peer to contribute, and be
+associative under κ∧ flattening; this is a semantic model relation, not a
+surface `rinka` rewrite. Nesting therefore flattens, and
+
+```text
+joint_M(joint_M(e₁,e₂),e₃)  CoRef  joint_M(e₁,joint_M(e₂,e₃)).
+```
+
+`hold_M(⊤)` is `κ∧`'s declared null whole/component: it has no substantive
+peer unit, is the unique complete all-null whole, and adjoining it does not
+change the other cover. Hence `joint_M(e,hold_M(⊤))` co-refers with `e`.
+This is a constitution law, not a claim that the plural reference
+`Combine(e,hold_M(⊤))` co-refers with `e`. These clauses exhibit the
+`joint_M` required by §9.3 rather than positing a second notion of joint
+state.
+
+For property constitution, primitive `MixAt κ F a` is the pure realization
+condition a declared `κ : ContributionBasis<ρ>` supplies for nonempty family
+`F` at total row record `a : Record ρ`; `ContributesAt κ P F a` is its
+operand-contribution relation.
+The interface is admissible only when:
+
+- `MixAt` is invariant under permutation, rebracketing, and duplicate collapse
+  of `F`;
+- whenever it holds, every family member P satisfies
+  `ContributesAt κ P F a` nontrivially at
+  the basis κ declares—spatial region, temporal phase, constitutive origin,
+  phenomenal/intentional aspect, or another lexically specified mode;
+- those listed contributions are jointly sufficient for `MixAt κ F a`: no
+  family member is a free rider and no additional unlisted peer contribution
+  is needed at that basis; and
+- the generic interface licenses neither inference from contribution to
+  satisfaction nor to non-satisfaction of an operand at whole-argument
+  granularity. A particular declared basis may add either law when its row
+  warrants it; neither is inherited by default.
+
+Each basis declaration must spell `ContributesAt` through a typed witness
+domain and pure realization relation appropriate to that mode (region,
+phase, origin, aspect, …), or through an equivalent extensional clause. An
+uninterpreted always-true contribution flag is not an admissible instance.
+The witness type is per basis because forcing origins and phenomenal aspects
+into one first-order “part” sort would recreate the rejected universal mass
+former.
+
+Then
+
+```text
+(GunmaPredAt κ R F) ≝
+  ∀a : Record ρ. (R(a) ↔ MixAt κ F a)
+```
+
+Only pure, already-lowered common-row predicates may enter `F`; contextual
+sites are bound before family construction. Each usable row needs a curated
+lexical/per-row basis declaration. A color-region basis can validate a
+blue/red ball without making the whole wholly blue or red; an origin basis
+can validate a lion/tiger hybrid without lion-only or tiger-only material
+parts; an aspect basis can validate blended desire/fear without pure emotion
+parts. These are different declared contribution modes, not licenses for an
+empty universal “some relation” analysis.
 
 ### 4.10 Cardinal quantification
 
@@ -927,7 +1138,7 @@ VC2–VC3) — formally, the denotation function is profile-indexed,
 the π-family — and truth simpliciter, where invoked, is supertruth
 over the family — existential collapse of precisifications into branches would
 make one admissible reading's success suffice, which VC1 forbids. Each named operation of this chapter (`Refer`,
-`Context`, `Vague`, `Presuppose`, `Supplement`, the selections of §5.6,
+`Local`, `Context`, `Vague`, `Presuppose`, `Supplement`, the selections of §5.6,
 the connectives' state-passing, §9.3's `StateClause`/`CloseClause`/
 `EventOfContent` interface, and §7's performance/realized-content
 interface) is an operation of this algebra, and its
@@ -1091,6 +1302,34 @@ selection introduced before an act sequence remain bound across it
 spelling of
 cross-sentence reference).
 
+`(Local comp) : RefComp<A>` is the reference-level accessibility delimiter.
+It runs `comp : RefComp<A>` once and returns the same branch value, preserves
+the operand's world filtering, contextual choices, and projective
+obligations, but existentially projects from each output information state
+exactly the fresh discourse-assignment slots introduced while `comp` ran.
+Incoming assignments and all later introductions remain. The returned value
+is still available to an enclosing `Bind`; it is simply not an anaphoric
+discourse introduction. Any projective obligation emitted inside `comp`
+closes over the selected semantic values before projection, so preservation
+does not leave a dangling assignment index. Outcomes with the same projected
+state but different returned values remain distinct branches for the
+continuation. `Local` cannot take a `PerfComp`, hide a performance,
+or turn an effectful computation pure.
+
+The principal lowering witness is an internal collection base:
+
+```lisp
+(Bind {$base :: Referents T} (Local (Refer P))
+  {… construct and introduce the one surface group/set from $base …})
+```
+
+The hidden base has ordinary non-maximal `Refer` selection and truth
+filtering, while only the surface collection survives as a discourse
+referent. Without this delimiter `lo'i ratcu` would introduce both rats and
+their set, contradicting the `ri` count in CLL 6.52. This cross-construction
+accessibility job is the factorization argument for the lowering-only generic
+form; it is not a renderer or evaluator convenience.
+
 ### 5.3 The specificity triad
 
 Three primitive computations answer §1.4:
@@ -1161,6 +1400,7 @@ binders (§7.4).
 | `↔`, `⊕` | Each operand evaluated exactly once against the incoming state; nothing escapes. (Hence primitive: rewrites would duplicate evaluation.) |
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. **Witness export:** a successful evaluation of an exporting quantifier introduces its witness referent(s) — see §5.6, including the dependent case. |
 | `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). |
+| `Local` | Its operand sees the incoming state and runs normally; only discourse-assignment slots freshly introduced by that operand are projected from its output. Truth filtering, returned values, contextual resolution, and projective obligations survive. |
 | `Context` | Consults the incoming context and introduces nothing. Logical embedding never turns retrieval into quantification over admissible values: site/dependency identity is exactly §5.3's, while the consuming content—not the recovered value—is negated, questioned, or connected. |
 | `StateClause`, `CloseClause` | Applying `StateClause c` evaluates c exactly once on its one matching holding-state lineage; c's ordinary introductions and projectives obey their own rows. `CloseClause` keeps its event witness local: the witness is recoverable through `EventOfContent` but is not a discourse introduction. |
 | `Presuppose` | See §5.5: the condition projects to the nearest legal commitment boundary; the at-issue operand sees the incoming state. Introductions inside the condition are local to the condition check; nothing escapes from it. |
@@ -1390,7 +1630,7 @@ The normative classification:
 | tanru modification link | constrained `Context` | one intended admissible link per occurrence; convention supplies resolver priors, not lexicalization |
 | `tu'a` | constrained `Context` | intended host-sorted abstraction; shape + `srana`-aboutness constrain recovery (P14) |
 | topic `zo'u` link | constrained `Context` | one intended place fill or coarse `About` value for a single-bridi comment (P26); compound place-linking is a gap |
-| constitution-bearing `joi` loci | **gap** | the rejected mixture-choice analysis is removed; the adopted indexed-constitution programme awaits its complete clauses (§14) |
+| constitution-bearing `joi` loci | constrained `Context` basis + typed constitution | group/event/property instances select one intended declared basis; missing property instances, `pe'e joi`, `joi nai`, and compound performance are bounded gaps (§14) |
 | vague-quantity thresholds (`so'i`, `so'e`, …; `ji'i` tolerance) | `Vague` | sorites: no fact fixes the boundary |
 | `du'e` / `mo'a` / `rau` | `Vague` threshold **constrained by** a `Context` standard/purpose | two parameters; the purpose is recoverable, the boundary is not |
 | `na'i`'s defect dimension | `Context` | the hearer is expected to see what is defective |
@@ -2288,16 +2528,13 @@ The table is exhaustive; the following laws constrain its nontrivial rows:
    spatial facet holds follows the declared relation, not a ban on infinity.
 3. **Conjunction.** On a lineage where c and d hold,
    `hold_M(∧ c d)` is the jointly constituted State of `EventOfContent c` and
-   `EventOfContent d`. A model supplies this `joint_M` operation as semantic
-   structure; it is actual exactly when both components are actual. GitHub #4
-   must exhibit `joint_M` as the complete `GunmaEvent`/constitution witness
-   rather than leave two rival notions of joint state. To preserve the
-   existing source-ordered associativity law for `∧`, `joint_M` is associative
-   up to `CoRef` and has the holding state of `⊤` as unit; no commutativity of
-   dynamic evaluation is inferred. Consequently GitHub #4's complete
-   constitution must treat `hold_M(⊤)` as an absorbable/null component:
-   adjoining it to a complete event basis leaves the constituted whole
-   unchanged up to `CoRef`, rather than adding an ordinary nontrivial part.
+   `EventOfContent d`. Section 4.9 now exhibits this `joint_M` as the unique
+   complete `GunmaAt` event witness at the distinguished conjunction basis
+   `κ∧`; it is actual exactly when both non-null components are actual. The
+   basis's self-flattening law gives associativity up to `CoRef`, while
+   `hold_M(⊤)` is its declared null component and unit. No commutativity of
+   dynamic evaluation is inferred: the event cover is insensitive to operand
+   order, but `∧` still evaluates its Content operands in source order.
 4. **Disjunction.** The event of `(CloseClause (ClauseOr C D))` is
    branch-relative: a live C-lineage carries C's event and a live D-lineage
    carries D's. If both disjuncts hold, both lineages are available; no covert
@@ -2335,6 +2572,7 @@ must provide for the core to interpret predications over it:
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
 | situation behavior | whether the relation/value projection is rigid or is evaluated relative to a surrounding `StateClause` situation (§5.7); physical value-bearing entries must declare this, while numeric constants and arithmetic are rigid |
 | plurality behavior | optional, per place: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). Two independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed, denied, or left undeclared; the values state lexical entailments of the word, never a reading parameter (P4) |
+| constitution behavior | for a whole/component row or a `joi`-compatible result: the pure admissible-basis constraint; group/event bases declare peer granularity and, for events, trace/role-participant/causal/actuality aggregation; a property row declares its `ContributionBasis<ρ>` `MixAt`/`ContributesAt` instance. Absence means the corresponding constitution reading is unmapped, never model-chosen (§4.9) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
 | degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
 | kind admission | whether a place admits kind-like referents (ruling P3) |
@@ -2343,13 +2581,48 @@ must provide for the core to interpret predications over it:
 | indicator entries | for UI: relation, roles, degree place, `nai`-pair (with `Scalar Opposite` fallback where unpaired — §7.6, §6.3), host-force profile, evidential basis-kind where applicable (§7.6) |
 
 Adopted collection entries (P5): official `gunma` already takes its
-components as x2, and `selcmi` — a community lujvo (xorxes), which
+components as x2 and explicitly glosses itself as only partially specified;
+its row lowers through a constrained `Context` basis to non-exhaustive
+`GunmaAt`. `CompleteGunmaAt` is the defined strengthening used where the
+surface says the listed/base components constitute the whole. The lightly
+attested community lujvo `mulgunma` independently spells that complete
+strengthening, but is corroboration rather than a required surface exponent.
+`selcmi` — a community lujvo (xorxes), which
 the Contemporary CLL edition itself now uses and glosses in its
 set-descriptor expansion (ch. 6) — already takes its members as x2;
 both are adopted with plural
-x2 read as plural references. (The genuine defect in this area is
+x2 read as plural references. `selcmi`'s member relation is exact; unlike
+general `gunma`, it does not admit unlisted members. (The genuine defect in this area is
 official `cmima`'s x2 being glossed as a *set*; the library avoids
-`cmima`, and the lexicon program may propose broadening its x2.) The
+`cmima`, and the lexicon program may propose broadening its x2.) The resolved
+official-row clause is:
+
+```lisp
+; gunma g Cs — deps selected by this resolved occurrence
+(Bind {$κ :: GroupBasis T}
+      (Context GroupBasisConstraint[gunma,T] deps…)
+  {(GunmaAt $κ g Cs)})
+```
+
+`GroupBasisConstraint[k,T]` is lexicon data, not one unconstrained universal
+predicate. When `gunma` occurs inside a position requiring a pure property
+(notably a `Refer` restrictor), the mapping hoists this κ binding outside that
+property and shares the captured value; it never hides `Context` in a `Fn`.
+
+The working dictionary wording for the adopted group row is: **“x1 is a
+jointly constituted group/team/aggregate whole with x2 among its components
+at the contextually relevant decomposition basis; x2 need not exhaust the
+peer components. The whole has its own properties; no property is inherited
+between whole and components without a lexical law.”** The proposed event
+overload replaces `Group<T>`/`T` by `Eventuality`/`Eventuality` and requires
+the event-instance aggregation laws of §4.9. It is an extension for the
+content-word programme, not evidence that the present official row already
+spells every event/property use. No surface property overload is proposed:
+`PredTerm<ρ>` is not first-order, and property `joi` remains the generic
+`GunmaPredAt` interface. The complete wording (“x2 are all peer components at
+that basis”) is the `CompleteGunmaAt`/`mulgunma` layer used by `joi` and the
+descriptors. `jo'u` never invokes either row; it is only plural `Combine`.
+The
 `le`-description relation is **`skicu` itself** — official row "x1 tells
 about/describes x2 (object/event/state) to audience x3 with description
 x4 (property)", an
@@ -2422,20 +2695,32 @@ the speaker's commitment that the audience can identify the referent is
 a cooperative-use commitment stated here in prose, not machinery;
 non-veridical, speaker-identifying. `la N` → `Refer` via naming
 (`Named`/`NameSign`). `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical,
-[Speaker], P, ·)` at their predication (§5.8). `loi`/`lo'i` → `Refer` to
-group/set objects via `gunma`/`selcmi` (P5), after binding an ordinary
-**non-maximal** `(Refer P)` base. Thus bare `lo'i gerku` may be a set of the
-contextually selected dogs, not necessarily all dogs. The maximal reading
-remains available when context selects that base or when explicit `ro`/
-`MaxRefer` requires it; bare collection gadri do not add it. Inner PA →
+[Speaker], P, ·)` at their predication (§5.8). `loi`/`lo'i` first bind an
+ordinary **non-maximal** `(Local (Refer P))` base (P5). `Local` keeps that
+lowering-internal base out of the discourse store. `loi` then retrieves a
+constrained `GroupBasis<T>` and `Refer`s to a `Group<T>` satisfying
+`CompleteGunmaAt κ g base`; `lo'i` `Refer`s to the exact `selcmi` set over
+the same base. In both cases the outer `Refer` restrictor is a property of one
+`Group<T>`/`Set<T>` object (singleton-lifted at the relation): a number-neutral
+outer reference may contain several qualifying objects, but each qualifies
+individually rather than several partial objects qualifying only collectively.
+Thus bare `lo'i gerku` may be a set of the contextually
+selected dogs, not necessarily all dogs, but the hidden dog reference does
+not become a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal
+reading remains available when context selects that base or when explicit
+`ro`/`MaxRefer` requires it; bare collection gadri do not add it. Completeness
+here forbids components beyond the selected base; the still-open
+count/mass `CoveredBy` question (§14) separately asks what makes a veridical
+P-base itself free of P-external residue. Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
 selection / subreference selection (P1, §4.10). Inner `no` → the
 zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
 in a description (`le mi ratcu`) is the `pe`-associator restriction
 (CLL 8.7: `le mi ratcu` ≈ `le ratcu pe mi`) — a restrictive `srana`
 conjunct beside the description head. `lei`/`le'i` →
-the P10 `skicu` base bound first, then `Refer` to the `gunma` group /
-`selcmi` set object over it; `lai`/`la'i` → the naming base likewise
+the P10 `skicu` base bound first under `Local`, then `Refer` to the
+complete-`GunmaAt` group / exact-`selcmi` set object over it;
+`lai`/`la'i` → the naming base likewise
 — `Group<T>`, `Set<T>`, and `Referents<T>` stay distinct, inner PA
 constrains the base, outer PA counts the objects (P5's two sites).
 
@@ -2508,17 +2793,20 @@ shared by the connection (a force conflict has no resolved reading);
 the schema is stated for the content-taking forces (`Assert`,
 `Command`) — an interrogative host queries the connected content;
 UI targeting distinguishes the compound act from its clauses (pin
-P32). Constitution-bearing `.i joi` and the other non-logical ijoik
-performance cases are gap-registered pending the indexed constitution and
-compound-performance clauses (§14). `.i TAG bo` → the same single performance,
+P32). The event/content contribution of constitution-bearing `.i joi` is now
+`JoiClause` (§12); its **compound performance** and the other non-logical
+ijoik performance cases remain gap-registered pending the `ConnectionPlan`
+clauses (§14). `.i TAG bo` → the same single performance,
 with component ClauseContents exposing both events inside an outer state:
 `(Assert (CloseClause (StateClause
 (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))))` — never
 closed component contents beside free event variables. Jek at the tanru-unit
 locus → `TanruLinkConnect` (§12; pin P33): shared head asserted once,
 one constrained-`Context` intended link per conjunct, connective over the link
-applications; distinct-head units connect as whole predications. Joiks at
-either tanru locus are gap-registered pending the constitution programme.
+applications; distinct-head units connect as whole predications. Plain `joi`
+at either tanru locus uses `JoiPred` over the already-lowered common-row
+properties; missing common rows/bases and the other unmapped joiks remain
+gaps.
 BIhI: `X bi'o Y` →
 the ordered `Interval` (a `Set` object) with GAhO endpoint kinds;
 `bi'i` → ⊳ symmetrization (normalize endpoint order with their
@@ -2530,11 +2818,18 @@ sentence loci: **no standard resolved mapping exists** (CLL 14.16
 says no meanings have been found) — a documented no-mapping, and an
 implementation must not invent one. Non-logical: `jo'u` → `Combine`; `ce` → set;
 `ce'o` → list; `fa'u` → `ZipWith`; exact tag/facet `joi` joining → `∧` where
-it merely conjoins facets over an already shared event. Sumti, tanru/property,
-and sentence/event `joi` uses that require a constituted whole have no baseline
-lowering until §14's adopted constitution programme is completed; there is no
-fallback `Vague` connecting relation. Official `ju'e` likewise has no baseline
-lowering pending its separate vague-connective adjudication (§14).
+it merely conjoins facets over an already shared event. Constitution-bearing
+`joi` dispatches by the resolved result type (§4.9, §12): ordinary sumti form
+a complete `Group<T>`; Eventuality operands in an Eventuality-demanding place
+form a complete joint event; common-row tanru/property operands form a
+`JoiPred` property satisfying `GunmaPredAt` (`JoiTanru` keeps a shared head separate);
+afterthought and forethought clause connection form
+`JoiClause`. A homogeneous `joi` chain is flattened before one complete cover
+is formed; `se joi` is the same symmetric relation. There is no fallback
+`Vague` connecting relation. Mixed-row property uses, `pe'e joi` termsets,
+compound ijoik performance, and `joi nai` remain explicit gaps (§14).
+Official `ju'e` likewise has no baseline lowering pending its separate
+vague-connective adjudication (§14).
 `ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
 
 **Events, tense, modals** (P8, P24). Every declarative clause is
@@ -3118,9 +3413,12 @@ The rows, labelled and typed (P25's referential discipline; the
 `Ordering` place is function-typed, the `InnatelyCapable` precedent):
 
 ```text
-(MeiRel n)  : PredTerm⟨ x1:Referents<Group<T>>, x2:Referents<Set<T>>,
-                        x3:Referents<T> ⟩
-   ; lexical content: x1 is the gunma-group over x2's members, and
+(MeiRel κ n) : PredTerm⟨ x1:Referents<Group<T>>, x2:Referents<Set<T>>,
+                         x3:Referents<T> ⟩
+   ; κ : GroupBasis<T>, hoisted by the surface occurrence's constrained
+   ; Context site before this pure row value is formed.
+   ; lexical content: x1 is completely constituted, at the row's
+   ; constrained GroupBasis<T>, by exactly x2's members, and
    ; (= (Card s) n) at the presupposed sole set member s of x2 (the
    ; §9.2 projective singular pattern); x3 among s's members.
    ; Objective-indefinite n extends the row with the comparison set
@@ -3143,6 +3441,27 @@ The rows, labelled and typed (P25's referential discipline; the
    ; x1's degree on x2 (through the gradable projection its lexical
    ; content names) lies in position n's region.
 ```
+
+For positive `n`, the `MeiRel κ n` clause is stated by the pure maximal member
+cover `m : Referents<T>` of the sole set `s` (the `MaxRefer` coverage pattern,
+but no discourse introduction):
+
+```text
+MemberCover(s,m) ≝
+  Distrib (λx.(x ∈ s)) m
+  ∧ ∀x.(x ∈ s → Among(x,m))
+  ∧ ∀r.(Among(r,m) → ∃x.(x ∈ s ∧ Overlap(x,r)))
+```
+
+After the mapping hoists the row's constrained κ site, its content includes
+`MemberCover(s,m)`, `CompleteGunmaAt κ x1 m`, `Card(s)=n`, and
+`Among(x3,m)`. Thus a threesome
+cannot contain a fourth peer component. At `n=0` this expansion is unavailable:
+`x3` and `Referents<T>` are nonempty, while the experimental dictionary entry
+  for `nomei` explicitly proposes an empty mass/0-tuple. Whether `Group<T>`
+  admits a null object and how a complete empty cover is represented without an
+  empty `Referents<T>` are gap-registered (§14; GitHub #23); the baseline neither declares
+the form false nor inserts a covert empty plurality.
 
 The `me X me'u MOI` composite (CLL Example 18.93) applies the family
 the MOI cmavo selects at the number the `me`-complement supplies —
@@ -3285,14 +3604,103 @@ schema is defined only for one open-bridi comment. `tu'e…tu'u` may scope a
 topic over a sequence, but cross-clausal place-linking within that sequence is
 gap-registered (§14); explicit anaphora and coarse `About` remain available.
 
-**Constitution-bearing `joi`** (reserved baseline gap). The prior
-`AdmissibleMixture`/`Vague` analysis is rejected: a positive use must not
-succeed through an unintended connecting relation, and no evidence requires a
-hidden mixture-kind value. The adopted direction is one indexed constitution
-programme over `gunma`-style relations for group, event, and compatible
-predicate results. Until its category-specific laws are stated, sumti,
-tanru/property, and sentence/event `joi` have no baseline library expansion
-(§14); exact tag/facet conjunction remains ordinary `∧`.
+**Constitution-bearing `joi`.** The prior `AdmissibleMixture`/`Vague`
+analysis is rejected: a positive use must not succeed through an unintended
+connecting relation, and no hidden mixture-kind value is selected. After all
+surface operands are computed once in source order and a homogeneous chain is
+flattened, the applicable typed instance is one of these defined forms
+(`Combine Xs` is the associative fold of the nonempty operand references):
+
+```text
+(JoiGroup κ X₁ … Xₙ) : RefComp<Referents<Group<T>>>  ≝
+  (SelectExactly 1 (λ {$g :: Group T}
+    {(∧ (GunmaAt κ $g X₁) … (GunmaAt κ $g Xₙ)
+        (CompleteGunmaAt κ $g (Combine X₁ … Xₙ)))}))
+
+(JoiEvent κ E₁ … Eₙ) : RefComp<Referents<Eventuality>>  ≝
+  (SelectExactly 1 (λ {$j :: Eventuality}
+    {(∧ (GunmaAt κ $j E₁) … (GunmaAt κ $j Eₙ)
+        (CompleteGunmaAt κ $j (Combine E₁ … Eₙ)))}))
+
+(JoiPred κ P₁ … Pₙ) : PredTerm<ρ>  ≝
+  (λ {$a :: Record ρ}
+    {(MixAt κ (Family P₁ … Pₙ) $a)})
+```
+
+`SelectExactly 1` makes the returned reference one whole without claiming
+that no co-descriptive whole exists outside the selected witness. This is the
+`joi1` single-entity commitment; number-neutral group descriptors remain
+separate. The mapping binds κ through
+`GroupBasisConstraint[joi,T]` or `EventBasisConstraint[joi]` after computing
+the surface operands and before invoking these forms. `JoiGroup` is the
+ordinary sumti result. `JoiEvent` is selected instead when
+all operands are Eventuality references and the consuming place demands an
+Eventuality; in an otherwise unconstrained `Entity` place the group reading
+is the default. `JoiPred` requires pure, already-lowered operands of one exact
+row and a declared `ContributionBasis<ρ>` instance. The mapping binds the one
+intended κ first through a constrained `Context` site with the reading's
+dependency profile; the transparent row-function result is then constructed
+directly from `MixAt`, with `GunmaPredAt κ (JoiPred κ P₁ … Pₙ)
+(Family P₁ … Pₙ)` following by definition. If no common row or declared
+contribution basis exists, there is no baseline reading.
+
+At a shared-head tanru locus the head is not itself one of the mixed
+properties. The exact schema is:
+
+```text
+((JoiTanru M₁ M₂ H) fills…) ≝
+(Bind {$l1 :: PredTerm ρ(H)}
+        (Context (λ {$r :: PredTerm ρ(H)}
+          {(TanruAdmissible M₁ H $r)}) deps₁…)
+      {$l2 :: PredTerm ρ(H)}
+        (Context (λ {$r :: PredTerm ρ(H)}
+          {(TanruAdmissible M₂ H $r)}) deps₂…)
+      {$κ :: ContributionBasis ρ(H)}
+        (Context ContributionBasisConstraint[joi,ρ(H)] depsκ…)
+  {(∧ (H fills…) ((JoiPred $κ $l1 $l2) fills…))})
+```
+
+Thus `blanu joi xunre bolci` asserts `bolci` once and mixes the two intended
+head-relative color contributions. Distinct-head units use `JoiPred` over
+their already-lowered whole common-row properties. All three `Context` sites
+obey §5.3 independently; any free modifier/link dependencies appearing in
+the basis constraint must be named in `depsκ…`. The homogeneous n-ary
+generalization binds one intended link per modifier in source order, forms one
+`Family⁺`, retrieves one κ, and asserts H once; it never nests a mixed
+predicate as a new peer merely because the parser associated the chain.
+
+The event-open clause form uses the same event instance without introducing
+its local event witnesses into discourse:
+
+```lisp
+(JoiClause κ C D) ≝
+  (λ {$j :: Referents Eventuality}
+    {(∃ (λ {$e1 :: Referents Eventuality}
+      {(∧ (C $e1)
+          (∃ (λ {$e2 :: Referents Eventuality}
+            {(∧ (D $e2)
+                (GunmaAt κ $j $e1)
+                (GunmaAt κ $j $e2)
+                (CompleteGunmaAt κ $j (Combine $e1 $e2))
+                (fasnu $j))})))}))})
+```
+
+The nested `∧` evaluates `C` then `D` exactly once. `CloseClause` retains `$j`
+as the connected content's event; `$e1` and `$e2` remain local component
+witnesses. Forethought `joi gi … gi …` uses the same form. This completes the
+content/event contribution needed by `.i joi`; packaging it as one structured
+performance, with component targeting and transcript spans, remains the
+`ConnectionPlan` gap (§14). Exact tag/facet `joi` over an already shared event
+continues to be ordinary `∧`, not `JoiClause`.
+
+Because `Combine` is commutative and the property family is permutation-
+invariant, `se joi` changes no denotation. Homogeneous chains flatten before
+construction; mixed joik grouping remains syntactically significant. Repeated
+co-referential sumti operands collapse at the plural `Combine` layer; the
+language supplies no multiplicity reading for `joi`. `joi nai`, which CLL
+14.15 says selects some *other connection* rather than negating an operand,
+and `pe'e joi` termsets remain gap-registered rather than receiving a discrete
+choice fallback.
 
 **Tanru link connection** (jek at the tanru-unit locus; pin P33).
 `TanruLinkConnect`: for a shared head, retrieve one intended admissible link
@@ -3312,9 +3720,12 @@ with ⊙ the jek's operator and each dependency profile declared by the
 resolved reading; links bind first so the connective ranges over fixed
 intended values. NA/SE/NAI decorate ⊙ as at any locus.
 Distinct-head units connect as whole predications —
-`(⊙ ((Tanru M₁ H₁) fills…) ((Tanru M₂ H₂) fills…))`. A joik at either
-tanru locus is constitution-bearing and gap-registered pending the indexed
-programme; `nai` supplies no fallback discrete-choice semantics.
+`(⊙ ((Tanru M₁ H₁) fills…) ((Tanru M₂ H₂) fills…))`. Plain `joi` at a
+shared-head locus uses `JoiTanru`; at a distinct-head locus it uses `JoiPred`
+over the already-lowered whole common-row properties. Missing common rows or
+declared contribution bases are gaps.
+Other joiks dispatch by their own rows, and `nai` supplies no fallback
+discrete-choice semantics.
 
 **MEX:** by metalanguage recursion over `Natural` and lists:
 `(te'a x 0) ≝ 1`, `(te'a x (n+1)) ≝ (× x (te'a x n))`;
@@ -3349,10 +3760,18 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   explicit; lexical plurality behavior lives in the lexicon.
 - **P5** `loi`/`lo'i` denote group/set objects via `gunma`/`selcmi`,
   whose x2s (official components; xorxes' members) are read as plural
-  references; inner PA = group/set size, outer PA counts groups/sets.
-  Their base is ordinary non-maximal `Refer P`, like `lo P`; maximality is
-  available only when explicitly marked or contextually resolved. (`cmima`
-  x2-as-set is the one defective gloss nearby; avoided.)
+  references; inner PA = group/set size, outer PA counts groups/sets. Their
+  lowering-internal base is ordinary non-maximal `Refer P`, like `lo P`,
+  delimited by `Local` so it does not become a second surface antecedent;
+  maximality is available only when explicitly marked or contextually
+  resolved. General `gunma` is non-exhaustive `GunmaAt`, while group-forming
+  `joi`, `loi`/`lei`/`lai`, and `MeiRel` use `CompleteGunmaAt`. `joi` forms a
+  single selected constituted whole (`joi1`; no global uniqueness claim), not
+  a `jo'u` plurality carrying a covert
+  non-distributivity instruction (`joi2`); event and common-row property uses
+  are the indexed instances of the same programme. No component-property
+  inheritance follows. (`cmima` x2-as-set is the one defective gloss nearby;
+  avoided.)
 - **P6** Supported strong donkey/dependent-witness readings lower by reading
   selection to joint multi-parameter loci; this is not an
   equivalence-preserving normalization of the compositional selection
@@ -3509,14 +3928,18 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P32** Sentence-level **logical** connection is **one performance of the
   connected ClauseContent, closed once for force** (forced by `.i ja`; stated
   for the content-taking forces, interrogative hosts querying the connected
-  content). Constitution-bearing `.i joi` is gap-registered pending the
-  indexed event/compound-performance programme; `.i TAG bo`
+  content). Constitution-bearing `.i joi` now has the indexed event/content
+  form `JoiClause`; its structured compound performance is gap-registered
+  pending `ConnectionPlan`. `.i TAG bo`
   exposes both event binders with the tag
   conjunct inside the performed content.
 - **P33** Jek at the tanru-unit locus = `TanruLinkConnect`: shared
   head asserted once, one constrained-`Context` intended link per conjunct,
   connective over the link applications; distinct heads connect as whole
-  predications. Joiks at this locus remain constitution gaps.
+  predications. Constitution-bearing `joi` at this locus uses `JoiPred` over
+  the already-lowered common-row properties, with `JoiTanru` asserting a
+  shared head once and mixing only its head-relative links; a missing common
+  row or contribution-basis instance is an explicit gap.
 - **P34** `vu'o` distributes an incidental clause **once per
   immediate connectee** (never collectively over `Combine`, never
   member-distributed into a plural connectee); restrictives restrict
@@ -3553,7 +3976,7 @@ approximate:
   particular discrete alternative and commits to existential success through
   any admissible one. Tanru, `tu'a`, bare `jai`, and topic links have intended
   values and use constrained `Context`; `na'e` denotes a direct coarse region;
-  constitution-bearing `joi` is the next gap below. Official `ju'e` (“vague
+  constitution-bearing `joi` uses the §4.9 indexed programme. Official `ju'e` (“vague
   non-logical connective”) is a real surface candidate, but CLL and the
   dictionary do not define whether its positive and negated uses have
   existential-choice, contextual, or other truth conditions; it remains
@@ -3585,21 +4008,41 @@ approximate:
   general domains (plural references, heterogeneous tuples, labels, and
   predicate-valued answers) do not share such an interface. Lojban has no
   grammatical exponent that warrants adding it solely for this marker.
-- **Constitution-bearing `joi` and non-logical sentence connection.** The
-  former `AdmissibleMixture`/`Vague` choice analysis is rejected. The adopted
-  design direction is an indexed `gunma` constitution family: non-exhaustive
-  base constitution plus a complete strengthening, with category-specific
-  group, event, and property laws and a typed compound-performance plan. Its
-  exact component bases, event trace/cause/participant laws, property
-  contribution basis, force/targeting clauses, and `nai` behavior are not yet
-  all stated. Therefore sumti `joi`, tanru/property joiks, `.i joi`, and other
-  constitution-bearing sentence ijoiks have no baseline lowering. Exact
-  tag/facet `joi` that merely conjoins predications over an already shared event
-  remains ordinary `∧`. Any future compound-performance constructor is
-  constrained by §7.1: its one host `Perform` creates one `ActOccurrence`
-  with one capture. Component transcript spans may realize component act
-  packages for targeting, but do not become additional performed occurrences
-  unless the semantics explicitly performs them; #6 owns those span laws.
+- **Residual `joi` and non-logical sentence connection.** Section 4.9 now
+  defines the layered constitution interface and its group/event/property
+  laws; §12 supplies `JoiGroup`, `JoiEvent`, `JoiPred`, `JoiTanru`, and
+  `JoiClause`.
+  Remaining gaps are bounded: (a) a tanru/property use with no common row or
+  curated `ContributionBasis<ρ>` instance; (b) `pe'e joi` termsets, whose
+  paired term-and-tag bundles cannot be reduced to either a plain group or a
+  property family; (c) `joi nai`, whose “some other connection” reading has
+  no selected contrast-domain member or scope law; and (d) the structured
+  **performance** of `.i joi` and other non-logical ijoiks. `JoiClause`
+  supplies (d)'s content and compound event but not its component roles,
+  targeting, transcript spans, force, or accessibility plan. Any future
+  `ConnectionPlan` constructor is constrained by §7.1: its one host `Perform`
+  creates one `ActOccurrence` with one capture. Component transcript spans may
+  realize component act packages for targeting, but do not become additional
+  performed occurrences unless the semantics explicitly performs them; #6
+  owns those laws. Exact tag/facet `joi` over an already shared event remains
+  ordinary `∧`.
+- **Description `CoveredBy` boundary.** `Refer P` currently requires the
+  selected reference itself to satisfy P but has no separately typed
+  count/mass coverage condition. Consequently the constitution work can say
+  that `loi P` has no component beyond its selected base, but cannot yet prove
+  that a count-noun base has no P-external residue (the dog-plus-cat test)
+  without imposing an atomistic rule that would break divisible substances.
+  GitHub #8 owns the `CoveredBy P r` interface, lexical count/mass boundary,
+  and its pin. This gap does not reopen the non-maximal-base or `Local`
+  decisions.
+- **Zero-member `MeiRel` / `nomei`.** The positive-n `MeiRel κ n` definition
+  uses a nonempty maximal member reference, as its x3 and the adopted
+  `Referents<T>` component carrier require. The experimental dictionary entry
+  for `nomei` instead proposes an empty mass/0-tuple. A treatment must decide
+  whether `Group<T>` contains a null group and add a typed empty-cover case
+  without weakening `Referents<T>` globally; until then `MeiRel κ 0` has no
+  baseline row clause (GitHub #23). Ordinary claims that a set has cardinality zero remain
+  available through `Card`.
 - **Cross-clausal topic place-linking.** P26's `PlaceFill` arm is defined only
   for one open bridi. A topic scoped over a conditional or `tu'e…tu'u` sequence
   may bear different place relations to different clauses; no single residual
@@ -3719,11 +4162,11 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e` | §10 |
-| plurality, masses, reciprocals | §4.8, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`) | constitution-bearing `joi` | §3, §5 |
+| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis rows, compound ijoik performance; count/mass `CoveredBy` | §3, §5 |
 | prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
-| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; constitution joiks/ijoiks; `ju'e`; the non-numeric MOI composite (§14) | — |
+| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, `JoiPred`, `JoiTanru`, `JoiClause`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; residual joik/ijoik performance; `ju'e`; `nomei`'s empty cover; the non-numeric MOI composite (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
 | repair, prosody | §11 ⊳ | — | registered | §13 |
 
@@ -3741,11 +4184,13 @@ labelled records; `bind`, the computation carrier's sequencing operation
 (the direct `Bind` form denotes it with a scoped continuation, §5.2); lexical
 predication (dictionary relations as constants); `DropPlace`;
 `¬ ∧ ∨ → ↔ ⊕ ∀ ∃ =`; `Combine`, `Among`; `SetOf`, `Card`, `∈`, the
-arithmetic base; `Refer`, `Context`, `Vague`, the `Select` family;
+arithmetic base; `Refer`, `Local`, `Context`, `Vague`, the `Select` family;
 `Presuppose`, `Supplement` (display is its §7.6 spelling); `Generic`;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
-`Scalar`; `StateClause`, `CloseClause`, and the constrained
+`Scalar`; the basis-indexed primitive interfaces `BasisUnitAt`, `PeerUnitAt`,
+`MixAt`, and `ContributesAt`;
+`StateClause`, `CloseClause`, and the constrained
 `EventOfContent` projection (§9.3); the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
@@ -3764,7 +4209,9 @@ expansions; everything else is library or lexicon): `DirectClause`, the six
 clause-connective lifts, `Close`, `⊤` (the
 empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
-demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`, the
+demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`,
+`GunmaAt`, `CompleteGunmaAt`, `ComponentAt`, `GunmaPredAt`, `JoiGroup`, `JoiEvent`, `JoiPred`, `JoiTanru`,
+`JoiClause`, the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
@@ -3799,10 +4246,11 @@ inventory:
   never silently applied), or *no-fit* (a coinage is owed; until coined,
   the PascalCase placeholder carries the predicate-style definition).
 - **Class O — operators over content, computations, or signs** (`Refer`,
-  `Context`, `Vague`, the `DirectClause`/`StateClause`/`CloseClause`/clause-
+  `Local`, `Context`, `Vague`, the `DirectClause`/`StateClause`/`CloseClause`/clause-
   connective family and `Close`, the force constructors, the
   `ActContent`/`RealizedContent` projections, the question formers,
-  `Presuppose`/`Supplement`, `Tanru`/`Scalar`,
+  `Presuppose`/`Supplement`, `Tanru`/`Scalar`, the effectful/clausal
+  `JoiGroup`/`JoiEvent`/`JoiTanru`/`JoiClause` forms,
   `DropPlace`, the selections — while defined machinery like `At`
   (record application) and library λs like `JaiPromote` are Class M
   under §16.2's machinery status): not predicates over
@@ -3817,7 +4265,9 @@ inventory:
 - **Class M — structural and metalanguage machinery**: the direct
   `λ`/`Let`/`Bind` forms, record filling, type formers, rows, typing and
   formation judgments, the computation carrier's `bind`, the evaluator,
-  opaque `ActOccurrence` handle/capture infrastructure, and metalanguage recursion
+  opaque `ActOccurrence` handle/capture infrastructure, the constitution-basis
+  formers, `Family⁺`, and their primitive unit/mix/contribution interfaces,
+  pure function-level `JoiPred`, and metalanguage recursion
   in library definitions. **No content word is
   owed**, and the committee should coin none merely to rename these forms:
   a sort *predicate* (`fasnu` for eventhood) is a content word; the sort
@@ -3897,6 +4347,7 @@ perform:
 | lexical basis interpretation | definitions bottom out in model-given lexical relations or the dictionary is cyclic |
 | effect sequencing | ordering introductions, contextual retrievals, and projective emissions is an operation on computations, not a truth condition |
 | accessibility and effect-flow policy | whether an introduction escapes, a sign is inert, or an obligation projects is part of composition, not an extra claim |
+| local introduction projection | `Local` preserves a computation's semantic filtering/value while hiding only its internal discourse slots; a predicate can describe neither that state projection nor which syntactic base is non-surface |
 | force performance | describing or quoting an assertion must not assert it; only `Perform` executes an act package |
 | typing and formation judgments | ill-formed combinations have no denotation; turning well-formedness into a predicate would make failure merely false |
 | reading resolution | anaphora, erasure, template expansion, and dependency selection determine the resolved term upstream; predicates may describe their results but do not run the resolver |
@@ -4005,7 +4456,7 @@ definability:
 Works cited across this document set (specification, primer, rationale,
 samples). Inline citations name the work and, where applicable, the
 chapter/section or dictionary entry. Living sources (wiki pages,
-jbovlaste) were last verified 2026-08-22; the repository snapshots
+jbovlaste) were last verified 2026-08-25; the repository snapshots
 used for source verification are noted per entry.
 
 - **CLL** — Cowan, John Woldemar, *The Complete Lojban Language*,
@@ -4066,6 +4517,18 @@ used for source verification are noted per entry.
   proposed `ce'u` definition discussed in rationale §2.10 — a
   proposed, partial extension: `ce'u` "almost solely used in `ka`",
   with `si'o`/`du'u`/`su'u` noted as able to "make some sense").
+- **BPFK Non-logical Connectives** — "BPFK Section: Non-logical
+  Connectives", Lojban Wiki,
+  <https://mw.lojban.org/papri/BPFK_Section:_Non-logical_Connectives>
+  (proposed `joi` prose and the formal `X joi Y = lo gunma be X .e Y`
+  equation; their `joi2`/`joi1` tension is discussed in rationale §1.7a).
+- **`joi` working page** — "joi", Lojban Wiki,
+  <https://mw.lojban.org/papri/joi> (2018 property/event extension proposals;
+  architectural evidence, not a completed denotation).
+- **Lojban discussion archive** — local reproducible snapshot at
+  `/home/int19h.linux/git/lojban-disc`; rationale §1.7a cites the 2010
+  partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
+  component-inheritance critique preserved in the mailing-list archive.
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
   (or to Be Some Values of Some Variables)", *The Journal of
   Philosophy* 81(8), 1984, pp. 430–449.

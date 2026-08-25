@@ -234,6 +234,24 @@ episodic specimen selected `ActualClause`; a capability reading selects
                 (DirectClause (stali Audience))))))
 ```
 
+The constitution contribution underlying `mi sanga .i joi do dansu` is now
+fully typed even though #6 still owns the compound act/transcript plan:
+
+```lisp
+; κ :: DecompositionBasis<Eventuality,Eventuality>, recovered for this joi
+(JoiClause $κ
+  (DirectClause (sanga Speaker))
+  (DirectClause (dansu Audience)))
+```
+
+Applying this `ClauseContent` to `$j` evaluates the singing and dancing once,
+requires `$j` to be their complete joint event at κ, and makes `$j` actual.
+`CloseClause` would retain `$j` as the compound content's event; it would not
+export either component event. This is deliberately not displayed as an
+`Assert`: deciding the structured one-performance wrapper, component roles,
+and UI/span targeting is the remaining `ConnectionPlan` gap, not part of
+`JoiClause`.
+
 ## 3. Reference and descriptions
 
 ```lisp
@@ -285,18 +303,52 @@ existentially.)
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: x2 = members) [P5]
 (Bind {$base :: Referents Entity}
-        (Refer (λ {$x :: Entity} {(gerku $x)}))      ; ordinary base:
-                                                    ; context may select some dogs
+        (Local (Refer (λ {$x :: Entity} {(gerku $x)}))) ; ordinary base,
+                                                        ; but not a surface DR
   {(Bind {$sets :: Referents (Set Entity)}
-          (Refer (λ {$s :: Referents (Set Entity)}
+          (Refer (λ {$s :: Set Entity}
             {(Close (selcmi $s $base))}))
     {(Mention $sets)})})
 ```
 
-`loi gerku` is the same shape through `gunma` at `Group`. Neither object
-unwraps to its members implicitly. A maximal all-dogs base is available only
-when context or explicit `ro`/`MaxRefer` supplies it; bare collection gadri do
-not force it.
+`loi gerku` uses the complete constitution layer, not free `gunma`'s
+partial-friendly layer:
+
+```lisp
+; loi gerku — κ is the occurrence's resolved group basis
+(Bind {$base :: Referents Entity}
+      (Local (Refer (λ {$x :: Entity} {(gerku $x)})))
+  {(Bind {$κ :: GroupBasis Entity}
+         (Context GroupBasisConstraint[loi,Entity] deps…)
+    {(Bind {$groups :: Referents (Group Entity)}
+           (Refer (λ {$g :: Group Entity}
+             {(CompleteGunmaAt $κ $g $base)}))
+      {(Mention $groups)})})})
+```
+
+Neither object unwraps to its members implicitly. A maximal all-dogs base is
+available only when context or explicit `ro`/`MaxRefer` supplies it; bare
+collection gadri do not force it. `CompleteGunmaAt` says there is no peer
+component beyond `$base`; the separate §14/#8 `CoveredBy` gap asks whether
+the base property's own count/mass satisfaction can contain external residue.
+The `Local` boundary is independently observable: in CLL 6.52
+`lo'i ratcu cu barda .i ku'i lu'a ri cmalu`, `ri` resolves to `$sets`, never
+to the lowering-internal `$base`.
+
+```lisp
+; mi joi do bevri lo pipno — one constituted group carries
+(Bind {$κ :: GroupBasis Entity}
+      (Context GroupBasisConstraint[joi,Entity] deps…)
+  {(Bind {$g :: Referents (Group Entity)}
+         (JoiGroup $κ Speaker Audience)
+    {(Bind {$p :: Referents Entity}
+           (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
+      {(Close (bevri $g $p))})})})
+```
+
+The nearby `mi jo'u do bevri lo pipno` instead fills x1 with
+`(Combine Speaker Audience)`: no group object and no covert
+non-distributivity instruction.
 
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]
@@ -993,4 +1045,20 @@ lo'e mlatu cu cinri .i ri se nelci mi
   — generic anaphora: what does ri reach?
 mi za'o citka
   — ZAhO contours pending their lexical boundary rows.
+ti cinfo joi tigra
+  — core shape available through JoiPred, but baseline lexicon still owes the
+    common-row constitutive-origin ContributionBasis for this hybrid reading;
+    it must not demand lion-only and tiger-only material parts.
+ti blanu joi xunre bolci
+  — JoiTanru fixes the structural shape (bolci once; only the two intended
+    head-relative color links mixed), while the color row still owes its
+    curated spatial-contribution basis in #12.
+mi ce'e bau la .lojban. pe'e joi do ce'e bau la .glibau. casnu
+  — pe'e-joi termset: paired term/tag bundles still lack a typed dispatch.
+mi sanga .i joi do dansu
+  — JoiClause supplies the compound event/content; #6 still owes the one
+    performance's component roles, targeting, spans, and accessibility.
+mi joi nai do cu remei
+  — CLL's “some other connection” does not identify which alternative or its
+    scope; no hidden existential-choice fallback.
 ```

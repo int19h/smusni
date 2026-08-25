@@ -246,6 +246,41 @@ The other gadri, briefly:
 > abstract set object with two members). Three types; predicates care
 > which they get.
 
+`joi` is the connective that constructs such a whole. Compare:
+
+- `mi jo'u do bevri lo pipno`: the x1 is the ordinary plural “you and I”; the
+  word `bevri` decides whether that plurality can satisfy carrying together,
+  separately, or in some other configuration.
+- `mi joi do bevri lo pipno`: `joi` introduces a group object completely
+  constituted by you and me at the intended grouping basis, and the carrying
+  is predicated of that group.
+
+This is not a magic rule that properties flow between members and wholes. A
+group can weigh 150 kg without either member doing so, and a member can be
+tired without the group being tired. The core instead has a typed
+constitution relation. Ordinary `gunma` is allowed to mention only some
+components (“I am part of my family”); the stronger relation used by `joi`
+and `loi` says that the supplied base is complete at the chosen peer level.
+The peer level matters: people in a team, phases of an event, and origins or
+aspects of a mixed property are different kinds of contribution, not one
+universal notion of physical part.
+
+The same programme closes at the right result type. Two ordinary sumti form a
+`Group`; two event descriptions in an event-demanding place can form one
+joint event; compatible tanru properties can form one mixed property when the
+lexicon declares how their row combines. That is why a blue/red ball need be
+neither wholly blue nor wholly red, and why a lion/tiger hybrid need not have
+pure-lion and pure-tiger body parts. If no contribution rule is declared, the
+reading is a gap rather than “whatever mixture the model happens to like.”
+
+One subtlety matters for later pronouns. In `loi gerku` the component-dog
+reference is only a lowering step; the surface introduced the group. The
+`Local` boundary keeps that hidden base usable while constructing the group
+but does not add it to the anaphora stack. Thus in CLL's
+`lo'i ratcu … .i ku'i lu'a ri …`, `ri` reaches the set, not a second invisible
+rat reference. `Local` changes accessibility only: it does not make the base
+maximal, erase its truth conditions, or hide the resulting collection.
+
 ## 4. What later sentences can see
 
 Our running example continues `.i ri … tatpi` — "they are tired." What
