@@ -1,5 +1,9 @@
 # Launching a reviewer session
 
+Paths below are relative to the repository root; commands are run from there.
+See [`PROTOCOL.md`](PROTOCOL.md) for the exchange rules and
+[`participants.toml`](participants.toml) for the actor slugs.
+
 Each mailbox actor is one accountable model session that the human partner
 wakes. The clients below were checked on 2026-08-25 (`kimi` 0.38.0,
 `qwen` 0.22.0). Nothing here is protocol state; session ids may be kept in an
@@ -8,11 +12,12 @@ to be resumed.
 
 ## Before the first launch
 
-- The working tree must contain the current `AGENTS.md` and
-  `tools/review-exchange/` (commit or at least keep them checked out); the
-  clients read the charter from the working tree at startup.
+- The working tree must contain the current [`AGENTS.md`](../../AGENTS.md)
+  and this directory (commit or at least keep them checked out); the clients
+  read the charter from the working tree at startup.
 - Do not run reviewers with blanket auto-approval (`kimi -y`, Qwen YOLO
-  modes). Approve the helper (`python3 tools/review-exchange/exchange.py …`)
+  modes). Approve the helper ([`exchange.py`](exchange.py), invoked as
+  `python3 tools/review-exchange/exchange.py …` from the repository root)
   and read-only repository tools; deny tracked-file edits unless the session
   is an assigned implementer in its own worktree.
 
@@ -49,6 +54,9 @@ history, so `--continue` resumes whichever of the two ran most recently.
 `qwen … -p … -o json` — but is not needed for tab-based operation.)
 
 ## First prompt (replace ACTOR and the docket)
+
+The prompt is text for a session started in the repository root, so its paths
+are root-relative on purpose.
 
 > You are the review-exchange actor `ACTOR` (see
 > `tools/review-exchange/participants.toml`). Read `AGENTS.md` in full — it is

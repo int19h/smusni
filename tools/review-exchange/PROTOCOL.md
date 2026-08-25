@@ -5,15 +5,20 @@ Protocol version: **`smusni-review-mail/v2`**.
 The exchange is a transient peer-review channel shared through the local
 filesystem by every model session working on this repository and by the human
 partner. It replaces copy/paste between sessions. The message spool under
-`review/exchange/` is ignored by Git; this directory (`tools/review-exchange/`)
-holds the tracked control plane: this protocol, the participant registry, the
-helper, its templates, and its tests. GitHub issues remain the durable work
+[`review/exchange/`](../../review/exchange/) is ignored by Git; this directory
+holds the tracked control plane: this protocol, the participant registry
+([`participants.toml`](participants.toml)), the helper
+([`exchange.py`](exchange.py)), its templates
+([message](MESSAGE_TEMPLATE.md), [acknowledgement](ACK_TEMPLATE.md)), the
+launch guide ([`LAUNCH.md`](LAUNCH.md)), and its [tests](tests/). File paths
+in this document are written relative to the repository root, and all
+commands are run from there. GitHub issues remain the durable work
 queue, and the normative documents plus the human partner's adjudications remain
 the semantic authority.
 
 ## Participants
 
-`participants.toml` is the single actor allow-list. Every actor has a lowercase
+[`participants.toml`](participants.toml) is the single actor allow-list. Every actor has a lowercase
 slug (`codex`, `fable`, `kimi`, `qwen`, `deepseek`, `human`, …), a display name,
 its transporting client, its default model selector, an `active` flag, and a
 `broadcast_recipient` flag. Actor identity is distinct from client and model:
@@ -43,6 +48,8 @@ starts from the strongest premise. Nothing in the pending sets or
 acknowledgements encodes or requires a sequence.
 
 ## Layout
+
+Paths relative to the repository root:
 
 ```text
 tools/review-exchange/            tracked control plane
@@ -166,6 +173,8 @@ or durable issue update was silently skipped.
 
 ## Commands
 
+Run from the repository root:
+
 ```sh
 python3 tools/review-exchange/exchange.py status --actor <actor>   # start and end of a turn
 python3 tools/review-exchange/exchange.py new --actor <actor> --to all|a,b --kind <kind> \
@@ -181,7 +190,8 @@ Run the suite both unbound and bound (the second form, as a launched tab would
 run it); both must pass.
 
 Exit codes: 0 ok · 1 usage · 2 validation · 3 ownership/permission ·
-4 collision/duplicate · 5 unknown reference. `review/exchange_check.py <actor>`
+4 collision/duplicate · 5 unknown reference.
+[`review/exchange_check.py`](../../review/exchange_check.py)` <actor>`
 remains as a thin compatibility wrapper around `status`; it lives in the
 ignored `review/` directory on purpose (it exists only so sessions started
 under the v1 charter keep seeing traffic until they reload), while everything

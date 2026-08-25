@@ -280,5 +280,21 @@ class ExchangeTest(unittest.TestCase):
         self.run_tool("new", "--actor", "codex", "--to", ",", "--kind", "request", "--slug", "e", expect=1)
 
 
+    # ---- documentation hygiene ----------------------------------------------
+    def test_markdown_links_resolve_relative_to_their_file(self):
+        import re
+        docs = list(HERE.parent.glob("*.md"))
+        self.assertTrue(docs)
+        broken = []
+        for doc in docs:
+            for m in re.finditer(r"\]\(([^)]+)\)", doc.read_text()):
+                target = m.group(1).split("#")[0]
+                if not target or target.startswith(("http://", "https://")):
+                    continue
+                if not (doc.parent / target).exists():
+                    broken.append(f"{doc.name}: {target}")
+        self.assertEqual(broken, [])
+
+
 if __name__ == "__main__":
     unittest.main()
