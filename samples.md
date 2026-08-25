@@ -285,8 +285,8 @@ existentially.)
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: x2 = members) [P5]
 (Bind {$base :: Referents Entity}
-        (MaxRefer (λ {$x :: Entity} {(gerku $x)}))   ; the maximal base:
-                                                    ; THE dogs, not some
+        (Refer (λ {$x :: Entity} {(gerku $x)}))      ; ordinary base:
+                                                    ; context may select some dogs
   {(Bind {$sets :: Referents (Set Entity)}
           (Refer (λ {$s :: Referents (Set Entity)}
             {(Close (selcmi $s $base))}))
@@ -294,7 +294,9 @@ existentially.)
 ```
 
 `loi gerku` is the same shape through `gunma` at `Group`. Neither object
-unwraps to its members implicitly.
+unwraps to its members implicitly. A maximal all-dogs base is available only
+when context or explicit `ro`/`MaxRefer` supplies it; bare collection gadri do
+not force it.
 
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]
@@ -388,10 +390,9 @@ reference the selection binds, and nothing else is needed
 
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
-; (one content, abbreviating the two performed assertions)
-(Assert
-  (Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
-    (∧
+; truth-conditional joint-locus artifact; the discourse keeps two Host acts
+(Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
+  (∧
       ; sentence 1's own claim — the ownership, never erased:
       (∀ (λ {$p :: Entity}
         {(→ (prenu $p)
@@ -405,14 +406,24 @@ reference the selection binds, and nothing else is needed
               (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
               (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
               (Close (ponse $p $d)))
-           (Close (tatpi $d)))})))))
+           (Close (tatpi $d)))}))))
 ```
 
 Pinned reading: each person owns three dogs, and each person's dogs are
-tired — the anaphor normalizes into a joint locus with the governing
-quantifier, and the normalization keeps the first sentence's assertion
+tired — the resolver selects the strong joint-locus construal and the mapping
+lowers that reading with the governing quantifier; the lowering keeps the
+first sentence's assertion
 (a bare conditional would be vacuously true of a dogless person). The
-summed reading ("all the dogs together") requires explicit collection.
+summed reading ("all the dogs together") requires explicit collection. This
+is not an equivalent rewrite of the original selection computation: two
+qualifying dog witnesses, only one tired, separate them. The present rule pays
+with retroactive strengthening; plural-information states are the recorded
+repair, while the weak selected-witness comparison is not a baseline Lojban
+reading without a surface selector.
+
+This displayed Content does not collapse the two written sentences into one
+performance: the discourse mapping retains two `Host` occurrences and uses
+the artifact to state the selected cross-sentence truth constraint.
 
 ```lisp
 ; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
@@ -870,12 +881,14 @@ there is no intended soritical boundary, as in the cutoff examples above.
 ; mo'e = AmountValue: the amount's numeric value on the SAME scale that
 ; defined it (distinct Context sites would allow a mismatch — pin P15).
 
-; lo jei mi klama — fuzzy truth degree (CLL 11.6)
+; lo jei mi klama — epistemology-relative truth-value object (P38)
 (Bind {$ep :: Referents Epistemology} (Context)
   {(Bind {$tv :: Referents TruthValue}
           (Refer (λ {$v :: Referents TruthValue}
             {((JeiRel (Close (klama Speaker))) $v $ep)}))
-    {(Mention (TruthValueDegree $tv))})})   ; a Number in [0,1]
+    {(Mention $tv)})})
+; The proposed numeric [0,1] crossing is gap-registered, not silently
+; available as an alternative reading of this same surface form.
 
 ; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
 (Bind {$bob :: Referents Entity}

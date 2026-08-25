@@ -218,13 +218,15 @@ as holder for `le'e`); no prototype individual (P11).
 ### loi / lo'i (LE)
 
 Group and set objects: `Refer` to the `gunma`/`selcmi` object whose
-components/members are the **maximal** plurality of the description
-(P5); inner PA counts the base, outer PA counts groups/sets.
+components/members are an ordinary non-maximal `Refer` plurality of the
+description (P5); inner PA counts the base, outer PA counts groups/sets.
+Context or explicit `ro`/`MaxRefer` may supply the maximal base, but the bare
+gadri does not.
 
 ```lisp
-; loi gerku cu sruri lo zdani — the maximal base bound first
+; loi gerku cu sruri lo zdani — an ordinary base bound first
 (Bind {$base :: Referents Entity}
-      👉(MaxRefer (λ {$x :: Entity} {(gerku $x)}))👈
+      👉(Refer (λ {$x :: Entity} {(gerku $x)}))👈
   {(Bind {$g :: Referents (Group Entity)}
         👉(Refer (λ {$r :: Referents (Group Entity)} {(gunma $r $base)}))👈
     {(Bind {$z :: Referents Entity}
@@ -1000,6 +1002,11 @@ current ground.
 Recency anaphora: ⊳ resolved by CLL ch. 7 counting over accessible
 referents before the calculus; the term sees the binding, never a
 search (P16). Source order of fills feeds the counting.
+When a resolved strong reading binds a witness outside its governor, P6 lowers
+that selected construal to a joint locus. This is not an equivalent rewrite of
+the original selection computation; the retroactivity cost and
+plural-information-state candidate are in the gap register, and no weak
+selected-witness reading is silently added.
 
 **See.** [Spec §5.6, §11](spec.md), pin P16.
 
@@ -1144,6 +1151,9 @@ The abstraction-relation family: named relations with labelled rows
 `ZuhoRel`), parameterized by the abstracted content, with reference
 applying outside — so `lo`/`le`, quantification, and relative clauses
 work on abstractions for free; omitted x2s close into `Context`.
+`JeiRel` yields an epistemology-relative `TruthValue`. P38 removes the
+unestablished numeric [0,1] crossing from the baseline and records it only as
+a gap proposal.
 
 ```lisp
 ; lo ni mi klama

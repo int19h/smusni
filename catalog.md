@@ -320,7 +320,7 @@ reflection.
 (`da` — pin P20). The restrictor position of derived quantifiers is
 pure; body introductions are local per instantiation; exporting
 quantifiers are built from selections, not from bare `∃`.
-**For.** `ro da zo'u …` and the joint loci of donkey normalization.
+**For.** `ro da zo'u …` and the joint loci selected by strong donkey readings.
 **See.** [Spec §4.5, §5.6](spec.md); [primer ch. 4–5](primer.md).
 
 ### 1.20 `=` — typed equality
@@ -426,8 +426,10 @@ selection forms). The witness laws: `(Distrib P w)` holds, and
 `(CardBasis w P)` is `= n` (`SelectExactly`) or `≥ n`
 (`SelectAtLeast`). Unlike `Refer`, a selection under a governing
 quantifier is *dependent* — one witness per value of the governor (the
-dependence law) — which is what dependent anaphora normalizes over,
-and why no `Refer`-plus-cardinality spelling can replace them (a
+dependence law). A supported strong dependent-anaphora reading selects and
+lowers to a joint locus over that dependency; this is not an equivalent
+rewrite of the selection computation. The dependence law is also why no
+`Refer`-plus-cardinality spelling can replace them (a
 `Refer` is a governor-invariant constant). Binding a witness never
 re-evaluates a selection; distinct selections introduce distinct
 discourse referents (introduction identity — the witness values may
@@ -680,9 +682,10 @@ narrative perspective shifts.
 sends each domain tuple `a` to `f a…`; `QuestionOf` reifies a query as
 an embeddable `Question` object. `Answer` applies a query's
 answer-content function to a selection: `(PolarAnswer Yes|No)`,
-`(TupleAnswer a [Exhaustive|MentionSome])` — `Exhaustive` conjoining
-the completeness claim, `MentionSome` overtly marking the weakest
-reading, and absence of the marker meaning absence (pin P9).
+or `(TupleAnswer a)`. Baseline answerhood adds no completeness marker
+(pin P9): `MentionSome` is removed as an inert duplicate, and `Exhaustive` is
+gap-registered until a pure answer function and typed answer-domain
+membership/equivalence make its proposed completeness clause meaningful.
 **For.** `xu`/`ma`/`mo`/`fi'a`/`pei` questions; `kau` answerhood via
 the defined `ContextualAnswer`.
 **See.** [Spec §8](spec.md); [primer ch. 6](primer.md).
@@ -713,18 +716,20 @@ anything else, its scale a contextual slot.
 **See.** [Spec §9.2](spec.md); [primer ch. 8](primer.md);
 [rationale §1.10](rationale.md).
 
-### 1.44 `AmountValue`, `TruthValueDegree`, `EventOfContent`
+### 1.44 `AmountValue` and `EventOfContent`
 
 **Informally.** The named adjacent-sort crossings (pin P13 allows no
-implicit ones): `AmountValue : Referents<Amount> × Referents<Scale> →
-Number` — an amount's numeric value on its scale (`mo'e`; CLL 11.5);
-`TruthValueDegree : Referents<TruthValue> → Number` — a truth value's
-fuzzy degree in [0,1] (CLL 11.6); and `EventOfContent : Content →
+implicit ones): `AmountValue : Referents<Amount> × Referents<Scale> ⇀
+Number` — an amount's numeric value on its scale (`mo'e`; CLL 11.5),
+defined projectively at singleton amount and scale references;
+and `EventOfContent : Content →
 Referents<Eventuality>` — the inert projection of a clause's event
 intension. For direct closure it is the lexical witness; conjunction gives a
 joint State, disjunction is branch-relative, and negation gives a negative
 State. Its operand is never evaluated by the projection.
-**See.** [Spec §9.2–9.3](spec.md); [rationale §1.15](rationale.md).
+P38 removes the unestablished numeric `jei` crossing from the baseline and
+records its exact `TruthValueDegree` proposal in the gap register.
+**See.** [Spec §9.2–9.3, §13–14](spec.md); [rationale §1.10, §1.15](rationale.md).
 
 ### 1.45 `MetalinguisticallyDefective` and the named value enumerations
 
@@ -1071,8 +1076,8 @@ among it, every part overlaps a P-unit. Defined only for inhabited P
 
 Models must supply this reference for each inhabited pure restrictor
 the mapping can form (plural comprehension — a model condition).
-**For.** The `lo'i`/`loi` base ("the set of *the* dogs") and `Every`'s
-witness export.
+**For.** `Every`'s witness export and explicitly/contextually maximal bases.
+Bare `loi`/`lo'i` use ordinary `Refer` instead (P5).
 **See.** [Spec §12, §11](spec.md).
 
 ### 2.11 `Reciprocate`

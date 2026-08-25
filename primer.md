@@ -226,7 +226,8 @@ The other gadri, briefly:
   on the description's truth.
 - `la N` — reference through a name-sign.
 - `loi P` / `lo'i P` — reference to a *group object* / a *set object*
-  built from P-things. A crowd can surround a building though no person
+  built from a contextually selected, not automatically maximal, reference to
+  P-things. A crowd can surround a building though no person
   does; the group is a thing in its own right.
 - `lo'e P` / `le'e P` — generic talk ("the typical P…") — not a
   reference to any particular P at all. The core gives these their own
@@ -280,9 +281,16 @@ spells both out.)
 
 The pronoun inside the consequent covaries with the donkey inside the
 relative clause — classical logic can't write that with separate
-quantifiers, so the core *normalizes* the sentence to one universal over
-person–donkey pairs. The same trick, one level up, handles "every person
+quantifiers, so the resolved strong reading *lowers* to one universal over
+person–donkey pairs. This is a reading choice, not an equivalent rewrite of
+the compositional selection. The same selected construal, one level up, handles "every person
 has three dogs; they are tired" (each person's dogs are tired).
+
+That choice has a cost: the later pronoun retroactively strengthens how the
+first sentence is construed. A future plural-information-state model could
+store the dependency when it first arises and remove that retroactivity. The
+weaker "one selected witness" model is coherent, but no Lojban form has been
+found that selects it, so it is not a second silent reading.
 
 > **Jargon box.** This is *dynamic semantics*: meanings are instructions
 > for updating the conversation, not just true/false conditions
@@ -455,6 +463,11 @@ attend a `nu` but not a proposition:
 - `ni` — an amount on a scale; `jei` — a truth value under an
   epistemology; `li'i` — an experience with an experiencer; `si'o` — a
   concept in a mind; `su'u` — the generic abstraction with a category.
+
+`jei` does not silently turn that truth value into a number. CLL's old [0,1]
+proposal never acquired conventions or established practice, so P38 keeps the
+numeric crossing as a future gap proposal rather than an optional baseline
+reading.
 
 In the core these last five are ordinary *relations* — "a is the amount
 of content c on scale s" — so all your gadri skills apply to them:

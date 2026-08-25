@@ -1157,7 +1157,7 @@ binders (§7.4).
 | `∧`, `Do` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11) are ordinary `∧`. |
 | `∨` | Operands each see the incoming state; branch-local introductions do not escape the disjunction. |
 | `¬` | Operand sees the incoming state; nothing escapes. |
-| `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. Donkey normalization (§5.6) applies when a consequent anaphor binds an antecedent introduction. |
+| `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. The joint-locus reading selection of §5.6 applies when the resolved reading binds a consequent anaphor to an antecedent introduction. |
 | `↔`, `⊕` | Each operand evaluated exactly once against the incoming state; nothing escapes. (Hence primitive: rewrites would duplicate evaluation.) |
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. **Witness export:** a successful evaluation of an exporting quantifier introduces its witness referent(s) — see §5.6, including the dependent case. |
 | `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). |
@@ -1232,19 +1232,20 @@ convention — the binder is visible in the term).
 
 **Dependent witnesses.** A selection in the scope of a quantifier is a
 *dependent* selection — one witness per value of each governing binder.
-An anaphor binding a dependent witness from outside the governing scope
-triggers joint-locus normalization (the donkey rule below, one level up):
-the selection raises into a joint locus with its governor, both
-restrictions form the antecedent (with the description quantifier's
-import preserved — the `Presuppose` wrapper carries over), and the
-anaphor's content joins the consequent — **conjoined with the governing
-sentence's own assertion, which the normalization must not erase**: the
+The compositional table does not export that witness beyond its governor, so
+an outside anaphor is otherwise inaccessible. For the supported strong
+anaphoric reading, the resolver selects a joint-locus construal and the
+mapping lowers **that reading** one level up: the selection and governor form
+a joint locus, both restrictions form the antecedent (with the description
+quantifier's import preserved — the `Presuppose` wrapper carries over), and
+the anaphor's content joins the consequent — **conjoined with the governing
+sentence's own assertion, which the selected lowering must not erase**: the
 first sentence claimed the ownership, and a conditional alone would be
 vacuously true of a dogless person. Fixture: `ro prenu cu ponse ci
-gerku .i ri tatpi` normalizes to
+gerku .i ri tatpi` has the selected strong lowering
 
 ```lisp
-; one content, abbreviating the two performed assertions
+; truth-condition artifact for the two Host occurrences
 (Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
   (∧
     ; sentence 1's claim, preserved:
@@ -1263,19 +1264,32 @@ gerku .i ri tatpi` normalizes to
          (Close (tatpi $d)))}))))
 ```
 
+The display is the strong reading's truth-condition artifact, not its force
+packaging: the two `.i`-separated sentences remain two `Host` occurrences.
+The selected cross-sentence constraint must not collapse their act/token
+identity.
+
 — each person owns three dogs, and each person's dogs are tired; no
 single plural of all dogs is asserted,
 and the summation reading is expressible only by explicit collection,
-never automatic. Two boundary notes: an embedded xorlo *description*
+never automatic. This strong joint-locus term is **not** an
+equivalence-preserving rewrite of the original selection computation: a model
+may offer two qualifying dog witnesses, only one tired, so the computation can
+succeed through that witness while the universal joint-locus term is false.
+The cost of the current reading selection is therefore retroactive
+strengthening: sentence one's construal depends on the later anaphor. Section
+14 records plural-information states as the principled model upgrade and the
+weak selected-witness alternative as rejected absent a Lojban surface
+selector. Two boundary notes: an embedded xorlo *description*
 (`ro prenu cu bevri lo pipno`) is a referential constant shared across the
 governor's values, not a dependent witness — only genuinely
 quantificational selections depend; and anaphora to a witness that does
 not escape its governor is simply inaccessible — a reading the table
 correctly refuses.
 
-**Donkey normalization** (ruling P6). When an anaphor binds an
-introduction made inside a restrictor (`ro prenu poi ponse su'o xasli cu
-darxi ri`), the reading normalizes to the governing quantifier's joint
+**Donkey reading selection** (ruling P6). When the resolved strong reading
+binds an anaphor to an introduction made inside a restrictor (`ro prenu poi
+ponse su'o xasli cu darxi ri`), that reading lowers to the governing quantifier's joint
 multi-parameter locus, with the description's import preserved and the
 indefinite's variable at the plural type (its witness is a plural
 reference; the atomic-pair spelling is the distributive strengthening):
@@ -1295,7 +1309,7 @@ witness law — the joint locus quantifies exactly the donkey-witness
 pluralities, not references with non-donkey residue.) The
 restrictor's relational conjunct ties the parameters; no E-type
 description or choice function is invoked. Bare mathematical `ro da`
-normalizes without the `Presuppose` — the import belongs to description
+uses the same selected joint locus without the `Presuppose` — the import belongs to description
 quantifiers only (pin P2). Configurations beyond the supported fragment
 (anaphora out of disjunctive restrictors, stacked indefinites with split
 anaphora) are gap-registered.
@@ -1996,15 +2010,15 @@ denotations: a query is its
 and `Answer` applies it: `(Answer q (TupleAnswer a))` is the content
 `q`'s function assigns to `a`, evaluated as ordinary content (its
 dynamics are its operators'; nothing question-specific is added), and
-`(Answer q (PolarAnswer s))` likewise at `Bool`. The `Exhaustive`
-marker conjoins the completeness claim — every domain value whose
-assigned content holds is among the selected tuple — and
-`MentionSome` marks the weakest reading explicitly, adding nothing:
-its content is that of the unmarked form, its value is the overt
-contrast with `Exhaustive`. The `Selection<A>` family:
+`(Answer q (PolarAnswer s))` likewise at `Bool`. The baseline
+`Selection<A>` family has only
 `(PolarAnswer Yes|No) : Selection<Bool>` and
-`(TupleAnswer tuple [Exhaustive|MentionSome]) : Selection<A>` are the
-base forms of the answer-selection family; `ContextualAnswer` — the
+`(TupleAnswer tuple) : Selection<A>`. `MentionSome` is removed: it was
+extensionally identical to the unmarked form and has no Lojban exponent.
+`Exhaustive` is demoted to the gap register rather than left as prose: a
+definition would require a pure answer-content function **and** typed
+selection membership/equivalence at every answer domain, neither of which the
+general `Query<A>` interface supplies. `ContextualAnswer` — the
 semantics of bare `kau` — is licensed only as `Answer`'s second
 operand, and the *composite* is the defined form making the
 contextual retrieval explicit:
@@ -2020,15 +2034,17 @@ contextual retrieval explicit:
 constructor follows that domain: `TupleAnswer` at open domains,
 `PolarAnswer` at `Bool` (the `xu kau` case); no exhaustivity marker
 either way (absence, per P9). `Answer` yields `Content` and
-so embeds under `Reify` as any content does. **The exhaustivity operand is optional and its
-absence is meaningful** (ruling P9): unmarked answerhood carries no
+so embeds under `Reify` as any content does. **Exhaustivity is absent**
+(ruling P9): unmarked answerhood carries no
 exhaustivity conjunct — truth-conditionally the weakest (mention-some-
-compatible) reading — and strengthenings enter only by explicit marker or
-lexically (an embedding predicate such as `djuno` may contribute its own
+compatible) reading — and strengthenings enter only by a separately stated
+claim or lexically (an embedding predicate such as `djuno` may contribute its own
 completeness presupposition through §5.5; it never rewrites the answer).
-Lojban has no grammatical means to mark `kau` exhaustivity, so no `Vague`
+Lojban has no grammatical exhaustivity marker for `kau`, so no `Vague`
 parameter is posited: a decision point the language cannot express is
-silence, not vagueness.
+silence, not vagueness. A speaker can still state a separate completeness
+claim, and the recorded `Exhaustive` proposal may return only if its purity and
+answer-domain structure are supplied.
 
 ### 8.3 Place and relation questions
 
@@ -2172,22 +2188,22 @@ above, and `li'i` is its own abstractor (`LihiRel`), not an event
 refinement. `ka` is not in this family: property abstraction is `λ`
 (implicit `ce'u` pinned in P12). Sort discipline and no-coercion (P13)
 are unchanged; adjacent-sort recastings are explicit named operators in
-the library — including the **numeric crossings**
+the library. The baseline's numeric abstraction crossing is
 
 ```text
-AmountValue     : Referents<Amount> × Referents<Scale> → Number
-TruthValueDegree: Referents<TruthValue> → Number      ; fuzzy jei ∈ [0,1]
+AmountValue     : Referents<Amount> × Referents<Scale> ⇀ Number
 ```
 
-(defined at the reference types `lo ni`/`lo jei` actually yield, with the
-singular-reading condition their lexicon rows state; CLL 11.5: a `ni`
+(defined at the reference type `lo ni` actually yields, projectively at
+singleton amount and scale references; CLL 11.5: a `ni`
 sumti is semantically a number, and `mo'e` maps to `AmountValue`, so
-`li pa vu'u mo'e le ni …` type-checks. The `jei` crossing carries a
-sourcing caveat: CLL 11.6 records the numeric [0,1] reading as a
-proposed convention that never became established practice — adopting
-`TruthValueDegree` is this specification's own ruling, a documented
-divergence pending a dedicated pin, and a conforming reading may
-decline the crossing).
+`li pa vu'u mo'e le ni …` type-checks). `JeiRel`, by contrast, yields an
+epistemology-relative `TruthValue`. P38 removes the formerly optional numeric
+`TruthValueDegree` crossing from the baseline: CLL 11.6 records [0,1] as a
+first-edition proposal whose conventions were never worked out and whose
+number-valued reading never became established. The exact proposed crossing
+is preserved in §14 as a possible future pin, never as per-reading optional
+truth conditions.
 
 ### 9.3 Clause eventualities and `EventOfContent`
 
@@ -2227,7 +2243,7 @@ wins:
 | `(Presuppose π body)`; `(Supplement anchor side body)` when the body is Content | The at-issue body's event. Projective conditions and side commitments remain part of Content identity but do not replace the at-issue eventuality. |
 | `(InContext c g)` | `event(c)` evaluated with the same shifted utterance ground `g`; this shifts the projection rather than constructing a new holding state. |
 | `(Holds p)`; `(ActContent a)`; `(RealizedContent u)`; `(InterpretContent s)` | The event of the represented, raw-packaged, occurrence-captured, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7; none of these projections constructs a new holding state. |
-| `(Answer q selection)` | The event of the answer-content selected by q. If `Exhaustive` adds a completeness conjunct, the conjunction row below applies to that defined result. |
+| `(Answer q selection)` | The event of the answer-content selected by q; baseline answerhood adds no completeness conjunct. |
 | `(∧ c₁ … cₙ)`, n > 0 | `joint_M(event(c₁), …, event(cₙ))`, in source association order and up to `CoRef`. |
 | `(∨ c₁ … cₙ)` | Branch-relative: a cᵢ-lineage carries `event(cᵢ)`; no fused event or exported choice is added. |
 | `(¬ c)` | The negative State `hold_M(¬ c)`, not `event(c)`. |
@@ -2407,9 +2423,11 @@ a cooperative-use commitment stated here in prose, not machinery;
 non-veridical, speaker-identifying. `la N` → `Refer` via naming
 (`Named`/`NameSign`). `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical,
 [Speaker], P, ·)` at their predication (§5.8). `loi`/`lo'i` → `Refer` to
-group/set objects via `gunma`/`selcmi` (P5), the base being the **maximal
-plurality of the description** (`lo'i gerku` is the set of the dogs, not
-of some dogs — the library's maximal-base form supplies it). Inner PA →
+group/set objects via `gunma`/`selcmi` (P5), after binding an ordinary
+**non-maximal** `(Refer P)` base. Thus bare `lo'i gerku` may be a set of the
+contextually selected dogs, not necessarily all dogs. The maximal reading
+remains available when context selects that base or when explicit `ro`/
+`MaxRefer` requires it; bare collection gadri do not add it. Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
 selection / subreference selection (P1, §4.10). Inner `no` → the
 zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
@@ -2930,7 +2948,7 @@ so the `fa'u` specimen expands completely:
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
-                ; base (lo'i/loi, Every's export). Models must supply
+                ; base (Every's export and explicit maximal uses). Models must supply
                 ; this reference for each inhabited pure restrictor the
                 ; mapping can form (a model condition: plural
                 ; comprehension for P).
@@ -3332,10 +3350,17 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P5** `loi`/`lo'i` denote group/set objects via `gunma`/`selcmi`,
   whose x2s (official components; xorxes' members) are read as plural
   references; inner PA = group/set size, outer PA counts groups/sets.
-  (`cmima` x2-as-set is the one defective gloss nearby; avoided.)
-- **P6** Donkey configurations normalize to joint multi-parameter loci;
-  dynamic accessibility includes restrictor introductions; CLL 7.6
-  counting is the mapping discipline over accessible referents.
+  Their base is ordinary non-maximal `Refer P`, like `lo P`; maximality is
+  available only when explicitly marked or contextually resolved. (`cmima`
+  x2-as-set is the one defective gloss nearby; avoided.)
+- **P6** Supported strong donkey/dependent-witness readings lower by reading
+  selection to joint multi-parameter loci; this is not an
+  equivalence-preserving normalization of the compositional selection
+  computation. Dynamic accessibility includes restrictor introductions; CLL
+  7.6 counting is the mapping discipline over accessible referents. The
+  current cost is retroactive strengthening; plural-information states are the
+  recorded model upgrade, and the weak selected-witness alternative is
+  rejected absent a surface selector.
 - **P7** `noi` is projective supplement, anchored; dependent supplements
   commit per instantiation inside their binder.
 - **P8** A tenseless bridi is
@@ -3350,8 +3375,10 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   (CLL 10.14) is one named text-to-reading resolver, never a semantic
   default.
 - **P9** Bare `kau`: answerhood with exhaustivity **absent** — weakest
-  truth conditions; strengthenings lexical/pragmatic/explicit. (Absence,
-  not `Vague`: Lojban has no grammatical precisification route.)
+  truth conditions; strengthenings lexical, pragmatic, or separately stated.
+  `MentionSome` is removed as inert and `Exhaustive` is gap-registered pending
+  a pure answer function plus typed answer-domain membership/equivalence.
+  (Absence, not `Vague`: Lojban has no grammatical precisification route.)
 - **P10** `le` lowers through **`skicu`** — exact
   official fit, guskant-precedented — with the utterance-locution
   anchoring clause (§11) answering act-vs-identification: the describing
@@ -3468,8 +3495,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   applied at the token sort).
 - **P29** `cu'o` is an opaque lexical relation with a `Number` place
   in [0,1]; the model supplies the measure; **no probability
-  calculus** enters the core (the `JeiRel`/`TruthValueDegree`
-  precedent).
+  calculus** enters the core. `JeiRel`'s epistemology-relative truth-value
+  object is not a covert numeric probability (P38).
 - **P30** `bu'a`-series = typed quantification at `PredTerm<ρ>` —
   variables, not objects; exact-row consistency across occurrences;
   non-`su'o` quantifiers prenex-only (CLL 16.107); only pure
@@ -3509,6 +3536,11 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   `AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
   preimage (the stated digits exact by the region's construction),
   directionally under `ma'u`/`ni'u`; both regions VC1-nonempty.
+- **P38** `jei` reifies an epistemology-relative `TruthValue` through
+  `JeiRel`. The numeric [0,1] `TruthValueDegree` crossing is not baseline
+  Lojban: CLL 11.6 records it as an unestablished proposal, preserved in the
+  gap register for possible future adoption only through a new evidence-backed
+  pin.
 
 ## 14. Gap register
 
@@ -3532,6 +3564,22 @@ approximate:
   (positive existential, negation denying all), never a `Vague`
   precisification family. Until such a witness and pin exist, `co'e`/`do'e` or
   any other form receives no exceptional weak reading.
+- **Numeric `jei` crossing.** CLL 11.6 records the first-edition proposal that
+  a `jei` truth value map to a number in [0,1], while also stating that its
+  conventions were never worked out and the number-valued reading never
+  became established. The recorded candidate is exactly
+  `TruthValueDegree : Referents<TruthValue> ⇀ Number`, defined projectively
+  only at a singleton truth-value reference. P38 keeps `JeiRel` in the baseline and withholds this
+  crossing until corpus/speaker evidence supports a new prescriptive pin.
+- **Exhaustive answer marker.** `MentionSome` is rejected as a semantically
+  inert duplicate of unmarked answerhood. The recorded `Exhaustive` candidate
+  would conjoin: every answer-domain value whose assigned content holds is in
+  the selected answers. It is not a baseline `Selection` value because that
+  clause is defined only when the query's answer-content function is pure and
+  the answer domain supplies typed selection membership/equivalence; the
+  general domains (plural references, heterogeneous tuples, labels, and
+  predicate-valued answers) do not share such an interface. Lojban has no
+  grammatical exponent that warrants adding it solely for this marker.
 - **Constitution-bearing `joi` and non-logical sentence connection.** The
   former `AdmissibleMixture`/`Vague` choice analysis is rejected. The adopted
   design direction is an indexed `gunma` constitution family: non-exhaustive
@@ -3583,6 +3631,16 @@ approximate:
   consequences.
 - **ZAhO contours** pending their lexicon rows (P24); habituals (TAhE)
   likewise.
+- **Dependency-preserving plural information states.** P6's supported strong
+  joint-locus term is a selected construal, not the output of a
+  semantics-preserving rewrite. It retroactively strengthens the antecedent
+  when a later anaphor appears. The principled candidate stores each
+  governor–witness dependency when the antecedent is evaluated and lets the
+  anaphor consume that stored relation (van den Berg/Brasoveanu-style plural
+  information states), so no retroactive reanalysis is needed. The weaker
+  compositional alternative — continue through one selected witness branch —
+  is a coherent comparison model but not an available baseline Lojban reading:
+  no surface form selecting it has been identified.
 - **Exotic donkey configurations**: anaphora out of disjunctive
   restrictors; stacked indefinites with split anaphora (§5.6).
 - **Termset witness export** (joint anaphora to termset selections) and
@@ -3694,7 +3752,7 @@ fact relations; the declared MEX conversion crossings, `During`,
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
 context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
-derived `DuhuRel`), the crossings `AmountValue`/`TruthValueDegree`,
+derived `DuhuRel`), the crossing `AmountValue`,
 `InnatelyCapable`, `MotionVector`; and the axiomatic
 admissibility predicates (§12). **Defined forms** (term-language
 expansions; everything else is library or lexicon): `DirectClause`, the six
@@ -4032,6 +4090,17 @@ used for source verification are noted per entry.
 - **Kamp** — Kamp, Hans, "A Theory of Truth and Semantic
   Representation", in *Formal Methods in the Study of Language*,
   Mathematisch Centrum, 1981 (Discourse Representation Theory).
+- **van den Berg** — van den Berg, Martin H., *Some Aspects of the Internal
+  Structure of Discourse: The Dynamics of Nominal Anaphora*, doctoral thesis,
+  University of Amsterdam, 1996,
+  <https://eprints.illc.uva.nl/id/eprint/1996/> (plural information states;
+  recorded candidate for P6, not an adopted Lojban analysis).
+- **Brasoveanu** — Brasoveanu, Adrian, "Donkey Pluralities: Plural
+  Information States versus Non-Atomic Individuals", *Linguistics and
+  Philosophy* 31(2), 2008, pp. 129–209,
+  <https://doi.org/10.1007/s10988-008-9035-0> (comparison of dependency in
+  plural information states and individual plurality; P6's model-level
+  candidate).
 - **Link** — Link, Godehard, "The Logical Analysis of Plurals and Mass
   Terms: A Lattice-theoretical Approach", in *Meaning, Use, and
   Interpretation of Language*, de Gruyter, 1983.

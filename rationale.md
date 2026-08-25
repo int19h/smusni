@@ -209,10 +209,13 @@ accessibility rule ("a successful exporting evaluation introduces its
 witness referent") supplies it with no run identities, no retrieval
 operator, and no bookkeeping — and every construction expressible with a
 retrieval operator is expressible by binding the referent. The dependent
-case (`ro prenu cu ponse ci gerku .i ri tatpi`) generalizes the same rule
-one scope level up via donkey normalization, rather than adding
-machinery. **Cost.** The normalization rules must be stated per
-configuration; the exotic ones are gap-registered rather than guessed.
+case (`ro prenu cu ponse ci gerku .i ri tatpi`) does not compositionally export
+the witness beyond its governor. Its supported strong reading is selected
+upstream and lowers one scope level up to a joint locus, rather than adding an
+object-language retrieval operator. **Cost.** This is not an equivalent
+rewrite of the original selection computation and retroactively strengthens
+the antecedent when the later anaphor appears. The plural-information-state
+upgrade in §14 is the principled repair; exotic configurations stay gaps.
 
 ### 1.7 The plural algebra, without covers
 
@@ -234,6 +237,14 @@ does not lean on it.) **Why no distributivity/cover
 parameter?** See §2.5 — the strongest single "less is more" decision in
 the core. **Cost.** Marked readings need marks (`lu'a`, `Distrib`,
 group gadri) — which Lojban has.
+
+Collection gadri do not silently maximize their base. Bare `loi P`/`lo'i P`
+first use the same ordinary non-maximal `Refer P` as `lo P`, then refer to the
+group/set object constituted from that base. This matches CLL's contextual
+`lo'i ratcu` discussion and preserves P1's uniformity. The all-P base remains
+available through explicit `ro`/`MaxRefer` or a context that genuinely selects
+it; the cost is only that mathematical users must state maximality when the
+context does not already make it clear.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -298,6 +309,14 @@ ordinary contextual closure. A family of primitive
 `Content × operand → sort` constructors was rejected because it would
 re-derive all of that machinery, worse, per sort. **Cost.** Terms are a
 little longer; uniformity pays for it.
+
+`jei` stops at its epistemology-relative `TruthValue` object. CLL 11.6's
+numeric [0,1] treatment is explicitly a proposal whose conventions were never
+worked out and whose number-valued reading never became established. P38
+therefore removes `TruthValueDegree` from the normative crossing inventory and
+keeps its exact signature only as a gap proposal. This is prescriptive rather
+than optional-per-reading: a future evidence-backed pin may add the crossing;
+the current surface never chooses between two hidden type-changing readings.
 
 ### 1.11 Acts, performance, tokens, signs
 
@@ -555,8 +574,9 @@ semantics is static semantics at a higher type**, twice over. A
 supported at-issue declarative discourse — once its readings,
 contextual parameters, and precisifications are fixed — has
 classically statable truth conditions: the
-donkey normalization's output *is* a classical formula; normalization
-is the desugaring, performed by the mapping. (Questions, directives,
+selected strong donkey reading's joint-locus lowering *is* a classical
+formula; it is a reading-specific mapping, not an equivalence theorem for the
+underlying selection computation. (Questions, directives,
 displays, and the projective dimension carry more than truth
 conditions; for them the desugaring target is the model's
 state-transformer objects, the second sense below.) And sentence meanings are
@@ -568,8 +588,8 @@ conjunction and lets `su'o gerku cu klama .i ri melbi` come out right,
 because the witness closes inside sentence one before sentence two
 exists. A semantics of Lojban discourse must either raise the sentence
 type (the transformer model) or globalize the translation (per-
-configuration normalization); this core does the second in the mapping
-for the supported fragment and justifies those rules uniformly with the
+configuration reading selection and lowering); this core does the second in the mapping
+for the selected supported fragment and tests those rules against the
 first in the model — with `Bind` as the visible seam (§1.14).
 
 The comparison with Eberban sharpens here. Eberban is a *sentence*
@@ -975,7 +995,13 @@ genuinely fought:
   absence. Absence won, with its consequence stated plainly: unmarked
   answerhood has the weakest (mention-some-compatible) truth conditions,
   and stronger readings come from the embedding predicate's lexical
-  presuppositions or explicit markers. The parallel with tenselessness
+  presuppositions or separately stated content. `MentionSome` is removed
+  because it duplicated the unmarked form. `Exhaustive` is not retained as an
+  uninterpreted marker: defining it would require both a pure answer-content
+  function and typed selection membership/equivalence across plural, tuple,
+  label, and predicate-valued answer domains. With no Lojban exponent to
+  justify that new generic interface, the candidate is gap-registered. The
+  parallel with tenselessness
   and distributivity is exact, and deliberate.
 - **P10 (`le`).** The two supports for a dedicated description
   relation fell (§2.6), guskant's expansion supplied the
@@ -1157,12 +1183,13 @@ weaker than `¬`) was overruled by primary text (§1.8). One separation *was* fo
 the rounds: the dependent-witness sentence `ro prenu cu ponse ci gerku
 .i ri tatpi` genuinely separates an embedded quantifier's witness from
 any single top-level plural — and was absorbed by generalizing the
-export rule to joint-locus normalization, not by refuting the
-simplification.
+mapping to a selected strong joint-locus reading, not by an
+equivalence-preserving normalization of the compositional selection.
 
 Standing invitations, recorded so future revisions know where to push:
-a witness-separating configuration that joint-locus normalization cannot
-absorb (narrows §1.6); a facet-joining sentence
+evidence for a Lojban surface selector of the weak dependent-witness reading,
+or a plural-information-state account that removes the current strong
+reading's retroactivity (narrows §1.6); a facet-joining sentence
 where dynamic `∧` mispredicts (revives a dedicated joining operator); a
 sentence forcing world variables into terms (moves intension into the
 syntax); a genericity theory that derives `Generic` while preserving the
