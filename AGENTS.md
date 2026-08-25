@@ -105,13 +105,14 @@ coherent-baseline backlog and its dependencies.
 - Update the issue when scope or decisions change. Close it only after the
   acceptance criteria and repository checks pass; a mailbox response or local
   review note alone never closes work.
-- Owner adjudications are final. Record their durable consequence in the issue
-  body or a comment, while retaining rejected alternatives and reopening
-  criteria where the semantic decision genuinely had several coherent options.
+- The human partner's adjudications are final. Record their durable
+  consequence in the issue body or a comment, while retaining rejected
+  alternatives and reopening criteria where the semantic decision genuinely
+  had several coherent options.
 
 ## Codex–Fable collaboration
 
-Codex and Fable are peer reviewers working with the repository owner; neither
+Codex and Fable are peer reviewers working with the human partner; neither
 model's proposal becomes consensus merely because it was written. The ignored
 mailbox under `review/exchange/` replaces ad hoc copy/paste when both models can
 access this filesystem. The full protocol and templates are in
@@ -144,11 +145,12 @@ access this filesystem. The full protocol and templates are in
   commit/working-tree state where relevant, and GitHub issue numbers.
 - The mailbox is transient coordination, not authority. If an exchange creates
   or changes actionable work, update GitHub. If it proposes a semantic change,
-  preserve the proposal in review until owner authorization; do not silently
-  apply it to the baseline.
+  preserve the proposal in review until human-partner authorization; do not
+  silently apply it to the baseline.
 - If only one model is active, continue useful work and leave an addressed
   handoff. Do not block routine progress merely waiting for an acknowledgement
-  unless the issue explicitly requires two-model review or owner adjudication.
+  unless the issue explicitly requires two-model review or human-partner
+  adjudication.
 
 ## Hard constraints
 
@@ -341,7 +343,7 @@ judgment that the documents lack value.
   limitation it exposes; do not call a corpus synchronized when
   corpus-integrity, link, term-balance, or pin checks fail.
 - A decision recorded in review is not silently applied to the baseline.
-  Distinguish: proposed, reviewer consensus, owner-adopted, applied, and
+  Distinguish: proposed, reviewer consensus, human-adopted, applied, and
   verified.
 - Never infer authorization for separately queued rewrites from approval of a
   neighboring doctrine. Reflection excision, doctrine sweeps, model adoption,

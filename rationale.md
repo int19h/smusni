@@ -569,8 +569,9 @@ the route back, so the event projection adds no hidden evaluation power.
 Fine's truthmaker semantics is a useful comparative model here: conjunctive
 verification fuses component states, disjunctive verification takes an
 alternative, and negation requires an explicit policy. It does not decide
-Lojban. This project chooses negative holding states because the owner-adopted
-coverage includes negative clauses, and §4.9 identifies conjunctive joint
+Lojban. This project chooses negative holding states because the
+human-adopted coverage includes negative clauses, and §4.9 identifies
+conjunctive joint
 states with the canonical complete event `GunmaAt` constitution rather than
 proliferating notions of “joint.”
 
