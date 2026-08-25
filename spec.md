@@ -3567,10 +3567,15 @@ approximate:
 - **Numeric `jei` crossing.** CLL 11.6 records the first-edition proposal that
   a `jei` truth value map to a number in [0,1], while also stating that its
   conventions were never worked out and the number-valued reading never
-  became established. The recorded candidate is exactly
+  became established. CLL 19.6 nevertheless says that the usual fuzzy-logic
+  machinery in Lojban is `jei`; any revival must reconcile that confident
+  cross-reference with 11.6's explicit historical disclaimer (and must also
+  supply semantics for the likewise-unmapped subscripted-`ja'a` convention
+  mentioned there). The recorded candidate is exactly
   `TruthValueDegree : Referents<TruthValue> ⇀ Number`, defined projectively
-  only at a singleton truth-value reference. P38 keeps `JeiRel` in the baseline and withholds this
-  crossing until corpus/speaker evidence supports a new prescriptive pin.
+  only at a singleton truth-value reference. P38 keeps `JeiRel` in the
+  baseline and withholds this crossing until corpus/speaker evidence supports
+  a new prescriptive pin.
 - **Exhaustive answer marker.** `MentionSome` is rejected as a semantically
   inert duplicate of unmarked answerhood. The recorded `Exhaustive` candidate
   would conjoin: every answer-domain value whose assigned content holds is in
