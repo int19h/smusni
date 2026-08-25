@@ -40,6 +40,16 @@ and core typability never establishes Lojban expressibility.
 - Verify sources rather than citation-following: check that a reference exists,
   which edition it belongs to, what it actually says, and whether it supports
   the claimed inference.
+- Preserve intellectual provenance even when it is not agreement. Whenever a
+  rule, pin, formal construction, counterexample, or rationale is materially
+  prompted by or derived from another person's mailing-list message, wiki
+  page, IRC/forum post, corpus example, or published work, cite that source in
+  the document set's `spec.md` References section and at the dependent passage.
+  Identify the author, date, and stable page/message/archive location where
+  available, and describe the nature of the dependence accurately: a source
+  that inspired, exposed, or was generalized or corrected by the project must
+  not be presented as agreeing with or authoritatively establishing the final
+  decision.
 - Speaker evidence should use concrete Lojban situations and minimal pairs,
   separate truth from felicity and projection, distinguish comprehension from
   production, and record speaker experience and date.
