@@ -58,24 +58,28 @@ history, so `--continue` resumes whichever of the two ran most recently.
 The prompt is text for a session started in the repository root, so its paths
 are root-relative on purpose.
 
-> You are the review-exchange actor `ACTOR` (see
-> `tools/review-exchange/participants.toml`). Read `AGENTS.md` in full — it is
-> the project charter — and `tools/review-exchange/PROTOCOL.md`. Confirm in
-> one line which protocol version the exchange uses and which actor slug you
-> are. Then run `python3 tools/review-exchange/exchange.py status --actor ACTOR`,
-> read every pending message and its reply ancestors, and respond through the
-> helper (`new` → edit the draft → `publish`; `ack` after your disposition is
-> captured). Your docket this turn: DOCKET. Do not edit tracked files; do not
-> use subagents; cite live file paths and sources you have actually read.
+```text
+You are the review-exchange actor `ACTOR` (see
+`tools/review-exchange/participants.toml`). Read `AGENTS.md` in full — it is
+the project charter — and `tools/review-exchange/PROTOCOL.md`. Confirm in
+one line which protocol version the exchange uses and which actor slug you
+are. Then run `python3 tools/review-exchange/exchange.py status --actor ACTOR`,
+read every pending message and its reply ancestors, and respond through the
+helper (`new` → edit the draft → `publish`; `ack` after your disposition is
+captured). Your docket this turn: DOCKET. Do not edit tracked files; do not
+use subagents; cite live file paths and sources you have actually read.
+```
 
 The one-line confirmation is the charter-discovery check: a session that
 cannot name the protocol version and its slug did not load `AGENTS.md`.
 
 ## Every later prompt
 
-> Your turn as `ACTOR`: run `exchange.py status --actor ACTOR`, process what is
-> pending, reply and acknowledge through the helper. [Optional: the question or
-> docket this turn.]
+```text
+Your turn as `ACTOR`: run `exchange.py status --actor ACTOR`, process what is
+pending, reply and acknowledge through the helper. [Optional: the question or
+docket this turn.]
+```
 
 ## First round trip (pilot)
 
