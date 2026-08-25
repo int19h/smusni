@@ -25,12 +25,11 @@
   (core-atom value (node-source node) (node-line node) (node-column node) #f #f))
 
 (define (app-at node head . arguments)
-  (core-list 'paren (cons (atom-at node head) arguments)
+  (core-list (cons (atom-at node head) arguments)
              (node-source node) (node-line node) (node-column node) #f #f))
 
 (define (head-of node)
   (and (core-list? node)
-       (eq? (core-list-shape node) 'paren)
        (pair? (core-list-elements node))
        (core-atom? (first (core-list-elements node)))
        (core-atom-value (first (core-list-elements node)))))
@@ -101,4 +100,3 @@
   (define sites (collect-sites ast))
   (define result (walk ast))
   (elaboration result (reverse choices) sites))
-

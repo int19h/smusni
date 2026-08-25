@@ -1,94 +1,135 @@
-(smusni-fence-manifest 1
-  (fence "samples.md" 1 specimen "82d318130152003287c099c7eefd701ce6868242")
-  (fence "samples.md" 2 specimen "bca29759cc129330ac981b96275383a25add318f")
-  (fence "samples.md" 3 specimen "b419005b5f493365ef4b162575898d6ee9ebf238")
-  (fence "samples.md" 4 specimen "14f7a042d294d075a0bad1978571a8a122200ac2")
-  (fence "samples.md" 5 specimen "bb3f45defaafb03d528961457a04e3c6f27cfd66")
-  (fence "samples.md" 6 specimen "fbabbeb68faeb654d6109699223a1496ae2cdac5")
-  (fence "samples.md" 7 specimen "0c823943d9818415fe46cfbb6bf5f7f8a035be10")
-  (fence "samples.md" 8 specimen "f5df1896475bda775ffbdd3508d7d02473b4cfe8")
-  (fence "samples.md" 9 specimen "4021f0618fabf586468f89e6dd79a129bb675bb6")
-  (fence "samples.md" 10 specimen "1a5245b069fb678e5065b8bd54bee5192432c613")
-  (fence "samples.md" 11 specimen "a114277901ea6efdfd2092ce68b2d76273153d48")
-  (fence "samples.md" 12 specimen "862742d0f6b9951dea2544082774bb62e0998fe5")
-  (fence "samples.md" 13 specimen "83b8a4dae2192d40b767754e3d1d86c0b2df22f1")
-  (fence "samples.md" 14 schema "90fdba0b3747e52116f39df32d013b7dfaabfbdb"
-         (note "open physical-parameter fragment with declared metavariables"))
-  (fence "samples.md" 15 specimen "0d9bdfb9acc1311c014ab563a98f96ab4f8769cb")
-  (fence "samples.md" 16 specimen "33ea8bb4cdb9bbc90f7e759cd40eb0385ce8bef0")
-  (fence "samples.md" 17 specimen "23dffcd28bf78120428768ab5f66684f86ee46a9")
-  (fence "samples.md" 18 schema "c3482340961a9a7fe10aa18250bac3e9702385be"
-         (note "open JoiClause fragment parameterized by kappa"))
-  (fence "samples.md" 19 specimen "f6306ca6a825812183f3a1dfd7a344a82161b721")
-  (fence "samples.md" 20 specimen "497b9d18e12a253ce48800954ecf4499f46063b1")
-  (fence "samples.md" 21 specimen "2e19ca24c2dfbffffd59c44eceb51ee42290646f")
-  (fence "samples.md" 22 specimen "afa97b270bdd0569530f3ac5c328c1c79d5cd7a7")
-  (fence "samples.md" 23 specimen "f2ce0c4bc6d4e6eb980000770a6ce46328c172df")
-  (fence "samples.md" 24 schema "0f5c6074618341a240903a0682ba24fd8097a626"
-         (note "descriptor lowering schema with an explicit dependency-profile metavariable"))
-  (fence "samples.md" 25 schema "c77b076f41186db35732751e6fb7ecaae3c7471a"
-         (note "joi lowering schema with an explicit dependency-profile metavariable"))
-  (fence "samples.md" 26 specimen "e4d262c467cd0932d234acf4642bc0120cbe4b77")
-  (fence "samples.md" 27 specimen "196e687aeb31437c27ec947e3a2c78c70c793d35")
-  (fence "samples.md" 28 specimen "0b5176b63e7a42c12edb40859ed340072125fa82")
-  (fence "samples.md" 29 specimen "39f341a04be643b9f88946a1009ee0d5e1058746")
-  (fence "samples.md" 30 specimen "ccf06145795d50e7dcf840ba1ce7e339b0f8e600")
-  (fence "samples.md" 31 specimen "3888293d5a741a45d3def0a58d88c3dadb859c30")
-  (fence "samples.md" 32 specimen "30eecfcc9bafe403e11fb8e2cbbe5918e7c78c92")
-  (fence "samples.md" 33 specimen "a697839892e9d4926b0131aaba8c06cbfa310871")
-  (fence "samples.md" 34 specimen "aa85706753f538997ddd315ce9a8371560780ddb")
-  (fence "samples.md" 35 specimen "ca720fac04381fe51bd067b1fdb1aafa76b5a0ae")
-  (fence "samples.md" 36 specimen "a538ad51b84398c3174fca7a5cf8faef1c5b62e6")
-  (fence "samples.md" 37 specimen "24abc60c0d5f18ca606ebc30034871dedede44ba")
-  (fence "samples.md" 38 specimen "51e9744262ab201426d4473f58b2bdc498338e6d")
-  (fence "samples.md" 39 specimen "0f27825bb7a77f05bab90ee9aad54691301c2830")
-  (fence "samples.md" 40 specimen "7512a558db7681c8217b38bf7aa9c3d5ef3fd257")
-  (fence "samples.md" 41 specimen "65a34b9ec5168c21e7c4a2cf6f94067c0c6bd378")
-  (fence "samples.md" 42 specimen "e26ccac68719e5502d1785ed81029b8f7ae4cd11")
-  (fence "samples.md" 43 specimen "629721dd4329b3f20347e2ca349839363ca774fb")
-  (fence "samples.md" 44 specimen "6a605399ce7d2f0f95202e9c42e526da81a914fa")
-  (fence "samples.md" 45 specimen "65f76de66e110557627fff68d91af0d21ed99afd")
-  (fence "samples.md" 46 specimen "a504a67888f7c8505cd700df43dc346e3f2d82da")
-  (fence "samples.md" 47 specimen "0a7b60e1f1c8cc017092224c0a562c631f96706b")
-  (fence "samples.md" 48 specimen "7f889434ac9d00fa880823dc44ccd499a2988cd5")
-  (fence "samples.md" 49 specimen "fadb46cf059ef282ee8df9d448995f4646e77051")
-  (fence "samples.md" 50 specimen "84ab2c11e55a9d4f82413c6275f80daa2f41fedb")
-  (fence "samples.md" 51 schema "4c44c5948d5af87d72f06e12abfdb03cf9403454"
-         (note "side-by-side positive/negative intended-value schema"))
-  (fence "samples.md" 52 specimen "c6fd505895bb18b032697c8e269899709f0c923b")
-  (fence "samples.md" 53 specimen "fdc9b0b60dbc7bc2593892fb92ce4004a2fbebcc")
-  (fence "samples.md" 54 specimen "160f49ccee4ce34d01ba020a7b025a26dab7ca6a")
-  (fence "samples.md" 55 specimen "1f40b8c8212224b32beb553ad82d9bbc1f05b502")
-  (fence "samples.md" 56 specimen "ceeacf647540cfae07899b0fb5d6bf9e8f50e156")
-  (fence "samples.md" 57 specimen "9341deecf760e5c276c05cd0aa075b85c001dc49")
-  (fence "samples.md" 58 specimen "2100a19acd0ebd45be30b6df0213d91980a3e3ce")
-  (fence "samples.md" 59 specimen "b0f1aa5a0a0b355c6c9e67397ee6399a5be8f6c6")
-  (fence "samples.md" 60 specimen "9d8bad3c3859775b7a27c761f110bd1083d8ecd4")
-
-  (fence "spec.md" 1 specimen "e11b80722140960fac027e32c07ce60254e32614")
-  (fence "spec.md" 2 specimen "7974b2da579099162cc037f3952c3de202434ae5")
-  (fence "spec.md" 3 expansion "a590b34e23edf4d56ff5e0653ecbd4bf0f3747b0")
-  (fence "spec.md" 4 specimen "6c0d8fabafa50b584e356584f7f3d825ebfab992")
-  (fence "spec.md" 5 schema "cb88a37f838407ab16037a3ec9f9d1e71d667826"
-         (note "schematic typed universal with an ellipsis body"))
-  (fence "spec.md" 6 expansion "6be80bf36233d8ef8eb9d3f42fa805ffa51531b1")
-  (fence "spec.md" 7 declaration "f9b80375715d188988c5467c52b898bcbbdf4de4")
-  (fence "spec.md" 8 schema "5cc00428665b2b8278e155d6377b50228552bafc"
-         (note "finite computed-label case schema"))
-  (fence "spec.md" 9 specimen "25ece208c031e28df7d0e1c7b011cba8d3ffa645")
-  (fence "spec.md" 10 specimen "9401002142f90505a3b1b1d7517603747c96081e")
-  (fence "spec.md" 11 schema "0de62136db90bed630c42a92318c33d5bb07ab69"
-         (note "lowering pattern with an ellipsis body"))
-  (fence "spec.md" 12 specimen "0f9b6ab333c5867e5576d5c76cb5edf4255715d0")
-  (fence "spec.md" 13 specimen "1919bdf63d5cf55a15125508dab4031fd3c0c00a")
-  (fence "spec.md" 14 specimen "f15e9d61dc795fdddb5721205a0d753dd2447384")
-  (fence "spec.md" 15 expansion "82601f947a97fb3a82f1f3e82149320b19b03a2d")
-  (fence "spec.md" 16 expansion "dab522edf55f0c38c9afb4b6fa3f1000b57396c2")
-  (fence "spec.md" 17 schema "d2a668ce7c6724c4aceb965f6d4e4db201337301"
-         (note "content-level indicator schema with free metavariables"))
-  (fence "spec.md" 18 schema "b25e39c7036c3a300f47b25ab05dd5b2cf49022a"
-         (note "gunma lowering schema with dependency-profile metavariables"))
-  (fence "spec.md" 19 specimen "46eff64a87691d0d08d1d9c434a625e0597e728f")
-  (fence "spec.md" 20 expansion "916298fc22f3806f19c9feb98b9bf460f29a859c")
-  (fence "spec.md" 21 expansion "3a75c4dd7394882ecd3293c678c3a6225317ce06")
-)
+(smusni-fence-manifest
+ 1
+ (fence "samples.md" 1 specimen "738f3c4cc9a19d8708f73af84f65571286474905")
+ (fence "samples.md" 2 specimen "4dafb267405c206fcd2cfc26056b51d6d3940054")
+ (fence "samples.md" 3 specimen "3db37afbd27c832ee661ef1fad0b621eb031fed6")
+ (fence "samples.md" 4 specimen "6ee5b8e402e2c2f6585d7ade3e4911d3faef1a2a")
+ (fence "samples.md" 5 specimen "bb3f45defaafb03d528961457a04e3c6f27cfd66")
+ (fence "samples.md" 6 specimen "167ba93649e02fe22885e038fa31606397fb364e")
+ (fence "samples.md" 7 specimen "57ea22e1867e3c11766c3b8b9f0dd01264cac3f5")
+ (fence "samples.md" 8 specimen "45365bc7337e4453654b5e43103d859e34dbde60")
+ (fence "samples.md" 9 specimen "f6c4583d56ec030ef369a55bc5233e8e0ed7c6e2")
+ (fence "samples.md" 10 specimen "1a5245b069fb678e5065b8bd54bee5192432c613")
+ (fence "samples.md" 11 specimen "e3785369d0dec808c5bf5acff3899d2304bfcff4")
+ (fence "samples.md" 12 specimen "06d0d9d33529bc747322d3cdb405412e003be3ff")
+ (fence "samples.md" 13 specimen "4fab3b87ce230a3fcfb053b863b9c0ed70d4135c")
+ (fence
+  "samples.md"
+  14
+  schema
+  "bf0cd5c00290030d92e0a7008345fca7288900f8"
+  (note "open physical-parameter fragment with declared metavariables"))
+ (fence "samples.md" 15 specimen "0d9bdfb9acc1311c014ab563a98f96ab4f8769cb")
+ (fence "samples.md" 16 specimen "33ea8bb4cdb9bbc90f7e759cd40eb0385ce8bef0")
+ (fence "samples.md" 17 specimen "14a885a17c62156d54c7ed3a78b6b3908ef59371")
+ (fence
+  "samples.md"
+  18
+  schema
+  "c0eddf6b865c5ad0a9c4d5e68ab73330faf8bf30"
+  (note "open JoiClause fragment parameterized by kappa"))
+ (fence "samples.md" 19 specimen "9e3967b0e16d7c22d263f5dd3e873c8babd43e84")
+ (fence "samples.md" 20 specimen "2876852d13a2e58a91e2a64a38a429d66119040d")
+ (fence "samples.md" 21 specimen "68fd3b480a697f1f7f5d93e6ad02cbfd92541bab")
+ (fence "samples.md" 22 specimen "51894d5541b6381e478bca7b33a039b6f96feab4")
+ (fence "samples.md" 23 specimen "c5deba4b14c6d8bdc0cc2f9ab092492c7993c40f")
+ (fence
+  "samples.md"
+  24
+  schema
+  "5e039ba77ddd394a407bab625ac3a23b4a39a59f"
+  (note
+   "descriptor lowering schema with an explicit dependency-profile metavariable"))
+ (fence
+  "samples.md"
+  25
+  schema
+  "be009658e693cb9135c1a2af639e731f0bda6b86"
+  (note
+   "joi lowering schema with an explicit dependency-profile metavariable"))
+ (fence "samples.md" 26 specimen "dcea1ed0a217abde9363445f09a21d766080cca6")
+ (fence "samples.md" 27 specimen "ccf68ce3fb78ffc5ac02f46b6273afaf35e01275")
+ (fence "samples.md" 28 specimen "5af448ae9b9bd7501e692d569c52f597fe7ee753")
+ (fence "samples.md" 29 specimen "bf1bff37b3eff8fbcd7f2aea46b3fa08def64d3a")
+ (fence "samples.md" 30 specimen "dac8ad12b46365a0c1d8f1960c64873de7205e78")
+ (fence "samples.md" 31 specimen "e5727916b51b996f029d9a75c1165b472e38580f")
+ (fence "samples.md" 32 specimen "45db27674d62ecbc3f79df14a63fc4208690b0c3")
+ (fence "samples.md" 33 specimen "765095ac1c557b2738cacaa08afc13a5514c83d8")
+ (fence "samples.md" 34 specimen "546483572c8b82d02c31422e9f757152ce89b82b")
+ (fence "samples.md" 35 specimen "1a575b6f5bb94517627d63ad1a30f80d0a825446")
+ (fence "samples.md" 36 specimen "16d5445b9f0efb113e3a9f4a03224a1f770d4959")
+ (fence "samples.md" 37 specimen "503d01b346d6bf0ccd691b3621ea1022326831e5")
+ (fence "samples.md" 38 specimen "7803f54fed3fbabeeb36b7fed9b4b6264bee058c")
+ (fence "samples.md" 39 specimen "94d7c78c9ffa610e620b869e490dcead7e2f1e12")
+ (fence "samples.md" 40 specimen "0d257553df3ae17c8eb7ca27f65922ceadd33ba0")
+ (fence "samples.md" 41 specimen "0974123a7549881ac866736e6b007c7ec545f6ad")
+ (fence "samples.md" 42 specimen "3629d28112535eed341d6cdf5d9b616315a60849")
+ (fence "samples.md" 43 specimen "901e7498b95b442ff8bce8445419eee3ca88968e")
+ (fence "samples.md" 44 specimen "cd871c142f1cce3f93c734cb30eabd81c0255279")
+ (fence "samples.md" 45 specimen "0cb89ee56a509f9f188dd4a55197dd375af94b03")
+ (fence "samples.md" 46 specimen "299c04f7e6a84ab2b123aa88d1455ed0cf35cfd3")
+ (fence "samples.md" 47 specimen "4a9b373fab796c473bb9e876485273e89bb061d3")
+ (fence "samples.md" 48 specimen "108047de2dcd7fda8512944d7f0ff361c5052b6f")
+ (fence "samples.md" 49 specimen "d18b550e979e80e4ef5a9c15530e135e9dc7f869")
+ (fence "samples.md" 50 specimen "c7922087c3c3985f9bf6e2f1b13cecf7fc8e5569")
+ (fence
+  "samples.md"
+  51
+  schema
+  "5a1cd2b8b6822564b35b2fc42a92c19e7cc50fcd"
+  (note "side-by-side positive/negative intended-value schema"))
+ (fence "samples.md" 52 specimen "18fc2d84c0815db802a7c4408fc3cb6c23716df0")
+ (fence "samples.md" 53 specimen "f31462b3d6837ee0ae528eb2c40090c63d648886")
+ (fence "samples.md" 54 specimen "8c242085d258c1d6abe8d39bd2dc7e8b128d745e")
+ (fence "samples.md" 55 specimen "82f4bd4c4f1e86823f95585520240cf5e1fa735a")
+ (fence "samples.md" 56 specimen "203880927716ccc2198466970bc150b74bcb7c26")
+ (fence "samples.md" 57 specimen "4c9334364851c333d8d56bab7af0162ebfa6b174")
+ (fence "samples.md" 58 specimen "b680c5cf6698f14202dd1390bd5081016fd617df")
+ (fence "samples.md" 59 specimen "589adfc4e176dc6ab1035fd0a48e93ba2dbe6ef1")
+ (fence "samples.md" 60 specimen "cee1f11c30a4f8541a7f8e567642de3453389bbb")
+ (fence "spec.md" 1 specimen "e11b80722140960fac027e32c07ce60254e32614")
+ (fence "spec.md" 2 specimen "621187d74d9d9df8953e2e731ea712bb08a6e111")
+ (fence "spec.md" 3 expansion "bc4fa1b042bc8238d2dc1d8eab2354bc87acbe05")
+ (fence "spec.md" 4 specimen "9d713f6c0194caa64dcf738c85bd1e2918b1b219")
+ (fence
+  "spec.md"
+  5
+  schema
+  "ec12aedce7c517c0561463e3ce84640a9dbc6cbd"
+  (note "schematic typed universal with an ellipsis body"))
+ (fence "spec.md" 6 expansion "2892852bfcc49d5773f580fdc8df8548d067e551")
+ (fence "spec.md" 7 declaration "f9b80375715d188988c5467c52b898bcbbdf4de4")
+ (fence
+  "spec.md"
+  8
+  schema
+  "b1e9170c2d7fdd44d69baccb14a37ce987bcc65a"
+  (note "finite computed-label case schema"))
+ (fence "spec.md" 9 specimen "4da2df77645deee22f6ddfbb87b1418fa7bfecc5")
+ (fence "spec.md" 10 specimen "adf09e7b1524d4d7d299a629e334a159c4e1b33f")
+ (fence
+  "spec.md"
+  11
+  schema
+  "efdf4c59513bd7ef0d3b4a3c8de66ba7d29a1ba6"
+  (note "lowering pattern with an ellipsis body"))
+ (fence "spec.md" 12 specimen "9abc6462c335cc118f6573d954f8aab72d32260c")
+ (fence "spec.md" 13 specimen "0632970f41b4064890c06323bf610d45aeee69b7")
+ (fence "spec.md" 14 specimen "54cca2029c04e08fb5a7fbe4a4e3646f60ff84d7")
+ (fence "spec.md" 15 expansion "860aec4e62adaf9863bcfc60e57482447a77fb11")
+ (fence "spec.md" 16 expansion "e23c95652100b56ceeb9e5c738d1eaf820569e8c")
+ (fence
+  "spec.md"
+  17
+  schema
+  "075e8fcadecc1f89670409e8153df9b741c03c44"
+  (note "content-level indicator schema with free metavariables"))
+ (fence
+  "spec.md"
+  18
+  schema
+  "67aea6009c6201815520f5d8bc50a275690a14a4"
+  (note "gunma lowering schema with dependency-profile metavariables"))
+ (fence "spec.md" 19 specimen "a9c634f7bd73b38f2bdda307801f658a9257861d")
+ (fence "spec.md" 20 expansion "088f873f9baadcb7a2c547adb7d6a6b08e8ac344")
+ (fence "spec.md" 21 expansion "16c662212db5ad904d77249c4d23942e60514087"))

@@ -15,6 +15,7 @@
          load-manifest
          classify-fences
          generated-corpus
+         validate-notation!
          check-corpus!
          write-corpus!)
 
@@ -28,6 +29,7 @@
 (struct manifest-entry (source ordinal kind digest note issue) #:transparent)
 
 (define fence-open-rx #px"^([[:space:]]*)```lisp[[:space:]]*$")
+(define fence-lisp-prefix-rx #px"^[[:space:]]*```lisp\\b")
 (define fence-close-rx #px"^[[:space:]]*```[[:space:]]*$")
 
 (define (strip-indent line indent)
@@ -49,6 +51,11 @@
     (if (null? rest)
         (reverse found)
         (let ((opening (regexp-match fence-open-rx (car rest))))
+          (when (and (not opening)
+                     (regexp-match? fence-lisp-prefix-rx (car rest)))
+            (error 'read-fences
+                   "unsupported lisp fence info string in ~a at line ~a"
+                   relative-source line-number))
           (if (not opening)
               (loop (cdr rest) (add1 line-number) ordinal found)
               (let collect ((body-lines (cdr rest))
@@ -86,6 +93,25 @@
           (read-fences "spec.md")))
 
 (define valid-kinds '(specimen declaration expansion schema unchecked))
+
+(define banned-notation
+  (list (cons #px"," "comma (Racket unquote syntax)")
+        (cons #px"⟨" "legacy row table")
+        (cons #px"ρ[(]" "legacy row-of spelling")
+        (cons #px"Fn<|EFn<" "angle-bracket function type")
+        (cons #px"GroupBasisConstraint[[]" "bracketed constraint pseudo-call")
+        (cons #px"C[[]" "bracketed schema hole")
+        (cons #px"(^|[^$A-Za-z0-9_-])x[1-9]([^A-Za-z0-9_-]|$)"
+              "legacy x-prefixed row label")))
+
+(define (validate-notation! fences)
+  (for ([item (in-list fences)])
+    (for ([entry (in-list banned-notation)])
+      (when (regexp-match? (car entry) (fence-content item))
+        (error 'validate-notation!
+               "~a #~a (line ~a) contains ~a"
+               (fence-source item) (fence-ordinal item)
+               (fence-start-line item) (cdr entry))))))
 
 (define (datum->manifest-entry datum)
   (match datum
@@ -233,6 +259,7 @@
    [("--check") "verify manifest and checked-in corpus (default)" (set! action 'check)]
    [("--template") "print a manifest template" (set! action 'template)])
   (define fences (read-all-fences))
+  (validate-notation! fences)
   (case action
     [(template) (print-template fences)]
     [else

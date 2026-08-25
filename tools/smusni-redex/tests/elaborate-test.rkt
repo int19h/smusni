@@ -6,7 +6,7 @@
 
 (define compact
   (read-core-specimen
-   "(Assert (Bind {$x :: Entity} (Context) {(gerku $x)}))"
+   "(Assert {Bind [$x :: Entity] (Context) (gerku $x)})"
    'compact))
 (define compact-elaboration (elaborate-core compact))
 (check-not-false
@@ -29,11 +29,10 @@
 
 (define two-sites
   (read-core-specimen
-   "(Bind {$x :: Entity} (Context) {$y :: Entity} (Vague P) {(R $x $y)})"
+   "{Bind [$x :: Entity] (Context) [$y :: Entity] (Vague P) (R $x $y)}"
    'sites))
 (define site-values (elaboration-sites (elaborate-core two-sites)))
 (check-equal? (map site-id-kind site-values) '(Context Vague))
 (check-equal? (map site-id-ordinal site-values) '(1 2))
 
 (displayln "elaboration tests: ok")
-

@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "b95878c5673898cf2e6cce2c6c9c8f09b1b395e1")
- (fixture-sha1 "58739ce184251dff2e677a2e716eb47cff5cd747")
+ (core-sha1 "bf53c9e62899f893f026bd05ccd88511060aa830")
+ (fixture-sha1 "84e623e9dc0c4f2f98c666fd7d672e8de44239b8")
  (sorts
   AbstractNature
   Achievement
@@ -30,6 +30,31 @@
   TruthValue
   Unit
   UtteranceToken)
+ (type-forms
+  Act
+  ActOccurrence
+  CompatibleLabel
+  ContrastDomain
+  ContributionBasis
+  DecompositionBasis
+  EFn
+  Fn
+  Group
+  Label
+  List
+  PerfComp
+  PredTerm
+  Query
+  Record
+  RefComp
+  Referents
+  Region
+  Row
+  RowMinus
+  RowOf
+  Set
+  Sign
+  SignToken)
  (constants
   AttachedAddress
   AttachedDisplay
@@ -72,7 +97,9 @@
   Close
   CloseClause
   CoRef
+  Combine
   CompleteGunmaAt
+  ComponentAt
   Context
   ContextualAnswer
   Contrast
@@ -90,13 +117,18 @@
   Express
   Generic
   Grade
+  GroupBasisConstraint
   GunmaAt
+  GunmaPredAt
   Happiness
   Holds
   InterpretContent
   JaiRaise
   JaiRoleAdmissible
   JeiRel
+  JoiClause
+  JoiEvent
+  JoiGroup
   JoiPred
   JoiTanru
   Let
@@ -107,6 +139,7 @@
   MetalinguisticallyDefective
   MixAt
   MoreThan
+  NahiObjection
   Named
   NiRel
   No
@@ -122,8 +155,10 @@
   Refer
   Reify
   Scalar
+  SelectAllBut
   SelectAtLeast
   SelectExactly
+  SelectSome
   Set
   SetOf
   Sign
@@ -133,6 +168,7 @@
   SuhuRel
   Supplement
   Tanru
+  TanruAdmissible
   Unhappiness
   Utterance
   Vague
@@ -142,16 +178,20 @@
   ¬
   λ
   →
+  ↔
   ∀
   ∃
   ∈
   −
   ∧
-  ∨)
+  ∨
+  ⊕)
  (fixture-rows
   bajra
+  balvi
   barda
   batci
+  bevri
   blabi
   cabna
   cadzu
@@ -159,6 +199,7 @@
   citka
   cukta
   cusku
+  dansu
   darxi
   datka
   djica
@@ -183,6 +224,7 @@
   prenu
   purci
   rinka
+  sanga
   selcmi
   sipna
   skicu

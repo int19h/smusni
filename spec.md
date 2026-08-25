@@ -217,61 +217,62 @@ Core terms are written as S-expressions:
 - `(operator operand …)` — ordinary application and operator forms;
   PascalCase spellings mark named provisional core forms (§1.2, §16),
   while lowercase names are lexical predicates (dictionary words:
-  `klama`, `gerku`). The direct `λ`/`Let`/`Bind` syntax is stated below.
-  A small set of mathematical glyphs (`¬ ∧ ∨ → ↔ ⊕ ∀ ∃ = ∈ ⊆
-  ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators (`⊤` is
-  the trivially true content — the empty conjunction, `∧`'s unit).
+  `klama`, `gerku`). A small set of mathematical glyphs (`¬ ∧ ∨ → ↔ ⊕
+  ∀ ∃ = ∈ ⊆ ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators
+  (`⊤` is the trivially true content — the empty conjunction, `∧`'s
+  unit).
+- Parenthesis shape is **non-semantic**: `(...)`, `[...]`, and `{...}`
+  denote the same list term, as they do in Redex. A special form is
+  recognized by its reserved head atom and positional operands, never by
+  delimiter shape: `(λ binders body)`, `(Let binder value body)`, and
+  `(Bind binder computation … body)`. The style convention — not a
+  formation condition — writes applications/predications with `(...)`,
+  special forms with `{...}`, and binder/type syntax with `[...]`, e.g.
+  `{Let [$x :: Referents Entity] $y (klama $x $y)}`.
 - `$name` — variables, always introduced by a binder with an explicit
-  type ascription: `(λ {$x :: Entity} {…})`, `(Let {$p :: T} v {…})`.
-  `::` is the **type-ascription keyword** — a member of the keyword
-  family below, marking that its operand is a type — and every form
-  that requires a type annotation requires it. A compound type is a
-  **generic instantiation** — a type constructor applied to indices of
-  its declared kinds: sorts (`Referents Entity`), rows (`Record ρ`,
-  `PredTerm ρ(H)`, and `Label klama` — the §4.7 abbreviation of the
-  row-indexed `Label ρ(klama)`), forces (`Act Assertion`), sign kinds
-  (`SignToken K`) — and after `::` the
-  application spine is written flat: `{$r :: Referents Entity}`
-  applies the `Referents` former to
-  `Entity` (the type the metalanguage displays as `Referents<Entity>`),
-  and parentheses appear only to group a *nested* instantiation
-  (`{$sets :: Referents (Set Entity)}`). Row expressions — `ρ`,
-  `ρ−ℓ`, `ρ(H)`, and explicit row literals `⟨x1:…, …⟩` where no row
-  name serves — are stated metalanguage (a row name, a row minus a
-  label, the row of a relation, a row spelled out) and keep that
-  spelling inside schematic ascriptions; they are not term-level
-  parentheses. Thus `{$x :: Entity}` binds
-  over single individuals while `{$r :: Referents Entity}` binds a
-  plural reference (§3.2): different types, one notation. (Should a
-  function type ever be needed in this position, an `Fn`/`EFn`
-  instantiation takes its parameter sort-list as a single
-  parenthesized operand.)
-- `:label value` — a labelled place fill inside a predication (§4.2);
-  `:2` names the second lexical place, `:Eventuality` the event place.
-  `::` above is the same device one level up: a keyword marking the
-  role of the operand that follows it as a type.
+  type ascription. A binder group contains one or more variables, `::`,
+  and one type, e.g. `[$x $y :: Referents Entity]`; a telescope is a
+  list of groups, e.g. `[[$x :: Entity] [$r :: Referents Entity]]`.
+  `::` is the type-ascription keyword, and every form that requires a
+  type annotation requires it.
+- A compound type is a generic instantiation. Ordinary type constructors
+  use a flat spine after `::`: `[$r :: Referents Entity]`, with
+  parentheses only for a nested instantiation
+  (`[$sets :: Referents (Set Entity)]`). Function types have the one
+  reader-compatible spelling `Fn (A B) C` / `EFn (A B) C`, with a
+  parenthesized parameter-type list followed by the result; `Fn () C`
+  has zero parameters. Angle-bracket signatures such as `Fn<(A), B>`
+  remain metalanguage.
+- Rows used as object-language type indexes are written `(RowOf H)` for
+  the row of lexical entry `H`, `(Row (1 T1) (2 T2) …
+  (Eventuality Te))` for a literal row, and `(RowMinus row label)` for
+  row deletion. `Record row`, `PredTerm row`, `Label row`, and
+  `CompatibleLabel row T` consume those indexes. Row metavariables such
+  as `ρ` and display tables such as `⟨…⟩` remain metalanguage and occur
+  only in schema/expansion displays.
+- `:label value` — a labelled place fill inside a predication (§4.2).
+  Ordinary labels are numerals (`:1`, `:2`, …); `:Eventuality` names the
+  distinguished event place. The same labels are bare numerals or
+  `Eventuality` when passed to `At`, `DropPlace`, `Label`,
+  `CompatibleLabel`, or written in `Row`. Positional fills follow numeral
+  order. `::` similarly marks the following material as a type.
 - `; text` — comments, to end of line; consumed as whitespace. By
   convention a specimen's first comment line is its Lojban source.
 - `"…"` — `Text` literals (used by name signs, quoted text, and sign
   facts).
-- `{…}` — binder punctuation. A binder telescope is either one **group**
-  of variables sharing one ascription, `{$x :: T}` or `{$x $y :: T}`,
-  or a left-scoping concatenation of groups,
-  `{{$x :: T} {$y :: S}}`. A binder body is likewise delimited by
-  braces. These inert positions are syntax, not term-valued quotation:
-  braces do not construct signs, and nothing interprets their contents
-  at run time. Set-builder and record displays are metalanguage and use
-  words or `⟨…⟩`.
-- The term grammar has atoms, parenthesized application/operator forms,
-  and three direct binding forms: `(λ {Δ} {body})`,
-  `(Let {$x :: T} value {body})`, and
-  `(Bind {$x :: T} computation {body})`.
-  The binders are syntactically distinct from ordinary application and
-  obey the formation rules of §4.4 and §5.2. In types after `::`,
-  application remains the flat spine described above, with parentheses
-  grouping nested instantiations only (angle-bracket signatures such as
-  `Fn<(A), B>` are metalanguage). `Bind` remains variadic by alternation,
-  `(Bind {$x :: T} c₁ {$y :: S} c₂ … {body})`, as §5.2 defines.
+- The term grammar has atoms and list forms. `λ`, `Let`, and `Bind` are
+  direct special forms, syntactically distinct from ordinary application
+  by their reserved head atoms and governed by §4.4/§5.2. `Bind` remains
+  variadic by alternation: `{Bind [$x :: T] c1 [$y :: S] c2 … body}`.
+  Bodies are bare term operands; delimiter shape never adds a wrapper or
+  quotation.
+- Commas do not occur in `lisp` fences: Racket reads them as `unquote`.
+  Constraint families and schema holes use ordinary applications, e.g.
+  `(GroupBasisConstraint loi Entity)` and `(C $v)`. ASCII apostrophe is
+  likewise a reader delimiter; the sole sanctioned pre-read step replaces
+  an identifier-internal Lojban apostrophe (as in `te'a`) with a same-width
+  safe marker outside comments/strings and restores it after `read-syntax`.
+  Identifiers never end in apostrophe; use `$e2`, not `$e'`.
 
 Notation conventions — elision of inferable types, the writing of `Close`
 (§4.6), currying conventions, pretty-printing — are non-semantic: two
@@ -369,9 +370,10 @@ A **place row** ρ is a finite sequence of labelled, typed places, e.g. for
 `klama`:
 
 ```text
-ρ(klama) = ⟨ x1:Referents<Entity>, x2:Referents<Entity>,
-             x3:Referents<Entity>, x4:Referents<Entity>,
-             x5:Referents<Entity> ; ev:Referents<Eventuality> ⟩
+(RowOf klama) =
+  (Row (1 (Referents Entity)) (2 (Referents Entity))
+       (3 (Referents Entity)) (4 (Referents Entity))
+       (5 (Referents Entity)) (Eventuality (Referents Eventuality)))
 ```
 
 The event place `ev` is distinguished: it is present exactly on lexical
@@ -379,19 +381,19 @@ entries whose §10 clause-event mode is `DirectEvent(ev)`, and is filled with
 `:Eventuality`. Holding-state entries have no such row field; their clause
 event comes from `StateClause` after ordinary fills.
 
-- `PredTerm<ρ>` — the type of relations over row ρ. It is a **transparent
+- `PredTerm ρ` — the type of relations over row ρ. It is a **transparent
   alias** for the row-function type `Record ρ → Content`: partial filling
   is abstraction over the residual row, place selection is record
   projection, and two relations equal on all row records are the same
   relation. A relation over the exhausted row is its content:
-  `PredTerm<⟨⟩>` applied at the empty record is `Content`, and the
+  `PredTerm (Row)` applied at the empty record is `Content`, and the
   notation writes that final application invisibly. The alias is retained pervasively in signatures because
   labelled places are the load-bearing Lojban-specific structure (free
   place order, `zi'o`, conversion, place questions all speak in labels).
-- `Fn<(A …), B>` — ordinary functions with positional parameters, the type
-  of λ-abstractions. Properties are `Fn<(T), Content>`; generalized
-  quantifiers are `Fn<(Fn<(T), Content>), Content>`.
-- `Label<ρ>` — the finite type of ρ's place labels; the domain of place
+- `Fn (A …) B` — ordinary functions with positional parameters, the type
+  of λ-abstractions. Properties are `Fn (T) Content`; generalized
+  quantifiers are `Fn ((Fn (T) Content)) Content`.
+- `Label ρ` — the finite type of ρ's place labels; the domain of place
   questions (§8.3).
 
 Purity is tracked in the function space: `Fn` is the **pure** arrow — a
@@ -404,7 +406,7 @@ unhoisted effects simply fails to have the pure type. Nuclear scopes,
 `OpenQ` bodies, and `Generic`'s nuclear operand are `EFn` — they may
 close places contextually and introduce referents, with the accessibility
 table governing what escapes. This is the whole of the purity discipline:
-a typing fact, not an algorithm. `PredTerm<ρ>`, `Fn`, and `EFn` are types
+a typing fact, not an algorithm. `PredTerm ρ`, `Fn`, and `EFn` are types
 and appear freely in variable annotations, λ parameter lists, and
 `Context`/`Vague` type arguments.
 
@@ -420,7 +422,7 @@ recovery with `⇀` or projective partiality with `→`.
 ```text
 Content            evaluable (dynamic) propositional content
 ClauseContent      event-open declarative content, definitionally
-                   EFn<(Referents<Eventuality>), Content>
+                   EFn ((Referents Eventuality)) Content
 RefComp<T>         reference/contextual computations returning T
 Act<F>             speech acts of force F ∈ ⟨Assertion, Question,
                    Directive, Expressive, Address⟩
@@ -524,7 +526,7 @@ Fills are positional by default, following the row order; a labelled fill
 continue from the place after `n`:
 
 ```lisp
-; klama fe ti tu        — x2 = ti, x3 = tu, x1 unfilled
+; klama fe ti tu        — place 2 = ti; place 3 = tu; place 1 unfilled
 (klama :2 This Yonder)
 ```
 
@@ -541,9 +543,9 @@ above merely computing which labels are used:
 
 ```lisp
 (klama :2 This Yonder)
-  ≝ (At (At klama x2 This) x3 Yonder)
+  ≝ (At (At klama 2 This) 3 Yonder)
 (klama Speaker This)
-  ≝ (At (At klama x1 Speaker) x2 This)
+  ≝ (At (At klama 1 Speaker) 2 This)
 ```
 
 Fills are values — effectful arguments are bound by `Bind` before they
@@ -562,8 +564,8 @@ term the mapping produces, while never changing what any one term
 means. And `At` itself is no
 new primitive: with `PredTerm` a transparent alias (§3.3), the literal
 fill is partial application of the row function —
-`(At R ℓ v) ≝ (λ {$rest :: Record ρ−ℓ} {(R ⟨$rest extended with
-ℓ = v⟩)})` — so the
+`(At R ℓ v) ≝ (λ [$rest :: Record (RowMinus ρ ℓ)]
+{(R ⟨the ρ-record extending $rest with ℓ = v⟩)})` — so the
 whole fill apparatus bottoms out in λ and labelled records.
 
 ### 4.2 Place conversion
@@ -574,16 +576,16 @@ places. A converted relation escaping into a function position is the
 λ-abstraction over the permuted row:
 
 ```lisp
-; se tavla, as a first-class binary relation
-(λ {$new-x1 $new-x2 :: Referents Entity}
-  {(tavla $new-x2 $new-x1)})
+; se tavla as a first-class binary relation
+{λ [$new1 $new2 :: Referents Entity]
+  (tavla $new2 $new1)}
 ```
 
 No `Se` operator exists in the core.
 
 ### 4.3 Place deletion
 
-`(DropPlace R n) : PredTerm<ρ − n>` is the relation ρ with place `n`
+`(DropPlace R n) : PredTerm (RowMinus ρ n)` is the relation ρ with place `n`
 removed — the meaning of `zi'o`. Deletion is semantic surgery on the
 relation, not omission of a fill: `mi klama ti zi'o ti ti` predicates a
 relation that *has no origin role*, which neither `zo'e` nor closure can
@@ -591,10 +593,10 @@ express. A lexical entry states which deletions are meaningful (§10).
 
 ### 4.4 Functions and binding
 
-`(λ {Δ} {body})` is a direct binding form. If the telescope `Δ` extends
+`{λ Δ body}` is a direct binding form. If the telescope `Δ` extends
 the current typing context by parameters `x₁:T₁ … xₙ:Tₙ` and the body
-has type `B`, the abstraction has type `Fn<(T₁ … Tₙ), B>` when the body
-is pure and `EFn<(T₁ … Tₙ), B>` otherwise (§3.3). Bound occurrences are
+has type `B`, the abstraction has type `Fn (T₁ … Tₙ) B` when the body
+is pure and `EFn (T₁ … Tₙ) B` otherwise (§3.3). Bound occurrences are
 resolved lexically; α-renaming is meaning-preserving; substitution is
 capture-avoiding. Application to value arguments satisfies the ordinary
 β-law, evaluating the body once with those values substituted. If the
@@ -602,9 +604,9 @@ result is a computation, substitution constructs that computation; it does
 not itself run it. η holds at the pure function type where it does not
 change effects or site structure.
 
-`(Let {$x :: T} v {body})` is the direct inert-sharing form, defined as
+`{Let [$x :: T] v body}` is the direct inert-sharing form, defined as
 immediate value application,
-`(Let {$x :: T} v {body}) ≝ ((λ {$x :: T} {body}) v)`, and the
+`{Let [$x :: T] v body} ≝ ({λ [$x :: T] body} v)`, and the
 spelling for several shared values is explicit nesting. Its active operand
 must be a value of type `T`; if `body` has type `B` under `$x:T`, the whole
 form has type `B`. It does not run a reference computation or share an
@@ -625,7 +627,7 @@ The logical operators are `¬ ∧ ∨ → ↔ ⊕` over `Content` and the
 quantifiers `∀ ∃` over typed λ-bodies, with (multi-parameter) joint loci:
 
 ```lisp
-(∀ (λ {$x $y :: Entity} {…}))
+(∀ {λ [$x $y :: Entity] {…}})
 ```
 
 Statically they have classical truth conditions. Dynamically each carries
@@ -661,9 +663,9 @@ For an event-licensed row with unfilled defaultable places p₁…pₖ,
 
 ```lisp
 (DirectClause P) ≝
-(λ {$e :: Referents Eventuality}
-  {(Bind {$v1 :: T1} (Context) … {$vk :: Tk} (Context)
-    {(P :p1 $v1 … :pk $vk :Eventuality $e)})})
+{λ [$e :: Referents Eventuality]
+  (Bind {$v1 :: T1} (Context) … {$vk :: Tk} (Context)
+    {(P :p1 $v1 … :pk $vk :Eventuality $e)})}
 ```
 
 When k = 0 and P contains no other effects, this function refines to the pure
@@ -695,14 +697,14 @@ with three type-directed cases:
   ; event-licensed row, resolved actual CAhA mode
 (Close (P :Eventuality e))        ≝
   (CloseClause
-    (λ {$e' :: Referents Eventuality}
-      {(∧ (CoRef $e' e) ((ActualClause (DirectClause P)) e))}))
+    (λ {$e2 :: Referents Eventuality}
+      {(∧ (CoRef $e2 e) ((ActualClause (DirectClause P)) e))}))
   ; explicit/shared lexical event; no second event is introduced
 (Close P_eventless)               ≝
   Bind ordinary defaults, then CloseClause(ActualClause(StateClause(P_filled)))
 ```
 
-In the explicit-event case, the local closure witness `$e'` is constrained to
+In the explicit-event case, the local closure witness `$e2` is constrained to
 co-refer with the already supplied e; it therefore records that same event in
 the structured Content without adding another event. Plain application
 `((ActualClause …) e)` has the same at-issue run but, because
@@ -740,22 +742,22 @@ plain `∧` inside a single `ClauseContent`; it is not `ClauseAnd`.
 
 ### 4.7 Place questions
 
-`Label<ρ>` (§3.3) types questions over places. `At` is the
+`Label ρ` (§3.3) types questions over places. `At` is the
 single-place fill former: with a **literal** label, `(At R ℓ v)` is
 partial application of the row function at field ℓ (§4.1 — every fill
 notation desugars to it). With a **computed** label —
-`$p : CompatibleLabel<ρ,T>` for a fill `v : T`, the `fi'a` case —
+`$p : CompatibleLabel ρ T` for a fill `v : T`, the `fi'a` case —
 `(At R $p v)` abbreviates the finite case split over the compatible
 labels, each branch a literal fill:
 
 ```lisp
-(∨ (∧ (= $p ℓ₁) C[(At R ℓ₁ v)]) … (∧ (= $p ℓₙ) C[(At R ℓₙ v)]))
+(∨ (∧ (= $p ℓ1) (C (At R ℓ1 v))) … (∧ (= $p ℓn) (C (At R ℓn v))))
 ```
 
-(`C[·]` the containing predication through its closure — the
+(`C` the containing predication through its closure — the
 computed-label form is licensed exactly where that closed context
 exists, so every branch is `Content`). The domain is the
-**compatible-label refinement** `CompatibleLabel<ρ,T>` (declared with
+**compatible-label refinement** `CompatibleLabel ρ T` (declared with
 the topic interface, §12): the labels whose place sort accepts the
 fill — a heterogeneous row contributes no ill-typed branch — and the
 event place is excluded (no FA tag reaches it; surface place
@@ -964,8 +966,8 @@ group-forming occurrence retrieves a constrained `GroupBasis<T>` through
 `Context`, with the resolved reading declaring its dependency profile. The
 lexicon declares the admissible bases: “team”, “committee”, “material
 aggregate”, and the like are not an unconstrained choice left to a model.
-`GroupBasisConstraint[k,T]`, `EventBasisConstraint[k]`, and
-`ContributionBasisConstraint[k,ρ]` are metalanguage names for the pure
+`(GroupBasisConstraint k T)`, `(EventBasisConstraint k)`, and
+`(ContributionBasisConstraint k ρ)` are metalanguage names for the pure
 constraint property supplied by the lexicon/mapping for construction class
 `k`; they are not term constructors or a closed enumeration of possible
 bases. A displayed `Context` uses the applicable property, whose free outer
@@ -1080,9 +1082,9 @@ predicates running of it —
 
 ```lisp
 ; ci gerku cu bajra — the default (witness-set) reading
-(Bind {$w :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
-  {(Close (bajra $w))})
+{Bind [$w :: Referents Entity]
+        (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
+  (Close (bajra $w))}
 ```
 
 — the shape the library's `Exactly n` (§12) realizes. Two things about
@@ -1100,7 +1102,7 @@ exactly three, and no others" —
 
 ```lisp
 ; the marked global strengthening (not the bare-PA default)
-(= (Card (SetOf (λ {$x :: Entity} {(∧ (gerku $x) (bajra $x))}))) 3)
+(= (Card (SetOf {λ [$x :: Entity] (∧ (gerku $x) (bajra $x))})) 3)
 ```
 
 is a distinct, stronger meaning, named `GlobalExactly` in the library and
@@ -1342,8 +1344,8 @@ or turn an effectful computation pure.
 The principal lowering witness is an internal collection base:
 
 ```lisp
-(Bind {$base :: Referents T} (Local (Refer P))
-  {… construct and introduce the one surface group/set from $base …})
+{Bind [$base :: Referents T] (Local (Refer P))
+  {… construct and introduce the one surface group/set from $base …}}
 ```
 
 The hidden base has ordinary non-maximal `Refer` selection and truth
@@ -1477,10 +1479,10 @@ content then predicates of it:
 
 ```lisp
 ; ci gerku cu bajra .i ri tatpi
-(Bind {$dogs :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
-  {(Do (Assert (Close (bajra $dogs)))
-      (Assert (Close (tatpi $dogs))))})
+{Bind [$dogs :: Referents Entity]
+        (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
+  (Do (Assert (Close (bajra $dogs)))
+      (Assert (Close (tatpi $dogs))))}
 ```
 
 The library's GQ forms (`Exactly`, `AtLeast`, `Some`, … — §12) are
@@ -1509,22 +1511,22 @@ gerku .i ri tatpi` has the selected strong lowering
 
 ```lisp
 ; truth-condition artifact for the two Host occurrences
-(Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
+(Presuppose (∃ {λ [$x :: Entity] (prenu $x)})
   (∧
-    ; sentence 1's claim, preserved:
-    (∀ (λ {$p :: Entity}
-      {(→ (prenu $p)
-         (∃ (λ {$d :: Referents Entity}
-           {(∧ (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
-              (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
-              (Close (ponse $p $d)))})))}))
-    ; the anaphoric continuation, at the joint locus (strong reading):
-    (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-      {(→ (∧ (prenu $p)
-            (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
-            (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
+    ; sentence 1's claim; preserved:
+    (∀ {λ [$p :: Entity]
+      (→ (prenu $p)
+         (∃ {λ [$d :: Referents Entity]
+           (∧ (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+              (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
+              (Close (ponse $p $d)))}))})
+    ; the anaphoric continuation; at the joint locus (strong reading):
+    (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+      (→ (∧ (prenu $p)
+            (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+            (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
             (Close (ponse $p $d)))
-         (Close (tatpi $d)))}))))
+         (Close (tatpi $d)))})))
 ```
 
 The display is the strong reading's truth-condition artifact, not its force
@@ -1558,13 +1560,13 @@ indefinite's variable at the plural type (its witness is a plural
 reference; the atomic-pair spelling is the distributive strengthening):
 
 ```lisp
-(Presuppose (∃ (λ {$x :: Entity} {(∧ (prenu $x)
-              (∃ (λ {$y :: Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
-  (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-    {(→ (∧ (prenu $p)
-          (Distrib (λ {$z :: Entity} {(xasli $z)}) $d)
+(Presuppose (∃ {λ [$x :: Entity] (∧ (prenu $x)
+              (∃ {λ [$y :: Entity] (∧ (xasli $y) (Close (ponse $x $y)))}))})
+  (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+    (→ (∧ (prenu $p)
+          (Distrib {λ [$z :: Entity] (xasli $z)} $d)
           (Close (ponse $p $d)))
-       (Close (darxi $p $d)))})))
+       (Close (darxi $p $d)))}))
 ```
 
 (The `Distrib` conjunct restores the indefinite selection's own
@@ -1674,7 +1676,7 @@ whose speaker genuinely intends no particular discrete value.
 
 ### 6.2 Tanru
 
-`(Tanru M H) : PredTerm<ρ(H)>` — modification of head `H` by modifier
+`(Tanru M H) : PredTerm (RowOf H)` — modification of head `H` by modifier
 `M`; a **defined** operator, the expansion below being its definition
 (only `TanruAdmissible` inside it is primitive).
 The result's row is the head's row (CLL ch. 5: the tanru's places are the
@@ -1683,11 +1685,11 @@ modification link relates `M` to that predication —
 
 ```lisp
 ((Tanru M H) fills…) ≝
-(Bind {$link :: PredTerm ρ(H)}
+{Bind [$link :: PredTerm (RowOf H)]
         (Context
-          (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)})
+          {λ [$r :: PredTerm (RowOf H)] (TanruAdmissible M H $r)}
           deps…)
-  {(∧ (H fills…) ($link fills…))})
+  (∧ (H fills…) ($link fills…)) }
 ```
 
 Here `deps…` is the dependency profile declared by the resolved reading; it
@@ -1718,26 +1720,26 @@ operands in the program's sense (§16.2).
 
 ### 6.3 Scalar operators
 
-`ContrastDomain<ρ>` is the typed interface of relevant alternatives for a
+`ContrastDomain ρ` is the typed interface of relevant alternatives for a
 predicate row ρ: it supplies the universe against which a predicate's region
 is interpreted and, optionally, polarity and betweenness structure. It is a
 declared domain former with region/membership laws, not a first-order set or a
-`Group<PredTerm>` object. The applicable domain is lexically fixed where the
+`Group (PredTerm ρ)` object. The applicable domain is lexically fixed where the
 dictionary provides one and otherwise recovered by constrained `Context`.
 Soritical boundaries inside its regions remain `Vague` per §6.1.
 
-More exactly, `ContrastRegion<ρ>` is the associated region type. Each model's
-interpretation of a value `D : ContrastDomain<ρ>` supplies the following
+More exactly, `ContrastRegion ρ` is the associated region type. Each model's
+interpretation of a value `D : ContrastDomain ρ` supplies the following
 *semantic-interface* operations; the subscripted notation here is
 metalanguage, not additional core syntax:
 
 ```text
 universe_D(r)        : Content                         (r : Record ρ)
-cell_D(P)            : ContrastRegion<ρ>              (P : PredTerm<ρ>)
-member_D(r, A)       : Content                         (A : ContrastRegion<ρ>)
-complement_D(A)      : ContrastRegion<ρ>
-opposite_D(A)        : ContrastRegion<ρ>               (partial)
-between_D(A)         : ContrastRegion<ρ>               (partial)
+cell_D(P)            : ContrastRegion ρ                (P : PredTerm ρ)
+member_D(r, A)       : Content                         (A : ContrastRegion ρ)
+complement_D(A)      : ContrastRegion ρ
+opposite_D(A)        : ContrastRegion ρ                 (partial)
+between_D(A)         : ContrastRegion ρ                 (partial)
 ```
 
 It obeys, for every record `r`, predicate `P`, and region `A`,
@@ -1761,14 +1763,14 @@ member_D(r, between_D(A))              ↔ member_D(r, between_D(opposite_D(A)))
 ```
 
 These are membership laws; the core neither assumes nor needs equality at
-`ContrastRegion<ρ>`.
+`ContrastRegion ρ`.
 
 `OtherThan` therefore needs neither an ordering nor a partition into fine
 alternatives. `Opposite` requires the polarity operation and `Neutral` the
 betweenness operation; absence of the required operation is a projective
 definedness condition under §4.9.
 
-`(Scalar k D P) : PredTerm<ρ>`, for `D : ContrastDomain<ρ>` and
+`(Scalar k D P) : PredTerm ρ`, for `D : ContrastDomain ρ` and
 `k ∈ ⟨OtherThan, Opposite, Neutral⟩`, is the `na'e`/`to'e`/`no'e`
 family. The Lojban mapping binds a lexically fixed or constrained-`Context`
 domain before applying `Scalar`, so the retrieval site and dependencies stay
@@ -1803,7 +1805,7 @@ Gradable predication exposes its two parameters through the library's
 `Grade` schema:
 
 ```text
-Grade : GradableRel<ρ,ℓ> × Scale × Region<Scale> → PredTerm<ρ>
+Grade : GradableRel ρ ℓ × Scale × Region Scale → PredTerm ρ
 ```
 
 with the scale obtained by `Context` when not lexical (which dimension —
@@ -2030,7 +2032,7 @@ is a λ, not a computation:
 
 ```lisp
 (Utterance {$u :: UtteranceToken} {fact…})
-  ≝ (λ {$u :: Referents UtteranceToken} {(∧ fact…)})
+  ≝ {λ [$u :: Referents UtteranceToken] (∧ fact…)}
 ```
 
 (The entry notation ascribes the token *sort*; the definition binds at
@@ -2161,8 +2163,8 @@ target — no dedicated operator is needed:
   primitive `Holds` (`Reify`'s inverse, §9.1):
 
   ```lisp
-  (Let {$p :: Proposition} (Reify c)
-    {(Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p))})
+  {Let [$p :: Proposition] (Reify c)
+    (Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p))}
   ```
 
   so anchor, side, and evaluated body all speak of the same content with
@@ -2409,14 +2411,15 @@ assigns these abstractors place structures (CLL ch. 11 §3 for the event
 types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 
 ```text
-(NiRel c)   : PredTerm⟨ x1:Referents<Amount>,        x2:Referents<Scale> ⟩
-(JeiRel c)  : PredTerm⟨ x1:Referents<TruthValue>,    x2:Referents<Epistemology> ⟩
-(LihiRel c) : PredTerm⟨ x1:Referents<Experience>,    x2:Referents<Entity> ⟩  ; experiencer
-(SihoRel c) : PredTerm⟨ x1:Referents<Concept>,       x2:Referents<Entity> ⟩  ; mind
-(SuhuRel c) : PredTerm⟨ x1:Referents<AbstractNature>, x2:Referents<Entity> ⟩ ; category
-(PuhuRel c) : PredTerm⟨ x1:Referents<Process>,   x2:Referents<Eventuality> ⟩ ; stages
-(ZuhoRel c) : PredTerm⟨ x1:Referents<Activity>,  x2:Referents<Eventuality> ⟩ ; repeated actions
-(DuhuRel c) : PredTerm⟨ x1:Referents<Proposition>, x2:Referents<Sign<Sentence>> ⟩
+(NiRel c)   : PredTerm (Row (1 (Referents Amount)) (2 (Referents Scale)))
+(JeiRel c)  : PredTerm (Row (1 (Referents TruthValue)) (2 (Referents Epistemology)))
+(LihiRel c) : PredTerm (Row (1 (Referents Experience)) (2 (Referents Entity))) ; experiencer
+(SihoRel c) : PredTerm (Row (1 (Referents Concept)) (2 (Referents Entity))) ; mind
+(SuhuRel c) : PredTerm (Row (1 (Referents AbstractNature)) (2 (Referents Entity))) ; category
+(PuhuRel c) : PredTerm (Row (1 (Referents Process)) (2 (Referents Eventuality))) ; stages
+(ZuhoRel c) : PredTerm (Row (1 (Referents Activity)) (2 (Referents Eventuality))) ; repeated actions
+(DuhuRel c) : PredTerm (Row (1 (Referents Proposition))
+                            (2 (Referents (Sign Sentence))))
 ```
 
 `DuhuRel` is derived — formally: `((DuhuRel c) x1 x2) ≝
@@ -2622,12 +2625,12 @@ official-row clause is:
 
 ```lisp
 ; gunma g Cs — deps selected by this resolved occurrence
-(Bind {$κ :: GroupBasis T}
-      (Context GroupBasisConstraint[gunma,T] deps…)
-  {(GunmaAt $κ g Cs)})
+{Bind [$κ :: GroupBasis T]
+      (Context (GroupBasisConstraint gunma T) deps…)
+  (GunmaAt $κ g Cs)}
 ```
 
-`GroupBasisConstraint[k,T]` is lexicon data, not one unconstrained universal
+`(GroupBasisConstraint k T)` is lexicon data, not one unconstrained universal
 predicate. When `gunma` occurs inside a position requiring a pure property
 (notably a `Refer` restrictor), the mapping hoists this κ binding outside that
 property and shares the captured value; it never hides `Context` in a `Fn`.
@@ -3240,8 +3243,8 @@ so the `fa'u` specimen expands completely:
 
 ```lisp
 ; mi fa'u do tavla do fa'u mi
-(ZipWith (λ {$s $l :: Referents Entity}
-           {(Close (tavla $s $l))})
+(ZipWith {λ [$s $l :: Referents Entity]
+           (Close (tavla $s $l))}
   (List Speaker Audience)
   (List Audience Speaker))
 ; ≡ (∧ (Close (tavla Speaker Audience))
@@ -3260,9 +3263,9 @@ so the `fa'u` specimen expands completely:
     (Refer (λ {$r :: Referents T}          ; inhabited
       {(∧ (Distrib P $r)
           (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))}))
-          (∀ (λ {$r' :: Referents T}
-               {(→ (Among $r' $r)
-                   (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r'))})))})))})))
+          (∀ (λ {$r2 :: Referents T}
+               {(→ (Among $r2 $r)
+                   (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r2))})))})))})))
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
@@ -3334,52 +3337,52 @@ function `λe.⊤` supplies no occurrence claim until a caller adds one.
 
 Tense helpers per the lexicon's tag-reduction rows. Tagged `jai`: for
 a lexical row ρ with promoted role ℓ, writing ρ' for ρ with ℓ
-relabelled x1 and x1 relabelled `fai`,
+relabelled `1` and `1` relabelled `fai`,
 
 ```text
-(JaiPromote R ℓ) : PredTerm<ρ'> ≝
-  (λ {$r :: Record ρ'}
-    {(R ⟨the ρ-record with ℓ = $r.x1, x1 = $r.fai, rest unchanged⟩)})
+(JaiPromote R ℓ) : PredTerm ρ' ≝
+  {λ [$r :: Record ρ']
+    (R ⟨the ρ-record with ℓ = $r.1 and 1 = $r.fai; rest unchanged⟩)}
 ```
 
-— the promoted role becomes x1 and the old x1 becomes the labelled,
+— the promoted role becomes place 1 and the old place 1 becomes the labelled,
 *fillable* `fai` place (closing contextually like any place when
 unfilled — CLL 9.12).
 
-**Bare `jai` role raising.** Let R have old x1 type `Referents<A>`, and let
+**Bare `jai` role raising.** Let R have old place 1 type `Referents<A>`, and let
 the resolved reading select raised-sumti sort T. The pure axiomatic
 admissibility family
 
 ```text
 JaiRoleAdmissible :
-  PredTerm<ρ> × Fn<(Referents<T>, Referents<A>), Content> → Content
+  PredTerm ρ × Fn ((Referents T) (Referents A)) Content → Content
 ```
 
 holds of exactly the relations that interpret a T-sumti's admissible role in
-an A-valued abstraction occupying R's old x1. This is an interface constraint,
+an A-valued abstraction occupying R's old place 1. This is an interface constraint,
 not reflection over an abstraction's syntax: ordinary place roles and exact
 tag-reduction roles may satisfy it, while the baseline exposes no AST from
 which to enumerate them. For a role K it defines the pure relation former
 
 ```text
-(JaiRaise R K) : PredTerm<ρ'> ≝
-  (λ {$r :: Record ρ'}
-    {(∧ (R ⟨the ρ-record with x1 = $r.fai, rest unchanged⟩)
-        (K $r.x1 $r.fai))})
+(JaiRaise R K) : PredTerm ρ' ≝
+  {λ [$r :: Record ρ']
+    (∧ (R ⟨the ρ-record with 1 = $r.fai; rest unchanged⟩)
+       (K $r.1 $r.fai))}
 ```
 
-where ρ' replaces R's x1 by `x1:Referents<T>` and adds the labelled,
+where ρ' replaces R's place 1 by `(1 (Referents T))` and adds the labelled,
 fillable `fai:Referents<A>` place. Bare `jai` binds K visibly at the applied
 predicate locus:
 
 ```text
 ((jai R) fills…) ↦
-(Bind {$role :: Fn<(Referents<T>, Referents<A>), Content>}
+{Bind [$role :: Fn ((Referents T) (Referents A)) Content]
       (Context
-        (λ {$k :: Fn<(Referents<T>, Referents<A>), Content>}
-          {(JaiRoleAdmissible R $k)})
+        {λ [$k :: Fn ((Referents T) (Referents A)) Content]
+          (JaiRoleAdmissible R $k)}
         deps…)
-  {((JaiRaise R $role) fills…)})
+  ((JaiRaise R $role) fills…) }
 ```
 
 T and A are indices of one resolved typed reading, not members of a union;
@@ -3394,8 +3397,8 @@ remain explicit alternative targets); the `na'i` objection ≝
 
 ```lisp
 (NahiObjection t) ≝
-  (Bind {$d :: DefectKind} (Context)
-    {(Express (Close (MetalinguisticallyDefective t $d)))})
+  {Bind [$d :: DefectKind] (Context)
+    (Express (Close (MetalinguisticallyDefective t $d)))}
 ```
 
 for a bound prior target `t` (`DefectKind` — wording, form, implication,
@@ -3430,14 +3433,15 @@ this form retroactively grounds the P1 inner-PA machinery.
 indexed by the number `n`, catalogued with exact rows — not term
 expansions (their content is lexical):
 
-`Ordering<T>` is the pure comparison type `Fn<(T, T), Content>`
+`Ordering T` is the pure comparison type `Fn (T T) Content`
 (total and transitive as a definedness condition on its uses).
 The rows, labelled and typed (P25's referential discipline; the
 `Ordering` place is function-typed, the `InnatelyCapable` precedent):
 
 ```text
-(MeiRel κ n) : PredTerm⟨ x1:Referents<Group<T>>, x2:Referents<Set<T>>,
-                         x3:Referents<T> ⟩
+(MeiRel κ n) : PredTerm
+  (Row (1 (Referents (Group T))) (2 (Referents (Set T)))
+       (3 (Referents T)))
    ; κ : GroupBasis<T>, hoisted by the surface occurrence's constrained
    ; Context site before this pure row value is formed.
    ; lexical content: x1 is completely constituted, at the row's
@@ -3447,20 +3451,22 @@ The rows, labelled and typed (P25's referential discipline; the
    ; Objective-indefinite n extends the row with the comparison set
    ; x4:Referents<Set<T>>; subjective n extends it with the standard
    ; place (the degree quantifiers' σ, a Referents<Entity>).
-(MoiRel n)  : PredTerm⟨ x1:Referents<T>, x2:Referents<Set<T>>,
-                        x3:Ordering<T> ⟩
+(MoiRel n)  : PredTerm
+  (Row (1 (Referents T)) (2 (Referents (Set T))) (3 (Ordering T)))
    ; x1 is the n-th member of x2 under x3; x3 Context-recovered when
    ; unstated; definedness: n within x2's cardinality.
-(SiheRel n) : PredTerm⟨ x1:Referents<Entity>, x2:Referents<Entity> ⟩
+(SiheRel n) : PredTerm
+  (Row (1 (Referents Entity)) (2 (Referents Entity)))
    ; x1 is an n-fraction portion of the mass x2 (CLL: portion of
    ; mass); the fraction n a Number in (0, 1].
-(CuhoRel n) : PredTerm⟨ x1:Referents<Eventuality>,
-                        x2:Referents<Eventuality> ⟩
+(CuhoRel n) : PredTerm
+  (Row (1 (Referents Eventuality)) (2 (Referents Eventuality)))
    ; event x1 has probability n under conditions x2 — an opaque
    ; lexical relation; formation condition 0 ≤ n ≤ 1; the model
    ; supplies the measure. NO probability calculus enters the core
    ; (pin P29).
-(VaheRel n) : PredTerm⟨ x1:Referents<Entity>, x2:Referents<Scale> ⟩
+(VaheRel n) : PredTerm
+  (Row (1 (Referents Entity)) (2 (Referents Scale)))
    ; x1's degree on x2 (through the gradable projection its lexical
    ; content names) lies in position n's region.
 ```
@@ -3527,21 +3533,21 @@ condition (§5.5) — the core supplies no totality or unique-result
 guarantees:
 
 ```text
-RelToOp<ρ> : PredTerm<ρ> ⇀ Fn<(Number …), Number>       ; na'u
+RelToOp ρ : PredTerm ρ ⇀ Fn (Number …) Number           ; na'u
    ; defined only at rows whose x1 and operand places take
    ; Referents<Number> (each fill projectively singular): the
    ; operator maps the operands' sole members to the sole x1 member —
    ; definedness includes functionality of the relation in x1 there.
-OpToRel : Fn<(Number …), Number> → PredTerm⟨x1:Referents<Number>,
-                                            x2…:Referents<Number>⟩
+OpToRel : Fn (Number …) Number →
+  PredTerm (Row (1 (Referents Number)) (2 (Referents Number)) …)
    ; nu'a — total: x1's sole member is the operator's result at the
    ; operands' sole members (P25's referential places; singular
    ; conditions formation-level).
-OperandToOp : Number → RefComp<Fn<(Number …), Number>>  ; ma'o
+OperandToOp : Number → RefComp (Fn (Number …) Number)   ; ma'o
    ; the intended function is a Context recovery — hence the
    ; computation type; the constant-function ambiguity CLL 18.21
    ; records is a recovery, not a default (pin P36).
-AmountOperand<ρ> : PredTerm<ρ> ⇀ RefComp<Number>        ; ni'e
+AmountOperand ρ : PredTerm ρ ⇀ RefComp Number           ; ni'e
    ; its own crossing, NOT `NiRel` (which reifies an abstraction):
    ; defined where the row names a Number-sorted result place; the
    ; result is the computation that closes the remaining places per
@@ -3652,7 +3658,7 @@ flattened, the applicable typed instance is one of these defined forms
 that no co-descriptive whole exists outside the selected witness. This is the
 `joi1` single-entity commitment; number-neutral group descriptors remain
 separate. The mapping binds κ through
-`GroupBasisConstraint[joi,T]` or `EventBasisConstraint[joi]` after computing
+`(GroupBasisConstraint joi T)` or `(EventBasisConstraint joi)` after computing
 the surface operands and before invoking these forms. `JoiGroup` is the
 ordinary sumti result. `JoiEvent` is selected instead when
 all operands are Eventuality references and the consuming place demands an
@@ -3673,15 +3679,15 @@ properties. The exact schema is:
 
 ```text
 ((JoiTanru M₁ M₂ H) fills…) ≝
-(Bind {$l1 :: PredTerm ρ(H)}
-        (Context (λ {$r :: PredTerm ρ(H)}
-          {(TanruAdmissible M₁ H $r)}) deps₁…)
-      {$l2 :: PredTerm ρ(H)}
-        (Context (λ {$r :: PredTerm ρ(H)}
-          {(TanruAdmissible M₂ H $r)}) deps₂…)
-      {$κ :: ContributionBasis ρ(H)}
-        (Context ContributionBasisConstraint[joi,ρ(H)] depsκ…)
-  {(∧ (H fills…) ((JoiPred $κ $l1 $l2) fills…))})
+{Bind [$l1 :: PredTerm (RowOf H)]
+        (Context {λ [$r :: PredTerm (RowOf H)]
+          (TanruAdmissible M₁ H $r)} deps₁…)
+      [$l2 :: PredTerm (RowOf H)]
+        (Context {λ [$r :: PredTerm (RowOf H)]
+          (TanruAdmissible M₂ H $r)} deps₂…)
+      [$κ :: ContributionBasis (RowOf H)]
+        (Context (ContributionBasisConstraint joi (RowOf H)) depsκ…)
+  (∧ (H fills…) ((JoiPred $κ $l1 $l2) fills…)) }
 ```
 
 Thus `blanu joi xunre bolci` asserts `bolci` once and mixes the two intended
@@ -3698,13 +3704,13 @@ its local event witnesses into discourse:
 
 ```lisp
 (JoiClause κ C D) ≝
-  (λ {$j :: Referents Eventuality}
-    {(∃ (λ {$e1 :: Referents Eventuality}
-      {(∧ (C $e1)
-          (∃ (λ {$e2 :: Referents Eventuality}
-            {(∧ (D $e2)
+  {λ [$j :: Referents Eventuality]
+    (∃ {λ [$e1 :: Referents Eventuality]
+      (∧ (C $e1)
+          (∃ {λ [$e2 :: Referents Eventuality]
+            (∧ (D $e2)
                 (CompleteGunmaAt κ $j (Combine $e1 $e2))
-                (fasnu $j))})))}))})
+                (fasnu $j))}))})}
 ```
 
 The nested `∧` evaluates `C` then `D` exactly once. `CloseClause` retains `$j`

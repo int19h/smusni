@@ -14,12 +14,11 @@
          SmusniSurface)
 
 (struct core-atom (value source line column position span) #:transparent)
-(struct core-list (shape elements source line column position span) #:transparent)
+(struct core-list (elements source line column position span) #:transparent)
 
 (define-language SmusniSurface
-  [shape paren brace bracket]
   [atom variable-not-otherwise-mentioned natural string]
-  [term atom (node shape term ...)])
+  [term atom (node term ...)])
 
 (define (syntax-location stx)
   (values (syntax-source stx)
@@ -28,18 +27,11 @@
           (syntax-position stx)
           (syntax-span stx)))
 
-(define (shape-of stx)
-  (case (syntax-property stx 'paren-shape)
-    [(#\{) 'brace]
-    [(#\[) 'bracket]
-    [else 'paren]))
-
 (define (syntax->core stx)
   (define-values (source line column position span) (syntax-location stx))
   (define elements (syntax->list stx))
   (if elements
-      (core-list (shape-of stx)
-                 (map syntax->core elements)
+      (core-list (map syntax->core elements)
                  source line column position span)
       (let ([value (syntax-e stx)])
         (core-atom
@@ -108,19 +100,9 @@
 (define (node-symbol? node symbol)
   (and (core-atom? node) (eq? (core-atom-value node) symbol)))
 
-(define (raise-shape who node expected)
-  (error who "expected ~a punctuation at ~a:~a, got ~a"
-         expected (core-list-line node) (core-list-column node)
-         (core-list-shape node)))
-
-(define (require-shape who node expected)
-  (unless (and (core-list? node) (eq? (core-list-shape node) expected))
-    (if (core-list? node)
-        (raise-shape who node expected)
-        (error who "expected ~a-delimited form, got ~e" expected node))))
-
 (define (validate-binder who binder)
-  (require-shape who binder 'brace)
+  (unless (core-list? binder)
+    (error who "expected binder list, got ~e" binder))
   (define elems (core-list-elements binder))
   (define separators
     (for/list ([element (in-list elems)]
@@ -134,9 +116,10 @@
            (core-list-line binder) (core-list-column binder))))
 
 (define (validate-telescope who telescope)
-  (require-shape who telescope 'brace)
+  (unless (core-list? telescope)
+    (error who "expected binder/telescope list, got ~e" telescope))
   (define elems (core-list-elements telescope))
-  (if (and (pair? elems) (andmap core-list? elems))
+  (if (and (pair? elems) (core-list? (first elems)))
       (for ([group (in-list elems)]) (validate-binder who group))
       (validate-binder who telescope)))
 
@@ -148,19 +131,17 @@
      (unless (= (length elems) 3)
        (error 'validate-core-form "λ requires a telescope and one body"))
      (validate-telescope 'validate-core-form (second elems))
-     (require-shape 'validate-core-form (third elems) 'brace)]
+     (void)]
     [(Let)
      (unless (= (length elems) 4)
        (error 'validate-core-form "Let requires binder, value, and body"))
      (validate-binder 'validate-core-form (second elems))
-     (require-shape 'validate-core-form (fourth elems) 'brace)]
+     (void)]
     [(Bind)
      (unless (and (>= (length elems) 4) (even? (length elems)))
        (error 'validate-core-form
               "Bind requires alternating binder/computation pairs and one body"))
      (define tail (rest elems))
-     (define body (last tail))
-     (require-shape 'validate-core-form body 'brace)
      (define pairs (drop-right tail 1))
      (for ([index (in-range 0 (length pairs) 2)])
        (validate-binder 'validate-core-form (list-ref pairs index)))]))
@@ -170,8 +151,7 @@
     [(core-atom? form) (void)]
     [else
      (define elems (core-list-elements form))
-     (when (and (eq? (core-list-shape form) 'paren)
-                (pair? elems)
+     (when (and (pair? elems)
                 (core-atom? (first elems))
                 (member (core-atom-value (first elems)) '(λ Let Bind)))
        (validate-direct-binder form))
@@ -182,12 +162,13 @@
   (unless (= (length forms) 1)
     (error 'read-core-specimen "expected exactly one term, got ~a" (length forms)))
   (define form (first forms))
-  (require-shape 'read-core-specimen form 'paren)
+  (unless (core-list? form)
+    (error 'read-core-specimen "expected one list term, got ~e" form))
   (validate-core-form form)
   form)
 
 (define (core->datum form)
   (match form
     [(core-atom value _ _ _ _ _) value]
-    [(core-list shape elements _ _ _ _ _)
-     `(node ,shape ,@(map core->datum elements))]))
+    [(core-list elements _ _ _ _ _)
+     `(node ,@(map core->datum elements))]))

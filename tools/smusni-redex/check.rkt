@@ -4,6 +4,7 @@
          racket/list
          racket/match
          racket/runtime-path
+         racket/set
          racket/string
          "elaborate.rkt"
          "extract.rkt"
@@ -32,6 +33,25 @@
     [else (error 'load-expected-findings "unsupported expected-findings header")]))
 
 (define (finding-key source ordinal) (cons source ordinal))
+
+(define schema-head-exemptions '(C D H P i-rel))
+
+(define (metavariable-head? value)
+  (or (member value schema-head-exemptions)
+      (and (symbol? value)
+           (string-contains? (symbol->string value) "…"))))
+
+(define (collect-application-heads form)
+  (define found (mutable-set))
+  (define (walk node)
+    (when (core-list? node)
+      (define elements (core-list-elements node))
+      (when (and (pair? elements) (core-atom? (first elements))
+                 (symbol? (core-atom-value (first elements))))
+        (set-add! found (core-atom-value (first elements))))
+      (for ([element (in-list elements)]) (walk element))))
+  (walk form)
+  (set->list found))
 
 (define (match-expected observed expected-by-key)
   (define key (finding-key (observed-finding-source observed)
@@ -68,12 +88,34 @@
   (define declaration-count 0)
   (define site-count 0)
   (define choice-count 0)
+  (define undeclared-heads (make-hash))
 
   (for ([item (in-list classified)])
+    (with-handlers
+        ([exn:fail?
+          (lambda (exception)
+            (set! unexpected
+                  (cons (observed-finding
+                         (fence-source item) (fence-ordinal item)
+                         (fence-digest item) 'inventory-reader-error
+                         (exn-message exception))
+                        unexpected)))])
+      (for ([form (in-list (read-core-forms (fence-content item)))])
+        (for ([head (in-list (collect-application-heads form))]
+              #:unless (or (inventory-name-declared? inventory head)
+                           (metavariable-head? head)
+                           (and (symbol? head)
+                                (string-prefix? (symbol->string head) "$"))))
+          (hash-update! undeclared-heads head
+                        (lambda (locations)
+                          (cons (format "~a#~a" (fence-source item)
+                                        (fence-ordinal item))
+                                locations))
+                        '()))))
     (case (fence-kind item)
       [(specimen)
        (with-handlers
-           ([exn:fail?
+           ([exn:fail:smusni?
              (lambda (exception)
                (define observed
                  (observed-finding (fence-source item) (fence-ordinal item)
@@ -85,7 +127,15 @@
                               (finding-key (fence-source item)
                                            (fence-ordinal item))
                               expected)
-                   (set! unexpected (cons observed unexpected))))])
+                   (set! unexpected (cons observed unexpected))))]
+            [exn:fail?
+             (lambda (exception)
+               (set! unexpected
+                     (cons (observed-finding
+                            (fence-source item) (fence-ordinal item)
+                            (fence-digest item) 'checker-error
+                            (exn-message exception))
+                           unexpected)))])
          (define forms
            (read-core-forms (fence-content item)
                             (format "~a#~a" (fence-source item)
@@ -126,6 +176,14 @@
                             (fence-note item) (fence-issue item)))
                    unexpected))]))
 
+  (for ([(head locations) (in-hash undeclared-heads)])
+    (set! unexpected
+          (cons (observed-finding
+                 "inventory" 0 "n/a" 'inventory-error
+                 (format "undeclared application head ~a at ~a"
+                         head (string-join (remove-duplicates locations) ", ")))
+                unexpected)))
+
   (define stale-expected
     (for/list ([expected (in-list expected-findings)]
                #:unless (hash-has-key?
@@ -140,6 +198,8 @@
           schema-count expansion-count declaration-count)
   (printf "elaboration: ~a retrieval sites, ~a recorded choices\n"
           site-count choice-count)
+  (printf "bounded pass-through typing rules: ~a\n"
+          (string-join (map symbol->string pass-through-forms) ", "))
   (define sorted-matched-keys
     (sort (hash-keys matched-expected)
           (lambda (left right)

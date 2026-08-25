@@ -21,8 +21,8 @@
 (define fixture-path (build-path tool-dir "inventory" "fixtures.sexp"))
 (define assembled-path (build-path tool-dir "inventory" "assembled.sexp"))
 
-(struct row-decl (name required total event-mode citation) #:transparent)
-(struct inventory (sorts subsorts constants forms rows core-digest fixture-digest)
+(struct row-decl (name total event-mode citation) #:transparent)
+(struct inventory (sorts subsorts type-forms constants forms rows core-digest fixture-digest)
   #:transparent)
 
 (define (digest-file path)
@@ -36,6 +36,7 @@
   (define fixture-data (read-one fixtures))
   (define sorts (make-hash))
   (define subsorts '())
+  (define type-forms (make-hash))
   (define constants (make-hash))
   (define forms (make-hash))
   (match core-data
@@ -46,6 +47,8 @@
           (hash-set! sorts name citation)]
          [`(subsort ,(? symbol? child) ,(? symbol? parent) ,(? string? citation))
           (set! subsorts (cons (list child parent citation) subsorts))]
+         [`(type-form ,(? symbol? name) ,arity ,(? string? citation))
+          (hash-set! type-forms name (list arity citation))]
          [`(constant ,(? symbol? name) ,type ,(? string? citation))
           (hash-set! constants name (list type citation))]
          [`(form ,(? symbol? name) ,status ,signature ,class ,reach ,(? string? citation))
@@ -57,21 +60,20 @@
     [`(smusni-lexical-fixtures 1 ,entries ...)
      (for ([entry (in-list entries)])
        (match entry
-         [`(row ,(? symbol? name) ,(? exact-positive-integer? required)
-                ,(? exact-positive-integer? total) ,event-mode ,(? string? citation))
-          (when (> required total)
-            (error 'load-inventory "row requires more fills than it has: ~e" entry))
-          (hash-set! rows name (row-decl name required total event-mode citation))]
+         [`(row ,(? symbol? name) ,(? exact-positive-integer? total)
+                ,event-mode ,(? string? citation))
+          (hash-set! rows name (row-decl name total event-mode citation))]
          [else (error 'load-inventory "invalid fixture row: ~e" entry)]))]
     [else (error 'load-inventory "unsupported fixture inventory header")])
   (define names (append (hash-keys constants) (hash-keys forms) (hash-keys rows)))
   (unless (= (length names) (length (remove-duplicates names)))
     (error 'load-inventory "duplicate declared name across inventory classes"))
-  (inventory sorts (reverse subsorts) constants forms rows
+  (inventory sorts (reverse subsorts) type-forms constants forms rows
              (digest-file core) (digest-file fixtures)))
 
 (define (inventory-name-declared? inv name)
   (or (hash-has-key? (inventory-constants inv) name)
+      (hash-has-key? (inventory-type-forms inv) name)
       (hash-has-key? (inventory-forms inv) name)
       (hash-has-key? (inventory-rows inv) name)))
 
@@ -83,6 +85,7 @@
      (core-sha1 ,(inventory-core-digest inv))
      (fixture-sha1 ,(inventory-fixture-digest inv))
      (sorts ,@(sort (hash-keys (inventory-sorts inv)) symbol<?))
+     (type-forms ,@(sort (hash-keys (inventory-type-forms inv)) symbol<?))
      (constants ,@(sort (hash-keys (inventory-constants inv)) symbol<?))
      (forms ,@(sort (hash-keys (inventory-forms inv)) symbol<?))
      (fixture-rows ,@(sort (hash-keys (inventory-rows inv)) symbol<?))))
@@ -110,8 +113,8 @@
    [("--check") "check assembled.sexp (default)" (set! write? #f)])
   (define inv (load-inventory))
   (if write? (write-assembled! inv) (check-assembled! inv))
-  (printf "inventory: ~a sorts, ~a core forms, ~a fixture rows\n"
+  (printf "inventory: ~a sorts, ~a type formers, ~a core forms, ~a fixture rows\n"
           (hash-count (inventory-sorts inv))
+          (hash-count (inventory-type-forms inv))
           (hash-count (inventory-forms inv))
           (hash-count (inventory-rows inv))))
-

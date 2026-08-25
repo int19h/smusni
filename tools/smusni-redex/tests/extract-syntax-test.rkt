@@ -6,6 +6,7 @@
          "../syntax.rkt")
 
 (define all-fences (read-all-fences))
+(check-not-exn (lambda () (validate-notation! all-fences)))
 (check-equal? (length all-fences) 81)
 (check-equal? (count (lambda (item) (string=? (fence-source item) "samples.md"))
                      all-fences)
@@ -39,19 +40,15 @@
     (check-not-exn (lambda () (validate-core-form form)))))
 
 (define lambda-form
-  (read-core-specimen "(λ {$x :: Entity} {(gerku $x)})" 'lambda-test))
-(check-equal? (core-list-shape lambda-form) 'paren)
-(check-equal? (core-list-shape (second (core-list-elements lambda-form))) 'brace)
-
-(check-exn
- exn:fail?
- (lambda ()
-   (read-core-specimen "(λ ($x :: Entity) {(gerku $x)})" 'bad-braces)))
+  (read-core-specimen "{λ [$x :: Entity] (gerku $x)}" 'lambda-test))
+(define lambda-paren-form
+  (read-core-specimen "(λ ($x :: Entity) (gerku $x))" 'lambda-paren-test))
+(check-equal? (core->datum lambda-form) (core->datum lambda-paren-form))
 
 (check-not-exn
  (lambda ()
    (read-core-specimen
-    "(Bind {$x :: Entity} (Context) {$y :: Entity} (Refer P) {(R $x $y)})"
+    "{Bind [$x :: Entity] (Context) [$y :: Entity] (Refer P) (R $x $y)}"
     'variadic-bind)))
 
 (check-exn

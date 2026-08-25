@@ -15,12 +15,22 @@
          type-compatible?
          infer-core
          infer-specimen-forms
+         pass-through-forms
          pure-typing?
          SmusniStatic
          type-compatible)
 
 (struct typing (type effects obligations gaps) #:transparent)
 (struct exn:fail:smusni exn:fail (source line column) #:transparent)
+
+(define pass-through-forms
+  '(Every No Exactly AtLeast MoreThan Reciprocate CardBasis CoRef Named
+          Realizes SpeakerOf EvidentialBasis Happiness Unhappiness Desire
+          AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
+          Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Tanru Scalar
+          Grade JaiRaise DuhuRel NiRel SuhuRel JeiRel StructuredQuote
+          OpaqueQuote WordSign InterpretContent RealizedContent AmountValue
+          ZipWith))
 
 (define-language SmusniStatic
   [τ any])
@@ -61,12 +71,11 @@
 
 (define (application-head node)
   (and (core-list? node)
-       (eq? (core-list-shape node) 'paren)
        (pair? (core-list-elements node))
        (atom-value (first (core-list-elements node)))))
 
 (define (dynamic-effect? effect)
-  (member effect '(context refer projective performance)))
+  (member effect '(context refer projective performance effectful-call)))
 
 (define (pure-typing? result)
   (not (for/or ([effect (in-set (typing-effects result))])
@@ -101,7 +110,7 @@
        (raise-type node "legacy angle/comma type spelling is not §2 flat syntax: ~a"
                    value))
      value]
-    [(and (core-list? node) (eq? (core-list-shape node) 'paren))
+    [(core-list? node)
      (define elements (core-list-elements node))
      (when (or (null? elements)
                (member (application-head node) '(quote unquote)))
@@ -114,11 +123,24 @@
   (define first-type (parse-type-node (first nodes)))
   (cond
     [(null? (rest nodes)) first-type]
-    ;; Row literals and ρ(H) remain opaque row metalanguage inside an
-    ;; ascription. In particular, commas read as `unquote` must not turn the
-    ;; row display into term syntax.
-    [(member first-type '(PredTerm Record ContrastDomain ContributionBasis))
-     `(,first-type (RowMeta ,@(map core->datum (rest nodes))))]
+    [(member first-type '(Fn EFn))
+     (unless (and (= (length nodes) 3) (core-list? (second nodes)))
+       (raise-type (first nodes)
+                   "~a type syntax is ~a (A B) C with one parameter-list operand"
+                   first-type first-type))
+     (define parameters
+       (for/list ([parameter (in-list (core-list-elements (second nodes)))])
+         (parse-type-node parameter)))
+     `(,first-type ,parameters ,(parse-type-node (third nodes)))]
+    [(eq? first-type 'Row)
+     `(Row
+       ,@(for/list ([field (in-list (rest nodes))])
+           (unless (and (core-list? field)
+                        (>= (length (core-list-elements field)) 2))
+             (raise-type field "Row fields are (label type) lists"))
+           (define field-elements (core-list-elements field))
+           `(,(parse-type-node (first field-elements))
+             ,(parse-type (rest field-elements)))))]
     [(not (symbol? first-type))
      (raise-type (first nodes) "type constructor must be a symbol")]
     [else `(,first-type ,@(map parse-type-node (rest nodes)))]))
@@ -157,6 +179,16 @@
        [`(SignToken ,_) #t]
        [`(PredTerm ,_ ...) #t]
        [`(Record ,_) #t]
+       [`(Row ,fields ...)
+        (andmap (lambda (field)
+                  (and (list? field) (= (length field) 2)
+                       (or (exact-positive-integer? (first field))
+                           (eq? (first field) 'Eventuality))
+                       (type-well-formed? (second field))))
+                fields)]
+       [`(RowOf ,(? symbol? _)) #t]
+       [`(RowMinus ,row ,_) (type-well-formed? row)]
+       [`(Label ,row) (type-well-formed? row)]
        [`(Fn ,params ,result)
         (and (list? params) (andmap type-well-formed? params)
              (type-well-formed? result))]
@@ -232,13 +264,14 @@
   (unless (type-compatible? actual expected)
     (raise-type node "type mismatch: expected ~e, got ~e" expected actual)))
 
-(define (brace-body node)
-  (unless (and (core-list? node) (eq? (core-list-shape node) 'brace))
-    (raise-type node "expected brace-delimited body"))
-  (define elements (core-list-elements node))
-  (unless (= (length elements) 1)
-    (raise-type node "body must contain exactly one term, got ~a" (length elements)))
-  (first elements))
+(define (body-term node)
+  ;; Milestone 1.1 migrates direct forms to bare bodies. Retain a narrow
+  ;; compatibility path for defined entry notations not yet synchronized.
+  (if (and (core-list? node)
+           (= (length (core-list-elements node)) 1)
+           (core-list? (first (core-list-elements node))))
+      (first (core-list-elements node))
+      node))
 
 (define (binder-separator elements node)
   (define positions
@@ -251,8 +284,8 @@
   (first positions))
 
 (define (parse-binder-group node)
-  (unless (and (core-list? node) (eq? (core-list-shape node) 'brace))
-    (raise-type node "expected brace-delimited binder"))
+  (unless (core-list? node)
+    (raise-type node "expected binder list"))
   (define elements (core-list-elements node))
   (define separator (binder-separator elements node))
   (define names (take elements separator))
@@ -266,14 +299,11 @@
     (cons name type)))
 
 (define (parse-telescope node)
-  (unless (and (core-list? node) (eq? (core-list-shape node) 'brace))
-    (raise-type node "expected brace-delimited telescope"))
+  (unless (core-list? node)
+    (raise-type node "expected binder/telescope list"))
   (define elements (core-list-elements node))
   (if (and (pair? elements)
-           (andmap (lambda (element)
-                     (and (core-list? element)
-                          (eq? (core-list-shape element) 'brace)))
-                   elements))
+           (core-list? (first elements)))
       (append-map parse-binder-group elements)
       (parse-binder-group node)))
 
@@ -304,7 +334,7 @@
              (list (format "undeclared atom ~a" value))) ]))
 
 (define (infer-body body env inv)
-  (infer-core (brace-body body) env inv))
+  (infer-core (body-term body) env inv))
 
 (define (infer-lambda node env inv)
   (define elements (core-list-elements node))
@@ -344,7 +374,7 @@
     [(eq? head 'Vague)
      (match expected
        [`(RefComp ,_)
-        (typing expected empty-effects '() '())]
+        (typing expected (set 'context) '() '())]
        [_ (raise-type node "Vague requires a RefComp expected type")])]
     [(eq? head 'Refer)
      (match expected
@@ -461,13 +491,71 @@
   (define event-filled?
     (for/or ([argument (in-list arguments)])
       (eq? (atom-value argument) ':Eventuality)))
+  (define ordinary-count (- value-count (if event-filled? 1 0)))
+  (when (> ordinary-count (row-decl-total row))
+    (raise-type node "row ~a has ~a ordinary places but received ~a fills"
+                head (row-decl-total row) ordinary-count))
   (define output-type
-    (if (and (>= value-count (row-decl-required row))
+    (if (and (= ordinary-count (row-decl-total row))
              (or (eq? (row-decl-event-mode row) 'holding-state)
                  event-filled?))
         'Content
-        `(PredTerm ,head ,value-count)))
+        `(PredTerm ,head ,ordinary-count ,event-filled?)))
   (merge-results output-type argument-results))
+
+(define (row-index-shape row inv)
+  (cond
+    [(symbol? row)
+     (define declaration (inventory-row inv row))
+     (and declaration
+          (list (row-decl-total declaration)
+                (eq? (row-decl-event-mode declaration) 'direct-event)))]
+    [else
+     (match row
+       [`(ArityRow ,(? exact-nonnegative-integer? count)) (list count #f)]
+       [`(Row ,fields ...)
+        (list (count (lambda (field)
+                       (and (list? field) (exact-positive-integer? (first field))))
+                     fields)
+              (for/or ([field (in-list fields)])
+                (and (list? field) (eq? (first field) 'Eventuality))))]
+       [_ #f])]))
+
+(define (argument-fill-counts arguments)
+  (define event-filled?
+    (for/or ([argument (in-list arguments)])
+      (eq? (atom-value argument) ':Eventuality)))
+  (define value-count
+    (for/sum ([argument (in-list arguments)])
+      (if (and (core-atom? argument)
+               (symbol? (core-atom-value argument))
+               (string-prefix? (symbol->string (core-atom-value argument)) ":"))
+          0 1)))
+  (values (- value-count (if event-filled? 1 0)) event-filled?))
+
+(define (infer-predterm-application node pred-type operator results arguments inv)
+  (match pred-type
+    [`(PredTerm ,row ,filled ,event-already?)
+     (define shape (row-index-shape row inv))
+     (define-values (new-fills event-now?) (argument-fill-counts arguments))
+     (define total-filled (+ filled new-fills))
+     (when (and shape (> total-filled (first shape)))
+       (raise-type node "PredTerm row has ~a ordinary places but application fills ~a"
+                   (first shape) total-filled))
+     (define event-filled? (or event-already? event-now?))
+     (merge-results
+      (if (and shape (= total-filled (first shape))
+               (or (not (second shape)) event-filled?))
+          'Content
+          `(PredTerm ,row ,total-filled ,event-filled?))
+      (cons operator results))]
+    [`(PredTerm ,row)
+     (infer-predterm-application node `(PredTerm ,row 0 #f)
+                                 operator results arguments inv)]
+    [`(PredTerm ,row ,filled)
+     (infer-predterm-application node `(PredTerm ,row ,filled #f)
+                                 operator results arguments inv)]
+    [other (raise-type node "not a PredTerm application: ~e" other)]))
 
 (define (infer-logical node head arguments env inv)
   (define results (map (lambda (argument) (infer-core argument env inv)) arguments))
@@ -507,16 +595,21 @@
         (for ([argument (in-list arguments)] [actual (in-list argument-results)]
               [expected (in-list params)])
           (ensure-compatible argument (typing-type actual) expected))
-        (merge-results result (cons operator argument-results))]
+        (merge-results result (cons operator argument-results)
+                       #:effects (if (eq? arrow 'EFn)
+                                     (set 'effectful-call)
+                                     empty-effects))]
        ['ClauseContent
         (unless (= (length arguments) 1)
           (raise-type node "ClauseContent application takes one event reference"))
         (ensure-compatible (first arguments)
                            (typing-type (first argument-results))
                            '(Referents Eventuality))
-        (merge-results 'Content (cons operator argument-results))]
-       [`(PredTerm ,row ,rest ...)
-        (merge-results 'Content (cons operator argument-results))]
+        (merge-results 'Content (cons operator argument-results)
+                       #:effects (set 'effectful-call))]
+       [`(PredTerm ,_ ,_ ...)
+        (infer-predterm-application node (typing-type operator)
+                                    operator argument-results arguments inv)]
        [other (typing 'Unknown empty-effects '()
                       (list (format "application of unsupported operator type ~e" other)))])]
     [(member head '(∧ ∨ →)) (infer-logical node head arguments env inv)]
@@ -573,14 +666,23 @@
        ['Content operand]
        ['ClauseContent
         (raise-type node "ClauseContent requires CloseClause, not Close/Content transparency")]
-       [`(PredTerm ,row ,_ ...)
+       [`(PredTerm ,row ,filled ,_event-filled)
+        (define row-declaration (inventory-row inv row))
+        (define defaults-remain?
+          (or (not row-declaration)
+              (< filled (row-decl-total row-declaration))))
         (merge-results 'Content (list operand)
-                       #:effects (if (eq? row 'skicu)
-                                     empty-effects
-                                     (set 'context)))]
-       [`(,arrow ,_ Content)
-        #:when (member arrow '(Fn EFn))
+                       #:effects (if defaults-remain?
+                                     (set 'context)
+                                     empty-effects))]
+       [`(PredTerm ,_ ,_ ...)
         (merge-results 'Content (list operand) #:effects (set 'context))]
+       [`(,arrow ,params Content)
+        #:when (member arrow '(Fn EFn))
+        (merge-results 'Content (list operand)
+                       #:effects (if (or (eq? arrow 'EFn) (pair? params))
+                                     (set 'context)
+                                     empty-effects))]
        [other (raise-type node "Close cannot consume ~e" other)])]
     [(eq? head 'CloseClause)
      (unless (= (length arguments) 1) (raise-type node "CloseClause takes one operand"))
@@ -780,9 +882,12 @@
                                     (equal? (core-atom-value (second arguments)) 0))
                                '("MeiRel kappa 0 is gap #23")
                                '()))]
-    [(member head '(Tanru Scalar Grade JaiRaise DuhuRel NiRel SuhuRel JeiRel))
+    [(member head '(DuhuRel NiRel SuhuRel JeiRel))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
-     (merge-results `(PredTerm ,head 0) results)]
+     (merge-results '(PredTerm (ArityRow 2) 0 #f) results)]
+    [(member head '(Tanru Scalar Grade JaiRaise))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (merge-results `(PredTerm ,head 0 #f) results)]
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold
                           MetalinguisticallyDefective Contrast JaiRoleAdmissible
@@ -805,16 +910,43 @@
                         '(Sign Sentence)
                         '(Sign UnknownKind))
                     (list body))]
+    [(eq? head 'At)
+     (unless (= (length arguments) 3)
+       (raise-type node "At takes relation, bare numeral/Eventuality label, and value"))
+     (define label (atom-value (second arguments)))
+     (unless (or (exact-positive-integer? label)
+                 (eq? label 'Eventuality)
+                 (match (typing-type (infer-core (second arguments) env inv))
+                   [`(CompatibleLabel ,_ ,_) #t]
+                   [`(Label ,_) #t]
+                   [_ #f]))
+       (raise-type (second arguments)
+                   "At label must be a bare numeral/Eventuality or typed label value"))
+     (define relation (infer-core (first arguments) env inv))
+     (define value (infer-core (third arguments) env inv))
+     (unless (match (typing-type relation) [`(PredTerm ,_ ,_ ...) #t] [_ #f])
+       (raise-type (first arguments) "At requires PredTerm"))
+     (merge-results '(PredTerm Derived 0 #f) (list relation value))]
+    [(eq? head 'DropPlace)
+     (unless (= (length arguments) 2)
+       (raise-type node "DropPlace takes relation and bare numeral/Eventuality label"))
+     (define label (atom-value (second arguments)))
+     (unless (or (exact-positive-integer? label) (eq? label 'Eventuality))
+       (raise-type (second arguments)
+                   "DropPlace label must be a bare positive numeral or Eventuality"))
+     (define relation (infer-core (first arguments) env inv))
+     (unless (match (typing-type relation) [`(PredTerm ,_ ,_ ...) #t] [_ #f])
+       (raise-type (first arguments) "DropPlace requires PredTerm"))
+     (merge-results '(PredTerm Derived 0 #f) (list relation))]
     [(member head '(StructuredQuote OpaqueQuote WordSign InterpretContent
-                                    RealizedContent AmountValue ZipWith At DropPlace))
+                                    RealizedContent AmountValue ZipWith))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (define type
        (case head
          [(OpaqueQuote WordSign StructuredQuote) '(Sign Sentence)]
          [(InterpretContent RealizedContent) 'Content]
          [(AmountValue) 'Number]
-         [(ZipWith) 'Content]
-         [(At DropPlace) '(PredTerm Derived 0)]))
+         [(ZipWith) 'Content]))
      (merge-results type results)]
     [(inventory-row inv head)
      (infer-lexical-application node head arguments env inv (inventory-row inv head))]
@@ -828,8 +960,20 @@
           (raise-type node "bound function arity mismatch"))
         (for ([arg arguments] [result results] [expected params])
           (ensure-compatible arg (typing-type result) expected))
-        (merge-results output (cons operator results))]
-       [`(PredTerm ,_ ,_ ...) (merge-results 'Content (cons operator results))]
+        (merge-results output (cons operator results)
+                       #:effects (if (eq? arrow 'EFn)
+                                     (set 'effectful-call)
+                                     empty-effects))]
+       ['ClauseContent
+        (unless (= (length results) 1)
+          (raise-type node "ClauseContent application takes one event reference"))
+        (ensure-compatible (first arguments) (typing-type (first results))
+                           '(Referents Eventuality))
+        (merge-results 'Content (cons operator results)
+                       #:effects (set 'effectful-call))]
+       [`(PredTerm ,_ ,_ ...)
+        (infer-predterm-application node (typing-type operator)
+                                    operator results arguments inv)]
        [other (raise-type node "bound value is not applicable: ~e" other)])]
     [else
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
@@ -839,8 +983,6 @@
 (define (infer-core node [env (hash)] [inv (load-inventory)])
   (cond
     [(core-atom? node) (infer-atom node env inv)]
-    [(not (eq? (core-list-shape node) 'paren))
-     (raise-type node "brace/bracket form is not a term outside its syntax role")]
     [else (infer-application node env inv)]))
 
 (define (infer-specimen-forms forms [inv (load-inventory)])
