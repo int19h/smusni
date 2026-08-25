@@ -58,4 +58,8 @@
  exn:fail?
  (lambda () (read-core-specimen "(gerku x) (mlatu y)" 'two-terms)))
 
+(define apostrophe-form (read-core-specimen "(te'a 2 3)" 'apostrophe))
+(check-equal? (core-atom-value (first (core-list-elements apostrophe-form)))
+              (string->symbol "te'a"))
+
 (displayln "extract/syntax tests: ok")

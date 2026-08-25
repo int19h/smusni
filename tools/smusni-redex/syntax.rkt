@@ -41,10 +41,63 @@
       (core-list (shape-of stx)
                  (map syntax->core elements)
                  source line column position span)
-      (core-atom (syntax-e stx) source line column position span)))
+      (let ([value (syntax-e stx)])
+        (core-atom
+         (if (symbol? value)
+             (string->symbol
+              (string-replace (symbol->string value) "ʼ" "'"))
+             value)
+         source line column position span))))
+
+(define (identifier-char? character)
+  (or (char-alphabetic? character)
+      (char-numeric? character)
+      (member character '(#\_ #\-))))
+
+;; Racket treats ASCII apostrophe as quote punctuation even in `te'a`.
+;; Protect identifier-internal Lojban apostrophes with a same-width marker
+;; before read-syntax, then restore them in syntax->core. Comments and strings
+;; are left byte-for-byte semantic text.
+(define (protect-lojban-apostrophes text)
+  (define length (string-length text))
+  (define out (open-output-string))
+  (let loop ([index 0] [state 'normal] [escaped? #f])
+    (when (< index length)
+      (define character (string-ref text index))
+      (define next-state state)
+      (define next-escaped? #f)
+      (cond
+        [(eq? state 'comment)
+         (write-char character out)
+         (when (char=? character #\newline) (set! next-state 'normal))]
+        [(eq? state 'string)
+         (write-char character out)
+         (cond
+           [escaped? (set! next-escaped? #f)]
+           [(char=? character #\\) (set! next-escaped? #t)]
+           [(char=? character #\") (set! next-state 'normal)])]
+        [else
+         (cond
+           [(char=? character #\;)
+            (write-char character out)
+            (set! next-state 'comment)]
+           [(char=? character #\")
+            (write-char character out)
+            (set! next-state 'string)]
+           [(and (char=? character #\')
+                 (positive? index)
+                 (< (add1 index) length)
+                 (identifier-char? (string-ref text (sub1 index)))
+                 (identifier-char? (string-ref text (add1 index))))
+            (write-char #\ʼ out)]
+           [else (write-char character out)])])
+      (loop (add1 index) next-state next-escaped?)))
+  (get-output-string out))
 
 (define (read-core-forms input [source-name 'smusni])
-  (define in (if (input-port? input) input (open-input-string input)))
+  (define raw
+    (if (input-port? input) (port->string input) input))
+  (define in (open-input-string (protect-lojban-apostrophes raw)))
   (port-count-lines! in)
   (let loop ([forms '()])
     (define stx (read-syntax source-name in))
