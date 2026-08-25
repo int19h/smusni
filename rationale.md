@@ -304,7 +304,10 @@ curated realization clause per common row. Every declared event basis must
 also state trace, role-participant, and causal aggregation; every property
 basis must make all operands contribute and jointly suffice. This moves the
 hard semantics to a typed, auditable interface rather than renaming it “the
-model's mixture”. No component property inherits automatically: the 1995
+model's mixture”. A basis used by `joi` must also preserve each surface
+operand's units in the combined cover; a granularity that merges away the
+speaker's operand boundary is inadmissible for that occurrence, not a reason
+for the term to become false. No component property inherits automatically: the 1995
 mailing-list critique's reductio (`lei mlatu` would be a tail, or have been in
 the sun, because some material part was) is decisive.
 

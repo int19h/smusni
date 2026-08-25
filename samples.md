@@ -1061,4 +1061,7 @@ mi sanga .i joi do dansu
 mi joi nai do cu remei
   — CLL's “some other connection” does not identify which alternative or its
     scope; no hidden existential-choice fallback.
+li pa joi re du li ci
+  — joik-connected mekso operands parse, but no number/operator/collection
+    denotation has been established for this locus.
 ```

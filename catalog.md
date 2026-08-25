@@ -943,7 +943,9 @@ interfaces, not first-order sets or inspectable records.
 **Formally.** See spec §4.9 for the unit/cover laws, event trace/participant/
 cause obligations, and `GunmaPredAt`'s pointwise `MixAt` condition. Group and
 event component arguments remain `Referents<·>`; only predicate components
-need `Family⁺`.
+need `Family⁺`. A basis used by a `joi` construction must preserve every
+operand-cover unit in the combined cover; merging granularities are
+inadmissible for that operand partition.
 **For.** The defined constitution relations below; conjunction's canonical
 `joint_M` basis.
 **Status.** `BasisUnitAt`, `PeerUnitAt`, `MixAt`, and `ContributesAt`, the

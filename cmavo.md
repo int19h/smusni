@@ -1806,8 +1806,10 @@ production; `se` on a non-logical connective swaps the (ordered)
 operands; `nai` on a joik is per-locus: truth-table for logical
 loci and `RegionComplement` for BIhI. Plain constitution-bearing `joi` uses
 the typed `Joi*` dispatch above; `joi nai` remains gap-registered because
-“some other connection” supplies neither one intended alternative nor a
-contrast-domain/scope law. `nai` creates no hidden discrete-choice fallback.
+CLL 15.7's scalar “some other connection” supplies neither one intended
+alternative nor a contrast-domain/scope law. Its future route is §6.3
+contrast structure over a typed connective family; `nai` creates no hidden
+discrete-choice fallback.
 
 **See.** [Spec §4.5, §4.8, §11](spec.md).
 
@@ -1922,5 +1924,5 @@ is exactly what the specification itself marks open:
   abstractors; the non-numeric `me … me'u MOI` composite;
   `joi nai`, `pe'e joi`, property `joi` without a declared basis, and compound
   ijoik performance (plain sumti/event/property constitution and `JoiClause`
-  are mapped);
+  are mapped); joik-connected mekso operands such as `li pa joi re`;
   the explicit vague connective `ju'e`; cross-clausal topic place-linking.

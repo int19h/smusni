@@ -915,6 +915,20 @@ thereby components. A basis may declare a null component only with an
 explicit identity law; the conjunction basis below is the sole baseline
 case.
 
+A basis offered to `JoiGroup`, `JoiEvent`, or `JoiClause` is admissible for a
+particular flattened operand partition `X₁,…,Xₙ` only if it **respects that
+partition**:
+
+```text
+BasisUnitAt(κ,u,Xᵢ) → BasisUnitAt(κ,u,Combine(X₁,…,Xₙ))   for every i.
+```
+
+The speaker's articulation into `joi` operands is therefore preserved at the
+selected peer granularity. A basis that merges away an operand-boundary unit
+(for example, maximal contiguous phases that merge two adjacent events) is
+not admissible for that partition; it cannot make the mapping silently
+unsatisfiable.
+
 `GunmaAt` is now an actual definition over that interface, deliberately
 **non-exhaustive** so `w` may have other peer units. The complete strengthening
 adds the converse:
@@ -940,6 +954,10 @@ basis-declared null component; the null is absorbable, not an ordinary
 component of everything. A complete construction rules out an unmentioned peer at
 the selected basis. Neither layer licenses component-to-whole or
 whole-to-component property inheritance.
+
+For a declared null cover, `GunmaAt κ w null` is deliberately vacuous; only
+the basis's explicit null-whole/identity law can make it complete, and no
+surface `ComponentAt` exposes the vacuous partial relation.
 
 `GroupBasis<T>` abbreviates `DecompositionBasis<Group<T>,T>`. Each mapped
 group-forming occurrence retrieves a constrained `GroupBasis<T>` through
@@ -979,6 +997,11 @@ has **complete-cover existence and extensionality**: for every mapped operand
 cover it supplies a complete whole, and any two complete whole references for
 that cover co-refer. Thus the clause parameter is one joint whole up to
 reference identity rather than an accidental plurality of rival events.
+Together with the earlier congruence law that co-referent wholes have the same
+`PeerUnitAt` field, this also blocks a plural reference to rival partial
+wholes from masquerading as the complete joint event: extensionality would
+force it to co-refer with the genuine whole, while field congruence would then
+force the incompatible peer fields to agree.
 
 The model carries one distinguished event basis `κ∧` for conjunction.
 `joint_M(e₁,…,eₙ)` is, up to `CoRef`, the unique complete event whole under
@@ -3614,13 +3637,11 @@ flattened, the applicable typed instance is one of these defined forms
 ```text
 (JoiGroup κ X₁ … Xₙ) : RefComp<Referents<Group<T>>>  ≝
   (SelectExactly 1 (λ {$g :: Group T}
-    {(∧ (GunmaAt κ $g X₁) … (GunmaAt κ $g Xₙ)
-        (CompleteGunmaAt κ $g (Combine X₁ … Xₙ)))}))
+    {(CompleteGunmaAt κ $g (Combine X₁ … Xₙ))}))
 
 (JoiEvent κ E₁ … Eₙ) : RefComp<Referents<Eventuality>>  ≝
   (SelectExactly 1 (λ {$j :: Eventuality}
-    {(∧ (GunmaAt κ $j E₁) … (GunmaAt κ $j Eₙ)
-        (CompleteGunmaAt κ $j (Combine E₁ … Eₙ)))}))
+    {(CompleteGunmaAt κ $j (Combine E₁ … Eₙ))}))
 
 (JoiPred κ P₁ … Pₙ) : PredTerm<ρ>  ≝
   (λ {$a :: Record ρ}
@@ -3642,7 +3663,10 @@ intended κ first through a constrained `Context` site with the reading's
 dependency profile; the transparent row-function result is then constructed
 directly from `MixAt`, with `GunmaPredAt κ (JoiPred κ P₁ … Pₙ)
 (Family P₁ … Pₙ)` following by definition. If no common row or declared
-contribution basis exists, there is no baseline reading.
+contribution basis exists, there is no baseline reading. The per-operand
+`GunmaAt κ whole Xᵢ` facts are derivable from complete constitution plus the
+operand-respecting admissibility law, so the definitions do not repeat them as
+conjuncts.
 
 At a shared-head tanru locus the head is not itself one of the mixed
 properties. The exact schema is:
@@ -3679,8 +3703,6 @@ its local event witnesses into discourse:
       {(∧ (C $e1)
           (∃ (λ {$e2 :: Referents Eventuality}
             {(∧ (D $e2)
-                (GunmaAt κ $j $e1)
-                (GunmaAt κ $j $e2)
                 (CompleteGunmaAt κ $j (Combine $e1 $e2))
                 (fasnu $j))})))}))})
 ```
@@ -3698,9 +3720,11 @@ invariant, `se joi` changes no denotation. Homogeneous chains flatten before
 construction; mixed joik grouping remains syntactically significant. Repeated
 co-referential sumti operands collapse at the plural `Combine` layer; the
 language supplies no multiplicity reading for `joi`. `joi nai`, which CLL
-14.15 says selects some *other connection* rather than negating an operand,
-and `pe'e joi` termsets remain gap-registered rather than receiving a discrete
-choice fallback.
+15.7 calls scalar negation selecting some *other connection* rather than
+negating an operand, and `pe'e joi` termsets remain gap-registered rather than
+receiving a discrete-choice fallback. The natural future route for `joi nai`
+is §6.3 contrast structure over a typed connective family, once its domain and
+scope are actually defined.
 
 **Tanru link connection** (jek at the tanru-unit locus; pin P33).
 `TanruLinkConnect`: for a shared head, retrieve one intended admissible link
@@ -4015,9 +4039,12 @@ approximate:
   Remaining gaps are bounded: (a) a tanru/property use with no common row or
   curated `ContributionBasis<ρ>` instance; (b) `pe'e joi` termsets, whose
   paired term-and-tag bundles cannot be reduced to either a plain group or a
-  property family; (c) `joi nai`, whose “some other connection” reading has
-  no selected contrast-domain member or scope law; and (d) the structured
-  **performance** of `.i joi` and other non-logical ijoiks. `JoiClause`
+  property family; (c) `joi nai`, whose CLL 15.7 scalar-negation reading has
+  no selected contrast-domain member or scope law (the recorded candidate is
+  §6.3 contrast machinery over the connective family); and (d) the structured
+  **performance** of `.i joi` and other non-logical ijoiks; and (e)
+  joik-connected mekso operands such as `li pa joi re`, whose parser locus has
+  no number/operator/collection denotation. `JoiClause`
   supplies (d)'s content and compound event but not its component roles,
   targeting, transcript spans, force, or accessibility plan. Any future
   `ConnectionPlan` constructor is constrained by §7.1: its one host `Perform`
@@ -4161,7 +4188,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
-| MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e` | §10 |
+| MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e`, joik-connected mekso operands | §10 |
 | plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis rows, compound ijoik performance; count/mass `CoveredBy` | §3, §5 |
 | prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
