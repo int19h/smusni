@@ -519,9 +519,15 @@ def cmd_new(reg: Registry, a: argparse.Namespace) -> int:
 
 def cmd_publish(reg: Registry, actor: str | None, draft: Path) -> int:
     actor = bound_actor(reg, actor)
+    draft_dir = reg.spool / "drafts" / actor
+    if not draft.exists() and "/" not in str(draft):
+        # accept a bare draft id or filename, as `ack` accepts a bare id
+        candidate = draft_dir / (draft.name if draft.name.endswith(".md") else f"{draft.name}.md")
+        if candidate.exists():
+            draft = candidate
     draft = draft.resolve()
     if not draft.exists():
-        raise ExchangeError(EXIT_USAGE, f"draft not found: {draft}")
+        raise ExchangeError(EXIT_USAGE, f"draft not found: {draft} (pass the draft path, its filename, or its id)")
     if draft.parent != (reg.spool / "drafts" / actor).resolve():
         raise ExchangeError(EXIT_OWNERSHIP, f"{draft} is not in {actor}'s draft directory")
     data, body, errs = front_matter(draft)

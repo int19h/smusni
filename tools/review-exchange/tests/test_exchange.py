@@ -280,6 +280,16 @@ class ExchangeTest(unittest.TestCase):
         self.run_tool("new", "--actor", "codex", "--to", ",", "--kind", "request", "--slug", "e", expect=1)
 
 
+    def test_publish_accepts_bare_id_or_filename(self):
+        d = Path(self.run_tool("new", "--actor", "codex", "--to", "fable", "--kind", "request",
+                               "--slug", "byid").strip()); self.fill(d)
+        pub = Path(self.run_tool("publish", "--actor", "codex", d.stem).strip())     # bare id
+        self.assertTrue(pub.exists())
+        d2 = Path(self.run_tool("new", "--actor", "codex", "--to", "fable", "--kind", "request",
+                                "--slug", "byname").strip()); self.fill(d2)
+        self.assertTrue(Path(self.run_tool("publish", "--actor", "codex", d2.name).strip()).exists())
+        self.run_tool("publish", "--actor", "codex", "20260101T000000Z-codex-nothing", expect=1)
+
     # ---- documentation hygiene ----------------------------------------------
     def test_markdown_links_resolve_relative_to_their_file(self):
         import re

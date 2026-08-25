@@ -179,7 +179,7 @@ Run from the repository root:
 python3 tools/review-exchange/exchange.py status --actor <actor>   # start and end of a turn
 python3 tools/review-exchange/exchange.py new --actor <actor> --to all|a,b --kind <kind> \
     --slug <slug> [--issues '#1,#2'] [--reply-to <id>] [--supersedes <id>] [--no-ack]
-python3 tools/review-exchange/exchange.py publish --actor <actor> <draft>
+python3 tools/review-exchange/exchange.py publish --actor <actor> <draft-path|draft-id>
 python3 tools/review-exchange/exchange.py ack --actor <actor> <id> --disposition '…'
 python3 tools/review-exchange/exchange.py validate
 python3 -m unittest discover -s tools/review-exchange/tests
