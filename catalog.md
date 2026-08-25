@@ -158,6 +158,9 @@ the current transcript token/span and the extensional semantic capture of
 that performance's utterance context and `Context` resolver. Re-performing
 one act creates another occurrence and may realize different content without
 mutating the package. **Semantic class:** Class M model infrastructure.
+The captured resolver is its original partial function over every declared
+dependency tuple at the package's sites, not a visited-tuple cache; newly
+reached tuples use that function or project its undefinedness.
 **Surface reachability:** lowering-only generic infrastructure — `Perform`
 returns the handle and act-level UI lowerings `Bind` it, but there is no
 direct Lojban sumti spelling, pure constructor, or state inspector. Its factorization witness is the
@@ -165,6 +168,8 @@ direct Lojban sumti spelling, pure constructor, or state inspector. Its factoriz
 grounding.
 `OccurrenceRole` is the closed `Host | AttachedDisplay | AttachedAddress`
 index supplied explicitly to `Perform`; unary `Perform a` is Host shorthand.
+A standalone display/COI/vocative is Host; the attached roles occur only
+beside a distinct Host.
 **For.** Cross-performance default `go'i` and `la'e di'u` preserve the antecedent occurrence's
 resolved context; `ra'o` selectively rebuilds its marked pro-assign sites from
 the raw package while retaining other captured sites.

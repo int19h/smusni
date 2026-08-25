@@ -945,7 +945,13 @@ that performance's utterance context and contextual resolver. A capture is a
 semantic closure, not a trace, cache, or diagnostic record: it is identified
 only by the values it supplies to the package's context projections and
 `Context` sites at their declared dependency tuples; unrelated resolver
-behavior is ignored. The assertion member of such an occurrence therefore
+behavior is ignored. For each captured site, this is the original resolver's
+**partial function over the site's whole declared dependency domain**, not the
+finite graph of tuples that the performed run happened to visit. If later
+template reuse reaches a previously unvisited tuple, it consults that captured
+partial function: a defined value is reused, while undefinedness projects in
+the ordinary way. The caller's resolver is never substituted merely because
+the tuple is new. The assertion member of such an occurrence therefore
 has a structured Content value interpreted under that capture. Performing the
 same a twice creates two occurrences and may yield two realized contents;
 neither performance mutates a or changes `(ActContent a)`. Section 7.1 fixes
@@ -1654,6 +1660,9 @@ package through transcript structure; #6 owns any component-content projection
 inside the one compound occurrence. The surface-to-discourse mapping supplies
 the explicit `OccurrenceRole`; no term inspects it after `Perform` constructs
 the occurrence.
+A standalone display, COI, or vocative utterance has no distinct host to
+attach to and is therefore its entry's `Host`; `AttachedDisplay` and
+`AttachedAddress` are used only beside another Host occurrence.
 
 `Perform` first creates the occurrence/capture, then runs that captured
 payload, handles its presuppositions and supplements, and only then applies
@@ -1794,6 +1803,10 @@ sharpening. `ra'o` selectively reopens the antecedent pro-assign sites it
 marks: the mapping rebuilds those sites from the raw package/template under
 the new performance context while retaining the occurrence capture at every
 unmarked site (§11). It is not a wholesale raw-package replay.
+If a reuse override introduces a dependency tuple the antecedent run never
+visited, the capture uses §5.1's full-domain partial-function rule; it neither
+freshly resolves in the caller's context nor fails merely because the tuple
+was unvisited.
 
 The `Utterance` λ above is a *pure token-description property*. It suspends
 the facts by nature (nothing is performed, nothing introduced — quoted material

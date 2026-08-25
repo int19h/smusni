@@ -366,6 +366,12 @@ but no performance occurrence, so quotation interpretation correctly gets
 the raw content. The capture is semantic, not a replay log: truth evaluation,
 reference choices, projective commitments, and vagueness still obey their
 ordinary rules.
+The captured resolver is a partial function over every legal dependency tuple
+of each captured site, not a log of tuples the first run happened to visit.
+If a later `go'i` override reaches a new tuple, that original captured
+function supplies it or is projectively undefined; the new speaker does not
+quietly choose a replacement. A standalone UI/COI/vocative is its own Host
+occurrence; "attached" roles exist only when another Host is present.
 
 Embedded questions: `mi djuno lo du'u ma kau klama` — "I know who came."
 What `kau` contributes is *answerhood*: my knowledge settles the question.

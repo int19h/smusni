@@ -332,6 +332,12 @@ without identifying any two of them. **Why not
 target only the raw act?** Re-performing one package would make the two
 targets identical. It freezes contextual interpretation, not dynamic truth,
 reference outcomes, projective discharge, or a `Vague` sharpening.
+The resolver capture is likewise extensional rather than historical: at each
+captured site it retains the original partial function on the entire declared
+dependency domain. A later override that reaches a tuple not traversed in the
+antecedent therefore uses the original captured answer when defined and is
+projectively undefined otherwise; fresh caller-context resolution would break
+the very capture default this layer exists to state.
 CLL 7.6 independently supplies the key minimal pair: ordinary GOhA keeps the
 antecedent pro-sumti meanings, whereas `ra'o` reinterprets them in the new
 context. That source does **not** license reopening every omitted place or

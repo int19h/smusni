@@ -1299,6 +1299,8 @@ family). ⊳ Target selection by grammatical attachment (P19).
 The occurrence handle makes the host-force/display target explicit after
 lowering; performing `$a` again returns a distinct handle that the earlier UI
 does not modify. A relation about the raw package may still target `$a`.
+A standalone UI with no separate host is itself `(Perform Host (Express …))`,
+not `AttachedDisplay`.
 
 **See.** [Spec §7.6, §11](spec.md), pin P19; [samples §7](samples.md).
 
@@ -1417,6 +1419,8 @@ suspended-topic stack in the information state.
 
 Performative expressives: `Express` of the COI lexical relation with
 the performative host-force profile — the greeting *is* the act.
+A standalone COI is therefore `Host`; it is `AttachedDisplay` only when the
+grammar attaches it beside a distinct host.
 
 ```lisp
 ; coi do
@@ -1432,6 +1436,8 @@ Vocative address: `(Perform AttachedAddress (Vocative X))` beside the host,
 binding of the active `do` (P27) — `do` and `ko` consult the active
 binding before falling back to the utterance's Audience, which is
 never mutated.
+A lone vocative with no distinct host uses unary/Host `Perform`, not
+`AttachedAddress`.
 
 ```lisp
 ; doi .djan. ko klama — the vocative act, then the command to John

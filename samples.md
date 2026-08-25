@@ -576,6 +576,10 @@ that occurrence content. `go'i ra'o` instead starts from raw
 `(ActContent (RealizedAct<Assertion> $u))` as its source template, selectively
 reinterprets the marked pro-assign sites in the new utterance
 context/`ShiftedGround`, and retains every unrelated captured `Context` site.
+If an override widens a captured site's governor and reaches a dependency
+tuple absent from the antecedent run, it consults the original capture's
+full-domain partial resolver: reuse gets that original-context value when
+defined and projective undefinedness otherwise, never fresh caller resolution.
 
 ```lisp
 ; mi djuno lo du'u ma kau klama      [pin P9]
