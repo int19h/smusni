@@ -1,0 +1,53 @@
+# Participant registry for the review exchange. This file is the single
+# actor allow-list: the helper derives actor names, message-ID syntax,
+# broadcast expansion, and default provenance from it. Adding a reviewer is
+# an edit here, never a code change.
+
+protocol = "smusni-review-mail/v2"
+spool = "review/exchange"
+
+[actors.codex]
+active = true
+display_name = "Codex"
+client = "codex"
+model = "session-selected"
+broadcast_recipient = true
+
+[actors.fable]
+active = true
+display_name = "Fable"
+client = "claude"
+model = "claude-fable-5"
+broadcast_recipient = true
+
+[actors.kimi]
+active = true
+display_name = "Kimi K3"
+client = "kimi"
+model = "kimi-code/k3"
+broadcast_recipient = true
+
+[actors.qwen]
+active = true
+display_name = "Qwen 3.8 Max"
+client = "qwen"
+model = "qwen3.8-max-preview"
+broadcast_recipient = true
+
+[actors.deepseek]
+active = true
+display_name = "DeepSeek V4 Pro"
+client = "qwen"
+model = "deepseek-v4-pro"
+broadcast_recipient = true
+
+# The human partner may address any actor and adjudicates semantic forks,
+# but is never a broadcast recipient and never owes an acknowledgement:
+# messages addressed to `human` are listed as ADDRESSED, never pending.
+[actors.human]
+active = true
+display_name = "human partner"
+client = "none"
+model = "human"
+broadcast_recipient = false
+acknowledges = false

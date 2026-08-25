@@ -110,46 +110,49 @@ coherent-baseline backlog and its dependencies.
   alternatives and reopening criteria where the semantic decision genuinely
   had several coherent options.
 
-## Codex–Fable collaboration
+## Multi-model review collaboration
 
-Codex and Fable are peer reviewers working with the human partner; neither
-model's proposal becomes consensus merely because it was written. The ignored
-mailbox under `review/exchange/` replaces ad hoc copy/paste when both models can
-access this filesystem. The full protocol and templates are in
-`review/EXCHANGE_PROTOCOL.md`.
+Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max, and
+DeepSeek V4 Pro — review this repository as peers working with the human
+partner; no model's proposal becomes consensus merely because it was written.
+The ignored spool under `review/exchange/` replaces copy/paste between
+sessions. The tracked protocol, participant registry, helper, templates, and
+tests live under `tools/review-exchange/`; read `PROTOCOL.md` there before
+using the exchange.
 
-- Messages are immutable Markdown files addressed by directory:
-  `review/exchange/inbox/codex/` and `review/exchange/inbox/fable/`.
-- Compose under `review/exchange/drafts/<sender>/`, validate, then atomically
-  move the finished file into the recipient inbox. Appearance in an inbox is
-  the observable publication boundary; never edit it there.
-- Filenames and IDs are
-  `YYYYMMDDTHHMMSSZ-<sender>-<short-slug>.md`, using UTC. Each message header
-  declares protocol version, ID, sender, recipient, creation time, kind,
-  reply/supersession links, and relevant GitHub issues.
-- Codex writes only messages addressed to Fable and acknowledgements under
-  `review/exchange/acks/codex/`; Fable writes only messages addressed to Codex
-  and acknowledgements under `review/exchange/acks/fable/`. Never edit or move
-  another participant's published message.
-- Correct a message with a new `supersedes` message. Respond with a new file
-  whose `in_reply_to` names the earlier ID. Acknowledge only after the message
-  has been read and any requested durable action has been answered or captured
-  in a GitHub issue.
-- Acknowledgement means the disposition is durably captured in a reply, issue,
-  or short explicit explanation; it does not require completing queued work.
-- At the start and end of every substantive semantic turn, run
-  `python3 review/exchange_check.py codex` (Fable uses `fable`), read all pending
-  messages, and run the validator before announcing that the mailbox is clear.
+- Each launcher supplies its actor slug from `participants.toml` and
+  exports `SMUSNI_EXCHANGE_ACTOR`; actor identity is distinct from client and
+  model. Every actor writes only its own
+  drafts and acknowledgements and publishes only its own messages; published
+  messages are immutable, and no actor edits or moves another's files.
+- Messages are addressed to the audience the sender needs — one actor, a
+  subset, or `all` — and stored once. **No turn order is prescribed**: the
+  human partner decides which session wakes next, and may give a question first
+  to whichever actor is best placed to answer it.
+- At the start and end of every substantive turn, run
+  `python3 tools/review-exchange/exchange.py status --actor <actor>`, read
+  every pending message and its reply ancestors, and run the validator before
+  announcing the mailbox clear. Compose with `new`, publish with `publish`,
+  acknowledge with `ack`; never hand-write timestamps or move files.
+- Correct a message with a new `supersedes` message; respond with `in_reply_to`.
+  Acknowledge only after the disposition is durably captured in a reply, issue,
+  or short explicit explanation; acknowledgement never means agreement or
+  completion of queued work.
 - Every substantive message separates claims, evidence, objections/questions,
-  and requested disposition. Cite live file paths/sections, source excerpts,
-  commit/working-tree state where relevant, and GitHub issue numbers.
-- The mailbox is transient coordination, not authority. If an exchange creates
+  and requested disposition, citing live file paths/sections, source excerpts,
+  commit/working-tree state, and GitHub issue numbers.
+- No vote, quorum, silence, or acknowledgement count becomes consensus; record
+  named positions, name one durable recorder per docket, and leave genuine
+  semantic forks to the human partner. Each actor is one accountable model
+  session; hidden subagents or swarms are not used without express
+  authorization, and authorized use is disclosed.
+- The spool is transient coordination, not authority. If an exchange creates
   or changes actionable work, update GitHub. If it proposes a semantic change,
   preserve the proposal in review until human-partner authorization; do not
   silently apply it to the baseline.
 - If only one model is active, continue useful work and leave an addressed
   handoff. Do not block routine progress merely waiting for an acknowledgement
-  unless the issue explicitly requires two-model review or human-partner
+  unless the issue explicitly requires multi-model review or human-partner
   adjudication.
 
 ## Hard constraints
@@ -190,9 +193,9 @@ not proof that a host language’s choices are right for Lojban.
 ## Live-document context policy
 
 The repository charter in this file must remain stable and compact. **Do not
-concatenate or preload the documentation corpus into `AGENTS.md`.** Codex does
-not follow document references from this file; semantic documents are read from
-the live filesystem when a task needs them.
+concatenate or preload the documentation corpus into `AGENTS.md`.** Do not
+assume a named document has been loaded merely because this charter references
+it; semantic documents are read from the live filesystem when a task needs them.
 
 At the beginning of a semantic design, review, or editing task:
 
@@ -210,9 +213,9 @@ decisions are authoritative.
 Changing `brief.md`, `spec.md`, `rationale.md`, `samples.md`, consensus, or any
 other semantic document **does not require a session reload**. Reread the live
 files as needed. A reload is relevant only when project instruction discovery
-itself changes (`AGENTS.md`, an applicable override, or Codex configuration)
-and the new instructions must govern the session, or when the user explicitly
-requests a fresh session.
+itself changes (`AGENTS.md`, an applicable override, or a client's
+configuration) and the new instructions must govern the session, or when the
+user explicitly requests a fresh session.
 
 For a global cross-document review, read every claimed-in-scope document in
 full during the task and report any truncation or unavailable source before
@@ -329,8 +332,9 @@ judgment that the documents lack value.
 
 ## Working protocol
 
-- Check the Codex mailbox before beginning and before ending substantive
-  semantic work; mention pending Fable input that materially affects the task.
+- Check your actor's exchange status before beginning and before ending
+  substantive semantic work; mention pending peer input that materially affects
+  the task.
 - Lead with the current outcome, then the evidence and tradeoffs.
 - For reviews, actively seek counterexamples, contradictions, unstated
   assumptions, edition drift, non sequiturs, and apparently sourced claims that
@@ -338,7 +342,8 @@ judgment that the documents lack value.
 - Before changing a semantic rule, trace every normative and derivative
   consumer with `rg`; after changing it, synchronize or explicitly queue those
   consumers.
-- Use `apply_patch` for edits. Preserve unrelated worktree changes.
+- Use the client's structured patch/edit facility for file authoring (Codex:
+  `apply_patch`); never shell redirection. Preserve unrelated worktree changes.
 - Run `python3 review/checks.py` after documentation edits and report any
   limitation it exposes; do not call a corpus synchronized when
   corpus-integrity, link, term-balance, or pin checks fail.
