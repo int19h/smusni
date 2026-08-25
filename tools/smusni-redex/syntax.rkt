@@ -69,10 +69,23 @@
 (define (validate-binder who binder)
   (require-shape who binder 'brace)
   (define elems (core-list-elements binder))
-  (unless (and (>= (length elems) 3)
-               (node-symbol? (list-ref elems (- (length elems) 2)) '::))
+  (define separators
+    (for/list ([element (in-list elems)]
+               [index (in-naturals)]
+               #:when (node-symbol? element '::))
+      index))
+  (unless (and (= (length separators) 1)
+               (positive? (first separators))
+               (< (first separators) (sub1 (length elems))))
     (error who "malformed typed binder group at ~a:~a"
            (core-list-line binder) (core-list-column binder))))
+
+(define (validate-telescope who telescope)
+  (require-shape who telescope 'brace)
+  (define elems (core-list-elements telescope))
+  (if (and (pair? elems) (andmap core-list? elems))
+      (for ([group (in-list elems)]) (validate-binder who group))
+      (validate-binder who telescope)))
 
 (define (validate-direct-binder form)
   (define elems (core-list-elements form))
@@ -81,7 +94,7 @@
     [(λ)
      (unless (= (length elems) 3)
        (error 'validate-core-form "λ requires a telescope and one body"))
-     (require-shape 'validate-core-form (second elems) 'brace)
+     (validate-telescope 'validate-core-form (second elems))
      (require-shape 'validate-core-form (third elems) 'brace)]
     [(Let)
      (unless (= (length elems) 4)
@@ -125,4 +138,3 @@
     [(core-atom value _ _ _ _ _) value]
     [(core-list shape elements _ _ _ _ _)
      `(node ,shape ,@(map core->datum elements))]))
-

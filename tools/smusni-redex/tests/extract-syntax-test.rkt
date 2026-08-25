@@ -14,6 +14,30 @@
                      all-fences)
               21)
 
+(define classified (classify-fences all-fences (load-manifest)))
+(check-equal? (count (lambda (item) (eq? (fence-kind item) 'specimen))
+                     classified)
+              64)
+(check-equal? (count (lambda (item) (eq? (fence-kind item) 'unchecked))
+                     classified)
+              0)
+(check-not-exn (lambda () (check-corpus! classified)))
+
+(for ([item (in-list classified)]
+      #:when (eq? (fence-kind item) 'specimen))
+  (define forms
+    (read-core-forms (fence-content item)
+                     (format "~a:~a" (fence-source item)
+                             (fence-start-line item))))
+  (check-true (pair? forms)
+              (format "~a fence ~a has a term"
+                      (fence-source item) (fence-ordinal item)))
+  (for ([form (in-list forms)])
+    (check-true (core-list? form)
+                (format "~a fence ~a has only top-level forms"
+                        (fence-source item) (fence-ordinal item)))
+    (check-not-exn (lambda () (validate-core-form form)))))
+
 (define lambda-form
   (read-core-specimen "(λ {$x :: Entity} {(gerku $x)})" 'lambda-test))
 (check-equal? (core-list-shape lambda-form) 'paren)
@@ -35,4 +59,3 @@
  (lambda () (read-core-specimen "(gerku x) (mlatu y)" 'two-terms)))
 
 (displayln "extract/syntax tests: ok")
-
