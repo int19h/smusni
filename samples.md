@@ -597,8 +597,9 @@ own lexical presupposition, never from `kau`.
 ```lisp
 ; .ui do klama — pure emotion: host asserted, joy displayed
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (Happiness Speaker $o Moderate)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (Happiness Speaker $o Moderate)))))})})
 
 ; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
 (Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
@@ -606,15 +607,17 @@ own lexical presupposition, never from `kau`.
 
 ; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (Unhappiness Speaker $o Intense)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Intense)))))})})
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [spec §7.6]
 (Let {$a :: Act Assertion} (Assert (Close (cadzu Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (EvidentialBasis Speaker $o Observation)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (EvidentialBasis Speaker $o Observation)))))})})
 ; act-level display: Perform returns the bound occurrence handle; the family
 ; force clause grounds THIS occurrence (a mode of commitment);
 ; a later Perform $a returns a different, ungrounded occurrence;
@@ -641,16 +644,17 @@ own lexical presupposition, never from `kau`.
 ```lisp
 ; .i mi klama .i ku'i do stali — a discourse relation
 (Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o1 :: ActOccurrence Assertion} (Perform $a1)
+  {(Bind {$o1 :: ActOccurrence Assertion} (Perform Host $a1)
     {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-      {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
-        {(Express (Close (Contrast $o2 $o1)))})})})})
+      {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
+        {(Do (Perform AttachedDisplay
+          (Express (Close (Contrast $o2 $o1)))))})})})})
 ```
 
 ```lisp
 ; do klama .i na'i — metalinguistic objection         [spec §7.3]
 (Let {$prior :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$prioro :: ActOccurrence Assertion} (Perform $prior)
+  {(Bind {$prioro :: ActOccurrence Assertion} (Perform Host $prior)
     {(Bind {$defect :: DefectKind} (Context)
       {(Express
         (Close (MetalinguisticallyDefective $prioro $defect)))})})})
@@ -904,8 +908,9 @@ there is no intended soritical boundary, as in the cutoff examples above.
               (∃ (λ {$e :: Referents Eventuality}
                 {(∧ (Close (tatpi $dogs :Eventuality $e))
                     (cabna $e $occ2))})))
-        {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
-          {(Express (Close (Unhappiness Speaker $o2 Intense)))})})}))})
+        {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
+          {(Do (Perform AttachedDisplay
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))})})}))})
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
@@ -947,8 +952,9 @@ bodies use braces to show scope; the braces do not quote core code.
 ```lisp
 ; one act value, performed and then targeted by a display
 (Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (Happiness Speaker $o Moderate)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (Happiness Speaker $o Moderate)))))})})
 ```
 
 `λ` binds pure or effectful function bodies according to their type;

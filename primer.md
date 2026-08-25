@@ -385,8 +385,9 @@ a degree on an intensity scale — displayed alongside its host:
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
 (Let {$a :: Act Assertion} (Assert (Close (tatpi $dogs)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (Unhappiness Speaker $o Intense)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Intense)))))})})
 ```
 
 The bound `$o` is the performance occurrence. If `$a` is performed again, the
@@ -572,8 +573,9 @@ the way chapter 2 anchored the stove):
               (∃ (λ {$e :: Referents Eventuality}       ; chapter 4: ri = $dogs
                 {(∧ (Close (tatpi $dogs :Eventuality $e))
                     (cabna $e $occ2))})))
-        {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
-          {(Express (Close (Unhappiness Speaker $o2 Intense)))})})}))}) ; chapter 7
+        {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
+          {(Do (Perform AttachedDisplay
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))})})}))}) ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.

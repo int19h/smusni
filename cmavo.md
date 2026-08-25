@@ -1291,8 +1291,9 @@ family). ⊳ Target selection by grammatical attachment (P19).
 ; .uinai mi klama — the display targets the bound host occurrence; degree
 ; Moderate is the unmarked region (cai would make it Intense)
 (Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-    {(Express (Close (Unhappiness Speaker $o Moderate)))})})
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    {(Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Moderate)))))})})
 ```
 
 The occurrence handle makes the host-force/display target explicit after
@@ -1360,7 +1361,7 @@ dimension; performs nothing, negates nothing.
 ; do klama .i na'i — the objected act Let-bound (§7.2: no
 ; discourse constants); its performance occurrence Bind-bound
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform $a)
+  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
     {👉(NahiObjection $o)👈})})
 ```
 
@@ -1387,10 +1388,11 @@ Constituent `ji'a` and `po'o` are focus derivations
 ; .i mi klama .i ku'i do stali — no prior/following-discourse
 ; constants exist (§7.2): raw acts are Let-bound, occurrences Bind-bound
 (Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o1 :: ActOccurrence Assertion} (Perform $a1)
+  {(Bind {$o1 :: ActOccurrence Assertion} (Perform Host $a1)
     {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-      {(Bind {$o2 :: ActOccurrence Assertion} (Perform $a2)
-        {(Express (Close (Contrast $o2 $o1)))})})})})
+      {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
+        {(Do (Perform AttachedDisplay
+          (Express (Close (Contrast $o2 $o1)))))})})})})
 ```
 
 **See.** [Spec §7.2, §11](spec.md); [catalog 2.25](catalog.md).
@@ -1425,7 +1427,8 @@ the performative host-force profile — the greeting *is* the act.
 
 ### doi (DOI)
 
-Vocative address: the `Vocative` act beside the host, **plus** ⊳
+Vocative address: `(Perform AttachedAddress (Vocative X))` beside the host,
+**plus** ⊳
 binding of the active `do` (P27) — `do` and `ko` consult the active
 binding before falling back to the utterance's Audience, which is
 never mutated.
@@ -1434,7 +1437,7 @@ never mutated.
 ; doi .djan. ko klama — the vocative act, then the command to John
 (Bind {$j :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} {(Named "djan" $r)}))
-  {(Do 👉(Vocative $j)👈
+  {(Do 👉(Perform AttachedAddress (Vocative $j))👈
        (Command 👉$j👈 (Close (klama $j))))})
 ; the ⊳ active-do binding makes ko and do resolve to $j (P27)
 ```

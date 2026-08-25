@@ -163,6 +163,8 @@ returns the handle and act-level UI lowerings `Bind` it, but there is no
 direct Lojban sumti spelling, pure constructor, or state inspector. Its factorization witness is the
 `ActContent`/`RealizedContent` distinction and occurrence-relative indicator
 grounding.
+`OccurrenceRole` is the closed `Host | AttachedDisplay | AttachedAddress`
+index supplied explicitly to `Perform`; unary `Perform a` is Host shorthand.
 **For.** Cross-performance default `go'i` and `la'e di'u` preserve the antecedent occurrence's
 resolved context; `ra'o` selectively rebuilds its marked pro-assign sites from
 the raw package while retaining other captured sites.
@@ -568,7 +570,8 @@ specimen fragments.
 ### 1.36 `Perform` and `Do`
 
 **Informally.** `Perform` injects an act into the performance level —
-first creating a fresh `ActOccurrence` under `CurrentToken`, then running the
+at explicit `OccurrenceRole` (unary `Perform a` = `Perform Host a`), first
+creating a fresh `ActOccurrence` under `CurrentToken`, then running the
 force payload under that occurrence's capture, handling projectives, and
 applying the force's commitment effects; its `PerfComp` result is the opaque
 occurrence handle, which `Bind` may name. At a `Discourse` position the handle
@@ -939,8 +942,8 @@ effectful computation; that is `Bind`'s job, by type.
 **Content-word status.** Class M structural machinery: no content word is
 owed for this sharing syntax.
 **For.** `(Let {$a :: Act Assertion} (Assert …)
-{(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-{(Express (… $o …))})})` — `Let` shares the raw act, while `Bind` names
+{(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+{(Do (Perform AttachedDisplay (Express (… $o …))))})})` — `Let` shares the raw act, while `Bind` names
 the one performance occurrence the display targets.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
 
@@ -1258,8 +1261,9 @@ dimension — performing nothing, negating nothing.
 occurrence handle and display the speaker's basis for that occurrence — a mode of commitment, not
 a second claim.
 **Formally.** for `a : Act<F>`, `(GroundedBy b a) ≝
-(Bind {$o :: ActOccurrence F} (Perform a)
-{(Express (Close (EvidentialBasis Speaker $o b)))})`.
+(Bind {$o :: ActOccurrence F} (Perform Host a)
+{(Do (Perform AttachedDisplay
+  (Express (Close (EvidentialBasis Speaker $o b)))))})`.
 **For.** `za'a do cadzu` — the assertion grounded in observation;
 negation touches the walking, never the basis.
 **See.** [Spec §12, §7.6](spec.md); [primer ch. 7](primer.md).

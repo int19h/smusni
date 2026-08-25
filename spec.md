@@ -460,6 +460,7 @@ named construct and normative for exactly those uses:
 - **Closed enumerations** — finite, equality-bearing index types,
   declared with their constructs: `Bool` (§3.1), `Proximity` (§5.1),
   the force index of `Act<F>`, the pure/effectful function classes of §3.3,
+  `OccurrenceRole` (§7.1: `Host | AttachedDisplay | AttachedAddress`),
   `ThresholdKind`, `Direction`, `BasisKind`, `DefectKind`,
   `EnumerationLevel`, the intensity regions (§7.6), and the
   place-label types `Label<ρ>`. `=` is available at every enumeration
@@ -1599,10 +1600,15 @@ Mention : T → Act<Expressive>           (use/mention: displays a value)
 Constructing an act does not perform it. The typing discipline:
 
 ```text
-Perform : Act<F> → PerfComp<ActOccurrence<F>>
+Perform : OccurrenceRole × Act<F> → PerfComp<ActOccurrence<F>>
 Do      : Discourse × Discourse × … → Discourse
           (flattening, associative; zero operands = empty discourse)
 ```
+
+Unary `(Perform a)` is the defined Host shorthand
+`(Perform Host a)`. Attached display/address lowerings write their roles
+explicitly; role is therefore part of the core term, never remembered from
+surface provenance.
 
 Denotationally, an `Act<F>` value is a **force-tagged content package**:
 the force `F` together with the content computation (for `Ask`, the
@@ -1645,9 +1651,9 @@ acts are not occurrences merely because component spans realize them.
 `RealizedContent` selects the `Host`, never an attached display merely because
 it shares the token. `RealizedAct` may independently select a raw component
 package through transcript structure; #6 owns any component-content projection
-inside the one compound occurrence. The surface-to-discourse coercion carries the grammatical
-role; an explicit generic `Perform` with no attached host defaults to `Host`.
-No term inspects role.
+inside the one compound occurrence. The surface-to-discourse mapping supplies
+the explicit `OccurrenceRole`; no term inspects it after `Perform` constructs
+the occurrence.
 
 `Perform` first creates the occurrence/capture, then runs that captured
 payload, handles its presuppositions and supplements, and only then applies
@@ -1674,7 +1680,7 @@ notation for monadic discard,
 `(Bind {$ignored :: T} p {(Do)})`; the empty `Do` is the performance unit.
 Thus all existing `(Do (Perform a) …)` and bare-act spellings remain concise.
 Where the occurrence matters — notably an act-level indicator — the lowering
-instead writes `(Bind {$o :: ActOccurrence F} (Perform a) {body})` and targets
+instead writes `(Bind {$o :: ActOccurrence F} (Perform Host a) {body})` and targets
 `$o`. This is an exact expansion, not a mutable "last occurrence" lookup.
 
 A document denotes one `Discourse`, whose top-level `Do` sequence is
@@ -1846,8 +1852,9 @@ target — no dedicated operator is needed:
   display is an `Express` act beside the host on the discourse spine. The
   lowering binds the occurrence handle returned by the host performance and
   applies the indicator relation to that handle:
-  `(Bind {$o :: ActOccurrence Assertion} (Perform $a)
-     {(Express (Close (i-rel Speaker $o degree)))})`.
+  `(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+     {(Do (Perform AttachedDisplay
+            (Express (Close (i-rel Speaker $o degree)))))})`.
   Expressive force is itself non-at-issue commitment, and the family
   **force clause** holds: an evidential displayed this way *grounds* the
   host act — a mode of commitment, not a second claim — and a host-force
@@ -2568,7 +2575,8 @@ state-of-affairs reading, `Reify` only where a proposition is
 demanded; no universal coercion (P13), and a non-assertion antecedent
 yields partiality where content is demanded (P21). Where the act package
 rather than performed content is requested, `RealizedAct<F>` remains the raw
-crossing. `doi X` → the `Vocative X` act beside the host **plus** ⊳
+crossing. `doi X` → `(Perform AttachedAddress (Vocative X))` beside the host
+**plus** ⊳
 binding of the active `do` (CLL 2.14 — `do` "now refers to" X): `do`
 and `ko` consult the active binding before falling back to the
 utterance's Audience, which itself is never mutated (each utterance's
@@ -3047,8 +3055,9 @@ schemas ≝ performative `Express` of the COI lexical relation
 (`coi-greeting`, `ki'e-thanks`, …), schematically `(COIExpress R
 addr) ≝ (Express (Close (R Speaker addr)))` with the entry's
 performative host-force profile; for `a : Act<F>`, `(GroundedBy b a)` ≝
-`(Bind {$o :: ActOccurrence F} (Perform a)
-   {(Express (Close (EvidentialBasis Speaker $o b)))})` —
+`(Bind {$o :: ActOccurrence F} (Perform Host a)
+   {(Do (Perform AttachedDisplay
+          (Express (Close (EvidentialBasis Speaker $o b)))))})` —
 the act-level evidential spelling of §7.6 (named to
 avoid the `Ground` sort, §5.1); focus for
 a host content frame `H[·]` and focused sumti `f : Referents<T>`
@@ -3433,7 +3442,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   cross-clausal place-linking is gap-registered; no segment-state effect.
 - **P27** Imperative and address: `ko` = the active addressee with
   command force on the nearest **performed** clause — no force
-  extrusion through `Reify` or quotation; `doi` performs `Vocative`
+  extrusion through `Reify` or quotation; `doi` performs `Vocative` at
+  `AttachedAddress`
   and ⊳ binds the active `do` (CLL 2.14); the Audience projection is
   never mutated — each utterance's ctx carries its own audience.
 - **P28** `do'i` is `Context` at the salient transcript token/span
