@@ -67,7 +67,8 @@ must remain, so event-indexing their declarative uses would add lifted twins
 rather than eliminate machinery; those twins do exactly the job
 `StateClause` factors once. It would also duplicate lexical events on ordinary
 brivla unless it retained the same direct-vs-holding distinction. The type
-`ClauseContent = EFn<Eventuality,Content>` instead leaves one event open:
+`ClauseContent = EFn<(Referents<Eventuality>), Content>` instead leaves one
+event open:
 `DirectClause` uses the lexical event, `StateClause` supplies a holding state
 only when no single lexical event survives, and `CloseClause` closes the
 common interface with the same run as existential closure while retaining the
@@ -244,7 +245,7 @@ Collection gadri do not silently maximize their base. Bare `loi P`/`lo'i P`
 first use the same ordinary non-maximal `Refer P` as `lo P`, under `Local`,
 then refer to the group/set object constituted from that base. `Local` is
 needed, not decorative: without projection of the hidden introduction,
-CLL 6.52's `lo'i ratcu … .i ku'i lu'a ri …` would leave both the rats and the
+CLL Example 6.52's `lo'i ratcu … .i ku'i lu'a ri …` would leave both the rats and the
 set in the discourse store, while the text has introduced only the set sumti.
 It retains the selected base as a lexical `Bind` value and all truth/
 projective effects, hiding only its anaphoric slot. This matches CLL's
@@ -642,7 +643,7 @@ borrowing facet conjunction.
 binder — the seam between the pure λ-fragment and the dynamics.
 **Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
 *once*, with its witness reused across two performed acts —
-`(Bind {$cat :: Referents Entity} (Refer P) {(Do a₁ a₂)})`. **Why not
+`{Bind [$cat :: Referents Entity] (Refer P) (Do a₁ a₂)}`. **Why not
 ordinary λ-application?** In the calculus as typed, application simply
 *cannot* consume a computation where a value is demanded — `Bind` is the
 value-returning computation eliminator (`RefComp` and `PerfComp`), and that
@@ -1225,8 +1226,13 @@ genuinely fought:
   natural-language trade.
 - **P5 (collections and `joi`).** Three independent choices are bundled only
   because they meet at the same boundary. Bare collection bases remain
-  non-maximal, as CLL 18.11 says explicitly; `Local` prevents that hidden
-  `Refer` from falsifying CLL 6.52's surface-anaphora count. General `gunma`
+  non-maximal: the evidence is xorlo's abolition of default quantifiers (P1)
+  together with Example 6.52's anaphora, not CLL 18.11 — original 18.11
+  glosses the bare `lo'i ratcu` of Example 18.83 as "the set of all rats"
+  (the rejected maximal reading), and the citation edition's non-maximal
+  wording there is this project's own amendment (fork commit `6c580fb2`),
+  corroborative record that cannot ratify the pin; `Local` prevents that
+  hidden `Refer` from falsifying Example 6.52's surface-anaphora count. General `gunma`
   is non-exhaustive because its official gloss says “partially specified” and
   attested uses of `se gunma` name only one family member; complete
   descriptors and `joi` add the defined converse cover. Finally `joi1` beats
@@ -1264,9 +1270,9 @@ genuinely fought:
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (termsets, no maximality).** CLL ch. 16 §7 (its examples
-  16.42–16.45, print numbering) glosses `ci gerku ce'e re nanmu cu
-  batci` as: two picked groups, "every one of the dogs bites each of the
+- **P17 (termsets, no maximality).** CLL ch. 16 §7 (Examples
+  16.41–16.45; the gloss follows Example 16.45) glosses `ci gerku ce'e re
+  nanmu cu batci` as: two picked groups, "every one of the dogs bites each of the
   men" — full product — and stops. The coordinate-closure strengthening
   ("and no other dog bites them") makes the sentence false in situations
   speakers plainly use it for, so it is a named optional profile, not
@@ -1355,7 +1361,8 @@ genuinely fought:
   choice unresolved, but that does not show that one speaker intends both or
   neither. A constrained `Context` retrieves one intended member of the
   `TopicResolution<ρ>` union; place-fill is available for a single open bridi,
-  with coarse `srana`-aboutness (CLL 19.10's money topic) as the other arm.
+  with coarse `srana`-aboutness (CLL Example 19.10's money topic) as the other
+  arm.
   Cross-clausal place-linking remains a gap. Why not the Tanru link: types do
   not fit —
   a topic is a referent, not a modifier over the head's
@@ -1377,7 +1384,7 @@ genuinely fought:
   quantifiers are typed, so `∃` at `PredTerm<ρ>` expresses CLL 16.13
   directly, while reified predicate objects (§9.1's reserved family)
   would bring the identity-granularity questions along for nothing —
-  no identity claims occur. The prenex constraint is CLL 16.107
+  no identity claims occur. The prenex constraint is CLL Example 16.107
   verbatim. `cei` stores more than a relation (CLL 7.5: fills, tense,
   negation ride along, later fills override), so the binding is a
   bridi template at the ⊳ layer — a `PredTerm` value would wrongly

@@ -160,11 +160,12 @@ episodic specimen selected `ActualClause`; a capability reading selects
   (CloseClause
     (StateClause
       (Every {λ [$x :: Entity] (datka $x)}
-        {λ [$ducks :: Referents Entity]
+        {λ [$duck :: Entity]
           (CloseClause
-            (CapableClause (DirectClause (flulimna $ducks))))}))))
-; Each nuclear capability clause closes locally; the outer State is the
-; universal claim. No one event is shared by every duck.
+            (CapableClause (DirectClause (flulimna $duck))))}))))
+; Every's nuclear scope is member-level (§12: Distrib over the maximal
+; reference); each duck's capability clause closes locally; the outer State
+; is the universal claim. No one event is shared by every duck.
 ```
 
 ```lisp
@@ -356,7 +357,8 @@ predicate is chosen:
 
 ```lisp
 ; mi joi do — the distinct canonical Group<Entity> reading [P40]
-{Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+{Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+      (Context (GroupBasisConstraint joi Entity) deps…)
   {Bind [$group :: Referents (Group Entity)]
         (JoiGroup $κ Speaker Audience)
     (Mention $group)}}
@@ -421,7 +423,7 @@ collection gadri do not force it. `CompleteGunmaAt` says there is no peer
 component beyond `$base`; P39 separately makes a count-profile base
 `CoveredBy` its declared units, while cumulative mass and other reference
 modes keep their own exact lexical extension.
-The `Local` boundary is independently observable: in CLL 6.52
+The `Local` boundary is independently observable: in CLL Example 6.52
 `lo'i ratcu cu barda .i ku'i lu'a ri cmalu`, `ri` resolves to `$sets`, never
 to the lowering-internal `$base`.
 
@@ -490,7 +492,8 @@ separate operations:
       (Local (SelectExactly 3 {λ [$x :: Entity]
         (Close (skicu Speaker $x Audience
           {λ [$y :: Referents Entity] (prenu $y)}))}))
-  {Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+  {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+        (Context (GroupBasisConstraint lu'o Entity) deps…)
     {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
       (Mention $aggregate)}}}
 ```
@@ -498,8 +501,10 @@ separate operations:
 ```lisp
 ; lu'a ri — fragment: components of the previously selected single group
 {λ [[$κ :: DecompositionBasis (Group Entity) Entity]
-    [$group :: Referents (Group Entity)]]
+    [$group :: Group Entity]]
   (Mention (components_κ $κ $group))}
+; components_κ takes one Group<T> object (§12); ri's projective singular
+; condition is what supplies that sole group and is elided here.
 ```
 
 The bridge `lu'o mi'o cu remei ≡ mi'o remei` is still not claimed: P40 now
@@ -653,9 +658,14 @@ the artifact to state the selected cross-sentence truth constraint.
 ```lisp
 ; ro gerku cu blabi — importing universal   [pin P2]
 (Assert
-  (Presuppose
-    (∃ {λ [$x :: Entity] (gerku $x)})
-    (∀ {λ [$x :: Entity] (→ (gerku $x) (Close (blabi $x)))})))
+  (Every {λ [$x :: Entity] (gerku $x)}
+         {λ [$x :: Entity] (Close (blabi $x))}))
+; ≝ {Bind [$w :: Referents Entity] (MaxRefer gerku-property)
+;      (Distrib blabi-property $w)} per spec §12: MaxRefer's own Presuppose
+; carries the import and the maximal witness $w is exported for later
+; anaphora. The bare Presuppose(∃ gerku)(∀ x. gerku x → blabi x) has the
+; same truth conditions but exports nothing — it is the truth-condition
+; artifact of spec §5.6 rather than the lowering.
 ```
 
 Contrast: `naku ro gerku cu blabi` — the nonemptiness presupposition
@@ -891,10 +901,10 @@ own lexical presupposition, never from `kau`.
 ; sutra klama — one intended link recovered at this occurrence [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
-; ≗ (Bind {$link :: PredTerm (RowOf klama)}
-;         (Context (λ {$r :: PredTerm (RowOf klama)}
-;                    {(TanruAdmissible sutra klama $r)}))
-;     {… (∧ (klama …) ($link …))})
+; ≗ {Bind [$link :: PredTerm (RowOf klama)]
+;         (Context {λ [$r :: PredTerm (RowOf klama)]
+;                    (TanruAdmissible sutra klama $r)})
+;     … (∧ (klama …) ($link …))}
 ; no governor dependencies in this reading. `na sutra klama` retrieves
 ; one intended admissible link at that occurrence's site and negates that claim;
 ; it does not quantify over every possible tanru link.
@@ -937,8 +947,8 @@ content built from the recovered value):
 
 ```lisp
 ; positive                                  ; negative
-(Bind {$v :: T} (Context P deps…)           {Bind [$v :: T] (Context P deps…)
-  (C $v)}                                    {(¬ (C $v))})
+{Bind [$v :: T] (Context P deps…)           {Bind [$v :: T] (Context P deps…)
+  (C $v)}                                     (¬ (C $v))}
 ```
 
 Within either resolved reading, the occurrence site produces one `$v`; the
@@ -1124,16 +1134,18 @@ there is no intended soritical boundary, as in the cutoff examples above.
               (Supplement $dogs (Close (blabi $dogs))
                 (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)}
                      {λ [$ppl :: Referents Entity]
-                       (∃ {λ [$e :: Referents Eventuality]
-                          (∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))})}))))
+                       (CloseClause (ActualClause
+                         {λ [$e :: Referents Eventuality]
+                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                              (cabna $e $occ1))}))}))))
         (Perform $a1)}}
     {Bind [$occ2 :: Time] (Context)
       {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ {λ [$e :: Referents Eventuality]
-                (∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))}))
+              (CloseClause (ActualClause
+                {λ [$e :: Referents Eventuality]
+                  (∧ (Close (tatpi $dogs :Eventuality $e)) ; the prior direct-event
+                     (cabna $e $occ2))})))         ; fill is kept: tatpi's mode is #12's
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}
@@ -1158,8 +1170,9 @@ conjuncts entirely, are the other members of P8's reading family.
 
 ## 12. Direct binding notation
 
-The three binder forms are part of the core syntax. Their telescopes and
-bodies use braces to show scope; the braces do not quote core code.
+The three binder forms are part of the core syntax. By spec §2's
+convention a binder form is written `{…}` with its telescope in `[…]` and
+a bare body; the delimiters show scope and do not quote core code.
 
 ```lisp
 ; lo ka se klama — direct function abstraction

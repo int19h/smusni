@@ -74,7 +74,7 @@ Start smaller:
 
 ```
 ; mi klama
-(Assert (klama Speaker))
+(Assert (Close (klama Speaker)))
 ```
 
 Two moves happened. First, `klama` is a **predicate** — a relation with
@@ -83,7 +83,12 @@ five labelled places (goer, destination, origin, route, means) — and
 `Assert` turns the filled-in content into a claim. Keep these apart:
 Lojban embeds bridi inside other bridi all the time (`mi djica lo nu do
 klama` doesn't claim you go), so *saying-that* must be a separate
-ingredient from *the that*. The core makes it a visible one.
+ingredient from *the that*. The core makes it a visible one. (`Close`, the
+third word, is the spec's name for "fill the omitted places from context
+and close the clause" *on the actual reading this specimen selects* — a
+resolved-reading shorthand, not a default the surface imposes; a bare bridi
+can also be read as a capability claim. The next paragraph and chapter 2
+unpack both points.)
 
 **What about the four unfilled places?** `mi klama` doesn't mention a
 destination, but it isn't about going *nowhere*; the destination is
@@ -93,15 +98,19 @@ whose content the hearer is expected to recover from the situation:
 
 ```
 (Assert
-  (Bind {$destination :: Referents Entity} (Context)
-    {(∃ (λ {$e :: Referents Eventuality}
-      {(klama Speaker $destination … :Eventuality $e)}))}))
+  {Bind [$destination :: Referents Entity] (Context)
+    (CloseClause
+      (ActualClause
+        {λ [$e :: Referents Eventuality]
+          (klama Speaker $destination … :Eventuality $e)}))})
 ```
 
 (Only the destination slot is shown — the origin, route, and means each
 get their own `Context` binding exactly like it; the specification's
 samples write all four out. There's also an event variable in there —
-chapter 2.) Three different
+chapter 2: `CloseClause` closes that event slot while remembering *which*
+event was this clause's own, and `ActualClause` records that the clause was
+read as actually happening — both unpacked there.) Three different
 "missing thing" markers get three different treatments, and the difference
 matters:
 
@@ -132,12 +141,17 @@ going by me, and that going is earlier than now:
 ```
 ; mi pu klama
 (Assert
-  (∃ (λ {$e :: Referents Eventuality}
-    {(∧ (klama Speaker :Eventuality $e)
-       (purci $e Now))})))
+  (CloseClause
+    (ActualClause
+      {λ [$e :: Referents Eventuality]
+        (∧ ((DirectClause (klama Speaker)) $e)
+           (purci $e Now))})))
 ```
 
-That's the whole theory of tense. `pu` is not a verb inflection; it is a
+(`DirectClause` opens the clause with its going-event as the one open
+slot, `ActualClause` records the actual-mode reading, and `CloseClause`
+closes the slot while keeping that event as the clause's own.) That's the
+whole theory of tense. `pu` is not a verb inflection; it is a
 predicate (`purci`, "is earlier than") applied to the event. `ba` is
 `balvi`, `ca` is `cabna`; spatial tenses locate the event; `sepi'o` adds a
 `pilno` ("uses") predication about the same event; BAI modals are the same
@@ -195,8 +209,8 @@ core adopts wholesale —
 
 ```
 ; lo ci gerku
-(Refer (λ {$r :: Referents Entity}
-  {(∧ (gerku $r) …exactly-three-units…)}))
+(Refer {λ [$r :: Referents Entity]
+  (∧ (gerku $r) …exactly-three-units…)})
 ```
 
 `lo P` does one thing: it **introduces a referent** — one-or-more things
@@ -255,6 +269,12 @@ The other gadri, briefly:
   constituted by you and me at the intended grouping basis, and the carrying
   is predicated of that group.
 
+The composite pronouns side with the plain plural, not with `joi`: `mi'o`
+is `mi jo'u do`, one neutral plurality of speaker and listener, so `mi'o
+remna` says we are humans without building a group that would then have
+to be human; `mi .e do remna` makes two separate claims; and only `mi joi
+do` builds the group (pin P40).
+
 This is not a magic rule that properties flow between members and wholes. A
 group can weigh 150 kg without either member doing so, and a member can be
 tired without the group being tired. The core instead has a typed
@@ -304,15 +324,17 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-  {(→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
-     (darxi $p $d))}))
+(∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+  (→ (∧ (prenu $p)
+        (Distrib {λ [$z :: Entity] (xasli $z)} $d)
+        (Close (ponse $p $d)))
+     (Close (darxi $p $d)))})
 ```
 
 (The donkey variable is a *plural* one — if someone owns several donkeys,
-`ri` reaches all of them; and the full form also carries the "there are
-donkey-owners" presupposition that `ro` brings — the spec's version
-spells both out.)
+`ri` reaches all of them, and `Distrib` says every unit of `$d` is a
+donkey; the full form also carries the "there are donkey-owners"
+presupposition that `ro` brings — the spec's version spells it out.)
 
 The pronoun inside the consequent covaries with the donkey inside the
 relative clause — classical logic can't write that with separate
@@ -382,7 +404,7 @@ witness export).
 
 ```
 (Ask (Polar (Close (klama Speaker))))                          ; xu mi klama
-(Ask (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))}))) ; ma klama
+(Ask (OpenQ {λ [$x :: Referents Entity] (Close (klama $x))})) ; ma klama
 (Command Audience (Close (klama Audience)))                    ; ko klama
 (Express …)                            ; .ui and friends — chapter 7
 (Vocative Audience)                    ; doi (addressing the listener)
@@ -433,10 +455,10 @@ a degree on an intensity scale — displayed alongside its host:
 
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
-(Let {$a :: Act Assertion} (Assert (Close (tatpi $dogs)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Unhappiness Speaker $o Intense)))))})})
+{Let [$a :: Act Assertion] (Assert (Close (tatpi $dogs)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Intense)))))}}
 ```
 
 The bound `$o` is the performance occurrence. If `$a` is performed again, the
@@ -454,7 +476,7 @@ Note the three moving parts, all decided by rulings you can look up:
 `nai` did **not** logically negate anything — `.uinai` is the *paired
 emotion*, unhappiness, a word of its own; `cai` intensified *that*
 (intense unhappiness, not "intensely other-than-happy"); and the target —
-what the feeling is about — is the assertion it follows. And one thing
+what the feeling is about — is the whole assertion it opens. And one thing
 that did *not* happen: pure-emotion indicators like `.ui` never change
 what is claimed — `.ui do klama` claims you're going and displays joy
 about it. (Whether an indicator's host stays claimed is exactly what
@@ -498,14 +520,19 @@ attend a `nu` but not a proposition:
 - `ni` — an amount on a scale; `jei` — a truth value under an
   epistemology; `li'i` — an experience with an experiencer; `si'o` — a
   concept in a mind; `su'u` — the generic abstraction with a category.
+- `pu'u` — a process with its stages; `zu'o` — an activity of repeated
+  actions: relations like `ni`, with the stages or actions in their second
+  place. `mu'e` and `za'i` are `nu`'s sort refinements (a point-like
+  achievement; a state).
 
 `jei` does not silently turn that truth value into a number. CLL's old [0,1]
 proposal never acquired conventions or established practice, so P38 keeps the
 numeric crossing as a future gap proposal rather than an optional baseline
 reading.
 
-In the core these last five are ordinary *relations* — "a is the amount
-of content c on scale s" — so all your gadri skills apply to them:
+In the core `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, and `zu'o` are
+ordinary *relations* — "a is the amount of content c on scale s" — so all
+your gadri skills apply to them:
 `lo ni…`, `le ni…`, quantified `ni`s, relative clauses on abstractions,
 and an omitted scale is the usual contextual slot. Nothing new to learn:
 that is the point.
@@ -569,10 +596,11 @@ leaks through a quotation boundary. This entire family is what keeps
 use/mention straight, and it is why the core can talk about Lojban in
 Lojban without paradox.
 
-> **Notation box: why the braces?** In `(λ {$x :: T} {body})`,
-> `{$x :: T}` is the binder telescope — “introduce variable `$x` of
-> type `T`” — and `{body}` marks its scope. `Let` and `Bind` use the
-> same punctuation. These are direct binding forms, not functions that
+> **Notation box: why the braces?** In `{λ [$x :: T] body}`, the braces
+> mark the binding form and its scope, `[$x :: T]` is the binder telescope
+> — “introduce variable `$x` of type `T`” — and the body follows bare.
+> `Let` and `Bind` use the same punctuation: `{Let [$x :: T] value body}`,
+> `{Bind [$x :: T] computation body}`. These are direct binding forms, not functions that
 > receive quoted source code, and the braces do not create signs. Lojban
 > quotation remains the `lu`/`zoi`/`zo` family above. A staged extension
 > for quoting the core's own notation was explored and set aside; nothing
@@ -606,37 +634,41 @@ its episodic readings (each sentence's occasion contextually anchored,
 the way chapter 2 anchored the stove):
 
 ```lisp
-(Bind {$dogs :: Referents Entity}                       ; chapter 3: lo introduces…
-      (Refer (λ {$r :: Referents Entity}
-        {(∧ (gerku $r)
-            (= (CardBasis $r (λ {$x :: Entity} {(gerku $x)})) 3))})) ; …three dogs
-  {(Do
-    (Bind {$occ1 :: Time} (Context)                       ; chapter 2: the occasion —
-      {(Let {$a1 :: Act Assertion}                      ; outside the negation
+{Bind [$dogs :: Referents Entity]                       ; chapter 3: lo introduces…
+      (Refer {λ [$r :: Referents Entity]
+        (∧ (gerku $r)
+            (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))}) ; …three dogs
+  (Do
+    {Bind [$occ1 :: Time] (Context)                       ; chapter 2: the occasion —
+      {Let [$a1 :: Act Assertion]                      ; outside the negation
             (Assert
               (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
-                (¬ (Exactly 2 (λ {$x :: Entity} {(prenu $x)}) ; chapter 5: a two-person
-                     (λ {$ppl :: Referents Entity}          ; witness
-                       {(∃ (λ {$e :: Referents Eventuality}
-                          {(∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))}))})))))
-        {(Perform $a1)})})                             ; chapter 6: …and say it
-    (Bind {$occ2 :: Time} (Context)
-      {(Let {$a2 :: Act Assertion}
+                (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)} ; chapter 5: a two-person
+                     {λ [$ppl :: Referents Entity]          ; witness
+                       (CloseClause (ActualClause
+                         {λ [$e :: Referents Eventuality]
+                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                              (cabna $e $occ1))}))}))))
+        (Perform $a1)}}                             ; chapter 6: …and say it
+    {Bind [$occ2 :: Time] (Context)
+      {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ (λ {$e :: Referents Eventuality}       ; chapter 4: ri = $dogs
-                {(∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))})))
-        {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
-          {(Do (Perform AttachedDisplay
-            (Express (Close (Unhappiness Speaker $o2 Intense)))))})})}))}) ; chapter 7
+              (CloseClause (ActualClause                  ; chapter 4: ri = $dogs
+                {λ [$e :: Referents Eventuality]
+                  (∧ (Close (tatpi $dogs :Eventuality $e))
+                     (cabna $e $occ2))})))
+        {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
+          (Do (Perform AttachedDisplay
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})} ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.
 `CardBasis` is chapter 3's `…exactly-three-units…` made honest: it
 counts a plural referent *by a unit predicate* — these, counted as
-dogs, number three (so a plurality can be three dogs and one pack
-without contradiction). `Exactly n P body` is chapter 5's witness
+dogs, number three. (The count alone would tolerate a pack riding
+along; what rules it out is `gerku`'s own plural meaning, which under a
+count profile requires the referent to be *covered* by dog units — pin
+P39 — so `lo ci gerku` is three dogs and nothing else.) `Exactly n P body` is chapter 5's witness
 selection as one operator: pick an n-unit P witness and run the
 body on it — on the witness *as a plurality*, which is why the body's
 variable `$ppl` is reference-typed: whether the dogs bit the two
@@ -648,9 +680,11 @@ the aside is new information, committed by the speaker — but it
 beside the `¬` rather than under it, where no negation or question can
 reach. Everything else you have seen: the two
 `Let`/`Perform` pairs are chapter 6's acts-as-values, built and then
-said; and `Express` takes `$a2` itself as the emotion's target — the
-displayed unhappiness is about *that assertion*, which only a language
-whose acts are values can even write down.
+said; and the `Unhappiness` relation takes the bound occurrence `$o2` —
+this performance of `$a2` — as its target, with `Express` then packaging
+that displayed content as an act: the unhappiness is about *that assertion
+as made here*, which only a language whose acts are values and whose
+performances are handles can even write down.
 
 If you can reconstruct the story from the sentence — or check it off
 against the term, line by line — you have the core. The specification

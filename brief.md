@@ -1,7 +1,7 @@
 # Charter: the Lojban semantic core
 
-This repository defines a community-facing **definition of Lojban
-semantics** in terms of a small typed semantic core — a "Lojban semantic
+This repository defines a community-facing **prescriptive definition of
+Lojban semantics** in terms of a small typed semantic core — a "Lojban semantic
 assembly language".
 
 ## Mission
@@ -16,6 +16,12 @@ the specification's adequacy chapter states how far that claim presently
 reaches, with its gap register bounding the remainder; the core is
 the definition, and Lojban surface syntax becomes one (privileged) way to
 spell its terms.
+
+The lowering need not be surjective. Generic core forms may lack a Lojban
+spelling when they substantially factor shared semantic structure or
+simplify the model; every such form still owes a necessity or
+factorization argument, and core typability never establishes Lojban
+expressibility (specification §1.1).
 
 Every resolved declarative clause exposes one `ClauseContent` eventuality
 before force closes it. Event-licensed lexical clauses use their lexical
@@ -47,6 +53,12 @@ This is a *definition*, not a description:
   doctrine chapter states how they are weighed, and the compatibility
   principle that governs departures: a practical speaker of CLL Lojban
   must never have the rug pulled without strong, recorded motivation.
+- Provenance is preserved even where it is not agreement: a rule, pin,
+  formal construction, or counterexample materially prompted by another
+  person's work cites it and states the nature of the dependence; a source
+  the project corrected, generalized, or amended — including the
+  Contemporary CLL edition's project-authored passages — is never presented
+  as independently ratifying the result.
 
 ## The documents
 
@@ -91,10 +103,12 @@ At the repository root:
   could only be explained by an internal model detail, it is reshaped on
   semantic merits.
 - **The S-expression notation** — parenthesized application/operator
-  forms, direct `λ`/`Let`/`Bind` forms with brace-delimited telescopes and
-  bodies, PascalCase named core forms, lowercase lexical predicates,
-  `$variables`, and `;` comments — is a vehicle, not the subject. Braces
-  in binder positions are punctuation, not quoted core code. The notation
+  forms, the direct `λ`/`Let`/`Bind` special forms written
+  `{λ [$x :: T] body}` (braces mark the form, brackets its telescope, the
+  body is bare), PascalCase named core forms, lowercase lexical predicates,
+  `$variables`, and `;` comments — is a vehicle, not the subject. Delimiter
+  shape is non-semantic; braces and brackets are punctuation, not quoted
+  core code. The notation
   is kept because it is readable and avoids bikeshedding; PascalCase names
   mark the placeholder status the specification assigns them.
 - **Core vs sugar.** The core may be verbose. Anything derivable stays out
@@ -104,6 +118,14 @@ At the repository root:
   formal-semantics literature must be able to evaluate every claim. Cite
   CLL chapters/sections and the literature where a construct follows or
   departs from an established treatment.
+- **Honest coverage.** A meaning has a lowering, a defined/library
+  expansion, or a gap entry; no unanalysed construction is filled with
+  vague prose, implementation behavior, or an invented default.
+- **Semantic class and surface reachability are orthogonal.** A term-level
+  operator remains an operator even if no surface Lojban spells every use,
+  and an unreachable semantic former is not thereby metalanguage;
+  surface-reachable, lowering-only, and generic-infrastructure status are
+  tracked separately (specification §1.1, §16).
 
 ## Comparative inputs (explicitly citable)
 
@@ -141,20 +163,22 @@ constructors)? What do they *fail* to cover that Lojban needs? Which of
 their formal devices would make our core smaller or crisper without
 smuggling in an implementation?
 
-## Derived artifacts (future)
+## Derived artifacts
 
 The documents are the definition; anything executable or machine-checked
-is a **derived artifact**, never the authority. Two lines look promising
-once the core stabilizes. A **Lean 4** mechanization can host the core as
-an extensible typed DSL: direct core binders elaborate to Lean binding
-syntax, and sample terms become checked objects rather than prose. Even
-Lojban text could be fed in through an independently specified parsing and
-reading-resolution layer. Redex can separately execute and test reduction
-and accessibility rules before stable fragments earn Lean proofs. A
-**Metamath cross-check**
-against Brismu's derivations would test the pin list from the opposite
-direction. Both are future work items, started only on explicit
-decision; neither may ever become a place where the definition lives.
+is a **derived artifact**, never the authority. A Redex-based checker
+(`tools/smusni-redex`, run by `tools/check-smusni`) already extracts the
+specimens from the specification and samples, type-checks them against a
+fixture lexicon, and exercises the model-profile fixtures; it tests the
+documents, reports its own known debts, and decides no meaning. A **Lean 4**
+mechanization is the next line: the core as an extensible typed DSL, direct
+core binders elaborating to Lean binding syntax, sample terms as checked
+objects rather than prose, with a bounded Redex-to-Lean pilot queued in the
+tracker. Lojban text could later be fed in through an independently
+specified parsing and reading-resolution layer, and a **Metamath
+cross-check** against Brismu's derivations would test the pin list from
+the opposite direction. Each is started only on explicit decision; none may
+ever become a place where the definition lives.
 
 ## Coverage
 
@@ -165,7 +189,8 @@ places with contextual defaulting; place conversion and deletion; universal
 clause eventualities with direct lexical events or holding states, and
 tense/modal facets as ordinary predicates over the current clause event;
 sorts (entities, eventualities and their subsorts, sets, groups, lists,
-signs, acts, utterances, amounts, scales, …) and functions; lambdas;
+signs, utterances, amounts, scales, …), functions, and first-class act
+values; lambdas;
 inert `Let` vs effectful `Bind`; reference (descriptions, names,
 generics) and the specificity triad; relative clauses; generalized
 quantifiers with explicit import, witness export, and presupposition;

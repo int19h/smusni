@@ -218,9 +218,10 @@ Core terms are written as S-expressions:
   PascalCase spellings mark named provisional core forms (§1.2, §16),
   while lowercase names are lexical predicates (dictionary words:
   `klama`, `gerku`). A small set of mathematical glyphs (`¬ ∧ ∨ → ↔ ⊕
-  ∀ ∃ = ∈ ⊆ ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators
-  (`⊤` is the trivially true content — the empty conjunction, `∧`'s
-  unit).
+  ∀ ∃ = ∈ ⊆ ∪ ∩ × ≤ < ≥ > + − ÷ ⊤`) name the logical and mathematical
+  operators (`⊤` is the trivially true content — the empty conjunction,
+  `∧`'s unit; `×` is numeric product on `Number` and, by its operands'
+  sorts, the set product `pi'u` denotes).
 - Parenthesis shape is **non-semantic**: `(...)`, `[...]`, and `{...}`
   denote the same list term, as they do in Redex. A special form is
   recognized by its reserved head atom and positional operands, never by
@@ -391,8 +392,9 @@ event comes from `StateClause` after ordinary fills.
   labelled places are the load-bearing Lojban-specific structure (free
   place order, `zi'o`, conversion, place questions all speak in labels).
 - `Fn (A …) B` — ordinary functions with positional parameters, the type
-  of λ-abstractions. Properties are `Fn (T) Content`; generalized
-  quantifiers are `Fn ((Fn (T) Content)) Content`.
+  of λ-abstractions. Properties are `Fn (T) Content`; the library's
+  generalized quantifiers (§12) take a pure restrictor `Fn (T) Content`
+  and a nuclear scope that may be effectful (`EFn`).
 - `Label ρ` — the finite type of ρ's place labels; the domain of place
   questions (§8.3).
 
@@ -564,8 +566,8 @@ term the mapping produces, while never changing what any one term
 means. And `At` itself is no
 new primitive: with `PredTerm` a transparent alias (§3.3), the literal
 fill is partial application of the row function —
-`(At R ℓ v) ≝ (λ [$rest :: Record (RowMinus ρ ℓ)]
-{(R ⟨the ρ-record extending $rest with ℓ = v⟩)})` — so the
+`(At R ℓ v) ≝ {λ [$rest :: Record (RowMinus ρ ℓ)]
+(R ⟨the ρ-record extending $rest with ℓ = v⟩)}` — so the
 whole fill apparatus bottoms out in λ and labelled records.
 
 ### 4.2 Place conversion
@@ -627,7 +629,7 @@ The logical operators are `¬ ∧ ∨ → ↔ ⊕` over `Content` and the
 quantifiers `∀ ∃` over typed λ-bodies, with (multi-parameter) joint loci:
 
 ```lisp
-(∀ {λ [$x $y :: Entity] {…}})
+(∀ {λ [$x $y :: Entity] …})
 ```
 
 Statically they have classical truth conditions. Dynamically each carries
@@ -664,8 +666,8 @@ For an event-licensed row with unfilled defaultable places p₁…pₖ,
 ```lisp
 (DirectClause P) ≝
 {λ [$e :: Referents Eventuality]
-  (Bind {$v1 :: T1} (Context) … {$vk :: Tk} (Context)
-    {(P :p1 $v1 … :pk $vk :Eventuality $e)})}
+  {Bind [$v1 :: T1] (Context) … [$vk :: Tk] (Context)
+    (P :p1 $v1 … :pk $vk :Eventuality $e)}}
 ```
 
 When k = 0 and P contains no other effects, this function refines to the pure
@@ -680,7 +682,7 @@ CloseClause : ClauseContent → Content
 ```
 
 The **run projection** of `(CloseClause C)` is exactly the run of
-`(∃ (λ {$e :: Referents Eventuality} {(C $e)}))`. Its structured
+`(∃ {λ [$e :: Referents Eventuality] (C $e)})`. Its structured
 Content denotation additionally carries that branch's locally bound `$e` as
 the clause-event projection (§9.3). `CloseClause` is therefore primitive:
 plain `∃` can reproduce its truth and dynamic effects but cannot attach the
@@ -697,8 +699,8 @@ with three type-directed cases:
   ; event-licensed row, resolved actual CAhA mode
 (Close (P :Eventuality e))        ≝
   (CloseClause
-    (λ {$e2 :: Referents Eventuality}
-      {(∧ (CoRef $e2 e) ((ActualClause (DirectClause P)) e))}))
+    {λ [$e2 :: Referents Eventuality]
+      (∧ (CoRef $e2 e) ((ActualClause (DirectClause P)) e))})
   ; explicit/shared lexical event; no second event is introduced
 (Close P_eventless)               ≝
   Bind ordinary defaults, then CloseClause(ActualClause(StateClause(P_filled)))
@@ -726,7 +728,7 @@ eventuality interface:
 ```text
 (ClauseNot C)       ≝ (StateClause (¬ (CloseClause C)))
 (ClauseAnd C D)     ≝ (StateClause (∧ (CloseClause C) (CloseClause D)))
-(ClauseOr C D)      ≝ (λ {$e :: Referents Eventuality} {(∨ (C $e) (D $e))})
+(ClauseOr C D)      ≝ {λ [$e :: Referents Eventuality] (∨ (C $e) (D $e))}
 (ClauseImp C D)     ≝ (StateClause (→ (CloseClause C) (CloseClause D)))
 (ClauseIff C D)     ≝ (StateClause (↔ (CloseClause C) (CloseClause D)))
 (ClauseXor C D)     ≝ (StateClause (⊕ (CloseClause C) (CloseClause D)))
@@ -1359,7 +1361,7 @@ world* (hypothetical mood) would be a sibling index-shift operator —
 
 ### 5.2 Effectful binding
 
-`(Bind {$x :: T} comp {body})` is the direct effectful binding form: it
+`{Bind [$x :: T] comp body}` is the direct effectful binding form: it
 runs a value-returning `comp : Comp<T>` in its declared computation category
 (`RefComp<T>` for reference/context effects, `PerfComp<T>` for performance)
 and binds its result for `body`, sequencing
@@ -1372,8 +1374,8 @@ effect can be hidden in Content. Denotationally `Bind` is the computation carrie
 the eliminator for computation values and cannot be β-reduced away: the computation
 may introduce referents, consult context, or project obligations. `Let`
 (§4.4) is its pure degenerate case. A multi-binding
-`(Bind {$x₁ :: T₁} c₁ {$x₂ :: T₂} c₂ … {body})` is left-to-right nesting —
-`(Bind {$x₁ :: T₁} c₁ {(Bind {$x₂ :: T₂} c₂ {…})})` — so later computations
+`{Bind [$x₁ :: T₁] c₁ [$x₂ :: T₂] c₂ … body}` is left-to-right nesting —
+`{Bind [$x₁ :: T₁] c₁ {Bind [$x₂ :: T₂] c₂ …}}` — so later computations
 may consume earlier results. The honest gloss: `Bind` is
 function application under mandatory call-by-value at computation
 types, made visible — the λ-fragment stays pure so that β-equality
@@ -1390,7 +1392,7 @@ computation that returns an act package as a value is typed
 `RefComp<Act F>` like any other value-returning computation. This is
 what lets a description or
 selection introduced before an act sequence remain bound across it
-(`(Bind {$x :: Referents T} (Refer P) {(Do a₁ a₂)})` — the ordinary
+(`{Bind [$x :: Referents T] (Refer P) (Do a₁ a₂)}` — the ordinary
 spelling of
 cross-sentence reference).
 
@@ -1412,13 +1414,13 @@ The principal lowering witness is an internal collection base:
 
 ```lisp
 {Bind [$base :: Referents T] (Local (Refer P))
-  {… construct and introduce the one surface group/set from $base …}}
+  … construct and introduce the one surface group/set from $base …}
 ```
 
 The hidden base has ordinary non-maximal `Refer` selection and truth
 filtering, while only the surface collection survives as a discourse
 referent. Without this delimiter `lo'i ratcu` would introduce both rats and
-their set, contradicting the `ri` count in CLL 6.52. This cross-construction
+their set, contradicting the `ri` count in CLL Example 6.52. This cross-construction
 accessibility job is the factorization argument for the lowering-only generic
 form; it is not a renderer or evaluator convenience.
 
@@ -2032,10 +2034,10 @@ both descriptions while `RealizedContent` remains performance-only.
 
 At a `Discourse` position, a value-returning performance computation p is
 notation for monadic discard,
-`(Bind {$ignored :: T} p {(Do)})`; the empty `Do` is the performance unit.
+`{Bind [$ignored :: T] p (Do)}`; the empty `Do` is the performance unit.
 Thus all existing `(Do (Perform a) …)` and bare-act spellings remain concise.
 Where the occurrence matters — notably an act-level indicator — the lowering
-instead writes `(Bind {$o :: ActOccurrence F} (Perform Host a) {body})` and targets
+instead writes `{Bind [$o :: ActOccurrence F] (Perform Host a) body}` and targets
 `$o`. This is an exact expansion, not a mutable "last occurrence" lookup.
 
 A document denotes one `Discourse`, whose top-level `Do` sequence is
@@ -2211,9 +2213,9 @@ target — no dedicated operator is needed:
   display is an `Express` act beside the host on the discourse spine. The
   lowering binds the occurrence handle returned by the host performance and
   applies the indicator relation to that handle:
-  `(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-     {(Do (Perform AttachedDisplay
-            (Express (Close (i-rel Speaker $o degree)))))})`.
+  `{Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+     (Do (Perform AttachedDisplay
+            (Express (Close (i-rel Speaker $o degree)))))}`.
   Expressive force is itself non-at-issue commitment, and the family
   **force clause** holds: an evidential displayed this way *grounds* the
   host act — a mode of commitment, not a second claim — and a host-force
@@ -2357,9 +2359,9 @@ contextual retrieval explicit:
 
 ```text
 (Answer q ContextualAnswer) ≝                     ; open q : Query<A>
-  (Bind {$a :: A} (Context) {(Answer q (TupleAnswer $a))})
+  {Bind [$a :: A] (Context) (Answer q (TupleAnswer $a))}
 (Answer q ContextualAnswer) ≝                     ; polar q : Query<Bool>
-  (Bind {$a :: Bool} (Context) {(Answer q (PolarAnswer $a))})
+  {Bind [$a :: Bool] (Context) (Answer q (PolarAnswer $a))}
 ```
 
 — the retrieval is at the query's answer domain, and the selection
@@ -2426,13 +2428,13 @@ condition** with singularity projective. The remark's precise shape:
 ```text
 (Meau0 r) ≝
 (Presuppose
-  (∃ (λ {$p :: Proposition}
-    {(∧ (CoRef r $p)
-       (∀ (λ {$q :: Proposition} {(→ (CoRef r $q) (= $q $p))})))}))
-  (∃ (λ {$p :: Proposition}
-    {(∧ (CoRef r $p)
-       (∀ (λ {$q :: Proposition} {(→ (CoRef r $q) (= $q $p))}))
-       (Holds $p))})))
+  (∃ {λ [$p :: Proposition]
+    (∧ (CoRef r $p)
+       (∀ {λ [$q :: Proposition] (→ (CoRef r $q) (= $q $p))}))})
+  (∃ {λ [$p :: Proposition]
+    (∧ (CoRef r $p)
+       (∀ {λ [$q :: Proposition] (→ (CoRef r $q) (= $q $p))})
+       (Holds $p))}))
 ```
 
 (the member `$p` singleton-lifts at the referential `CoRef`
@@ -2490,8 +2492,8 @@ types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 ```
 
 `DuhuRel` is derived — formally: `((DuhuRel c) x1 x2) ≝
-(∧ (CoRef x1 (Reify c)) (Distrib (λ {$s :: Sign Sentence} {(CoRef
-(Reify (InterpretContent $s)) (Reify c))}) x2))` — its x1 the reified
+(∧ (CoRef x1 (Reify c)) (Distrib {λ [$s :: Sign Sentence] (CoRef
+(Reify (InterpretContent $s)) (Reify c))} x2))` — its x1 the reified
 content, its x2 sentence signs whose interpretation reifies the same
 (CLL 11.7's x2 and `se du'u`); the others are the
 family proper. `DuhuRel` — and with it `se du'u` — is defined only
@@ -2504,7 +2506,7 @@ sign for open expressions; no such sign kind exists in the baseline, so
 this remains reserved-family territory (§14). Reference applies
 **outside** the relation, exactly as for
 any selbri: `lo ni mi klama` is `Refer` over
-`(λ {$a :: Referents Amount} {(Close ((NiRel …) $a))})` — so the
+`{λ [$a :: Referents Amount] (Close ((NiRel …) $a))}` — so the
 `lo`/`le` contrast, outer quantification,
 and relative clauses all work on abstractions for free, and an omitted x2
 is ordinary closure into `Context` (the `su'u` categorizer's contextual
@@ -2572,7 +2574,7 @@ wins:
 |---|---|
 | `(CloseClause C)` | On each candidate/event branch, the locally bound witness `$e` used to evaluate `(C $e)`. Truth filtering may reject the branch; it does not replace its described event. |
 | `((StateClause c) e)` | `$e` on the sole possible satisfying co-reference class; a non-`hold_M(c)` candidate has no satisfying lineage and does not evaluate `c`. |
-| `(Bind {$x} computation {body})` when the body returns Content | The event of the selected continuation body on that outcome branch. `Let` is already covered by ordinary application/β. |
+| `{Bind [$x] computation body}` when the body returns Content | The event of the selected continuation body on that outcome branch. `Let` is already covered by ordinary application/β. |
 | `(Presuppose π body)`; `(Supplement anchor side body)` when the body is Content | The at-issue body's event. Projective conditions and side commitments remain part of Content identity but do not replace the at-issue eventuality. |
 | `(InContext c g)` | `event(c)` evaluated with the same shifted utterance ground `g`; this shifts the projection rather than constructing a new holding state. |
 | `(Holds p)`; `(ActContent a)`; `(RealizedContent u)`; `(InterpretContent s)` | The event of the represented, raw-packaged, occurrence-captured, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7; none of these projections constructs a new holding state. |
@@ -2586,7 +2588,7 @@ wins:
 This table closes F1's otherwise ambiguous case deliberately: application at
 the transparent function alias is ordinary application. Giving every such
 application its argument as event would make
-`((λ {$e} {⊤}) x)` and its β-reduct `⊤` differ in Content identity,
+`({λ [$e] ⊤} x)` and its β-reduct `⊤` differ in Content identity,
 contradicting §4.4. `CloseClause` is the semantically explicit point at which
 the locally selected clause witness becomes the event of the closed Content.
 
@@ -2759,7 +2761,8 @@ or reading rule.
 - **L1.4** FA/conversion → labelled fills / row routing (§4.2).
 - **L1.5** `zi'o` → `DropPlace`.
 - **L1.6** `zo'e`/omission → per-site `Context` (P15).
-- **L1.7** `fi'a` → `OpenQ` over `Label<ρ>`.
+- **L1.7** `fi'a` → `OpenQ` over the compatible-label refinement
+  `CompatibleLabel<ρ,T>` of `Label<ρ>` (§4.7, §8.3).
 - **L1.8** `co'e`/`do'e` → `Context` at relation/tag type.
 - **L1.9** *(reading)* ⊳ `si`/`sa`/`su` erase before reading; quoted text
   preserves them.
@@ -2804,10 +2807,10 @@ or reading rule.
   utterance's own token u₀ (the `dei` value, §7.4):
 
   ```text
-  (λ {$r :: Referents Entity}
-    {(∃ (λ {$e :: Referents Locution}
-      {(∧ (LocutionOf $e u₀)
-         (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))}))})
+  {λ [$r :: Referents Entity]
+    (∃ {λ [$e :: Referents Locution]
+      (∧ (LocutionOf $e u₀)
+         (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))})}
   ```
 
   for which `(Close (skicu Speaker $r Audience P))` is the **licensed display
@@ -2831,7 +2834,7 @@ or reading rule.
   partial objects qualifying only collectively.
 - **L3.7** *(note)* Thus bare `lo'i gerku` may be a set of the contextually
   selected dogs, not necessarily all dogs, but the hidden dog reference does
-  not become a second antecedent: in CLL 6.52 `ri` denotes the set. The
+  not become a second antecedent: in CLL Example 6.52 `ri` denotes the set. The
   maximal reading remains available when context selects that base or when
   explicit `ro`/`MaxRefer` requires it; bare collection gadri do not add it.
 - **L3.8** *(note)* Completeness here forbids components beyond the selected
@@ -2891,8 +2894,9 @@ or reading rule.
 
 **Quantification and connectives** (L5; P2, P17, P18).
 
-- **L5.1** `ro` over descriptions → importing `Every` (`Presuppose`
-  nonemptiness + `∀`); bare `ro da` → `∀`.
+- **L5.1** `ro` over descriptions → the library's importing `Every` (§12:
+  `MaxRefer`'s presupposed nonemptiness, member-level `Distrib`, and export
+  of the maximal witness); bare `ro da` → `∀`.
 - **L5.2** PA-quantifiers → library cardinal GQs over a counting basis.
 - **L5.3** Termsets (`ce'e`, `nu'i`) → co-selected witness sets at one joint
   locus with the full product; no coordinate maximality (the coordinate-closed
@@ -2903,7 +2907,7 @@ or reading rule.
   is untouched; pin P30): the row ρ is ⊳ fixed consistently across every
   occurrence (the exact resolved row; incompatible uses = no resolved
   reading); bare `bu'a` carries implicit `su'o`, and any other quantifier
-  requires the prenex (CLL 16.107); restrictions must be pure and already
+  requires the prenex (CLL Example 16.107); restrictions must be pure and already
   typed at `PredTerm<ρ>` — an ordinary first-order `ke'a` clause on a
   predicate variable does not type (reserved-family territory, §14).
 - **L5.6** `cei` + `broda`-series → ⊳ **bridi-template** binding (CLL 7.5):
@@ -2913,7 +2917,7 @@ or reading rule.
   sample predicates, not contextual retrievals.
 - **L5.7** When a quantifier or `Generic` takes a nuclear `C_x :
   ClauseContent`, it closes each instantiation locally and lifts the complete
-  quantified claim: `(StateClause (Q P (λ {$x} {(CloseClause C_x)})))`. It
+  quantified claim: `(StateClause (Q P {λ [$x] (CloseClause C_x)}))`. It
   never passes one shared lexical event through all quantifier instantiations.
 - **L5.8** Declarative logical connection uses
   `ClauseNot`/`ClauseAnd`/`ClauseOr`/`ClauseImp`/ `ClauseIff`/`ClauseXor`
@@ -2927,13 +2931,14 @@ or reading rule.
   removes the `na`; pin P31); `Scalar` gains no fourth kind, emphasis is
   absence or `ba'e` focus.
 - **L5.11** Applied `na'e`/`to'e`/`no'e P` bind the applicable domain visibly:
-  `((NAhE P) fills…) ↦ (Bind {$d :: ContrastDomain ρ(P)} (Context
-  domain-constraint deps…) {((Scalar OtherThan|Opposite|Neutral $d P)
-  fills…)})`; the constraint and dependency profile come from the lexical
+  `((NAhE P) fills…) ↦ {Bind [$d :: ContrastDomain ρ(P)] (Context
+  domain-constraint deps…) ((Scalar OtherThan|Opposite|Neutral $d P)
+  fills…)}`; the constraint and dependency profile come from the lexical
   entry and resolved reading (§6.3).
 - **L5.12** Sentence-level **logical** connection (`.i je`, `.i ja`, …) →
   **one performance of the connected clause** — `(Assert (CloseClause
-  (ClauseOr C₁ C₂)))` for `.i ja`, which forces the uniform rule; the host's
+  (ActualClause (ClauseOr C₁ C₂))))` for `.i ja` in the actual mode (the
+  resolved CAhA former is never elided, P24), which forces the uniform rule; the host's
   single force is shared by the connection (a force conflict has no resolved
   reading); the schema is stated for the content-taking forces (`Assert`,
   `Command`) — an interrogative host queries the connected content; UI
@@ -3247,11 +3252,11 @@ neutral plural predication, per P4; `Every`'s nuclear scope is
 member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
 
 ```text
-(Exactly n P Q)  ≝ (Bind {$w :: Referents T} (SelectExactly n P) {(Q $w)})
-(AtLeast n P Q)  ≝ (Bind {$w :: Referents T} (SelectAtLeast n P) {(Q $w)})
-(Some P Q)       ≝ (Bind {$w :: Referents T} (SelectSome P)      {(Q $w)})
-(Every P Q)      ≝ (Bind {$w :: Referents T} (MaxRefer P)
-                     {(Distrib Q $w)})          ; the import is MaxRefer's
+(Exactly n P Q)  ≝ {Bind [$w :: Referents T] (SelectExactly n P) (Q $w)}
+(AtLeast n P Q)  ≝ {Bind [$w :: Referents T] (SelectAtLeast n P) (Q $w)}
+(Some P Q)       ≝ {Bind [$w :: Referents T] (SelectSome P)      (Q $w)}
+(Every P Q)      ≝ {Bind [$w :: Referents T] (MaxRefer P)
+                     (Distrib Q $w)}          ; the import is MaxRefer's
                                                 ; own presupposition (below),
                                                 ; emitted before any witness
                                                 ; can fail; exports w
@@ -3259,8 +3264,8 @@ member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
 (AtMost n P Q)   ≝ (¬ (AtLeast n+1 P Q))                   ; no export
 (MoreThan n P Q) ≝ (AtLeast n+1 P Q)
 (FewerThan n P Q)≝ (¬ (AtLeast n P Q))                     ; total at n = 0
-(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (Q $x))}))) n)
-(Distrib Q r)    ≝ (∀ (λ {$x :: T} {(→ (Among $x r) (Q $x))}))
+(GlobalExactly n P Q) ≝ (= (Card (SetOf {λ [$x :: T] (∧ (P $x) (Q $x))})) n)
+(Distrib Q r)    ≝ (∀ {λ [$x :: T] (→ (Among $x r) (Q $x))})
                    ; T the member type of r; $x lifts to a singleton
                    ; reference for Among — Distrib is unit distribution
 ```
@@ -3286,7 +3291,7 @@ scope's contextual sites and introductions out of the comprehension
 first (site identity, §5.3, makes the hoist meaning-preserving), and
 an unhoistable nuclear scope simply has no global reading.
 
-`no prenu cu jmaji` is `(No prenu-property (λ {$w :: Referents Entity} {(Close (jmaji $w))}))` —
+`no prenu cu jmaji` is `(No prenu-property {λ [$w :: Referents Entity] (Close (jmaji $w))})` —
 "no people-witness gathers", the reading a distributive quantifier
 could not express at all (§4.10).
 
@@ -3313,21 +3318,21 @@ admissible region — the gradable analogue, consumed by `Grade`'s
 `Vague` region):
 
 ```text
-(Many P Q)   ≝ (Bind {$θ :: Natural} (Vague (AdmissibleThreshold ManyK P))
-                 {(AtLeast $θ P Q)})
-(Few P Q)    ≝ (Bind {$θ :: Natural} (Vague (AdmissibleThreshold FewK P))
-                 {(FewerThan $θ P Q)})
-(Most P Q)   ≝ (> (Card (SetOf (λ {$x :: T} {(∧ (P $x) (Q $x))})))
-                  (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Q $x)))}))))
-(TooMany P Q)≝ (Bind {$σ :: Referents Entity} (Context)          ; purpose
-                      {$θ :: Natural} (Vague (AdmissibleThreshold TooManyK P $σ))
-                 {(MoreThan $θ P Q)})
-(TooFew P Q) ≝ (Bind {$σ :: Referents Entity} (Context)
-                      {$θ :: Natural} (Vague (AdmissibleThreshold TooFewK P $σ))
-                 {(FewerThan $θ P Q)})
-(Enough P Q) ≝ (Bind {$σ :: Referents Entity} (Context)
-                      {$θ :: Natural} (Vague (AdmissibleThreshold EnoughK P $σ))
-                 {(AtLeast $θ P Q)})
+(Many P Q)   ≝ {Bind [$θ :: Natural] (Vague (AdmissibleThreshold ManyK P))
+                 (AtLeast $θ P Q)}
+(Few P Q)    ≝ {Bind [$θ :: Natural] (Vague (AdmissibleThreshold FewK P))
+                 (FewerThan $θ P Q)}
+(Most P Q)   ≝ (> (Card (SetOf {λ [$x :: T] (∧ (P $x) (Q $x))}))
+                  (Card (SetOf {λ [$x :: T] (∧ (P $x) (¬ (Q $x)))})))
+(TooMany P Q)≝ {Bind [$σ :: Referents Entity] (Context)          ; purpose
+                      [$θ :: Natural] (Vague (AdmissibleThreshold TooManyK P $σ))
+                 (MoreThan $θ P Q)}
+(TooFew P Q) ≝ {Bind [$σ :: Referents Entity] (Context)
+                      [$θ :: Natural] (Vague (AdmissibleThreshold TooFewK P $σ))
+                 (FewerThan $θ P Q)}
+(Enough P Q) ≝ {Bind [$σ :: Referents Entity] (Context)
+                      [$θ :: Natural] (Vague (AdmissibleThreshold EnoughK P $σ))
+                 (AtLeast $θ P Q)}
 ```
 
 Gradable predication: a `GradableRel<ρ,ℓ>` is a lexical relation whose
@@ -3347,11 +3352,11 @@ whole document). Then
 
 ```text
 (Grade R s reg) : PredTerm<ρ> ≝
-  (λ {$rec :: Record ρ} {(InRegion (deg_R $rec s) reg)})
+  {λ [$rec :: Record ρ] (InRegion (deg_R $rec s) reg)}
 ```
 
 — the relation holding of a row record exactly when its degree
-on scale `s` lies in region `reg`. No `…` remains in this chapter.
+on scale `s` lies in region `reg`.
 
 **Complement selection** (`da'a`, CLL 18.8; default n = 1). A
 **declared** primitive member of the §5.6 selection family (like its
@@ -3361,7 +3366,7 @@ ordinary export:
 ```text
 (SelectAllBut n P) : RefComp<Referents<T>>   ; witness law:
    ; (∧ (CoveredBy P w)
-   ;    (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Among $x w)))}))) n))
+   ;    (= (Card (SetOf {λ [$x :: T] (∧ (P $x) (¬ (Among $x w)))})) n))
    ; — the witness is P-covered without residue AND leaves exactly n
    ; P-individuals behind, spelled by comprehension: the plural kernel
    ; has no difference operator and needs none. Which individuals are
@@ -3447,16 +3452,16 @@ The LAhE collection crossings are type-directed:
 Empty set/list/member crossings and `nomei` remain governed by the nonempty
 reference boundary and §14/#23.
 
-`(Overlap a b)` ≝ `(∃ (λ {$c :: Referents T} {(∧ (Among $c a) (Among $c b))}))`;
-`(Interval a b k₁ k₂)` ≝ `(SetOf (λ {$x :: T} {(∧ (cmp₁ a $x) (cmp₂ $x b))}))` with
+`(Overlap a b)` ≝ `(∃ {λ [$c :: Referents T] (∧ (Among $c a) (Among $c b))})`;
+`(Interval a b k₁ k₂)` ≝ `(SetOf {λ [$x :: T] (∧ (cmp₁ a $x) (cmp₂ $x b))})` with
 `cmpᵢ` strict/nonstrict per the `ga'o`/`ke'i` endpoint kinds. The
 reciprocal schema (consumed by `simxu`'s and `soi`'s lexicon rows):
 
 ```text
 (Reciprocate r P) ≝
-  (∀ (λ {$x $y :: T}
-       {(→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
-           (P $x $y))}))    ; member-wise, both ways: T is r's member
+  (∀ {λ [$x $y :: T]
+       (→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
+           (P $x $y))})    ; member-wise, both ways: T is r's member
                             ; sort; the units singleton-lift at Among
                             ; and at P's places (§3.2). Vacuous on a
                             ; unitless (atomless) reference —
@@ -3494,9 +3499,9 @@ so the `fa'u` specimen expands completely:
                                                  ; the lexicon's cmene row
 (MaxRefer P)    : RefComp<Referents<T>> ≝
   (Presuppose (∃ P)                       ; defined only when P is
-    (Refer (λ {$r :: Referents T}          ; inhabited
-      {(∧ (CoveredBy P $r)
-          (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))})))})))
+    (Refer {λ [$r :: Referents T]          ; inhabited
+      (∧ (CoveredBy P $r)
+          (∀ {λ [$x :: T] (→ (P $x) (Among $x $r))}))}))
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
@@ -3524,7 +3529,7 @@ interval `I`, is itself an outer holding-state clause:
 ```text
 (RoiClause n C I) ≝
 (StateClause
-  (= (Card (SetOf (λ {$e :: Eventuality} {(∧ (C $e) (During $e I))}))) n))
+  (= (Card (SetOf {λ [$e :: Eventuality] (∧ (C $e) (During $e I))})) n))
 ```
 
 This **replaces** `CloseClause C`: the counted component events remain the
@@ -3543,10 +3548,10 @@ Referents<Entity> → Content` (the `mo'i` heading: the event's `muvdu`
 motion with `farna` direction). The CAhA clause formers are:
 
 ```text
-(Realized C)           ≝ (∃ (λ {$e :: Referents Eventuality}
-                              {(∧ (C $e) (fasnu $e))}))
-(ActualClause C)       ≝ (λ {$e :: Referents Eventuality}
-                            {(∧ (C $e) (fasnu $e))})
+(Realized C)           ≝ (∃ {λ [$e :: Referents Eventuality]
+                              (∧ (C $e) (fasnu $e))})
+(ActualClause C)       ≝ {λ [$e :: Referents Eventuality]
+                            (∧ (C $e) (fasnu $e))}
 (CapableClause C)      ≝ (StateClause (InnatelyCapable C))
 (UnrealizedClause C)   ≝ (StateClause
                             (∧ (InnatelyCapable C) (¬ (Realized C))))
@@ -3638,21 +3643,21 @@ schemas ≝ performative `Express` of the COI lexical relation
 (`coi-greeting`, `ki'e-thanks`, …), schematically `(COIExpress R
 addr) ≝ (Express (Close (R Speaker addr)))` with the entry's
 performative host-force profile; for `a : Act<F>`, `(GroundedBy b a)` ≝
-`(Bind {$o :: ActOccurrence F} (Perform Host a)
-   {(Do (Perform AttachedDisplay
-          (Express (Close (EvidentialBasis Speaker $o b)))))})` —
+`{Bind [$o :: ActOccurrence F] (Perform Host a)
+   (Do (Perform AttachedDisplay
+          (Express (Close (EvidentialBasis Speaker $o b)))))}` —
 the act-level evidential spelling of §7.6 (named to
 avoid the `Ground` sort, §5.1); focus for
 a host content frame `H[·]` and focused sumti `f : Referents<T>`
 (the alternatives `$y` singleton-lift into `CoRef` at `f`'s type):
-`(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ {$y :: T} {(∧ (¬ (CoRef $y f)) H[$y])}))))`
-(`po'o`), and `(Additive f H) ≝ (Presuppose (∃ (λ {$y :: T} {(∧ (¬ (CoRef
-$y f)) H[$y])})) H[f])` (constituent `ji'a`).
+`(Only f H) ≝ (Presuppose H[f] (¬ (∃ {λ [$y :: T] (∧ (¬ (CoRef $y f)) H[$y])})))`
+(`po'o`), and `(Additive f H) ≝ (Presuppose (∃ {λ [$y :: T] (∧ (¬ (CoRef
+$y f)) H[$y])}) H[f])` (constituent `ji'a`).
 
 **Sumti-based selbri** (`me`, CLL 5.10): the Among-property —
 
 ```text
-(MePred X) ≝ (λ {$w :: Referents T} {(Among $w X)})   ; X's computation,
+(MePred X) ≝ {λ [$w :: Referents T] (Among $w X)}   ; X's computation,
    ; if any, is bound before the pure property forms; T is X's sort.
    ; Singleton X: extensionally the P23 identity/co-reference.
 ```
@@ -3718,10 +3723,10 @@ After the mapping hoists the row's constrained κ site, its content includes
 `Among(x3,m)`. Thus a threesome
 cannot contain a fourth peer component. At `n=0` this expansion is unavailable:
 `x3` and `Referents<T>` are nonempty, while the experimental dictionary entry
-  for `nomei` explicitly proposes an empty mass/0-tuple. Whether `Group<T>`
-  admits a null object and how a complete empty cover is represented without an
-  empty `Referents<T>` are gap-registered (§14; GitHub #23); the baseline neither declares
-the form false nor inserts a covert empty plurality.
+for `nomei` explicitly proposes an empty mass/0-tuple. Whether `Group<T>`
+admits a null object and how a complete empty cover is represented without an
+empty `Referents<T>` are gap-registered (§14; GitHub #23); the baseline neither
+declares the form false nor inserts a covert empty plurality.
 
 The `me X me'u MOI` composite (CLL Example 18.93) applies the family
 the MOI cmavo selects at the number the `me`-complement supplies —
@@ -3745,16 +3750,16 @@ domain it is the betweenness span; `mi'i` is metric, never endpoint
 arithmetic:
 
 ```text
-(MetricBall c rad d k) ≝ (SetOf (λ {$x :: T} {(cmpₖ (d c $x) rad)}))
+(MetricBall c rad d k) ≝ (SetOf {λ [$x :: T] (cmpₖ (d c $x) rad)})
    ; cmpₖ = ≤ or < per the GAhO kind k; rad : Number — a measure
    ; sumti supplies it through AmountValue at its scale (§9.2)
 (SpanRegion a b d k₁ k₂) ≝
-   (SetOf (λ {$x :: T}
-     {(∧ (= (+ (d a $x) (d $x b)) (d a b))
-        (endₖ₁ $x a) (endₖ₂ $x b))}))
+   (SetOf {λ [$x :: T]
+     (∧ (= (+ (d a $x) (d $x b)) (d a b))
+        (endₖ₁ $x a) (endₖ₂ $x b))})
    ; metric betweenness; endₖ is ⊤ for ga'o and (¬ (= $x ·)) for
    ; ke'i — the endpoint kinds govern membership, as Interval's cmpᵢ do
-(RegionComplement U A) ≝ (SetOf (λ {$x :: T} {(∧ (∈ $x U) (¬ (∈ $x A)))}))
+(RegionComplement U A) ≝ (SetOf {λ [$x :: T] (∧ (∈ $x U) (¬ (∈ $x A)))})
    ; U the Context-recovered universe — the bi'o-nai reading
 ```
 
@@ -3841,14 +3846,14 @@ unfilled row ρ:
 
 ```text
 topic zo'u comment ↦
-(Bind {$res :: TopicResolution<ρ,T>}
+{Bind [$res :: TopicResolution<ρ,T>]
       (Context (TopicAdmissible t R) deps…)
-  {(∨ (∧ (= $res (PlaceFill ℓ₁)) (Close (At R ℓ₁ t)))
+  (∨ (∧ (= $res (PlaceFill ℓ₁)) (Close (At R ℓ₁ t)))
       …one disjunct per ℓ ∈ CompatibleLabel<ρ,T>…
       (∧ (= $res About)
-         (Let {$p :: Proposition} (Reify (Close R))
-           {(∧ (Holds $p)
-              (Close (srana t $p)))})))})
+         {Let [$p :: Proposition] (Reify (Close R))
+           (∧ (Holds $p)
+              (Close (srana t $p)))}))}
    ; the closed union eliminates by the finite equality-guarded
    ; disjunction (§3.5 — the §4.7 label-case precedent): one disjunct
    ; per compatible label (the topic fills ℓ; Close handles the rest)
@@ -3876,12 +3881,12 @@ flattened, the applicable typed instance is one of these defined forms
   (Massify κ (Combine X₁ … Xₙ))
 
 (JoiEvent κ E₁ … Eₙ) : RefComp<Referents<Eventuality>>  ≝
-  (SelectExactly 1 (λ {$j :: Eventuality}
-    {(CompleteGunmaAt κ $j (Combine E₁ … Eₙ))}))
+  (SelectExactly 1 {λ [$j :: Eventuality]
+    (CompleteGunmaAt κ $j (Combine E₁ … Eₙ))})
 
 (JoiPred κ P₁ … Pₙ) : PredTerm<ρ>  ≝
-  (λ {$a :: Record ρ}
-    {(MixAt κ (Family P₁ … Pₙ) $a)})
+  {λ [$a :: Record ρ]
+    (MixAt κ (Family P₁ … Pₙ) $a)}
 ```
 
 `SelectExactly 1` makes the returned reference one whole without claiming
@@ -3969,11 +3974,11 @@ predication once, and join the link applications with the connective —
 
 ```text
 ((TanruLinkConnect ⊙ M₁ M₂ H) fills…) ≝
-(Bind {$l1 :: PredTerm ρ(H)}
-        (Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₁ H $r)}) deps₁…)
-      {$l2 :: PredTerm ρ(H)}
-        (Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M₂ H $r)}) deps₂…)
-  {(∧ (H fills…) (⊙ ($l1 fills…) ($l2 fills…)))})
+{Bind [$l1 :: PredTerm ρ(H)]
+        (Context {λ [$r :: PredTerm ρ(H)] (TanruAdmissible M₁ H $r)} deps₁…)
+      [$l2 :: PredTerm ρ(H)]
+        (Context {λ [$r :: PredTerm ρ(H)] (TanruAdmissible M₂ H $r)} deps₂…)
+  (∧ (H fills…) (⊙ ($l1 fills…) ($l2 fills…)))}
 ```
 
 with ⊙ the jek's operator and each dependency profile declared by the
@@ -4094,9 +4099,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   batci` (Examples 16.41–16.45; the gloss is 16.45) is two picked groups
   with every dog biting each man, and says nothing stronger; the
   coordinate-closed profile is a named strengthening; referential members
-  need no termset semantics at all (16.7: unquantified descriptions are
-  constants outside scope distinctions, and only explicit `ro…ro`,
-  16.46, spells the full product). The bare-PA half is a **documented
+  need no termset semantics at all (the citation edition's 16.7:
+  unquantified descriptions are constants outside scope distinctions, and
+  only explicit `ro…ro`, Example 16.46, spells the full product — wording
+  this project authored under xorlo, fork commit `e21e63c7`, hence
+  corroborative record rather than independent evidence; original 16.7
+  instead gave an unquantified `le nanmu` an implicit `ro`, the pre-xorlo
+  reading that xorlo's constant treatment of unquantified descriptions
+  supersedes). The bare-PA half is a **documented
   divergence from CLL's letter**, in two respects: ch. 16 §6 glosses
   bare numeric quantification globally ("exactly two things, no more or
   less" — Example 16.34) *and* distributively (`PA broda` "is shorthand
@@ -4117,8 +4127,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   `Refer` (plural references are nonempty by type); it is
   **special-cased at the mapping layer** to the zero-count schema —
   `lo no broda` in a bridi frame `R[·]` lowers to
-  `(No (λ {$x :: Entity} {(broda $x)}) (λ {$w :: Referents Entity}
-  {R[$w]}))`, guskant's unofficial
+  `(No {λ [$x :: Entity] (broda $x)} {λ [$w :: Referents Entity]
+  R[$w]})`, guskant's unofficial
   `naku su'oi da poi ke'a broda` relativized to the frame ("gadri: an
   unofficial commentary from a logical point of view", the "Cannot say
   zero" section). This is what makes answer substitution work: `lo xo
@@ -4178,7 +4188,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   object is not a covert numeric probability (P38).
 - **P30** `bu'a`-series = typed quantification at `PredTerm<ρ>` —
   variables, not objects; exact-row consistency across occurrences;
-  non-`su'o` quantifiers prenex-only (CLL 16.107); only pure
+  non-`su'o` quantifiers prenex-only (CLL Example 16.107); only pure
   higher-order restrictions type. `cei`/`broda`-series bind bridi
   **templates** (fills, tense, negation; later fills override —
   CLL 7.5), not bare relation values.
@@ -4311,7 +4321,7 @@ approximate:
   paired term-and-tag bundles cannot be reduced to either a plain group or a
   property family; (c) `joi nai`, whose CLL 15.7 scalar-negation reading has
   no selected contrast-domain member or scope law (the recorded candidate is
-  §6.3 contrast machinery over the connective family); and (d) the structured
+  §6.3 contrast machinery over the connective family); (d) the structured
   **performance** of `.i joi` and other non-logical ijoiks; and (e)
   joik-connected mekso operands such as `li pa joi re`, whose parser locus has
   no number/operator/collection denotation. `JoiClause`
@@ -4456,7 +4466,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 L8, §7.2 | `EnumerationOrdinal` | — | — |
 | relation variables, templates, connective residue, BIhI, ROI | §11 L5–L6 | `TanruLinkConnect`, `JoiPred`, `JoiTanru`, `JoiClause`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; residual joik/ijoik performance; `ju'e`; `nomei`'s empty cover; the non-numeric MOI composite (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
-| repair, prosody | §11 *(reading)* rules / the resolved-reading datum (#9) | — | registered | §13 |
+| repair, prosody | §11 *(reading)* rules / the resolved-reading datum (#9) | — | registered | — |
 
 A claim of coverage that cannot cite a schema, a library definition, or a
 gap entry is a defect in this document.
@@ -4831,11 +4841,12 @@ used for source verification are noted per entry.
 - **`joi` working page** — "joi", Lojban Wiki,
   <https://mw.lojban.org/papri/joi> (2018 property/event extension proposals;
   architectural evidence, not a completed denotation).
-- **Lojban discussion archive** — local reproducible snapshot at
-  `~/lojban/disc` (a verified copy of the share's `~/git/lojban-disc`, moved
-  off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
-  partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
-  component-inheritance critique preserved in the mailing-list archive.
+- **Lojban discussion archive** — the Lojban IRC logs and mailing-list
+  archive, cited from the project's verified local snapshot (`lojban-disc`;
+  IRC citations give line numbers in its `irc/all_logs.txt`, mail citations
+  give Message-IDs); rationale §1.7a cites the 2010 partial `se gunma` use at
+  lines 408817–408825 and the 1995 component-inheritance critique preserved
+  in the mailing-list archive.
 - **Personal pro-sumti record** — sources for P40, with their evidential roles
   rather than authority: original CLL §7.2 at the baseline source commit
   `13ce309d` says the forms are masses and `mi'o = mi joi do` (the rejected

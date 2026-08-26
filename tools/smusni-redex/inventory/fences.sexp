@@ -33,7 +33,7 @@
  (fence "samples.md" 11 specimen "e3785369d0dec808c5bf5acff3899d2304bfcff4"
         (origin "surface")
         (rules "L6.4"))
- (fence "samples.md" 12 specimen "06d0d9d33529bc747322d3cdb405412e003be3ff"
+ (fence "samples.md" 12 specimen "746a1f80760906d8284c2e0a83291c6a25f0af94"
         (origin "surface")
         (rules "L5.1" "L5.7" "L6.6"))
  (fence "samples.md" 13 specimen "4fab3b87ce230a3fcfb053b863b9c0ed70d4135c"
@@ -83,7 +83,7 @@
  (fence "samples.md" 26 specimen "d4aa723c38d70a1b4f5f272b4f3c680ecf95ce33"
         (origin "surface")
         (rules "L7.4" "L5.8"))
- (fence "samples.md" 27 specimen "4c3b2565ed85b3da022fd8d7ba445c61b8fb8a8e"
+ (fence "samples.md" 27 specimen "72483335a75e31f291142a3eae2a3a1708356925"
         (origin "surface")
         (rules "L7.4" "L5.22"))
  (fence "samples.md" 28 specimen "05606f4ef1c0a477054a350053c5a49eef190406"
@@ -110,10 +110,10 @@
  (fence "samples.md" 33 specimen "0053b0ad0158260b7a1f5c1863a3a60b7d695ead"
         (origin "surface")
         (rules "L3.12" "L3.9" "L3.15" "L3.2" "L12.7"))
- (fence "samples.md" 34 specimen "d3dc9784cf580ce1b4efe31840b1cbb07a59eebd"
+ (fence "samples.md" 34 specimen "3fb669c310769bfcc41ab0e61e89c0ad41147dd3"
         (origin "surface")
         (rules "L3.14" "L3.2" "L3.9" "L3.15"))
- (fence "samples.md" 35 specimen "4d1569f29face71d85370c699b9c489d1585cb8f"
+ (fence "samples.md" 35 specimen "096965489fcedaa8d5f2785b3fb7bd0ab3f05100"
         (origin "surface")
         (rules "L3.14" "L8.1"))
  (fence "samples.md" 36 specimen "dcea1ed0a217abde9363445f09a21d766080cca6"
@@ -140,7 +140,7 @@
  (fence "samples.md" 43 specimen "765095ac1c557b2738cacaa08afc13a5514c83d8"
         (origin "surface")
         (rules "L5.1" "L4.1" "L8.1"))
- (fence "samples.md" 44 specimen "546483572c8b82d02c31422e9f757152ce89b82b"
+ (fence "samples.md" 44 specimen "8eac378a0dbb7e9bb101843b6c5f2217febf3ca7"
         (origin "surface")
         (rules "L5.1"))
  (fence "samples.md" 45 specimen "1a575b6f5bb94517627d63ad1a30f80d0a825446"
@@ -181,7 +181,7 @@
  (fence "samples.md" 57 specimen "4a9b373fab796c473bb9e876485273e89bb061d3"
         (origin "surface")
         (rules "L11.13"))
- (fence "samples.md" 58 specimen "108047de2dcd7fda8512944d7f0ff361c5052b6f"
+ (fence "samples.md" 58 specimen "bb119d6c918c79eb106582945612008b1629ed9c"
         (origin "surface")
         (rules "L1.10"))
  (fence "samples.md" 59 specimen "d18b550e979e80e4ef5a9c15530e135e9dc7f869"
@@ -194,7 +194,7 @@
   "samples.md"
   61
   schema
-  "5a1cd2b8b6822564b35b2fc42a92c19e7cc50fcd"
+  "a578eede93730cad7e283ea7f584fce5efd24d2a"
   (note "side-by-side positive/negative intended-value schema"))
  (fence "samples.md" 62 specimen "18fc2d84c0815db802a7c4408fc3cb6c23716df0"
         (origin "surface")
@@ -211,7 +211,7 @@
  (fence "samples.md" 66 specimen "203880927716ccc2198466970bc150b74bcb7c26"
         (origin "surface")
         (rules "L12.1" "L12.2" "L12.3" "L9.14"))
- (fence "samples.md" 67 specimen "4c9334364851c333d8d56bab7af0162ebfa6b174"
+ (fence "samples.md" 67 specimen "4c817faeaf9ed5ad1f796c7a5b6d9cba8b973769"
         (origin "surface")
         (rules "L3.1" "L3.9" "L3.15" "L4.2" "L5.9" "L5.2" "L11.2" "L11.6" "L11.7"))
  (fence "samples.md" 68 specimen "b680c5cf6698f14202dd1390bd5081016fd617df"
@@ -236,9 +236,9 @@
   "spec.md"
   5
   schema
-  "ec12aedce7c517c0561463e3ce84640a9dbc6cbd"
+  "fe5bfbdec40ba0419b3761ff91931742e01196e2"
   (note "schematic typed universal with an ellipsis body"))
- (fence "spec.md" 6 expansion "2892852bfcc49d5773f580fdc8df8548d067e551")
+ (fence "spec.md" 6 expansion "7f9d9b1e5772edf5fad712b401812bf2e03ca6ee")
  (fence "spec.md" 7 declaration "f9b80375715d188988c5467c52b898bcbbdf4de4")
  (fence
   "spec.md"
@@ -256,7 +256,7 @@
   "spec.md"
   11
   schema
-  "efdf4c59513bd7ef0d3b4a3c8de66ba7d29a1ba6"
+  "64774649585218b06269d21a4b4a2d5a2f8724e1"
   (note "lowering pattern with an ellipsis body"))
  (fence "spec.md" 12 specimen "9abc6462c335cc118f6573d954f8aab72d32260c"
         (origin "surface")
