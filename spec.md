@@ -376,8 +376,8 @@ A **place row** ρ is a finite sequence of labelled, typed places, e.g. for
        (5 (Referents Entity)) (Eventuality (Referents Eventuality)))
 ```
 
-The event place `ev` is distinguished: it is present exactly on lexical
-entries whose §10 clause-event mode is `DirectEvent(ev)`, and is filled with
+The `Eventuality` place is distinguished: it is present exactly on lexical
+entries whose §10 clause-event mode is `DirectEvent(Eventuality)`, and is filled with
 `:Eventuality`. Holding-state entries have no such row field; their clause
 event comes from `StateClause` after ordinary fills.
 

@@ -177,7 +177,10 @@
        [`(Query ,_) #t]
        [`(Sign ,_) #t]
        [`(SignToken ,_) #t]
-       [`(PredTerm ,_ ...) #t]
+       [`(PredTerm ,row ,_ ...)
+        (if (and (list? row) (member (first row) '(Row RowOf RowMinus)))
+            (type-well-formed? row inv)
+            #t)]
        [`(Record ,_) #t]
        [`(Row ,fields ...)
         (andmap (lambda (field)
@@ -186,8 +189,15 @@
                            (eq? (first field) 'Eventuality))
                        (type-well-formed? (second field))))
                 fields)]
-       [`(RowOf ,(? symbol? _)) #t]
-       [`(RowMinus ,row ,_) (type-well-formed? row)]
+       [`(RowOf ,(? symbol? head))
+        (hash-has-key? (inventory-rows inv) head)]
+       [`(RowMinus ,row ,label)
+        (and (type-well-formed? row inv)
+             (let ([shape (row-index-shape row inv)])
+               (and shape
+                    (or (and (exact-positive-integer? label)
+                             (<= label (first shape)))
+                        (and (eq? label 'Eventuality) (second shape))))))]
        [`(Label ,row) (type-well-formed? row)]
        [`(Fn ,params ,result)
         (and (list? params) (andmap type-well-formed? params)
@@ -512,6 +522,21 @@
                 (eq? (row-decl-event-mode declaration) 'direct-event)))]
     [else
      (match row
+       [`(RowOf ,(? symbol? head))
+        (define declaration (inventory-row inv head))
+        (and declaration
+             (list (row-decl-total declaration)
+                   (eq? (row-decl-event-mode declaration) 'direct-event)))]
+       [`(RowMinus ,base ,label)
+        (define base-shape (row-index-shape base inv))
+        (and base-shape
+             (cond
+               [(and (exact-positive-integer? label)
+                     (<= label (first base-shape)))
+                (list (sub1 (first base-shape)) (second base-shape))]
+               [(and (eq? label 'Eventuality) (second base-shape))
+                (list (first base-shape) #f)]
+               [else #f]))]
        [`(ArityRow ,(? exact-nonnegative-integer? count)) (list count #f)]
        [`(Row ,fields ...)
         (list (count (lambda (field)
@@ -584,6 +609,10 @@
   (define arguments (rest elements))
   (define head (atom-value head-node))
   (cond
+    [(member head '(Context Vague Refer))
+     (raise-type node
+                 "~a is a retrieval/reference computation; bind it with an expected type and do not place it directly in a pure position"
+                 head)]
     [(not head)
      (define operator (infer-core head-node env inv))
      (define argument-results (map (lambda (arg) (infer-core arg env inv)) arguments))
@@ -926,6 +955,16 @@
      (define value (infer-core (third arguments) env inv))
      (unless (match (typing-type relation) [`(PredTerm ,_ ,_ ...) #t] [_ #f])
        (raise-type (first arguments) "At requires PredTerm"))
+     (match (typing-type relation)
+       [`(PredTerm ,row ,_ ...)
+        (define shape (row-index-shape row inv))
+        (when (and shape (or (exact-positive-integer? label)
+                             (eq? label 'Eventuality))
+                   (not (or (and (exact-positive-integer? label)
+                                 (<= label (first shape)))
+                            (and (eq? label 'Eventuality) (second shape)))))
+          (raise-type (second arguments) "label ~a is outside row ~e" label row))]
+       [_ (void)])
      (merge-results '(PredTerm Derived 0 #f) (list relation value))]
     [(eq? head 'DropPlace)
      (unless (= (length arguments) 2)
@@ -937,6 +976,15 @@
      (define relation (infer-core (first arguments) env inv))
      (unless (match (typing-type relation) [`(PredTerm ,_ ,_ ...) #t] [_ #f])
        (raise-type (first arguments) "DropPlace requires PredTerm"))
+     (match (typing-type relation)
+       [`(PredTerm ,row ,_ ...)
+        (define shape (row-index-shape row inv))
+        (when (and shape
+                   (not (or (and (exact-positive-integer? label)
+                                 (<= label (first shape)))
+                            (and (eq? label 'Eventuality) (second shape)))))
+          (raise-type (second arguments) "label ~a is outside row ~e" label row))]
+       [_ (void)])
      (merge-results '(PredTerm Derived 0 #f) (list relation))]
     [(member head '(StructuredQuote OpaqueQuote WordSign InterpretContent
                                     RealizedContent AmountValue ZipWith))

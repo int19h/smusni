@@ -97,6 +97,20 @@
 (check-not-exn (lambda () (infer-text "(At klama 2 This)")))
 (check-not-exn (lambda () (infer-text "(DropPlace klama 3)")))
 (check-true (type-error? (lambda () (infer-text "(At klama x2 This)"))))
+(check-true (type-error? (lambda () (infer-text "(At klama 9 This)"))))
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text "{λ [$p :: PredTerm (RowOf zzzz)] (Close $p)}"))))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$p :: PredTerm (RowMinus (RowOf klama) 3)]
+        (Close ($p Speaker This That Yonder))}")))
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text "(SetOf {λ [$x :: Entity] (Context)})"))))
 
 (check-equal?
  (typing-type
