@@ -78,6 +78,9 @@
 
   (constant Speaker (Referents Entity) "spec §5.1")
   (constant Audience (Referents Entity) "spec §5.1")
+  (constant MiAOthers (Referents Entity) "spec §5.1, P40")
+  (constant MaAOthers (Referents Entity) "spec §5.1, P40")
+  (constant DoOOthers (Referents Entity) "spec §5.1, P40")
   (constant This (Referents Entity) "spec §5.1")
   (constant That (Referents Entity) "spec §5.1")
   (constant Yonder (Referents Entity) "spec §5.1")

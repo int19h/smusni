@@ -164,6 +164,31 @@
         (CoveredBy $p $r)}"))))
 
 (check-equal?
+ (typing-type (infer-text "(Combine Speaker Audience)"))
+ '(Referents Entity))
+
+(check-equal?
+ (typing-type
+  (infer-text "{λ [$x :: Entity] (Combine $x Speaker)}"))
+ '(Fn (Entity) (Referents Entity)))
+
+(check-true
+ (type-error?
+  (lambda () (infer-text "(Combine Speaker (Close (gerku Speaker)))"))))
+
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$k :: DecompositionBasis (Group Entity) Entity]
+       {Bind [$g :: Referents (Group Entity)]
+             (JoiGroup $k Speaker Audience)
+         (Mention $g)}}")))
+
+(define personal-others-use (infer-text "(Mention MiAOthers)"))
+(check-not-false
+ (member 'mi-a-others-defined (typing-obligations personal-others-use)))
+
+(check-equal?
  (typing-type
   (infer-text
    "(Assert (CloseClause {λ [$e :: Referents Eventuality] (gerku Speaker)}))"))

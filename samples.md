@@ -323,6 +323,72 @@ existentially.)
   (Assert (Close (klama $alis)))}
 ```
 
+Composite personal pro-sumti are ordinary plural references (P40):
+
+```lisp
+; mi'o remna — one member-level-compatible predication [P40]
+(Assert (Close (remna (Combine Speaker Audience))))
+```
+
+This is the carrier probe. No component-to-group inheritance would make a
+constituted group human merely because the speaker and audience are humans.
+For a collective relation, `mi'o` and explicit `jo'u` still give the same one
+argument:
+
+```lisp
+; mi'o jmaji ≡ mi jo'u do jmaji — one neutral plural predication [P40]
+(Assert (Close (jmaji (Combine Speaker Audience))))
+```
+
+Logical connection is structurally stronger, with two separately
+instantiated clauses:
+
+```lisp
+; mi .e do jmaji — speaker gathers AND audience gathers [P40]
+(Assert
+  (CloseClause
+    (ClauseAnd (DirectClause (jmaji Speaker))
+               (DirectClause (jmaji Audience)))))
+```
+
+Constitution is a different typed result even before any group-level
+predicate is chosen:
+
+```lisp
+; mi joi do — the distinct canonical Group<Entity> reading [P40]
+{Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+  {Bind [$group :: Referents (Group Entity)]
+        (JoiGroup $κ Speaker Audience)
+    (Mention $group)}}
+```
+
+One composite argument does not duplicate its omitted places. This expansion
+isolates x2: exactly one destination value is recovered for the one plural-x1
+journey predication; the value may itself be plural, but there is no hidden
+speaker-to-one/audience-to-another pairing:
+
+```lisp
+; mi'o klama — one place-1 value and one omitted place-2 Context site [P40]
+{Bind [$to :: Referents Entity] (Context)
+  (Assert
+    (Close (klama (Combine Speaker Audience)
+                  :2 $to :3 This :4 That :5 Yonder)))}
+```
+
+The sibling forms use named token-context projections whose §5.1 constraints
+make the “others” genuinely other and enforce the exclusions:
+
+```lisp
+; mi'a / do'o / ma'a — their complete reference values [P40]
+(Do
+  (Mention (Combine Speaker MiAOthers))
+  (Mention (Combine Audience DoOOthers))
+  (Mention (Combine (Combine Speaker Audience) MaAOthers)))
+```
+
+Positive `mi'o … mei` remains #24: it cannot change any of these values into
+a covert group.
+
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: place 2 = members) [P5]
 {Bind [$base :: Referents Entity]
@@ -436,9 +502,9 @@ separate operations:
   (Mention (components_κ $κ $group))}
 ```
 
-The bridge `lu'o mi'o cu remei ≡ mi'o remei` is not claimed by this
-milestone: its surface agreement and `-mei` premises remain assigned to
-#22/#24.
+The bridge `lu'o mi'o cu remei ≡ mi'o remei` is still not claimed: P40 now
+fixes `mi'o`'s plural side, while #24 still owns the missing positive
+plural-`MeiRel` instance needed for the right-hand form.
 
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]

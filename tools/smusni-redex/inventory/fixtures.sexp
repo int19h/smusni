@@ -38,6 +38,7 @@
   (row ponse 2 holding-state "fixture; official row pending #12")
   (row prami 2 holding-state "fixture; official row pending #12")
   (row prenu 1 holding-state "fixture; official row pending #12")
+  (row remna 1 holding-state "fixture; official row pending #12")
   (row purci 2 holding-state "fixture; official row pending #12")
   (row rinka 3 holding-state "fixture; official row pending #12")
   (row sanga 3 direct-event "fixture; official row pending #12")

@@ -230,7 +230,9 @@ never the set-object) are a plurality wearing set-notation clothing, and the
 clothing costs more than it carries — the plural axioms return as
 side conditions, the member-wise/object-wise distinction moves from
 the type system into per-place convention, and coverage is lost where
-Lojban is deliberately non-atomistic. (The familiar objection — "the
+Lojban is deliberately non-atomistic — a boundary motivated in part by
+guskant's Condition₁ not-individuals proof and cut-bread interpretation (see
+References). (The familiar objection — "the
 crowd can be large while the set is abstract" — attacks set-*object*
 predication, which no serious set-typed design proposes; this document
 does not lean on it.) **Why no distributivity/cover
@@ -429,6 +431,50 @@ P-external residue makes both `ko'a R` and `lo R` fail. The rejected
 description-only placement reopens only if speakers accept the same resolved
 `R_p(r)` as nuclear predication while forbidding r specifically as a `lo R`
 referent. No such witness survived the design audit.
+
+### 1.7c Composite personal pro-sumti are plural, not constituted groups
+
+**Decision.** `mi'o` is `Combine Speaker Audience`: the same neutral plural
+argument as `mi jo'u do`. The sibling forms use the same construction with
+their token-relative “others” projections; the context constraints spell out
+the inclusion and exclusion facts instead of relying on English “we”. P4 then
+lets one lexical predication determine how that plurality satisfies it.
+
+The three nearby constructions are observably different. `mi .e do jmaji`
+connects two clauses and therefore says separately that the speaker gathers
+and the audience gathers; `mi'o jmaji` makes one collective predication of
+their combined plurality. `mi joi do` manufactures a first-order group. Under
+P5 no component property inherits to that group, so bare attested `mi'o
+remna` is the decisive carrier probe: the speaker and audience can be humans
+without the group object itself being human. Collective `casnu`/`jmaji` and
+reciprocal `simxu` examples do not discriminate the carriers, and the two
+`se cmene` examples are likewise compromised by collective naming and overt
+`ro`; the rationale does not overclaim them.
+
+The evidence is genuinely layered. Original CLL §7.2 explicitly says the
+forms are masses and equates `mi'o` with `mi joi do`; that is the coherent
+rejected alternative and the principal compatibility cost. Current CLL §7.2
+says `mi jo'u do`, but that sentence is this project's July 2026 amendment
+and cannot ratify the project. The official dictionary fixes speaker,
+listener, and others but no carrier ontology. Independent post-xorlo support
+comes from Llambías' 2004 “not marked either way for distributivity” remark
+and the 2013 Selpa'i/Assis/Clifford thread: `mi'o = mi jo'u do`, preference
+for `jo'u`, and united pluralities whose satisfaction mode remains open. The
+References entry gives exact Message-IDs and roles. The IRC `mi'o remna`
+tokens supply compatibility evidence, not a universal usage theorem.
+
+One composite pro-sumti remains one argument. Thus `mi'o klama` has one
+omitted destination retrieval, possibly returning a plural place value; it
+does not distribute the clause into speaker/listener journeys or pair each
+member with a separately recovered destination. That contrast belongs to the
+surface structure, not pragmatic pairing.
+
+**Cost and reopening.** This diverges from original CLL and requires three
+explicit “others” context projections. It does not solve positive `mi'o …
+mei`: #24 must add or reject a plural carrier instance without changing the
+pronoun. Reopen P40 only for ordinary unmarked uses that require properties of
+a constituted group which its members lack; collective or reciprocal plural
+predication and cardinality alone do not qualify.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -1385,6 +1431,14 @@ genuinely fought:
   atomless-safe overlap clause and cumulative mass profiles, not the placement
   decision. Cost, rejected alternative, and reopening witness are recorded in
   §1.7b.
+- **P40 (composite personal pro-sumti).** Original CLL's mass equation loses
+  on the no-inheritance probe: a group of humans is not thereby human, while
+  bare `mi'o remna` is attested. Neutral `Combine` supplies distributive,
+  collective, and reciprocal lexical satisfaction without equating one
+  argument to the two-clause `.e` form; explicit `joi` remains available for
+  a constituted group. The independent post-xorlo discussion converges on
+  this shape, while current CLL only records the project's own amendment.
+  Exact context constraints, costs, and reopening evidence are in §1.7c.
 
 ## 4. What would change our minds
 

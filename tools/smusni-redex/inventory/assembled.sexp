@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "21aa17a19353fa3d506775fbe914cc22e50c3a51")
- (fixture-sha1 "84e623e9dc0c4f2f98c666fd7d672e8de44239b8")
+ (core-sha1 "f31b0d4543393231b8d3121981f8fd2eb6e16533")
+ (fixture-sha1 "16331ecfbe976cb1a4fb9e3e8e452a10d958cd57")
  (sorts
   AbstractNature
   Achievement
@@ -59,10 +59,13 @@
   AttachedAddress
   AttachedDisplay
   Audience
+  DoOOthers
   Hearsay
   Host
   Intense
+  MaAOthers
   ManyK
+  MiAOthers
   Moderate
   Now
   Observation
@@ -229,6 +232,7 @@
   prami
   prenu
   purci
+  remna
   rinka
   sanga
   selcmi

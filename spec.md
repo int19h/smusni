@@ -1309,6 +1309,7 @@ ctx = ⟨ speaker  : Referents<Entity>,   audience : Referents<Entity>,
         token    : Referents<UtteranceToken> ⟩
 
 Speaker, Audience : ctx → Referents<Entity>
+MiAOthers, MaAOthers, DoOOthers : ctx ⇀ Referents<Entity>
 Now : ctx → Time            Here : ctx → Location
 CurrentToken : ctx → Referents<UtteranceToken>
 Proximity          = Proximal | Medial | Distal   (a closed type)
@@ -1319,6 +1320,17 @@ Deictic       : Proximity × Ground → Referents<Entity>
 ShiftedGround : GroundDescription → Ground        (constructs — §6.1)
 InContext     : Content × Ground → Content
 ```
+
+The three “others” projections are partial current-token context values,
+nonempty when defined by their output type. They are not mandatory fields on
+every utterance context and not an English-pronoun shortcut. Their exact
+definedness conditions are the role constraints: `MiAOthers` does not overlap
+Speaker, and `Combine Speaker MiAOthers` does not overlap Audience;
+`DoOOthers` does not overlap Audience, and `Combine Audience DoOOthers` does
+not overlap Speaker; `MaAOthers` does not overlap
+`Combine Speaker Audience`. Using the corresponding pro-sumti projects this
+definedness in the ordinary §1.7/P21 way. Nothing requires the three
+projections to co-refer with one another.
 
 Demonstratives (`This`/`That`/`Yonder`, i.e. `ti`/`ta`/`tu`) are
 `Deictic` at the three proximities against the context's ground:
@@ -2947,6 +2959,29 @@ GQ policy. The default interval is the Context-recovered anchor with `Vague`
 extent (CLL 10.9), overridable by explicit ZEhA/`ze'e` forms (P35). `fi'o P`
 uses P as a tag with the lexicon's current clause-event link.
 
+**Composite personal pro-sumti** (P40). These are ordinary neutral plural
+references, not logical sentence connection and not constituted group
+objects. Their complete lowerings and result types are:
+
+```text
+mi'o ↦ (Combine Speaker Audience)                     : Referents<Entity>
+mi'a ↦ (Combine Speaker MiAOthers)                    : Referents<Entity>
+do'o ↦ (Combine Audience DoOOthers)                   : Referents<Entity>
+ma'a ↦ (Combine (Combine Speaker Audience) MaAOthers) : Referents<Entity>
+```
+
+The §5.1 context constraints make `mi'a` exclude Audience, `do'o` exclude
+Speaker, and every “others” value genuinely other than the included role
+values. Each displayed result fills one place in one predication. In
+particular, `mi'o klama` has one x1 reference and one omitted-x2 `Context`
+site; it does not expand to paired speaker/listener journeys or two omitted
+sites. `mi .e do broda` instead connects two separately instantiated clauses;
+`mi jo'u do broda` has the same argument denotation as `mi'o broda`; and
+`mi joi do broda` first constructs §12's canonical `Group<Entity>`. No
+component property inherits to that group (P5). Positive `mi'o … mei` does not
+alter this lowering: the separate plural-carrier instance problem remains
+#24, never a covert second group denotation.
+
 **Anaphora** (P16). ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible
 referents (§5.6); `vo'a`-series → bridi-place bindings; KOhA assigned →
 bound variable; unassigned → keyed `Context`; ⊳ cross-performance
@@ -4108,6 +4143,21 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   `lo broda = zo'e noi broda`, and mishandled collective heads. Reopens only
   on a supported case where the same resolved `R_p(r)` is true in nuclear
   predication but r must nevertheless be unavailable specifically to `lo R`.
+- **P40** `mi'o` denotes exactly `Combine Speaker Audience`, the ordinary
+  neutral plural reference corresponding to `mi jo'u do`. It is neither the
+  logical connection `mi .e do` nor the canonical group `mi joi do`; P4
+  leaves one predication's collective/distributive/reciprocal satisfaction to
+  its lexical row. `mi'a`, `do'o`, and `ma'a` use the analogous §11 `Combine`
+  lowerings with the token-relative `MiAOthers`, `DoOOthers`, and `MaAOthers`
+  projections and §5.1's inclusion/exclusion constraints. One composite
+  pro-sumti creates one argument and therefore one omitted-place site per
+  unfilled host place, never a hidden member pairing. Original CLL §7.2's
+  `mi'o = mi joi do` mass analysis is the coherent rejected alternative;
+  current CLL's `mi jo'u do` wording is project-authored corroboration, not
+  independent evidence. Positive `mi'o … mei` remains #24's separate carrier
+  problem. Reopens only on ordinary unmarked uses that require a constituted
+  group's own properties rather than neutral plural predication or #24's
+  cardinality interface.
 
 ## 14. Gap register
 
@@ -4300,7 +4350,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | relative clauses, `goi`, `voi` | §11 ¶3 | audience-deleted `skicu` (P10) | — | §4 |
 | quantifiers, termsets, negation scope | §11 ¶4 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
-| anaphora, KOhA, `ra'o` | §11 ¶6 | — | exotic donkeys | §4, §5 |
+| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 ¶6 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
 | abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
@@ -4345,7 +4395,8 @@ total `ActContent`, and the token/sign
 fact relations; the declared MEX conversion crossings, `During`,
 `EnumerationOrdinal`, and the
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
-context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
+context projections (including partial `MiAOthers`/`MaAOthers`/`DoOOthers`);
+`Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
 derived `DuhuRel`), the crossing `AmountValue`,
 `InnatelyCapable`, `MotionVector`; and the axiomatic
@@ -4637,7 +4688,8 @@ used for source verification are noted per entry.
   individuals, then offers cut bread as the material-noun reading. This
   motivated §4.8's no-atoms boundary, the `CoveredBy` overlap conjunct, and
   cumulative/divisible mass unit profiles; it does not decide P39's placement
-  between lexical and description semantics.
+  between lexical and description semantics. The concrete dependent term is
+  the Condition₁/`CoveredBy` specimen in `samples.md` §3.
 - **BPFK Gadri** — "BPFK Section: gadri", Lojban Wiki,
   <https://mw.lojban.org/papri/BPFK_Section:_gadri> (page id 527; the table
   defines `lo [PA] broda` as `zo'e noi ke'a broda [gi'e zilkancu …]`). This
@@ -4690,6 +4742,28 @@ used for source verification are noted per entry.
   off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
   partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
   component-inheritance critique preserved in the mailing-list archive.
+- **Personal pro-sumti record** — sources for P40, with their evidential roles
+  rather than authority: original CLL §7.2 at the baseline source commit
+  `13ce309d` says the forms are masses and `mi'o = mi joi do` (the rejected
+  alternative); the current `mi jo'u do`/neutral-plural wording was introduced
+  by this project's CLL commit
+  `224cb6312c6cd8c66a683e08f244f055abe2082b` and cannot self-ratify.
+  Jorge Llambías, 2004-08-28,
+  `<20040829024337.55170.qmail@web41906.mail.yahoo.com>`, says personal
+  pronouns are unmarked for distributivity (independent post-xorlo support).
+  Selpa'i, 2013-06-16, `<51BDBA1D.80602@gmx.de>`, explicitly proposes
+  `mi'o = mi jo'u do`; Felipe Gonçalves Assis, 2013-06-16,
+  `<CALMa68r4BqLh=eFcGPV1mA-fDkYpg3xR6d-Nu4RD8qVrueM4Gw@mail.gmail.com>`,
+  favors `jo'u` as the simpler post-xorlo treatment; John E. Clifford,
+  2013-06-16,
+  `<1371405876.998.YahooMailNeo@web184401.mail.bf1.yahoo.com>`, describes the
+  simplest forms as united pluralities whose predicate satisfaction remains
+  open. The messages are in the local archive's
+  `mail/lojban-list.maildir.zip`. Bare member-level corpus probes are
+  `mi'o remna` by selckiku (IRC `all_logs.txt` line 477248, 2011-08-13) and
+  `_mukti_` (line 1005240, 2015-11-01); they expose the no-inheritance cost of
+  the rejected group carrier, while collective/reciprocal uses alone do not
+  discriminate it.
 - **Historical group/mass identity record** — messages in the same local
   archive, cited in rationale §1.7a with their role in the project's
   argument: Arthur W. Protin Jr., 1991-06-20,
