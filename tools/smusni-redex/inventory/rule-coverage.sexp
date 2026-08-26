@@ -1,17 +1,15 @@
 (smusni-rule-coverage 1
-  ;; Ratchet: the count of §11 rules cited by at least one specimen must
-  ;; never fall below this floor; raise it whenever coverage grows.
-  (cited-floor 70)
-  ;; Lowering rules of spec §11 that no samples.md/spec.md specimen cites yet.
-  ;; Each entry names the issue that owns the missing coverage (#9 M3 corpus).
+  ;; Ratchet: the count of §11 lowering judgments cited by at least one
+  ;; surface specimen must never fall below this floor; raise it whenever
+  ;; coverage grows.
+  (cited-floor 68)
+  ;; Lowering judgments no surface specimen cites yet (gap/note/reading
+  ;; rules are outside F₀ and never appear here). Each entry names the issue
+  ;; that owns the missing coverage (#9 M3 corpus).
   (uncovered "L1.8" "#9")
-  (uncovered "L1.9" "#9")
   (uncovered "L2.1" "#9")
   (uncovered "L2.2" "#9")
-  (uncovered "L2.3" "#9")
   (uncovered "L2.4" "#9")
-  (uncovered "L3.7" "#9")
-  (uncovered "L3.8" "#9")
   (uncovered "L3.13" "#9")
   (uncovered "L4.5" "#9")
   (uncovered "L4.6" "#9")
@@ -23,23 +21,16 @@
   (uncovered "L5.6" "#9")
   (uncovered "L5.10" "#9")
   (uncovered "L5.13" "#9")
-  (uncovered "L5.14" "#9")
   (uncovered "L5.15" "#9")
   (uncovered "L5.16" "#9")
   (uncovered "L5.17" "#9")
-  (uncovered "L5.18" "#9")
-  (uncovered "L5.21" "#9")
-  (uncovered "L5.22" "#9")
+  (uncovered "L5.19" "#9")
   (uncovered "L5.23" "#9")
-  (uncovered "L5.24" "#9")
-  (uncovered "L5.25" "#9")
-  (uncovered "L6.5" "#9")
-  (uncovered "L6.7" "#9")
+  (uncovered "L5.27" "#9")
   (uncovered "L6.8" "#9")
   (uncovered "L6.9" "#9")
   (uncovered "L6.10" "#9")
   (uncovered "L6.11" "#9")
-  (uncovered "L7.5" "#9")
   (uncovered "L8.2" "#9")
   (uncovered "L8.3" "#9")
   (uncovered "L8.4" "#9")
@@ -47,12 +38,7 @@
   (uncovered "L8.6" "#9")
   (uncovered "L8.7" "#9")
   (uncovered "L8.10" "#9")
-  (uncovered "L8.11" "#9")
-  (uncovered "L8.12" "#9")
   (uncovered "L9.2" "#9")
-  (uncovered "L9.3" "#9")
-  (uncovered "L9.4" "#9")
-  (uncovered "L9.5" "#9")
   (uncovered "L9.9" "#9")
   (uncovered "L9.10" "#9")
   (uncovered "L9.12" "#9")

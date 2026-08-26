@@ -14,7 +14,7 @@
          "syntax.rkt"
          "types.rkt")
 
-(provide run-checks spec-rule-ids load-rule-coverage rule-coverage-findings)
+(provide run-checks spec-rules spec-rule-ids load-rule-coverage rule-coverage-findings)
 
 (define-runtime-path tool-dir ".")
 (define expected-findings-path
@@ -23,19 +23,25 @@
   (build-path tool-dir "inventory" "rule-coverage.sexp"))
 (define spec-path (build-path tool-dir ".." ".." "spec.md"))
 
-;; Rule ids are read from the normative text itself: every `- **Ln.m**` line
-;; between the §11 and §12 headings of spec.md. The manifest cites them; the
-;; ledger below records the rules no specimen cites yet, each with an issue.
-(define (spec-rule-ids [path spec-path])
+;; Rules are read from the normative text itself: every `- **Ln.m**` line
+;; between the §11 and §12 headings of spec.md, with its kind — `map` (a
+;; lowering judgment, the F₀ population) unless the label is followed by
+;; *(gap)*, *(note)*, or *(reading)*. The manifest cites map rules only; the
+;; ledger records the map rules no surface specimen cites yet, each with an
+;; issue.
+(define (spec-rules [path spec-path])
   (define lines (file->lines path))
   (define start (index-where lines (lambda (l) (string-prefix? l "## 11. "))))
   (define stop (index-where lines (lambda (l) (string-prefix? l "## 12. "))))
   (unless (and start stop (< start stop))
-    (error 'spec-rule-ids "spec.md §11/§12 headings not found"))
+    (error 'spec-rules "spec.md §11/§12 headings not found"))
   (for*/list ([line (in-list (take (drop lines start) (- stop start)))]
-              [m (in-value (regexp-match #px"^- \\*\\*(L[0-9]+\\.[0-9]+)\\*\\* " line))]
+              [m (in-value (regexp-match #px"^- \\*\\*(L[0-9]+\\.[0-9]+)\\*\\*(?: \\*\\((gap|note|reading)\\)\\*)? " line))]
               #:when m)
-    (cadr m)))
+    (cons (cadr m) (string->symbol (or (caddr m) "map")))))
+
+(define (spec-rule-ids [path spec-path])
+  (map car (spec-rules path)))
 
 ;; Returns (values floor ledger). The floor is a ratchet: the number of rules
 ;; cited by specimens may never fall below it, and a commit that raises
@@ -44,33 +50,53 @@
 (define (load-rule-coverage [path rule-coverage-path])
   (match (call-with-input-file path read)
     [`(smusni-rule-coverage 1 (cited-floor ,(? exact-nonnegative-integer? floor)) ,entries ...)
-     (values floor
-             (for/list ([entry (in-list entries)])
-               (match entry
-                 [`(uncovered ,(? string? id) ,(? string? issue)) (cons id issue)]
-                 [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)])))]
+     (define ledger
+       (for/list ([entry (in-list entries)])
+         (match entry
+           [`(uncovered ,(? string? id) ,(? string? issue))
+            (unless (regexp-match? #px"^#[0-9]+$" issue)
+              (error 'load-rule-coverage "uncovered ~a needs a durable issue like #9, got ~e" id issue))
+            (cons id issue)]
+           [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)])))
+     (define ids (map car ledger))
+     (unless (= (length ids) (set-count (list->set ids)))
+       (error 'load-rule-coverage "duplicate uncovered entries in the ledger"))
+     (values floor ledger)]
     [else (error 'load-rule-coverage "unsupported rule-coverage header (expect a cited-floor)")]))
 
 ;; Gate 3a (#9 M1): returns a list of (cons phase message) findings.
-(define (rule-coverage-findings rule-ids classified ledger floor)
-  (define known (list->set rule-ids))
+(define (rule-coverage-findings rules classified ledger floor)
+  ;; `rules` is a list of (id . kind); only `map` rules are lowering judgments.
+  (define kinds (for/hash ([r (in-list rules)]) (values (car r) (cdr r))))
+  (define rule-ids (for/list ([r (in-list rules)] #:when (eq? (cdr r) 'map)) (car r)))
+  (define known (list->set (map car rules)))
   (define cited (make-hash))
   (define findings '())
   (define (note! message) (set! findings (cons (cons 'rules-error message) findings)))
   (for ([item (in-list classified)] #:when (eq? (fence-kind item) 'specimen))
     (define rules (fence-rules item))
-    (when (null? rules)
-      (note! (format "specimen ~a#~a cites no lowering rule"
+    (define core? (equal? (fence-origin item) "core"))
+    (when (and (null? rules) (not core?))
+      (note! (format "surface specimen ~a#~a cites no lowering rule"
+                     (fence-source item) (fence-ordinal item))))
+    (when (and core? (pair? rules))
+      (note! (format "core specimen ~a#~a must not cite lowering rules (it lowers no surface Lojban)"
                      (fence-source item) (fence-ordinal item))))
     (for ([id (in-list rules)])
-      (unless (set-member? known id)
-        (note! (format "specimen ~a#~a cites unknown rule ~a"
-                       (fence-source item) (fence-ordinal item) id)))
-      (hash-set! cited id #t)))
+      (cond
+        [(not (set-member? known id))
+         (note! (format "specimen ~a#~a cites unknown rule ~a"
+                        (fence-source item) (fence-ordinal item) id))]
+        [(not (eq? (hash-ref kinds id) 'map))
+         (note! (format "specimen ~a#~a cites ~a, a ~a rule, not a lowering judgment"
+                        (fence-source item) (fence-ordinal item) id (hash-ref kinds id)))]
+        [else (hash-set! cited id #t)])))
   (define ledgered (for/hash ([entry (in-list ledger)]) (values (car entry) (cdr entry))))
   (for ([(id issue) (in-hash ledgered)])
     (unless (set-member? known id)
       (note! (format "rule-coverage ledger names unknown rule ~a" id)))
+    (when (and (set-member? known id) (not (eq? (hash-ref kinds id) 'map)))
+      (note! (format "rule-coverage ledger lists ~a, a ~a rule; only lowering judgments are coverable" id (hash-ref kinds id))))
     (when (hash-has-key? cited id)
       (note! (format "rule-coverage ledger lists ~a as uncovered, but a specimen cites it" id))))
   (for ([id (in-list rule-ids)])
@@ -270,10 +296,11 @@
                          head (string-join (remove-duplicates locations) ", ")))
                 unexpected)))
 
-  (define rule-ids (spec-rule-ids))
+  (define rules (spec-rules))
+  (define rule-ids (map car rules))
   (define-values (coverage-floor coverage-ledger) (load-rule-coverage))
   (define-values (rule-findings cited-count ledgered-count)
-    (rule-coverage-findings rule-ids classified coverage-ledger coverage-floor))
+    (rule-coverage-findings rules classified coverage-ledger coverage-floor))
   (for ([finding (in-list rule-findings)])
     (set! unexpected
           (cons (observed-finding "rules" 0 "n/a" (car finding) (cdr finding))
@@ -293,8 +320,22 @@
           schema-count expansion-count declaration-count)
   (printf "elaboration: ~a retrieval sites, ~a recorded choices\n"
           site-count choice-count)
-  (printf "rules: ~a lowering rules in spec §11; ~a cited by specimens (ratchet floor ~a); ~a uncovered (ledgered with issues)\n"
-          (length rule-ids) cited-count coverage-floor ledgered-count)
+  (define map-count (for/sum ([r (in-list rules)]) (if (eq? (cdr r) 'map) 1 0)))
+  (printf "rules: ~a in spec §11 (~a lowering judgments = F₀; ~a gap/note/reading); ~a judgments cited by surface specimens (ratchet floor ~a); ~a uncovered (ledgered with issues)\n"
+          (length rules) map-count (- (length rules) map-count) cited-count coverage-floor ledgered-count)
+  ;; Coverage matrix regenerated from the manifest, one line per §11 family.
+  (define cited-ids
+    (for*/set ([item (in-list classified)] #:when (eq? (fence-kind item) 'specimen)
+               [id (in-list (fence-rules item))]) id))
+  (define families
+    (remove-duplicates (for/list ([r (in-list rules)]) (car (string-split (car r) ".")))))
+  (for ([fam (in-list families)])
+    (define fam-rules (for/list ([r (in-list rules)] #:when (string-prefix? (car r) (string-append fam "."))) r))
+    (define fam-map (for/list ([r (in-list fam-rules)] #:when (eq? (cdr r) 'map)) (car r)))
+    (define fam-cited (for/list ([id (in-list fam-map)] #:when (set-member? cited-ids id)) id))
+    (printf "  ~a: ~a judgments, ~a cited, ~a uncovered; ~a gap/note/reading\n"
+            fam (length fam-map) (length fam-cited) (- (length fam-map) (length fam-cited))
+            (- (length fam-rules) (length fam-map))))
   (printf "bounded pass-through typing rules: ~a\n"
           (string-join (map symbol->string pass-through-forms) ", "))
   (define sorted-matched-keys

@@ -24,9 +24,9 @@
 (define manifest-path (build-path tool-dir "inventory" "fences.sexp"))
 (define corpus-dir (build-path tool-dir "corpus"))
 
-(struct fence (source ordinal start-line content digest kind note issue rules)
+(struct fence (source ordinal start-line content digest kind note issue rules origin)
   #:transparent)
-(struct manifest-entry (source ordinal kind digest note issue rules) #:transparent)
+(struct manifest-entry (source ordinal kind digest note issue rules origin) #:transparent)
 
 (define fence-open-rx #px"^([[:space:]]*)```lisp[[:space:]]*$")
 (define fence-lisp-prefix-rx #px"^[[:space:]]*```lisp\\b")
@@ -81,7 +81,7 @@
                                       (add1 line-number)
                                       content
                                       (content-digest content)
-                                      #f #f #f '())
+                                      #f #f #f '() "surface")
                                found)))
                   (else
                    (collect (cdr body-lines)
@@ -120,13 +120,15 @@
      (define note #f)
      (define issue #f)
      (define rules '())
+     (define origin "surface")
      (for ([clause (in-list clauses)])
        (match clause
          [`(note ,(? string? text)) (set! note text)]
          [`(issue ,(? string? text)) (set! issue text)]
          [`(rules ,(? string? ids) ...) (set! rules ids)]
+         [`(origin ,(? string? o)) (unless (member o '("surface" "core")) (error 'load-manifest "origin must be surface or core: ~e" datum)) (set! origin o)]
          [else (error 'load-manifest "invalid fence clause: ~e in ~e" clause datum)]))
-     (manifest-entry source ordinal kind digest note issue rules)]
+     (manifest-entry source ordinal kind digest note issue rules origin)]
     [else (error 'load-manifest "invalid fence entry: ~e" datum)]))
 
 (define (load-manifest [path manifest-path])
@@ -176,7 +178,8 @@
                    [kind (manifest-entry-kind entry)]
                    [note (manifest-entry-note entry)]
                    [issue (manifest-entry-issue entry)]
-                   [rules (manifest-entry-rules entry)])))
+                   [rules (manifest-entry-rules entry)]
+                   [origin (manifest-entry-origin entry)])))
   (unless (zero? (hash-count by-key))
     (error 'classify-fences "manifest contains stale entries: ~e"
            (sort (hash-keys by-key)
@@ -200,6 +203,7 @@
            (fence-kind item) (fence-digest item))
    (if (fence-note item) (format "; classification-note: ~a\n" (fence-note item)) "")
    (if (fence-issue item) (format "; durable-issue: ~a\n" (fence-issue item)) "")
+   (if (eq? (fence-kind item) 'specimen) (format "; origin: ~a\n" (fence-origin item)) "")
    (if (pair? (fence-rules item))
        (format "; rules: ~a\n" (string-join (fence-rules item) " "))
        "")

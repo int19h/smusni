@@ -78,8 +78,15 @@ Do not hand-edit generated corpus files.
 
 ## Lowering-rule citations (#9 M1)
 
-`spec.md` §11 numbers every lowering schema `Ln.m`; the checker reads those
-ids from the normative text, never from a copy. Each specimen entry in
+`spec.md` §11 numbers every schema `Ln.m` and marks the kind of each: an
+unmarked rule is a lowering judgment (the F₀ population); *(gap)*, *(note)*,
+and *(reading)* rules are documented no-mappings, explanatory consequences,
+and resolved-reading decisions, never citable and never ledgered. The checker
+reads ids and kinds from the normative text, never from a copy. Specimens
+carry an `(origin "surface"|"core")` clause: a surface specimen lowers
+Lojban and must cite the judgments it instantiates as its focal claims (not
+every rule its sub-terms touch); a core fixture is a typed term authored
+directly in the core and cites nothing. Each specimen entry in
 `inventory/fences.sexp` carries a `(rules …)` clause naming the rules it
 instantiates, and `inventory/rule-coverage.sexp` ledgers every rule no
 specimen cites yet, each with the issue that owns the gap. The run fails on a

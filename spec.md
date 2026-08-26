@@ -2738,8 +2738,14 @@ and contribute no term constructors.
 
 Each schema below is a numbered rule `Ln.m` — n the paragraph, m the
 position — so that samples, the coverage matrix, and the checker can cite
-one rule by id, as pins are cited by id (#9). A rule's id carries no
-meaning; the rule text is the schema.
+one rule by id, as pins are cited by id (#9). An id carries no meaning; the
+rule text is the schema. An unmarked rule is a **lowering judgment** and
+belongs to the supported fragment F₀; a rule marked *(gap)* records a
+documented no-mapping, *(note)* an explanatory consequence, and *(reading)*
+a text-to-reading decision that the resolved-reading datum owns (#9). A
+specimen cites the lowering judgments whose schemas it instantiates as its
+focal claims, never every rule its sub-terms touch, and never a gap, note,
+or reading rule.
 
 **Predication and places** (L1).
 
@@ -2755,8 +2761,8 @@ meaning; the rule text is the schema.
 - **L1.6** `zo'e`/omission → per-site `Context` (P15).
 - **L1.7** `fi'a` → `OpenQ` over `Label<ρ>`.
 - **L1.8** `co'e`/`do'e` → `Context` at relation/tag type.
-- **L1.9** ⊳ `si`/`sa`/`su` erase before reading; quoted text preserves them.
-
+- **L1.9** *(reading)* ⊳ `si`/`sa`/`su` erase before reading; quoted text
+  preserves them.
 - **L1.10** Tanru (`sutra klama`) → `(Tanru M H)`: the head asserted once and
   one intended `TanruAdmissible` link retrieved at a constrained `Context`
   site (§6.2).
@@ -2776,8 +2782,8 @@ meaning; the rule text is the schema.
   surface does not determine which resolution was intended; the core preserves
   it as one typed `Context` site, not an existential disjunction over every
   admissible resolution.
-- **L2.3** Cross-clausal place-linking is gap-registered; no segment-state
-  effect (`ni'o` owns segments).
+- **L2.3** *(gap)* Cross-clausal place-linking is gap-registered; no
+  segment-state effect (`ni'o` owns segments).
 - **L2.4** `ko` → fills its place with the **active addressee** (the
   `doi`-updated `do` binding, falling back to the utterance's Audience) and ⊳
   marks the **nearest performed clause** as the command force (§7.1, addressee
@@ -2823,13 +2829,13 @@ meaning; the rule text is the schema.
   at the relation): a number-neutral outer reference may contain several
   qualifying objects, but each qualifies individually rather than several
   partial objects qualifying only collectively.
-- **L3.7** Thus bare `lo'i gerku` may be a set of the contextually selected
-  dogs, not necessarily all dogs, but the hidden dog reference does not become
-  a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal reading
-  remains available when context selects that base or when explicit
-  `ro`/`MaxRefer` requires it; bare collection gadri do not add it.
-- **L3.8** Completeness here forbids components beyond the selected base;
-  whether the base itself has external residue is already decided by its
+- **L3.7** *(note)* Thus bare `lo'i gerku` may be a set of the contextually
+  selected dogs, not necessarily all dogs, but the hidden dog reference does
+  not become a second antecedent: in CLL 6.52 `ri` denotes the set. The
+  maximal reading remains available when context selects that base or when
+  explicit `ro`/`MaxRefer` requires it; bare collection gadri do not add it.
+- **L3.8** *(note)* Completeness here forbids components beyond the selected
+  base; whether the base itself has external residue is already decided by its
   resolved lexical extension (P39).
 - **L3.9** Inner PA → unit count of the selected base (`CardBasis`); outer PA
   → witness-set selection / subreference selection (P1, §4.10).
@@ -2848,6 +2854,10 @@ meaning; the rule text is the schema.
   crossings of §12 (`Distrib`/members/`components_κ`; `Massify`; the exact
   `selcmi` set; the ordered `List`), at a constrained basis site where one is
   required (P5, #25).
+- **L3.15** Inner PA's counting basis → the resolved place's declared
+  `unit_Rℓ` (§10) where the row has a unit profile, otherwise an explicitly
+  resolved pure basis at a `Context` site; the count is `CardBasis` over that
+  basis (P39, §12).
 
 **Relative clauses** (L4).
 
@@ -2928,50 +2938,52 @@ meaning; the rule text is the schema.
   `Command`) — an interrogative host queries the connected content; UI
   targeting distinguishes the compound act from its clauses (pin P32).
 - **L5.13** The event/content contribution of constitution-bearing `.i joi` is
-  now `JoiClause` (§12); its **compound performance** and the other
-  non-logical ijoik performance cases remain gap-registered pending the
-  `ConnectionPlan` clauses (§14).
-- **L5.14** `.i TAG bo` → the same single performance, with component
+  now `JoiClause` (§12);
+- **L5.14** *(gap)* its **compound performance** and the other non-logical
+  ijoik performance cases remain gap-registered pending the `ConnectionPlan`
+  clauses (§14).
+- **L5.15** `.i TAG bo` → the same single performance, with component
   ClauseContents exposing both events inside an outer state: `(Assert
   (CloseClause (StateClause (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))))`
   — never closed component contents beside free event variables.
-- **L5.15** Jek at the tanru-unit locus → `TanruLinkConnect` (§12; pin P33):
+- **L5.16** Jek at the tanru-unit locus → `TanruLinkConnect` (§12; pin P33):
   shared head asserted once, one constrained-`Context` intended link per
   conjunct, connective over the link applications; distinct-head units connect
   as whole predications.
-- **L5.16** Plain `joi` at either tanru locus uses `JoiPred` over the
-  already-lowered common-row properties; missing common rows/bases and the
-  other unmapped joiks remain gaps.
-- **L5.17** BIhI: `X bi'o Y` → the ordered `Interval` (a `Set` object) with
+- **L5.17** Plain `joi` at either tanru locus uses `JoiPred` over the
+  already-lowered common-row properties;
+- **L5.18** *(gap)* missing common rows/bases and the other unmapped joiks
+  remain gaps.
+- **L5.19** BIhI: `X bi'o Y` → the ordered `Interval` (a `Set` object) with
   GAhO endpoint kinds; `bi'i` → ⊳ symmetrization (normalize endpoint order
   with their kinds) then the same; `mi'i` → `MetricBall` (§12 — no endpoint
   arithmetic); `bi'o nai` → `RegionComplement` in a Context universe; joigik
   forethought = the same units; the region object fills the host place, whose
   lexical semantics does the rest.
-- **L5.18** BIhI at tanru and sentence loci: **no standard resolved mapping
-  exists** (CLL 14.16 says no meanings have been found) — a documented
+- **L5.20** *(gap)* BIhI at tanru and sentence loci: **no standard resolved
+  mapping exists** (CLL 14.16 says no meanings have been found) — a documented
   no-mapping, and an implementation must not invent one.
-- **L5.19** Non-logical: `jo'u` → `Combine`; `ce` → set; `ce'o` → list; `fa'u`
+- **L5.21** Non-logical: `jo'u` → `Combine`; `ce` → set; `ce'o` → list; `fa'u`
   → `ZipWith`; exact tag/facet `joi` joining → `∧` where it merely conjoins
   facets over an already shared event.
-- **L5.20** Constitution-bearing `joi` dispatches by the resolved result type
+- **L5.22** Constitution-bearing `joi` dispatches by the resolved result type
   (§4.9, §12): ordinary sumti form a complete `Group<T>`; Eventuality operands
   in an Eventuality-demanding place form a complete joint event; common-row
   tanru/property operands form a `JoiPred` property satisfying `GunmaPredAt`
   (`JoiTanru` keeps a shared head separate); afterthought and forethought
   clause connection form `JoiClause`.
-- **L5.21** A homogeneous `joi` chain is flattened before one complete cover
+- **L5.23** A homogeneous `joi` chain is flattened before one complete cover
   is formed; `se joi` is the same symmetric relation.
-- **L5.22** There is no fallback `Vague` connecting relation.
-- **L5.23** Mixed-row property uses, `pe'e joi` termsets, compound ijoik
-  performance, and `joi nai` remain explicit gaps (§14).
-- **L5.24** Official `ju'e` likewise has no baseline lowering pending its
-  separate vague-connective adjudication (§14).
-- **L5.25** `ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
-- **L5.26** Threshold quantities (`so'i`, `du'e`, `mo'a`, …) → the §6.4 degree
-  GQs over a `Vague` cutoff at a `Context`-recovered scale/purpose (§6.4).
-
-- **L5.27** Gradable predication (`ta barda`) → `Grade` over a
+- **L5.24** *(note)* There is no fallback `Vague` connecting relation.
+- **L5.25** *(gap)* Mixed-row property uses, `pe'e joi` termsets, compound
+  ijoik performance, and `joi nai` remain explicit gaps (§14).
+- **L5.26** *(gap)* Official `ju'e` likewise has no baseline lowering pending
+  its separate vague-connective adjudication (§14).
+- **L5.27** `ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
+- **L5.28** Threshold quantities (`so'i`, `so'e`, …) → the §6.4 degree GQs
+  over a `Vague` threshold; the purpose-relative forms (`du'e`, `mo'a`, `rau`)
+  additionally bind a `Context` standard (§6.1, §6.4).
+- **L5.29** Gradable predication (`ta barda`) → `Grade` over a
   `Context`-recovered scale and a `Vague` cutoff region (§6.4).
 
 **Events, tense, modals** (L6; P8, P24).
@@ -2987,16 +2999,16 @@ meaning; the rule text is the schema.
 - **L6.4** Tenseless bridi → per the selected reading (P8): episodic → a
   `Context`-anchored temporal facet; habitual/gnomic → no temporal conjunct
   and an outer holding-state clause.
-- **L6.5** ⊳ Reading selection is upstream; `ki` stickiness propagates
-  resolved tense by source order; ⊳ story time (CLL 10.14) supplies narrative
-  sequencing as reading inference, not semantics.
+- **L6.5** *(reading)* ⊳ Reading selection is upstream; `ki` stickiness
+  propagates resolved tense by source order; ⊳ story time (CLL 10.14) supplies
+  narrative sequencing as reading inference, not semantics.
 - **L6.6** CAhA applies the §12 ClauseContent formers: `ca'a` →
   `ActualClause`; `ka'e` → `CapableClause`; `nu'o` → `UnrealizedClause`;
   `pu'i` → `DemonstratedClause`. Missing CAhA is reading-multiple among these
   modes with no default (CLL 10.19; P24), so bare capability uses do not
   falsely assert an actual-world event.
-- **L6.7** ZAhO boundary relations consume the same current clause event
-  (gap-registered until their lexical rows are filled).
+- **L6.7** *(gap)* ZAhO boundary relations consume the same current clause
+  event (gap-registered until their lexical rows are filled).
 - **L6.8** `n roi` → `RoiClause` (§12), **replacing** `CloseClause C` with the
   holding state of the count over C-events in the `During` interval; all
   surface arguments and the interval bind before the pure `SetOf`.
@@ -3019,20 +3031,20 @@ meaning; the rule text is the schema.
   do'o ↦ (Combine Audience DoOOthers)                   : Referents<Entity>
   ma'a ↦ (Combine (Combine Speaker Audience) MaAOthers) : Referents<Entity>
   ```
-- **L7.2** The §5.1 context constraints make `mi'a` exclude Audience, `do'o`
-  exclude Speaker, and every “others” value genuinely other than the included
-  role values.
-- **L7.3** Each displayed result fills one place in one predication. In
-  particular, `mi'o klama` has one x1 reference and one omitted-x2 `Context`
-  site; it does not expand to paired speaker/listener journeys or two omitted
-  sites.
+- **L7.2** *(note)* The §5.1 context constraints make `mi'a` exclude Audience,
+  `do'o` exclude Speaker, and every “others” value genuinely other than the
+  included role values.
+- **L7.3** *(note)* Each displayed result fills one place in one predication.
+  In particular, `mi'o klama` has one x1 reference and one omitted-x2
+  `Context` site; it does not expand to paired speaker/listener journeys or
+  two omitted sites.
 - **L7.4** `mi .e do broda` instead connects two separately instantiated
   clauses; `mi jo'u do broda` has the same argument denotation as `mi'o
   broda`; and `mi joi do broda` first constructs §12's canonical
   `Group<Entity>`. No component property inherits to that group (P5).
-- **L7.5** Positive `mi'o … mei` does not alter this lowering: the separate
-  plural-carrier instance problem remains #24, never a covert second group
-  denotation.
+- **L7.5** *(gap)* Positive `mi'o … mei` does not alter this lowering: the
+  separate plural-carrier instance problem remains #24, never a covert second
+  group denotation.
 
 **Anaphora** (L8; P16).
 
@@ -3083,13 +3095,14 @@ meaning; the rule text is the schema.
   `do` and `ko` consult the active binding before falling back to the
   utterance's Audience, which itself is never mutated (each utterance's ctx
   carries its own audience as a fact about it; pin P27).
-- **L8.11** `da'o` → ⊳ cancellation of **all** resolver assignments (KOhA,
-  letteral, and pro-bridi stores);
-- **L8.12** `ni'o` levels are segment-stack transitions with per-level cleared
-  registers — the assignment-clearing level (`ni'o` spoken, `ni'o ni'o`
-  written) clears assignments, the drastic level (one more `ni'o`) also resets
-  tenses and indicators, and `no'i` resumes what its `ni'o` dropped along with
-  the suspended frame — never a destructive `da'o` alias (CLL 7.13, 19.3).
+- **L8.11** *(reading)* `da'o` → ⊳ cancellation of **all** resolver
+  assignments (KOhA, letteral, and pro-bridi stores);
+- **L8.12** *(reading)* `ni'o` levels are segment-stack transitions with
+  per-level cleared registers — the assignment-clearing level (`ni'o` spoken,
+  `ni'o ni'o` written) clears assignments, the drastic level (one more `ni'o`)
+  also resets tenses and indicators, and `no'i` resumes what its `ni'o`
+  dropped along with the suspended frame — never a destructive `da'o` alias
+  (CLL 7.13, 19.3).
 
 **Abstractions** (L9; §9, P13, P14).
 
@@ -3108,19 +3121,19 @@ meaning; the rule text is the schema.
   reified) holds as a theorem of this mapping over `ka`/`du'u`.
 - **L9.2** Elided places inside `du'u` close ordinarily (`zo'e` ≡ omission,
   P15); only explicit `ce'u` extracts.
-- **L9.3** Arity counts **distinct extracted variables**: ⊳ `ce'u goi`
-  aliasing identifies occurrences and `ce'u xi` indexing selects the
+- **L9.3** *(reading)* Arity counts **distinct extracted variables**: ⊳ `ce'u
+  goi` aliasing identifies occurrences and `ce'u xi` indexing selects the
   extracting abstraction, both resolved at the text-to-reading layer.
-- **L9.4** Explicit `ce'u` in the other abstractors is unmapped at baseline,
-  and not by blanket referral to the reserved family: each would need a
-  **result-specific typed analysis** — `lo ni ce'u clani` calls for an
+- **L9.4** *(gap)* Explicit `ce'u` in the other abstractors is unmapped at
+  baseline, and not by blanket referral to the reserved family: each would
+  need a **result-specific typed analysis** — `lo ni ce'u clani` calls for an
   argument-indexed amount abstraction, and `jei`/`li'i`/the event abstractors
   likewise have their own codomains, none of them a reified `PredTerm<ρ>`
   (§14).
-- **L9.5** The Rosta all-`ce'u` reading of `si'o`, which genuinely nominalizes
-  a predicate into a concept *object*, is the one reading that belongs to the
-  reserved family (§9.1). Baseline `si'o` has no covert `ce'u`, closes its
-  inner ClauseContent normally, and maps through `SihoRel` with the
+- **L9.5** *(note)* The Rosta all-`ce'u` reading of `si'o`, which genuinely
+  nominalizes a predicate into a concept *object*, is the one reading that
+  belongs to the reserved family (§9.1). Baseline `si'o` has no covert `ce'u`,
+  closes its inner ClauseContent normally, and maps through `SihoRel` with the
   conceptualizing mind at x2 (CLL 11.9) — a stated divergence from the Rosta
   proposal's clause 7.
 - **L9.6** `nu` + sorts → `Refer` directly over the ClauseContent event
@@ -3164,8 +3177,8 @@ meaning; the rule text is the schema.
 
 **Indicators and discourse** (L11; §7, P19).
 
-- **L11.1** ⊳ UI target selection by grammatical attachment (FUhE/FUhO
-  extend);
+- **L11.1** *(reading)* ⊳ UI target selection by grammatical attachment
+  (FUhE/FUhO extend);
 - **L11.2** UI → displayed-content relations per lexicon entries with
   host-force profiles;
 - **L11.3** evidentials → the family force clause;
@@ -4424,25 +4437,25 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 
 | Construct family | Schema | Library | Gap | Samples |
 |---|---|---|---|---|
-| predication, places, `zi'o`, conversion | §11 ¶1 | `ClauseContent`, `DirectClause`/`StateClause`/`CloseClause` | — | §1–§2 |
-| tense/aspect/space, BAI, CAhA | §11 ¶5 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE | §2 |
-| gadri, descriptions, `lo'e`/`le'e` | §11 ¶2 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora | §3 |
-| relative clauses, `goi`, `voi` | §11 ¶3 | audience-deleted `skicu` (P10) | — | §4 |
-| quantifiers, termsets, negation scope | §11 ¶4 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
+| predication, places, `zi'o`, conversion | §11 L1 | `ClauseContent`, `DirectClause`/`StateClause`/`CloseClause` | — | §1–§2 |
+| tense/aspect/space, BAI, CAhA | §11 L6 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE | §2 |
+| gadri, descriptions, `lo'e`/`le'e` | §11 L3 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora | §3 |
+| relative clauses, `goi`, `voi` | §11 L4 | audience-deleted `skicu` (P10) | — | §4 |
+| quantifiers, termsets, negation scope | §11 L5 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
-| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 ¶6 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
-| abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
-| questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
-| indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
-| quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
-| MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e`, joik-connected mekso operands | §10 |
-| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `CoveredBy`, `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis and per-row unit-profile data, compound ijoik performance | §3, §5 |
-| prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
-| associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
-| utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
-| relation variables, templates, connective residue, BIhI, ROI | §11 ¶4–5 | `TanruLinkConnect`, `JoiPred`, `JoiTanru`, `JoiClause`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; residual joik/ijoik performance; `ju'e`; `nomei`'s empty cover; the non-numeric MOI composite (§14) | — |
+| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
+| abstractions, `tu'a`, `jai`, `mo'e` | §11 L9 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
+| questions, answers, `kau` | §11 L10 | domain-enumeration schemas | — | §6 |
+| indicators, evidentials, discursives, COI, `na'i` | §11 L11 | discourse relations, focus, objection, COI schemas | — | §7 |
+| quotation, signs, letterals | §11 L12 | sign constructors | — | §10 |
+| MEX | §11 L12 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e`, joik-connected mekso operands | §10 |
+| plurality, masses, reciprocals | §4.8–4.9, §11 L3 | `CoveredBy`, `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis and per-row unit-profile data, compound ijoik performance | §3, §5 |
+| prenex, topic, imperative, vocative | §11 L2 | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
+| associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 L3–L4, L12 | `MePred`, the MOI families | — | — |
+| utterance anaphora, `da'o`, NIhO depth, MAI | §11 L8, §7.2 | `EnumerationOrdinal` | — | — |
+| relation variables, templates, connective residue, BIhI, ROI | §11 L5–L6 | `TanruLinkConnect`, `JoiPred`, `JoiTanru`, `JoiClause`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; residual joik/ijoik performance; `ju'e`; `nomei`'s empty cover; the non-numeric MOI composite (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
-| repair, prosody | §11 ⊳ | — | registered | §13 |
+| repair, prosody | §11 *(reading)* rules / the resolved-reading datum (#9) | — | registered | §13 |
 
 A claim of coverage that cannot cite a schema, a library definition, or a
 gap entry is a defect in this document.
