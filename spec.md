@@ -320,6 +320,7 @@ Entity
 ├─ Set<T>  Group<T>  List<T>    (collection objects, §4.9)
 ├─ Sign<K>  SignToken<K>        (signs, §7.5; K a sign kind)
 ├─ UtteranceToken               (utterance tokens, §7.4)
+├─ GroundDescription            (ground specifications, §5.1)
 └─ Ground            (deictic grounds, §5.1)
 ```
 
@@ -2814,8 +2815,11 @@ or reading rule.
   ```
 
   for which `(Close (skicu Speaker $r Audience P))` is the **licensed display
-  abbreviation** (P10; the samples book's brief spelling) — an abbreviation of
-  this term, not a local reinterpretation of `Close` — and the speaker's
+  stand-in** (P10; the samples book's brief spelling): a mapping-declared
+  shorthand whose normative referent is the anchored term above — not a
+  same-denotation spelling variant in §2's sense, since its literal `Close`
+  reading would close the describing event existentially, and not a local
+  reinterpretation of `Close` — and the speaker's
   commitment that the audience can identify the referent is a cooperative-use
   commitment stated here in prose, not machinery; non-veridical,
   speaker-identifying.
@@ -2894,8 +2898,9 @@ or reading rule.
 
 **Quantification and connectives** (L5; P2, P17, P18).
 
-- **L5.1** `ro` over descriptions → importing `Every` (`Presuppose`
-  nonemptiness + `∀`); bare `ro da` → `∀`.
+- **L5.1** `ro` over descriptions → the library's importing `Every` (§12:
+  `MaxRefer`'s presupposed nonemptiness, member-level `Distrib`, and export
+  of the maximal witness); bare `ro da` → `∀`.
 - **L5.2** PA-quantifiers → library cardinal GQs over a counting basis.
 - **L5.3** Termsets (`ce'e`, `nu'i`) → co-selected witness sets at one joint
   locus with the full product; no coordinate maximality (the coordinate-closed
@@ -2936,7 +2941,8 @@ or reading rule.
   entry and resolved reading (§6.3).
 - **L5.12** Sentence-level **logical** connection (`.i je`, `.i ja`, …) →
   **one performance of the connected clause** — `(Assert (CloseClause
-  (ClauseOr C₁ C₂)))` for `.i ja`, which forces the uniform rule; the host's
+  (ActualClause (ClauseOr C₁ C₂))))` for `.i ja` in the actual mode (the
+  resolved CAhA former is never elided, P24), which forces the uniform rule; the host's
   single force is shared by the connection (a force conflict has no resolved
   reading); the schema is stated for the content-taking forces (`Assert`,
   `Command`) — an interrogative host queries the connected content; UI
@@ -3474,6 +3480,8 @@ by metalanguage recursion over list structure:
 (ZipWith f (List) (List))                 ≝ ⊤
 (ZipWith f (List a as…) (List b bs…))     ≝ (∧ (f a b)
                                                (ZipWith f (List as…) (List bs…)))
+   ; no clause for lists of unequal length: ZipWith is then undefined — a
+   ; projective definedness condition (§4.9), as for xi past the end
 ```
 
 so the `fa'u` specimen expands completely:

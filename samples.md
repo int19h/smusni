@@ -658,9 +658,14 @@ the artifact to state the selected cross-sentence truth constraint.
 ```lisp
 ; ro gerku cu blabi — importing universal   [pin P2]
 (Assert
-  (Presuppose
-    (∃ {λ [$x :: Entity] (gerku $x)})
-    (∀ {λ [$x :: Entity] (→ (gerku $x) (Close (blabi $x)))})))
+  (Every {λ [$x :: Entity] (gerku $x)}
+         {λ [$x :: Entity] (Close (blabi $x))}))
+; ≝ {Bind [$w :: Referents Entity] (MaxRefer gerku-property)
+;      (Distrib blabi-property $w)} per spec §12: MaxRefer's own Presuppose
+; carries the import and the maximal witness $w is exported for later
+; anaphora. The bare Presuppose(∃ gerku)(∀ x. gerku x → blabi x) has the
+; same truth conditions but exports nothing — it is the truth-condition
+; artifact of spec §5.6 rather than the lowering.
 ```
 
 Contrast: `naku ro gerku cu blabi` — the nonemptiness presupposition
@@ -1129,16 +1134,18 @@ there is no intended soritical boundary, as in the cutoff examples above.
               (Supplement $dogs (Close (blabi $dogs))
                 (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)}
                      {λ [$ppl :: Referents Entity]
-                       (∃ {λ [$e :: Referents Eventuality]
-                          (∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))})}))))
+                       (CloseClause (ActualClause
+                         {λ [$e :: Referents Eventuality]
+                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                              (cabna $e $occ1))}))}))))
         (Perform $a1)}}
     {Bind [$occ2 :: Time] (Context)
       {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ {λ [$e :: Referents Eventuality]
-                (∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))}))
+              (CloseClause (ActualClause
+                {λ [$e :: Referents Eventuality]
+                  (∧ ((StateClause (tatpi $dogs)) $e) ; tatpi: eventless fixture row
+                     (cabna $e $occ2))})))         ; so its holding state is the event
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}

@@ -96,17 +96,18 @@ whose content the hearer is expected to recover from the situation:
 ```
 (Assert
   {Bind [$destination :: Referents Entity] (Context)
-    (∃ {λ [$e :: Referents Eventuality]
-      (klama Speaker $destination … :Eventuality $e)})})
+    (CloseClause
+      (ActualClause
+        {λ [$e :: Referents Eventuality]
+          (klama Speaker $destination … :Eventuality $e)}))})
 ```
 
 (Only the destination slot is shown — the origin, route, and means each
 get their own `Context` binding exactly like it; the specification's
 samples write all four out. There's also an event variable in there —
-chapter 2. And where this primer writes `∃` over that event, the
-specification writes `CloseClause`, which additionally records *which*
-event was the clause's own; the primer keeps the simpler spelling
-throughout.) Three different
+chapter 2: `CloseClause` closes that event slot while remembering *which*
+event was this clause's own, and `ActualClause` records that the clause was
+read as actually happening — both unpacked there.) Three different
 "missing thing" markers get three different treatments, and the difference
 matters:
 
@@ -137,12 +138,17 @@ going by me, and that going is earlier than now:
 ```
 ; mi pu klama
 (Assert
-  (∃ {λ [$e :: Referents Eventuality]
-    (∧ (klama Speaker :Eventuality $e)
-       (purci $e Now))}))
+  (CloseClause
+    (ActualClause
+      {λ [$e :: Referents Eventuality]
+        (∧ ((DirectClause (klama Speaker)) $e)
+           (purci $e Now))})))
 ```
 
-That's the whole theory of tense. `pu` is not a verb inflection; it is a
+(`DirectClause` opens the clause with its going-event as the one open
+slot, `ActualClause` records the actual-mode reading, and `CloseClause`
+closes the slot while keeping that event as the clause's own.) That's the
+whole theory of tense. `pu` is not a verb inflection; it is a
 predicate (`purci`, "is earlier than") applied to the event. `ba` is
 `balvi`, `ca` is `cabna`; spatial tenses locate the event; `sepi'o` adds a
 `pilno` ("uses") predication about the same event; BAI modals are the same
@@ -316,14 +322,16 @@ survives it:
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
 (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
-  (→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
-     (darxi $p $d))})
+  (→ (∧ (prenu $p)
+        (Distrib {λ [$z :: Entity] (xasli $z)} $d)
+        (Close (ponse $p $d)))
+     (Close (darxi $p $d)))})
 ```
 
 (The donkey variable is a *plural* one — if someone owns several donkeys,
-`ri` reaches all of them; and the full form also carries the "there are
-donkey-owners" presupposition that `ro` brings — the spec's version
-spells both out.)
+`ri` reaches all of them, and `Distrib` says every unit of `$d` is a
+donkey; the full form also carries the "there are donkey-owners"
+presupposition that `ro` brings — the spec's version spells it out.)
 
 The pronoun inside the consequent covaries with the donkey inside the
 relative clause — classical logic can't write that with separate
@@ -509,14 +517,19 @@ attend a `nu` but not a proposition:
 - `ni` — an amount on a scale; `jei` — a truth value under an
   epistemology; `li'i` — an experience with an experiencer; `si'o` — a
   concept in a mind; `su'u` — the generic abstraction with a category.
+- `pu'u` — a process with its stages; `zu'o` — an activity of repeated
+  actions: relations like `ni`, with the stages or actions in their second
+  place. `mu'e` and `za'i` are `nu`'s sort refinements (a point-like
+  achievement; a state).
 
 `jei` does not silently turn that truth value into a number. CLL's old [0,1]
 proposal never acquired conventions or established practice, so P38 keeps the
 numeric crossing as a future gap proposal rather than an optional baseline
 reading.
 
-In the core these last five are ordinary *relations* — "a is the amount
-of content c on scale s" — so all your gadri skills apply to them:
+In the core `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, and `zu'o` are
+ordinary *relations* — "a is the amount of content c on scale s" — so all
+your gadri skills apply to them:
 `lo ni…`, `le ni…`, quantified `ni`s, relative clauses on abstractions,
 and an omitted scale is the usual contextual slot. Nothing new to learn:
 that is the point.
@@ -629,16 +642,18 @@ the way chapter 2 anchored the stove):
               (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
                 (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)} ; chapter 5: a two-person
                      {λ [$ppl :: Referents Entity]          ; witness
-                       (∃ {λ [$e :: Referents Eventuality]
-                          (∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))})}))))
+                       (CloseClause (ActualClause
+                         {λ [$e :: Referents Eventuality]
+                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                              (cabna $e $occ1))}))}))))
         (Perform $a1)}}                             ; chapter 6: …and say it
     {Bind [$occ2 :: Time] (Context)
       {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ {λ [$e :: Referents Eventuality]       ; chapter 4: ri = $dogs
-                (∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))}))
+              (CloseClause (ActualClause                  ; chapter 4: ri = $dogs
+                {λ [$e :: Referents Eventuality]
+                  (∧ ((StateClause (tatpi $dogs)) $e)      ; tiredness is a state
+                     (cabna $e $occ2))})))
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})} ; chapter 7

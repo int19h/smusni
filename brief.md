@@ -189,7 +189,8 @@ places with contextual defaulting; place conversion and deletion; universal
 clause eventualities with direct lexical events or holding states, and
 tense/modal facets as ordinary predicates over the current clause event;
 sorts (entities, eventualities and their subsorts, sets, groups, lists,
-signs, acts, utterances, amounts, scales, …) and functions; lambdas;
+signs, utterances, amounts, scales, …), functions, and first-class act
+values; lambdas;
 inert `Let` vs effectful `Bind`; reference (descriptions, names,
 generics) and the specificity triad; relative clauses; generalized
 quantifiers with explicit import, witness export, and presupposition;
