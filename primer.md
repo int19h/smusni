@@ -85,7 +85,10 @@ Lojban embeds bridi inside other bridi all the time (`mi djica lo nu do
 klama` doesn't claim you go), so *saying-that* must be a separate
 ingredient from *the that*. The core makes it a visible one. (`Close`, the
 third word, is the spec's name for "fill the omitted places from context
-and close the clause" — the next paragraph and chapter 2 unpack it.)
+and close the clause" *on the actual reading this specimen selects* — a
+resolved-reading shorthand, not a default the surface imposes; a bare bridi
+can also be read as a capability claim. The next paragraph and chapter 2
+unpack both points.)
 
 **What about the four unfilled places?** `mi klama` doesn't mention a
 destination, but it isn't about going *nowhere*; the destination is
@@ -677,10 +680,11 @@ the aside is new information, committed by the speaker — but it
 beside the `¬` rather than under it, where no negation or question can
 reach. Everything else you have seen: the two
 `Let`/`Perform` pairs are chapter 6's acts-as-values, built and then
-said; and `Express` takes the bound occurrence `$o2` — this performance
-of `$a2` — as the emotion's target: the displayed unhappiness is about
-*that assertion as made here*, which only a language whose acts are values
-and whose performances are handles can even write down.
+said; and the `Unhappiness` relation takes the bound occurrence `$o2` —
+this performance of `$a2` — as its target, with `Express` then packaging
+that displayed content as an act: the unhappiness is about *that assertion
+as made here*, which only a language whose acts are values and whose
+performances are handles can even write down.
 
 If you can reconstruct the story from the sentence — or check it off
 against the term, line by line — you have the core. The specification
