@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+python3 tools/check-docs.py .
+raco test tools/smusni-redex/tests/*.rkt
+racket tools/smusni-redex/inventory.rkt --check
+racket tools/smusni-redex/extract.rkt --check
+racket tools/smusni-redex/check.rkt "$@"
+

@@ -33,7 +33,7 @@ specification's References section.
   (Close (klama Speaker)))
 ; ≝ (Assert (CloseClause (ActualClause (DirectClause (klama Speaker)))))
 ; this specimen selects the actual missing-CAhA reading; Close names that
-; core composition, not a default imposed on the surface.
+; core composition; not a default imposed on the surface.
 ```
 
 Expanded once to the primitive closure boundary, so the notation convention
@@ -42,14 +42,14 @@ is grounded (spec §4.6) — four contextual places and the event:
 ```lisp
 ; mi klama — Close expanded
 (Assert
-  (Bind {$to :: Referents Entity} (Context)
-         {$from :: Referents Entity} (Context)
-         {$via :: Referents Entity} (Context)
-         {$by :: Referents Entity} (Context)
-    {(CloseClause
-      (λ {$e :: Referents Eventuality}
-        {(∧ (klama Speaker $to $from $via $by :Eventuality $e)
-           (fasnu $e))}))}))
+  {Bind [$to :: Referents Entity] (Context)
+         [$from :: Referents Entity] (Context)
+         [$via :: Referents Entity] (Context)
+         [$by :: Referents Entity] (Context)
+    (CloseClause
+      {λ [$e :: Referents Eventuality]
+        (∧ (klama Speaker $to $from $via $by :Eventuality $e)
+           (fasnu $e))})})
 ```
 
 Replacing `CloseClause` here with bare `∃e` would preserve the run
@@ -61,12 +61,12 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 (pin P15; rationale §1.2).
 
 ```lisp
-; klama fe ti tu — labelled fills, x1 left contextual
+; klama fe ti tu — labelled fills; place 1 left contextual
 (Assert (Close (klama :2 This Yonder)))
 ```
 
 ```lisp
-; mi klama ti zi'o ti ti — the origin role removed, not omitted
+; mi klama ti zi'o ti ti — the origin role removed; not omitted
 (Assert (Close ((DropPlace klama 3) Speaker This This This)))
 ```
 
@@ -78,8 +78,8 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 ```lisp
 ; lo ka se klama — a converted relation escaping as a function
 (Mention
-  (λ {$x :: Referents Entity}
-    {(Close (klama :2 $x))}))
+  {λ [$x :: Referents Entity]
+    (Close (klama :2 $x))})
 ```
 
 ## 2. Events, tense, facets
@@ -93,9 +93,9 @@ variable already says everything one would say:
 (Assert
   (CloseClause
     (ActualClause
-      (λ {$e :: Referents Eventuality}
-        {(∧ ((DirectClause (citka Speaker)) $e)
-           (purci $e Now))}))))
+      {λ [$e :: Referents Eventuality]
+        (∧ ((DirectClause (citka Speaker)) $e)
+           (purci $e Now))})))
 ```
 
 ```lisp
@@ -103,23 +103,23 @@ variable already says everything one would say:
 (Assert
   (CloseClause
     (ActualClause
-      (λ {$e :: Referents Eventuality}
-        {(∃ (λ {$m :: Referents Eventuality}
-          {(∧ ((DirectClause (citka Speaker)) $e)
+      {λ [$e :: Referents Eventuality]
+        (∃ {λ [$m :: Referents Eventuality]
+          (∧ ((DirectClause (citka Speaker)) $e)
              (purci $m Now)
-             (purci $e $m))}))}))))
+             (purci $e $m))})})))
 ```
 
 ```lisp
-; mi klama ti sepi'o ti — an instrumental facet, same event
+; mi klama ti sepi'o ti — an instrumental facet; same event
 (Assert
   (CloseClause
     (ActualClause
-      (λ {$e :: Referents Eventuality}
-        {(∧ ((DirectClause (klama Speaker This)) $e)
-           (Close (pilno :2 This :3 $e)))}))))
-; the host event fills pilno x3 (purpose) — the tag row's licensed link
-; per the official row: x1 uses x2 for purpose x3.
+      {λ [$e :: Referents Eventuality]
+        (∧ ((DirectClause (klama Speaker This)) $e)
+           (Close (pilno :2 This :3 $e)))})))
+; the host event fills pilno place 3 (purpose) — the tag row's licensed link
+; per the official row: place 1 uses place 2 for purpose place 3.
 ```
 
 Contrast (`nai` on the tag): `mi klama ti sepi'onai ti` negates only the
@@ -140,11 +140,11 @@ present. Its episodic reading carries a `Context`-anchored occasion —
 ```lisp
 ; mi citka — the episodic reading: at the contextually relevant occasion
 (Assert
-  (Bind {$occ :: Time} (Context)
-    {(CloseClause
-      (λ {$e :: Referents Eventuality}
-        {(∧ ((ActualClause (DirectClause (citka Speaker))) $e)
-           (cabna $e $occ))}))}))
+  {Bind [$occ :: Time] (Context)
+    (CloseClause
+      {λ [$e :: Referents Eventuality]
+        (∧ ((ActualClause (DirectClause (citka Speaker))) $e)
+           (cabna $e $occ))})})
 ```
 
 — while the habitual/gnomic reading carries no temporal conjunct at
@@ -159,10 +159,10 @@ episodic specimen selected `ActualClause`; a capability reading selects
 (Assert
   (CloseClause
     (StateClause
-      (Every (λ {$x :: Entity} {(datka $x)})
-        (λ {$ducks :: Referents Entity}
-          {(CloseClause
-            (CapableClause (DirectClause (flulimna $ducks))))})))))
+      (Every {λ [$x :: Entity] (datka $x)}
+        {λ [$ducks :: Referents Entity]
+          (CloseClause
+            (CapableClause (DirectClause (flulimna $ducks))))}))))
 ; Each nuclear capability clause closes locally; the outer State is the
 ; universal claim. No one event is shared by every duck.
 ```
@@ -172,14 +172,14 @@ episodic specimen selected `ActualClause`; a capability reading selects
 (Assert
   (CloseClause
     (ActualClause
-      (λ {$s :: Referents Eventuality}
-        {(∧ ((StateClause
-               (Bind {$home :: Referents Entity}
-                     (Refer (λ {$x :: Referents Entity}
-                       {(zdani $x Speaker)}))
-                 {(CoRef That $home)})) $s)
-           (purci $s Now))}))))
-; The home description is inside StateClause, so its property is evaluated in
+      {λ [$s :: Referents Eventuality]
+        (∧ ((StateClause
+               {Bind [$home :: Referents Entity]
+                     (Refer {λ [$x :: Referents Entity]
+                       (zdani $x Speaker)})
+                 (CoRef That $home)}) $s)
+           (purci $s Now))})))
+; The home description is inside StateClause; so its property is evaluated in
 ; $s: That may have been the home then without being it now. Hoisting $home
 ; outside gives the rigid de re reading. du/CoRef itself retains ordinary arity.
 ```
@@ -187,17 +187,17 @@ episodic specimen selected `ActualClause`; a capability reading selects
 ```lisp
 ; fragment: a physical parameter has value $x now but not in a future state
 ; $alpha :: Referents Entity
-; $valueOf :: Fn<(Referents<Entity>), Number>  (state-sensitive projection)
+; $valueOf :: Fn ((Referents Entity)) Number  (state-sensitive projection)
 ; $x :: Number
 (CloseClause
   (ActualClause
     (ClauseAnd
-      (λ {$s :: Referents Eventuality}
-        {(∧ ((StateClause (= ($valueOf $alpha) $x)) $s)
-           (cabna $s Now))})
-      (λ {$t :: Referents Eventuality}
-        {(∧ ((StateClause (¬ (= ($valueOf $alpha) $x))) $t)
-           (balvi $t Now))}))))
+      {λ [$s :: Referents Eventuality]
+        (∧ ((StateClause (= ($valueOf $alpha) $x)) $s)
+           (cabna $s Now))}
+      {λ [$t :: Referents Eventuality]
+        (∧ ((StateClause (¬ (= ($valueOf $alpha) $x))) $t)
+           (balvi $t Now))})))
 ; The two applications of $valueOf are inside their StateClauses and may vary.
 ; Binding the resulting Number outside instead would give the rigid de re case.
 ```
@@ -219,14 +219,14 @@ episodic specimen selected `ActualClause`; a capability reading selects
 ```
 
 ```lisp
-; mi klama .ije do stali — joint State, one assertion
+; mi klama .ije do stali — joint State; one assertion
 (Assert
   (CloseClause
     (ActualClause
       (ClauseAnd (DirectClause (klama Speaker))
                  (DirectClause (stali Audience))))))
 
-; mi klama .ija do stali — branch-relative event, one assertion
+; mi klama .ija do stali — branch-relative event; one assertion
 (Assert
   (CloseClause
     (ActualClause
@@ -238,7 +238,7 @@ The constitution contribution underlying `mi sanga .i joi do dansu` is now
 fully typed even though #6 still owns the compound act/transcript plan:
 
 ```lisp
-; κ :: DecompositionBasis<Eventuality,Eventuality>, recovered for this joi
+; κ :: DecompositionBasis<Eventuality;Eventuality>; recovered for this joi
 (JoiClause $κ
   (DirectClause (sanga Speaker))
   (DirectClause (dansu Audience)))
@@ -256,9 +256,9 @@ and UI/span targeting is the remaining `ConnectionPlan` gap, not part of
 
 ```lisp
 ; lo mlatu cu blabi              [pin P1]
-(Bind {$cat :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))
-  {(Assert (Close (blabi $cat)))})
+{Bind [$cat :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (mlatu $x)})
+  (Assert (Close (blabi $cat)))}
 ```
 
 Pinned reading: a new referent — one or more real cats, number-neutral,
@@ -268,19 +268,19 @@ quantificational force at all.
 
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
-(Bind {$cat :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))
-  {(Assert
-    (CloseClause (ClauseNot (DirectClause (jbena $cat)))))})
+{Bind [$cat :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (mlatu $x)})
+  (Assert
+    (CloseClause (ClauseNot (DirectClause (jbena $cat)))))}
 ```
 
 ```lisp
 ; le mlatu cu blabi              [pin P10]
-(Bind {$it :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity}
-          {(Close (skicu Speaker $x Audience
-            (λ {$y :: Referents Entity} {(mlatu $y)})))}))
-  {(Assert (Close (blabi $it)))})
+{Bind [$it :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity]
+          (Close (skicu Speaker $x Audience
+            {λ [$y :: Referents Entity] (mlatu $y)}))})
+  (Assert (Close (blabi $it)))}
 ```
 
 Pinned reading: reference through the speaker's identifying description —
@@ -295,20 +295,20 @@ existentially.)
 
 ```lisp
 ; la .alis. klama
-(Bind {$alis :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(Named "alis" $x)}))
-  {(Assert (Close (klama $alis)))})
+{Bind [$alis :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (Named "alis" $x)})
+  (Assert (Close (klama $alis)))}
 ```
 
 ```lisp
-; lo'i gerku — a set object via selcmi (xorxes' lujvo: x2 = members) [P5]
-(Bind {$base :: Referents Entity}
-        (Local (Refer (λ {$x :: Entity} {(gerku $x)}))) ; ordinary base,
+; lo'i gerku — a set object via selcmi (xorxes' lujvo: place 2 = members) [P5]
+{Bind [$base :: Referents Entity]
+        (Local (Refer {λ [$x :: Entity] (gerku $x)})) ; ordinary base;
                                                         ; but not a surface DR
-  {(Bind {$sets :: Referents (Set Entity)}
-          (Refer (λ {$s :: Set Entity}
-            {(Close (selcmi $s $base))}))
-    {(Mention $sets)})})
+  {Bind [$sets :: Referents (Set Entity)]
+          (Refer {λ [$s :: Set Entity]
+            (Close (selcmi $s $base))})
+    (Mention $sets)}}
 ```
 
 `loi gerku` uses the complete constitution layer, not free `gunma`'s
@@ -316,14 +316,14 @@ partial-friendly layer:
 
 ```lisp
 ; loi gerku — κ is the occurrence's resolved group basis
-(Bind {$base :: Referents Entity}
-      (Local (Refer (λ {$x :: Entity} {(gerku $x)})))
-  {(Bind {$κ :: GroupBasis Entity}
-         (Context GroupBasisConstraint[loi,Entity] deps…)
-    {(Bind {$groups :: Referents (Group Entity)}
-           (Refer (λ {$g :: Group Entity}
-             {(CompleteGunmaAt $κ $g $base)}))
-      {(Mention $groups)})})})
+{Bind [$base :: Referents Entity]
+      (Local (Refer {λ [$x :: Entity] (gerku $x)}))
+  {Bind [$κ :: GroupBasis Entity]
+         (Context (GroupBasisConstraint loi Entity) deps…)
+    {Bind [$groups :: Referents (Group Entity)]
+           (Refer {λ [$g :: Group Entity]
+             (CompleteGunmaAt $κ $g $base)})
+      (Mention $groups)}}}
 ```
 
 Neither object unwraps to its members implicitly. A maximal all-dogs base is
@@ -337,13 +337,13 @@ to the lowering-internal `$base`.
 
 ```lisp
 ; mi joi do bevri lo pipno — one constituted group carries
-(Bind {$κ :: GroupBasis Entity}
-      (Context GroupBasisConstraint[joi,Entity] deps…)
-  {(Bind {$g :: Referents (Group Entity)}
+{Bind [$κ :: GroupBasis Entity]
+      (Context (GroupBasisConstraint joi Entity) deps…)
+  {Bind [$g :: Referents (Group Entity)]
          (JoiGroup $κ Speaker Audience)
-    {(Bind {$p :: Referents Entity}
-           (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
-      {(Close (bevri $g $p))})})})
+    {Bind [$p :: Referents Entity]
+           (Refer {λ [$r :: Referents Entity] (pipno $r)})
+      (Close (bevri $g $p))}}}
 ```
 
 The nearby `mi jo'u do bevri lo pipno` instead fills x1 with
@@ -354,8 +354,8 @@ non-distributivity instruction.
 ; lo'e mlatu cu cinri            [pin P11]
 (Assert
   (Generic Typical
-    (λ {$x :: Entity} {(mlatu $x)})
-    (λ {$x :: Entity} {(Close (cinri $x))})))
+    {λ [$x :: Entity] (mlatu $x)}
+    {λ [$x :: Entity] (Close (cinri $x))}))
 ```
 
 Pinned reading: a generic claim through a normality ordering — no
@@ -370,35 +370,35 @@ classes, which no single referent could verify (rationale §1.9).
 
 ```lisp
 ; lo mlatu poi blabi cu jbena — restrictive: inside the property
-(Bind {$cat :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity}
-          {(∧ (mlatu $x) (blabi $x))}))
-  {(Assert (Close (jbena $cat)))})
+{Bind [$cat :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity]
+          (∧ (mlatu $x) (blabi $x))})
+  (Assert (Close (jbena $cat)))}
 ```
 
 ```lisp
 ; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
-(Bind {$dog :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity}
-          {(∧ (Close (skicu Speaker $x Audience            ; the le-head:
-               (λ {$y :: Referents Entity} {(gerku $y)}))) ; "my dog"
+{Bind [$dog :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity]
+          (∧ (Close (skicu Speaker $x Audience            ; the le-head:
+               {λ [$y :: Referents Entity] (gerku $y)})) ; "my dog"
              (Close ((DropPlace skicu 3) Speaker $x       ; the voi
-               (λ {$y :: Referents Entity} {(blabi $y)}))))}))   ; restriction
-  {(Assert (Close (jbena $dog)))})
-; the voi conjunct's audience place is DELETED, not omitted — a voi
+               {λ [$y :: Referents Entity] (blabi $y)})))})   ; restriction
+  (Assert (Close (jbena $dog)))}
+; the voi conjunct's audience place is DELETED; not omitted — a voi
 ; description has no audience role; the le-head keeps its audience.
-; Three-way contrast: poi (veridical restriction, in the property),
-; noi (projective supplement, below), voi (non-veridical restriction
+; Three-way contrast: poi (veridical restriction; in the property);
+; noi (projective supplement; below); voi (non-veridical restriction
 ; through the describer).
 ```
 
 ```lisp
 ; lo gerku noi blabi cu na melbi     [pin P7]
-(Bind {$dog :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(gerku $x)}))
-  {(Assert
+{Bind [$dog :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (gerku $x)})
+  (Assert
     (Supplement $dog (Close (blabi $dog))
-      (CloseClause (ClauseNot (DirectClause (melbi $dog))))))})
+      (CloseClause (ClauseNot (DirectClause (melbi $dog))))))}
 ```
 
 Pinned reading: whiteness is a projective side commitment — the negation
@@ -409,11 +409,11 @@ the description.
 
 ```lisp
 ; mi tavla le pendo goi ko'a — aliasing is shared binding
-(Bind {$friend :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity}
-          {(Close (skicu Speaker $x Audience
-            (λ {$y :: Referents Entity} {(pendo $y)})))}))
-  {(Assert (Close (tavla Speaker $friend)))})
+{Bind [$friend :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity]
+          (Close (skicu Speaker $x Audience
+            {λ [$y :: Referents Entity] (pendo $y)}))})
+  (Assert (Close (tavla Speaker $friend)))}
 ; later ko'a occurrences consume the same binding.  [pin P16]
 ```
 
@@ -424,16 +424,16 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ```lisp
 ; ci gerku cu bajra .i ri tatpi      [spec §5.6]
-(Bind {$dogs :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
-  {(Do
+{Bind [$dogs :: Referents Entity]
+        (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
+  (Do
     (Assert (Close (bajra $dogs)))
-    (Assert (Close (tatpi $dogs))))})
+    (Assert (Close (tatpi $dogs))))}
 ; the selection introduces and BINDS the witness; the anaphor is an
-; ordinary bound occurrence — no free names, no retrieval operator.
+; ordinary bound occurrence — no free names; no retrieval operator.
 ; the nuclear predication is NEUTRAL (P4): each-ran comes from bajra's
-; lexicon row, not from the quantifier — contrast ci prenu cu jmaji,
-; where the three gather TOGETHER, same shape.
+; lexicon row; not from the quantifier — contrast ci prenu cu jmaji;
+; where the three gather TOGETHER; same shape.
 ```
 
 There is no retrieval operator: the exported witness *is* the three-dog
@@ -443,22 +443,22 @@ reference the selection binds, and nothing else is needed
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
 ; truth-conditional joint-locus artifact; the discourse keeps two Host acts
-(Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
+(Presuppose (∃ {λ [$x :: Entity] (prenu $x)})
   (∧
-      ; sentence 1's own claim — the ownership, never erased:
-      (∀ (λ {$p :: Entity}
-        {(→ (prenu $p)
-           (∃ (λ {$d :: Referents Entity}
-             {(∧ (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
-                (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
-                (Close (ponse $p $d)))})))}))
+      ; sentence 1's own claim — the ownership; never erased:
+      (∀ {λ [$p :: Entity]
+        (→ (prenu $p)
+           (∃ {λ [$d :: Referents Entity]
+             (∧ (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+                (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
+                (Close (ponse $p $d)))}))})
       ; the anaphoric continuation at the joint locus (strong reading):
-      (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-        {(→ (∧ (prenu $p)
-              (Distrib (λ {$x :: Entity} {(gerku $x)}) $d)
-              (= (CardBasis $d (λ {$x :: Entity} {(gerku $x)})) 3)
+      (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+        (→ (∧ (prenu $p)
+              (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+              (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
               (Close (ponse $p $d)))
-           (Close (tatpi $d)))}))))
+           (Close (tatpi $d)))})))
 ```
 
 Pinned reading: each person owns three dogs, and each person's dogs are
@@ -480,16 +480,16 @@ the artifact to state the selected cross-sentence truth constraint.
 ```lisp
 ; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
 (Assert
-  (Presuppose (∃ (λ {$x :: Entity}
-                {(∧ (prenu $x)
-                   (∃ (λ {$y :: Entity} {(∧ (xasli $y) (Close (ponse $x $y)))})))}))
-    (∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-      {(→ (∧ (prenu $p)
-            (Distrib (λ {$z :: Entity} {(xasli $z)}) $d)
+  (Presuppose (∃ {λ [$x :: Entity]
+                (∧ (prenu $x)
+                   (∃ {λ [$y :: Entity] (∧ (xasli $y) (Close (ponse $x $y)))}))})
+    (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+      (→ (∧ (prenu $p)
+            (Distrib {λ [$z :: Entity] (xasli $z)} $d)
             (Close (ponse $p $d)))
-         (Close (darxi $p $d)))}))))
+         (Close (darxi $p $d)))})))
 ; $d at the plural type: the witness donkeys — the Distrib conjunct
-; is the selection's own witness law, so the locus ranges over
+; is the selection's own witness law; so the locus ranges over
 ; donkey-witness pluralities only; the atomic-pair spelling is the
 ; distributive strengthening.
 ```
@@ -498,8 +498,8 @@ the artifact to state the selected cross-sentence truth constraint.
 ; ro gerku cu blabi — importing universal   [pin P2]
 (Assert
   (Presuppose
-    (∃ (λ {$x :: Entity} {(gerku $x)}))
-    (∀ (λ {$x :: Entity} {(→ (gerku $x) (Close (blabi $x)))}))))
+    (∃ {λ [$x :: Entity] (gerku $x)})
+    (∀ {λ [$x :: Entity] (→ (gerku $x) (Close (blabi $x)))})))
 ```
 
 Contrast: `naku ro gerku cu blabi` — the nonemptiness presupposition
@@ -508,11 +508,11 @@ presupposition.
 
 ```lisp
 ; lo xo prenu cu jmaji — ... no — inner-no answer      [pin P22]
-; the answer "no" is elliptical lo no prenu cu jmaji (guskant),
-; which lowers through the zero-count special case, never Refer:
+; the answer "no" is elliptical lo no prenu cu jmaji (guskant);
+; which lowers through the zero-count special case; never Refer:
 (Assert
-  (No (λ {$x :: Entity} {(prenu $x)})
-      (λ {$w :: Referents Entity} {(Close (jmaji $w))})))
+  (No {λ [$x :: Entity] (prenu $x)}
+      {λ [$w :: Referents Entity] (Close (jmaji $w))}))
 ; the nuclear scope is reference-typed (spec §12): "no people-witness
 ; gathers" — the collective reading a distributive quantifier could not
 ; state at all.
@@ -522,16 +522,16 @@ presupposition.
 
 ```lisp
 ; ci gerku ce'e re prenu cu nelci    [pin P17]
-(Bind {$dogs :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
-        {$people :: Referents Entity}
-        (SelectExactly 2 (λ {$x :: Entity} {(prenu $x)}))
-  {(Assert
-    (Distrib (λ {$d :: Entity}
-      {(Distrib (λ {$p :: Entity}
-         {(Close (nelci $d $p))}) $people)}) $dogs))})
+{Bind [$dogs :: Referents Entity]
+        (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
+        [$people :: Referents Entity]
+        (SelectExactly 2 {λ [$x :: Entity] (prenu $x)})
+  (Assert
+    (Distrib {λ [$d :: Entity]
+      (Distrib {λ [$p :: Entity]
+         (Close (nelci $d $p))} $people)} $dogs))}
 ; co-selected plural witnesses (the selections commute — one joint
-; locus, P25's referential discipline); the member-wise Distrib nest
+; locus; P25's referential discipline); the member-wise Distrib nest
 ; is the full product
 ```
 
@@ -548,23 +548,23 @@ the full product there needs explicit `ro…ro` (CLL Example 16.46).
 
 ```lisp
 ; ci jbopre cu simxu lo ka tavla — a reciprocal    [spec §12]
-(Bind {$trio :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(jbopre $x)}))
-  {(Assert
+{Bind [$trio :: Referents Entity]
+        (SelectExactly 3 {λ [$x :: Entity] (jbopre $x)})
+  (Assert
     (Reciprocate $trio
-      (λ {$a $b :: Referents Entity}
-        {(Close (tavla $a $b))})))})
+      {λ [$a $b :: Referents Entity]
+        (Close (tavla $a $b))}))}
 ; simxu's lexicon row consumes the library's Reciprocate schema:
 ; pairwise both ways among the witness.
 ```
 
 ```lisp
 ; so'i prenu cu klama — vague quantity    [spec §6.4]
-(Bind {$n :: Natural}
-        (Vague (AdmissibleThreshold ManyK (λ {$x :: Entity} {(prenu $x)})))
-  {(Assert
-    (AtLeast $n (λ {$x :: Entity} {(prenu $x)})
-                (λ {$w :: Referents Entity} {(Close (klama $w))})))})
+{Bind [$n :: Natural]
+        (Vague (AdmissibleThreshold ManyK {λ [$x :: Entity] (prenu $x)}))
+  (Assert
+    (AtLeast $n {λ [$x :: Entity] (prenu $x)}
+                {λ [$w :: Referents Entity] (Close (klama $w))}))}
 ```
 
 No exact count hides here: the term denotes the family over admissible
@@ -577,21 +577,21 @@ thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
 (Ask (Polar (Close (klama Speaker))))
 
 ; ma klama
-(Ask (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))})))
+(Ask (OpenQ {λ [$x :: Referents Entity] (Close (klama $x))}))
 
 ; ti mo — an open relation question
-(Ask (OpenQ (λ {$r :: PredTerm ⟨x1:(Referents Entity)⟩}
-  {(Close ($r This))})))
+(Ask (OpenQ {λ [$r :: PredTerm (Row (1 (Referents Entity)))]
+  (Close ($r This))}))
 
 ; klama fi'a ti — a place question           [spec §4.7]
-(Ask (OpenQ (λ {$p :: CompatibleLabel klama (Referents Entity)}
-  {(Close (At klama $p This))})))
+(Ask (OpenQ {λ [$p :: CompatibleLabel (RowOf klama) (Referents Entity)]
+  (Close (At klama $p This))}))
 ; the computed-label domain is the compatible refinement (§4.7): the
 ; event place and any sort-incompatible place contribute no branch
 ```
 
 ```lisp
-; mi cusku lu mi klama li'u — reported, not performed
+; mi cusku lu mi klama li'u — reported; not performed
 (Assert
   (Close
     (cusku Speaker
@@ -605,9 +605,9 @@ The `Realizes` fact above describes a raw act package inside quotation; it
 does not create a performance occurrence. Contrast the performance boundary:
 
 ```lisp
-; one reusable package, two performance occurrences
-(Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Do (Perform $a) (Perform $a))})
+; one reusable package; two performance occurrences
+{Let [$a :: Act Assertion] (Assert (Close (klama Speaker)))
+  (Do (Perform $a) (Perform $a))}
 ```
 
 The two `Perform` nodes create distinct `ActOccurrence`s even if this
@@ -628,8 +628,8 @@ inspectors; core terms receive only the opaque `$oᵢ` handles.
 
 ```lisp
 ; la'e do'i — proposition reading of a salient performed assertion
-(Bind {$u :: Referents UtteranceToken} (Context)
-  {(Mention (Reify (RealizedContent $u)))})
+{Bind [$u :: Referents UtteranceToken] (Context)
+  (Mention (Reify (RealizedContent $u)))}
 ```
 
 `RealizedContent` is partial and inert: `$u` must select one eligible
@@ -651,7 +651,7 @@ defined and projective undefinedness otherwise, never fresh caller resolution.
     (djuno Speaker
       (Reify
         (Answer
-          (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))}))
+          (OpenQ {λ [$x :: Referents Entity] (Close (klama $x))})
           ContextualAnswer)))))
 ```
 
@@ -662,70 +662,70 @@ own lexical presupposition, never from `kau`.
 ## 7. Indicators
 
 ```lisp
-; .ui do klama — pure emotion: host asserted, joy displayed
-(Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Happiness Speaker $o Moderate)))))})})
+; .ui do klama — pure emotion: host asserted; joy displayed
+{Let [$a :: Act Assertion] (Assert (Close (klama Audience)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Happiness Speaker $o Moderate)))))}}
 
 ; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
 (Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
 ; no assertion of sleeping occurs — the host-force profile of .au.
 
-; .uinai cai do klama — paired emotion, then degree   [spec §7.6]
-(Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Unhappiness Speaker $o Intense)))))})})
+; .uinai cai do klama — paired emotion; then degree   [spec §7.6]
+{Let [$a :: Act Assertion] (Assert (Close (klama Audience)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Intense)))))}}
 ```
 
 ```lisp
 ; za'a do cadzu — evidential grounding the act        [spec §7.6]
-(Let {$a :: Act Assertion} (Assert (Close (cadzu Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (EvidentialBasis Speaker $o Observation)))))})})
+{Let [$a :: Act Assertion] (Assert (Close (cadzu Audience)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (EvidentialBasis Speaker $o Observation)))))}}
 ; act-level display: Perform returns the bound occurrence handle; the family
 ; force clause grounds THIS occurrence (a mode of commitment);
-; a later Perform $a returns a different, ungrounded occurrence;
-; na za'a do cadzu negates the walking, never the basis.
+; a later Perform $a returns a different; ungrounded occurrence;
+; na za'a do cadzu negates the walking; never the basis.
 
 ; mi jinvi lo du'u ti'e do klama — evidential on embedded content
 (Assert
   (Close
     (jinvi Speaker
       (Reify
-        (Let {$p :: Proposition} (Reify (Close (klama Audience)))
-          {(Supplement $p
+        {Let [$p :: Proposition] (Reify (Close (klama Audience)))
+          (Supplement $p
             (Close (EvidentialBasis Speaker $p Hearsay))
-            (Holds $p))})))))
-; content-level display: the content occurs ONCE, under a pure Reify
-; shared by Let; Holds evaluates that same proposition object, so the
-; anchor, the displayed basis, and the evaluated body all carry one set
+            (Holds $p))}))))
+; content-level display: the content occurs ONCE; under a pure Reify
+; shared by Let; Holds evaluates that same proposition object; so the
+; anchor; the displayed basis; and the evaluated body all carry one set
 ; of contextual sites. The hearsay rides the embedded claim projectively
-; — the reason evidentials are targeted display, not an operand on
-; assertion force. (ti'e placed after du'u, targeting the abstraction's
-; content, per the CLL attachment rule.)
+; — the reason evidentials are targeted display; not an operand on
+; assertion force. (ti'e placed after du'u; targeting the abstraction's
+; content; per the CLL attachment rule.)
 ```
 
 ```lisp
 ; .i mi klama .i ku'i do stali — a discourse relation
-(Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o1 :: ActOccurrence Assertion} (Perform Host $a1)
-    {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-      {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
-        {(Do (Perform AttachedDisplay
-          (Express (Close (Contrast $o2 $o1)))))})})})})
+{Let [$a1 :: Act Assertion] (Assert (Close (klama Speaker)))
+  {Bind [$o1 :: ActOccurrence Assertion] (Perform Host $a1)
+    {Let [$a2 :: Act Assertion] (Assert (Close (stali Audience)))
+      {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
+        (Do (Perform AttachedDisplay
+          (Express (Close (Contrast $o2 $o1)))))}}}}
 ```
 
 ```lisp
 ; do klama .i na'i — metalinguistic objection         [spec §7.3]
-(Let {$prior :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$prioro :: ActOccurrence Assertion} (Perform Host $prior)
-    {(Bind {$defect :: DefectKind} (Context)
-      {(Express
-        (Close (MetalinguisticallyDefective $prioro $defect)))})})})
-; the defect dimension is contextually recovered; nothing is negated,
+{Let [$prior :: Act Assertion] (Assert (Close (klama Audience)))
+  {Bind [$prioro :: ActOccurrence Assertion] (Perform Host $prior)
+    {Bind [$defect :: DefectKind] (Context)
+      (Express
+        (Close (MetalinguisticallyDefective $prioro $defect)))}}}
+; the defect dimension is contextually recovered; nothing is negated;
 ; and the objection itself performs nothing beyond the display.
 ```
 
@@ -735,8 +735,8 @@ own lexical presupposition, never from `kau`.
 ; sutra klama — one intended link recovered at this occurrence [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
-; ≗ (Bind {$link :: PredTerm ρ(klama)}
-;         (Context (λ {$r :: PredTerm ρ(klama)}
+; ≗ (Bind {$link :: PredTerm (RowOf klama)}
+;         (Context (λ {$r :: PredTerm (RowOf klama)}
 ;                    {(TanruAdmissible sutra klama $r)}))
 ;     {… (∧ (klama …) ($link …))})
 ; no governor dependencies in this reading. `na sutra klama` retrieves
@@ -746,26 +746,26 @@ own lexical presupposition, never from `kau`.
 
 ```lisp
 ; ta na'e melbi — scalar otherness            [spec §6.3]
-(Bind {$d :: ContrastDomain ρ(melbi)} (Context)
-  {(Assert (Close ((Scalar OtherThan $d melbi) That)))})
+{Bind [$d :: ContrastDomain (RowOf melbi)] (Context)
+  (Assert (Close ((Scalar OtherThan $d melbi) That)))}
 ; contrast domain: visible Context site; any soritical boundary: Vague.
 ; DENIES beauty AND directly asserts membership in the complement of
 ; beauty's region in the recovered domain (CLL 15.4: selbri negation
 ; "remains an assertion of some specific truth"). No finer alternative is
-; selected; to'e uses the domain's antipode, no'e its between-region.
+; selected; to'e uses the domain's antipode; no'e its between-region.
 ```
 
 ```lisp
 ; mi djica tu'a lo cukta                      [pin P14]
-(Bind {$book :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(cukta $x)}))
-  {(Bind {$a :: Referents Eventuality}          ; sort from djica's x2
-          (Context (λ {$v :: Referents Eventuality}
-            {(∧ (∃ (λ {$p :: Proposition}
-                 {(CoRef $v (EventOfContent (Holds $p)))})) ; clause-event shape
-               (Close (srana $v $book)))})
+{Bind [$book :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (cukta $x)})
+  {Bind [$a :: Referents Eventuality]          ; sort from djica's place 2
+          (Context {λ [$v :: Referents Eventuality]
+            (∧ (∃ {λ [$p :: Proposition]
+                 (CoRef $v (EventOfContent (Holds $p)))}) ; clause-event shape
+               (Close (srana $v $book)))}
             $book)                               ; depends on this book
-    {(Assert (Close (djica Speaker $a)))})})
+    (Assert (Close (djica Speaker $a)))}}
 ```
 
 Pinned reading: the occurrence-specifically intended eventuality-sorted
@@ -781,8 +781,8 @@ content built from the recovered value):
 
 ```lisp
 ; positive                                  ; negative
-(Bind {$v :: T} (Context P deps…)           (Bind {$v :: T} (Context P deps…)
-  {C[$v]})                                    {(¬ C[$v])})
+(Bind {$v :: T} (Context P deps…)           {Bind [$v :: T] (Context P deps…)
+  (C $v)}                                    {(¬ (C $v))})
 ```
 
 Within either resolved reading, the occurrence site produces one `$v`; the
@@ -792,39 +792,40 @@ denial of all admissible alternatives.
 
 ```lisp
 ; mi jai rinka lo nu do morsi — a typed bare-jai role site [spec §12]
-(Bind {$death :: Referents Eventuality}
-      (Refer (λ {$e :: Referents Eventuality}
-        {(Close (morsi :1 Audience :Eventuality $e))}))
-  {(Bind {$role :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+{Bind [$death :: Referents Eventuality]
+      (Refer {λ [$e :: Referents Eventuality]
+        (Close (morsi :1 Audience :Eventuality $e))})
+  {Bind [$role :: Fn ((Referents Entity) (Referents Eventuality)) Content]
         (Context
-          (λ {$k :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
-            {(JaiRoleAdmissible rinka $k)}))
-    {(Assert
-      (Close ((JaiRaise rinka $role) :1 Speaker :2 $death)))})})
+          {λ [$k :: Fn ((Referents Entity) (Referents Eventuality)) Content]
+            (JaiRoleAdmissible rinka $k)})
+    (Assert
+      (Close ((JaiRaise rinka $role) :1 Speaker :2 $death)))}}
 ; T = Entity and A = Eventuality in this reading. The unfilled fai place
 ; retrieves the hidden cause event; the intended role relates Speaker to it.
 ```
 
 ```lisp
-; ta barda — gradable predication: Context scale, Vague cutoff  [spec §6.4]
-(Bind {$s :: Scale} (Context)                    ; which size-scale: recoverable
-       {$reg :: Region Scale}
-         (Vague (λ {$r :: Region Scale} {(AdmissibleCutoff $s $r)}))
-  {(Assert (Close ((Grade barda $s $reg) That)))})
+; ta barda — gradable predication: Context scale; Vague cutoff  [spec §6.4]
+{Bind [$s :: Scale] (Context)                    ; which size-scale: recoverable
+       [$reg :: Region Scale]
+         (Vague {λ [$r :: Region Scale] (AdmissibleCutoff $s $r)})
+  (Assert (Close ((Grade barda $s $reg) That)))}
 
-; du'e gerku cu klama — Vague threshold, Context purpose  [spec §6.4]
-(Bind {$purpose :: Referents Entity} (Context)  ; too many FOR WHAT: recoverable
-       {$n :: Natural}
+; du'e gerku cu klama — Vague threshold; Context purpose  [spec §6.4]
+{Bind [$purpose :: Referents Entity] (Context)  ; too many FOR WHAT: recoverable
+       [$n :: Natural]
          (Vague (AdmissibleThreshold TooManyK
-                  (λ {$x :: Entity} {(gerku $x)}) $purpose))
-  {(Assert
-    (MoreThan $n (λ {$x :: Entity} {(gerku $x)})
-                 (λ {$w :: Referents Entity} {(Close (klama $w))})))})
+                  {λ [$x :: Entity] (gerku $x)} $purpose))
+  (Assert
+    (MoreThan $n {λ [$x :: Entity] (gerku $x)}
+                 {λ [$w :: Referents Entity] (Close (klama $w))}))}
 
-; mi co'e do — elliptical selbri: Context, not Vague   [spec §6.1]
-(Bind {$r :: PredTerm ⟨x1:(Referents Entity), x2:(Referents Entity)⟩}
+; mi co'e do — elliptical selbri: Context; not Vague   [spec §6.1]
+{Bind [$r :: PredTerm
+              (Row (1 (Referents Entity)) (2 (Referents Entity)))]
         (Context)
-  {(Assert (Close ($r Speaker Audience)))})
+  (Assert (Close ($r Speaker Audience)))}
 ```
 
 Both `co'e` and `tu'a` pass the intended-value recovery test. `co'e`
@@ -837,59 +838,59 @@ there is no intended soritical boundary, as in the cutoff examples above.
 
 ```lisp
 ; lo du'u mi klama cu se djuno do
-(Bind {$p :: Referents Proposition}
-        (Refer (λ {$q :: Referents Proposition}
-          {(CoRef $q (Reify (Close (klama Speaker))))}))
-  {(Assert (Close (djuno Audience $p)))})
+{Bind [$p :: Referents Proposition]
+        (Refer {λ [$q :: Referents Proposition]
+          (CoRef $q (Reify (Close (klama Speaker))))})
+  (Assert (Close (djuno Audience $p)))}
 ; CoRef (library) is plural co-reference — mutual Among — since typed =
 ; stays first-order; Reify is pure and lifts to a singleton reference.
 
-; lo se du'u mi klama — the sentence expressing it (CLL 11.7 x2)
-(Let {$p :: Proposition} (Reify (Close (klama Speaker)))
-  {(Bind {$s :: Referents (Sign Sentence)}
-          (Refer (λ {$x :: Referents (Sign Sentence)}
-            {((DuhuRel (Close (klama Speaker))) $p :2 $x)}))
-    {(Mention $s)})})
-; x1 is filled with the reified content itself — the relation
-; identifies it, so leaving x1 to contextual closure would add a
+; lo se du'u mi klama — the sentence expressing it (CLL 11.7 place 2)
+{Let [$p :: Proposition] (Reify (Close (klama Speaker)))
+  {Bind [$s :: Referents (Sign Sentence)]
+          (Refer {λ [$x :: Referents (Sign Sentence)]
+            ((DuhuRel (Close (klama Speaker))) $p :2 $x)})
+    (Mention $s)}}
+; place 1 is filled with the reified content itself — the relation
+; identifies it; so leaving place 1 to contextual closure would add a
 ; retrieval the Lojban does not contain.
 
-; lo ni mi klama — an abstraction relation, reference outside  [spec §9.2]
-(Bind {$a :: Referents Amount}
-        (Refer (λ {$x :: Referents Amount}
-          {(Close ((NiRel (Close (klama Speaker))) $x))}))
-  {(Mention $a)})
-; the omitted scale x2 closed contextually — the same rule as any
-; omitted place; le ni …, quantified ni, relative clauses on
+; lo ni mi klama — an abstraction relation; reference outside  [spec §9.2]
+{Bind [$a :: Referents Amount]
+        (Refer {λ [$x :: Referents Amount]
+          (Close ((NiRel (Close (klama Speaker))) $x))})
+  (Mention $a)}
+; the omitted scale place 2 closed contextually — the same rule as any
+; omitted place; le ni …; quantified ni; relative clauses on
 ; abstractions: all inherited from ordinary reference.
 
 ; lo su'u mi klama kei be lo fasnu — explicit categorizer (CLL 11.9)
-(Bind {$kind :: Referents Eventuality}
-        (Refer (λ {$k :: Referents Eventuality} {(fasnu $k)}))
-  {(Bind {$a :: Referents AbstractNature}
-          (Refer (λ {$x :: Referents AbstractNature}
-            {(Close ((SuhuRel (Close (klama Speaker))) $x $kind))}))
-    {(Mention $a)})})
+{Bind [$kind :: Referents Eventuality]
+        (Refer {λ [$k :: Referents Eventuality] (fasnu $k)})
+  {Bind [$a :: Referents AbstractNature]
+          (Refer {λ [$x :: Referents AbstractNature]
+            (Close ((SuhuRel (Close (klama Speaker))) $x $kind))})
+    (Mention $a)}}
 
 ; lo nu mi pu klama — event abstraction: Refer at the event sort
-(Bind {$ev :: Referents Eventuality}
+{Bind [$ev :: Referents Eventuality]
       (Refer
         (ActualClause
-          (λ {$e :: Referents Eventuality}
-            {(∧ ((DirectClause (klama Speaker)) $e)
-               (purci $e Now))})))
-  {(Mention $ev)})
+          {λ [$e :: Referents Eventuality]
+            (∧ ((DirectClause (klama Speaker)) $e)
+               (purci $e Now))}))
+  (Mention $ev)}
 ; The omitted-place Context sites remain inside the event property with their
 ; ordinary site identity; Refer sequences them rather than pretending purity.
 ```
 
 ```lisp
 ; lo nu ta du lo mi zdani — event abstraction over eventless identity
-(Bind {$home :: Referents Entity}
-      (Refer (λ {$x :: Referents Entity} {(zdani $x Speaker)}))
-  {(Bind {$state :: Referents Eventuality}
+{Bind [$home :: Referents Entity]
+      (Refer {λ [$x :: Referents Entity] (zdani $x Speaker)})
+  {Bind [$state :: Referents Eventuality]
         (Refer (StateClause (CoRef That $home)))
-    {(Mention $state)})})
+    (Mention $state)}}
 ; StateClause is already the event property nu needs; no event place is
 ; added to CoRef/du and EventOfContent selects this same holding state.
 ```
@@ -902,7 +903,7 @@ there is no intended soritical boundary, as in the cutoff examples above.
   (Utterance {$u :: UtteranceToken}
     {(Realizes $u (Assert (Close (klama Speaker))))})))
 
-; lo'u mi klama le'u — text, uninterpreted
+; lo'u mi klama le'u — text; uninterpreted
 (Mention (OpaqueQuote "mi klama"))
 
 ; zo klama cu valsi
@@ -916,37 +917,37 @@ there is no intended soritical boundary, as in the cutoff examples above.
         {(Realizes $u (Assert (Close (klama Speaker))))}))))
 ; defined because the realized act is an assertion: InterpretContent is
 ; the RAW ActContent projection on assertion-realizing entries (spec §7.5).
-; quotation supplies no ActOccurrence and therefore no RealizedContent, but
+; quotation supplies no ActOccurrence and therefore no RealizedContent; but
 ; the represented token's own intended context still interprets its deictics.
 
 ; li re te'a ci du li bi — MEX with te'a (library)
 (Assert (= (te'a 2 3) 8))
-; contrast: me'o re te'a ci mentions the EXPRESSION sign, not 8:
+; contrast: me'o re te'a ci mentions the EXPRESSION sign; not 8:
 ; (Mention (Sign {$s :: SignToken MathExpression} {(TextOf $s "re te'a ci")}))
 
 ; li pa vu'u mo'e lo ni mi klama — the numeric crossing (CLL 11.5)
-(Bind {$scale :: Referents Scale} (Context)      ; ONE scale, hoisted:
-  {(Bind {$amt :: Referents Amount}                 ; it fills NiRel's x2
-          (Refer (λ {$a :: Referents Amount}     ; AND reads the value
-            {((NiRel (Close (klama Speaker))) $a $scale)}))
-    {(Mention (− 1 (AmountValue $amt $scale)))})})
+{Bind [$scale :: Referents Scale] (Context)      ; ONE scale; hoisted:
+  {Bind [$amt :: Referents Amount]                 ; it fills NiRel's place 2
+          (Refer {λ [$a :: Referents Amount]     ; AND reads the value
+            ((NiRel (Close (klama Speaker))) $a $scale)})
+    (Mention (− 1 (AmountValue $amt $scale)))}}
 ; mo'e = AmountValue: the amount's numeric value on the SAME scale that
 ; defined it (distinct Context sites would allow a mismatch — pin P15).
 
 ; lo jei mi klama — epistemology-relative truth-value object (P38)
-(Bind {$ep :: Referents Epistemology} (Context)
-  {(Bind {$tv :: Referents TruthValue}
-          (Refer (λ {$v :: Referents TruthValue}
-            {((JeiRel (Close (klama Speaker))) $v $ep)}))
-    {(Mention $tv)})})
-; The proposed numeric [0,1] crossing is gap-registered, not silently
+{Bind [$ep :: Referents Epistemology] (Context)
+  {Bind [$tv :: Referents TruthValue]
+          (Refer {λ [$v :: Referents TruthValue]
+            ((JeiRel (Close (klama Speaker))) $v $ep)})
+    (Mention $tv)}}
+; The proposed numeric [0;1] crossing is gap-registered; not silently
 ; available as an alternative reading of this same surface form.
 
 ; la .bab. goi by. cu klama .i by. prami — letteral-keyed binding
-(Bind {$bob :: Referents Entity}
-        (Refer (λ {$x :: Referents Entity} {(Named "bab" $x)}))
-  {(Do (Assert (Close (klama $bob)))
-      (Assert (Close (prami $bob))))})
+{Bind [$bob :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (Named "bab" $x)})
+  (Do (Assert (Close (klama $bob)))
+      (Assert (Close (prami $bob))))}
 ; the letteral by. is a binding KEY resolved at the mapping layer;
 ; both occurrences consume the one binding.
 ```
@@ -955,31 +956,31 @@ there is no intended soritical boundary, as in the cutoff examples above.
 
 ```lisp
 ; lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
-; (episodic readings: each sentence's occasion is Context-anchored, P8)
-(Bind {$dogs :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity}
-        {(∧ (gerku $r)
-            (= (CardBasis $r (λ {$x :: Entity} {(gerku $x)})) 3))}))
-  {(Do
-    (Bind {$occ1 :: Time} (Context)          ; the biting's occasion — bound
-      {(Let {$a1 :: Act Assertion}         ; OUTSIDE the negation, so na
+; (episodic readings: each sentence's occasion is Context-anchored; P8)
+{Bind [$dogs :: Referents Entity]
+      (Refer {λ [$r :: Referents Entity]
+        (∧ (gerku $r)
+            (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))})
+  (Do
+    {Bind [$occ1 :: Time] (Context)          ; the biting's occasion — bound
+      {Let [$a1 :: Act Assertion]         ; OUTSIDE the negation; so na
             (Assert                       ; denies biting AT that occasion
               (Supplement $dogs (Close (blabi $dogs))
-                (¬ (Exactly 2 (λ {$x :: Entity} {(prenu $x)})
-                     (λ {$ppl :: Referents Entity}
-                       {(∃ (λ {$e :: Referents Eventuality}
-                          {(∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))}))})))))
-        {(Perform $a1)})})
-    (Bind {$occ2 :: Time} (Context)
-      {(Let {$a2 :: Act Assertion}
+                (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)}
+                     {λ [$ppl :: Referents Entity]
+                       (∃ {λ [$e :: Referents Eventuality]
+                          (∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1))})}))))
+        (Perform $a1)}}
+    {Bind [$occ2 :: Time] (Context)
+      {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ (λ {$e :: Referents Eventuality}
-                {(∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))})))
-        {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
-          {(Do (Perform AttachedDisplay
-            (Express (Close (Unhappiness Speaker $o2 Intense)))))})})}))})
+              (∃ {λ [$e :: Referents Eventuality]
+                (∧ (Close (tatpi $dogs :Eventuality $e))
+                    (cabna $e $occ2))}))
+        {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
+          (Do (Perform AttachedDisplay
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}
 ```
 
 (The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
@@ -1006,24 +1007,24 @@ bodies use braces to show scope; the braces do not quote core code.
 
 ```lisp
 ; lo ka se klama — direct function abstraction
-(λ {$x :: Referents Entity}
-  {(Close (klama :2 $x))})
+{λ [$x :: Referents Entity]
+  (Close (klama :2 $x))}
 ```
 
 ```lisp
 ; lo mlatu cu blabi .i ri jbena — effectful binding across a discourse
-(Bind {$cat :: Referents Entity}
-      (Refer (λ {$x :: Referents Entity} {(mlatu $x)}))
-  {(Do (Assert (Close (blabi $cat)))
-       (Assert (Close (jbena $cat))))})
+{Bind [$cat :: Referents Entity]
+      (Refer {λ [$x :: Referents Entity] (mlatu $x)})
+  (Do (Assert (Close (blabi $cat)))
+       (Assert (Close (jbena $cat))))}
 ```
 
 ```lisp
-; one act value, performed and then targeted by a display
-(Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Happiness Speaker $o Moderate)))))})})
+; one act value; performed and then targeted by a display
+{Let [$a :: Act Assertion] (Assert (Close (klama Speaker)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Happiness Speaker $o Moderate)))))}}
 ```
 
 `λ` binds pure or effectful function bodies according to their type;
