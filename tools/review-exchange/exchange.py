@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as _dt
+import json
 import os
 import re
 import sys
@@ -761,6 +762,196 @@ def cmd_status(reg: Registry, actor: str) -> int:
     return EXIT_VALIDATION if spool.errors else 0
 
 
+def _message_title(message: Message) -> str:
+    """Extract a compact display title without interpreting Markdown as HTML."""
+    for line in message.body.splitlines():
+        heading = re.match(r"^\s{0,3}#{1,6}\s+(.+?)\s*$", line)
+        if heading:
+            return re.sub(r"[*_`~\[\]]", "", heading.group(1)).strip()
+    slug = message.id.split("-", 2)[-1] if message.id else "Untitled message"
+    return slug.replace("-", " ").strip().title()
+
+
+def _message_excerpt(message: Message, limit: int = 180) -> str:
+    lines: list[str] = []
+    in_fence = False
+    for raw in message.body.splitlines():
+        line = raw.strip()
+        if line.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not line or line.startswith("#"):
+            continue
+        line = re.sub(r"^[-*+>]\s+", "", line)
+        line = re.sub(r"\[([^]]+)]\([^)]+\)", r"\1", line)
+        line = re.sub(r"[*_`~]", "", line)
+        if line:
+            lines.append(line)
+        if len(" ".join(lines)) >= limit:
+            break
+    excerpt = " ".join(lines)
+    return excerpt if len(excerpt) <= limit else excerpt[:limit - 1].rstrip() + "…"
+
+
+def build_snapshot(reg: Registry) -> dict:
+    """Return the validated, read-only exchange view consumed by web clients.
+
+    Invalid published files remain excluded exactly as they are in ``Spool``;
+    validation errors are included so a reader can show a degraded-state
+    banner instead of treating a partial view as healthy.
+    """
+    spool = Spool(reg)
+    messages = sorted(spool.published.values(), key=lambda m: m.id)
+    known_actors = sorted(set(spool.sessions.by_id) | spool.actors.reg.fixed)
+
+    superseded_by: dict[str, list[str]] = {}
+    children: dict[str, list[str]] = {}
+    for message in messages:
+        parent = message.data.get("in_reply_to", "none")
+        if parent != "none":
+            children.setdefault(parent, []).append(message.id)
+        target = message.data.get("supersedes", "none")
+        if target != "none":
+            superseded_by.setdefault(target, []).append(message.id)
+
+    def root_and_depth(message: Message) -> tuple[str, int]:
+        current, depth, seen = message, 0, {message.id}
+        while current.data.get("in_reply_to", "none") != "none":
+            parent_id = current.data["in_reply_to"]
+            if parent_id in seen or parent_id not in spool.published:
+                break
+            seen.add(parent_id)
+            current = spool.published[parent_id]
+            depth += 1
+        return current.id, depth
+
+    ack_details: dict[str, list[dict[str, str]]] = {}
+    for message_id, actors in spool.acked.items():
+        for actor in sorted(actors):
+            path = reg.spool / "acks" / actor / f"{message_id}.ack.md"
+            if not path.exists():
+                continue
+            data, body, _ = front_matter(path)
+            disposition = body.strip()
+            prefix = "Read and disposition captured in:"
+            if disposition.startswith(prefix):
+                disposition = disposition[len(prefix):].strip()
+            ack_details.setdefault(message_id, []).append({
+                "by": actor,
+                "created_utc": data.get("created_utc", ""),
+                "disposition": disposition,
+            })
+
+    serialized: list[dict] = []
+    for message in messages:
+        root_id, depth = root_and_depth(message)
+        pending: list[str] = []
+        addressed: list[str] = []
+        for actor in known_actors:
+            if not spool._addressed(message, actor):
+                continue
+            if not spool.actors.acknowledges(actor):
+                addressed.append(actor)
+            elif message.ack_required and not spool._acked_for(message, actor):
+                pending.append(actor)
+        serialized.append({
+            "id": message.id,
+            "protocol": message.protocol,
+            "legacy": message.legacy,
+            "from": message.sender,
+            "to": message.recipients(),
+            "audience": message.data.get("audience", "direct"),
+            "created_utc": message.data.get("created_utc", ""),
+            "kind": message.data.get("kind", ""),
+            "model": message.data.get("model", ""),
+            "client": message.data.get("client", ""),
+            "generation": message.data.get("generation", "0"),
+            "ack_required": message.ack_required,
+            "acked_by": sorted(spool.acked.get(message.id, set())),
+            "acknowledgements": ack_details.get(message.id, []),
+            "pending_for": pending,
+            "addressed_without_ack": addressed,
+            "in_reply_to": message.data.get("in_reply_to", "none"),
+            "replies": sorted(children.get(message.id, [])),
+            "supersedes": message.data.get("supersedes", "none"),
+            "superseded_by": sorted(superseded_by.get(message.id, [])),
+            "github_issues": ([] if message.data.get("github_issues", "none") == "none"
+                              else message.data.get("github_issues", "").split(",")),
+            "title": _message_title(message),
+            "excerpt": _message_excerpt(message),
+            "body": message.body.strip(),
+            "root_id": root_id,
+            "depth": depth,
+            "path": str(message.path.relative_to(reg.root)),
+        })
+
+    thread_groups: dict[str, list[dict]] = {}
+    for message in serialized:
+        thread_groups.setdefault(message["root_id"], []).append(message)
+    threads: list[dict] = []
+    for root_id, members in thread_groups.items():
+        members.sort(key=lambda m: m["id"])
+        root = next((m for m in members if m["id"] == root_id), members[0])
+        threads.append({
+            "id": root_id,
+            "title": root["title"],
+            "excerpt": root["excerpt"],
+            "created_utc": min(m["created_utc"] for m in members),
+            "last_activity_utc": max(m["created_utc"] for m in members),
+            "message_ids": [m["id"] for m in members],
+            "participants": sorted({a for m in members for a in [m["from"], *m["to"]]}),
+            "kinds": sorted({m["kind"] for m in members}),
+            "github_issues": sorted({i for m in members for i in m["github_issues"]}),
+            "pending_for": sorted({a for m in members for a in m["pending_for"]}),
+            "has_broadcast": any(m["audience"] == "all" for m in members),
+            "has_legacy": any(m["legacy"] for m in members),
+            "superseded": bool(root["superseded_by"]),
+        })
+    threads.sort(key=lambda t: (t["last_activity_utc"], t["id"]), reverse=True)
+
+    sessions = []
+    for sid, session in sorted(spool.sessions.by_id.items()):
+        sessions.append({
+            "id": sid,
+            "model": session.model,
+            "display_name": reg.models.get(session.model, {}).get("display_name", session.model),
+            "client": session.data.get("client", ""),
+            "model_name": session.data.get("model_name", ""),
+            "generation": session.data.get("generation", ""),
+            "status": session.data.get("status", ""),
+            "created_utc": session.data.get("created_utc", ""),
+            "retired_utc": session.data.get("retired_utc", ""),
+            "note": session.data.get("note", ""),
+        })
+
+    return {
+        "protocol": reg.protocol,
+        "generation": reg.generation,
+        "generated_at": stamp(now_utc())[1],
+        "healthy": not spool.errors,
+        "errors": spool.errors,
+        "stats": {
+            "threads": len(threads),
+            "messages": len(serialized),
+            "sessions": len(sessions),
+            "active_sessions": sum(s["status"] == "active" for s in sessions),
+            "drafts": len(spool.drafts),
+            "acknowledgements": sum(len(v) for v in spool.acked.values()),
+            "pending": sum(len(m["pending_for"]) for m in serialized),
+        },
+        "models": [dict({"id": model}, **values) for model, values in sorted(reg.models.items())],
+        "sessions": sessions,
+        "threads": threads,
+        "messages": serialized,
+    }
+
+
+def cmd_snapshot(reg: Registry) -> int:
+    snapshot = build_snapshot(reg)
+    print(json.dumps(snapshot, ensure_ascii=False, indent=2))
+    return EXIT_VALIDATION if not snapshot["healthy"] else 0
+
+
 def cmd_new(reg: Registry, a: argparse.Namespace) -> int:
     spool = Spool(reg)
     actors = spool.actors
@@ -932,6 +1123,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("validate")
     sub.add_parser("sessions")
+    sub.add_parser("snapshot", help="print the read-only exchange view as JSON")
     p = sub.add_parser("join"); p.add_argument("--model", required=True); p.add_argument("--client"); p.add_argument("--note")
     p = sub.add_parser("retire"); p.add_argument("--actor"); p.add_argument("--note")
     p = sub.add_parser("status"); p.add_argument("--actor", required=True)
@@ -951,6 +1143,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_validate(reg)
         if a.command == "sessions":
             return cmd_sessions(reg)
+        if a.command == "snapshot":
+            return cmd_snapshot(reg)
         if a.command == "join":
             return cmd_join(reg, a.model, a.client, a.note)
         if a.command == "retire":

@@ -223,6 +223,7 @@ Run from the repository root:
 python3 tools/review-exchange/exchange.py join --model <slug> [--note '…']   # once, first turn: prints your id
 python3 tools/review-exchange/exchange.py status --actor <actor>   # start and end of a turn
 python3 tools/review-exchange/exchange.py sessions                 # who exists, active or retired
+python3 tools/review-exchange/exchange.py snapshot                 # validated read model as JSON
 python3 tools/review-exchange/exchange.py retire --actor <actor> [--note '…']   # handoff
 python3 tools/review-exchange/exchange.py new --actor <actor> --to all|a,b --kind <kind> \
     --slug <slug> [--issues '#1,#2'] [--reply-to <id>] [--supersedes <id>] [--no-ack]
@@ -231,7 +232,11 @@ python3 tools/review-exchange/exchange.py ack --actor <actor> <id> --disposition
 python3 tools/review-exchange/exchange.py validate
 python3 -m unittest discover -s tools/review-exchange/tests
 SMUSNI_EXCHANGE_ACTOR=<actor> python3 -m unittest discover -s tools/review-exchange/tests
+python3 tools/review-exchange/web.py --open                        # local read-only thread client
 ```
+
+The web client's behavior and safety boundary are documented in
+[`WEB.md`](WEB.md).
 
 Run the suite both unbound and bound (the second form, as a launched tab would
 run it); both must pass.
