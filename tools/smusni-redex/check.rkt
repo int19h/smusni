@@ -37,17 +37,22 @@
               #:when m)
     (cadr m)))
 
+;; Returns (values floor ledger). The floor is a ratchet: the number of rules
+;; cited by specimens may never fall below it, and a commit that raises
+;; coverage must raise the floor, so the recorded number is always exact and a
+;; lowered floor is a visible diff.
 (define (load-rule-coverage [path rule-coverage-path])
   (match (call-with-input-file path read)
-    [`(smusni-rule-coverage 1 ,entries ...)
-     (for/list ([entry (in-list entries)])
-       (match entry
-         [`(uncovered ,(? string? id) ,(? string? issue)) (cons id issue)]
-         [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)]))]
-    [else (error 'load-rule-coverage "unsupported rule-coverage header")]))
+    [`(smusni-rule-coverage 1 (cited-floor ,(? exact-nonnegative-integer? floor)) ,entries ...)
+     (values floor
+             (for/list ([entry (in-list entries)])
+               (match entry
+                 [`(uncovered ,(? string? id) ,(? string? issue)) (cons id issue)]
+                 [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)])))]
+    [else (error 'load-rule-coverage "unsupported rule-coverage header (expect a cited-floor)")]))
 
 ;; Gate 3a (#9 M1): returns a list of (cons phase message) findings.
-(define (rule-coverage-findings rule-ids classified ledger)
+(define (rule-coverage-findings rule-ids classified ledger floor)
   (define known (list->set rule-ids))
   (define cited (make-hash))
   (define findings '())
@@ -71,6 +76,10 @@
   (for ([id (in-list rule-ids)])
     (unless (or (hash-has-key? cited id) (hash-has-key? ledgered id))
       (note! (format "rule ~a is cited by no specimen and has no uncovered-ledger entry with an issue" id))))
+  (when (< (hash-count cited) floor)
+    (note! (format "rule coverage fell to ~a cited rules, below the ratchet floor ~a: add specimens, do not ledger" (hash-count cited) floor)))
+  (when (> (hash-count cited) floor)
+    (note! (format "rule coverage rose to ~a cited rules: raise (cited-floor ~a) in rule-coverage.sexp to ~a" (hash-count cited) floor (hash-count cited))))
   (values (reverse findings) (hash-count cited) (hash-count ledgered)))
 
 (struct expected-finding (source ordinal digest phase pattern issue note)
@@ -262,8 +271,9 @@
                 unexpected)))
 
   (define rule-ids (spec-rule-ids))
+  (define-values (coverage-floor coverage-ledger) (load-rule-coverage))
   (define-values (rule-findings cited-count ledgered-count)
-    (rule-coverage-findings rule-ids classified (load-rule-coverage)))
+    (rule-coverage-findings rule-ids classified coverage-ledger coverage-floor))
   (for ([finding (in-list rule-findings)])
     (set! unexpected
           (cons (observed-finding "rules" 0 "n/a" (car finding) (cdr finding))
@@ -283,8 +293,8 @@
           schema-count expansion-count declaration-count)
   (printf "elaboration: ~a retrieval sites, ~a recorded choices\n"
           site-count choice-count)
-  (printf "rules: ~a lowering rules in spec §11; ~a cited by specimens; ~a uncovered (ledgered with issues)\n"
-          (length rule-ids) cited-count ledgered-count)
+  (printf "rules: ~a lowering rules in spec §11; ~a cited by specimens (ratchet floor ~a); ~a uncovered (ledgered with issues)\n"
+          (length rule-ids) cited-count coverage-floor ledgered-count)
   (printf "bounded pass-through typing rules: ~a\n"
           (string-join (map symbol->string pass-through-forms) ", "))
   (define sorted-matched-keys

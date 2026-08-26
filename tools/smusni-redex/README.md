@@ -85,5 +85,9 @@ instantiates, and `inventory/rule-coverage.sexp` ledgers every rule no
 specimen cites yet, each with the issue that owns the gap. The run fails on a
 specimen without citations, a citation of an unknown id, a rule that is
 neither cited nor ledgered, or a ledger entry for a rule that a specimen does
-cite. Citing a rule is a claim about the specimen; it is not checked
-semantically until #9 M3.
+cite. The ledger also carries a **ratchet** `(cited-floor N)`: the number of
+rules cited by specimens may never fall below it, and a commit that raises
+coverage must raise the floor, so ledgering a rule instead of writing its
+specimen is a failing move and any lowered floor is a visible diff. Citing a
+rule is a claim about the specimen; it is not checked semantically until #9
+M3.

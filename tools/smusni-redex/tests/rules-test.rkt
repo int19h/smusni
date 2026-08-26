@@ -17,7 +17,8 @@
 (define-values (clean cited ledgered)
   (rule-coverage-findings '("L1.1" "L1.2")
                           (list (fake "s" 1 '("L1.1")))
-                          '(("L1.2" . "#9"))))
+                          '(("L1.2" . "#9"))
+                          1))
 (check-equal? clean '())
 (check-equal? cited 1)
 (check-equal? ledgered 1)
@@ -27,7 +28,8 @@
                           (list (fake "s" 1 '("L9.99"))   ; unknown id
                                 (fake "s" 2 '()))          ; no citation
                           '(("L1.1" . "#9")               ; ledgered but cited? no: L1.1 not cited
-                            ("L7.7" . "#9"))))            ; ledger names unknown rule
+                            ("L7.7" . "#9"))             ; ledger names unknown rule
+                          0))
 (define messages (map cdr bad))
 (check-true (ormap (lambda (m) (regexp-match? #rx"unknown rule L9.99" m)) messages))
 (check-true (ormap (lambda (m) (regexp-match? #rx"cites no lowering rule" m)) messages))
@@ -36,7 +38,19 @@
 (check-true (ormap (lambda (m) (regexp-match? #rx"L1.3 is cited by no specimen" m)) messages))
 
 (define-values (stale _c2 _l2)
-  (rule-coverage-findings '("L1.1") (list (fake "s" 1 '("L1.1"))) '(("L1.1" . "#9"))))
+  (rule-coverage-findings '("L1.1") (list (fake "s" 1 '("L1.1"))) '(("L1.1" . "#9")) 1))
 (check-true (ormap (lambda (m) (regexp-match? #rx"but a specimen cites it" (cdr m))) stale))
+
+
+;; Ratchet: coverage below the floor fails; coverage above it demands a raise.
+(define-values (below _c3 _l3)
+  (rule-coverage-findings '("L1.1" "L1.2") (list (fake "s" 1 '("L1.1"))) '(("L1.2" . "#9")) 2))
+(check-true (ormap (lambda (m) (regexp-match? #rx"below the ratchet floor 2" (cdr m))) below))
+(define-values (above _c4 _l4)
+  (rule-coverage-findings '("L1.1" "L1.2") (list (fake "s" 1 '("L1.1" "L1.2"))) '() 1))
+(check-true (ormap (lambda (m) (regexp-match? #rx"raise \\(cited-floor 1\\)" (cdr m))) above))
+(define-values (floor-ok ledger-ok) (load-rule-coverage))
+(check-true (exact-nonnegative-integer? floor-ok))
+(check-true (list? ledger-ok))
 
 (displayln "rules tests: ok")

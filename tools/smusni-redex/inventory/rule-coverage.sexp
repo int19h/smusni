@@ -1,4 +1,7 @@
 (smusni-rule-coverage 1
+  ;; Ratchet: the count of §11 rules cited by at least one specimen must
+  ;; never fall below this floor; raise it whenever coverage grows.
+  (cited-floor 70)
   ;; Lowering rules of spec §11 that no samples.md/spec.md specimen cites yet.
   ;; Each entry names the issue that owns the missing coverage (#9 M3 corpus).
   (uncovered "L1.8" "#9")
