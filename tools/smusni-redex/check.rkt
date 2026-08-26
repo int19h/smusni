@@ -1,6 +1,7 @@
 #lang racket
 
 (require racket/cmdline
+         racket/file
          racket/list
          racket/match
          racket/runtime-path
@@ -13,11 +14,64 @@
          "syntax.rkt"
          "types.rkt")
 
-(provide run-checks)
+(provide run-checks spec-rule-ids load-rule-coverage rule-coverage-findings)
 
 (define-runtime-path tool-dir ".")
 (define expected-findings-path
   (build-path tool-dir "inventory" "expected-findings.sexp"))
+(define rule-coverage-path
+  (build-path tool-dir "inventory" "rule-coverage.sexp"))
+(define spec-path (build-path tool-dir ".." ".." "spec.md"))
+
+;; Rule ids are read from the normative text itself: every `- **Ln.m**` line
+;; between the §11 and §12 headings of spec.md. The manifest cites them; the
+;; ledger below records the rules no specimen cites yet, each with an issue.
+(define (spec-rule-ids [path spec-path])
+  (define lines (file->lines path))
+  (define start (index-where lines (lambda (l) (string-prefix? l "## 11. "))))
+  (define stop (index-where lines (lambda (l) (string-prefix? l "## 12. "))))
+  (unless (and start stop (< start stop))
+    (error 'spec-rule-ids "spec.md §11/§12 headings not found"))
+  (for*/list ([line (in-list (take (drop lines start) (- stop start)))]
+              [m (in-value (regexp-match #px"^- \\*\\*(L[0-9]+\\.[0-9]+)\\*\\* " line))]
+              #:when m)
+    (cadr m)))
+
+(define (load-rule-coverage [path rule-coverage-path])
+  (match (call-with-input-file path read)
+    [`(smusni-rule-coverage 1 ,entries ...)
+     (for/list ([entry (in-list entries)])
+       (match entry
+         [`(uncovered ,(? string? id) ,(? string? issue)) (cons id issue)]
+         [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)]))]
+    [else (error 'load-rule-coverage "unsupported rule-coverage header")]))
+
+;; Gate 3a (#9 M1): returns a list of (cons phase message) findings.
+(define (rule-coverage-findings rule-ids classified ledger)
+  (define known (list->set rule-ids))
+  (define cited (make-hash))
+  (define findings '())
+  (define (note! message) (set! findings (cons (cons 'rules-error message) findings)))
+  (for ([item (in-list classified)] #:when (eq? (fence-kind item) 'specimen))
+    (define rules (fence-rules item))
+    (when (null? rules)
+      (note! (format "specimen ~a#~a cites no lowering rule"
+                     (fence-source item) (fence-ordinal item))))
+    (for ([id (in-list rules)])
+      (unless (set-member? known id)
+        (note! (format "specimen ~a#~a cites unknown rule ~a"
+                       (fence-source item) (fence-ordinal item) id)))
+      (hash-set! cited id #t)))
+  (define ledgered (for/hash ([entry (in-list ledger)]) (values (car entry) (cdr entry))))
+  (for ([(id issue) (in-hash ledgered)])
+    (unless (set-member? known id)
+      (note! (format "rule-coverage ledger names unknown rule ~a" id)))
+    (when (hash-has-key? cited id)
+      (note! (format "rule-coverage ledger lists ~a as uncovered, but a specimen cites it" id))))
+  (for ([id (in-list rule-ids)])
+    (unless (or (hash-has-key? cited id) (hash-has-key? ledgered id))
+      (note! (format "rule ~a is cited by no specimen and has no uncovered-ledger entry with an issue" id))))
+  (values (reverse findings) (hash-count cited) (hash-count ledgered)))
 
 (struct expected-finding (source ordinal digest phase pattern issue note)
   #:transparent)
@@ -207,6 +261,14 @@
                          head (string-join (remove-duplicates locations) ", ")))
                 unexpected)))
 
+  (define rule-ids (spec-rule-ids))
+  (define-values (rule-findings cited-count ledgered-count)
+    (rule-coverage-findings rule-ids classified (load-rule-coverage)))
+  (for ([finding (in-list rule-findings)])
+    (set! unexpected
+          (cons (observed-finding "rules" 0 "n/a" (car finding) (cdr finding))
+                unexpected)))
+
   (define stale-expected
     (for/list ([expected (in-list expected-findings)]
                #:unless (hash-has-key?
@@ -221,6 +283,8 @@
           schema-count expansion-count declaration-count)
   (printf "elaboration: ~a retrieval sites, ~a recorded choices\n"
           site-count choice-count)
+  (printf "rules: ~a lowering rules in spec §11; ~a cited by specimens; ~a uncovered (ledgered with issues)\n"
+          (length rule-ids) cited-count ledgered-count)
   (printf "bounded pass-through typing rules: ~a\n"
           (string-join (map symbol->string pass-through-forms) ", "))
   (define sorted-matched-keys

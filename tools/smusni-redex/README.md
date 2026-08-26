@@ -74,3 +74,16 @@ racket tools/smusni-redex/extract.rkt --write
 ```
 
 Do not hand-edit generated corpus files.
+
+
+## Lowering-rule citations (#9 M1)
+
+`spec.md` §11 numbers every lowering schema `Ln.m`; the checker reads those
+ids from the normative text, never from a copy. Each specimen entry in
+`inventory/fences.sexp` carries a `(rules …)` clause naming the rules it
+instantiates, and `inventory/rule-coverage.sexp` ledgers every rule no
+specimen cites yet, each with the issue that owns the gap. The run fails on a
+specimen without citations, a citation of an unknown id, a rule that is
+neither cited nor ledgered, or a ledger entry for a rule that a specimen does
+cite. Citing a rule is a claim about the specimen; it is not checked
+semantically until #9 M3.

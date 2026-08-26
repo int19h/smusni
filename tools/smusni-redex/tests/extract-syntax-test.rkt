@@ -24,6 +24,11 @@
               0)
 (check-not-exn (lambda () (check-corpus! classified)))
 
+(for ([item (in-list classified)] #:when (eq? (fence-kind item) 'specimen))
+  (check-true (pair? (fence-rules item))
+              (format "~a fence ~a cites at least one lowering rule"
+                      (fence-source item) (fence-ordinal item))))
+
 (for ([item (in-list classified)]
       #:when (eq? (fence-kind item) 'specimen))
   (define forms

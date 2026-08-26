@@ -2736,405 +2736,485 @@ Normative lowering schemas, one line each; the cited pins carry the
 arguments. Text-to-reading rules (marked ⊳) resolve before the calculus
 and contribute no term constructors.
 
-**Predication and places.** A bridi first forms `ClauseContent`: a
-direct-event lexical row uses `DirectClause`; an eventless row or `du`/MEX
-claim uses `StateClause` after its ordinary fills. Tense, tags, CAhA, ROI, and
-`nu` consume that open clause; an assertion or any other Content-taking
-consumer applies `CloseClause`. `Close` remains §4.6's abbreviation for the
-common resolved actual-mode predication-to-content cases. FA/conversion → labelled fills / row routing (§4.2).
-`zi'o` → `DropPlace`. `zo'e`/omission → per-site `Context` (P15). `fi'a` →
-`OpenQ` over `Label<ρ>`. `co'e`/`do'e` → `Context` at relation/tag type.
-⊳ `si`/`sa`/`su` erase before reading; quoted text preserves them.
+Each schema below is a numbered rule `Ln.m` — n the paragraph, m the
+position — so that samples, the coverage matrix, and the checker can cite
+one rule by id, as pins are cited by id (#9). A rule's id carries no
+meaning; the rule text is the schema.
 
-**Prenexes, topics, imperatives** (P26, P27). Quantifier prenex
-(`… zo'u`): prenexed `PA da [poi …]` terms lower to the
-quantifier/selection prefix in **surface order — prenex order is scope
-order** (P18's surface-scope doctrine; CLL 16.2), scoping across an
-I-connected tail and across a `tu'e…tu'u` group when the syntax makes
-that group the matrix; bare selbri variables take the implicit
-`su'o` of the `bu'a` row. Topic `zo'u` → the `Topic` schema (§12):
-the topic binds normally, and a constrained `Context` retrieves one intended
-`TopicResolution` — an admissible unfilled place of a single-bridi open
-comment frame, or coarse `srana`-aboutness to the closed comment (CLL 19.4's
-fish; pin P26). The surface does not determine which resolution was intended;
-the core preserves it as one typed `Context` site, not an existential
-disjunction over every admissible resolution. Cross-clausal place-linking is
-gap-registered; no segment-state effect
-(`ni'o` owns segments). `ko` → fills its place with the **active
-addressee** (the `doi`-updated `do` binding, falling back to the
-utterance's Audience) and ⊳ marks the **nearest performed clause** as
-the command force (§7.1, addressee = the same active value);
-quotation and content abstractions are inert — `lo nu ko klama`
-constructs content, commands nothing (pin P27); CLL 14.13's
-obedience gloss is a remark, not machinery.
+**Predication and places** (L1).
 
-**Descriptions** (P1, P10, P11, P39). `lo P` → `(Refer P)`, literally:
-veridical and number-neutral, with no second description-only condition. Where
-the resolved lexical place declares a unit profile, P already has §10's
-`CoveredBy` plural extension; collective, kind-like, and substance modes use
-their own declared lexical extensions. `le P` → `Refer` via
-`skicu(Speaker, ·, Audience, P)`
-with the anchoring clause — the describing event is this utterance's own
-locution. The anchored reference property, in full, conjoins the
-locution fact at the utterance's own token u₀ (the `dei` value, §7.4):
+- **L1.1** A bridi first forms `ClauseContent`: a direct-event lexical row
+  uses `DirectClause`; an eventless row or `du`/MEX claim uses `StateClause`
+  after its ordinary fills.
+- **L1.2** Tense, tags, CAhA, ROI, and `nu` consume that open clause; an
+  assertion or any other Content-taking consumer applies `CloseClause`.
+- **L1.3** `Close` remains §4.6's abbreviation for the common resolved
+  actual-mode predication-to-content cases.
+- **L1.4** FA/conversion → labelled fills / row routing (§4.2).
+- **L1.5** `zi'o` → `DropPlace`.
+- **L1.6** `zo'e`/omission → per-site `Context` (P15).
+- **L1.7** `fi'a` → `OpenQ` over `Label<ρ>`.
+- **L1.8** `co'e`/`do'e` → `Context` at relation/tag type.
+- **L1.9** ⊳ `si`/`sa`/`su` erase before reading; quoted text preserves them.
 
-```text
-(λ {$r :: Referents Entity}
-  {(∃ (λ {$e :: Referents Locution}
-    {(∧ (LocutionOf $e u₀)
-       (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))}))})
-```
+- **L1.10** Tanru (`sutra klama`) → `(Tanru M H)`: the head asserted once and
+  one intended `TanruAdmissible` link retrieved at a constrained `Context`
+  site (§6.2).
 
-for which `(Close (skicu Speaker $r Audience P))` is the **licensed
-display abbreviation** (P10; the samples book's brief spelling) — an
-abbreviation of this term, not a local reinterpretation of `Close` —
-and
-the speaker's commitment that the audience can identify the referent is
-a cooperative-use commitment stated here in prose, not machinery;
-non-veridical, speaker-identifying. `la N` → `Refer` via naming
-(`Named`/`NameSign`). `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical,
-[Speaker], P, ·)` at their predication (§5.8). `loi`/`lo'i` first bind an
-ordinary **non-maximal** `(Local (Refer P))` base (P5). `Local` keeps that
-lowering-internal base out of the discourse store. `loi` then retrieves a
-constrained `GroupBasis<T>` and `Refer`s to a `Group<T>` satisfying
-`CompleteGunmaAt κ g base`; `lo'i` `Refer`s to the exact `selcmi` set over
-the same base. In both cases the outer `Refer` restrictor is a property of one
-`Group<T>`/`Set<T>` object (singleton-lifted at the relation): a number-neutral
-outer reference may contain several qualifying objects, but each qualifies
-individually rather than several partial objects qualifying only collectively.
-Thus bare `lo'i gerku` may be a set of the contextually
-selected dogs, not necessarily all dogs, but the hidden dog reference does
-not become a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal
-reading remains available when context selects that base or when explicit
-`ro`/`MaxRefer` requires it; bare collection gadri do not add it. Completeness
-here forbids components beyond the selected base; whether the base itself has
-external residue is already decided by its resolved lexical extension (P39).
-Inner PA →
-unit count of the selected base (`CardBasis`); outer PA → witness-set
-selection / subreference selection (P1, §4.10). Inner `no` → the
-zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
-in a description (`le mi ratcu`) is the `pe`-associator restriction
-(CLL 8.7: `le mi ratcu` ≈ `le ratcu pe mi`) — a restrictive `srana`
-conjunct beside the description head. `lei`/`le'i` →
-the P10 `skicu` base bound first under `Local`, then `Refer` to the
-complete-`GunmaAt` group / exact-`selcmi` set object over it;
-`lai`/`la'i` → the naming base likewise
-— `Group<T>`, `Set<T>`, and `Referents<T>` stay distinct, inner PA
-constrains the base, outer PA counts the objects (P5's two sites).
+**Prenexes, topics, imperatives** (L2; P26, P27).
 
-**Relative clauses.** `poi` → conjunct in the reference property; `noi` →
-`Supplement` anchored at the referent (P7); `voi` → the audience-deleted
-`skicu` (`(DropPlace skicu 3)`, P10) restrictively; `goi` →
-discourse-scoped binding; `ke'a` → the property's
-parameter. Outer `poi` after `ku` → restriction on the outer selection;
-maximal-subreference readings are explicit library content, not
-defaults. GOI associators (CLL 8.3's own expansions, nested as CLL
-nests them): `pe X` → restrictive `(srana ke'a X)` conjunct; `po X` →
-restrictive `se steci srana`; `po'e X` → restrictive
-`jinzi ke se steci srana` (nested, not conjoined); `po'u X` →
-restrictive P23 identity (`=`/`CoRef` as sort dictates); `ne`/`no'u`
-→ the incidental (`Supplement`) counterparts; `X` is computed and
-bound before the pure restriction forms. `zi'e` → restrictives
-conjoin in the reference property, incidentals stack as separate
-`Supplement`s; order-insensitive **truth-conditionally** — bindings
-and supplements keep source order at the effect level. `vu'o` → ⊳
-widens attachment to the whole connected sumti: an incidental clause
-anchors at the joint unit but predicates **once of each immediate
-connectee** (`(∧ (Q r₁) (Q r₂))` — never of the `Combine` collectively,
-never member-distributed into a plural connectee); a restrictive
-clause restricts each operand under the connective's structure; a
-group-forming joik instead supports the clause on the resultant
-object (CLL 8.8 attests the incidental case; the restrictive rule is
-this specification's extension; pin P34).
+- **L2.1** Quantifier prenex (`… zo'u`): prenexed `PA da [poi …]` terms lower
+  to the quantifier/selection prefix in **surface order — prenex order is
+  scope order** (P18's surface-scope doctrine; CLL 16.2), scoping across an
+  I-connected tail and across a `tu'e…tu'u` group when the syntax makes that
+  group the matrix; bare selbri variables take the implicit `su'o` of the
+  `bu'a` row.
+- **L2.2** Topic `zo'u` → the `Topic` schema (§12): the topic binds normally,
+  and a constrained `Context` retrieves one intended `TopicResolution` — an
+  admissible unfilled place of a single-bridi open comment frame, or coarse
+  `srana`-aboutness to the closed comment (CLL 19.4's fish; pin P26). The
+  surface does not determine which resolution was intended; the core preserves
+  it as one typed `Context` site, not an existential disjunction over every
+  admissible resolution.
+- **L2.3** Cross-clausal place-linking is gap-registered; no segment-state
+  effect (`ni'o` owns segments).
+- **L2.4** `ko` → fills its place with the **active addressee** (the
+  `doi`-updated `do` binding, falling back to the utterance's Audience) and ⊳
+  marks the **nearest performed clause** as the command force (§7.1, addressee
+  = the same active value); quotation and content abstractions are inert — `lo
+  nu ko klama` constructs content, commands nothing (pin P27); CLL 14.13's
+  obedience gloss is a remark, not machinery.
 
-**Quantification and connectives** (P2, P17, P18). `ro` over descriptions
-→ importing `Every` (`Presuppose` nonemptiness + `∀`); bare `ro da` → `∀`.
-PA-quantifiers → library cardinal GQs over a counting basis. Termsets
-(`ce'e`, `nu'i`) → co-selected witness sets at one joint locus with the
-full product; no coordinate maximality (the coordinate-closed profile is a
-named strengthening). `da'a n` → the `SelectAllBut`
-selection (§12; default n = 1). `bu'a`/`bu'e`/`bu'i` → **typed
-quantification at `PredTerm<ρ>`** — predicate-typed variables, not
-predicate objects (the §9.1 reserved family is untouched; pin P30):
-the row ρ is ⊳ fixed consistently across every occurrence (the exact
-resolved row; incompatible uses = no resolved reading); bare `bu'a`
-carries implicit `su'o`, and any other quantifier requires the prenex
-(CLL 16.107); restrictions must be pure and already typed at
-`PredTerm<ρ>` — an ordinary first-order `ke'a` clause on a predicate
-variable does not type (reserved-family territory, §14). `cei` +
-`broda`-series → ⊳ **bridi-template** binding (CLL 7.5): the template
-stores fills, tense, and negation, and expansion applies the
-documented later-fill override before lowering — the `go'i` machinery,
-not a bare `PredTerm` value; unassigned `broda`-series words are
-CLL's schematic sample predicates, not contextual retrievals.
-When a quantifier or `Generic` takes a nuclear `C_x : ClauseContent`, it
-closes each instantiation locally and lifts the complete quantified claim:
-`(StateClause (Q P (λ {$x} {(CloseClause C_x)})))`. It never passes one
-shared lexical event through all quantifier instantiations. Declarative
-logical connection uses `ClauseNot`/`ClauseAnd`/`ClauseOr`/`ClauseImp`/
-`ClauseIff`/`ClauseXor` (§4.6), whose underlying Content operators remain
-`¬ ∧ ∨ → ↔ ⊕` with the surface grammar fixing structure. `na` ≡ left-edge
-`naku`; `naku` movement flips quantifiers per CLL ch. 16; `ja'a`/`je'a` → identity at their loci —
-transparent (`na je'a broda` ≡ `na broda`) — except that an affirmer
-⊳ **overrides inherited negation** in a pro-bridi expansion
-(`ja'a go'i` over a negative template removes the `na`; pin P31);
-`Scalar` gains no fourth kind, emphasis is absence or `ba'e` focus.
-Applied `na'e`/`to'e`/`no'e P` bind the applicable domain visibly:
-`((NAhE P) fills…) ↦ (Bind {$d :: ContrastDomain ρ(P)}
-(Context domain-constraint deps…)
-{((Scalar OtherThan|Opposite|Neutral $d P) fills…)})`; the constraint and
-dependency profile come from the lexical entry and resolved reading (§6.3).
-Sentence-level **logical** connection (`.i je`, `.i ja`, …) → **one
-performance of the connected clause** — `(Assert (CloseClause
-(ClauseOr C₁ C₂)))` for `.i ja`, which forces the uniform rule; the host's single force is
-shared by the connection (a force conflict has no resolved reading);
-the schema is stated for the content-taking forces (`Assert`,
-`Command`) — an interrogative host queries the connected content;
-UI targeting distinguishes the compound act from its clauses (pin
-P32). The event/content contribution of constitution-bearing `.i joi` is now
-`JoiClause` (§12); its **compound performance** and the other non-logical
-ijoik performance cases remain gap-registered pending the `ConnectionPlan`
-clauses (§14). `.i TAG bo` → the same single performance,
-with component ClauseContents exposing both events inside an outer state:
-`(Assert (CloseClause (StateClause
-(∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))))` — never
-closed component contents beside free event variables. Jek at the tanru-unit
-locus → `TanruLinkConnect` (§12; pin P33): shared head asserted once,
-one constrained-`Context` intended link per conjunct, connective over the link
-applications; distinct-head units connect as whole predications. Plain `joi`
-at either tanru locus uses `JoiPred` over the already-lowered common-row
-properties; missing common rows/bases and the other unmapped joiks remain
-gaps.
-BIhI: `X bi'o Y` →
-the ordered `Interval` (a `Set` object) with GAhO endpoint kinds;
-`bi'i` → ⊳ symmetrization (normalize endpoint order with their
-kinds) then the same; `mi'i` → `MetricBall` (§12 — no endpoint
-arithmetic); `bi'o nai` → `RegionComplement` in a Context universe;
-joigik forethought = the same units; the region object fills the
-host place, whose lexical semantics does the rest. BIhI at tanru and
-sentence loci: **no standard resolved mapping exists** (CLL 14.16
-says no meanings have been found) — a documented no-mapping, and an
-implementation must not invent one. Non-logical: `jo'u` → `Combine`; `ce` → set;
-`ce'o` → list; `fa'u` → `ZipWith`; exact tag/facet `joi` joining → `∧` where
-it merely conjoins facets over an already shared event. Constitution-bearing
-`joi` dispatches by the resolved result type (§4.9, §12): ordinary sumti form
-a complete `Group<T>`; Eventuality operands in an Eventuality-demanding place
-form a complete joint event; common-row tanru/property operands form a
-`JoiPred` property satisfying `GunmaPredAt` (`JoiTanru` keeps a shared head separate);
-afterthought and forethought clause connection form
-`JoiClause`. A homogeneous `joi` chain is flattened before one complete cover
-is formed; `se joi` is the same symmetric relation. There is no fallback
-`Vague` connecting relation. Mixed-row property uses, `pe'e joi` termsets,
-compound ijoik performance, and `joi nai` remain explicit gaps (§14).
-Official `ju'e` likewise has no baseline lowering pending its separate
-vague-connective adjudication (§14).
-`ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
+**Descriptions** (L3; P1, P10, P11, P39).
 
-**Events, tense, modals** (P8, P24). Every declarative clause is
-`ClauseContent`. A direct lexical episode uses its lexical event as the clause
-parameter; identity, mathematics, negation, quantified/generic claims, and
-other eventless compositions use a holding state. Tense/aspect/spatial cmavo
-and BAI conjoin their event predicates to that current parameter:
-`C ↦ λe.(C(e) ∧ facet(e))`; no second event is introduced. Tense chains (`pu
-pu`) compose as anchor paths.
+- **L3.1** `lo P` → `(Refer P)`, literally: veridical and number-neutral, with
+  no second description-only condition. Where the resolved lexical place
+  declares a unit profile, P already has §10's `CoveredBy` plural extension;
+  collective, kind-like, and substance modes use their own declared lexical
+  extensions.
+- **L3.2** `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)` with the
+  anchoring clause — the describing event is this utterance's own locution.
+  The anchored reference property, in full, conjoins the locution fact at the
+  utterance's own token u₀ (the `dei` value, §7.4):
 
-Tenseless bridi → per the selected reading (P8): episodic → a
-`Context`-anchored temporal facet; habitual/gnomic → no temporal conjunct and
-an outer holding-state clause. ⊳ Reading selection is upstream; `ki`
-stickiness propagates resolved tense by source order; ⊳ story time (CLL 10.14)
-supplies narrative sequencing as reading inference, not semantics.
+  ```text
+  (λ {$r :: Referents Entity}
+    {(∃ (λ {$e :: Referents Locution}
+      {(∧ (LocutionOf $e u₀)
+         (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))}))})
+  ```
 
-CAhA applies the §12 ClauseContent formers: `ca'a` → `ActualClause`; `ka'e` →
-`CapableClause`; `nu'o` → `UnrealizedClause`; `pu'i` →
-`DemonstratedClause`. Missing CAhA is reading-multiple among these modes with
-no default (CLL 10.19; P24), so bare capability uses do not falsely assert an
-actual-world event. ZAhO boundary relations consume the same current clause
-event (gap-registered until their lexical rows are filled).
+  for which `(Close (skicu Speaker $r Audience P))` is the **licensed display
+  abbreviation** (P10; the samples book's brief spelling) — an abbreviation of
+  this term, not a local reinterpretation of `Close` — and the speaker's
+  commitment that the audience can identify the referent is a cooperative-use
+  commitment stated here in prose, not machinery; non-veridical,
+  speaker-identifying.
+- **L3.3** `la N` → `Refer` via naming (`Named`/`NameSign`).
+- **L3.4** `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical, [Speaker], P,
+  ·)` at their predication (§5.8).
+- **L3.5** `loi`/`lo'i` first bind an ordinary **non-maximal** `(Local (Refer
+  P))` base (P5). `Local` keeps that lowering-internal base out of the
+  discourse store.
+- **L3.6** `loi` then retrieves a constrained `GroupBasis<T>` and `Refer`s to
+  a `Group<T>` satisfying `CompleteGunmaAt κ g base`; `lo'i` `Refer`s to the
+  exact `selcmi` set over the same base. In both cases the outer `Refer`
+  restrictor is a property of one `Group<T>`/`Set<T>` object (singleton-lifted
+  at the relation): a number-neutral outer reference may contain several
+  qualifying objects, but each qualifies individually rather than several
+  partial objects qualifying only collectively.
+- **L3.7** Thus bare `lo'i gerku` may be a set of the contextually selected
+  dogs, not necessarily all dogs, but the hidden dog reference does not become
+  a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal reading
+  remains available when context selects that base or when explicit
+  `ro`/`MaxRefer` requires it; bare collection gadri do not add it.
+- **L3.8** Completeness here forbids components beyond the selected base;
+  whether the base itself has external residue is already decided by its
+  resolved lexical extension (P39).
+- **L3.9** Inner PA → unit count of the selected base (`CardBasis`); outer PA
+  → witness-set selection / subreference selection (P1, §4.10).
+- **L3.10** Inner `no` → the zero-count schema, never `Refer` (special case,
+  P22).
+- **L3.11** A leading possessor sumti in a description (`le mi ratcu`) is the
+  `pe`-associator restriction (CLL 8.7: `le mi ratcu` ≈ `le ratcu pe mi`) — a
+  restrictive `srana` conjunct beside the description head.
+- **L3.12** `lei`/`le'i` → the P10 `skicu` base bound first under `Local`,
+  then `Refer` to the complete-`GunmaAt` group / exact-`selcmi` set object
+  over it;
+- **L3.13** `lai`/`la'i` → the naming base likewise — `Group<T>`, `Set<T>`,
+  and `Referents<T>` stay distinct, inner PA constrains the base, outer PA
+  counts the objects (P5's two sites).
+- **L3.14** `lu'a`/`lu'o`/`lu'i`/`vu'i` → the type-directed LAhE collection
+  crossings of §12 (`Distrib`/members/`components_κ`; `Massify`; the exact
+  `selcmi` set; the ordered `List`), at a constrained basis site where one is
+  required (P5, #25).
 
-`n roi` → `RoiClause` (§12), **replacing** `CloseClause C` with the holding
-state of the count over C-events in the `During` interval; all surface
-arguments and the interval bind before the pure `SetOf`. `roi nai` negates the
-count condition before the state lift; subjective counts reuse the threshold-
-GQ policy. The default interval is the Context-recovered anchor with `Vague`
-extent (CLL 10.9), overridable by explicit ZEhA/`ze'e` forms (P35). `fi'o P`
-uses P as a tag with the lexicon's current clause-event link.
+**Relative clauses** (L4).
 
-**Composite personal pro-sumti** (P40). These are ordinary neutral plural
-references, not logical sentence connection and not constituted group
-objects. Their complete lowerings and result types are:
+- **L4.1** `poi` → conjunct in the reference property;
+- **L4.2** `noi` → `Supplement` anchored at the referent (P7);
+- **L4.3** `voi` → the audience-deleted `skicu` (`(DropPlace skicu 3)`, P10)
+  restrictively;
+- **L4.4** `goi` → discourse-scoped binding;
+- **L4.5** `ke'a` → the property's parameter.
+- **L4.6** Outer `poi` after `ku` → restriction on the outer selection;
+  maximal-subreference readings are explicit library content, not defaults.
+- **L4.7** GOI associators (CLL 8.3's own expansions, nested as CLL nests
+  them): `pe X` → restrictive `(srana ke'a X)` conjunct; `po X` → restrictive
+  `se steci srana`; `po'e X` → restrictive `jinzi ke se steci srana` (nested,
+  not conjoined); `po'u X` → restrictive P23 identity (`=`/`CoRef` as sort
+  dictates); `ne`/`no'u` → the incidental (`Supplement`) counterparts; `X` is
+  computed and bound before the pure restriction forms.
+- **L4.8** `zi'e` → restrictives conjoin in the reference property,
+  incidentals stack as separate `Supplement`s; order-insensitive
+  **truth-conditionally** — bindings and supplements keep source order at the
+  effect level.
+- **L4.9** `vu'o` → ⊳ widens attachment to the whole connected sumti: an
+  incidental clause anchors at the joint unit but predicates **once of each
+  immediate connectee** (`(∧ (Q r₁) (Q r₂))` — never of the `Combine`
+  collectively, never member-distributed into a plural connectee); a
+  restrictive clause restricts each operand under the connective's structure;
+  a group-forming joik instead supports the clause on the resultant object
+  (CLL 8.8 attests the incidental case; the restrictive rule is this
+  specification's extension; pin P34).
 
-```text
-mi'o ↦ (Combine Speaker Audience)                     : Referents<Entity>
-mi'a ↦ (Combine Speaker MiAOthers)                    : Referents<Entity>
-do'o ↦ (Combine Audience DoOOthers)                   : Referents<Entity>
-ma'a ↦ (Combine (Combine Speaker Audience) MaAOthers) : Referents<Entity>
-```
+**Quantification and connectives** (L5; P2, P17, P18).
 
-The §5.1 context constraints make `mi'a` exclude Audience, `do'o` exclude
-Speaker, and every “others” value genuinely other than the included role
-values. Each displayed result fills one place in one predication. In
-particular, `mi'o klama` has one x1 reference and one omitted-x2 `Context`
-site; it does not expand to paired speaker/listener journeys or two omitted
-sites. `mi .e do broda` instead connects two separately instantiated clauses;
-`mi jo'u do broda` has the same argument denotation as `mi'o broda`; and
-`mi joi do broda` first constructs §12's canonical `Group<Entity>`. No
-component property inherits to that group (P5). Positive `mi'o … mei` does not
-alter this lowering: the separate plural-carrier instance problem remains
-#24, never a covert second group denotation.
+- **L5.1** `ro` over descriptions → importing `Every` (`Presuppose`
+  nonemptiness + `∀`); bare `ro da` → `∀`.
+- **L5.2** PA-quantifiers → library cardinal GQs over a counting basis.
+- **L5.3** Termsets (`ce'e`, `nu'i`) → co-selected witness sets at one joint
+  locus with the full product; no coordinate maximality (the coordinate-closed
+  profile is a named strengthening).
+- **L5.4** `da'a n` → the `SelectAllBut` selection (§12; default n = 1).
+- **L5.5** `bu'a`/`bu'e`/`bu'i` → **typed quantification at `PredTerm<ρ>`** —
+  predicate-typed variables, not predicate objects (the §9.1 reserved family
+  is untouched; pin P30): the row ρ is ⊳ fixed consistently across every
+  occurrence (the exact resolved row; incompatible uses = no resolved
+  reading); bare `bu'a` carries implicit `su'o`, and any other quantifier
+  requires the prenex (CLL 16.107); restrictions must be pure and already
+  typed at `PredTerm<ρ>` — an ordinary first-order `ke'a` clause on a
+  predicate variable does not type (reserved-family territory, §14).
+- **L5.6** `cei` + `broda`-series → ⊳ **bridi-template** binding (CLL 7.5):
+  the template stores fills, tense, and negation, and expansion applies the
+  documented later-fill override before lowering — the `go'i` machinery, not a
+  bare `PredTerm` value; unassigned `broda`-series words are CLL's schematic
+  sample predicates, not contextual retrievals.
+- **L5.7** When a quantifier or `Generic` takes a nuclear `C_x :
+  ClauseContent`, it closes each instantiation locally and lifts the complete
+  quantified claim: `(StateClause (Q P (λ {$x} {(CloseClause C_x)})))`. It
+  never passes one shared lexical event through all quantifier instantiations.
+- **L5.8** Declarative logical connection uses
+  `ClauseNot`/`ClauseAnd`/`ClauseOr`/`ClauseImp`/ `ClauseIff`/`ClauseXor`
+  (§4.6), whose underlying Content operators remain `¬ ∧ ∨ → ↔ ⊕` with the
+  surface grammar fixing structure.
+- **L5.9** `na` ≡ left-edge `naku`; `naku` movement flips quantifiers per CLL
+  ch. 16;
+- **L5.10** `ja'a`/`je'a` → identity at their loci — transparent (`na je'a
+  broda` ≡ `na broda`) — except that an affirmer ⊳ **overrides inherited
+  negation** in a pro-bridi expansion (`ja'a go'i` over a negative template
+  removes the `na`; pin P31); `Scalar` gains no fourth kind, emphasis is
+  absence or `ba'e` focus.
+- **L5.11** Applied `na'e`/`to'e`/`no'e P` bind the applicable domain visibly:
+  `((NAhE P) fills…) ↦ (Bind {$d :: ContrastDomain ρ(P)} (Context
+  domain-constraint deps…) {((Scalar OtherThan|Opposite|Neutral $d P)
+  fills…)})`; the constraint and dependency profile come from the lexical
+  entry and resolved reading (§6.3).
+- **L5.12** Sentence-level **logical** connection (`.i je`, `.i ja`, …) →
+  **one performance of the connected clause** — `(Assert (CloseClause
+  (ClauseOr C₁ C₂)))` for `.i ja`, which forces the uniform rule; the host's
+  single force is shared by the connection (a force conflict has no resolved
+  reading); the schema is stated for the content-taking forces (`Assert`,
+  `Command`) — an interrogative host queries the connected content; UI
+  targeting distinguishes the compound act from its clauses (pin P32).
+- **L5.13** The event/content contribution of constitution-bearing `.i joi` is
+  now `JoiClause` (§12); its **compound performance** and the other
+  non-logical ijoik performance cases remain gap-registered pending the
+  `ConnectionPlan` clauses (§14).
+- **L5.14** `.i TAG bo` → the same single performance, with component
+  ClauseContents exposing both events inside an outer state: `(Assert
+  (CloseClause (StateClause (∃e₁ (∧ C₁(e₁) (∃e₂ (∧ C₂(e₂) (tag e₂ e₁))))))))`
+  — never closed component contents beside free event variables.
+- **L5.15** Jek at the tanru-unit locus → `TanruLinkConnect` (§12; pin P33):
+  shared head asserted once, one constrained-`Context` intended link per
+  conjunct, connective over the link applications; distinct-head units connect
+  as whole predications.
+- **L5.16** Plain `joi` at either tanru locus uses `JoiPred` over the
+  already-lowered common-row properties; missing common rows/bases and the
+  other unmapped joiks remain gaps.
+- **L5.17** BIhI: `X bi'o Y` → the ordered `Interval` (a `Set` object) with
+  GAhO endpoint kinds; `bi'i` → ⊳ symmetrization (normalize endpoint order
+  with their kinds) then the same; `mi'i` → `MetricBall` (§12 — no endpoint
+  arithmetic); `bi'o nai` → `RegionComplement` in a Context universe; joigik
+  forethought = the same units; the region object fills the host place, whose
+  lexical semantics does the rest.
+- **L5.18** BIhI at tanru and sentence loci: **no standard resolved mapping
+  exists** (CLL 14.16 says no meanings have been found) — a documented
+  no-mapping, and an implementation must not invent one.
+- **L5.19** Non-logical: `jo'u` → `Combine`; `ce` → set; `ce'o` → list; `fa'u`
+  → `ZipWith`; exact tag/facet `joi` joining → `∧` where it merely conjoins
+  facets over an already shared event.
+- **L5.20** Constitution-bearing `joi` dispatches by the resolved result type
+  (§4.9, §12): ordinary sumti form a complete `Group<T>`; Eventuality operands
+  in an Eventuality-demanding place form a complete joint event; common-row
+  tanru/property operands form a `JoiPred` property satisfying `GunmaPredAt`
+  (`JoiTanru` keeps a shared head separate); afterthought and forethought
+  clause connection form `JoiClause`.
+- **L5.21** A homogeneous `joi` chain is flattened before one complete cover
+  is formed; `se joi` is the same symmetric relation.
+- **L5.22** There is no fallback `Vague` connecting relation.
+- **L5.23** Mixed-row property uses, `pe'e joi` termsets, compound ijoik
+  performance, and `joi nai` remain explicit gaps (§14).
+- **L5.24** Official `ju'e` likewise has no baseline lowering pending its
+  separate vague-connective adjudication (§14).
+- **L5.25** `ku'a`/`jo'e`/`pi'u` → `∩`/`∪`/`×`.
+- **L5.26** Threshold quantities (`so'i`, `du'e`, `mo'a`, …) → the §6.4 degree
+  GQs over a `Vague` cutoff at a `Context`-recovered scale/purpose (§6.4).
 
-**Anaphora** (P16). ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible
-referents (§5.6); `vo'a`-series → bridi-place bindings; KOhA assigned →
-bound variable; unassigned → keyed `Context`; ⊳ cross-performance
-`go'i`/`go'e`/`go'a`/`go'o` expansion uses the antecedent occurrence's capture
-— the resolved template's utterance-context projections and `Context` answers
-stay fixed. For a whole-content assertion reuse this is
-`(RealizedContent u)`; place/negation overrides apply to the same captured
-template rather than reconstructing its sites. Other-force pro-bridi reuse has
-the analogous resolved template but no assertion-only `RealizedContent`
-projection. `nei`/`no'a`, and any pro-bridi inside unperformed material, have
-no prior performance requirement: they reuse the already resolved current or
-outer template environment directly. `ra'o` selectively discards the
-inherited capture only at the antecedent pro-assign sites it marks. For a
-performed assertion antecedent, the mapping obtains the raw source template
-through `ActContent (RealizedAct u)`, substitutes newly interpreted
-pro-sumti/pro-bridi at those sites under the new performance context, and
-retains the occurrence-captured values at omitted places, tanru links, and
-other unmarked `Context` sites. `InContext`/`ShiftedGround` makes any requested
-ground shift for the reopened material explicit (§5.1). Wholesale raw
-`ActContent` replay is valid only when every context-sensitive site in the
-template is marked for reopening. CLL 7.6 supplies the linguistic discriminator: ordinary
-GOhA repetition is of concepts, its antecedent pro-sumti normally keep their
-meanings, and `ra'o` repeats/reinterprets those pro-assigns in the new context.
-This specification preserves the rest of the resolved template rather than
-silently broadening `ra'o` to unrelated contextual omissions. The `di'u`
-series → utterance
-anaphora at `Referents<UtteranceToken>` (a selected transcript span):
-⊳ recency resolution over the transcript at three distances, past
-(`di'u`/`de'u`/`da'u`) and future (`di'e`/`de'e`/`da'e`); `dei` → the
-current entry's own bound `CurrentToken`; `do'i` → `Context` for the salient
-token/span — `Vague` only in the span's boundaries (pin P28). `la'e`
-on an utterance anaphor that demands assertion content uses
-`(RealizedContent u)` directly — its projective definedness requires one
-eligible performed, context-resolved host assertion occurrence
-(§7.4) — then applies the
-**host-sorted** crossing: `EventOfContent` for the
-state-of-affairs reading, `Reify` only where a proposition is
-demanded; no universal coercion (P13), and a non-assertion antecedent
-yields partiality where content is demanded (P21). Where the act package
-rather than performed content is requested, `RealizedAct<F>` remains the raw
-crossing. `doi X` → `(Perform AttachedAddress (Vocative X))` beside the host
-**plus** ⊳
-binding of the active `do` (CLL 2.14 — `do` "now refers to" X): `do`
-and `ko` consult the active binding before falling back to the
-utterance's Audience, which itself is never mutated (each utterance's
-ctx carries its own audience as a fact about it; pin P27). `da'o` →
-⊳ cancellation of **all** resolver assignments (KOhA, letteral, and
-pro-bridi stores); `ni'o` levels are segment-stack transitions with
-per-level cleared registers — the assignment-clearing level (`ni'o`
-spoken, `ni'o ni'o` written) clears assignments, the drastic level
-(one more `ni'o`) also resets tenses and indicators, and `no'i`
-resumes what its `ni'o` dropped along with the suspended frame —
-never a destructive `da'o` alias (CLL 7.13, 19.3).
+- **L5.27** Gradable predication (`ta barda`) → `Grade` over a
+  `Context`-recovered scale and a `Vague` cutoff region (§6.4).
 
-**Abstractions** (§9, P13, P14). The `ce'u`-capable abstractors of
-this baseline are exactly **`ka` and `du'u`**. The `du'u` case split:
+**Events, tense, modals** (L6; P8, P24).
 
-```text
-du'u body, extracted row ⟨⟩    ↦ (Reify (CloseClause body-ClauseContent))
-du'u body, extracted row ρ ≠ ⟨⟩ ↦ the λ over ρ, exactly as ka
-                                  (no DuhuRel, no se du'u — §9.2, §14)
-```
+- **L6.1** Every declarative clause is `ClauseContent`. A direct lexical
+  episode uses its lexical event as the clause parameter; identity,
+  mathematics, negation, quantified/generic claims, and other eventless
+  compositions use a holding state.
+- **L6.2** Tense/aspect/spatial cmavo and BAI conjoin their event predicates
+  to that current parameter: `C ↦ λe.(C(e) ∧ facet(e))`; no second event is
+  introduced.
+- **L6.3** Tense chains (`pu pu`) compose as anchor paths.
+- **L6.4** Tenseless bridi → per the selected reading (P8): episodic → a
+  `Context`-anchored temporal facet; habitual/gnomic → no temporal conjunct
+  and an outer holding-state clause.
+- **L6.5** ⊳ Reading selection is upstream; `ki` stickiness propagates
+  resolved tense by source order; ⊳ story time (CLL 10.14) supplies narrative
+  sequencing as reading inference, not semantics.
+- **L6.6** CAhA applies the §12 ClauseContent formers: `ca'a` →
+  `ActualClause`; `ka'e` → `CapableClause`; `nu'o` → `UnrealizedClause`;
+  `pu'i` → `DemonstratedClause`. Missing CAhA is reading-multiple among these
+  modes with no default (CLL 10.19; P24), so bare capability uses do not
+  falsely assert an actual-world event.
+- **L6.7** ZAhO boundary relations consume the same current clause event
+  (gap-registered until their lexical rows are filled).
+- **L6.8** `n roi` → `RoiClause` (§12), **replacing** `CloseClause C` with the
+  holding state of the count over C-events in the `During` interval; all
+  surface arguments and the interval bind before the pure `SetOf`.
+- **L6.9** `roi nai` negates the count condition before the state lift;
+  subjective counts reuse the threshold- GQ policy.
+- **L6.10** The default interval is the Context-recovered anchor with `Vague`
+  extent (CLL 10.9), overridable by explicit ZEhA/`ze'e` forms (P35).
+- **L6.11** `fi'o P` uses P as a tag with the lexicon's current clause-event
+  link.
 
-so `lo du'u ce'u klama` is the goer property, and the Rosta
-n-adic doctrine (n distinct extracted variables = n-adic; bare `du'u`
-the 0-adic case, whose extracted relation *is* the content,
-`PredTerm<⟨⟩>` ≅ `Content`, then reified) holds as a theorem of this
-mapping over `ka`/`du'u`. Elided places inside `du'u` close
-ordinarily (`zo'e` ≡ omission, P15); only explicit `ce'u` extracts.
-Arity counts **distinct extracted variables**: ⊳ `ce'u goi` aliasing
-identifies occurrences and `ce'u xi` indexing selects the extracting
-abstraction, both resolved at the text-to-reading layer. Explicit
-`ce'u` in the other abstractors is unmapped at baseline, and not by
-blanket referral to the reserved family: each would need a
-**result-specific typed analysis** — `lo ni ce'u clani` calls for an
-argument-indexed amount abstraction, and `jei`/`li'i`/the event
-abstractors likewise have their own codomains, none of them a
-reified `PredTerm<ρ>` (§14). The Rosta all-`ce'u` reading of `si'o`,
-which genuinely nominalizes a predicate into a concept *object*, is
-the one reading that belongs to the reserved family (§9.1). Baseline
-`si'o`
-has no covert `ce'u`, closes its inner ClauseContent normally, and maps
-through `SihoRel` with the conceptualizing mind at x2 (CLL 11.9) —
-a stated divergence from the Rosta proposal's clause 7. `nu` +
-sorts → `Refer` directly over the ClauseContent event property (so eventless
-identity and mathematical bridi use their `StateClause` state); `ka` → `λ` (⊳ implicit `ce'u` at first unfilled
-place, counting converted places; P12, a rule of `ka` alone — the
-experimental lambda-prenex
-`ce'ai` names binder order explicitly where multiple readings arise); `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` →
-the abstraction relations with reference outside; `mo'e` → the
-`AmountValue` numeric crossing; the content parameter supplied to the other
-abstraction relations is `CloseClause` of the inner clause. `tu'a X` → constrained `Context`
-retrieval of the intended abstraction, constrained by shape +
-`srana`-aboutness, **sort selected by the host place** (an event place gets an
-event-sorted abstraction). At that event sort the shape condition is
-`∃p:Proposition. CoRef(v, EventOfContent(Holds p))`; quantification remains at
-the first-order Proposition sort and `EventOfContent`'s operand is inert — no
-object-language quantifier ranges over dynamic `Content`. The resolved reading declares which governors, if
-any, the site depends on; enclosing binders are not inherited automatically.
-`jai`+tag →
-explicit role promotion, old x1 to the fillable `fai` place (library
-expansion); bare `jai` → `JaiRaise` (§12): for resolved raised sort T and
-old-x1 sort A, retrieve the intended admissible role at
-`Fn<(Referents<T>, Referents<A>), Content>` through constrained `Context`,
-then conjoin that role between the new x1 and the old x1 at `fai`. The
-dependency profile follows §5.3, and a missing `fai` closes contextually like
-any other place (P14). `la'e`/`lu'e` → interpretation /
-sign-of crossings.
+**Composite personal pro-sumti** (L7; P40).
 
-**Questions and answers** (§8, P9). `xu` → `Polar`; `ma`/`mo`/`fi'a`/
-`xo`/`ji`/`cu'e`/`pei` → `OpenQ` at their typed domains — ⊳ bare
-interrogatives take utterance-level scope even from embedded positions
-(CLL 11.8; §8.1); `kau` →
-`ContextualAnswer` with absent exhaustivity; `go'i` as answer → `Answer`
-with polar selection.
+- **L7.1** These are ordinary neutral plural references, not logical sentence
+  connection and not constituted group objects. Their complete lowerings and
+  result types are:
 
-**Indicators and discourse** (§7, P19). ⊳ UI target selection by
-grammatical attachment (FUhE/FUhO extend); UI → displayed-content
-relations per lexicon entries with host-force profiles; evidentials →
-the family force clause; `dai` → experiencer shift; `nai` → lexical pair;
-degree words → intensity regions. `.i` sequencing → `Do`; `ni'o`/`no'i` →
-`NewTopic`/`Resume`; discursives → library discourse relations; `po'o`,
-constituent `ji'a` → focus derivations; COI → performative expressive
-acts; `mi'e` → performative self-naming; `na'i` → the objection act
-(§7.3). `n mai`/`n mo'o` → `EnumerationOrdinal` display facts (§12) at
-the **attachment-selected** constituent (CLL 19.7 numbers sumti inside
-one bridi — not always the utterance), item and section level
-respectively; sequence key and resets Context-recovered; no temporal
-order implied.
+  ```text
+  mi'o ↦ (Combine Speaker Audience)                     : Referents<Entity>
+  mi'a ↦ (Combine Speaker MiAOthers)                    : Referents<Entity>
+  do'o ↦ (Combine Audience DoOOthers)                   : Referents<Entity>
+  ma'a ↦ (Combine (Combine Speaker Audience) MaAOthers) : Referents<Entity>
+  ```
+- **L7.2** The §5.1 context constraints make `mi'a` exclude Audience, `do'o`
+  exclude Speaker, and every “others” value genuinely other than the included
+  role values.
+- **L7.3** Each displayed result fills one place in one predication. In
+  particular, `mi'o klama` has one x1 reference and one omitted-x2 `Context`
+  site; it does not expand to paired speaker/listener journeys or two omitted
+  sites.
+- **L7.4** `mi .e do broda` instead connects two separately instantiated
+  clauses; `mi jo'u do broda` has the same argument denotation as `mi'o
+  broda`; and `mi joi do broda` first constructs §12's canonical
+  `Group<Entity>`. No component property inherits to that group (P5).
+- **L7.5** Positive `mi'o … mei` does not alter this lowering: the separate
+  plural-carrier instance problem remains #24, never a covert second group
+  denotation.
 
-**Quotation, signs, MEX** (§7.5, §4.9). `lu…li'u` → `StructuredQuote`;
-`lo'u…le'u`/`zoi` → `OpaqueQuote`; `zo` → `WordSign`; letterals →
-`LetteralSign` (⊳ letteral anaphora keys bindings); `me'o` → mention of a
-math-expression sign; `li` → the value; `du` → `=` / `CoRef` (P23), then
-`StateClause` at the declarative-clause layer (so tense, CAhA, ROI, ZAhO, and
-`nu` all have a state parameter);
-operators → typed
-functions; `xi` subscripts → application. `me X [me'u]` →
-`(MePred X)` (§12); number + MOI → the MOI relation families (§12);
-`me … me'u MOI` composes them. MEX conversions `na'u`/`nu'a`/`ma'o`/
-`ni'e` → the §12 partial interfaces (definedness projective;
-`ma'o`'s function recovery is `Context`, pin P36); `se` on operators
-→ argument permutation. Numeral notation (`pi`, `fi'u`, `pi'e`,
-`ki'o`, `ra'e`, `ce'i`) → ⊳ numeral syntax producing `Number`
-constants (fractions, mixed radix with `pi'e`'s base data, grouping
-with `ki'o` zero-padding, repeating digits, percent); `xo'e`
-(experimental) → `Context` at `Number` (P15's analogue); `ji'i` → the
-§12 approximation schemas by position — prefix/medial approximate
-(`AdmissibleTolerance`), suffix rounds, directional under
-`ma'u`/`ni'u` (pin P37). `la'o` → the ordinary naming route at
-the opaque text payload (`(NameSign t)`/`Named` unchanged, §12);
-`zo'oi` (experimental) → the word-level
-opaque sign.
+**Anaphora** (L8; P16).
+
+- **L8.1** ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible referents
+  (§5.6);
+- **L8.2** `vo'a`-series → bridi-place bindings;
+- **L8.3** KOhA assigned → bound variable; unassigned → keyed `Context`;
+- **L8.4** ⊳ cross-performance `go'i`/`go'e`/`go'a`/`go'o` expansion uses the
+  antecedent occurrence's capture — the resolved template's utterance-context
+  projections and `Context` answers stay fixed. For a whole-content assertion
+  reuse this is `(RealizedContent u)`; place/negation overrides apply to the
+  same captured template rather than reconstructing its sites.
+- **L8.5** Other-force pro-bridi reuse has the analogous resolved template but
+  no assertion-only `RealizedContent` projection.
+- **L8.6** `nei`/`no'a`, and any pro-bridi inside unperformed material, have
+  no prior performance requirement: they reuse the already resolved current or
+  outer template environment directly.
+- **L8.7** `ra'o` selectively discards the inherited capture only at the
+  antecedent pro-assign sites it marks. For a performed assertion antecedent,
+  the mapping obtains the raw source template through `ActContent (RealizedAct
+  u)`, substitutes newly interpreted pro-sumti/pro-bridi at those sites under
+  the new performance context, and retains the occurrence-captured values at
+  omitted places, tanru links, and other unmarked `Context` sites.
+  `InContext`/`ShiftedGround` makes any requested ground shift for the
+  reopened material explicit (§5.1). Wholesale raw `ActContent` replay is
+  valid only when every context-sensitive site in the template is marked for
+  reopening. CLL 7.6 supplies the linguistic discriminator: ordinary GOhA
+  repetition is of concepts, its antecedent pro-sumti normally keep their
+  meanings, and `ra'o` repeats/reinterprets those pro-assigns in the new
+  context. This specification preserves the rest of the resolved template
+  rather than silently broadening `ra'o` to unrelated contextual omissions.
+- **L8.8** The `di'u` series → utterance anaphora at
+  `Referents<UtteranceToken>` (a selected transcript span): ⊳ recency
+  resolution over the transcript at three distances, past
+  (`di'u`/`de'u`/`da'u`) and future (`di'e`/`de'e`/`da'e`); `dei` → the
+  current entry's own bound `CurrentToken`; `do'i` → `Context` for the salient
+  token/span — `Vague` only in the span's boundaries (pin P28).
+- **L8.9** `la'e` on an utterance anaphor that demands assertion content uses
+  `(RealizedContent u)` directly — its projective definedness requires one
+  eligible performed, context-resolved host assertion occurrence (§7.4) — then
+  applies the **host-sorted** crossing: `EventOfContent` for the
+  state-of-affairs reading, `Reify` only where a proposition is demanded; no
+  universal coercion (P13), and a non-assertion antecedent yields partiality
+  where content is demanded (P21). Where the act package rather than performed
+  content is requested, `RealizedAct<F>` remains the raw crossing.
+- **L8.10** `doi X` → `(Perform AttachedAddress (Vocative X))` beside the host
+  **plus** ⊳ binding of the active `do` (CLL 2.14 — `do` "now refers to" X):
+  `do` and `ko` consult the active binding before falling back to the
+  utterance's Audience, which itself is never mutated (each utterance's ctx
+  carries its own audience as a fact about it; pin P27).
+- **L8.11** `da'o` → ⊳ cancellation of **all** resolver assignments (KOhA,
+  letteral, and pro-bridi stores);
+- **L8.12** `ni'o` levels are segment-stack transitions with per-level cleared
+  registers — the assignment-clearing level (`ni'o` spoken, `ni'o ni'o`
+  written) clears assignments, the drastic level (one more `ni'o`) also resets
+  tenses and indicators, and `no'i` resumes what its `ni'o` dropped along with
+  the suspended frame — never a destructive `da'o` alias (CLL 7.13, 19.3).
+
+**Abstractions** (L9; §9, P13, P14).
+
+- **L9.1** The `ce'u`-capable abstractors of this baseline are exactly **`ka`
+  and `du'u`**. The `du'u` case split:
+
+  ```text
+  du'u body, extracted row ⟨⟩    ↦ (Reify (CloseClause body-ClauseContent))
+  du'u body, extracted row ρ ≠ ⟨⟩ ↦ the λ over ρ, exactly as ka
+                                    (no DuhuRel, no se du'u — §9.2, §14)
+  ```
+
+  so `lo du'u ce'u klama` is the goer property, and the Rosta n-adic doctrine
+  (n distinct extracted variables = n-adic; bare `du'u` the 0-adic case, whose
+  extracted relation *is* the content, `PredTerm<⟨⟩>` ≅ `Content`, then
+  reified) holds as a theorem of this mapping over `ka`/`du'u`.
+- **L9.2** Elided places inside `du'u` close ordinarily (`zo'e` ≡ omission,
+  P15); only explicit `ce'u` extracts.
+- **L9.3** Arity counts **distinct extracted variables**: ⊳ `ce'u goi`
+  aliasing identifies occurrences and `ce'u xi` indexing selects the
+  extracting abstraction, both resolved at the text-to-reading layer.
+- **L9.4** Explicit `ce'u` in the other abstractors is unmapped at baseline,
+  and not by blanket referral to the reserved family: each would need a
+  **result-specific typed analysis** — `lo ni ce'u clani` calls for an
+  argument-indexed amount abstraction, and `jei`/`li'i`/the event abstractors
+  likewise have their own codomains, none of them a reified `PredTerm<ρ>`
+  (§14).
+- **L9.5** The Rosta all-`ce'u` reading of `si'o`, which genuinely nominalizes
+  a predicate into a concept *object*, is the one reading that belongs to the
+  reserved family (§9.1). Baseline `si'o` has no covert `ce'u`, closes its
+  inner ClauseContent normally, and maps through `SihoRel` with the
+  conceptualizing mind at x2 (CLL 11.9) — a stated divergence from the Rosta
+  proposal's clause 7.
+- **L9.6** `nu` + sorts → `Refer` directly over the ClauseContent event
+  property (so eventless identity and mathematical bridi use their
+  `StateClause` state);
+- **L9.7** `ka` → `λ` (⊳ implicit `ce'u` at first unfilled place, counting
+  converted places; P12, a rule of `ka` alone — the experimental lambda-prenex
+  `ce'ai` names binder order explicitly where multiple readings arise);
+- **L9.8** `ni`/`jei`/`li'i`/`si'o`/`su'u`/`pu'u`/`zu'o` → the abstraction
+  relations with reference outside;
+- **L9.9** `mo'e` → the `AmountValue` numeric crossing;
+- **L9.10** the content parameter supplied to the other abstraction relations
+  is `CloseClause` of the inner clause.
+- **L9.11** `tu'a X` → constrained `Context` retrieval of the intended
+  abstraction, constrained by shape + `srana`-aboutness, **sort selected by
+  the host place** (an event place gets an event-sorted abstraction). At that
+  event sort the shape condition is `∃p:Proposition. CoRef(v,
+  EventOfContent(Holds p))`; quantification remains at the first-order
+  Proposition sort and `EventOfContent`'s operand is inert — no
+  object-language quantifier ranges over dynamic `Content`. The resolved
+  reading declares which governors, if any, the site depends on; enclosing
+  binders are not inherited automatically.
+- **L9.12** `jai`+tag → explicit role promotion, old x1 to the fillable `fai`
+  place (library expansion);
+- **L9.13** bare `jai` → `JaiRaise` (§12): for resolved raised sort T and
+  old-x1 sort A, retrieve the intended admissible role at `Fn<(Referents<T>,
+  Referents<A>), Content>` through constrained `Context`, then conjoin that
+  role between the new x1 and the old x1 at `fai`. The dependency profile
+  follows §5.3, and a missing `fai` closes contextually like any other place
+  (P14).
+- **L9.14** `la'e`/`lu'e` → interpretation / sign-of crossings.
+
+**Questions and answers** (L10; §8, P9).
+
+- **L10.1** `xu` → `Polar`;
+- **L10.2** `ma`/`mo`/`fi'a`/ `xo`/`ji`/`cu'e`/`pei` → `OpenQ` at their typed
+  domains — ⊳ bare interrogatives take utterance-level scope even from
+  embedded positions (CLL 11.8; §8.1);
+- **L10.3** `kau` → `ContextualAnswer` with absent exhaustivity;
+- **L10.4** `go'i` as answer → `Answer` with polar selection.
+
+**Indicators and discourse** (L11; §7, P19).
+
+- **L11.1** ⊳ UI target selection by grammatical attachment (FUhE/FUhO
+  extend);
+- **L11.2** UI → displayed-content relations per lexicon entries with
+  host-force profiles;
+- **L11.3** evidentials → the family force clause;
+- **L11.4** `dai` → experiencer shift;
+- **L11.5** `nai` → lexical pair;
+- **L11.6** degree words → intensity regions.
+- **L11.7** `.i` sequencing → `Do`;
+- **L11.8** `ni'o`/`no'i` → `NewTopic`/`Resume`;
+- **L11.9** discursives → library discourse relations;
+- **L11.10** `po'o`, constituent `ji'a` → focus derivations;
+- **L11.11** COI → performative expressive acts;
+- **L11.12** `mi'e` → performative self-naming;
+- **L11.13** `na'i` → the objection act (§7.3).
+- **L11.14** `n mai`/`n mo'o` → `EnumerationOrdinal` display facts (§12) at
+  the **attachment-selected** constituent (CLL 19.7 numbers sumti inside one
+  bridi — not always the utterance), item and section level respectively;
+  sequence key and resets Context-recovered; no temporal order implied.
+
+**Quotation, signs, MEX** (L12; §7.5, §4.9).
+
+- **L12.1** `lu…li'u` → `StructuredQuote`;
+- **L12.2** `lo'u…le'u`/`zoi` → `OpaqueQuote`;
+- **L12.3** `zo` → `WordSign`;
+- **L12.4** letterals → `LetteralSign` (⊳ letteral anaphora keys bindings);
+- **L12.5** `me'o` → mention of a math-expression sign;
+- **L12.6** `li` → the value;
+- **L12.7** `du` → `=` / `CoRef` (P23), then `StateClause` at the
+  declarative-clause layer (so tense, CAhA, ROI, ZAhO, and `nu` all have a
+  state parameter);
+- **L12.8** operators → typed functions;
+- **L12.9** `xi` subscripts → application.
+- **L12.10** `me X [me'u]` → `(MePred X)` (§12);
+- **L12.11** number + MOI → the MOI relation families (§12);
+- **L12.12** `me … me'u MOI` composes them.
+- **L12.13** MEX conversions `na'u`/`nu'a`/`ma'o`/ `ni'e` → the §12 partial
+  interfaces (definedness projective; `ma'o`'s function recovery is `Context`,
+  pin P36);
+- **L12.14** `se` on operators → argument permutation.
+- **L12.15** Numeral notation (`pi`, `fi'u`, `pi'e`, `ki'o`, `ra'e`, `ce'i`) →
+  ⊳ numeral syntax producing `Number` constants (fractions, mixed radix with
+  `pi'e`'s base data, grouping with `ki'o` zero-padding, repeating digits,
+  percent);
+- **L12.16** `xo'e` (experimental) → `Context` at `Number` (P15's analogue);
+- **L12.17** `ji'i` → the §12 approximation schemas by position —
+  prefix/medial approximate (`AdmissibleTolerance`), suffix rounds,
+  directional under `ma'u`/`ni'u` (pin P37).
+- **L12.18** `la'o` → the ordinary naming route at the opaque text payload
+  (`(NameSign t)`/`Named` unchanged, §12);
+- **L12.19** `zo'oi` (experimental) → the word-level opaque sign.
 
 ## 12. Library
 
