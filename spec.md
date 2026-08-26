@@ -862,7 +862,7 @@ references:
   non-exhaustive layer (x2 plural — ruling P5); group-forming `joi` and
   `loi`/`lei`/`lai` use the complete strengthening. `Set<T>` objects are
   related to their members by exact `selcmi`. `loi`/`lo'i` descriptions
-  refer to those objects (§11); neither unwraps implicitly to its members.
+  refer to those objects (§11 L3); neither unwraps implicitly to its members.
 - `List<T>` objects carry order (`ce'o`); indexing and `ZipWith` (the
   `fa'u` analysis) are library forms over list recursion (§12).
 - `Number` and its subsorts carry the arithmetic operators
@@ -1349,7 +1349,7 @@ occurrence context.
 
 `ShiftedGround` **constructs** a ground (never a contextual resolution),
 and `InContext` evaluates content with deictic projections taken from the
-given ground — the explicit form of context shift (`ra'o`; §11).
+given ground — the explicit form of context shift (`ra'o`; §11 L8.7).
 `InContext` shifts the utterance **ground** only; it does not change
 `CurrentToken`, occurrence identity, or the captured values of an already
 realized content. Shifting the *evaluation
@@ -1485,7 +1485,7 @@ binders (§7.4).
 
 | Form | Dynamic rule |
 |---|---|
-| `∧`, `Do` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11) are ordinary `∧`. |
+| `∧`, `Do` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11 L6.2) are ordinary `∧`. |
 | `∨` | Operands each see the incoming state; branch-local introductions do not escape the disjunction. |
 | `¬` | Operand sees the incoming state; nothing escapes. |
 | `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. The joint-locus reading selection of §5.6 applies when the resolved reading binds a consequent anaphor to an antecedent introduction. |
@@ -2104,7 +2104,7 @@ is a λ, not a computation:
 
 (The entry notation ascribes the token *sort*; the definition binds at
 the singleton-lifted reference type, §3.2 — specimens keep the sort
-spelling.) The following projections serve utterance anaphora (§11):
+spelling.) The following projections serve utterance anaphora (§11 L8.8):
 
 ```text
 RealizedAct<F> : Referents<UtteranceToken> ⇀ Act<F>
@@ -2148,7 +2148,7 @@ truth filtering, `Refer` outcomes, projective discharge, or a single `Vague`
 sharpening. `ra'o` selectively reopens the antecedent pro-assign sites it
 marks: the mapping rebuilds those sites from the raw package/template under
 the new performance context while retaining the occurrence capture at every
-unmarked site (§11). It is not a wholesale raw-package replay.
+unmarked site (§11 L8.7). It is not a wholesale raw-package replay.
 If a reuse override introduces a dependency tuple the antecedent run never
 visited, the capture uses §5.1's full-domain partial-function rule; it neither
 freshly resolves in the caller's context nor fails merely because the tuple
@@ -2495,7 +2495,7 @@ types, §5 for `ni`, §6 for `jei`, §9 for `li'i`/`si'o`/`su'u`):
 content, its x2 sentence signs whose interpretation reifies the same
 (CLL 11.7's x2 and `se du'u`); the others are the
 family proper. `DuhuRel` — and with it `se du'u` — is defined only
-for the 0-adic case: under explicit-`ce'u` extraction (§11) the
+for the 0-adic case: under explicit-`ce'u` extraction (§11 L9.1) the
 `du'u` abstraction is a λ, not a content, and sentence signs express
 closed sentences (`InterpretContent` is defined for sentence signs,
 not open properties), so `se du'u` under extraction has no baseline
@@ -2723,7 +2723,7 @@ x4 (property)", an
 exact fit place-for-place, and the analysis the community's formal gadri
 commentary has used all along (guskant: `le broda` = `zo'e noi mi ke'a
 do skicu lo ka ce'u broda`). The describing event is anchored by the
-mapping annex's clause (§11): it is the current utterance's own locution
+mapping annex's clause (§11 L3.2): it is the current utterance's own locution
 — saying `le broda` *is* the describing, so the anchor holds by
 construction through the token machinery (§7.4). `voi` uses the
 audience-deleted variant `(DropPlace skicu 3)` restrictively — the
@@ -4060,14 +4060,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   (Absence, not `Vague`: Lojban has no grammatical precisification route.)
 - **P10** `le` lowers through **`skicu`** — exact
   official fit, guskant-precedented — with the utterance-locution
-  anchoring clause (§11) answering act-vs-identification: the describing
+  anchoring clause (§11 L3.2) answering act-vs-identification: the describing
   event is this very utterance, true by construction. Speaker-indexed,
   non-veridical, number-neutral; `voi` = `(DropPlace skicu 3)`
   restrictive variant. No dictionary change (full argument:
   rationale §2.6).
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
-- **P12** Implicit `ce'u` — a rule of `ka` alone (§11): exactly one,
+- **P12** Implicit `ce'u` — a rule of `ka` alone (§11 L9.7): exactly one,
   first unfilled place, counting
   converted places; multiple candidates are distinct readings.
 - **P13** No implicit coercions among abstraction sorts; named explicit
@@ -4411,7 +4411,7 @@ approximate:
   `me'au` consumes through the row's `Holds`, plurality rule as at
   row ⟨⟩) — so adoption fills this declared hole without retyping
   any baseline place or reopening the bridge.
-- **Explicit `ce'u` in the non-`ka`/`du'u` abstractors** (§11): each
+- **Explicit `ce'u` in the non-`ka`/`du'u` abstractors** (§11 L9.4): each
   needs a **result-specific typed analysis** — an argument-indexed
   amount abstraction for `ni`, and per-abstractor codomains for
   `jei`/`li'i`/the event abstractors likewise — none of them a
