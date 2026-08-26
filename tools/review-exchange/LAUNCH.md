@@ -40,6 +40,22 @@ writing as each other by accident. Export it for the Codex and Fable tabs too.
 
 Paste the first prompt below into each tab.
 
+## Gemini in Antigravity (no terminal tab)
+
+Gemini runs as an Antigravity agent, not a terminal session. Open the
+repository root as the Antigravity workspace; the tracked always-on rule
+[`.agents/rules/smusni-charter.md`](../../.agents/rules/smusni-charter.md)
+loads on every message. It points at `AGENTS.md` (Antigravity does not read
+`AGENTS.md` by itself), instructs the session to read it in full, binds the
+actor to `gemini`, and requires every helper call to be spelled
+`SMUSNI_EXCHANGE_ACTOR=gemini python3 tools/review-exchange/exchange.py … --actor gemini`,
+since an Antigravity terminal does not keep an exported variable between
+commands. Use the same first prompt as the tabs, with `ACTOR` = `gemini`.
+Antigravity's background or parallel agent features count as hidden
+subagents under the charter unless the human partner authorizes them. Rule
+files are capped at 12,000 characters; the rule is a pointer, never a copy
+of the charter.
+
 ## If a tab dies: resume the exact session
 
 ```sh

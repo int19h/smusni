@@ -41,6 +41,15 @@ client = "qwen"
 model = "deepseek-v4-pro"
 broadcast_recipient = true
 
+# Gemini runs inside Google Antigravity; the workspace rule
+# `.agents/rules/smusni-charter.md` loads the charter and binds the actor.
+[actors.gemini]
+active = true
+display_name = "Gemini"
+client = "antigravity"
+model = "session-selected"
+broadcast_recipient = true
+
 # The human partner may address any actor and adjudicates semantic forks,
 # but is never a broadcast recipient and never owes an acknowledgement:
 # messages addressed to `human` are listed as ADDRESSED, never pending.

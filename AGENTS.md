@@ -112,8 +112,8 @@ coherent-baseline backlog and its dependencies.
 
 ## Multi-model review collaboration
 
-Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max, and
-DeepSeek V4 Pro — review this repository as peers working with the human
+Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max,
+DeepSeek V4 Pro, and Gemini — review this repository as peers working with the human
 partner; no model's proposal becomes consensus merely because it was written.
 The ignored spool under `review/exchange/` replaces copy/paste between
 sessions. The tracked protocol, participant registry, helper, templates, and
