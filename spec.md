@@ -870,6 +870,8 @@ CompleteGunmaAt<W,C> : DecompositionBasis<W,C> × Referents<W>
                          × Referents<C> → Content       (defined below)
 ComponentAt<W,C> : DecompositionBasis<W,C> × C
                      × Referents<W> → Content           (defined below)
+Aggregate<T> : DecompositionBasis<Group<T>,T> × Group<T> → Content
+                                                       (primitive classification)
 
 ContributionBasis<ρ>
 MixAt<ρ> : ContributionBasis<ρ> × Family⁺<PredTerm<ρ>>
@@ -974,6 +976,38 @@ bases. A displayed `Context` uses the applicable property, whose free outer
 variables obey §5.3's dependency rule.
 General `gunma` lowers to `GunmaAt`; `joi`, the group descriptors, and the
 group clause of `MeiRel` lower to `CompleteGunmaAt` (§11–§12).
+
+`Aggregate κ g` is the primitive, rigid model classification of a **bare
+aggregate device** at group basis κ. It is not inferred merely because an
+organization's membership happens never to change. The following laws hold
+at the situation of evaluation; `CompleteGunmaAt` gains no situation
+argument, because §5.7 already supplies the evaluation boundary:
+
+```text
+(R) Aggregate κ g → ∃C. at every model situation s,
+                         CompleteGunmaAt κ g C at s
+
+(E) for every admissible κ and nonempty C, at every situation s,
+      ∃g. Aggregate κ g ∧ CompleteGunmaAt κ g C
+
+(A) Aggregate κ g ∧ Aggregate κ h
+      ∧ CompleteGunmaAt κ g C ∧ CompleteGunmaAt κ h C → g = h
+
+(F) CompleteGunmaAt κ g C ∧ CompleteGunmaAt κ g D → CoRef C D
+```
+
+`R` is one-way: a fixed-roster committee, corporation, or named duo may
+remain distinct from the canonical aggregate of the same people. `A` gives
+one aggregate per basis/cover, not one group of every kind. `F` makes the
+complete cover of any group functional at one basis and situation. These
+laws leave cross-basis identity model-given and leave the null cover to §14/#23.
+
+The event-basis existence/extensionality clause below is the event instance
+of the same complete-cover pattern: every admitted operand cover has a whole;
+two event wholes complete over one cover at one basis co-refer; and one event
+whole has one complete cover up to `CoRef`. Events need no `Aggregate`
+classification because the event-construction clauses themselves fix the
+whole kind and identity interface.
 
 An event basis additionally supplies total model-level aggregation clauses
 for temporal trace, participants by semantic role, and causal profile. For
@@ -3211,8 +3245,53 @@ Up | Down | Either) is the stated value — so the underlying quantity
 is explicitly the bound `Number`, the stated digits exact by
 construction of the region (nonempty by VC1; pin P37).
 
-**Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
-distribution over members (`Distrib` at the use site);
+**Plurality and collections:** `UnitSet`/`CardBasis` (§4.8). The canonical
+group constructions and collection crossings are:
+
+```text
+(CanonicalAggregateAt κ g C) ≝
+  (∧ (Aggregate κ g) (CompleteGunmaAt κ g C))
+
+(Massify κ C) : RefComp<Referents<Group<T>>> ≝
+  (SelectExactly 1
+    (λ {$g :: Group T} {(CanonicalAggregateAt κ $g C)}))
+
+components_κ : Group<T> ⇀ Referents<T>
+components_κ(g) = C exactly when CompleteGunmaAt κ g C
+```
+
+`components_κ` is partial where no complete cover exists and functional by
+(F). `Massify` is definite by (E)+(A); it is a defined selection, not a
+primitive term constructor. Repeated manufacture at one κ and `CoRef` cover
+returns the same aggregate. An independently individuated organization with
+that cover need not be the aggregate.
+
+The LAhE collection crossings are type-directed:
+
+- `lu'a r` on an ordinary plural reference marks member-wise use (`Distrib`
+  at the consuming locus); on one `Set<T>` object it returns its nonempty
+  member reference; on one `Group<T>` object it returns `components_κ(g)` at
+  a constrained, dependency-declared basis and is projectively undefined
+  without one. Several collection objects require an explicit flattening
+  reading; no silent crossing is supplied.
+- `lu'o X` retrieves an admissible group basis κ, resolves X's underlying
+  nonempty reference (ordinary reference directly, set members, group
+  components, or list elements), and returns `Massify κ C`. On an
+  organization this canonicalizes its current cover; it is identity only
+  when X already is that canonical aggregate at κ.
+- `lu'i X` forms the exact `Set<T>` of the resolved covering units at a
+  constrained unit basis. For a non-null operand an admissible basis cannot
+  be unitless (§4.9's cover law); absent an admissible/recoverable basis the
+  reading is undefined, not the empty set. Set input is identity.
+- `vu'i X` forms a `List<T>` over those same units. If an order is intended,
+  it is one constrained `Context` site and the returned list keeps that order
+  for anaphora. A genuinely no-particular-order use is not defaulted to
+  `Context`; it remains the §14 `SomeAdmissible` witness candidate pending
+  evidence.
+
+Empty set/list/member crossings and `nomei` remain governed by the nonempty
+reference boundary and §14/#23.
+
 `(Overlap a b)` ≝ `(∃ (λ {$c :: Referents T} {(∧ (Among $c a) (Among $c b))}))`;
 `(Interval a b k₁ k₂)` ≝ `(SetOf (λ {$x :: T} {(∧ (cmp₁ a $x) (cmp₂ $x b))}))` with
 `cmpᵢ` strict/nonstrict per the `ga'o`/`ke'i` endpoint kinds. The
@@ -3642,8 +3721,7 @@ flattened, the applicable typed instance is one of these defined forms
 
 ```text
 (JoiGroup κ X₁ … Xₙ) : RefComp<Referents<Group<T>>>  ≝
-  (SelectExactly 1 (λ {$g :: Group T}
-    {(CompleteGunmaAt κ $g (Combine X₁ … Xₙ))}))
+  (Massify κ (Combine X₁ … Xₙ))
 
 (JoiEvent κ E₁ … Eₙ) : RefComp<Referents<Eventuality>>  ≝
   (SelectExactly 1 (λ {$j :: Eventuality}
@@ -4017,6 +4095,12 @@ approximate:
   (positive existential, negation denying all), never a `Vague`
   precisification family. Until such a witness and pin exist, `co'e`/`do'e` or
   any other form receives no exceptional weak reading.
+  `vu'i` supplies a second bounded probe: CLL requires the resulting sequence
+  to have an order while the dictionary leaves that order vague. An
+  occurrence with an intended order uses `Context`; a genuinely
+  no-particular-order use, if established, would need this exceptional
+  analysis rather than a maximally tolerant `Context`. No baseline
+  order-free reading is generated pending evidence.
 - **Numeric `jei` crossing.** CLL 11.6 records the first-edition proposal that
   a `jei` truth value map to a number in [0,1], while also stating that its
   conventions were never worked out and the number-valued reading never
@@ -4222,7 +4306,8 @@ arithmetic base; `Refer`, `Local`, `Context`, `Vague`, the `Select` family;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
 `Scalar`; the basis-indexed primitive interfaces `BasisUnitAt`, `PeerUnitAt`,
-`MixAt`, and `ContributesAt`;
+`MixAt`, and `ContributesAt`, plus the rigid group-basis classification
+`Aggregate`;
 `StateClause`, `CloseClause`, and the constrained
 `EventOfContent` projection (§9.3); the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
@@ -4244,7 +4329,8 @@ empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
 demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`,
 `GunmaAt`, `CompleteGunmaAt`, `ComponentAt`, `GunmaPredAt`, `JoiGroup`, `JoiEvent`, `JoiPred`, `JoiTanru`,
-`JoiClause`, the
+`JoiClause`, `CanonicalAggregateAt`, `Massify`, the partial `components_κ`
+projection, and the LAhE collection crossings; the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
@@ -4563,6 +4649,30 @@ used for source verification are noted per entry.
   off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
   partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
   component-inheritance critique preserved in the mailing-list archive.
+- **Historical group/mass identity record** — messages in the same local
+  archive, cited in rationale §1.7a with their role in the project's
+  argument: Arthur W. Protin Jr., 1991-06-20,
+  `<9106201157.aa26475@COR4.PICA.ARMY.MIL>` (simple aggregate versus
+  organism/organization; inspiration, not adoption); Bob LeChevalier,
+  1991-06-20, `<m0jqGpu-0002riC@snark.thyrsus.com>` (universal
+  massifiability and the changing-body example; existence and persistence
+  evidence, inheritance rejected); the 1994 sumti-paper draft circulated by
+  Gerald Koenig, 1994-11-07, `<199411080334.AA18322@nfs2.digex.net>`
+  (global extensional candidate, rejected); And Rosta, 1994-12-15,
+  `<199412160019.AA21882@nfs1.digex.net>` (groups as singulars); Jorge
+  Llambías, 1995-06-14, `<9506150238.aa20944@punt2.demon.co.uk>` (`re loi`
+  counting problem and inheritance critique); John E. Clifford, 2002-07-06,
+  `<1bb.2c60d43.2a586ccf@aol.com>` (intensional candidate and its costs), and
+  2005-12-14, `<20051215003856.5328.qmail@web81308.mail.mud.yahoo.com>`
+  (four incompatible mass doctrines); Martin Bays / Jorge Llambías,
+  2011-08-12–15, `<20110812152917.GK10697@gonzales>`,
+  `<CAO7tK2fvjYGpkpZKDzs6XvVc03xmBvLQEKK88aK5xb1CNYkzkQ@mail.gmail.com>`,
+  `<CAO7tK2cCop=+UVuEbsW7_rZ=pdbbsDDyiYL-sW-QbY2RnG7LJg@mail.gmail.com>`
+  (first-class groups and complete constituents); and Stela Selckiku,
+  2011-07-17,
+  `<CAJHgu=8Z8PcvteZkEoN4z0L+YNxwXG0savY4XNFdO=Sg6Q16NA@mail.gmail.com>`
+  (arbitrary aggregate abstraction; responsibility/inheritance gloss not
+  adopted).
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
   (or to Be Some Values of Some Variables)", *The Journal of
   Philosophy* 81(8), 1984, pp. 430–449.

@@ -70,7 +70,7 @@
 (define live-profile
   (law-profile 'constitution-live 'live-baseline '(F)))
 (define consensus-profile
-  (law-profile 'canonical-aggregate 'human-adopted-pending-sync '(F R E A)))
+  (law-profile 'canonical-aggregate 'live-baseline '(F R E A)))
 (define unrestricted-profile
   (law-profile 'unrestricted-U 'rejected-alternative '(F U)))
 (define biconditional-profile
@@ -80,11 +80,11 @@
   (law-profile 'constitution-basis 'live-baseline
                '(operand-respect null-absorption)))
 (define a-only-profile
-  (law-profile 'canonical-A-negative 'human-adopted-pending-sync '(A)))
+  (law-profile 'canonical-A-negative 'live-baseline '(A)))
 (define r-only-profile
-  (law-profile 'canonical-R-negative 'human-adopted-pending-sync '(R)))
+  (law-profile 'canonical-R-negative 'live-baseline '(R)))
 (define e-only-profile
-  (law-profile 'canonical-E-negative 'human-adopted-pending-sync '(E)))
+  (law-profile 'canonical-E-negative 'live-baseline '(E)))
 
 (define (basis-failures fixture)
   (append

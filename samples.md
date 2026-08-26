@@ -350,6 +350,27 @@ The nearby `mi jo'u do bevri lo pipno` instead fills x1 with
 `(Combine Speaker Audience)`: no group object and no covert
 non-distributivity instruction.
 
+The group result above is canonical manufacture: by definition
+`(JoiGroup $κ Speaker Audience)` is
+`(Massify $κ (Combine Speaker Audience))`. This does not identify every
+same-member organization with that aggregate. In a scene with two distinct
+same-roster committees, `lei ci prenu du le kamni` is true exactly when the
+two descriptions select the same `Group<Entity>` object; the shared cover
+does not force it. If one member later leaves, `ri` after `lei ci prenu`
+continues to denote the originally selected object: a persistent committee's
+`(components_κ ri)` may then be the remaining two, while a snapshot aggregate
+of the original three retains that rigid cover.
+
+Explicit `lu'o` canonicalizes: `lu'o le ci prenu` lowers, after resolving the
+three-person reference and κ, to `(Massify κ people)`. Applied to a committee
+it returns the canonical aggregate of the committee's current complete cover,
+not automatically the committee. `lu'a` of one group uses the partial
+`components_κ`; `lu'a` of one set uses its members; ordinary plural `lu'a`
+marks `Distrib`. `lu'i` forms the exact set of units at a resolved covering
+basis and is undefined without one (never an atomless-to-empty default).
+`vu'i` forms an ordered `List`; an intended order is one `Context` site, while
+a genuinely order-free use remains gap-registered.
+
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]
 (Assert

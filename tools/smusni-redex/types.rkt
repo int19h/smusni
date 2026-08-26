@@ -429,6 +429,19 @@
         (define operand (infer-with-expected (first arguments) env inv expected))
         (merge-results expected (list operand))]
        [_ (raise-type node "Local is restricted to RefComp")])]
+    [(eq? head 'Massify)
+     (match expected
+       [`(RefComp (Referents (Group ,inner)))
+        (define arguments (rest (core-list-elements node)))
+        (unless (= (length arguments) 2)
+          (raise-type node "Massify takes group basis and component reference"))
+        (define basis (infer-core (first arguments) env inv))
+        (define cover (infer-core (second arguments) env inv))
+        (ensure-compatible (second arguments) (typing-type cover)
+                           `(Referents ,inner))
+        (merge-results expected (list basis cover) #:effects (set 'refer))]
+       [_ (raise-type node
+                      "Massify requires RefComp<Referents<Group<T>>> expected type")])]
     [else
      (define inferred (infer-core node env inv))
      (ensure-compatible node (typing-type inferred) expected)
@@ -471,7 +484,7 @@
           (define declared-type (cdr binding))
           (define computation
             (if (member (application-head computation-node)
-                        '(Context Vague Refer SelectExactly SelectAtLeast Local))
+                        '(Context Vague Refer SelectExactly SelectAtLeast Local Massify))
                 (infer-with-expected computation-node current-env inv
                                      `(RefComp ,declared-type))
                 (infer-core computation-node current-env inv)))
@@ -920,9 +933,23 @@
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold
                           MetalinguisticallyDefective Contrast JaiRoleAdmissible
-                          CompleteGunmaAt GunmaAt CoRef))
+                          CompleteGunmaAt GunmaAt Aggregate CanonicalAggregateAt
+                          CoRef))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results 'Content results)]
+    [(eq? head 'components_κ)
+     (unless (= (length arguments) 2)
+       (raise-type node "components_κ takes basis and one group"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (match (typing-type (second results))
+       [`(Group ,inner)
+        (merge-results `(Referents ,inner) results
+                       #:obligations '(complete-group-cover-defined))]
+       [`(Referents (Group ,inner))
+        (merge-results `(Referents ,inner) results
+                       #:obligations '(sole-group-and-complete-cover-defined))]
+       [other (raise-type (second arguments)
+                          "components_κ requires one Group<T>, got ~e" other)])]
     [(eq? head 'List)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (define inner (if (null? results) 'Unknown (typing-type (first results))))

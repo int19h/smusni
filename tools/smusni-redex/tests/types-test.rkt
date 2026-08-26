@@ -112,6 +112,22 @@
   (lambda ()
     (infer-text "(SetOf {λ [$x :: Entity] (Context)})"))))
 
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$k :: DecompositionBasis (Group Entity) Entity]
+       {Bind [$g :: Referents (Group Entity)] (Massify $k Speaker)
+         (Mention $g)}}")))
+
+(check-equal?
+ (typing-type
+  (infer-text
+   "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
+        [$g :: Group Entity]]
+      (components_κ $k $g)}"))
+ '(Fn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
+      (Referents Entity)))
+
 (check-equal?
  (typing-type
   (infer-text

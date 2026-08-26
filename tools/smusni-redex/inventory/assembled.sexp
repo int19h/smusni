@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "bf53c9e62899f893f026bd05ccd88511060aa830")
+ (core-sha1 "2437d63c7a1a7e5e7f1dba147965742afd3358fb")
  (fixture-sha1 "84e623e9dc0c4f2f98c666fd7d672e8de44239b8")
  (sorts
   AbstractNature
@@ -79,6 +79,7 @@
   ActualClause
   AdmissibleCutoff
   AdmissibleThreshold
+  Aggregate
   Among
   AmountValue
   Answer
@@ -88,6 +89,7 @@
   AtLeast
   BasisUnitAt
   Bind
+  CanonicalAggregateAt
   CapableClause
   Card
   CardBasis
@@ -134,6 +136,7 @@
   Let
   List
   Local
+  Massify
   MeiRel
   Mention
   MetalinguisticallyDefective
@@ -169,11 +172,13 @@
   Supplement
   Tanru
   TanruAdmissible
+  TanruLinkConnect
   Unhappiness
   Utterance
   Vague
   WordSign
   ZipWith
+  components_κ
   |te'a|
   ¬
   λ

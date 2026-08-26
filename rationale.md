@@ -320,6 +320,59 @@ does not settle performance roles, UI targeting, or transcript spans; those
 remain #6. Property rows with no declared contribution basis, `pe'e joi`, and
 `joi nai` likewise remain honest bounded gaps.
 
+**Canonical aggregate identity versus organizations.** Explicit `joi` and
+`lu'o` must succeed for arbitrary nonempty components and must not select one
+of several rival “bare aggregates” accidentally supplied by a model. The
+adopted answer is a primitive, rigid `Aggregate κ g` classification plus
+one-way rigidity (R), existence (E), within-class uniqueness (A), and local
+complete-cover functionality (F). `Massify` is the defined unique selection
+from that class. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
+to the canonical aggregate or to an independently individuated team, family,
+body, committee, or other organization whose complete current cover happens
+to be the same.
+
+Two countermodels fix the boundary. First, budget and ethics committees may
+have the same three members at one time and later diverge. Unrestricted
+same-cover uniqueness would identify them rigidly at the first time; after
+divergence one object would have two non-`CoRef` complete covers, contradicting
+(F). Second, an organization whose roster never changes can still differ from
+the bare aggregate of that roster (and from another same-roster organization)
+by charter, task, history, or legal identity. Defining “aggregate” as merely
+“has one cover at every observed situation” would collapse those objects and
+would make classification unstable when a model gains a new future or
+counterfactual situation. Hence the classification is primitive and the
+rigidity implication is one-way.
+
+This preserves both ordinary readings of “the same people on two committees”:
+one roster object may bear two committee roles, or two organizations may share
+a roster. `du` decides a model/context fact; membership coincidence alone does
+not. `lu'o` applied to an organization instead returns the canonical aggregate
+of its resolved current components and is not identity in general. Cross-basis
+identity likewise remains model-given.
+
+The historical record genuinely splits. Protin's 1991 aggregate/organism
+distinction inspired the organization boundary; LeChevalier's same-day
+universal-massifiability argument motivates (E), while his `lai lojbab.` body
+example supports persistent **described** wholes rather than mutable bare
+constructor outputs. The 1994 sumti-paper draft states the extensional
+candidate; Clifford's 2002 “intensional, with all the horrors” response exposes
+its identity/anaphora costs. Llambías' 1995 `re loi broda` puzzle exposes the
+counting problem, and Selckiku's 2011 pinkie-and-bug example supports arbitrary
+explicit aggregation without its proposed inheritance gloss. Bays and
+Llambías' 2011 exchange supplies both the complete-constituents reading and
+the need for first-order group objects when groups are quantified over. These
+sources motivate and test the project law; none independently ratifies it.
+
+Rejected alternatives are therefore: global or situation-local uniqueness
+over **all** groups (organization collapse); fully model-given manufacture
+(no success or identity guarantee for `joi`/`lu'o`); no group objects (loses
+outer counting, equality, anaphora, and nested partitions); distinct group
+sorts for aggregates and organizations (makes their possible identity
+ill-typed); and the rigid-cover biconditional (collapses permanent
+organizations). The cost of the adopted primitive classification is explicit
+model structure, but it is exactly the distinction the surface constructors
+need and is factored by both `joi` and `lu'o`.
+
 **Costs and source limits.** Contemporary CLL's clean group prose is partly
 this project's own amendment and cannot ratify the choice by itself. Original
 CLL supplies the blue/red and joint-cause phenomena but not a coherent
