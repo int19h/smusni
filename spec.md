@@ -797,8 +797,27 @@ extraction**: for a pure `P : Fn<(T), Content>`,
 counting units *under a description* within a reference (pin P1's
 source-licensed unit basis).
 
-That is the whole plural kernel. No atoms are assumed (nothing requires
-that references bottom out in singletons), no distributivity operator is
+For a pure unit property `P : Fn<(T), Content>`, the defined no-residue
+condition is:
+
+```text
+(CoveredBy P r) ≝
+  (∧ (Distrib P r)
+     (∀ {λ [$r2 :: Referents T]
+       (→ (Among $r2 r)
+          (∃ {λ [$x :: T]
+            (∧ (P $x) (Overlap $x $r2))}))}))
+```
+
+Thus every represented unit satisfies P and every subreference overlaps some
+P-unit. The second conjunct is substantive when a reference has no atomic
+bottom: it excludes residue without requiring P-units themselves to be atoms.
+`Overlap` and `Distrib` are the §12 definitions. Selection witnesses and the
+lexical unit profiles of §10 use this one condition (P39).
+
+That is the whole plural kernel. No atoms are assumed: nothing requires
+references to bottom out in singletons, and guskant's Condition₁ proof and
+divisible-bread reading motivated that boundary. No distributivity operator is
 covert, and no cover parameter attaches to predication: a lexical
 predicate applied to a plural reference holds or fails of that plurality,
 and which configurations verify it is the predicate's lexical business
@@ -870,6 +889,8 @@ CompleteGunmaAt<W,C> : DecompositionBasis<W,C> × Referents<W>
                          × Referents<C> → Content       (defined below)
 ComponentAt<W,C> : DecompositionBasis<W,C> × C
                      × Referents<W> → Content           (defined below)
+Aggregate<T> : DecompositionBasis<Group<T>,T> × Group<T> → Content
+                                                       (primitive classification)
 
 ContributionBasis<ρ>
 MixAt<ρ> : ContributionBasis<ρ> × Family⁺<PredTerm<ρ>>
@@ -974,6 +995,40 @@ bases. A displayed `Context` uses the applicable property, whose free outer
 variables obey §5.3's dependency rule.
 General `gunma` lowers to `GunmaAt`; `joi`, the group descriptors, and the
 group clause of `MeiRel` lower to `CompleteGunmaAt` (§11–§12).
+
+`Aggregate κ g` is the primitive, rigid model classification of a **bare
+aggregate device** at group basis κ. It is not inferred merely because an
+organization's membership happens never to change. Its interpretation is
+situation-invariant: `StateClause` and every other situation shift leave the
+classification unchanged. The following laws hold at the situation of
+evaluation; `CompleteGunmaAt` gains no situation argument, because §5.7
+already supplies the evaluation boundary:
+
+```text
+(R) Aggregate κ g → ∃C. at every model situation s,
+                         CompleteGunmaAt κ g C at s
+
+(E) for every admissible κ and nonempty C, at every situation s,
+      ∃g. Aggregate κ g ∧ CompleteGunmaAt κ g C
+
+(A) Aggregate κ g ∧ Aggregate κ h
+      ∧ CompleteGunmaAt κ g C ∧ CompleteGunmaAt κ h C → g = h
+
+(F) CompleteGunmaAt κ g C ∧ CompleteGunmaAt κ g D → CoRef C D
+```
+
+`R` is one-way: a fixed-roster committee, corporation, or named duo may
+remain distinct from the canonical aggregate of the same people. `A` gives
+one aggregate per basis/cover, not one group of every kind. `F` makes the
+complete cover of any group functional at one basis and situation. These
+laws leave cross-basis identity model-given and leave the null cover to §14/#23.
+
+The event-basis existence/extensionality clause below is the event instance
+of the same complete-cover pattern: every admitted operand cover has a whole;
+two event wholes complete over one cover at one basis co-refer; and one event
+whole has one complete cover up to `CoRef`. Events need no `Aggregate`
+classification because the event-construction clauses themselves fix the
+whole kind and identity interface.
 
 An event basis additionally supplies total model-level aggregation clauses
 for temporal trace, participants by semantic role, and causal profile. For
@@ -1254,6 +1309,7 @@ ctx = ⟨ speaker  : Referents<Entity>,   audience : Referents<Entity>,
         token    : Referents<UtteranceToken> ⟩
 
 Speaker, Audience : ctx → Referents<Entity>
+MiAOthers, MaAOthers, DoOOthers : ctx ⇀ Referents<Entity>
 Now : ctx → Time            Here : ctx → Location
 CurrentToken : ctx → Referents<UtteranceToken>
 Proximity          = Proximal | Medial | Distal   (a closed type)
@@ -1264,6 +1320,17 @@ Deictic       : Proximity × Ground → Referents<Entity>
 ShiftedGround : GroundDescription → Ground        (constructs — §6.1)
 InContext     : Content × Ground → Content
 ```
+
+The three “others” projections are partial current-token context values,
+nonempty when defined by their output type. They are not mandatory fields on
+every utterance context and not an English-pronoun shortcut. Their exact
+definedness conditions are the role constraints: `MiAOthers` does not overlap
+Speaker, and `Combine Speaker MiAOthers` does not overlap Audience;
+`DoOOthers` does not overlap Audience, and `Combine Audience DoOOthers` does
+not overlap Speaker; `MaAOthers` does not overlap
+`Combine Speaker Audience`. Using the corresponding pro-sumti projects this
+definedness in the ordinary §1.7/P21 way. Nothing requires the three
+projections to co-refer with one another.
 
 Demonstratives (`This`/`That`/`Yonder`, i.e. `ti`/`ta`/`tu`) are
 `Deictic` at the three proximities against the context's ground:
@@ -1468,7 +1535,7 @@ SelectSome P      ≝ SelectAtLeast 1 P       ; ≥ 1 (su'o) — defined
 ```
 
 (restrictor `P` pure). The witness laws: a selection's witness `w`
-satisfies `(Distrib P w)` and `(= (CardBasis w P) n)` (`SelectExactly`)
+satisfies `(CoveredBy P w)` and `(= (CardBasis w P) n)` (`SelectExactly`)
 or `(≤ n (CardBasis w P))` (`SelectAtLeast`); and the **dependence
 law**: under governing binders, a selection introduces one witness per
 value of the governors (where `Refer` introduces a single
@@ -2597,7 +2664,8 @@ must provide for the core to interpret predications over it:
 | defaultability | per place: whether closure (§4.6) may introduce a `Context` there; non-defaultable places must be filled or abstracted |
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
 | situation behavior | whether the relation/value projection is rigid or is evaluated relative to a surrounding `StateClause` situation (§5.7); physical value-bearing entries must declare this, while numeric constants and arithmetic are rigid |
-| plurality behavior | optional, per place: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). Two independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed, denied, or left undeclared; the values state lexical entailments of the word, never a reading parameter (P4) |
+| plurality behavior | per place and resolved reference mode: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). A place either declares the pure unit profile below or supplies its exact direct plural condition; silence is not permission for a model-chosen reading. Two further independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed or denied where its lexical entailment is known (P4, P39) |
+| unit profile | optional, per place and resolved reference mode: a pure `unit_Rℓ : Fn<(T), Content>`. With every other operand fixed and every non-head retrieval hoisted, the resulting pure lexical property `R_p` obeys `R_p(r) ↔ CoveredBy(unit_Rℓ, r)`. For an ordinary count profile, `unit_Rℓ` is the freely interpreted singleton restriction of `R_p`; the equation then determines larger plural references rather than recursively defining the singleton base. Cumulative/divisible substance units, singleton-container units, and other licensed unit notions state their own property. A collective, kind-like, or otherwise directly plural mode instead omits this field and supplies its exact ordinary plural truth condition. The alternatives are lexical data, not readings chosen at application time; per-row values remain the lexicon programme's obligation (#12) |
 | constitution behavior | for a whole/component row or a `joi`-compatible result: the pure admissible-basis constraint; group/event bases declare peer granularity and, for events, trace/role-participant/causal/actuality aggregation; a property row declares its `ContributionBasis<ρ>` `MixAt`/`ContributesAt` instance. Absence means the corresponding constitution reading is unmapped, never model-chosen (§4.9) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
 | degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
@@ -2700,8 +2768,12 @@ quotation and content abstractions are inert — `lo nu ko klama`
 constructs content, commands nothing (pin P27); CLL 14.13's
 obedience gloss is a remark, not machinery.
 
-**Descriptions** (P1, P10, P11). `lo P` → `(Refer P)`, veridical,
-number-neutral. `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)`
+**Descriptions** (P1, P10, P11, P39). `lo P` → `(Refer P)`, literally:
+veridical and number-neutral, with no second description-only condition. Where
+the resolved lexical place declares a unit profile, P already has §10's
+`CoveredBy` plural extension; collective, kind-like, and substance modes use
+their own declared lexical extensions. `le P` → `Refer` via
+`skicu(Speaker, ·, Audience, P)`
 with the anchoring clause — the describing event is this utterance's own
 locution. The anchored reference property, in full, conjoins the
 locution fact at the utterance's own token u₀ (the `dei` value, §7.4):
@@ -2735,9 +2807,9 @@ selected dogs, not necessarily all dogs, but the hidden dog reference does
 not become a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal
 reading remains available when context selects that base or when explicit
 `ro`/`MaxRefer` requires it; bare collection gadri do not add it. Completeness
-here forbids components beyond the selected base; the still-open
-count/mass `CoveredBy` question (§14) separately asks what makes a veridical
-P-base itself free of P-external residue. Inner PA →
+here forbids components beyond the selected base; whether the base itself has
+external residue is already decided by its resolved lexical extension (P39).
+Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
 selection / subreference selection (P1, §4.10). Inner `no` → the
 zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
@@ -2886,6 +2958,29 @@ count condition before the state lift; subjective counts reuse the threshold-
 GQ policy. The default interval is the Context-recovered anchor with `Vague`
 extent (CLL 10.9), overridable by explicit ZEhA/`ze'e` forms (P35). `fi'o P`
 uses P as a tag with the lexicon's current clause-event link.
+
+**Composite personal pro-sumti** (P40). These are ordinary neutral plural
+references, not logical sentence connection and not constituted group
+objects. Their complete lowerings and result types are:
+
+```text
+mi'o ↦ (Combine Speaker Audience)                     : Referents<Entity>
+mi'a ↦ (Combine Speaker MiAOthers)                    : Referents<Entity>
+do'o ↦ (Combine Audience DoOOthers)                   : Referents<Entity>
+ma'a ↦ (Combine (Combine Speaker Audience) MaAOthers) : Referents<Entity>
+```
+
+The §5.1 context constraints make `mi'a` exclude Audience, `do'o` exclude
+Speaker, and every “others” value genuinely other than the included role
+values. Each displayed result fills one place in one predication. In
+particular, `mi'o klama` has one x1 reference and one omitted-x2 `Context`
+site; it does not expand to paired speaker/listener journeys or two omitted
+sites. `mi .e do broda` instead connects two separately instantiated clauses;
+`mi jo'u do broda` has the same argument denotation as `mi'o broda`; and
+`mi joi do broda` first constructs §12's canonical `Group<Entity>`. No
+component property inherits to that group (P5). Positive `mi'o … mei` does not
+alter this lowering: the separate plural-carrier instance problem remains
+#24, never a covert second group denotation.
 
 **Anaphora** (P16). ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible
 referents (§5.6); `vo'a`-series → bridi-place bindings; KOhA assigned →
@@ -3171,9 +3266,9 @@ ordinary export:
 
 ```text
 (SelectAllBut n P) : RefComp<Referents<T>>   ; witness law:
-   ; (∧ (Distrib P w)
+   ; (∧ (CoveredBy P w)
    ;    (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Among $x w)))}))) n))
-   ; — the witness satisfies P member-wise AND leaves exactly n
+   ; — the witness is P-covered without residue AND leaves exactly n
    ; P-individuals behind, spelled by comprehension: the plural kernel
    ; has no difference operator and needs none. Which individuals are
    ; left out is not a semantic parameter (neutral witness selection,
@@ -3211,8 +3306,53 @@ Up | Down | Either) is the stated value — so the underlying quantity
 is explicitly the bound `Number`, the stated digits exact by
 construction of the region (nonempty by VC1; pin P37).
 
-**Plurality and collections:** `UnitSet`/`CardBasis` (§4.8); `lu'a r` ≝
-distribution over members (`Distrib` at the use site);
+**Plurality and collections:** `UnitSet`/`CardBasis` (§4.8). The canonical
+group constructions and collection crossings are:
+
+```text
+(CanonicalAggregateAt κ g C) ≝
+  (∧ (Aggregate κ g) (CompleteGunmaAt κ g C))
+
+(Massify κ C) : RefComp<Referents<Group<T>>> ≝
+  (SelectExactly 1
+    {λ [$g :: Group T] (CanonicalAggregateAt κ $g C)})
+
+components_κ : Group<T> ⇀ Referents<T>
+components_κ(g) = C exactly when CompleteGunmaAt κ g C
+```
+
+`components_κ` is partial where no complete cover exists and functional by
+(F). `Massify` is definite by (E)+(A); it is a defined selection, not a
+primitive term constructor. Repeated manufacture at one κ and `CoRef` cover
+returns the same aggregate. An independently individuated organization with
+that cover need not be the aggregate.
+
+The LAhE collection crossings are type-directed:
+
+- `lu'a r` on an ordinary plural reference marks member-wise use (`Distrib`
+  at the consuming locus); on one `Set<T>` object it returns its nonempty
+  member reference; on one `Group<T>` object it returns `components_κ(g)` at
+  a constrained, dependency-declared basis and is projectively undefined
+  without one. Several collection objects require an explicit flattening
+  reading; no silent crossing is supplied.
+- `lu'o X` retrieves an admissible group basis κ, resolves X's underlying
+  nonempty reference (ordinary reference directly, set members, group
+  components, or list elements), and returns `Massify κ C`. On an
+  organization this canonicalizes its current cover; it is identity only
+  when X already is that canonical aggregate at κ.
+- `lu'i X` forms the exact `Set<T>` of the resolved covering units at a
+  constrained unit basis. For a non-null operand an admissible basis cannot
+  be unitless (§4.9's cover law); absent an admissible/recoverable basis the
+  reading is undefined, not the empty set. Set input is identity.
+- `vu'i X` forms a `List<T>` over those same units. If an order is intended,
+  it is one constrained `Context` site and the returned list keeps that order
+  for anaphora. A genuinely no-particular-order use is not defaulted to
+  `Context`; it remains the §14 `SomeAdmissible` witness candidate pending
+  evidence.
+
+Empty set/list/member crossings and `nomei` remain governed by the nonempty
+reference boundary and §14/#23.
+
 `(Overlap a b)` ≝ `(∃ (λ {$c :: Referents T} {(∧ (Among $c a) (Among $c b))}))`;
 `(Interval a b k₁ k₂)` ≝ `(SetOf (λ {$x :: T} {(∧ (cmp₁ a $x) (cmp₂ $x b))}))` with
 `cmpᵢ` strict/nonstrict per the `ga'o`/`ke'i` endpoint kinds. The
@@ -3261,11 +3401,8 @@ so the `fa'u` specimen expands completely:
 (MaxRefer P)    : RefComp<Referents<T>> ≝
   (Presuppose (∃ P)                       ; defined only when P is
     (Refer (λ {$r :: Referents T}          ; inhabited
-      {(∧ (Distrib P $r)
-          (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))}))
-          (∀ (λ {$r2 :: Referents T}
-               {(→ (Among $r2 $r)
-                   (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r2))})))})))})))
+      {(∧ (CoveredBy P $r)
+          (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))})))})))
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
@@ -3642,8 +3779,7 @@ flattened, the applicable typed instance is one of these defined forms
 
 ```text
 (JoiGroup κ X₁ … Xₙ) : RefComp<Referents<Group<T>>>  ≝
-  (SelectExactly 1 (λ {$g :: Group T}
-    {(CompleteGunmaAt κ $g (Combine X₁ … Xₙ))}))
+  (Massify κ (Combine X₁ … Xₙ))
 
 (JoiEvent κ E₁ … Eₙ) : RefComp<Referents<Eventuality>>  ≝
   (SelectExactly 1 (λ {$j :: Eventuality}
@@ -3994,6 +4130,34 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   Lojban: CLL 11.6 records it as an unestablished proposal, preserved in the
   gap register for possible future adoption only through a new evidence-backed
   pin.
+- **P39** `lo R` remains literally `(Refer R_p)`: description satisfaction
+  is the ordinary resolved lexical property, never a second stronger
+  description-only predicate. For each place and reference mode, the lexicon
+  either declares a pure unit profile and fixes the plural extension by
+  `R_p(r) ↔ CoveredBy(unit_Rℓ, r)`, or supplies the mode's exact direct
+  plural condition (collective, kind-like, substance, or otherwise). The
+  choice is lexical data, not a covert reading parameter. Selection witnesses
+  use `CoveredBy`; `MaxRefer` adds only inhabitedness and the all-satisfiers
+  conjunct. The rejected alternative strengthened `lo` alone; it duplicated
+  lexical truth conditions, contradicted official/BPFK
+  `lo broda = zo'e noi broda`, and mishandled collective heads. Reopens only
+  on a supported case where the same resolved `R_p(r)` is true in nuclear
+  predication but r must nevertheless be unavailable specifically to `lo R`.
+- **P40** `mi'o` denotes exactly `Combine Speaker Audience`, the ordinary
+  neutral plural reference corresponding to `mi jo'u do`. It is neither the
+  logical connection `mi .e do` nor the canonical group `mi joi do`; P4
+  leaves one predication's collective/distributive/reciprocal satisfaction to
+  its lexical row. `mi'a`, `do'o`, and `ma'a` use the analogous §11 `Combine`
+  lowerings with the token-relative `MiAOthers`, `DoOOthers`, and `MaAOthers`
+  projections and §5.1's inclusion/exclusion constraints. One composite
+  pro-sumti creates one argument and therefore one omitted-place site per
+  unfilled host place, never a hidden member pairing. Original CLL §7.2's
+  `mi'o = mi joi do` mass analysis is the coherent rejected alternative;
+  current CLL's `mi jo'u do` wording is project-authored corroboration, not
+  independent evidence. Positive `mi'o … mei` remains #24's separate carrier
+  problem. Reopens only on ordinary unmarked uses that require a constituted
+  group's own properties rather than neutral plural predication or #24's
+  cardinality interface.
 
 ## 14. Gap register
 
@@ -4017,6 +4181,12 @@ approximate:
   (positive existential, negation denying all), never a `Vague`
   precisification family. Until such a witness and pin exist, `co'e`/`do'e` or
   any other form receives no exceptional weak reading.
+  `vu'i` supplies a second bounded probe: CLL requires the resulting sequence
+  to have an order while the dictionary leaves that order vague. An
+  occurrence with an intended order uses `Context`; a genuinely
+  no-particular-order use, if established, would need this exceptional
+  analysis rather than a maximally tolerant `Context`. No baseline
+  order-free reading is generated pending evidence.
 - **Numeric `jei` crossing.** CLL 11.6 records the first-edition proposal that
   a `jei` truth value map to a number in [0,1], while also stating that its
   conventions were never worked out and the number-valued reading never
@@ -4059,15 +4229,6 @@ approximate:
   performed occurrences unless the semantics explicitly performs them; #6
   owns those laws. Exact tag/facet `joi` over an already shared event remains
   ordinary `∧`.
-- **Description `CoveredBy` boundary.** `Refer P` currently requires the
-  selected reference itself to satisfy P but has no separately typed
-  count/mass coverage condition. Consequently the constitution work can say
-  that `loi P` has no component beyond its selected base, but cannot yet prove
-  that a count-noun base has no P-external residue (the dog-plus-cat test)
-  without imposing an atomistic rule that would break divisible substances.
-  GitHub #8 owns the `CoveredBy P r` interface, lexical count/mass boundary,
-  and its pin. This gap does not reopen the non-maximal-base or `Local`
-  decisions.
 - **Zero-member `MeiRel` / `nomei`.** The positive-n `MeiRel κ n` definition
   uses a nonempty maximal member reference, as its x3 and the adopted
   `Referents<T>` component carrier require. The experimental dictionary entry
@@ -4189,13 +4350,13 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | relative clauses, `goi`, `voi` | §11 ¶3 | audience-deleted `skicu` (P10) | — | §4 |
 | quantifiers, termsets, negation scope | §11 ¶4 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
-| anaphora, KOhA, `ra'o` | §11 ¶6 | — | exotic donkeys | §4, §5 |
+| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 ¶6 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
 | abstractions, `tu'a`, `jai`, `mo'e` | §11 ¶7 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 ¶8 | domain-enumeration schemas | — | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e`, joik-connected mekso operands | §10 |
-| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis rows, compound ijoik performance; count/mass `CoveredBy` | §3, §5 |
+| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `CoveredBy`, `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis and per-row unit-profile data, compound ijoik performance | §3, §5 |
 | prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
@@ -4222,7 +4383,8 @@ arithmetic base; `Refer`, `Local`, `Context`, `Vague`, the `Select` family;
 `Reify`/`Holds`; `TanruAdmissible` (the `Tanru` operator itself is
 defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
 `Scalar`; the basis-indexed primitive interfaces `BasisUnitAt`, `PeerUnitAt`,
-`MixAt`, and `ContributesAt`;
+`MixAt`, and `ContributesAt`, plus the rigid group-basis classification
+`Aggregate`;
 `StateClause`, `CloseClause`, and the constrained
 `EventOfContent` projection (§9.3); the
 force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
@@ -4233,7 +4395,8 @@ total `ActContent`, and the token/sign
 fact relations; the declared MEX conversion crossings, `During`,
 `EnumerationOrdinal`, and the
 `SelectAllBut` member of the selection family (§12); `Deictic`, `ShiftedGround`, `InContext`, and the
-context projections; `Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
+context projections (including partial `MiAOthers`/`MaAOthers`/`DoOOthers`);
+`Polar`, `OpenQ`, `QuestionOf`, `Answer` with the
 answer-selection values; the abstraction relations (§9.2, minus the
 derived `DuhuRel`), the crossing `AmountValue`,
 `InnatelyCapable`, `MotionVector`; and the axiomatic
@@ -4244,11 +4407,12 @@ empty conjunction, §2), `At` with all fill notation, `Let` as direct
 value application, the
 demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`,
 `GunmaAt`, `CompleteGunmaAt`, `ComponentAt`, `GunmaPredAt`, `JoiGroup`, `JoiEvent`, `JoiPred`, `JoiTanru`,
-`JoiClause`, the
+`JoiClause`, `CanonicalAggregateAt`, `Massify`, the partial `components_κ`
+projection, and the LAhE collection crossings; the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
-`PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
+`PredTerm`, `UnitSet`/`CardBasis`, `CoveredBy`, `DuhuRel`,
 `ContextualAnswer`, `RoiClause`, the CAhA clause formers, and the library of §12. The
 [catalog](catalog.md) carries one entry per name — prose, formal
 definition where one exists, purpose, example, and links; each name's
@@ -4515,7 +4679,22 @@ used for source verification are noted per entry.
   <https://mw.lojban.org/papri/How_to_use_xorlo>.
 - **guskant** — "gadri: an unofficial commentary from a logical point
   of view",
-  <https://mw.lojban.org/papri/gadri:_an_unofficial_commentary_from_a_logical_point_of_view>.
+  <https://mw.lojban.org/papri/gadri:_an_unofficial_commentary_from_a_logical_point_of_view>
+  (Lojban-only proof:
+  <http://guskant.github.io/lojbo/jetnujarco.html>; wiki page id 14098,
+  revision 122002, 2017-12-09). The section “Referent of a plural constant is
+  not necessarily an individual or individuals” proves from Condition₁ that
+  an indefinitely refinable plural constant is neither an individual nor
+  individuals, then offers cut bread as the material-noun reading. This
+  motivated §4.8's no-atoms boundary, the `CoveredBy` overlap conjunct, and
+  cumulative/divisible mass unit profiles; it does not decide P39's placement
+  between lexical and description semantics. The concrete dependent term is
+  the Condition₁/`CoveredBy` specimen in `samples.md` §3.
+- **BPFK Gadri** — "BPFK Section: gadri", Lojban Wiki,
+  <https://mw.lojban.org/papri/BPFK_Section:_gadri> (page id 527; the table
+  defines `lo [PA] broda` as `zo'e noi ke'a broda [gi'e zilkancu …]`). This
+  supplies the description/predication identity used against P39's rejected
+  description-only strengthening; it does not supply the `CoveredBy` formula.
 - **Brismu** — *brismu: a relational interpretation of Lojban*,
   <https://brismu.systems/>; the chapter "Sets, not Masses" is at
   <https://brismu.systems/sets-not-masses.html>.
@@ -4563,6 +4742,52 @@ used for source verification are noted per entry.
   off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
   partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
   component-inheritance critique preserved in the mailing-list archive.
+- **Personal pro-sumti record** — sources for P40, with their evidential roles
+  rather than authority: original CLL §7.2 at the baseline source commit
+  `13ce309d` says the forms are masses and `mi'o = mi joi do` (the rejected
+  alternative); the current `mi jo'u do`/neutral-plural wording was introduced
+  by this project's CLL commit
+  `224cb6312c6cd8c66a683e08f244f055abe2082b` and cannot self-ratify.
+  Jorge Llambías, 2004-08-28,
+  `<20040829024337.55170.qmail@web41906.mail.yahoo.com>`, says personal
+  pronouns are unmarked for distributivity (independent post-xorlo support).
+  Selpa'i, 2013-06-16, `<51BDBA1D.80602@gmx.de>`, explicitly proposes
+  `mi'o = mi jo'u do`; Felipe Gonçalves Assis, 2013-06-16,
+  `<CALMa68r4BqLh=eFcGPV1mA-fDkYpg3xR6d-Nu4RD8qVrueM4Gw@mail.gmail.com>`,
+  favors `jo'u` as the simpler post-xorlo treatment; John E. Clifford,
+  2013-06-16,
+  `<1371405876.998.YahooMailNeo@web184401.mail.bf1.yahoo.com>`, describes the
+  simplest forms as united pluralities whose predicate satisfaction remains
+  open. The messages are in the local archive's
+  `mail/lojban-list.maildir.zip`. Member-level corpus probes are
+  `mi'o remna` by selckiku (IRC `all_logs.txt` line 477248, 2011-08-13) and
+  `_mukti_` (line 1005240, 2015-11-01); they expose the no-inheritance cost of
+  the rejected group carrier, while collective/reciprocal uses alone do not
+  discriminate it.
+- **Historical group/mass identity record** — messages in the same local
+  archive, cited in rationale §1.7a with their role in the project's
+  argument: Arthur W. Protin Jr., 1991-06-20,
+  `<9106201157.aa26475@COR4.PICA.ARMY.MIL>` (simple aggregate versus
+  organism/organization; inspiration, not adoption); Bob LeChevalier,
+  1991-06-20, `<m0jqGpu-0002riC@snark.thyrsus.com>` (universal
+  massifiability and the changing-body example; existence and persistence
+  evidence, inheritance rejected); the 1994 sumti-paper draft circulated by
+  Gerald Koenig, 1994-11-07, `<199411080334.AA18322@nfs2.digex.net>`
+  (global extensional candidate, rejected); And Rosta, 1994-12-15,
+  `<199412160019.AA21882@nfs1.digex.net>` (groups as singulars); Jorge
+  Llambías, 1995-06-14, `<9506150238.aa20944@punt2.demon.co.uk>` (`re loi`
+  counting problem and inheritance critique); John E. Clifford, 2002-07-06,
+  `<1bb.2c60d43.2a586ccf@aol.com>` (intensional candidate and its costs), and
+  2005-12-14, `<20051215003856.5328.qmail@web81308.mail.mud.yahoo.com>`
+  (four incompatible mass doctrines); Martin Bays / Jorge Llambías,
+  2011-08-12–15, `<20110812152917.GK10697@gonzales>`,
+  `<CAO7tK2fvjYGpkpZKDzs6XvVc03xmBvLQEKK88aK5xb1CNYkzkQ@mail.gmail.com>`,
+  `<CAO7tK2cCop=+UVuEbsW7_rZ=pdbbsDDyiYL-sW-QbY2RnG7LJg@mail.gmail.com>`
+  (first-class groups and complete constituents); and Stela Selckiku,
+  2011-07-17,
+  `<CAJHgu=8Z8PcvteZkEoN4z0L+YNxwXG0savY4XNFdO=Sg6Q16NA@mail.gmail.com>`
+  (arbitrary aggregate abstraction; responsibility/inheritance gloss not
+  adopted).
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable
   (or to Be Some Values of Some Variables)", *The Journal of
   Philosophy* 81(8), 1984, pp. 430–449.

@@ -47,10 +47,32 @@
   (define (walk node)
     (when (core-list? node)
       (define elements (core-list-elements node))
-      (when (and (pair? elements) (core-atom? (first elements))
-                 (symbol? (core-atom-value (first elements))))
-        (set-add! found (core-atom-value (first elements))))
-      (for ([element (in-list elements)]) (walk element))))
+      (define head
+        (and (pair? elements) (core-atom? (first elements))
+             (symbol? (core-atom-value (first elements)))
+             (core-atom-value (first elements))))
+      (case head
+        [(λ)
+         ;; Binder telescopes contain type spines such as `(Entity)`, which
+         ;; are not term applications and therefore do not have core heads.
+         (set-add! found head)
+         (when (= (length elements) 3) (walk (third elements)))]
+        [(Let)
+         (set-add! found head)
+         (when (= (length elements) 4)
+           (walk (third elements))
+           (walk (fourth elements)))]
+        [(Bind)
+         (set-add! found head)
+         (define tail (rest elements))
+         (when (and (>= (length tail) 3) (odd? (length tail)))
+           (define pairs (drop-right tail 1))
+           (for ([index (in-range 1 (length pairs) 2)])
+             (walk (list-ref pairs index)))
+           (walk (last tail)))]
+        [else
+         (when head (set-add! found head))
+         (for ([element (in-list elements)]) (walk element))])))
   (walk form)
   (set->list found))
 

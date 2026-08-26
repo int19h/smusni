@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "bf53c9e62899f893f026bd05ccd88511060aa830")
- (fixture-sha1 "84e623e9dc0c4f2f98c666fd7d672e8de44239b8")
+ (core-sha1 "f31b0d4543393231b8d3121981f8fd2eb6e16533")
+ (fixture-sha1 "16331ecfbe976cb1a4fb9e3e8e452a10d958cd57")
  (sorts
   AbstractNature
   Achievement
@@ -59,10 +59,13 @@
   AttachedAddress
   AttachedDisplay
   Audience
+  DoOOthers
   Hearsay
   Host
   Intense
+  MaAOthers
   ManyK
+  MiAOthers
   Moderate
   Now
   Observation
@@ -79,6 +82,7 @@
   ActualClause
   AdmissibleCutoff
   AdmissibleThreshold
+  Aggregate
   Among
   AmountValue
   Answer
@@ -88,6 +92,7 @@
   AtLeast
   BasisUnitAt
   Bind
+  CanonicalAggregateAt
   CapableClause
   Card
   CardBasis
@@ -104,6 +109,7 @@
   ContextualAnswer
   Contrast
   ContributesAt
+  CoveredBy
   Desire
   DirectClause
   Distrib
@@ -134,6 +140,7 @@
   Let
   List
   Local
+  Massify
   MeiRel
   Mention
   MetalinguisticallyDefective
@@ -169,11 +176,13 @@
   Supplement
   Tanru
   TanruAdmissible
+  TanruLinkConnect
   Unhappiness
   Utterance
   Vague
   WordSign
   ZipWith
+  components_κ
   |te'a|
   ¬
   λ
@@ -223,6 +232,7 @@
   prami
   prenu
   purci
+  remna
   rinka
   sanga
   selcmi

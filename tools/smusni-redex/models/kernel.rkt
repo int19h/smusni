@@ -34,7 +34,7 @@
 (define baseline+cj
   (law-profile 'baseline+CJ 'comparative '(aci among coref CJ)))
 (define count-profile
-  (law-profile 'count-CoveredBy 'human-adopted-pending-sync '(CoveredBy)))
+  (law-profile 'count-CoveredBy 'live-baseline '(CoveredBy)))
 
 (define same-units-distinct
   (let ([left (kref 'left (set 'u1 'u2))]

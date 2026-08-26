@@ -27,10 +27,10 @@
   '(Every No Exactly AtLeast MoreThan Reciprocate CardBasis CoRef Named
           Realizes SpeakerOf EvidentialBasis Happiness Unhappiness Desire
           AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
-          Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Tanru Scalar
-          Grade JaiRaise DuhuRel NiRel SuhuRel JeiRel StructuredQuote
-          OpaqueQuote WordSign InterpretContent RealizedContent AmountValue
-          ZipWith))
+          Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Aggregate
+          CanonicalAggregateAt Tanru Scalar Grade JaiRaise DuhuRel NiRel
+          SuhuRel JeiRel StructuredQuote OpaqueQuote WordSign InterpretContent
+          RealizedContent AmountValue ZipWith))
 
 (define-language SmusniStatic
   [τ any])
@@ -332,6 +332,14 @@
              empty-effects '() '())]
     [(and (symbol? value) (string-prefix? (symbol->string value) ":"))
      (typing 'LabelToken empty-effects '() '())]
+    [(member value '(MiAOthers MaAOthers DoOOthers))
+     (typing '(Referents Entity)
+             (set 'projective)
+             (list (case value
+                     [(MiAOthers) 'mi-a-others-defined]
+                     [(MaAOthers) 'ma-a-others-defined]
+                     [(DoOOthers) 'do-o-others-defined]))
+             '())]
     [(hash-has-key? (inventory-constants inv) value)
      (typing (first (hash-ref (inventory-constants inv) value))
              empty-effects '() '())]
@@ -429,6 +437,40 @@
         (define operand (infer-with-expected (first arguments) env inv expected))
         (merge-results expected (list operand))]
        [_ (raise-type node "Local is restricted to RefComp")])]
+    [(eq? head 'Massify)
+     (match expected
+       [`(RefComp (Referents (Group ,inner)))
+        (define arguments (rest (core-list-elements node)))
+        (unless (= (length arguments) 2)
+          (raise-type node "Massify takes group basis and component reference"))
+        (define basis (infer-core (first arguments) env inv))
+        (define cover (infer-core (second arguments) env inv))
+        (ensure-compatible (first arguments) (typing-type basis)
+                           `(DecompositionBasis (Group ,inner) ,inner))
+        (ensure-compatible (second arguments) (typing-type cover)
+                           `(Referents ,inner))
+        (merge-results expected (list basis cover) #:effects (set 'refer))]
+       [_ (raise-type node
+                      "Massify requires RefComp<Referents<Group<T>>> expected type")])]
+    [(eq? head 'JoiGroup)
+     (match expected
+       [`(RefComp (Referents (Group ,inner)))
+        (define arguments (rest (core-list-elements node)))
+        (unless (>= (length arguments) 3)
+          (raise-type node "JoiGroup takes one group basis and at least two references"))
+        (define basis (infer-core (first arguments) env inv))
+        (define operands
+          (map (lambda (argument) (infer-core argument env inv))
+               (rest arguments)))
+        (ensure-compatible (first arguments) (typing-type basis)
+                           `(DecompositionBasis (Group ,inner) ,inner))
+        (for ([argument (in-list (rest arguments))]
+              [operand (in-list operands)])
+          (ensure-compatible argument (typing-type operand)
+                             `(Referents ,inner)))
+        (merge-results expected (cons basis operands) #:effects (set 'refer))]
+       [_ (raise-type node
+                      "JoiGroup requires RefComp<Referents<Group<T>>> expected type")])]
     [else
      (define inferred (infer-core node env inv))
      (ensure-compatible node (typing-type inferred) expected)
@@ -471,7 +513,8 @@
           (define declared-type (cdr binding))
           (define computation
             (if (member (application-head computation-node)
-                        '(Context Vague Refer SelectExactly SelectAtLeast Local))
+                        '(Context Vague Refer SelectExactly SelectAtLeast Local
+                                  Massify JoiGroup))
                 (infer-with-expected computation-node current-env inv
                                      `(RefComp ,declared-type))
                 (infer-core computation-node current-env inv)))
@@ -677,6 +720,25 @@
         (merge-results 'Content results)]
        [(left right) (raise-type node "Among requires plural references, got ~e and ~e"
                                 left right)])]
+    [(eq? head 'Combine)
+     (unless (= (length arguments) 2)
+       (raise-type node "Combine takes two plural references"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (define (reference-inner type)
+       (match type
+         [`(Referents ,inner) inner]
+         [_ (and (first-order-type? type) type)]))
+     (define left (reference-inner (typing-type (first results))))
+     (define right (reference-inner (typing-type (second results))))
+     (unless (and left right)
+       (raise-type node "Combine requires referential values, got ~e and ~e"
+                   (typing-type (first results)) (typing-type (second results))))
+     (define common
+       (cond [(type-compatible? left right) right]
+             [(type-compatible? right left) left]
+             [else #f]))
+     (unless common (raise-type node "Combine references have incompatible sorts"))
+     (merge-results `(Referents ,common) results)]
     [(or (member head '(+ −))
          (and (symbol? head) (string=? (symbol->string head) "te'a")))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
@@ -861,6 +923,20 @@
           (raise-type node "Distrib property/reference type mismatch"))
         (merge-results 'Content (list property reference))]
        [(left right) (raise-type node "Distrib types are incompatible: ~e, ~e" left right)])]
+    [(eq? head 'CoveredBy)
+     (unless (= (length arguments) 2)
+       (raise-type node "CoveredBy takes a pure unit property and reference"))
+     (define property (infer-core (first arguments) env inv))
+     (define reference (infer-core (second arguments) env inv))
+     (match* ((typing-type property) (typing-type reference))
+       [(`(Fn (,domain) Content) `(Referents ,inner))
+        (unless (pure-typing? property)
+          (raise-type (first arguments) "CoveredBy unit property must be pure"))
+        (unless (type-compatible? inner domain)
+          (raise-type node "CoveredBy property/reference type mismatch"))
+        (merge-results 'Content (list property reference))]
+       [(left right)
+        (raise-type node "CoveredBy types are incompatible: ~e, ~e" left right)])]
     [(member head '(Every No Exactly AtLeast MoreThan))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results 'Content results)]
@@ -920,9 +996,27 @@
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold
                           MetalinguisticallyDefective Contrast JaiRoleAdmissible
-                          CompleteGunmaAt GunmaAt CoRef))
+                          CompleteGunmaAt GunmaAt Aggregate CanonicalAggregateAt
+                          CoRef))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results 'Content results)]
+    [(eq? head 'components_κ)
+     (unless (= (length arguments) 2)
+       (raise-type node "components_κ takes basis and one group"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (match (typing-type (second results))
+       [`(Group ,inner)
+        (ensure-compatible (first arguments) (typing-type (first results))
+                           `(DecompositionBasis (Group ,inner) ,inner))
+        (merge-results `(Referents ,inner) results
+                       #:obligations '(complete-group-cover-defined))]
+       [`(Referents (Group ,inner))
+        (ensure-compatible (first arguments) (typing-type (first results))
+                           `(DecompositionBasis (Group ,inner) ,inner))
+        (merge-results `(Referents ,inner) results
+                       #:obligations '(sole-group-and-complete-cover-defined))]
+       [other (raise-type (second arguments)
+                          "components_κ requires one Group<T>, got ~e" other)])]
     [(eq? head 'List)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (define inner (if (null? results) 'Unknown (typing-type (first results))))

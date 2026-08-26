@@ -266,6 +266,29 @@ no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (though its
 selected witness stays referable — §5 below); `lo` introduces with no
 quantificational force at all.
 
+`lo R` remains literally `Refer R`; where R's resolved lexical mode declares
+a unit profile, its plural extension already includes `CoveredBy`. The
+atomless witness motivating that condition can be displayed directly. The
+first conjunct says the bread is covered by cumulative bread units; the second
+is guskant's Condition₁ — every subreference has a proper subreference, so no
+atomic member basis is available:
+
+```lisp
+; atomless bread reference — CoveredBy succeeds without atomic members [P39]
+{λ [[$bread :: Referents Entity]
+    [$breadUnit :: Fn (Entity) Content]]
+  (∧ (CoveredBy $breadUnit $bread)
+     (∀ {λ [$r :: Referents Entity]
+       (→ (Among $r $bread)
+          (∃ {λ [$s :: Referents Entity]
+            (∧ (Among $s $r) (¬ (Among $r $s)))}))}))}
+```
+
+An atomic count profile is the familiar special case: a selected dog witness
+containing a cat or a pack object fails `CoveredBy(dogUnit, ·)`. A collective
+predicate such as `jmaji` need not declare that profile and is not silently
+distributed.
+
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
 {Bind [$cat :: Referents Entity]
@@ -300,6 +323,72 @@ existentially.)
   (Assert (Close (klama $alis)))}
 ```
 
+Composite personal pro-sumti are ordinary plural references (P40):
+
+```lisp
+; mi'o remna — one member-level-compatible predication [P40]
+(Assert (Close (remna (Combine Speaker Audience))))
+```
+
+This is the carrier probe. No component-to-group inheritance would make a
+constituted group human merely because the speaker and audience are humans.
+For a collective relation, `mi'o` and explicit `jo'u` still give the same one
+argument:
+
+```lisp
+; mi'o jmaji ≡ mi jo'u do jmaji — one neutral plural predication [P40]
+(Assert (Close (jmaji (Combine Speaker Audience))))
+```
+
+Logical connection is structurally stronger, with two separately
+instantiated clauses:
+
+```lisp
+; mi .e do jmaji — speaker gathers AND audience gathers [P40]
+(Assert
+  (CloseClause
+    (ClauseAnd (DirectClause (jmaji Speaker))
+               (DirectClause (jmaji Audience)))))
+```
+
+Constitution is a different typed result even before any group-level
+predicate is chosen:
+
+```lisp
+; mi joi do — the distinct canonical Group<Entity> reading [P40]
+{Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+  {Bind [$group :: Referents (Group Entity)]
+        (JoiGroup $κ Speaker Audience)
+    (Mention $group)}}
+```
+
+One composite argument does not duplicate its omitted places. This expansion
+isolates x2: exactly one destination value is recovered for the one plural-x1
+journey predication; the value may itself be plural, but there is no hidden
+speaker-to-one/audience-to-another pairing:
+
+```lisp
+; mi'o klama — one place-1 value and one omitted place-2 Context site [P40]
+{Bind [$to :: Referents Entity] (Context)
+  (Assert
+    (Close (klama (Combine Speaker Audience)
+                  :2 $to :3 This :4 That :5 Yonder)))}
+```
+
+The sibling forms use named token-context projections whose §5.1 constraints
+make the “others” genuinely other and enforce the exclusions:
+
+```lisp
+; mi'a / do'o / ma'a — their complete reference values [P40]
+(Do
+  (Mention (Combine Speaker MiAOthers))
+  (Mention (Combine Audience DoOOthers))
+  (Mention (Combine (Combine Speaker Audience) MaAOthers)))
+```
+
+Positive `mi'o … mei` remains #24: it cannot change any of these values into
+a covert group.
+
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: place 2 = members) [P5]
 {Bind [$base :: Referents Entity]
@@ -329,8 +418,9 @@ partial-friendly layer:
 Neither object unwraps to its members implicitly. A maximal all-dogs base is
 available only when context or explicit `ro`/`MaxRefer` supplies it; bare
 collection gadri do not force it. `CompleteGunmaAt` says there is no peer
-component beyond `$base`; the separate §14/#8 `CoveredBy` gap asks whether
-the base property's own count/mass satisfaction can contain external residue.
+component beyond `$base`; P39 separately makes a count-profile base
+`CoveredBy` its declared units, while cumulative mass and other reference
+modes keep their own exact lexical extension.
 The `Local` boundary is independently observable: in CLL 6.52
 `lo'i ratcu cu barda .i ku'i lu'a ri cmalu`, `ri` resolves to `$sets`, never
 to the lowering-internal `$base`.
@@ -349,6 +439,72 @@ to the lowering-internal `$base`.
 The nearby `mi jo'u do bevri lo pipno` instead fills x1 with
 `(Combine Speaker Audience)`: no group object and no covert
 non-distributivity instruction.
+
+The group result above is canonical manufacture: by definition
+`(JoiGroup $κ Speaker Audience)` is
+`(Massify $κ (Combine Speaker Audience))`. This does not identify every
+same-member organization with that aggregate. In a scene with two distinct
+same-roster committees, `lei ci prenu du le kamni` is true exactly when the
+two descriptions select the same `Group<Entity>` object; the shared cover
+does not force it. If one member later leaves, `ri` after `lei ci prenu`
+continues to denote the originally selected object: a persistent committee's
+`(components_κ ri)` may then be the remaining two, while a snapshot aggregate
+of the original three retains that rigid cover.
+
+Explicit `lu'o` canonicalizes: `lu'o le ci prenu` lowers, after resolving the
+three-person reference and κ, to `(Massify κ people)`. Applied to a committee
+it returns the canonical aggregate of the committee's current complete cover,
+not automatically the committee. `lu'a` of one group uses the partial
+`components_κ`; `lu'a` of one set uses its members; ordinary plural `lu'a`
+marks `Distrib`. `lu'i` forms the exact set of units at a resolved covering
+basis and is undefined without one (never an atomless-to-empty default).
+`vu'i` forms an ordered `List`; an intended order is one `Context` site, while
+a genuinely order-free use remains gap-registered.
+
+The following fragment begins after `le kamni` has supplied its resolved group
+reference and after κ has been resolved. It makes the contingency in the
+preceding prose explicit: the `lei` description ranges over any group complete
+over the three-person base, and identity with the independently selected
+committee is asserted rather than derived from that cover.
+
+```lisp
+; lei ci prenu du le kamni — fragment after resolving le kamni and κ
+{λ [[$κ :: DecompositionBasis (Group Entity) Entity]
+    [$committee :: Referents (Group Entity)]]
+  {Bind [$people :: Referents Entity]
+        (Local (SelectExactly 3 {λ [$x :: Entity]
+          (Close (skicu Speaker $x Audience
+            {λ [$y :: Referents Entity] (prenu $y)}))}))
+    {Bind [$described :: Referents (Group Entity)]
+          (Refer {λ [$g :: Group Entity]
+                   (CompleteGunmaAt $κ $g $people)})
+      (Assert (CoRef $described $committee))}}}
+```
+
+Canonical manufacture and the partial group-to-components crossing are
+separate operations:
+
+```lisp
+; lu'o le ci prenu — canonical aggregate of the selected people
+{Bind [$people :: Referents Entity]
+      (Local (SelectExactly 3 {λ [$x :: Entity]
+        (Close (skicu Speaker $x Audience
+          {λ [$y :: Referents Entity] (prenu $y)}))}))
+  {Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+    {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
+      (Mention $aggregate)}}}
+```
+
+```lisp
+; lu'a ri — fragment: components of the previously selected single group
+{λ [[$κ :: DecompositionBasis (Group Entity) Entity]
+    [$group :: Referents (Group Entity)]]
+  (Mention (components_κ $κ $group))}
+```
+
+The bridge `lu'o mi'o cu remei ≡ mi'o remei` is still not claimed: P40 now
+fixes `mi'o`'s plural side, while #24 still owns the missing positive
+plural-`MeiRel` instance needed for the right-hand form.
 
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]

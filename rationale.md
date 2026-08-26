@@ -230,7 +230,9 @@ never the set-object) are a plurality wearing set-notation clothing, and the
 clothing costs more than it carries — the plural axioms return as
 side conditions, the member-wise/object-wise distinction moves from
 the type system into per-place convention, and coverage is lost where
-Lojban is deliberately non-atomistic. (The familiar objection — "the
+Lojban is deliberately non-atomistic — a boundary motivated in part by
+guskant's Condition₁ not-individuals proof and cut-bread interpretation (see
+References). (The familiar objection — "the
 crowd can be large while the set is abstract" — attacks set-*object*
 predication, which no serious set-typed design proposes; this document
 does not lean on it.) **Why no distributivity/cover
@@ -320,6 +322,59 @@ does not settle performance roles, UI targeting, or transcript spans; those
 remain #6. Property rows with no declared contribution basis, `pe'e joi`, and
 `joi nai` likewise remain honest bounded gaps.
 
+**Canonical aggregate identity versus organizations.** Explicit `joi` and
+`lu'o` must succeed for arbitrary nonempty components and must not select one
+of several rival “bare aggregates” accidentally supplied by a model. The
+adopted answer is a primitive, rigid `Aggregate κ g` classification plus
+one-way rigidity (R), existence (E), within-class uniqueness (A), and local
+complete-cover functionality (F). `Massify` is the defined unique selection
+from that class. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
+to the canonical aggregate or to an independently individuated team, family,
+body, committee, or other organization whose complete current cover happens
+to be the same.
+
+Two countermodels fix the boundary. First, budget and ethics committees may
+have the same three members at one time and later diverge. Unrestricted
+same-cover uniqueness would identify them rigidly at the first time; after
+divergence one object would have two non-`CoRef` complete covers, contradicting
+(F). Second, an organization whose roster never changes can still differ from
+the bare aggregate of that roster (and from another same-roster organization)
+by charter, task, history, or legal identity. Defining “aggregate” as merely
+“has one cover at every observed situation” would collapse those objects and
+would make classification unstable when a model gains a new future or
+counterfactual situation. Hence the classification is primitive and the
+rigidity implication is one-way.
+
+This preserves both ordinary readings of “the same people on two committees”:
+one roster object may bear two committee roles, or two organizations may share
+a roster. `du` decides a model/context fact; membership coincidence alone does
+not. `lu'o` applied to an organization instead returns the canonical aggregate
+of its resolved current components and is not identity in general. Cross-basis
+identity likewise remains model-given.
+
+The historical record genuinely splits. Protin's 1991 aggregate/organism
+distinction inspired the organization boundary; LeChevalier's same-day
+universal-massifiability argument motivates (E), while his `lai lojbab.` body
+example supports persistent **described** wholes rather than mutable bare
+constructor outputs. The 1994 sumti-paper draft states the extensional
+candidate; Clifford's 2002 “intensional, with all the horrors” response exposes
+its identity/anaphora costs. Llambías' 1995 `re loi broda` puzzle exposes the
+counting problem, and Selckiku's 2011 pinkie-and-bug example supports arbitrary
+explicit aggregation without its proposed inheritance gloss. Bays and
+Llambías' 2011 exchange supplies both the complete-constituents reading and
+the need for first-order group objects when groups are quantified over. These
+sources motivate and test the project law; none independently ratifies it.
+
+Rejected alternatives are therefore: global or situation-local uniqueness
+over **all** groups (organization collapse); fully model-given manufacture
+(no success or identity guarantee for `joi`/`lu'o`); no group objects (loses
+outer counting, equality, anaphora, and nested partitions); distinct group
+sorts for aggregates and organizations (makes their possible identity
+ill-typed); and the rigid-cover biconditional (collapses permanent
+organizations). The cost of the adopted primitive classification is explicit
+model structure, but it is exactly the distinction the surface constructors
+need and is factored by both `joi` and `lu'o`.
+
 **Costs and source limits.** Contemporary CLL's clean group prose is partly
 this project's own amendment and cannot ratify the choice by itself. Original
 CLL supplies the blue/red and joint-cause phenomena but not a coherent
@@ -327,8 +382,99 @@ polymorphic model; the 2018 wiki proposals likewise assume the hard event/
 property realization step. The indexed interfaces are therefore a
 prescriptive construction justified by coverage and type discipline, not a
 claim that the sources already contained it. Complete constitution is exact
-relative to the selected base; #8 still owns whether a count-noun `Refer P`
-base itself excludes P-external residue without breaking mass terms.
+relative to the selected base; P39 now makes the base's own no-residue
+behavior part of its resolved lexical extension, without imposing a count
+profile on mass terms.
+
+### 1.7b Count and mass coverage: lexical extension, not descriptor repair
+
+The original defect was real: if `gerku(r)` at plural type were left wholly
+unconstrained, a model could make it true of three dogs plus a cat, while
+`CardBasis r gerku = 3` simply ignored the residue. `CoveredBy` closes that
+hole and remains meaningful without atoms: every subreference must overlap a
+P-unit, but a P-unit may itself be indefinitely divisible. Guskant's
+Condition₁ proof and cut-bread interpretation are the motivating witness for
+that second conjunct, not a proof of the project's lexical placement.
+
+Two placements were coherent. The rejected descriptor-specific repair made
+`lo R` select only `R(r) ∧ CoveredBy(unit_Rℓ,r)` while leaving nuclear
+`R(r)` weaker. The adopted lexical-extension repair makes the resolved `R_p`
+itself obey that equation wherever its lexicon place/reference mode declares
+a unit profile; `lo R` stays literally `Refer R_p`. The official dictionary
+and the BPFK gadri table both say `lo broda = zo'e noi broda`, so the
+descriptor-only alternative creates an unsupported asymmetry. It also buys
+nothing for collective heads: `lo bevri be lo pipno` may denote a team that
+carries the piano even when no member does, so such rows need their own direct
+plural condition under either design. Adding a descriptor layer on top merely
+duplicates the per-row distinction.
+
+The same point blocks a lexeme-wide count/mass Boolean. Official `nanba`
+means a quantity of **or container of** bread; substance portions can be
+cumulative and divisible, while container and kind modes have different
+units or direct plural conditions. The schema is therefore per place and
+resolved reference mode. Count profiles, cumulative substance profiles,
+singleton-container profiles, and direct collective/kind conditions are
+lexical alternatives, never a covert choice at application time. Actual row
+values remain #12 work.
+
+The factorization dividends are exact rather than rhetorical. All exporting
+cardinal selections use `CoveredBy` plus `CardBasis`, so dog-plus-cat and
+dog-plus-pack witnesses fail without forcing their nuclear predicate to be
+distributive. `MaxRefer` is inhabitedness plus `CoveredBy` plus the
+all-satisfiers conjunct. A collective nuclear scope remains neutral under P4.
+Kuna's plural-determiner architecture is comparative evidence that the
+ordinary plural predicate can serve as the restrictor; it does not decide
+Lojban.
+
+The cost is lexicon work and an explicit commitment: under a count profile,
+P-external residue makes both `ko'a R` and `lo R` fail. The rejected
+description-only placement reopens only if speakers accept the same resolved
+`R_p(r)` as nuclear predication while forbidding r specifically as a `lo R`
+referent. No such witness survived the design audit.
+
+### 1.7c Composite personal pro-sumti are plural, not constituted groups
+
+**Decision.** `mi'o` is `Combine Speaker Audience`: the same neutral plural
+argument as `mi jo'u do`. The sibling forms use the same construction with
+their token-relative “others” projections; the context constraints spell out
+the inclusion and exclusion facts instead of relying on English “we”. P4 then
+lets one lexical predication determine how that plurality satisfies it.
+
+The three nearby constructions are observably different. `mi .e do jmaji`
+connects two clauses and therefore says separately that the speaker gathers
+and the audience gathers; `mi'o jmaji` makes one collective predication of
+their combined plurality. `mi joi do` manufactures a first-order group. Under
+P5 no component property inherits to that group, so bare attested `mi'o
+remna` is the decisive carrier probe: the speaker and audience can be humans
+without the group object itself being human. Collective `casnu`/`jmaji` and
+reciprocal `simxu` examples do not discriminate the carriers, and the two
+`se cmene` examples are likewise compromised by collective naming and overt
+`ro`; the rationale does not overclaim them.
+
+The evidence is genuinely layered. Original CLL §7.2 explicitly says the
+forms are masses and equates `mi'o` with `mi joi do`; that is the coherent
+rejected alternative and the principal compatibility cost. Current CLL §7.2
+says `mi jo'u do`, but that sentence is this project's July 2026 amendment
+and cannot ratify the project. The official dictionary fixes speaker,
+listener, and others but no carrier ontology. Independent post-xorlo support
+comes from Llambías' 2004 “not marked either way for distributivity” remark
+and the 2013 Selpa'i/Assis/Clifford thread: `mi'o = mi jo'u do`, preference
+for `jo'u`, and united pluralities whose satisfaction mode remains open. The
+References entry gives exact Message-IDs and roles. The IRC `mi'o remna`
+tokens supply compatibility evidence, not a universal usage theorem.
+
+One composite pro-sumti remains one argument. Thus `mi'o klama` has one
+omitted destination retrieval, possibly returning a plural place value; it
+does not distribute the clause into speaker/listener journeys or pair each
+member with a separately recovered destination. That contrast belongs to the
+surface structure, not pragmatic pairing.
+
+**Cost and reopening.** This diverges from original CLL and requires three
+explicit “others” context projections. It does not solve positive `mi'o …
+mei`: #24 must add or reject a plural carrier instance without changing the
+pronoun. Reopen P40 only for ordinary unmarked uses that require properties of
+a constituted group which its members lack; collective or reciprocal plural
+predication and cardinality alone do not qualify.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -1276,6 +1422,23 @@ genuinely fought:
   the anchor vs the rounding preimage of the stated numeral (each
   nonempty by VC1) — so the underlying quantity is always the bound
   Number, never an unconstrained "true value".
+- **P39 (`CoveredBy` placement).** The dog-plus-cat countermodel requires a
+  no-residue law, but it does not justify making descriptions stricter than
+  predication. Official `lo` and the BPFK gadri equation identify the two;
+  collective heads independently require per-row plural semantics. The
+  adopted lexical-extension placement is therefore smaller and preserves the
+  xorlo identity. Guskant's Condition₁/cut-bread argument motivates the
+  atomless-safe overlap clause and cumulative mass profiles, not the placement
+  decision. Cost, rejected alternative, and reopening witness are recorded in
+  §1.7b.
+- **P40 (composite personal pro-sumti).** Original CLL's mass equation loses
+  on the no-inheritance probe: a group of humans is not thereby human, while
+  bare `mi'o remna` is attested. Neutral `Combine` supplies distributive,
+  collective, and reciprocal lexical satisfaction without equating one
+  argument to the two-clause `.e` form; explicit `joi` remains available for
+  a constituted group. The independent post-xorlo discussion converges on
+  this shape, while current CLL only records the project's own amendment.
+  Exact context constraints, costs, and reopening evidence are in §1.7c.
 
 ## 4. What would change our minds
 
