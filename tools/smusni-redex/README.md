@@ -74,3 +74,27 @@ racket tools/smusni-redex/extract.rkt --write
 ```
 
 Do not hand-edit generated corpus files.
+
+
+## Lowering-rule citations (#9 M1)
+
+`spec.md` §11 numbers every schema `Ln.m` and marks the kind of each: an
+unmarked rule is a lowering judgment (the F₀ population); *(gap)*, *(note)*,
+and *(reading)* rules are documented no-mappings, explanatory consequences,
+and resolved-reading decisions, never citable and never ledgered. The checker
+reads ids and kinds from the normative text, never from a copy. Specimens
+carry an `(origin "surface"|"core")` clause: a surface specimen lowers
+Lojban and must cite the judgments it instantiates as its focal claims (not
+every rule its sub-terms touch); a core fixture is a typed term authored
+directly in the core and cites nothing. Each specimen entry in
+`inventory/fences.sexp` carries a `(rules …)` clause naming the rules it
+instantiates, and `inventory/rule-coverage.sexp` ledgers every rule no
+specimen cites yet, each with the issue that owns the gap. The run fails on a
+specimen without citations, a citation of an unknown id, a rule that is
+neither cited nor ledgered, or a ledger entry for a rule that a specimen does
+cite. The ledger also carries a **ratchet** `(cited-floor N)`: the number of
+rules cited by specimens may never fall below it, and a commit that raises
+coverage must raise the floor, so ledgering a rule instead of writing its
+specimen is a failing move and any lowered floor is a visible diff. Citing a
+rule is a claim about the specimen; it is not checked semantically until #9
+M3.
