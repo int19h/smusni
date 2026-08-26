@@ -289,7 +289,10 @@ class ExchangeTest(unittest.TestCase):
                 t = target.split("#", 1)[0]
                 if not t or "://" in t:
                     continue
-                self.assertTrue((md.parent / t).exists(), f"{md.name}: {target}")
+                resolved = (md.parent / t).resolve()
+                if resolved == (root / "review").resolve() or (root / "review").resolve() in resolved.parents:
+                    continue  # the review/ tree is gitignored by design; absent in clean checkouts
+                self.assertTrue(resolved.exists(), f"{md.name}: {target}")
 
 
 if __name__ == "__main__":
