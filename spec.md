@@ -4559,7 +4559,8 @@ used for source verification are noted per entry.
   <https://mw.lojban.org/papri/joi> (2018 property/event extension proposals;
   architectural evidence, not a completed denotation).
 - **Lojban discussion archive** — local reproducible snapshot at
-  `/home/int19h.linux/git/lojban-disc`; rationale §1.7a cites the 2010
+  `~/lojban/disc` (a verified copy of the share's `~/git/lojban-disc`, moved
+  off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
   partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
   component-inheritance critique preserved in the mailing-list archive.
 - **Boolos** — Boolos, George, "To Be Is to Be a Value of a Variable

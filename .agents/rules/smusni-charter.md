@@ -51,5 +51,6 @@ the summary below never replaces it.
 
 - Lojban sources: `jbotci cukta` (Contemporary CLL), `jbotci vlacku`
   (dictionary), `jbotci gentufa` (parser); local archives under
-  `~/git/lojban-wiki` and `~/git/lojban-disc`; search with `rg`.
+  `~/lojban/wiki` and `~/lojban/disc` (local copies; never the `~/git/`
+  virtiofs originals); search with `rg`.
 - Checker: `tools/check-smusni` (and `--strict`) from the repository root.

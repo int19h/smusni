@@ -256,8 +256,14 @@ Prefer the local resources:
 
 - Contemporary CLL through `jbotci cukta` and `~/git/cll`;
 - dictionary definitions through `jbotci vlacku`;
-- `~/git/lojban-wiki`;
-- `~/git/lojban-disc` IRC and mailing-list archives.
+- `~/lojban/wiki` (the scraped mw.lojban.org text);
+- `~/lojban/disc` (IRC and mailing-list archives).
+
+The wiki and archive copies live under `~/lojban/` on the VM's own disk;
+the older `~/git/lojban-wiki` and `~/git/lojban-disc` are on a virtiofs
+share whose per-file overhead makes searching tens of thousands of small
+files slow and has stalled the share. Do not search or extract under those
+`~/git/` paths.
 
 Distinguish primary wording, later commentary, proposals, actual usage, and
 project inference. Search locally with `rg` before broad web research.
@@ -361,9 +367,9 @@ Use `jbotci cukta` to read an up-to-date version of the CLL or to run semantic s
 
 https://brismu.systems is "brismu: a relational interpretation of Lojban".
 
-~/git/lojban-wiki contains the entire text of mw.lojban.org fully scraped for convenient searching via grep etc.
+~/lojban/wiki contains the entire text of mw.lojban.org fully scraped for convenient searching via grep etc.
 
-~/git/lojban-disc contains Lojban IRC and mailing list archives that often contain past discussions of Lojban semantics.
+~/lojban/disc contains Lojban IRC and mailing list archives that often contain past discussions of Lojban semantics.
 
 None of these are to be considered strictly normative. They are provided as starting points, not as hard constraints. Divergence from CLL (in cukta edition) and guskant's xorlo treatment should always be motivated and have clearly reasoned justification, but it is well-known that CLL in particular is neither complete nor self-consistent so some divergence from it is not unexpected. Guskant's work, brismu, and various wiki references are all cited as a way to zero in on the preferred pick by picking the one with the strongest arguments in favor, but ultimately it is this project that makes the final decision. 
 
