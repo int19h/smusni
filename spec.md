@@ -979,9 +979,11 @@ group clause of `MeiRel` lower to `CompleteGunmaAt` (§11–§12).
 
 `Aggregate κ g` is the primitive, rigid model classification of a **bare
 aggregate device** at group basis κ. It is not inferred merely because an
-organization's membership happens never to change. The following laws hold
-at the situation of evaluation; `CompleteGunmaAt` gains no situation
-argument, because §5.7 already supplies the evaluation boundary:
+organization's membership happens never to change. Its interpretation is
+situation-invariant: `StateClause` and every other situation shift leave the
+classification unchanged. The following laws hold at the situation of
+evaluation; `CompleteGunmaAt` gains no situation argument, because §5.7
+already supplies the evaluation boundary:
 
 ```text
 (R) Aggregate κ g → ∃C. at every model situation s,
@@ -3254,7 +3256,7 @@ group constructions and collection crossings are:
 
 (Massify κ C) : RefComp<Referents<Group<T>>> ≝
   (SelectExactly 1
-    (λ {$g :: Group T} {(CanonicalAggregateAt κ $g C)}))
+    {λ [$g :: Group T] (CanonicalAggregateAt κ $g C)})
 
 components_κ : Group<T> ⇀ Referents<T>
 components_κ(g) = C exactly when CompleteGunmaAt κ g C

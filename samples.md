@@ -371,6 +371,47 @@ basis and is undefined without one (never an atomless-to-empty default).
 `vu'i` forms an ordered `List`; an intended order is one `Context` site, while
 a genuinely order-free use remains gap-registered.
 
+The following fragment begins after `le kamni` has supplied its resolved group
+reference and after κ has been resolved. It makes the contingency in the
+preceding prose explicit: the `lei` description ranges over any group complete
+over the three-person base, and identity with the independently selected
+committee is asserted rather than derived from that cover.
+
+```lisp
+; lei ci prenu du le kamni — fragment after resolving le kamni and κ
+{λ [[$κ :: DecompositionBasis (Group Entity) Entity]
+    [$committee :: Referents (Group Entity)]]
+  {Bind [$people :: Referents Entity]
+        (Local (SelectExactly 3 {λ [$x :: Entity] (prenu $x)}))
+    {Bind [$described :: Referents (Group Entity)]
+          (Refer {λ [$g :: Group Entity]
+                   (CompleteGunmaAt $κ $g $people)})
+      (Assert (CoRef $described $committee))}}}
+```
+
+Canonical manufacture and the partial group-to-components crossing are
+separate operations:
+
+```lisp
+; lu'o le ci prenu — canonical aggregate of the selected people
+{Bind [$people :: Referents Entity]
+      (Local (SelectExactly 3 {λ [$x :: Entity] (prenu $x)}))
+  {Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+    {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
+      (Mention $aggregate)}}}
+```
+
+```lisp
+; lu'a ri — fragment: components of the previously selected single group
+{λ [[$κ :: DecompositionBasis (Group Entity) Entity]
+    [$group :: Referents (Group Entity)]]
+  (Mention (components_κ $κ $group))}
+```
+
+The bridge `lu'o mi'o cu remei ≡ mi'o remei` is not claimed by this
+milestone: its surface agreement and `-mei` premises remain assigned to
+#22/#24.
+
 ```lisp
 ; lo'e mlatu cu cinri            [pin P11]
 (Assert

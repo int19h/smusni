@@ -27,10 +27,10 @@
   '(Every No Exactly AtLeast MoreThan Reciprocate CardBasis CoRef Named
           Realizes SpeakerOf EvidentialBasis Happiness Unhappiness Desire
           AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
-          Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Tanru Scalar
-          Grade JaiRaise DuhuRel NiRel SuhuRel JeiRel StructuredQuote
-          OpaqueQuote WordSign InterpretContent RealizedContent AmountValue
-          ZipWith))
+          Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Aggregate
+          CanonicalAggregateAt Tanru Scalar Grade JaiRaise DuhuRel NiRel
+          SuhuRel JeiRel StructuredQuote OpaqueQuote WordSign InterpretContent
+          RealizedContent AmountValue ZipWith))
 
 (define-language SmusniStatic
   [τ any])
@@ -437,6 +437,8 @@
           (raise-type node "Massify takes group basis and component reference"))
         (define basis (infer-core (first arguments) env inv))
         (define cover (infer-core (second arguments) env inv))
+        (ensure-compatible (first arguments) (typing-type basis)
+                           `(DecompositionBasis (Group ,inner) ,inner))
         (ensure-compatible (second arguments) (typing-type cover)
                            `(Referents ,inner))
         (merge-results expected (list basis cover) #:effects (set 'refer))]
@@ -943,9 +945,13 @@
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (match (typing-type (second results))
        [`(Group ,inner)
+        (ensure-compatible (first arguments) (typing-type (first results))
+                           `(DecompositionBasis (Group ,inner) ,inner))
         (merge-results `(Referents ,inner) results
                        #:obligations '(complete-group-cover-defined))]
        [`(Referents (Group ,inner))
+        (ensure-compatible (first arguments) (typing-type (first results))
+                           `(DecompositionBasis (Group ,inner) ,inner))
         (merge-results `(Referents ,inner) results
                        #:obligations '(sole-group-and-complete-cover-defined))]
        [other (raise-type (second arguments)

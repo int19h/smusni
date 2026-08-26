@@ -128,6 +128,21 @@
  '(Fn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
       (Referents Entity)))
 
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [$k :: Number]
+        {Bind [$g :: Referents (Group Entity)] (Massify $k Speaker)
+          (Mention $g)}}"))))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [[$k :: Number] [$g :: Group Entity]]
+        (components_κ $k $g)}"))))
+
 (check-equal?
  (typing-type
   (infer-text
