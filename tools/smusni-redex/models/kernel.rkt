@@ -7,6 +7,8 @@
 (provide kernel-results
          covered-by?
          refinement-stable?
+         kernel-law-failures
+         kernel-unknown-law-rejected?
          kernel-bounded-search)
 
 (struct kref (id units) #:transparent)
@@ -28,10 +30,9 @@
        (for/and ([unit (in-set reference)]) (predicate unit))))
 
 (define baseline
-  (law-profile 'baseline 'live-baseline '(aci among coref local-F)))
+  (law-profile 'baseline 'live-baseline '(aci among coref)))
 (define baseline+cj
-  (law-profile 'baseline+CJ 'rejected-alternative
-               '(aci among coref local-F CJ)))
+  (law-profile 'baseline+CJ 'comparative '(aci among coref CJ)))
 (define count-profile
   (law-profile 'count-CoveredBy 'human-adopted-pending-sync '(CoveredBy)))
 
@@ -41,12 +42,43 @@
     (kernel-fixture 'F-without-CJ (list left right)
                     (lambda (a b) (eq? (kref-id a) (kref-id b))))))
 
+(define (aci-holds? fixture)
+  (define refs (kernel-fixture-refs fixture))
+  (for*/and ([a refs] [b refs] [c refs])
+    (define ua (kref-units a))
+    (define ub (kref-units b))
+    (define uc (kref-units c))
+    (and (set=? (set-union ua ub) (set-union ub ua))
+         (set=? (set-union (set-union ua ub) uc)
+                (set-union ua (set-union ub uc)))
+         (set=? (set-union ua ua) ua))))
+
+(define (among-holds? fixture)
+  (define refs (kernel-fixture-refs fixture))
+  (define (among? a b) (subset? (kref-units a) (kref-units b)))
+  (and (for/and ([a refs]) (among? a a))
+       (for*/and ([a refs] [b refs] [c refs])
+         (or (not (and (among? a b) (among? b c))) (among? a c)))))
+
+(define (coref-holds? fixture)
+  (define refs (kernel-fixture-refs fixture))
+  (define relation (kernel-fixture-coref? fixture))
+  (and (for/and ([a refs]) (relation a a))
+       (for*/and ([a refs] [b refs])
+         (equal? (relation a b) (relation b a)))
+       (for*/and ([a refs] [b refs] [c refs])
+         (or (not (and (relation a b) (relation b c))) (relation a c)))))
+
 (define (kernel-law-failures fixture profile)
-  (append
-   (if (and (member 'CJ (law-profile-laws profile))
-            (not (cj-holds? fixture)))
-       '(CJ-cover-determination)
-       '())))
+  (for/list ([law (law-profile-laws profile)]
+             #:unless
+             (case law
+               [(aci) (aci-holds? fixture)]
+               [(among) (among-holds? fixture)]
+               [(coref) (coref-holds? fixture)]
+               [(CJ) (cj-holds? fixture)]
+               [else (error 'kernel-law-failures "unknown kernel law: ~a" law)]))
+    law))
 
 (define dog? (lambda (unit) (member unit '(dog1 dog2))))
 
@@ -78,6 +110,12 @@
      (make-result (car case) count-profile
                   (if (eq? (car case) 'dogs) 'accept 'reject)
                   (if (covered-by? dog? (cdr case)) '() '(CoveredBy))))))
+
+(define (kernel-unknown-law-rejected?)
+  (with-handlers ([exn:fail? (lambda (_) #t)])
+    (kernel-law-failures
+     same-units-distinct (law-profile 'bad 'live-baseline '(nonsense)))
+    #f))
 
 ;; Exhaust all two-reference unit assignments over two units. This is a real
 ;; bounded result about the stated signature, not an atomless claim.

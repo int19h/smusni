@@ -16,12 +16,18 @@
                       (model-result-model result)
                       (law-profile-name (model-result-profile result)))))
 
+(check-true (kernel-unknown-law-rejected?))
+(check-true (constitution-unknown-law-rejected?))
+(check-true (contribution-unknown-law-rejected?))
+
 (check-false (covered-by? (lambda (x) (eq? x 'dog)) (set 'dog 'cat)))
 (check-true (refinement-stable? (lambda (x) (member x '(dog1 dog2)))
                                 (set 'dog1 'dog2)))
 (check-true (refinement-stable? (lambda (x) (member x '(dog1 dog2)))
                                 (set 'dog1 'cat)))
 (check-true (proper-refinement-witness? (dyadic-interval 0 1)))
+(check-true (mass-covered-by-witness? (dyadic-interval 0 1) (lambda (_) #t)))
+(check-false (distrib-only-witness? '() (lambda (_) #t)))
 (check-equal? (hash-ref (constitution-bounded-search) 'structures) 16)
 (check-equal? (hash-ref (contrast-bounded-search) 'structures) 512)
 (check-true

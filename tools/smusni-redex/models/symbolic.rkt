@@ -2,7 +2,9 @@
 
 (provide (struct-out dyadic-interval)
          split-interval
-         proper-refinement-witness?)
+         proper-refinement-witness?
+         mass-covered-by-witness?
+         distrib-only-witness?)
 
 (struct dyadic-interval (lo hi) #:transparent)
 
@@ -26,3 +28,13 @@
        (< (- (dyadic-interval-hi right) (dyadic-interval-lo right))
           (- (dyadic-interval-hi interval) (dyadic-interval-lo interval)))))
 
+;; A cumulative mass unit predicate applies to every portion produced by the
+;; constructive splitter; no atom list is required. The comparison rule is
+;; deliberately unavailable when an atomistic member list is empty.
+(define (mass-covered-by-witness? interval unit-predicate)
+  (define-values (left right) (split-interval interval))
+  (and (unit-predicate interval) (unit-predicate left) (unit-predicate right)
+       (proper-refinement-witness? interval)))
+
+(define (distrib-only-witness? atomic-members unit-predicate)
+  (and (pair? atomic-members) (andmap unit-predicate atomic-members)))

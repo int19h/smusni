@@ -18,7 +18,7 @@
   (define failed (filter (lambda (result) (not (result-ok? result)))
                          all-model-results))
   (for ([status '(live-baseline human-adopted-pending-sync reviewer-consensus
-                                rejected-alternative)])
+                                comparative rejected-alternative)])
     (define rows
       (filter (lambda (result)
                 (eq? (law-profile-decision-status (model-result-profile result))
@@ -41,14 +41,20 @@
                (refinement-stable? (lambda (x) (member x '(dog1 dog2)))
                                    (set 'dog1 'cat))))
   (printf "bounded constitution search: ~a\n" (constitution-bounded-search))
-  (printf "bounded contrast search: ~a\n" (contrast-bounded-search))
+  (printf "bounded contrast search (cell/opposite/between varied; involution and symmetry fixed by construction): ~a\n"
+          (contrast-bounded-search))
   (define symbolic-ok?
     (for/and ([interval (list (dyadic-interval 0 1)
                               (dyadic-interval 1/4 3/4)
                               (dyadic-interval -2 6))])
       (proper-refinement-witness? interval)))
-  (printf "symbolic divisible-interval witness: ~a\n" symbolic-ok?)
-  (and (null? failed) symbolic-ok?))
+  (define mass-covered?
+    (mass-covered-by-witness? (dyadic-interval 0 1) (lambda (_) #t)))
+  (define atomistic-distrib-available?
+    (distrib-only-witness? '() (lambda (_) #t)))
+  (printf "symbolic divisible mass witness: CoveredBy=~a Distrib-only-available=~a\n"
+          mass-covered? atomistic-distrib-available?)
+  (and (null? failed) mass-covered? (not atomistic-distrib-available?)))
 
 (module+ main
   (exit (if (run-model-bank) 0 1)))

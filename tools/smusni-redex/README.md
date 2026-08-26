@@ -55,6 +55,8 @@ The model bank prints decision status before every verdict:
   synchronized;
 - `reviewer-consensus` tests a peer-settled proposal still awaiting the
   human/adoption or baseline edit recorded by its issue;
+- `comparative` tests a still-live alternative profile without treating it
+  as either baseline or rejected;
 - `rejected-alternative` is expected to reject its discriminating model.
 
 A green result in any non-baseline profile is evidence about that encoding,

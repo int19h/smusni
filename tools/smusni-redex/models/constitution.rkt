@@ -4,7 +4,8 @@
          racket/set
          "common.rkt")
 
-(provide constitution-results constitution-bounded-search)
+(provide constitution-results constitution-bounded-search constitution-law-failures
+         constitution-unknown-law-rejected?)
 
 (struct whole-model (name situations groups aggregate? covers required) #:transparent)
 (struct basis-fixture (name operand-units combined-units peer-units null-unit)
@@ -38,10 +39,10 @@
       (not (set-coref? c1 c2)))))
 
 (define (rigid-cover? model group)
-  (define covers
-    (append-map (lambda (s) (covers-at model s group))
-                (whole-model-situations model)))
-  (and (pair? covers)
+  (define per-situation
+    (for/list ([s (whole-model-situations model)]) (covers-at model s group)))
+  (define covers (append* per-situation))
+  (and (andmap pair? per-situation)
        (for/and ([cover covers]) (set-coref? cover (first covers)))))
 
 (define (law-R model)
@@ -50,8 +51,13 @@
     (rigid-cover? model g)))
 
 (define (law-E model)
-  (for/and ([required (whole-model-required model)])
-    (match-define (list situation cover) required)
+  (define occurring-covers
+    (remove-duplicates
+     (append-map (lambda (covers) covers)
+                 (hash-values (whole-model-covers model)))
+     set-coref?))
+  (for*/and ([situation (whole-model-situations model)]
+             [cover occurring-covers])
     (for/or ([g (whole-model-groups model)])
       (and ((whole-model-aggregate? model) g)
            (for/or ([actual (covers-at model situation g)])
@@ -64,7 +70,7 @@
 (define live-profile
   (law-profile 'constitution-live 'live-baseline '(F)))
 (define consensus-profile
-  (law-profile 'canonical-aggregate 'reviewer-consensus '(F R E A)))
+  (law-profile 'canonical-aggregate 'human-adopted-pending-sync '(F R E A)))
 (define unrestricted-profile
   (law-profile 'unrestricted-U 'rejected-alternative '(F U)))
 (define biconditional-profile
@@ -73,6 +79,12 @@
 (define basis-profile
   (law-profile 'constitution-basis 'live-baseline
                '(operand-respect null-absorption)))
+(define a-only-profile
+  (law-profile 'canonical-A-negative 'human-adopted-pending-sync '(A)))
+(define r-only-profile
+  (law-profile 'canonical-R-negative 'human-adopted-pending-sync '(R)))
+(define e-only-profile
+  (law-profile 'canonical-E-negative 'human-adopted-pending-sync '(E)))
 
 (define (basis-failures fixture)
   (append
@@ -99,10 +111,12 @@
 
 (define coincidence
   (whole-model
-   'coincidence-then-divergence '(t1 t2) '(aggregate budget ethics)
-   (lambda (g) (eq? g 'aggregate))
-   (hash (cover-key 't1 'aggregate) (list c1)
-         (cover-key 't2 'aggregate) (list c1)
+   'coincidence-then-divergence '(t1 t2) '(aggregate1 aggregate2 budget ethics)
+   (lambda (g) (member g '(aggregate1 aggregate2)))
+   (hash (cover-key 't1 'aggregate1) (list c1)
+         (cover-key 't2 'aggregate1) (list c1)
+         (cover-key 't1 'aggregate2) (list c2)
+         (cover-key 't2 'aggregate2) (list c2)
          (cover-key 't1 'budget) (list c1)
          (cover-key 't2 'budget) (list c1)
          (cover-key 't1 'ethics) (list c1)
@@ -122,14 +136,37 @@
    'one-group-two-covers '(t1) '(g) (lambda (_) #f)
    (hash (cover-key 't1 'g) (list c1 c2)) '()))
 
-(define (failures model profile)
+(define a-violator
+  (whole-model
+   'two-aggregates-one-cover '(t1) '(a1 a2) (lambda (_) #t)
+   (hash (cover-key 't1 'a1) (list c1)
+         (cover-key 't1 'a2) (list c1)) '()))
+
+(define r-violator
+  (whole-model
+   'aggregate-cover-diverges '(t1 t2) '(a) (lambda (_) #t)
+   (hash (cover-key 't1 'a) (list c1)
+         (cover-key 't2 'a) (list c2)) '()))
+
+(define r-missing-cover
+  (whole-model
+   'aggregate-cover-missing '(t1 t2) '(a) (lambda (_) #t)
+   (hash (cover-key 't1 'a) (list c1)) '()))
+
+(define e-violator
+  (whole-model
+   'cover-without-aggregate '(t1) '(organization) (lambda (_) #f)
+   (hash (cover-key 't1 'organization) (list c1)) '()))
+
+(define (constitution-law-failures model profile)
   (for/list ([law (law-profile-laws profile)]
              #:unless
              (case law
                [(F) (law-F model)] [(U) (law-U model)] [(A) (law-A model)]
                [(R) (law-R model)] [(E) (law-E model)]
                [(biconditional) (law-biconditional model)]
-               [else #t]))
+               [else (error 'constitution-law-failures
+                            "unknown constitution law: ~a" law)]))
     law))
 
 (define constitution-results
@@ -141,15 +178,29 @@
    (make-result 'hold-top-absorbable basis-profile 'accept
                 (basis-failures absorbable-null))
    (make-result 'one-group-two-covers live-profile 'reject
-                (failures f-violator live-profile))
+                (constitution-law-failures f-violator live-profile))
+   (make-result 'two-aggregates-one-cover a-only-profile 'reject
+                (constitution-law-failures a-violator a-only-profile))
+   (make-result 'aggregate-cover-diverges r-only-profile 'reject
+                (constitution-law-failures r-violator r-only-profile))
+   (make-result 'aggregate-cover-missing r-only-profile 'reject
+                (constitution-law-failures r-missing-cover r-only-profile))
+   (make-result 'cover-without-aggregate e-only-profile 'reject
+                (constitution-law-failures e-violator e-only-profile))
    (make-result 'coincidence-then-divergence consensus-profile 'accept
-                (failures coincidence consensus-profile))
+                (constitution-law-failures coincidence consensus-profile))
    (make-result 'coincidence-then-divergence unrestricted-profile 'reject
-                (failures coincidence unrestricted-profile))
+                (constitution-law-failures coincidence unrestricted-profile))
    (make-result 'permanent-organizations consensus-profile 'accept
-                (failures permanent consensus-profile))
+                (constitution-law-failures permanent consensus-profile))
    (make-result 'permanent-organizations biconditional-profile 'reject
-                (failures permanent biconditional-profile))))
+                (constitution-law-failures permanent biconditional-profile))))
+
+(define (constitution-unknown-law-rejected?)
+  (with-handlers ([exn:fail? (lambda (_) #t)])
+    (constitution-law-failures
+     coincidence (law-profile 'bad 'live-baseline '(nonsense)))
+    #f))
 
 ;; Enumerate the 16 two-group/two-situation choices between c1 and c2 and
 ;; report exactly how often F/U hold. Group identity remains intensional.
