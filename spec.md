@@ -2104,7 +2104,7 @@ is a λ, not a computation:
 
 (The entry notation ascribes the token *sort*; the definition binds at
 the singleton-lifted reference type, §3.2 — specimens keep the sort
-spelling.) The following projections serve utterance anaphora (§11 L8.8):
+spelling.) The following projections serve utterance anaphora (§11 L8.8–L8.9):
 
 ```text
 RealizedAct<F> : Referents<UtteranceToken> ⇀ Act<F>
