@@ -876,6 +876,20 @@
           (raise-type node "Distrib property/reference type mismatch"))
         (merge-results 'Content (list property reference))]
        [(left right) (raise-type node "Distrib types are incompatible: ~e, ~e" left right)])]
+    [(eq? head 'CoveredBy)
+     (unless (= (length arguments) 2)
+       (raise-type node "CoveredBy takes a pure unit property and reference"))
+     (define property (infer-core (first arguments) env inv))
+     (define reference (infer-core (second arguments) env inv))
+     (match* ((typing-type property) (typing-type reference))
+       [(`(Fn (,domain) Content) `(Referents ,inner))
+        (unless (pure-typing? property)
+          (raise-type (first arguments) "CoveredBy unit property must be pure"))
+        (unless (type-compatible? inner domain)
+          (raise-type node "CoveredBy property/reference type mismatch"))
+        (merge-results 'Content (list property reference))]
+       [(left right)
+        (raise-type node "CoveredBy types are incompatible: ~e, ~e" left right)])]
     [(member head '(Every No Exactly AtLeast MoreThan))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results 'Content results)]

@@ -266,6 +266,29 @@ no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (though its
 selected witness stays referable — §5 below); `lo` introduces with no
 quantificational force at all.
 
+`lo R` remains literally `Refer R`; where R's resolved lexical mode declares
+a unit profile, its plural extension already includes `CoveredBy`. The
+atomless witness motivating that condition can be displayed directly. The
+first conjunct says the bread is covered by cumulative bread units; the second
+is guskant's Condition₁ — every subreference has a proper subreference, so no
+atomic member basis is available:
+
+```lisp
+; atomless bread reference — CoveredBy succeeds without atomic members [P39]
+{λ [[$bread :: Referents Entity]
+    [$breadUnit :: Fn (Entity) Content]]
+  (∧ (CoveredBy $breadUnit $bread)
+     (∀ {λ [$r :: Referents Entity]
+       (→ (Among $r $bread)
+          (∃ {λ [$s :: Referents Entity]
+            (∧ (Among $s $r) (¬ (Among $r $s)))}))}))}
+```
+
+An atomic count profile is the familiar special case: a selected dog witness
+containing a cat or a pack object fails `CoveredBy(dogUnit, ·)`. A collective
+predicate such as `jmaji` need not declare that profile and is not silently
+distributed.
+
 ```lisp
 ; lo mlatu na jbena — the referent scopes outside negation
 {Bind [$cat :: Referents Entity]
@@ -329,8 +352,9 @@ partial-friendly layer:
 Neither object unwraps to its members implicitly. A maximal all-dogs base is
 available only when context or explicit `ro`/`MaxRefer` supplies it; bare
 collection gadri do not force it. `CompleteGunmaAt` says there is no peer
-component beyond `$base`; the separate §14/#8 `CoveredBy` gap asks whether
-the base property's own count/mass satisfaction can contain external residue.
+component beyond `$base`; P39 separately makes a count-profile base
+`CoveredBy` its declared units, while cumulative mass and other reference
+modes keep their own exact lexical extension.
 The `Local` boundary is independently observable: in CLL 6.52
 `lo'i ratcu cu barda .i ku'i lu'a ri cmalu`, `ri` resolves to `$sets`, never
 to the lowering-internal `$base`.
@@ -382,7 +406,9 @@ committee is asserted rather than derived from that cover.
 {λ [[$κ :: DecompositionBasis (Group Entity) Entity]
     [$committee :: Referents (Group Entity)]]
   {Bind [$people :: Referents Entity]
-        (Local (SelectExactly 3 {λ [$x :: Entity] (prenu $x)}))
+        (Local (SelectExactly 3 {λ [$x :: Entity]
+          (Close (skicu Speaker $x Audience
+            {λ [$y :: Referents Entity] (prenu $y)}))}))
     {Bind [$described :: Referents (Group Entity)]
           (Refer {λ [$g :: Group Entity]
                    (CompleteGunmaAt $κ $g $people)})
@@ -395,7 +421,9 @@ separate operations:
 ```lisp
 ; lu'o le ci prenu — canonical aggregate of the selected people
 {Bind [$people :: Referents Entity]
-      (Local (SelectExactly 3 {λ [$x :: Entity] (prenu $x)}))
+      (Local (SelectExactly 3 {λ [$x :: Entity]
+        (Close (skicu Speaker $x Audience
+          {λ [$y :: Referents Entity] (prenu $y)}))}))
   {Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
     {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
       (Mention $aggregate)}}}

@@ -380,8 +380,55 @@ polymorphic model; the 2018 wiki proposals likewise assume the hard event/
 property realization step. The indexed interfaces are therefore a
 prescriptive construction justified by coverage and type discipline, not a
 claim that the sources already contained it. Complete constitution is exact
-relative to the selected base; #8 still owns whether a count-noun `Refer P`
-base itself excludes P-external residue without breaking mass terms.
+relative to the selected base; P39 now makes the base's own no-residue
+behavior part of its resolved lexical extension, without imposing a count
+profile on mass terms.
+
+### 1.7b Count and mass coverage: lexical extension, not descriptor repair
+
+The original defect was real: if `gerku(r)` at plural type were left wholly
+unconstrained, a model could make it true of three dogs plus a cat, while
+`CardBasis r gerku = 3` simply ignored the residue. `CoveredBy` closes that
+hole and remains meaningful without atoms: every subreference must overlap a
+P-unit, but a P-unit may itself be indefinitely divisible. Guskant's
+Condition₁ proof and cut-bread interpretation are the motivating witness for
+that second conjunct, not a proof of the project's lexical placement.
+
+Two placements were coherent. The rejected descriptor-specific repair made
+`lo R` select only `R(r) ∧ CoveredBy(unit_Rℓ,r)` while leaving nuclear
+`R(r)` weaker. The adopted lexical-extension repair makes the resolved `R_p`
+itself obey that equation wherever its lexicon place/reference mode declares
+a unit profile; `lo R` stays literally `Refer R_p`. The official dictionary
+and the BPFK gadri table both say `lo broda = zo'e noi broda`, so the
+descriptor-only alternative creates an unsupported asymmetry. It also buys
+nothing for collective heads: `lo bevri be lo pipno` may denote a team that
+carries the piano even when no member does, so such rows need their own direct
+plural condition under either design. Adding a descriptor layer on top merely
+duplicates the per-row distinction.
+
+The same point blocks a lexeme-wide count/mass Boolean. Official `nanba`
+means a quantity of **or container of** bread; substance portions can be
+cumulative and divisible, while container and kind modes have different
+units or direct plural conditions. The schema is therefore per place and
+resolved reference mode. Count profiles, cumulative substance profiles,
+singleton-container profiles, and direct collective/kind conditions are
+lexical alternatives, never a covert choice at application time. Actual row
+values remain #12 work.
+
+The factorization dividends are exact rather than rhetorical. All exporting
+cardinal selections use `CoveredBy` plus `CardBasis`, so dog-plus-cat and
+dog-plus-pack witnesses fail without forcing their nuclear predicate to be
+distributive. `MaxRefer` is inhabitedness plus `CoveredBy` plus the
+all-satisfiers conjunct. A collective nuclear scope remains neutral under P4.
+Kuna's plural-determiner architecture is comparative evidence that the
+ordinary plural predicate can serve as the restrictor; it does not decide
+Lojban.
+
+The cost is lexicon work and an explicit commitment: under a count profile,
+P-external residue makes both `ko'a R` and `lo R` fail. The rejected
+description-only placement reopens only if speakers accept the same resolved
+`R_p(r)` as nuclear predication while forbidding r specifically as a `lo R`
+referent. No such witness survived the design audit.
 
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
@@ -1329,6 +1376,15 @@ genuinely fought:
   the anchor vs the rounding preimage of the stated numeral (each
   nonempty by VC1) — so the underlying quantity is always the bound
   Number, never an unconstrained "true value".
+- **P39 (`CoveredBy` placement).** The dog-plus-cat countermodel requires a
+  no-residue law, but it does not justify making descriptions stricter than
+  predication. Official `lo` and the BPFK gadri equation identify the two;
+  collective heads independently require per-row plural semantics. The
+  adopted lexical-extension placement is therefore smaller and preserves the
+  xorlo identity. Guskant's Condition₁/cut-bread argument motivates the
+  atomless-safe overlap clause and cumulative mass profiles, not the placement
+  decision. Cost, rejected alternative, and reopening witness are recorded in
+  §1.7b.
 
 ## 4. What would change our minds
 

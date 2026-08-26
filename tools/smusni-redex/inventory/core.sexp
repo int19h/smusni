@@ -134,6 +134,7 @@
   (form EventOfContent primitive special O generic "spec §9.3")
   (form Generic primitive special O surface "spec §5.8")
   (form Distrib defined special O generic "spec §12")
+  (form CoveredBy defined special O generic "spec §4.8")
   (form Every defined special O surface "spec §12")
   (form No defined special O surface "spec §12")
   (form Exactly defined special O surface "spec §12")

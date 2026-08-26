@@ -143,6 +143,26 @@
      "{λ [[$k :: Number] [$g :: Group Entity]]
         (components_κ $k $g)}"))))
 
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [[$p :: Fn (Entity) Content] [$r :: Referents Entity]]
+       (CoveredBy $p $r)}")))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [[$p :: EFn (Entity) Content] [$r :: Referents Entity]]
+        (CoveredBy $p $r)}"))))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [[$p :: Fn (Eventuality) Content] [$r :: Referents Entity]]
+        (CoveredBy $p $r)}"))))
+
 (check-equal?
  (typing-type
   (infer-text

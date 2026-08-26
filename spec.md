@@ -797,8 +797,27 @@ extraction**: for a pure `P : Fn<(T), Content>`,
 counting units *under a description* within a reference (pin P1's
 source-licensed unit basis).
 
-That is the whole plural kernel. No atoms are assumed (nothing requires
-that references bottom out in singletons), no distributivity operator is
+For a pure unit property `P : Fn<(T), Content>`, the defined no-residue
+condition is:
+
+```text
+(CoveredBy P r) ≝
+  (∧ (Distrib P r)
+     (∀ {λ [$r2 :: Referents T]
+       (→ (Among $r2 r)
+          (∃ {λ [$x :: T]
+            (∧ (P $x) (Overlap $x $r2))}))}))
+```
+
+Thus every represented unit satisfies P and every subreference overlaps some
+P-unit. The second conjunct is substantive when a reference has no atomic
+bottom: it excludes residue without requiring P-units themselves to be atoms.
+`Overlap` and `Distrib` are the §12 definitions. Selection witnesses and the
+lexical unit profiles of §10 use this one condition (P39).
+
+That is the whole plural kernel. No atoms are assumed: nothing requires
+references to bottom out in singletons, and guskant's Condition₁ proof and
+divisible-bread reading motivated that boundary. No distributivity operator is
 covert, and no cover parameter attaches to predication: a lexical
 predicate applied to a plural reference holds or fails of that plurality,
 and which configurations verify it is the predicate's lexical business
@@ -1504,7 +1523,7 @@ SelectSome P      ≝ SelectAtLeast 1 P       ; ≥ 1 (su'o) — defined
 ```
 
 (restrictor `P` pure). The witness laws: a selection's witness `w`
-satisfies `(Distrib P w)` and `(= (CardBasis w P) n)` (`SelectExactly`)
+satisfies `(CoveredBy P w)` and `(= (CardBasis w P) n)` (`SelectExactly`)
 or `(≤ n (CardBasis w P))` (`SelectAtLeast`); and the **dependence
 law**: under governing binders, a selection introduces one witness per
 value of the governors (where `Refer` introduces a single
@@ -2633,7 +2652,8 @@ must provide for the core to interpret predications over it:
 | defaultability | per place: whether closure (§4.6) may introduce a `Context` there; non-defaultable places must be filled or abstracted |
 | scope policy | per place: extensional / intensional / opaque (§5.7) |
 | situation behavior | whether the relation/value projection is rigid or is evaluated relative to a surrounding `StateClause` situation (§5.7); physical value-bearing entries must declare this, while numeric constants and arithmetic are rigid |
-| plurality behavior | optional, per place: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). Two independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed, denied, or left undeclared; the values state lexical entailments of the word, never a reading parameter (P4) |
+| plurality behavior | per place and resolved reference mode: how the relation composes with plural arguments — lexical knowledge, never a covert operator (§4.8). A place either declares the pure unit profile below or supplies its exact direct plural condition; silence is not permission for a model-chosen reading. Two further independent facts may be declared per place: **subreference-monotone** (satisfaction is preserved under subreference — `Among r' r` and `P … r …` entail `P … r' …` at that place; the pluralization of Eberban's subset-monotonicity star) and **collective-capable** (jointly satisfiable configurations are admissible). Either may be affirmed or denied where its lexical entailment is known (P4, P39) |
+| unit profile | optional, per place and resolved reference mode: a pure `unit_Rℓ : Fn<(T), Content>`. With every other operand fixed and every non-head retrieval hoisted, the resulting pure lexical property `R_p` obeys `R_p(r) ↔ CoveredBy(unit_Rℓ, r)`. For an ordinary count profile, `unit_Rℓ` is the freely interpreted singleton restriction of `R_p`; the equation then determines larger plural references rather than recursively defining the singleton base. Cumulative/divisible substance units, singleton-container units, and other licensed unit notions state their own property. A collective, kind-like, or otherwise directly plural mode instead omits this field and supplies its exact ordinary plural truth condition. The alternatives are lexical data, not readings chosen at application time; per-row values remain the lexicon programme's obligation (#12) |
 | constitution behavior | for a whole/component row or a `joi`-compatible result: the pure admissible-basis constraint; group/event bases declare peer granularity and, for events, trace/role-participant/causal/actuality aggregation; a property row declares its `ContributionBasis<ρ>` `MixAt`/`ContributesAt` instance. Absence means the corresponding constitution reading is unmapped, never model-chosen (§4.9) |
 | deletions | which `DropPlace` deletions are meaningful, with the deleted role's semantic characterization (§4.3) |
 | degree | optional: for gradable entries, the graded place label ℓ and degree projection `deg_R` consumed by `Grade` (§6.4) |
@@ -2736,8 +2756,12 @@ quotation and content abstractions are inert — `lo nu ko klama`
 constructs content, commands nothing (pin P27); CLL 14.13's
 obedience gloss is a remark, not machinery.
 
-**Descriptions** (P1, P10, P11). `lo P` → `(Refer P)`, veridical,
-number-neutral. `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)`
+**Descriptions** (P1, P10, P11, P39). `lo P` → `(Refer P)`, literally:
+veridical and number-neutral, with no second description-only condition. Where
+the resolved lexical place declares a unit profile, P already has §10's
+`CoveredBy` plural extension; collective, kind-like, and substance modes use
+their own declared lexical extensions. `le P` → `Refer` via
+`skicu(Speaker, ·, Audience, P)`
 with the anchoring clause — the describing event is this utterance's own
 locution. The anchored reference property, in full, conjoins the
 locution fact at the utterance's own token u₀ (the `dei` value, §7.4):
@@ -2771,9 +2795,9 @@ selected dogs, not necessarily all dogs, but the hidden dog reference does
 not become a second antecedent: in CLL 6.52 `ri` denotes the set. The maximal
 reading remains available when context selects that base or when explicit
 `ro`/`MaxRefer` requires it; bare collection gadri do not add it. Completeness
-here forbids components beyond the selected base; the still-open
-count/mass `CoveredBy` question (§14) separately asks what makes a veridical
-P-base itself free of P-external residue. Inner PA →
+here forbids components beyond the selected base; whether the base itself has
+external residue is already decided by its resolved lexical extension (P39).
+Inner PA →
 unit count of the selected base (`CardBasis`); outer PA → witness-set
 selection / subreference selection (P1, §4.10). Inner `no` → the
 zero-count schema, never `Refer` (special case, P22). A leading possessor sumti
@@ -3207,9 +3231,9 @@ ordinary export:
 
 ```text
 (SelectAllBut n P) : RefComp<Referents<T>>   ; witness law:
-   ; (∧ (Distrib P w)
+   ; (∧ (CoveredBy P w)
    ;    (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Among $x w)))}))) n))
-   ; — the witness satisfies P member-wise AND leaves exactly n
+   ; — the witness is P-covered without residue AND leaves exactly n
    ; P-individuals behind, spelled by comprehension: the plural kernel
    ; has no difference operator and needs none. Which individuals are
    ; left out is not a semantic parameter (neutral witness selection,
@@ -3342,11 +3366,8 @@ so the `fa'u` specimen expands completely:
 (MaxRefer P)    : RefComp<Referents<T>> ≝
   (Presuppose (∃ P)                       ; defined only when P is
     (Refer (λ {$r :: Referents T}          ; inhabited
-      {(∧ (Distrib P $r)
-          (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))}))
-          (∀ (λ {$r2 :: Referents T}
-               {(→ (Among $r2 $r)
-                   (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r2))})))})))})))
+      {(∧ (CoveredBy P $r)
+          (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))})))})))
                 ; all P-satisfiers, only P-covered parts: every unit is P,
                 ; every P-satisfier is Among it, and every subreference
                 ; overlaps a P-unit (no atomless residue) — the maximal
@@ -4074,6 +4095,19 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   Lojban: CLL 11.6 records it as an unestablished proposal, preserved in the
   gap register for possible future adoption only through a new evidence-backed
   pin.
+- **P39** `lo R` remains literally `(Refer R_p)`: description satisfaction
+  is the ordinary resolved lexical property, never a second stronger
+  description-only predicate. For each place and reference mode, the lexicon
+  either declares a pure unit profile and fixes the plural extension by
+  `R_p(r) ↔ CoveredBy(unit_Rℓ, r)`, or supplies the mode's exact direct
+  plural condition (collective, kind-like, substance, or otherwise). The
+  choice is lexical data, not a covert reading parameter. Selection witnesses
+  use `CoveredBy`; `MaxRefer` adds only inhabitedness and the all-satisfiers
+  conjunct. The rejected alternative strengthened `lo` alone; it duplicated
+  lexical truth conditions, contradicted official/BPFK
+  `lo broda = zo'e noi broda`, and mishandled collective heads. Reopens only
+  on a supported case where the same resolved `R_p(r)` is true in nuclear
+  predication but r must nevertheless be unavailable specifically to `lo R`.
 
 ## 14. Gap register
 
@@ -4145,15 +4179,6 @@ approximate:
   performed occurrences unless the semantics explicitly performs them; #6
   owns those laws. Exact tag/facet `joi` over an already shared event remains
   ordinary `∧`.
-- **Description `CoveredBy` boundary.** `Refer P` currently requires the
-  selected reference itself to satisfy P but has no separately typed
-  count/mass coverage condition. Consequently the constitution work can say
-  that `loi P` has no component beyond its selected base, but cannot yet prove
-  that a count-noun base has no P-external residue (the dog-plus-cat test)
-  without imposing an atomistic rule that would break divisible substances.
-  GitHub #8 owns the `CoveredBy P r` interface, lexical count/mass boundary,
-  and its pin. This gap does not reopen the non-maximal-base or `Local`
-  decisions.
 - **Zero-member `MeiRel` / `nomei`.** The positive-n `MeiRel κ n` definition
   uses a nonempty maximal member reference, as its x3 and the adopted
   `Referents<T>` component carrier require. The experimental dictionary entry
@@ -4281,7 +4306,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | indicators, evidentials, discursives, COI, `na'i` | §11 ¶9 | discourse relations, focus, objection, COI schemas | — | §7 |
 | quotation, signs, letterals | §11 ¶10 | sign constructors | — | §10 |
 | MEX | §11 ¶10 | `te'a`, `gei`, indexing, `Interval`, the conversion crossings, numeral schemas (`ji'i`, `da'a`, punctuation) | bases, arrays, indefinite operators, general `mo'e`, joik-connected mekso operands | §10 |
-| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis rows, compound ijoik performance; count/mass `CoveredBy` | §3, §5 |
+| plurality, masses, reciprocals | §4.8–4.9, §11 ¶2 | `CoveredBy`, `lu'a`, `Reciprocate` (`simxu`/`soi`), `GunmaAt`/`CompleteGunmaAt`, `JoiGroup`/`JoiEvent`/`JoiPred`/`JoiTanru`/`JoiClause` | `joi nai`, `pe'e joi`, missing contribution-basis and per-row unit-profile data, compound ijoik performance | §3, §5 |
 | prenex, topic, imperative, vocative | §11 ¶1a | `Topic`/`TopicAdmissible`, `RealizedAct`/`ActContent`/`RealizedContent` and occurrence capture (§7.1–7.4) | cross-clausal topic place-linking | — |
 | associators, `zi'e`, `vu'o`, `me`, MOI, group/set gadri | §11 ¶2–3, ¶10 | `MePred`, the MOI families | — | — |
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 ¶6, §7.2 | `EnumerationOrdinal` | — | — |
@@ -4336,7 +4361,7 @@ projection, and the LAhE collection crossings; the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
 `SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
-`PredTerm`, `UnitSet`/`CardBasis`, `DuhuRel`,
+`PredTerm`, `UnitSet`/`CardBasis`, `CoveredBy`, `DuhuRel`,
 `ContextualAnswer`, `RoiClause`, the CAhA clause formers, and the library of §12. The
 [catalog](catalog.md) carries one entry per name — prose, formal
 definition where one exists, purpose, example, and links; each name's
@@ -4603,7 +4628,21 @@ used for source verification are noted per entry.
   <https://mw.lojban.org/papri/How_to_use_xorlo>.
 - **guskant** — "gadri: an unofficial commentary from a logical point
   of view",
-  <https://mw.lojban.org/papri/gadri:_an_unofficial_commentary_from_a_logical_point_of_view>.
+  <https://mw.lojban.org/papri/gadri:_an_unofficial_commentary_from_a_logical_point_of_view>
+  (Lojban-only proof:
+  <http://guskant.github.io/lojbo/jetnujarco.html>; wiki page id 14098,
+  revision 122002, 2017-12-09). The section “Referent of a plural constant is
+  not necessarily an individual or individuals” proves from Condition₁ that
+  an indefinitely refinable plural constant is neither an individual nor
+  individuals, then offers cut bread as the material-noun reading. This
+  motivated §4.8's no-atoms boundary, the `CoveredBy` overlap conjunct, and
+  cumulative/divisible mass unit profiles; it does not decide P39's placement
+  between lexical and description semantics.
+- **BPFK Gadri** — "BPFK Section: gadri", Lojban Wiki,
+  <https://mw.lojban.org/papri/BPFK_Section:_gadri> (page id 527; the table
+  defines `lo [PA] broda` as `zo'e noi ke'a broda [gi'e zilkancu …]`). This
+  supplies the description/predication identity used against P39's rejected
+  description-only strengthening; it does not supply the `CoveredBy` formula.
 - **Brismu** — *brismu: a relational interpretation of Lojban*,
   <https://brismu.systems/>; the chapter "Sets, not Masses" is at
   <https://brismu.systems/sets-not-masses.html>.

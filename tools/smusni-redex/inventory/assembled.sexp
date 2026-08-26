@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "2437d63c7a1a7e5e7f1dba147965742afd3358fb")
+ (core-sha1 "21aa17a19353fa3d506775fbe914cc22e50c3a51")
  (fixture-sha1 "84e623e9dc0c4f2f98c666fd7d672e8de44239b8")
  (sorts
   AbstractNature
@@ -106,6 +106,7 @@
   ContextualAnswer
   Contrast
   ContributesAt
+  CoveredBy
   Desire
   DirectClause
   Distrib
