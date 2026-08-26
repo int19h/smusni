@@ -258,14 +258,33 @@
        (Do (Perform $a) (Perform $a))}"))
  'Discourse)
 
-;; Refer is deliberately EFn-admitting: its property may sequence retrieval
-;; sites, unlike SetOf/quantifier/selection restrictors.
+;; spec §5.3 (#33/#34): Refer's reference-level restrictor is EFn — it may
+;; sequence retrieval sites, unlike SetOf/quantifier/selection restrictors.
 (check-not-exn
  (lambda ()
    (infer-text
     "{Bind [$r :: Referents Entity]
-       (Refer {λ [$x :: Entity]
+       (Refer {λ [$x :: Referents Entity]
          {Bind [$s :: Scale] (Context) (gerku $x)}})
+       (Mention $r)}")))
+
+;; A member-level restrictor is the pure CoveredBy lift: an effectful one is
+;; not a term (its sites must be hoisted outside the Refer, spec §5.3).
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{Bind [$r :: Referents Entity]
+        (Refer {λ [$x :: Entity]
+          {Bind [$s :: Scale] (Context) (gerku $x)}})
+        (Mention $r)}"))))
+
+;; A pure member-level restrictor is admitted (the lift).
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{Bind [$r :: Referents Entity]
+       (Refer {λ [$x :: Entity] (gerku $x)})
        (Mention $r)}")))
 
 (displayln "typing tests: ok")

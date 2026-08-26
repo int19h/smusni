@@ -402,16 +402,28 @@
           (raise-type node "Refer takes one restrictor"))
         (define restriction (infer-core (first arguments) env inv))
         (define restriction-type (typing-type restriction))
+        ;; spec §5.3: the reference-level restrictor may be effectful (EFn);
+        ;; a member-level restrictor is the pure CoveredBy lift and must be Fn.
+        ;; Checked directly, because type-compatible? lifts a member-sorted
+        ;; parameter to Referents covariantly (the §7.4/§7.5 entry-notation
+        ;; allowance), which would otherwise admit EFn (T) Content here.
+        (when (match restriction-type
+                [`(EFn (,param) Content)
+                 (not (match param [`(Referents ,_) #t] [_ #f]))]
+                [_ #f])
+          (raise-type (first arguments)
+                      "Refer: a member-level restrictor must be a pure Fn (the §5.3 CoveredBy lift; hoist its sites outside the Refer), got ~e"
+                      restriction-type))
         (unless (or (type-compatible? restriction-type
                                       `(Fn ((Referents ,inner)) Content))
                     (type-compatible? restriction-type `(Fn (,inner) Content))
                     (type-compatible? restriction-type
                                       `(EFn ((Referents ,inner)) Content))
-                    (type-compatible? restriction-type `(EFn (,inner) Content))
                     (and (eq? inner 'Eventuality)
                          (type-compatible? restriction-type 'ClauseContent)))
           (raise-type (first arguments)
-                      "Refer restrictor has wrong type: ~e" restriction-type))
+                      "Refer restrictor has wrong type (a member-level restrictor must be a pure Fn, spec §5.3): ~e"
+                      restriction-type))
         (merge-results expected (list restriction) #:effects (set 'refer))]
        [_ (raise-type node "Refer requires RefComp<Referents<T>> expected type")])]
     [(member head '(SelectExactly SelectAtLeast))

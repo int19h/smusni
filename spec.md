@@ -403,11 +403,12 @@ function whose body, *when its result is evaluated*, performs no dynamic
 effects (§5): no introductions, no contextual retrievals, no projective
 emissions — and `EFn` the effectful arrow. Positions that demand purity
 are exactly **set comprehension (§4.9), quantifier and `Generic`
-restrictors (§4.10, §5.8), and selection restrictors (§5.6)**; a body with
-unhoisted effects simply fails to have the pure type. Nuclear scopes,
-`OpenQ` bodies, and `Generic`'s nuclear operand are `EFn` — they may
-close places contextually and introduce referents, with the accessibility
-table governing what escapes. This is the whole of the purity discipline:
+restrictors (§4.10, §5.8), selection restrictors (§5.6), and the
+member-level `Refer` lift (§5.3)**; a body with unhoisted effects simply
+fails to have the pure type. Nuclear scopes, `OpenQ` bodies, `Generic`'s
+nuclear operand, and `Refer`'s reference-level restrictor (§5.3) are
+`EFn` — they may close places contextually and introduce referents, with
+the accessibility table governing what escapes. This is the whole of the purity discipline:
 a typing fact, not an algorithm. `PredTerm ρ`, `Fn`, and `EFn` are types
 and appear freely in variable annotations, λ parameter lists, and
 `Context`/`Vague` type arguments.
@@ -672,7 +673,9 @@ For an event-licensed row with unfilled defaultable places p₁…pₖ,
 
 When k = 0 and P contains no other effects, this function refines to the pure
 `Fn` arrow. Otherwise it is effectful; no caller may
-silently use it in a pure `Refer` restrictor or `SetOf` comprehension.
+silently use it where purity is demanded — a selection restrictor, the
+member-level `Refer` lift (§5.3), or a `SetOf` comprehension — while a
+reference-level `Refer` restrictor may carry it (§5.3).
 
 The distinguished parameter is then closed only when ordinary content is
 needed:
@@ -1428,12 +1431,30 @@ form; it is not a renderer or evaluator convenience.
 
 Three primitive computations answer §1.4:
 
-- `(Refer P) : RefComp<Referents<T>>`, for `P` a property of references —
-  introduces a **new discourse referent**: a nonempty, number-neutral
-  plurality satisfying `P` veridically, fixed for its force segment, and
-  accessible to later anaphora per §5.4. This is the xorlo semantics of
+- `(Refer P) : RefComp<Referents<T>>`, for `P : EFn<(Referents<T>), Content>`
+  a property of references (pure `Fn` refines it) — introduces a **new
+  discourse referent**: a nonempty, number-neutral plurality satisfying `P`
+  veridically, fixed for its force segment, and accessible to later anaphora
+  per §5.4. `P`'s effects run under `Refer`, once per candidate witness
+  against the incoming state (§5.4). This is the xorlo semantics of
   descriptions (ruling P1): no implicit outer quantifier, no uniqueness,
   no default cardinality.
+
+  **Member-level restrictors.** A restrictor written over the member sort,
+  `Q : Fn<(T), Content>`, is admitted only through the defined **lift**
+  `(Refer Q) ≝ (Refer {λ [$r :: Referents T] (CoveredBy Q $r)})` — every
+  unit of the referent satisfies `Q` and no subreference escapes `Q`'s units
+  (§4.8): P39's lexical equation and `MaxRefer`'s pattern (§12), stated once
+  for every member property, lexical or not (L3.6's `CompleteGunmaAt κ g
+  base` included). The lift is a purity-demanding position (§3.3): a member
+  property whose formation needs contextual sites has them bound outside the
+  `Refer` and shared — the hoisting the comprehension forms already require
+  (§12) — and an effectful member-level restrictor is not a term. A
+  member-level λ therefore always displays a *unit* property; a row whose
+  plural satisfaction is collective, kind-like, or substance-like is written
+  at reference level with its own lexical extension (§10, P39). The
+  singleton-only, some-member, `Distrib`-only, and reference-level-only
+  readings are the rejected lifts (rationale §1.7b).
 - `(Context P? deps…) : RefComp<T>` — retrieves a contextually salient
   value of type `T`, constrained by an optional pure admissibility property
   `P : Fn<(T), Content>` and by its declared dependencies (the governing
@@ -1493,7 +1514,7 @@ binders (§7.4).
 | `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. The joint-locus reading selection of §5.6 applies when the resolved reading binds a consequent anaphor to an antecedent introduction. |
 | `↔`, `⊕` | Each operand evaluated exactly once against the incoming state; nothing escapes. (Hence primitive: rewrites would duplicate evaluation.) |
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. **Witness export:** a successful evaluation of an exporting quantifier introduces its witness referent(s) — see §5.6, including the dependent case. |
-| `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). |
+| `Refer` | Introduces its referent into the current force segment; fixed there (no re-selection under `¬` or across facets). Its restrictor's effects run against the incoming state, once per candidate witness; introductions made inside the restrictor survive with the referent (as under `∧`) unless a `Local` encloses the `Refer`, which projects them with the base (§5.2). The member-level lift (§5.3) is pure and introduces nothing. |
 | `Local` | Its operand sees the incoming state and runs normally; only discourse-assignment slots freshly introduced by that operand are projected from its output. Truth filtering, returned values, contextual resolution, and projective obligations survive. |
 | `Context` | Consults the incoming context and introduces nothing. Logical embedding never turns retrieval into quantification over admissible values: site/dependency identity is exactly §5.3's, while the consuming content—not the recovered value—is negated, questioned, or connected. |
 | `StateClause`, `CloseClause` | Applying `StateClause c` evaluates c exactly once on its one matching holding-state lineage; c's ordinary introductions and projectives obey their own rows. `CloseClause` keeps its event witness local: the witness is recoverable through `EventOfContent` but is not a discourse introduction. |
@@ -2702,7 +2723,8 @@ official-row clause is:
 
 `(GroupBasisConstraint k T)` is lexicon data, not one unconstrained universal
 predicate. When `gunma` occurs inside a position requiring a pure property
-(notably a `Refer` restrictor), the mapping hoists this κ binding outside that
+(a selection restrictor, the member-level `Refer` lift, or a `SetOf`
+comprehension — §3.3), the mapping hoists this κ binding outside that
 property and shares the captured value; it never hides `Context` in a `Fn`.
 
 The working dictionary wording for the adopted group row is: **“x1 is a
@@ -2823,13 +2845,14 @@ or reading rule.
 - **L3.4** `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical, [Speaker], P,
   ·)` at their predication (§5.8).
 - **L3.5** `loi`/`lo'i` first bind an ordinary **non-maximal** `(Local (Refer
-  P))` base (P5). `Local` keeps that lowering-internal base out of the
+  P))` base (P5) — under the §5.3 lift, literally `lo P`'s restrictor. `Local` keeps that lowering-internal base out of the
   discourse store.
 - **L3.6** `loi` then retrieves a constrained `GroupBasis<T>` and `Refer`s to
   a `Group<T>` satisfying `CompleteGunmaAt κ g base`; `lo'i` `Refer`s to the
   exact `selcmi` set over the same base. In both cases the outer `Refer`
-  restrictor is a property of one `Group<T>`/`Set<T>` object (singleton-lifted
-  at the relation): a number-neutral outer reference may contain several
+  restrictor is a property of one `Group<T>`/`Set<T>` object, entering through
+  the §5.3 member-level lift: the outer reference is `CoveredBy` that
+  property, so a number-neutral outer reference may contain several
   qualifying objects, but each qualifies individually rather than several
   partial objects qualifying only collectively.
 - **L3.7** *(note)* Thus bare `lo'i gerku` may be a set of the contextually
@@ -4515,7 +4538,8 @@ demonstratives, `Tanru` (§6.2), `TanruLinkConnect`, `JaiRaise`, `MePred`,
 projection, and the LAhE collection crossings; the
 region formers (`MetricBall`/`SpanRegion`/`RegionComplement`), the
 `Topic` lowering,
-`SelectSome`, the `Utterance`/`Sign` entry notations (§7.4),
+`SelectSome`, the member-level `Refer` lift (§5.3), the `Utterance`/`Sign`
+entry notations (§7.4),
 `PredTerm`, `UnitSet`/`CardBasis`, `CoveredBy`, `DuhuRel`,
 `ContextualAnswer`, `RoiClause`, the CAhA clause formers, and the library of §12. The
 [catalog](catalog.md) carries one entry per name — prose, formal
@@ -4846,7 +4870,11 @@ used for source verification are noted per entry.
   IRC citations give line numbers in its `irc/all_logs.txt`, mail citations
   give Message-IDs); rationale §1.7a cites the 2010 partial `se gunma` use at
   lines 408817–408825 and the 1995 component-inheritance critique preserved
-  in the mailing-list archive.
+  in the mailing-list archive. Rationale §1.7b cites Jorge Llambías,
+  2014-02-07, `<CAO7tK2f+f5tebxR-eH5UAx8mkOJAaZnM3Es2syyOdcMHZpn0qw@mail.gmail.com>`
+  (thread “Individuals and xorlo”), for the member-level reading of `lo`
+  that the §5.3 lift makes exact — a source the lift generalizes, not one
+  that states it.
 - **Personal pro-sumti record** — sources for P40, with their evidential roles
   rather than authority: original CLL §7.2 at the baseline source commit
   `13ce309d` says the forms are masses and `mi'o = mi joi do` (the rejected
