@@ -10,7 +10,7 @@ spool = "review/exchange"
 # The current session generation. Whoever calls a full-pass review of the
 # documents bumps this (a commit) before the fresh sessions are started; a
 # session joining afterwards becomes <model>_<generation>[.<n>].
-generation = 1
+generation = 2
 
 [models.codex]
 active = true
