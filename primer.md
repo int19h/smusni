@@ -95,9 +95,9 @@ whose content the hearer is expected to recover from the situation:
 
 ```
 (Assert
-  (Bind {$destination :: Referents Entity} (Context)
-    {(∃ (λ {$e :: Referents Eventuality}
-      {(klama Speaker $destination … :Eventuality $e)}))}))
+  {Bind [$destination :: Referents Entity] (Context)
+    (∃ {λ [$e :: Referents Eventuality]
+      (klama Speaker $destination … :Eventuality $e)})})
 ```
 
 (Only the destination slot is shown — the origin, route, and means each
@@ -137,9 +137,9 @@ going by me, and that going is earlier than now:
 ```
 ; mi pu klama
 (Assert
-  (∃ (λ {$e :: Referents Eventuality}
-    {(∧ (klama Speaker :Eventuality $e)
-       (purci $e Now))})))
+  (∃ {λ [$e :: Referents Eventuality]
+    (∧ (klama Speaker :Eventuality $e)
+       (purci $e Now))}))
 ```
 
 That's the whole theory of tense. `pu` is not a verb inflection; it is a
@@ -200,8 +200,8 @@ core adopts wholesale —
 
 ```
 ; lo ci gerku
-(Refer (λ {$r :: Referents Entity}
-  {(∧ (gerku $r) …exactly-three-units…)}))
+(Refer {λ [$r :: Referents Entity]
+  (∧ (gerku $r) …exactly-three-units…)})
 ```
 
 `lo P` does one thing: it **introduces a referent** — one-or-more things
@@ -315,9 +315,9 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ (λ {{$p :: Entity} {$d :: Referents Entity}}
-  {(→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
-     (darxi $p $d))}))
+(∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+  (→ (∧ (prenu $p) (xasli $d) (ponse $p $d))
+     (darxi $p $d))})
 ```
 
 (The donkey variable is a *plural* one — if someone owns several donkeys,
@@ -393,7 +393,7 @@ witness export).
 
 ```
 (Ask (Polar (Close (klama Speaker))))                          ; xu mi klama
-(Ask (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))}))) ; ma klama
+(Ask (OpenQ {λ [$x :: Referents Entity] (Close (klama $x))})) ; ma klama
 (Command Audience (Close (klama Audience)))                    ; ko klama
 (Express …)                            ; .ui and friends — chapter 7
 (Vocative Audience)                    ; doi (addressing the listener)
@@ -444,10 +444,10 @@ a degree on an intensity scale — displayed alongside its host:
 
 ```
 ; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
-(Let {$a :: Act Assertion} (Assert (Close (tatpi $dogs)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Unhappiness Speaker $o Intense)))))})})
+{Let [$a :: Act Assertion] (Assert (Close (tatpi $dogs)))
+  {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Intense)))))}}
 ```
 
 The bound `$o` is the performance occurrence. If `$a` is performed again, the
@@ -580,10 +580,11 @@ leaks through a quotation boundary. This entire family is what keeps
 use/mention straight, and it is why the core can talk about Lojban in
 Lojban without paradox.
 
-> **Notation box: why the braces?** In `(λ {$x :: T} {body})`,
-> `{$x :: T}` is the binder telescope — “introduce variable `$x` of
-> type `T`” — and `{body}` marks its scope. `Let` and `Bind` use the
-> same punctuation. These are direct binding forms, not functions that
+> **Notation box: why the braces?** In `{λ [$x :: T] body}`, the braces
+> mark the binding form and its scope, `[$x :: T]` is the binder telescope
+> — “introduce variable `$x` of type `T`” — and the body follows bare.
+> `Let` and `Bind` use the same punctuation: `{Let [$x :: T] value body}`,
+> `{Bind [$x :: T] computation body}`. These are direct binding forms, not functions that
 > receive quoted source code, and the braces do not create signs. Lojban
 > quotation remains the `lu`/`zoi`/`zo` family above. A staged extension
 > for quoting the core's own notation was explored and set aside; nothing
@@ -617,30 +618,30 @@ its episodic readings (each sentence's occasion contextually anchored,
 the way chapter 2 anchored the stove):
 
 ```lisp
-(Bind {$dogs :: Referents Entity}                       ; chapter 3: lo introduces…
-      (Refer (λ {$r :: Referents Entity}
-        {(∧ (gerku $r)
-            (= (CardBasis $r (λ {$x :: Entity} {(gerku $x)})) 3))})) ; …three dogs
-  {(Do
-    (Bind {$occ1 :: Time} (Context)                       ; chapter 2: the occasion —
-      {(Let {$a1 :: Act Assertion}                      ; outside the negation
+{Bind [$dogs :: Referents Entity]                       ; chapter 3: lo introduces…
+      (Refer {λ [$r :: Referents Entity]
+        (∧ (gerku $r)
+            (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))}) ; …three dogs
+  (Do
+    {Bind [$occ1 :: Time] (Context)                       ; chapter 2: the occasion —
+      {Let [$a1 :: Act Assertion]                      ; outside the negation
             (Assert
               (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
-                (¬ (Exactly 2 (λ {$x :: Entity} {(prenu $x)}) ; chapter 5: a two-person
-                     (λ {$ppl :: Referents Entity}          ; witness
-                       {(∃ (λ {$e :: Referents Eventuality}
-                          {(∧ (Close (batci $dogs $ppl :Eventuality $e))
-                              (cabna $e $occ1))}))})))))
-        {(Perform $a1)})})                             ; chapter 6: …and say it
-    (Bind {$occ2 :: Time} (Context)
-      {(Let {$a2 :: Act Assertion}
+                (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)} ; chapter 5: a two-person
+                     {λ [$ppl :: Referents Entity]          ; witness
+                       (∃ {λ [$e :: Referents Eventuality]
+                          (∧ (Close (batci $dogs $ppl :Eventuality $e))
+                              (cabna $e $occ1))})}))))
+        (Perform $a1)}}                             ; chapter 6: …and say it
+    {Bind [$occ2 :: Time] (Context)
+      {Let [$a2 :: Act Assertion]
             (Assert
-              (∃ (λ {$e :: Referents Eventuality}       ; chapter 4: ri = $dogs
-                {(∧ (Close (tatpi $dogs :Eventuality $e))
-                    (cabna $e $occ2))})))
-        {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
-          {(Do (Perform AttachedDisplay
-            (Express (Close (Unhappiness Speaker $o2 Intense)))))})})}))}) ; chapter 7
+              (∃ {λ [$e :: Referents Eventuality]       ; chapter 4: ri = $dogs
+                (∧ (Close (tatpi $dogs :Eventuality $e))
+                    (cabna $e $occ2))}))
+        {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
+          (Do (Perform AttachedDisplay
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})} ; chapter 7
 ```
 
 Three names appear here that earlier chapters only gestured at.

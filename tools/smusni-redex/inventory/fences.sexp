@@ -181,7 +181,7 @@
  (fence "samples.md" 57 specimen "4a9b373fab796c473bb9e876485273e89bb061d3"
         (origin "surface")
         (rules "L11.13"))
- (fence "samples.md" 58 specimen "108047de2dcd7fda8512944d7f0ff361c5052b6f"
+ (fence "samples.md" 58 specimen "bb119d6c918c79eb106582945612008b1629ed9c"
         (origin "surface")
         (rules "L1.10"))
  (fence "samples.md" 59 specimen "d18b550e979e80e4ef5a9c15530e135e9dc7f869"
@@ -194,7 +194,7 @@
   "samples.md"
   61
   schema
-  "5a1cd2b8b6822564b35b2fc42a92c19e7cc50fcd"
+  "a578eede93730cad7e283ea7f584fce5efd24d2a"
   (note "side-by-side positive/negative intended-value schema"))
  (fence "samples.md" 62 specimen "18fc2d84c0815db802a7c4408fc3cb6c23716df0"
         (origin "surface")
@@ -236,9 +236,9 @@
   "spec.md"
   5
   schema
-  "ec12aedce7c517c0561463e3ce84640a9dbc6cbd"
+  "fe5bfbdec40ba0419b3761ff91931742e01196e2"
   (note "schematic typed universal with an ellipsis body"))
- (fence "spec.md" 6 expansion "2892852bfcc49d5773f580fdc8df8548d067e551")
+ (fence "spec.md" 6 expansion "7f9d9b1e5772edf5fad712b401812bf2e03ca6ee")
  (fence "spec.md" 7 declaration "f9b80375715d188988c5467c52b898bcbbdf4de4")
  (fence
   "spec.md"
@@ -256,7 +256,7 @@
   "spec.md"
   11
   schema
-  "efdf4c59513bd7ef0d3b4a3c8de66ba7d29a1ba6"
+  "64774649585218b06269d21a4b4a2d5a2f8724e1"
   (note "lowering pattern with an ellipsis body"))
  (fence "spec.md" 12 specimen "9abc6462c335cc118f6573d954f8aab72d32260c"
         (origin "surface")

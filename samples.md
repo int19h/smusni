@@ -896,10 +896,10 @@ own lexical presupposition, never from `kau`.
 ; sutra klama — one intended link recovered at this occurrence [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
-; ≗ (Bind {$link :: PredTerm (RowOf klama)}
-;         (Context (λ {$r :: PredTerm (RowOf klama)}
-;                    {(TanruAdmissible sutra klama $r)}))
-;     {… (∧ (klama …) ($link …))})
+; ≗ {Bind [$link :: PredTerm (RowOf klama)]
+;         (Context {λ [$r :: PredTerm (RowOf klama)]
+;                    (TanruAdmissible sutra klama $r)})
+;     … (∧ (klama …) ($link …))}
 ; no governor dependencies in this reading. `na sutra klama` retrieves
 ; one intended admissible link at that occurrence's site and negates that claim;
 ; it does not quantify over every possible tanru link.
@@ -942,8 +942,8 @@ content built from the recovered value):
 
 ```lisp
 ; positive                                  ; negative
-(Bind {$v :: T} (Context P deps…)           {Bind [$v :: T] (Context P deps…)
-  (C $v)}                                    {(¬ (C $v))})
+{Bind [$v :: T] (Context P deps…)           {Bind [$v :: T] (Context P deps…)
+  (C $v)}                                     (¬ (C $v))}
 ```
 
 Within either resolved reading, the occurrence site produces one `$v`; the
@@ -1163,8 +1163,9 @@ conjuncts entirely, are the other members of P8's reading family.
 
 ## 12. Direct binding notation
 
-The three binder forms are part of the core syntax. Their telescopes and
-bodies use braces to show scope; the braces do not quote core code.
+The three binder forms are part of the core syntax. By spec §2's
+convention a binder form is written `{…}` with its telescope in `[…]` and
+a bare body; the delimiters show scope and do not quote core code.
 
 ```lisp
 ; lo ka se klama — direct function abstraction

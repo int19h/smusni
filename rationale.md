@@ -643,7 +643,7 @@ borrowing facet conjunction.
 binder — the seam between the pure λ-fragment and the dynamics.
 **Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
 *once*, with its witness reused across two performed acts —
-`(Bind {$cat :: Referents Entity} (Refer P) {(Do a₁ a₂)})`. **Why not
+`{Bind [$cat :: Referents Entity] (Refer P) (Do a₁ a₂)}`. **Why not
 ordinary λ-application?** In the calculus as typed, application simply
 *cannot* consume a computation where a value is demanded — `Bind` is the
 value-returning computation eliminator (`RefComp` and `PerfComp`), and that

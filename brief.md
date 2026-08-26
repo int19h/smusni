@@ -103,10 +103,12 @@ At the repository root:
   could only be explained by an internal model detail, it is reshaped on
   semantic merits.
 - **The S-expression notation** — parenthesized application/operator
-  forms, direct `λ`/`Let`/`Bind` forms with brace-delimited telescopes and
-  bodies, PascalCase named core forms, lowercase lexical predicates,
-  `$variables`, and `;` comments — is a vehicle, not the subject. Braces
-  in binder positions are punctuation, not quoted core code. The notation
+  forms, the direct `λ`/`Let`/`Bind` special forms written
+  `{λ [$x :: T] body}` (braces mark the form, brackets its telescope, the
+  body is bare), PascalCase named core forms, lowercase lexical predicates,
+  `$variables`, and `;` comments — is a vehicle, not the subject. Delimiter
+  shape is non-semantic; braces and brackets are punctuation, not quoted
+  core code. The notation
   is kept because it is readable and avoids bikeshedding; PascalCase names
   mark the placeholder status the specification assigns them.
 - **Core vs sugar.** The core may be verbose. Anything derivable stays out
