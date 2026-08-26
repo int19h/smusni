@@ -218,9 +218,10 @@ Core terms are written as S-expressions:
   PascalCase spellings mark named provisional core forms (§1.2, §16),
   while lowercase names are lexical predicates (dictionary words:
   `klama`, `gerku`). A small set of mathematical glyphs (`¬ ∧ ∨ → ↔ ⊕
-  ∀ ∃ = ∈ ⊆ ∪ ∩ ≤ < ⊤`) name the logical and mathematical operators
-  (`⊤` is the trivially true content — the empty conjunction, `∧`'s
-  unit).
+  ∀ ∃ = ∈ ⊆ ∪ ∩ × ≤ < ≥ > + − ÷ ⊤`) name the logical and mathematical
+  operators (`⊤` is the trivially true content — the empty conjunction,
+  `∧`'s unit; `×` is numeric product on `Number` and, by its operands'
+  sorts, the set product `pi'u` denotes).
 - Parenthesis shape is **non-semantic**: `(...)`, `[...]`, and `{...}`
   denote the same list term, as they do in Redex. A special form is
   recognized by its reserved head atom and positional operands, never by
@@ -391,8 +392,9 @@ event comes from `StateClause` after ordinary fills.
   labelled places are the load-bearing Lojban-specific structure (free
   place order, `zi'o`, conversion, place questions all speak in labels).
 - `Fn (A …) B` — ordinary functions with positional parameters, the type
-  of λ-abstractions. Properties are `Fn (T) Content`; generalized
-  quantifiers are `Fn ((Fn (T) Content)) Content`.
+  of λ-abstractions. Properties are `Fn (T) Content`; the library's
+  generalized quantifiers (§12) take a pure restrictor `Fn (T) Content`
+  and a nuclear scope that may be effectful (`EFn`).
 - `Label ρ` — the finite type of ρ's place labels; the domain of place
   questions (§8.3).
 
@@ -1418,7 +1420,7 @@ The principal lowering witness is an internal collection base:
 The hidden base has ordinary non-maximal `Refer` selection and truth
 filtering, while only the surface collection survives as a discourse
 referent. Without this delimiter `lo'i ratcu` would introduce both rats and
-their set, contradicting the `ri` count in CLL 6.52. This cross-construction
+their set, contradicting the `ri` count in CLL Example 6.52. This cross-construction
 accessibility job is the factorization argument for the lowering-only generic
 form; it is not a renderer or evaluator convenience.
 
@@ -2759,7 +2761,8 @@ or reading rule.
 - **L1.4** FA/conversion → labelled fills / row routing (§4.2).
 - **L1.5** `zi'o` → `DropPlace`.
 - **L1.6** `zo'e`/omission → per-site `Context` (P15).
-- **L1.7** `fi'a` → `OpenQ` over `Label<ρ>`.
+- **L1.7** `fi'a` → `OpenQ` over the compatible-label refinement
+  `CompatibleLabel<ρ,T>` of `Label<ρ>` (§4.7, §8.3).
 - **L1.8** `co'e`/`do'e` → `Context` at relation/tag type.
 - **L1.9** *(reading)* ⊳ `si`/`sa`/`su` erase before reading; quoted text
   preserves them.
@@ -2831,7 +2834,7 @@ or reading rule.
   partial objects qualifying only collectively.
 - **L3.7** *(note)* Thus bare `lo'i gerku` may be a set of the contextually
   selected dogs, not necessarily all dogs, but the hidden dog reference does
-  not become a second antecedent: in CLL 6.52 `ri` denotes the set. The
+  not become a second antecedent: in CLL Example 6.52 `ri` denotes the set. The
   maximal reading remains available when context selects that base or when
   explicit `ro`/`MaxRefer` requires it; bare collection gadri do not add it.
 - **L3.8** *(note)* Completeness here forbids components beyond the selected
@@ -2903,7 +2906,7 @@ or reading rule.
   is untouched; pin P30): the row ρ is ⊳ fixed consistently across every
   occurrence (the exact resolved row; incompatible uses = no resolved
   reading); bare `bu'a` carries implicit `su'o`, and any other quantifier
-  requires the prenex (CLL 16.107); restrictions must be pure and already
+  requires the prenex (CLL Example 16.107); restrictions must be pure and already
   typed at `PredTerm<ρ>` — an ordinary first-order `ke'a` clause on a
   predicate variable does not type (reserved-family territory, §14).
 - **L5.6** `cei` + `broda`-series → ⊳ **bridi-template** binding (CLL 7.5):
@@ -3351,7 +3354,7 @@ whole document). Then
 ```
 
 — the relation holding of a row record exactly when its degree
-on scale `s` lies in region `reg`. No `…` remains in this chapter.
+on scale `s` lies in region `reg`.
 
 **Complement selection** (`da'a`, CLL 18.8; default n = 1). A
 **declared** primitive member of the §5.6 selection family (like its
@@ -3718,10 +3721,10 @@ After the mapping hoists the row's constrained κ site, its content includes
 `Among(x3,m)`. Thus a threesome
 cannot contain a fourth peer component. At `n=0` this expansion is unavailable:
 `x3` and `Referents<T>` are nonempty, while the experimental dictionary entry
-  for `nomei` explicitly proposes an empty mass/0-tuple. Whether `Group<T>`
-  admits a null object and how a complete empty cover is represented without an
-  empty `Referents<T>` are gap-registered (§14; GitHub #23); the baseline neither declares
-the form false nor inserts a covert empty plurality.
+for `nomei` explicitly proposes an empty mass/0-tuple. Whether `Group<T>`
+admits a null object and how a complete empty cover is represented without an
+empty `Referents<T>` are gap-registered (§14; GitHub #23); the baseline neither
+declares the form false nor inserts a covert empty plurality.
 
 The `me X me'u MOI` composite (CLL Example 18.93) applies the family
 the MOI cmavo selects at the number the `me`-complement supplies —
@@ -4094,9 +4097,14 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   batci` (Examples 16.41–16.45; the gloss is 16.45) is two picked groups
   with every dog biting each man, and says nothing stronger; the
   coordinate-closed profile is a named strengthening; referential members
-  need no termset semantics at all (16.7: unquantified descriptions are
-  constants outside scope distinctions, and only explicit `ro…ro`,
-  16.46, spells the full product). The bare-PA half is a **documented
+  need no termset semantics at all (the citation edition's 16.7:
+  unquantified descriptions are constants outside scope distinctions, and
+  only explicit `ro…ro`, Example 16.46, spells the full product — wording
+  this project authored under xorlo, fork commit `e21e63c7`, hence
+  corroborative record rather than independent evidence; original 16.7
+  instead gave an unquantified `le nanmu` an implicit `ro`, the pre-xorlo
+  reading that xorlo's constant treatment of unquantified descriptions
+  supersedes). The bare-PA half is a **documented
   divergence from CLL's letter**, in two respects: ch. 16 §6 glosses
   bare numeric quantification globally ("exactly two things, no more or
   less" — Example 16.34) *and* distributively (`PA broda` "is shorthand
@@ -4178,7 +4186,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   object is not a covert numeric probability (P38).
 - **P30** `bu'a`-series = typed quantification at `PredTerm<ρ>` —
   variables, not objects; exact-row consistency across occurrences;
-  non-`su'o` quantifiers prenex-only (CLL 16.107); only pure
+  non-`su'o` quantifiers prenex-only (CLL Example 16.107); only pure
   higher-order restrictions type. `cei`/`broda`-series bind bridi
   **templates** (fills, tense, negation; later fills override —
   CLL 7.5), not bare relation values.
@@ -4311,7 +4319,7 @@ approximate:
   paired term-and-tag bundles cannot be reduced to either a plain group or a
   property family; (c) `joi nai`, whose CLL 15.7 scalar-negation reading has
   no selected contrast-domain member or scope law (the recorded candidate is
-  §6.3 contrast machinery over the connective family); and (d) the structured
+  §6.3 contrast machinery over the connective family); (d) the structured
   **performance** of `.i joi` and other non-logical ijoiks; and (e)
   joik-connected mekso operands such as `li pa joi re`, whose parser locus has
   no number/operator/collection denotation. `JoiClause`
@@ -4456,7 +4464,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | utterance anaphora, `da'o`, NIhO depth, MAI | §11 L8, §7.2 | `EnumerationOrdinal` | — | — |
 | relation variables, templates, connective residue, BIhI, ROI | §11 L5–L6 | `TanruLinkConnect`, `JoiPred`, `JoiTanru`, `JoiClause`, region formers, `SelectAllBut` | first-order restrictive clauses on `bu'a`; residual joik/ijoik performance; `ju'e`; `nomei`'s empty cover; the non-numeric MOI composite (§14) | — |
 | hypothetical mood | — | — | `da'i` | §13 |
-| repair, prosody | §11 *(reading)* rules / the resolved-reading datum (#9) | — | registered | §13 |
+| repair, prosody | §11 *(reading)* rules / the resolved-reading datum (#9) | — | registered | — |
 
 A claim of coverage that cannot cite a schema, a library definition, or a
 gap entry is a defect in this document.
@@ -4831,11 +4839,12 @@ used for source verification are noted per entry.
 - **`joi` working page** — "joi", Lojban Wiki,
   <https://mw.lojban.org/papri/joi> (2018 property/event extension proposals;
   architectural evidence, not a completed denotation).
-- **Lojban discussion archive** — local reproducible snapshot at
-  `~/lojban/disc` (a verified copy of the share's `~/git/lojban-disc`, moved
-  off virtiofs on 2026-08-26); rationale §1.7a cites the 2010
-  partial `se gunma` use in `irc/all_logs.txt` 408817–408825 and the 1995
-  component-inheritance critique preserved in the mailing-list archive.
+- **Lojban discussion archive** — the Lojban IRC logs and mailing-list
+  archive, cited from the project's verified local snapshot (`lojban-disc`;
+  IRC citations give line numbers in its `irc/all_logs.txt`, mail citations
+  give Message-IDs); rationale §1.7a cites the 2010 partial `se gunma` use at
+  lines 408817–408825 and the 1995 component-inheritance critique preserved
+  in the mailing-list archive.
 - **Personal pro-sumti record** — sources for P40, with their evidential roles
   rather than authority: original CLL §7.2 at the baseline source commit
   `13ce309d` says the forms are masses and `mi'o = mi joi do` (the rejected

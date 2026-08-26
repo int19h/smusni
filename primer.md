@@ -74,7 +74,7 @@ Start smaller:
 
 ```
 ; mi klama
-(Assert (klama Speaker))
+(Assert (Close (klama Speaker)))
 ```
 
 Two moves happened. First, `klama` is a **predicate** — a relation with
@@ -83,7 +83,9 @@ five labelled places (goer, destination, origin, route, means) — and
 `Assert` turns the filled-in content into a claim. Keep these apart:
 Lojban embeds bridi inside other bridi all the time (`mi djica lo nu do
 klama` doesn't claim you go), so *saying-that* must be a separate
-ingredient from *the that*. The core makes it a visible one.
+ingredient from *the that*. The core makes it a visible one. (`Close`, the
+third word, is the spec's name for "fill the omitted places from context
+and close the clause" — the next paragraph and chapter 2 unpack it.)
 
 **What about the four unfilled places?** `mi klama` doesn't mention a
 destination, but it isn't about going *nowhere*; the destination is
@@ -101,7 +103,10 @@ whose content the hearer is expected to recover from the situation:
 (Only the destination slot is shown — the origin, route, and means each
 get their own `Context` binding exactly like it; the specification's
 samples write all four out. There's also an event variable in there —
-chapter 2.) Three different
+chapter 2. And where this primer writes `∃` over that event, the
+specification writes `CloseClause`, which additionally records *which*
+event was the clause's own; the primer keeps the simpler spelling
+throughout.) Three different
 "missing thing" markers get three different treatments, and the difference
 matters:
 
@@ -254,6 +259,12 @@ The other gadri, briefly:
 - `mi joi do bevri lo pipno`: `joi` introduces a group object completely
   constituted by you and me at the intended grouping basis, and the carrying
   is predicated of that group.
+
+The composite pronouns side with the plain plural, not with `joi`: `mi'o`
+is `mi jo'u do`, one neutral plurality of speaker and listener, so `mi'o
+remna` says we are humans without building a group that would then have
+to be human; `mi .e do remna` makes two separate claims; and only `mi joi
+do` builds the group (pin P40).
 
 This is not a magic rule that properties flow between members and wholes. A
 group can weigh 150 kg without either member doing so, and a member can be
@@ -454,7 +465,7 @@ Note the three moving parts, all decided by rulings you can look up:
 `nai` did **not** logically negate anything — `.uinai` is the *paired
 emotion*, unhappiness, a word of its own; `cai` intensified *that*
 (intense unhappiness, not "intensely other-than-happy"); and the target —
-what the feeling is about — is the assertion it follows. And one thing
+what the feeling is about — is the whole assertion it opens. And one thing
 that did *not* happen: pure-emotion indicators like `.ui` never change
 what is claimed — `.ui do klama` claims you're going and displays joy
 about it. (Whether an indicator's host stays claimed is exactly what
@@ -635,8 +646,10 @@ the way chapter 2 anchored the stove):
 Three names appear here that earlier chapters only gestured at.
 `CardBasis` is chapter 3's `…exactly-three-units…` made honest: it
 counts a plural referent *by a unit predicate* — these, counted as
-dogs, number three (so a plurality can be three dogs and one pack
-without contradiction). `Exactly n P body` is chapter 5's witness
+dogs, number three. (The count alone would tolerate a pack riding
+along; what rules it out is `gerku`'s own plural meaning, which under a
+count profile requires the referent to be *covered* by dog units — pin
+P39 — so `lo ci gerku` is three dogs and nothing else.) `Exactly n P body` is chapter 5's witness
 selection as one operator: pick an n-unit P witness and run the
 body on it — on the witness *as a plurality*, which is why the body's
 variable `$ppl` is reference-typed: whether the dogs bit the two
@@ -648,9 +661,10 @@ the aside is new information, committed by the speaker — but it
 beside the `¬` rather than under it, where no negation or question can
 reach. Everything else you have seen: the two
 `Let`/`Perform` pairs are chapter 6's acts-as-values, built and then
-said; and `Express` takes `$a2` itself as the emotion's target — the
-displayed unhappiness is about *that assertion*, which only a language
-whose acts are values can even write down.
+said; and `Express` takes the bound occurrence `$o2` — this performance
+of `$a2` — as the emotion's target: the displayed unhappiness is about
+*that assertion as made here*, which only a language whose acts are values
+and whose performances are handles can even write down.
 
 If you can reconstruct the story from the sentence — or check it off
 against the term, line by line — you have the core. The specification

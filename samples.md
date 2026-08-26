@@ -160,11 +160,12 @@ episodic specimen selected `ActualClause`; a capability reading selects
   (CloseClause
     (StateClause
       (Every {λ [$x :: Entity] (datka $x)}
-        {λ [$ducks :: Referents Entity]
+        {λ [$duck :: Entity]
           (CloseClause
-            (CapableClause (DirectClause (flulimna $ducks))))}))))
-; Each nuclear capability clause closes locally; the outer State is the
-; universal claim. No one event is shared by every duck.
+            (CapableClause (DirectClause (flulimna $duck))))}))))
+; Every's nuclear scope is member-level (§12: Distrib over the maximal
+; reference); each duck's capability clause closes locally; the outer State
+; is the universal claim. No one event is shared by every duck.
 ```
 
 ```lisp
@@ -356,7 +357,8 @@ predicate is chosen:
 
 ```lisp
 ; mi joi do — the distinct canonical Group<Entity> reading [P40]
-{Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+{Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+      (Context (GroupBasisConstraint joi Entity) deps…)
   {Bind [$group :: Referents (Group Entity)]
         (JoiGroup $κ Speaker Audience)
     (Mention $group)}}
@@ -421,7 +423,7 @@ collection gadri do not force it. `CompleteGunmaAt` says there is no peer
 component beyond `$base`; P39 separately makes a count-profile base
 `CoveredBy` its declared units, while cumulative mass and other reference
 modes keep their own exact lexical extension.
-The `Local` boundary is independently observable: in CLL 6.52
+The `Local` boundary is independently observable: in CLL Example 6.52
 `lo'i ratcu cu barda .i ku'i lu'a ri cmalu`, `ri` resolves to `$sets`, never
 to the lowering-internal `$base`.
 
@@ -490,7 +492,8 @@ separate operations:
       (Local (SelectExactly 3 {λ [$x :: Entity]
         (Close (skicu Speaker $x Audience
           {λ [$y :: Referents Entity] (prenu $y)}))}))
-  {Bind [$κ :: DecompositionBasis (Group Entity) Entity] (Context)
+  {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+        (Context (GroupBasisConstraint lu'o Entity) deps…)
     {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
       (Mention $aggregate)}}}
 ```
@@ -498,8 +501,10 @@ separate operations:
 ```lisp
 ; lu'a ri — fragment: components of the previously selected single group
 {λ [[$κ :: DecompositionBasis (Group Entity) Entity]
-    [$group :: Referents (Group Entity)]]
+    [$group :: Group Entity]]
   (Mention (components_κ $κ $group))}
+; components_κ takes one Group<T> object (§12); ri's projective singular
+; condition is what supplies that sole group and is elided here.
 ```
 
 The bridge `lu'o mi'o cu remei ≡ mi'o remei` is still not claimed: P40 now
