@@ -46,6 +46,24 @@ description property may sequence retrieval sites; the returned referent is
 still introduced by `Refer` itself. This choice is pinned by a positive static
 test and must not be generalized to the pure positions.
 
+## Model-bank profiles
+
+The model bank prints decision status before every verdict:
+
+- `live-baseline` tests laws already present in the tracked specification;
+- `human-adopted-pending-sync` tests an adopted decision not yet fully
+  synchronized;
+- `reviewer-consensus` tests a peer-settled proposal still awaiting the
+  human/adoption or baseline edit recorded by its issue;
+- `rejected-alternative` is expected to reject its discriminating model.
+
+A green result in any non-baseline profile is evidence about that encoding,
+never ratification. Named regressions are deterministic. Bounded searches
+print the exact signature size and structure count. The divisible-bread
+compatibility case uses a symbolic dyadic-interval splitter because a finite
+atomless semilattice cannot exist; finite searches are never described as
+atomless.
+
 Generated files under `corpus/` are checked in for review. Regenerate them
 with:
 

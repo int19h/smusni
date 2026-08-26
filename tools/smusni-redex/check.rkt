@@ -9,6 +9,7 @@
          "elaborate.rkt"
          "extract.rkt"
          "inventory.rkt"
+         "models/run.rkt"
          "syntax.rkt"
          "types.rkt")
 
@@ -225,9 +226,12 @@
             (expected-finding-issue finding)
             (expected-finding-pattern finding)))
 
+  (define model-bank-ok? (run-model-bank))
+
   (define failure?
     (or (pair? unexpected)
         (pair? stale-expected)
+        (not model-bank-ok?)
         (and strict? (positive? (hash-count matched-expected)))))
   (when (and strict? (positive? (hash-count matched-expected)))
     (printf "STRICT: ~a known findings remain\n" (hash-count matched-expected)))
