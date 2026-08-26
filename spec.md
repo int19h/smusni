@@ -2736,7 +2736,7 @@ Normative lowering schemas, one line each; the cited pins carry the
 arguments. Text-to-reading rules (marked ⊳) resolve before the calculus
 and contribute no term constructors.
 
-Each schema below is a numbered rule `Ln.m` — n the paragraph, m the
+Each mapping-annex clause below is a numbered rule `Ln.m` — n the paragraph, m the
 position — so that samples, the coverage matrix, and the checker can cite
 one rule by id, as pins are cited by id (#9). An id carries no meaning; the
 rule text is the schema. An unmarked rule is a **lowering judgment** and
@@ -2856,9 +2856,10 @@ or reading rule.
   required (P5, #25).
 - **L3.15** Inner PA's counting basis → the resolved place's declared
   `unit_Rℓ` (§10) where the row has a unit profile, otherwise an explicitly
-  resolved pure basis at a `Context` site; the count is `CardBasis` over that
-  basis (P39, §12).
-
+  resolved pure basis at a `Context` site; for the `le` family (`le`, `lei`,
+  `le'i`) the basis is the describing property's speaker-described units,
+  not actual R-units (P10); the count is `CardBasis` over that basis (P39,
+  §12).
 **Relative clauses** (L4).
 
 - **L4.1** `poi` → conjunct in the reference property;
@@ -4442,7 +4443,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | gadri, descriptions, `lo'e`/`le'e` | §11 L3 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora | §3 |
 | relative clauses, `goi`, `voi` | §11 L4 | audience-deleted `skicu` (P10) | — | §4 |
 | quantifiers, termsets, negation scope | §11 L5 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
-| vague quantities, gradables | §6.4 | degree GQs, `Grade` | — | §5, §8 |
+| vague quantities, gradables | §6.4, §11 L5.28–L5.29 | degree GQs, `Grade` | — | §5, §8 |
 | anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
 | abstractions, `tu'a`, `jai`, `mo'e` | §11 L9 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 L10 | domain-enumeration schemas | — | §6 |

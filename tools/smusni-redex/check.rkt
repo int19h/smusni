@@ -49,24 +49,33 @@
 ;; lowered floor is a visible diff.
 (define (load-rule-coverage [path rule-coverage-path])
   (match (call-with-input-file path read)
-    [`(smusni-rule-coverage 1 (cited-floor ,(? exact-nonnegative-integer? floor)) ,entries ...)
+    [`(smusni-rule-coverage 1 (cited-floor ,(? exact-nonnegative-integer? floor))
+                             (rule-counts ,(? exact-nonnegative-integer? total)
+                                          ,(? exact-nonnegative-integer? maps)
+                                          ,(? exact-nonnegative-integer? gaps)
+                                          ,(? exact-nonnegative-integer? notes)
+                                          ,(? exact-nonnegative-integer? readings))
+                             ,entries ...)
      (define ledger
        (for/list ([entry (in-list entries)])
          (match entry
            [`(uncovered ,(? string? id) ,(? string? issue))
-            (unless (regexp-match? #px"^#[0-9]+$" issue)
+            (unless (regexp-match? #px"^#[1-9][0-9]*$" issue)
               (error 'load-rule-coverage "uncovered ~a needs a durable issue like #9, got ~e" id issue))
             (cons id issue)]
            [else (error 'load-rule-coverage "invalid coverage entry: ~e" entry)])))
      (define ids (map car ledger))
      (unless (= (length ids) (set-count (list->set ids)))
        (error 'load-rule-coverage "duplicate uncovered entries in the ledger"))
-     (values floor ledger)]
-    [else (error 'load-rule-coverage "unsupported rule-coverage header (expect a cited-floor)")]))
+     (values (list floor total maps gaps notes readings) ledger)]
+    [else (error 'load-rule-coverage "unsupported rule-coverage header (expect cited-floor and rule-counts)")]))
 
 ;; Gate 3a (#9 M1): returns a list of (cons phase message) findings.
-(define (rule-coverage-findings rules classified ledger floor)
+(define (rule-coverage-findings rules classified ledger floors)
   ;; `rules` is a list of (id . kind); only `map` rules are lowering judgments.
+  ;; `floors` is (cited-floor total map gap note reading) or just the cited floor.
+  (define floor (if (pair? floors) (first floors) floors))
+  (define counts (and (pair? floors) (rest floors)))
   (define kinds (for/hash ([r (in-list rules)]) (values (car r) (cdr r))))
   (define rule-ids (for/list ([r (in-list rules)] #:when (eq? (cdr r) 'map)) (car r)))
   (define known (list->set (map car rules)))
@@ -106,6 +115,13 @@
     (note! (format "rule coverage fell to ~a cited rules, below the ratchet floor ~a: add specimens, do not ledger" (hash-count cited) floor)))
   (when (> (hash-count cited) floor)
     (note! (format "rule coverage rose to ~a cited rules: raise (cited-floor ~a) in rule-coverage.sexp to ~a" (hash-count cited) floor (hash-count cited))))
+  ;; Exact rule-count ratchet: the numbered clauses of §11 by kind must match
+  ;; the recorded counts, so a deleted or re-kinded clause is a visible diff.
+  (when counts
+    (define (count-kind k) (for/sum ([r (in-list rules)]) (if (eq? (cdr r) k) 1 0)))
+    (define actual (list (length rules) (count-kind 'map) (count-kind 'gap) (count-kind 'note) (count-kind 'reading)))
+    (unless (equal? actual counts)
+      (note! (format "rule counts (total map gap note reading) are ~a but rule-coverage.sexp records ~a: update (rule-counts …) deliberately" actual counts))))
   (values (reverse findings) (hash-count cited) (hash-count ledgered)))
 
 (struct expected-finding (source ordinal digest phase pattern issue note)
@@ -298,9 +314,10 @@
 
   (define rules (spec-rules))
   (define rule-ids (map car rules))
-  (define-values (coverage-floor coverage-ledger) (load-rule-coverage))
+  (define-values (coverage-floors coverage-ledger) (load-rule-coverage))
+  (define coverage-floor (first coverage-floors))
   (define-values (rule-findings cited-count ledgered-count)
-    (rule-coverage-findings rules classified coverage-ledger coverage-floor))
+    (rule-coverage-findings rules classified coverage-ledger coverage-floors))
   (for ([finding (in-list rule-findings)])
     (set! unexpected
           (cons (observed-finding "rules" 0 "n/a" (car finding) (cdr finding))

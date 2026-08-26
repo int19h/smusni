@@ -52,9 +52,31 @@
 (define-values (above _c4 _l4)
   (rule-coverage-findings (R "L1.1" "L1.2") (list (fake "s" 1 '("L1.1" "L1.2"))) '() 1))
 (check-true (ormap (lambda (m) (regexp-match? #rx"raise \\(cited-floor 1\\)" (cdr m))) above))
-(define-values (floor-ok ledger-ok) (load-rule-coverage))
-(check-true (exact-nonnegative-integer? floor-ok))
+(define-values (floors-ok ledger-ok) (load-rule-coverage))
+(check-equal? (length floors-ok) 6)
 (check-true (list? ledger-ok))
+
+;; Exact rule-count ratchet: a deleted uncited gap clause is a finding.
+(define-values (counts-bad _c6 _l6)
+  (rule-coverage-findings (list (cons "L1.1" 'map))
+                          (list (fake "s" 1 '("L1.1")))
+                          '() (list 1 2 1 1 0 0)))
+(check-true (ormap (lambda (m) (regexp-match? #rx"rule counts .* records" (cdr m))) counts-bad))
+(define-values (counts-ok _c7 _l7)
+  (rule-coverage-findings (list (cons "L1.1" 'map) (cons "L1.2" 'gap))
+                          (list (fake "s" 1 '("L1.1")))
+                          '() (list 1 2 1 1 0 0)))
+(check-equal? counts-ok '())
+
+;; Ledger issues must be real GitHub numbers.
+(define (ledger-loads? text)
+  (define tmp (make-temporary-file "coverage-~a.sexp"))
+  (call-with-output-file tmp #:exists 'truncate (lambda (o) (display text o)))
+  (with-handlers ([exn:fail? (lambda (_) #f)])
+    (load-rule-coverage tmp) #t))
+(check-false (ledger-loads? "(smusni-rule-coverage 1 (cited-floor 0) (rule-counts 0 0 0 0 0) (uncovered \"L1.1\" \"#0\"))"))
+(check-false (ledger-loads? "(smusni-rule-coverage 1 (cited-floor 0) (rule-counts 0 0 0 0 0) (uncovered \"L1.1\" \"#9\") (uncovered \"L1.1\" \"#9\"))"))
+(check-true (ledger-loads? "(smusni-rule-coverage 1 (cited-floor 0) (rule-counts 0 0 0 0 0) (uncovered \"L1.1\" \"#9\"))"))
 
 
 ;; Kinds and origins: a gap rule is never citable or ledgerable; a core
