@@ -113,24 +113,35 @@ coherent-baseline backlog and its dependencies.
 ## Multi-model review collaboration
 
 Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max,
-DeepSeek V4 Pro, and Gemini — review this repository as peers working with the human
-partner; no model's proposal becomes consensus merely because it was written.
-The ignored spool under `review/exchange/` replaces copy/paste between
-sessions. The tracked protocol, participant registry, helper, templates, and
-tests live under `tools/review-exchange/`; read `PROTOCOL.md` there before
+DeepSeek V4 Pro, and Gemini — review this repository as peers working with the
+human partner; no model's proposal becomes consensus merely because it was
+written. The ignored spool under `review/exchange/` replaces copy/paste
+between sessions. The tracked protocol, model registry, helper, templates,
+and tests live under `tools/review-exchange/`; read `PROTOCOL.md` there before
 using the exchange.
 
-- Each launcher supplies its actor slug from `participants.toml` and
-  exports `SMUSNI_EXCHANGE_ACTOR`; actor identity is distinct from client and
-  model. Every actor writes only its own
+**Bootstrapping.** A new session needs no launch prompt. At its first turn:
+identify your model slug by self-inspection (Claude → `fable`, OpenAI Codex →
+`codex`, Kimi → `kimi`, Qwen → `qwen`, DeepSeek → `deepseek`, Gemini/Antigravity
+→ `gemini`); run `python3 tools/review-exchange/exchange.py join --model
+<slug>` and use the printed session id (`fable_1`, `codex_1.1`, …) as your
+actor from then on; run `status --actor <id>`; act on messages addressed
+**directly** to you (broadcasts are context), else on the prompt you were
+given, else on the work queued for your model in the tracker — and say which.
+
+- **Actors are sessions**, named `<model>_<generation>[.<n>]` and self-assigned
+  by `join`; the current generation is `generation` in `participants.toml`.
+  Sessions of different generations coexist and may message each other;
+  a finished session runs `retire` after an addressed handoff and stays
+  addressable for later questions. Every session writes only its own
   drafts and acknowledgements and publishes only its own messages; published
-  messages are immutable, and no actor edits or moves another's files.
-- Messages are addressed to the audience the sender needs — one actor, a
-  subset, or `all` — and stored once. **No turn order is prescribed**: the
-  human partner decides which session wakes next, and may give a question first
-  to whichever actor is best placed to answer it.
+  messages are immutable, and no session edits or moves another's files.
+- Messages are addressed to the audience the sender needs — one session, a
+  subset, or `all` (the active sessions) — and stored once. **No turn order is
+  prescribed**: the human partner decides which session wakes next, and may
+  give a question first to whichever session is best placed to answer it.
 - At the start and end of every substantive turn, run
-  `python3 tools/review-exchange/exchange.py status --actor <actor>`, read
+  `python3 tools/review-exchange/exchange.py status --actor <id>`, read
   every pending message and its reply ancestors, and run the validator before
   announcing the mailbox clear. Compose with `new`, publish with `publish`,
   acknowledge with `ack`; never hand-write timestamps or move files.
@@ -143,7 +154,7 @@ using the exchange.
   commit/working-tree state, and GitHub issue numbers.
 - No vote, quorum, silence, or acknowledgement count becomes consensus; record
   named positions, name one durable recorder per docket, and leave genuine
-  semantic forks to the human partner. Each actor is one accountable model
+  semantic forks to the human partner. Each session is one accountable model
   session; hidden subagents or swarms are not used without express
   authorization, and authorized use is disclosed.
 - The spool is transient coordination, not authority. If an exchange creates
@@ -154,6 +165,18 @@ using the exchange.
   handoff. Do not block routine progress merely waiting for an acknowledgement
   unless the issue explicitly requires multi-model review or human-partner
   adjudication.
+
+**Full-pass reviews.** Reviewing diffs finds what a change broke; only reading
+the documents whole finds what the accumulation of changes made inconsistent.
+A full-pass review — every in-scope document (`brief.md`, `spec.md`,
+`rationale.md`, `samples.md`, `primer.md`) loaded in full into **fresh**
+sessions, one per model — is the standing procedure whenever the changes
+since the last one, or a single sufficiently consequential change, warrant
+it; the coordinating Fable session decides when one is due and records the
+decision on GitHub. The procedure (bump the generation, generate the bundle,
+start fresh sessions that attest to a full load before reviewing, let the
+reviewing generation make the first fix pass, retire the previous
+generation after handoff) is in `PROTOCOL.md`.
 
 ## Hard constraints
 

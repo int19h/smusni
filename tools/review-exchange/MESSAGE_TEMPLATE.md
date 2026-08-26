@@ -1,12 +1,13 @@
 ---
-protocol: smusni-review-mail/v2
-id: YYYYMMDDTHHMMSSZ-actor-short-slug
-from: actor
+protocol: smusni-review-mail/v3
+id: YYYYMMDDTHHMMSSZ-session-short-slug
+from: session
 to: all
 created_utc: YYYY-MM-DDTHH:MM:SSZ
 kind: request
 model: model-selector
 client: client/version
+generation: 1
 ack_required: true
 in_reply_to: none
 supersedes: none

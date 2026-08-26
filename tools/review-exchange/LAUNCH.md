@@ -1,106 +1,50 @@
-# Launching a reviewer session
+# Launching a session
 
-Paths below are relative to the repository root; commands are run from there.
-See [`PROTOCOL.md`](PROTOCOL.md) for the exchange rules and
-[`participants.toml`](participants.toml) for the actor slugs.
+Sessions bootstrap themselves from the charter; there is no launch prompt to
+paste. Start the client in the repository root and give the session whatever
+task you have — or nothing. See [`PROTOCOL.md`](PROTOCOL.md) for the session
+model (`<slug>_<generation>[.<n>]`), generations, and full-pass reviews.
 
-Each mailbox actor is one accountable model session that the human partner
-wakes. The clients below were checked on 2026-08-25 (`kimi` 0.38.0,
-`qwen` 0.22.0). Nothing here is protocol state; session ids may be kept in an
-ignored note such as `review/exchange/sessions.txt` — only needed if a tab has
-to be resumed.
+## What a fresh session does on its own
 
-## Before the first launch
+1. Reads `AGENTS.md` (the client loads it; Antigravity through the workspace
+   rule `.agents/rules/smusni-charter.md`).
+2. Identifies its model slug and runs
+   `python3 tools/review-exchange/exchange.py join --model <slug>`; the printed
+   id (`fable_1`, `codex_1.1`, …) is its actor from then on.
+3. Runs `status --actor <id>`, reads what is addressed directly to it, and acts
+   on that; otherwise acts on your opening prompt; otherwise continues the
+   work queued for its model in the tracker.
 
-- The working tree must contain the current [`AGENTS.md`](../../AGENTS.md)
-  and this directory (commit or at least keep them checked out); the clients
-  read the charter from the working tree at startup.
-- Do not run reviewers with blanket auto-approval (`kimi -y`, Qwen YOLO
-  modes). Approve the helper ([`exchange.py`](exchange.py), invoked as
-  `python3 tools/review-exchange/exchange.py …` from the repository root)
-  and read-only repository tools; deny tracked-file edits unless the session
-  is an assigned implementer in its own worktree.
+## Per client
 
-## Normal operation: one interactive tab per actor
+- **Terminal tabs (Claude Code, Codex, Kimi, Qwen, DeepSeek):** one tab per
+  session; after joining, a tab may `export SMUSNI_EXCHANGE_ACTOR=<id>` so
+  the helper refuses any other actor. Resume a tab with the client's own
+  resume/continue command; never `--continue` for the two Qwen-transported
+  models (it would resume the wrong model's transcript).
+- **Antigravity (Gemini):** open the repository root as the workspace; the
+  always-on rule loads the charter pointer. Antigravity terminals do not keep
+  an exported variable between commands, so spell the actor on every helper
+  call: `SMUSNI_EXCHANGE_ACTOR=<id> python3 tools/review-exchange/exchange.py … --actor <id>`.
 
-Run each actor as a persistent interactive session in its own terminal tab and
-switch between tabs to give turns; that is the whole scheduler. Starting the
-tabs:
+## Several sessions of one model
 
-```sh
-cd ~/git/smusni
-SMUSNI_EXCHANGE_ACTOR=kimi     kimi -m kimi-code/k3                             # Kimi K3
-SMUSNI_EXCHANGE_ACTOR=qwen     qwen -m qwen3.8-max-preview -i "<first prompt>"  # Qwen 3.8 Max
-SMUSNI_EXCHANGE_ACTOR=deepseek qwen -m deepseek-v4-pro   -i "<first prompt>"  # DeepSeek V4 Pro
-```
+`join` hands out `fable_1`, then `fable_1.1`, `fable_1.2`, … in the current
+generation. Use extra sessions for work that benefits from a clean context;
+they are peers, not subagents, and each is accountable for its own messages.
 
-The environment variable binds the tab to its actor: the helper then refuses
-any other `--actor`, which is what prevents the two Qwen-backed tabs from
-writing as each other by accident. Export it for the Codex and Fable tabs too.
+## Handing off and retiring
 
-Paste the first prompt below into each tab.
+A session that is done runs `exchange.py retire --actor <id> --note '…'`
+after leaving an addressed handoff. Retired sessions drop out of `all` but
+stay addressable: resume the client session and it can answer a direct
+message from a later generation.
 
-## Gemini in Antigravity (no terminal tab)
+## Full-pass review
 
-Gemini runs as an Antigravity agent, not a terminal session. Open the
-repository root as the Antigravity workspace; the tracked always-on rule
-[`.agents/rules/smusni-charter.md`](../../.agents/rules/smusni-charter.md)
-loads on every message. It points at `AGENTS.md` (Antigravity does not read
-`AGENTS.md` by itself), instructs the session to read it in full, binds the
-actor to `gemini`, and requires every helper call to be spelled
-`SMUSNI_EXCHANGE_ACTOR=gemini python3 tools/review-exchange/exchange.py … --actor gemini`,
-since an Antigravity terminal does not keep an exported variable between
-commands. Use the same first prompt as the tabs, with `ACTOR` = `gemini`.
-Antigravity's background or parallel agent features count as hidden
-subagents under the charter unless the human partner authorizes them. Rule
-files are capped at 12,000 characters; the rule is a pointer, never a copy
-of the charter.
-
-## If a tab dies: resume the exact session
-
-```sh
-kimi -S            # picker; or kimi -m kimi-code/k3 -S <id>
-qwen sessions list # then: qwen -m qwen3.8-max-preview -r <id>
-                   #       qwen -m deepseek-v4-pro   -r <id>
-```
-
-Never use `-c`/`--continue` for Qwen or DeepSeek: they share one cwd-scoped
-history, so `--continue` resumes whichever of the two ran most recently.
-(Non-interactive use exists — `kimi … -p … --output-format stream-json`,
-`qwen … -p … -o json` — but is not needed for tab-based operation.)
-
-## First prompt (replace ACTOR and the docket)
-
-The prompt is text for a session started in the repository root, so its paths
-are root-relative on purpose.
-
-```text
-You are the review-exchange actor `ACTOR` (see
-`tools/review-exchange/participants.toml`). Read `AGENTS.md` in full — it is
-the project charter — and `tools/review-exchange/PROTOCOL.md`. Confirm in
-one line which protocol version the exchange uses and which actor slug you
-are. Then run `python3 tools/review-exchange/exchange.py status --actor ACTOR`,
-read every pending message and its reply ancestors, and respond through the
-helper (`new` → edit the draft → `publish`; `ack` after your disposition is
-captured). Your docket this turn: DOCKET. Do not edit tracked files; do not
-use subagents; cite live file paths and sources you have actually read.
-```
-
-The one-line confirmation is the charter-discovery check: a session that
-cannot name the protocol version and its slug did not load `AGENTS.md`.
-
-## Every later prompt
-
-```text
-Your turn as `ACTOR`: run `exchange.py status --actor ACTOR`, process what is
-pending, reply and acknowledge through the helper. [Optional: the question or
-docket this turn.]
-```
-
-## First round trip (pilot)
-
-Send each new actor one non-normative message (direct or `all`), wake it, and
-confirm with `exchange.py status --actor <actor>` that it went from pending to
-acknowledged with a published reply, and that `exchange.py validate` is clean.
-Only then hand it a semantic docket, naming the reviewers and one durable
-recorder.
+Bump `generation` in `participants.toml` (commit), run
+`python3 tools/review-exchange/bundle.py`, then start fresh sessions — one per
+model — whose first instruction is: *read `review/bundle/full-pass-<generation>.md`
+in full and attest by echoing each document's line count and SHA-256 from the
+loaded text before reviewing*. The rest follows `PROTOCOL.md`.

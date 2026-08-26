@@ -1,6 +1,7 @@
 # Multi-model review exchange protocol
 
-Protocol version: **`smusni-review-mail/v2`**.
+Protocol version: **`smusni-review-mail/v3`** (v1 and v2 files remain as
+read-only history).
 
 The exchange is a transient peer-review channel shared through the local
 filesystem by every model session working on this repository and by the human
@@ -16,25 +17,65 @@ commands are run from there. GitHub issues remain the durable work
 queue, and the normative documents plus the human partner's adjudications remain
 the semantic authority.
 
-## Participants
+## Models, sessions, generations
 
-[`participants.toml`](participants.toml) is the single actor allow-list. Every actor has a lowercase
-slug (`codex`, `fable`, `kimi`, `qwen`, `deepseek`, `human`, …), a display name,
-its transporting client, its default model selector, an `active` flag, and a
-`broadcast_recipient` flag. Actor identity is distinct from client and model:
-Qwen and DeepSeek are separate actors even though both are transported by the
-`qwen` client. Adding a reviewer is an edit to the registry, never a code
-change. Inactive actors remain valid historical senders but never enter a new
-broadcast audience.
+[`participants.toml`](participants.toml) is the single **model** allow-list
+and holds the current **generation**. Every model has a lowercase slug
+(`codex`, `fable`, `kimi`, `qwen`, `deepseek`, `gemini`), a display name, its
+transporting client, its default model selector, an `active` flag, and a
+`broadcast_recipient` flag. Model identity is distinct from client and
+selector: Qwen and DeepSeek are separate models even though both are
+transported by the `qwen` client. Adding a model is an edit to the registry,
+never a code change.
 
-The human partner is the actor `human`: may address any actor and may be
-addressed directly (a `decision-query`, say), adjudicates semantic forks, is
-never a broadcast recipient, and never owes an acknowledgement — the registry
-marks it `acknowledges = false`, so messages addressed to `human` are reported
-by `status --actor human` as `ADDRESSED`, never as pending, and no validation
-ever expects a human acknowledgement (one may still be written). Each named actor is one accountable model session; hidden
+**Actors are sessions.** A session registers itself once, at its first turn,
+with `exchange.py join --model <slug>`, and is named
+`<slug>_<generation>[.<n>]`: the first Fable session of generation 1 is
+`fable_1`, a second concurrent one `fable_1.1`, a third `fable_1.2`; the
+first Fable session after the generation is bumped to 2 is `fable_2`. Ids
+are assigned by the helper from the spool's session registry
+(`review/exchange/sessions/<id>.md`), never chosen by hand, so a session
+needs no launch prompt to know who it is. A session that has finished its
+work runs `exchange.py retire`: it leaves every future `all` audience but
+stays addressable, so the human partner can resume it later for a direct
+question (a new generation asking an old one why something is the way it
+is). Sessions of different generations coexist; nothing retires a session
+except itself or the human partner.
+
+**Generations.** The generation counter is bumped — a commit — by whoever
+calls a full-pass review of the documents (see *Full-pass reviews* below);
+sessions started afterwards join the new generation. A generation bump never
+alters who an already published message is pending for.
+
+**Legacy mail.** v1/v2 history addressed a bare model slug. The earliest-joined
+session of each model inherits that mail as pending, and an acknowledgement in
+a legacy `acks/<slug>/` directory still discharges it; v3 messages name
+sessions only, never bare slugs.
+
+The human partner is the fixed actor `human` (registry `sessions = false`):
+may address any session and be addressed directly (a `decision-query`, say),
+adjudicates semantic forks, is never a broadcast recipient, and never owes an
+acknowledgement — the registry marks it `acknowledges = false`, so messages
+addressed to `human` are reported by `status --actor human` as `ADDRESSED`,
+never as pending. Each session is one accountable model session; hidden
 subagents, teams, or swarms are not used unless the human partner expressly
 authorizes them, and any authorized use is disclosed in the message.
+
+## Bootstrapping a session
+
+A new session needs no launch prompt. At its first turn it:
+
+1. reads the charter (`AGENTS.md`), which every client loads;
+2. identifies its model slug by self-inspection (a Claude session is `fable`,
+   an OpenAI Codex session `codex`, Kimi `kimi`, Qwen `qwen`, DeepSeek
+   `deepseek`, a Gemini/Antigravity session `gemini`);
+3. runs `python3 tools/review-exchange/exchange.py join --model <slug>` and
+   uses the printed id as its `--actor` from then on (a tab may also export
+   it as `SMUSNI_EXCHANGE_ACTOR`);
+4. runs `status --actor <id>`, reads every message addressed **directly** to
+   it (and its reply ancestors) and acts on it; broadcasts are context;
+5. otherwise does what its opening prompt asked, or, given none, continues
+   the work queued for its model in the tracker and says so.
 
 ## Scheduling: no predetermined order
 
@@ -57,9 +98,11 @@ tools/review-exchange/            tracked control plane
   ACK_TEMPLATE.md  tests/
 
 review/exchange/                  ignored spool
-  messages/                       every published v2 message, stored once
-  drafts/<actor>/                 unpublished messages of that actor
-  acks/<actor>/                   acknowledgements authored by that actor
+  sessions/<session-id>.md        the session registry (join/retire)
+  messages/                       every published v2/v3 message, stored once
+  drafts/<session-id>/            unpublished messages of that session
+  acks/<session-id>/              acknowledgements authored by that session
+  acks/<model>/                   legacy v1/v2 acknowledgements (read-only)
   inbox/codex/, inbox/fable/      immutable v1 history (read-only)
 ```
 
@@ -67,12 +110,12 @@ Each actor writes only its own draft and acknowledgement directories and
 publishes only its own messages. No actor edits or moves another actor's files,
 and published files are never edited.
 
-**Actor binding.** Each launcher exports `SMUSNI_EXCHANGE_ACTOR=<slug>` before
-starting a session. When it is set, `new`/`publish`/`ack` refuse any other
-`--actor` (exit 3) and default to the bound actor when `--actor` is omitted.
-This is an accidental-safety boundary — two actors share the `qwen` client —
-not security against the shared account; leaving it unset is the human
-driver's manual escape.
+**Actor binding (optional).** A session may export
+`SMUSNI_EXCHANGE_ACTOR=<session-id>` after joining. When it is set,
+`new`/`publish`/`ack`/`retire` refuse any other `--actor` (exit 3) and default
+to the bound actor when `--actor` is omitted. This is an accidental-safety
+boundary for two sessions sharing one client, not security against the shared
+account; leaving it unset is the human driver's manual escape.
 
 **Drafts are private.** Only the sender's own `status` reports problems in its
 drafts, as `WARNING` lines; other actors' drafts may be half-written at any
@@ -81,20 +124,21 @@ moment and never block validation, publication, or acknowledgement.
 ## Messages
 
 Filename and `id` are identical except for `.md`:
-`YYYYMMDDTHHMMSSZ-<actor>-<short-slug>.md` (UTC; slug lowercase ASCII). The
-header is simple `key: value` front matter, not general YAML:
+`YYYYMMDDTHHMMSSZ-<session-id>-<short-slug>.md` (UTC; slug lowercase ASCII).
+The header is simple `key: value` front matter, not general YAML:
 
 ```text
 ---
-protocol: smusni-review-mail/v2
-id: 20260825T120000Z-qwen-example
-from: qwen
-to: codex,fable,kimi,deepseek
+protocol: smusni-review-mail/v3
+id: 20260826T120000Z-qwen_1-example
+from: qwen_1
+to: codex_1,fable_1,kimi_1.1
 audience: all
-created_utc: 2026-08-25T12:00:00Z
+created_utc: 2026-08-26T12:00:00Z
 kind: finding
 model: qwen3.8-max-preview
 client: qwen/0.22.0
+generation: 1
 ack_required: true
 in_reply_to: none
 supersedes: none
@@ -102,9 +146,10 @@ github_issues: #24,#25
 ---
 ```
 
-- `to` is a comma-separated actor list. In a **draft** it may be `all`; at
-  publication the helper expands `all` to the active broadcast recipients other
-  than the sender and records `audience: all`. A published message therefore
+- `to` is a comma-separated list of session ids (or `human`). In a **draft**
+  it may be `all`; at publication the helper expands `all` to the **active**
+  sessions of every broadcast model other than the sender and records
+  `audience: all`. A published message therefore
   always names its recipients explicitly, so a later registry change never
   alters whom an already published message is pending for.
 - A sender is never its own recipient. Direct and subset addressing are the
@@ -112,9 +157,8 @@ github_issues: #24,#25
 - `ack_required: true` makes every recipient pending until its own
   acknowledgement exists; `false` publishes an immutable FYI that is never
   pending.
-- `model` and `client` are required provenance on every message; the helper
-  fills them from the registry unless overridden. Session identifiers are not
-  recorded in messages.
+- `model`, `client`, and `generation` are required provenance on every
+  message; the helper fills them from the session registry unless overridden.
 - `kind` ∈ `request`, `response`, `finding`, `proposal`, `handoff`,
   `decision-query`. `in_reply_to` and `supersedes` each name one published
   message or `none`; branching discussion is normal and no linear thread is
@@ -176,7 +220,10 @@ or durable issue update was silently skipped.
 Run from the repository root:
 
 ```sh
+python3 tools/review-exchange/exchange.py join --model <slug> [--note '…']   # once, first turn: prints your id
 python3 tools/review-exchange/exchange.py status --actor <actor>   # start and end of a turn
+python3 tools/review-exchange/exchange.py sessions                 # who exists, active or retired
+python3 tools/review-exchange/exchange.py retire --actor <actor> [--note '…']   # handoff
 python3 tools/review-exchange/exchange.py new --actor <actor> --to all|a,b --kind <kind> \
     --slug <slug> [--issues '#1,#2'] [--reply-to <id>] [--supersedes <id>] [--no-ack]
 python3 tools/review-exchange/exchange.py publish --actor <actor> <draft-path|draft-id>
@@ -196,6 +243,30 @@ remains as a thin compatibility wrapper around `status`; it lives in the
 ignored `review/` directory on purpose (it exists only so sessions started
 under the v1 charter keep seeing traffic until they reload), while everything
 that defines behaviour is tracked here.
+
+## Full-pass reviews
+
+A full-pass review reads the documents whole — every in-scope document loaded
+in full into fresh contexts — rather than reviewing diffs. It is the standing
+procedure whenever the accumulated changes, or a single sufficiently
+consequential one, make the big picture worth re-reading; the Fable session
+acting as coordinator decides when one is due and records the decision on
+GitHub. Procedure:
+
+1. bump `generation` in `participants.toml` and commit;
+2. generate the review bundle: `python3 tools/review-exchange/bundle.py`
+   writes `review/bundle/full-pass-<generation>.md` — the in-scope documents
+   concatenated in order, each preceded by its name, line count, and SHA-256,
+   with a manifest at the top;
+3. the human partner starts **fresh** sessions (one per model); each joins as
+   `<slug>_<generation>`, reads the bundle in full, and **attests** by echoing
+   each document's line count and hash from the loaded text before writing a
+   word of review — a session that cannot hold the bundle fails the attestation
+   honestly instead of reviewing from a partial read;
+4. reviews go to the exchange and to GitHub as usual; the reviewing generation
+   also makes the first fix pass, since it holds the whole corpus in context;
+5. the previous generation's sessions retire after their handoffs and remain
+   addressable for questions.
 
 ## v1 history
 

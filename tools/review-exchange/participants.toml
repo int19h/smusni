@@ -1,40 +1,46 @@
 # Participant registry for the review exchange. This file is the single
-# actor allow-list: the helper derives actor names, message-ID syntax,
-# broadcast expansion, and default provenance from it. Adding a reviewer is
-# an edit here, never a code change.
+# model allow-list and the generation counter: actors are sessions that
+# register themselves with `exchange.py join --model <slug>` and are named
+# <slug>_<generation>[.<n>]; the helper derives message-id syntax, broadcast
+# expansion, and default provenance from it. Adding a model is an edit here,
+# never a code change.
 
-protocol = "smusni-review-mail/v2"
+protocol = "smusni-review-mail/v3"
 spool = "review/exchange"
+# The current session generation. Whoever calls a full-pass review of the
+# documents bumps this (a commit) before the fresh sessions are started; a
+# session joining afterwards becomes <model>_<generation>[.<n>].
+generation = 1
 
-[actors.codex]
+[models.codex]
 active = true
 display_name = "Codex"
 client = "codex"
 model = "session-selected"
 broadcast_recipient = true
 
-[actors.fable]
+[models.fable]
 active = true
 display_name = "Fable"
 client = "claude"
 model = "claude-fable-5"
 broadcast_recipient = true
 
-[actors.kimi]
+[models.kimi]
 active = true
 display_name = "Kimi K3"
 client = "kimi"
 model = "kimi-code/k3"
 broadcast_recipient = true
 
-[actors.qwen]
+[models.qwen]
 active = true
 display_name = "Qwen 3.8 Max"
 client = "qwen"
 model = "qwen3.8-max-preview"
 broadcast_recipient = true
 
-[actors.deepseek]
+[models.deepseek]
 active = true
 display_name = "DeepSeek V4 Pro"
 client = "qwen"
@@ -43,7 +49,7 @@ broadcast_recipient = true
 
 # Gemini runs inside Google Antigravity; the workspace rule
 # `.agents/rules/smusni-charter.md` loads the charter and binds the actor.
-[actors.gemini]
+[models.gemini]
 active = true
 display_name = "Gemini"
 client = "antigravity"
@@ -53,10 +59,11 @@ broadcast_recipient = true
 # The human partner may address any actor and adjudicates semantic forks,
 # but is never a broadcast recipient and never owes an acknowledgement:
 # messages addressed to `human` are listed as ADDRESSED, never pending.
-[actors.human]
+[models.human]
 active = true
 display_name = "human partner"
 client = "none"
 model = "human"
+sessions = false
 broadcast_recipient = false
 acknowledges = false

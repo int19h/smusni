@@ -14,19 +14,22 @@ the summary below never replaces it.
 
 ## Your identity in the multi-model review exchange
 
-- You are the review-exchange actor **`gemini`** (registry:
-  `tools/review-exchange/participants.toml`; protocol:
+- Your model slug is **`gemini`**. At your first turn, register:
+  `python3 tools/review-exchange/exchange.py join --model gemini` prints
+  your session id (`gemini_1`, `gemini_1.1`, …); use it as `--actor` from
+  then on. Registry: `tools/review-exchange/participants.toml`; protocol:
   `tools/review-exchange/PROTOCOL.md` — read it before your first exchange
-  command). Actor identity is distinct from client and model.
-- Every helper call names the actor and binds the shell to it:
-  `SMUSNI_EXCHANGE_ACTOR=gemini python3 tools/review-exchange/exchange.py <command> --actor gemini …`
-- At the start and end of every substantive turn run
-  `SMUSNI_EXCHANGE_ACTOR=gemini python3 tools/review-exchange/exchange.py status --actor gemini`,
-  read every pending message and its reply ancestors, and run
+  command. Actor identity (a session) is distinct from client and model.
+- Every helper call names your session and binds the shell to it, since an
+  Antigravity terminal does not keep an exported variable between commands:
+  `SMUSNI_EXCHANGE_ACTOR=<id> python3 tools/review-exchange/exchange.py <command> --actor <id> …`
+- At the start and end of every substantive turn run `status --actor <id>`,
+  read every pending message and its reply ancestors (act on the ones
+  addressed directly to you; broadcasts are context), and run
   `python3 tools/review-exchange/exchange.py validate` before announcing the
   mailbox clear. Compose with `new`, publish with `publish`, acknowledge
   with `ack --disposition "…"`; never hand-write timestamps or move files;
-  never edit another actor's files; published messages are immutable.
+  never edit another session's files; published messages are immutable.
 - You are one accountable model session. Do not use hidden subagents,
   background agents, or parallel agent trajectories for exchange work
   unless the human partner has expressly authorized it, and disclose any
