@@ -4759,7 +4759,7 @@ used for source verification are noted per entry.
   `<1371405876.998.YahooMailNeo@web184401.mail.bf1.yahoo.com>`, describes the
   simplest forms as united pluralities whose predicate satisfaction remains
   open. The messages are in the local archive's
-  `mail/lojban-list.maildir.zip`. Bare member-level corpus probes are
+  `mail/lojban-list.maildir.zip`. Member-level corpus probes are
   `mi'o remna` by selckiku (IRC `all_logs.txt` line 477248, 2011-08-13) and
   `_mukti_` (line 1005240, 2015-11-01); they expose the no-inheritance cost of
   the rejected group carrier, while collective/reciprocal uses alone do not
