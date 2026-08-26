@@ -320,7 +320,6 @@ Entity
 ├─ Set<T>  Group<T>  List<T>    (collection objects, §4.9)
 ├─ Sign<K>  SignToken<K>        (signs, §7.5; K a sign kind)
 ├─ UtteranceToken               (utterance tokens, §7.4)
-├─ GroundDescription            (ground specifications, §5.1)
 └─ Ground            (deictic grounds, §5.1)
 ```
 
@@ -2815,11 +2814,8 @@ or reading rule.
   ```
 
   for which `(Close (skicu Speaker $r Audience P))` is the **licensed display
-  stand-in** (P10; the samples book's brief spelling): a mapping-declared
-  shorthand whose normative referent is the anchored term above — not a
-  same-denotation spelling variant in §2's sense, since its literal `Close`
-  reading would close the describing event existentially, and not a local
-  reinterpretation of `Close` — and the speaker's
+  abbreviation** (P10; the samples book's brief spelling) — an abbreviation of
+  this term, not a local reinterpretation of `Close` — and the speaker's
   commitment that the audience can identify the referent is a cooperative-use
   commitment stated here in prose, not machinery; non-veridical,
   speaker-identifying.
@@ -3480,8 +3476,6 @@ by metalanguage recursion over list structure:
 (ZipWith f (List) (List))                 ≝ ⊤
 (ZipWith f (List a as…) (List b bs…))     ≝ (∧ (f a b)
                                                (ZipWith f (List as…) (List bs…)))
-   ; no clause for lists of unequal length: ZipWith is then undefined — a
-   ; projective definedness condition (§4.9), as for xi past the end
 ```
 
 so the `fa'u` specimen expands completely:

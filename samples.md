@@ -1144,8 +1144,8 @@ there is no intended soritical boundary, as in the cutoff examples above.
             (Assert
               (CloseClause (ActualClause
                 {λ [$e :: Referents Eventuality]
-                  (∧ ((StateClause (tatpi $dogs)) $e) ; tatpi: eventless fixture row
-                     (cabna $e $occ2))})))         ; so its holding state is the event
+                  (∧ (Close (tatpi $dogs :Eventuality $e)) ; the prior direct-event
+                     (cabna $e $occ2))})))         ; fill is kept: tatpi's mode is #12's
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}

@@ -655,7 +655,7 @@ the way chapter 2 anchored the stove):
             (Assert
               (CloseClause (ActualClause                  ; chapter 4: ri = $dogs
                 {λ [$e :: Referents Eventuality]
-                  (∧ ((StateClause (tatpi $dogs)) $e)      ; tiredness is a state
+                  (∧ (Close (tatpi $dogs :Eventuality $e))
                      (cabna $e $occ2))})))
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
