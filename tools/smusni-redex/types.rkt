@@ -125,6 +125,19 @@
     ['ClauseContent #t]
     [_ #f]))
 
+(define (gq-result-effects nuclear #:exports? exports?)
+  (define effects
+    (if (effectful-property? nuclear)
+        (set 'effectful-call)
+        empty-effects))
+  (if exports? (set-add effects 'refer) effects))
+
+(define card-definedness-effects (set 'projective))
+(define card-definedness-obligations '(finite-set-cardinality-defined))
+
+(define (literal-zero? node)
+  (and (core-atom? node) (equal? (core-atom-value node) 0)))
+
 (define (merge-results type results
                        #:effects [extra-effects empty-effects]
                        #:obligations [extra-obligations '()]
@@ -973,7 +986,10 @@
      (unless (= (length arguments) 1) (raise-type node "Card takes Set<T>"))
      (define set-result (infer-core (first arguments) env inv))
      (match (typing-type set-result)
-       [`(Set ,_) (merge-results 'Cardinal (list set-result))]
+       [`(Set ,_)
+        (merge-results 'Cardinal (list set-result)
+                       #:effects card-definedness-effects
+                       #:obligations card-definedness-obligations)]
        [other (raise-type node "Card requires Set<T>, got ~e" other)])]
     [(eq? head 'CardBasis)
      (unless (= (length arguments) 2) (raise-type node "CardBasis takes reference and basis"))
@@ -1024,9 +1040,14 @@
                     "~a nuclear scope must be reference-level EFn<(Referents<T>), Content>, got parameter ~e"
                     head other)])
      (merge-results 'Content results
-                    #:effects (if (effectful-property? (third results))
-                                  (set 'effectful-call)
-                                  empty-effects))]
+                    #:effects
+                    (gq-result-effects
+                     (third results)
+                     #:exports?
+                     (case head
+                       [(MoreThan) #t]
+                       [(Exactly AtLeast) (not (literal-zero? (first arguments)))]
+                       [else #f])))]
     [(member head '(Some No))
      (unless (= (length arguments) 2)
        (raise-type node "~a takes restrictor and nuclear scope" head))
@@ -1046,9 +1067,9 @@
                     "~a nuclear scope must be reference-level EFn<(Referents<T>), Content>, got parameter ~e"
                     head other)])
      (merge-results 'Content results
-                    #:effects (if (effectful-property? (second results))
-                                  (set 'effectful-call)
-                                  empty-effects))]
+                    #:effects
+                    (gq-result-effects (second results)
+                                       #:exports? (eq? head 'Some)))]
     [(eq? head 'Every)
      (unless (= (length arguments) 2)
        (raise-type node "Every takes restrictor and nuclear scope"))
@@ -1060,9 +1081,7 @@
      (ensure-same-property-domain (second arguments) restrictor-domain nuclear-domain
                                   "Every restrictor/nuclear")
      (merge-results 'Content results
-                    #:effects (if (effectful-property? (second results))
-                                  (set 'effectful-call)
-                                  empty-effects))]
+                    #:effects (gq-result-effects (second results) #:exports? #t))]
     [(member head '(GlobalExactly Most))
      (define counted? (eq? head 'GlobalExactly))
      (define expected-arity (if counted? 3 2))
@@ -1086,7 +1105,9 @@
      (ensure-same-property-domain (list-ref arguments nuclear-index)
                                   restrictor-domain nuclear-domain
                                   (format "~a restrictor/nuclear" head))
-     (merge-results 'Content results)]
+     (merge-results 'Content results
+                    #:effects card-definedness-effects
+                    #:obligations card-definedness-obligations)]
     [(eq? head 'Generic)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (unless (member (length results) '(3 4))

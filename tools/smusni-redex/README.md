@@ -54,7 +54,10 @@ restrictor with an `L0.1` pure-position diagnostic. The concrete GQs have their
 normative signatures rather than pass-through typing: witness forms take a
 pure member restrictor and a reference-level nuclear scope, `Every` takes a
 member-level nuclear scope, and `GlobalExactly`/`Most` require both operands
-to be pure because both run inside `SetOf` comprehensions.
+to be pure because both run inside `SetOf` comprehensions. Exporting GQs keep
+their witness-introduction effect (with the literal-zero `AtLeast`/`Exactly`
+exceptions), while `Card` and its `GlobalExactly`/`Most` consumers carry the
+projective finite-set definedness obligation.
 
 ## Model-bank profiles
 

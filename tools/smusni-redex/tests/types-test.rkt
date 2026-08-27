@@ -1,6 +1,7 @@
 #lang racket
 
 (require rackunit
+         racket/set
          redex/reduction-semantics
          "../syntax.rkt"
          "../types.rkt")
@@ -218,6 +219,63 @@
                    (format "(Most ~a ~a)"
                            pure-entity-restrictor effectful-member-nuclear)))])
   (check-l0.1-rejection text))
+
+;; Defined GQ results retain the effects of their §12 expansions. Exporting
+;; forms introduce a witness, except for the two literal-zero boundaries.
+(for ([content
+       (in-list
+        (list (format "(Exactly 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtLeast 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Some ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(MoreThan 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Every ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)))])
+  (check-l0.1-rejection
+   (format "(SetOf {λ [$z :: Entity] ~a})" content)))
+
+(for ([content
+       (in-list
+        (list (format "(No ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtMost 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(FewerThan 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtLeast 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Exactly 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)))])
+  (check-not-exn
+   (lambda ()
+     (infer-text (format "(SetOf {λ [$z :: Entity] ~a})" content)))))
+
+;; Card's finite-set definedness projects, including through the two §12
+;; comparison forms that are defined with Card.
+(for ([content
+       (in-list
+        (list (format "(GlobalExactly 1 ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)
+              (format "(Most ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)))])
+  (check-l0.1-rejection
+   (format "(SetOf {λ [$z :: Entity] ~a})" content)))
+
+(define standalone-some
+  (infer-text
+   (format "(Some ~a ~a)"
+           pure-entity-restrictor pure-reference-nuclear)))
+(check-true (set-member? (typing-effects standalone-some) 'refer))
+
+(define finite-card
+  (infer-text (format "(Card (SetOf ~a))" pure-entity-restrictor)))
+(check-equal? (typing-type finite-card) 'Cardinal)
+(check-true (set-member? (typing-effects finite-card) 'projective))
+(check-not-false
+ (member 'finite-set-cardinality-defined (typing-obligations finite-card)))
 
 (check-not-exn
  (lambda ()
