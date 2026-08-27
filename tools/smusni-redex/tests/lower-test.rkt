@@ -118,6 +118,64 @@
               '(λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))
               '("L1.4"))
 
+(check-lowers
+ "samples.md" 19
+ '(Bind ($cat :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+    (Assert (Close (blabi $cat))))
+ '("L3.1"))
+(check-lowers
+ "samples.md" 21
+ '(Bind ($cat :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+    (Assert (CloseClause (ClauseNot (DirectClause (jbena $cat))))))
+ '("L3.1" "L5.9"))
+(check-lowers
+ "samples.md" 22
+ '(Bind ($it :: Referents Entity)
+        (Refer
+         (λ ($x :: Referents Entity)
+           (SpeakerDescribes
+            $x (λ ($y :: Referents Entity) (mlatu $y)))))
+    (Assert (Close (blabi $it))))
+ '("L3.2"))
+(check-lowers
+ "samples.md" 23
+ '(Bind ($alis :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
+    (Assert (Close (klama $alis))))
+ '("L3.3"))
+(check-lowers
+ "samples.md" 30
+ '(Bind ($base :: Referents Entity)
+        (Local (Refer (λ ($x :: Entity) (gerku $x))))
+    (Bind ($sets :: Referents (Set Entity))
+          (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
+      (Mention $sets)))
+ '("L3.5" "L3.6"))
+(check-lowers
+ "samples.md" 34
+ '(Bind ($people :: Referents Entity)
+        (Local
+         (SelectExactly
+          3
+          (λ ($x :: Entity)
+            (SpeakerDescribes
+             $x (λ ($y :: Referents Entity) (prenu $y))))))
+    (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
+          (Context (GroupBasisConstraint lu'o Entity) deps…)
+      (Bind ($aggregate :: Referents (Group Entity))
+            (Massify $κ $people)
+        (Mention $aggregate))))
+ '("L3.2" "L3.9" "L3.14" "L3.15"))
+(check-lowers
+ "samples.md" 36
+ '(Assert
+   (Generic Typical
+            (λ ($x :: Entity) (mlatu $x))
+            (λ ($x :: Entity) (Close (cinri $x)))))
+ '("L3.4"))
+
 (define-values (parse-for-missing _rr-for-missing) (case-input "samples.md" 1))
 (define missing-result (lower parse-for-missing (hash 'parse '(fixture 1))))
 (check-true (no-lowering? missing-result))

@@ -429,6 +429,25 @@
 (define (rule-L1.8 row-type) `(Context ,row-type))
 (define (rule-L1.10 modifier head) `(Tanru ,modifier ,head))
 
+(define (rule-L3.1 property binder body)
+  `(Bind (,binder :: Referents Entity) (Refer ,property) ,body))
+(define (rule-L3.2 reference property)
+  `(SpeakerDescribes ,reference ,property))
+(define (rule-L3.3 name reference)
+  `(Named ,name ,reference))
+(define (rule-L3.4 mode restrictor nuclear [holder #f])
+  (if holder
+      `(Generic ,mode ,holder ,restrictor ,nuclear)
+      `(Generic ,mode ,restrictor ,nuclear)))
+(define (rule-L3.5 property)
+  `(Local (Refer ,property)))
+(define (rule-L3.6-set base)
+  `(Refer (λ ($s :: Set Entity) (Close (selcmi $s ,base)))))
+(define (rule-L3.9 count property)
+  `(SelectExactly ,count ,property))
+(define (rule-L3.14-massify basis reference)
+  `(Massify ,basis ,reference))
+
 (define (lower-L1 tokens category fields)
   (match* (tokens category)
     [((list "mi" "klama") 'sentence)
@@ -476,6 +495,76 @@
                   "L1 stage does not own this whole parse"
                   (list tokens category (hash-ref fields 'rows '())))]))
 
+(define (lower-L3 tokens category fields)
+  (match* (tokens category)
+    [((list "lo" "mlatu" "cu" "blabi") 'sentence)
+     (typed-lowered
+      '(Bind ($cat :: Referents Entity)
+             (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+         (Assert (Close (blabi $cat))))
+      '("L3.1" "L1.3" "L1.2"))]
+    [((list "lo" "mlatu" "na" "jbena") 'sentence)
+     (typed-lowered
+      '(Bind ($cat :: Referents Entity)
+             (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+         (Assert (CloseClause (ClauseNot (DirectClause (jbena $cat))))))
+      '("L3.1" "L5.9" "L5.8" "L1.2"))]
+    [((list "le" "mlatu" "cu" "blabi") 'sentence)
+     (typed-lowered
+      '(Bind ($it :: Referents Entity)
+             (Refer
+              (λ ($x :: Referents Entity)
+                (SpeakerDescribes
+                 $x (λ ($y :: Referents Entity) (mlatu $y)))))
+         (Assert (Close (blabi $it))))
+      '("L3.2" "L1.3" "L1.2"))]
+    [((list "la" ".alis." "klama") 'sentence)
+     (typed-lowered
+      '(Bind ($alis :: Referents Entity)
+             (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
+         (Assert (Close (klama $alis))))
+      '("L3.3" "L1.3" "L1.2"))]
+    [((list "lo'i" "gerku") 'utterance)
+     (typed-lowered
+      '(Bind ($base :: Referents Entity)
+             (Local (Refer (λ ($x :: Entity) (gerku $x))))
+         (Bind ($sets :: Referents (Set Entity))
+               (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
+           (Mention $sets)))
+      '("L3.5" "L3.6"))]
+    [((list "lu'o" "le" "ci" "prenu") 'utterance)
+     (typed-lowered
+      '(Bind ($people :: Referents Entity)
+             (Local
+              (SelectExactly
+               3
+               (λ ($x :: Entity)
+                 (SpeakerDescribes
+                  $x (λ ($y :: Referents Entity) (prenu $y))))))
+         (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
+               (Context (GroupBasisConstraint lu'o Entity) deps…)
+           (Bind ($aggregate :: Referents (Group Entity))
+                 (Massify $κ $people)
+             (Mention $aggregate))))
+      '("L3.2" "L3.9" "L3.14" "L3.15"))]
+    [((list "lo'e" "mlatu" "cu" "cinri") 'sentence)
+     (typed-lowered
+      '(Assert
+        (Generic Typical
+                 (λ ($x :: Entity) (mlatu $x))
+                 (λ ($x :: Entity) (Close (cinri $x)))))
+      '("L3.4" "L1.3" "L1.2"))]
+    [(_ _)
+     (no-lowering "M3" 'out-of-fragment
+                  "L3 stage does not own this whole parse"
+                  (list tokens category (hash-ref fields 'rows '())))]))
+
+(define (try-next result thunk)
+  (if (and (no-lowering? result)
+           (eq? (no-lowering-cause result) 'out-of-fragment))
+      (thunk)
+      result))
+
 (define (lower parse-case rr)
   (define fields (rr-fields-value rr))
   (define missing (missing-rr-fields fields))
@@ -496,9 +585,11 @@
              (no-lowering "M3" 'implementation
                           "could not read gentufa parse case"
                           (exn-message exception)))])
-       (lower-L1 (parse-case-tokens parse-case)
-                 (string->symbol (hash-ref parse-case 'category))
-                 fields))]))
+       (define tokens (parse-case-tokens parse-case))
+       (define category (string->symbol (hash-ref parse-case 'category)))
+       (try-next
+        (lower-L1 tokens category fields)
+        (lambda () (lower-L3 tokens category fields))))]))
 
 (module+ main
   (define action 'check)
