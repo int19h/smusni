@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "f31b0d4543393231b8d3121981f8fd2eb6e16533")
+ (core-sha1 "9c4d3a80a8133a02aa628b7a84823b50adca179a")
  (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature
@@ -90,6 +90,7 @@
   Assert
   At
   AtLeast
+  AtMost
   BasisUnitAt
   Bind
   CanonicalAggregateAt
@@ -121,7 +122,9 @@
   EvidentialBasis
   Exactly
   Express
+  FewerThan
   Generic
+  GlobalExactly
   Grade
   GroupBasisConstraint
   GunmaAt
@@ -146,6 +149,7 @@
   MetalinguisticallyDefective
   MixAt
   MoreThan
+  Most
   NahiObjection
   Named
   NiRel
@@ -169,6 +173,7 @@
   Set
   SetOf
   Sign
+  Some
   SpeakerOf
   StateClause
   StructuredQuote
