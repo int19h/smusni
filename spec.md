@@ -2756,10 +2756,11 @@ commentary has used all along (guskant: `le broda` = `zo'e noi mi ke'a
 do skicu lo ka ce'u broda`). The describing event is anchored by the
 mapping annex's clause (§11 L3.2): it is the current utterance's own locution
 — saying `le broda` *is* the describing, so the anchor holds by
-construction through the token machinery (§7.4). `voi` uses the
-audience-deleted variant `(DropPlace skicu 3)` restrictively — the
-deletion is semantic (no audience role exists in a `voi` description),
-per pin P10.
+construction through the token machinery (§7.4). `voi` goes through
+`SpeakerDescribesUnaddressed` (§12) restrictively — the same locution
+anchor with the audience place deleted, `(DropPlace skicu 3)` being that
+form's inner relation; the deletion is semantic (no audience role exists
+in a `voi` description), per pin P10 (#49).
 
 ## 11. Mapping annex: Lojban constructs to core terms
 
@@ -2989,8 +2990,10 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
 
 - **L4.1** `poi` → conjunct in the reference property;
 - **L4.2** `noi` → `Supplement` anchored at the referent (P7);
-- **L4.3** `voi` → the audience-deleted `skicu` (`(DropPlace skicu 3)`, P10)
-  restrictively;
+- **L4.3** `voi` → `SpeakerDescribesUnaddressed` (§12: the audience-deleted
+  `skicu`, `(DropPlace skicu 3)`, anchored to this utterance's own locution
+  exactly as `le` is, P10; #49) as a restrictive conjunct in the reference
+  property;
 - **L4.4** `goi` → discourse-scoped binding;
 - **L4.5** `ke'a` → the property's parameter.
 - **L4.6** Outer `poi` after `ku` → restriction on the outer selection;
@@ -3653,12 +3656,19 @@ LocutionOf : Referents<UtteranceToken> × Referents<Locution> → Content
   (∃ {λ [$e :: Referents Locution]
     (∧ (LocutionOf CurrentToken $e)
        (skicu Speaker r Audience P :Eventuality $e))})
+(SpeakerDescribesUnaddressed r P) : Content
+   ; voi (L4.3): the same r and P, the audience place deleted
+(SpeakerDescribesUnaddressed r P) ≝
+  (∃ {λ [$e :: Referents Locution]
+    (∧ (LocutionOf CurrentToken $e)
+       ((DropPlace skicu 3) Speaker r P :Eventuality $e))})
 ```
 
-The form is the term: no other spelling abbreviates it (§2), which is why
-the samples book displays it verbatim. `voi` (L4.3) uses the
-audience-deleted `skicu` under ordinary `Close` and does not go through
-this form.
+Each form is the term: no other spelling abbreviates it (§2), which is why
+the samples book displays them verbatim. `voi` (L4.3) goes through the
+sibling form: deleting `skicu`'s audience place removes the addressee, not
+the reason for the anchor — a `voi` description is likewise constituted by
+this utterance's own locution (#49).
 
 **Temporal incidence** (ROI's interface; P35). Declared:
 
@@ -4214,9 +4224,10 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   official fit, guskant-precedented — with the utterance-locution
   anchoring clause (§11 L3.2) answering act-vs-identification: the describing
   event is this very utterance, true by construction. Speaker-indexed,
-  non-veridical, number-neutral; `voi` = `(DropPlace skicu 3)`
-  restrictive variant. No dictionary change (full argument:
-  rationale §2.6).
+  non-veridical, number-neutral; `voi` = `SpeakerDescribesUnaddressed`,
+  the same anchored form with the audience place deleted (`(DropPlace
+  skicu 3)` as its inner relation), restrictive (#49). No dictionary
+  change (full argument: rationale §2.6).
 - **P11** `lo'e`/`le'e` via the axiomatic `Generic` operator (mode +
   holder); no fixed prototype reference.
 - **P12** Implicit `ce'u` — a rule of `ka` alone (§11 L9.7): exactly one,
@@ -4598,7 +4609,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | predication, places, `zi'o`, conversion | §11 L1 | `ClauseContent`, `DirectClause`/`StateClause`/`CloseClause` | — | §1–§2 |
 | tense/aspect/space, BAI, CAhA | §11 L6 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE | §2 |
 | gadri, descriptions, `lo'e`/`le'e` | §11 L3 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora | §3 |
-| relative clauses, `goi`, `voi` | §11 L4 | audience-deleted `skicu` (P10) | — | §4 |
+| relative clauses, `goi`, `voi` | §11 L4 | `SpeakerDescribesUnaddressed` (P10; #49) | — | §4 |
 | quantifiers, termsets, negation scope | §11 L5 | GQ family, `GlobalExactly`, `Distrib` | mixed termsets, termset export | §5 |
 | vague quantities, gradables | §6.4, §11 L5.28–L5.29 | degree GQs, `Grade` | — | §5, §8 |
 | anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8 | `Combine` plus the partial “others” context projections | exotic donkeys | §3–§5 |
