@@ -166,17 +166,30 @@ separately from M1's focal-citation ratchet.
 The parse-to-source adapter recursively inspects tagged gentufa constructs
 (`BridiStatement`, bridi/selbri/term nodes, descriptors, quantifiers,
 connections, termsets, and LAhE) and treats terminal lexemes as data. It never
-dispatches on a whole surface-token sentence. RR force, readings, selected
-rows, and sites are consumed on that path; mutation regressions require tree
-structure changes to block lowering and RR changes to alter or reject output.
+dispatches on a whole surface-token sentence. Each handled construct accounts
+for all of its direct semantic terminals and terms; an unsupported child makes
+the case `no-lowering` instead of disappearing. Ordinary fills first form a
+labelled place map, and conversion routes those labels to the base row before
+application; each `zi'o` remains a distinct `DropPlace` deletion.
+
+RR force, readings, selected rows, and site kind/order/dependencies are
+validated exactly for the selected rule path. A nonempty RR field with no M3
+consumer is rejected rather than ignored. Mutation regressions require tree
+structure changes to block lowering, exercise unseen lexical and place
+combinations, and require every RR change to alter or reject output. The report
+prints the number of eligible cases for which the gentufa/RR translation
+actually formed a Redex source view.
 
 The executable rules are the `(I I O)` Redex judgment `m3-lower`; its named
 clauses are live §11 ids, and formed attribution is read from
 `build-derivations`, never a manual counter. The display normalizer is a Redex
 metafunction applied to both sides, and `SmusniCore` declares canonical
 binding forms for λ, `Let`, and sequential `Bind` so comparison uses Redex
-`alpha-equivalent?`. The manifest driver deterministically enumerates and
-type-checks every fixture derivation; it is not labelled `redex-check`.
+`alpha-equivalent?`. Matching additionally requires a binding-sensitive
+retrieval-site certificate: site traversal order, `Context`/`Vague` kind, and
+the enclosing binders on which each computation depends must be in bijection.
+The manifest driver deterministically enumerates and type-checks every fixture
+derivation; it is not labelled `redex-check`.
 `redex-check` is reserved for the bounded `#:satisfying` generator. This Redex
 version rejects generation for the judgment's ellipsis patterns, so the report
 records seed/attempts/size as unavailable and labels coverage fixture-only

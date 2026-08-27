@@ -40,8 +40,10 @@
          datum->core
          parse-case-tokens
          parse-case-variants
+         parse-case->sigma
          normalize-core
          redex-alpha-equivalent?
+         site-signatures
          fixture-derivation-check
          generated-redex-check
          no-lowering-fails?
@@ -99,6 +101,12 @@
   [(apply* e_R (e_arg ...)) (e_R e_arg ...)])
 
 (define-metafunction SmusniM3
+  drop* : e (e ...) -> e
+  [(drop* e_R ()) e_R]
+  [(drop* e_R (e_label e_rest ...))
+   (drop* (DropPlace e_R e_label) (e_rest ...))])
+
+(define-metafunction SmusniM3
   force-out : e e -> e
   [(force-out assert e_body) (Assert e_body)]
   [(force-out mention e_body) (Mention e_body)])
@@ -126,23 +134,24 @@
    (ClauseOr (DirectClause e_left) (DirectClause e_right))])
 
 (define-metafunction SmusniM3
-  cohe-out : e e e -> e
-  [(cohe-out e_row e_left e_right)
+  cohe-out : e e e e -> e
+  [(cohe-out e_force e_row e_left e_right)
    (Bind (x_relation :: PredTerm e_row) (Context)
-     (Assert (Close (x_relation e_left e_right))))
+     (force-out e_force (Close (x_relation e_left e_right))))
    (where x_relation
-          ,(variable-not-in (term (e_row e_left e_right)) '$r))])
+          ,(variable-not-in
+            (term (e_force e_row e_left e_right)) '$r))])
 
 (define-metafunction SmusniM3
-  termset-out : e x e x x -> e
-  [(termset-out e_n1 e_P1 e_n2 e_P2 x_Q)
+  termset-out : e e x e x x -> e
+  [(termset-out e_force e_n1 e_P1 e_n2 e_P2 x_Q)
    (Bind (x_left_set :: Referents Entity)
          (SelectExactly e_n1 (λ (x_left_unit :: Entity)
                                (e_P1 x_left_unit)))
          (x_right_set :: Referents Entity)
          (SelectExactly e_n2 (λ (x_right_unit :: Entity)
                                (e_P2 x_right_unit)))
-     (Assert
+     (force-out e_force
       (Distrib
        (λ (x_left :: Entity)
          (Distrib (λ (x_right :: Entity)
@@ -150,7 +159,8 @@
                   x_right_set))
        x_left_set)))
    (where x_left_set
-          ,(variable-not-in (term (e_n1 e_P1 e_n2 e_P2 x_Q)) '$left))
+          ,(variable-not-in
+            (term (e_force e_n1 e_P1 e_n2 e_P2 x_Q)) '$left))
    (where x_left_unit
           ,(variable-not-in (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set)) '$x))
    (where x_right_set
@@ -174,26 +184,26 @@
             '$r))])
 
 (define-metafunction SmusniM3
-  grade-out : x e -> e
-  [(grade-out x_R e_arg)
+  grade-out : e x e -> e
+  [(grade-out e_force x_R e_arg)
    (Bind (x_scale :: Scale) (Context)
          (x_region :: Region Scale)
          (Vague (λ (x_cutoff :: Region Scale)
                   (AdmissibleCutoff x_scale x_cutoff)))
-     (Assert (Close ((Grade x_R x_scale x_region) e_arg))))
-   (where x_scale ,(variable-not-in (term (x_R e_arg)) '$s))
+     (force-out e_force (Close ((Grade x_R x_scale x_region) e_arg))))
+   (where x_scale ,(variable-not-in (term (e_force x_R e_arg)) '$s))
    (where x_region
           ,(variable-not-in (term (x_R e_arg x_scale)) '$reg))
    (where x_cutoff
           ,(variable-not-in (term (x_R e_arg x_scale x_region)) '$r))])
 
 (define-metafunction SmusniM3
-  scalar-out : e x e -> e
-  [(scalar-out e_kind x_R e_arg)
+  scalar-out : e e x e -> e
+  [(scalar-out e_force e_kind x_R e_arg)
    (Bind (x_domain :: ContrastDomain (RowOf x_R)) (Context)
-     (Assert (Close ((Scalar e_kind x_domain x_R) e_arg))))
+     (force-out e_force (Close ((Scalar e_kind x_domain x_R) e_arg))))
    (where x_domain
-          ,(variable-not-in (term (e_kind x_R e_arg)) '$d))])
+          ,(variable-not-in (term (e_force e_kind x_R e_arg)) '$d))])
 
 (define-metafunction SmusniM3
   zip-out : x (e ...) (e ...) -> e
@@ -232,6 +242,14 @@
    (description-source e_force x_Q e_polarity x_ref)])
 
 (define-metafunction SmusniM3
+  cardinal-cont-source : e x x -> e
+  [(cardinal-cont-source none x_Q x_ref)
+   (close shorthand (pred x_Q x_ref))]
+  [(cardinal-cont-source e_force x_Q x_ref)
+   (force e_force (close shorthand (pred x_Q x_ref)))
+   (side-condition (member (term e_force) '(assert mention)))])
+
+(define-metafunction SmusniM3
   le-out : x e x e -> e
   [(le-out x_P (pure described x_P) x_ref e_property) e_property]
   [(le-out x_P e_continuation x_ref e_body)
@@ -250,17 +268,17 @@
             (term (x_P e_continuation x_ref e_body x_described)) '$unit))])
 
 (define-metafunction SmusniM3
-  threshold-out : e e e -> e
-  [(threshold-out many e_P e_Q)
+  threshold-out : e e e e -> e
+  [(threshold-out e_force many e_P e_Q)
    (Bind (x_threshold :: Natural)
          (Vague (AdmissibleThreshold ManyK e_P))
-     (Assert (AtLeast x_threshold e_P e_Q)))
+     (force-out e_force (AtLeast x_threshold e_P e_Q)))
    (where x_threshold ,(variable-not-in (term (e_P e_Q)) '$n))]
-  [(threshold-out too-many e_P e_Q)
+  [(threshold-out e_force too-many e_P e_Q)
    (Bind (x_purpose :: Referents Entity) (Context)
          (x_threshold :: Natural)
          (Vague (AdmissibleThreshold TooManyK e_P x_purpose))
-     (Assert (MoreThan x_threshold e_P e_Q)))
+     (force-out e_force (MoreThan x_threshold e_P e_Q)))
    (where x_purpose ,(variable-not-in (term (e_P e_Q)) '$purpose))
    (where x_threshold
           ,(variable-not-in (term (e_P e_Q x_purpose)) '$n))])
@@ -299,18 +317,20 @@
    --------------------------------------------- "L1.4"
    (m3-lower e_RR (gentufa e_parse (route e_route)) e_out)]
 
-  [(where e_relation (DropPlace x_R e_label))
+  [(where e_relation (drop* x_R (e_label ...)))
    (where e_out (apply* e_relation (e_arg ...)))
    --------------------------------------------- "L1.5"
-   (m3-lower e_RR (gentufa e_parse (drop x_R e_label e_arg ...)) e_out)]
+   (m3-lower e_RR
+             (gentufa e_parse (drop x_R (e_label ...) e_arg ...)) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse e_source) e_out)
    --------------------------------------------- "L1.6"
    (m3-lower e_RR (gentufa e_parse (omit e_source)) e_out)]
 
-  [(where e_out (cohe-out e_row e_left e_right))
+  [(where e_out (cohe-out e_force e_row e_left e_right))
    --------------------------------------------- "L1.8"
-   (m3-lower e_RR (gentufa e_parse (cohe e_row e_left e_right)) e_out)]
+   (m3-lower e_RR
+             (gentufa e_parse (cohe e_force e_row e_left e_right)) e_out)]
 
   [(where e_relation (Tanru x_M x_H))
    (where e_out (apply* e_relation (e_arg ...)))
@@ -414,21 +434,26 @@
    (m3-lower e_RR (gentufa e_parse (every x_P x_Q))
              (Every e_P (λ (x_unit :: Entity) e_Q_body)))]
 
-  [(where x_witness ,(variable-not-in (term (e_RR e_parse e_n x_P x_Q)) '$w))
+  [(where x_witness
+          ,(variable-not-in
+            (term (e_RR e_parse e_force e_n x_P x_Q)) '$w))
+   (where e_continuation
+          (cardinal-cont-source e_force x_Q x_witness))
    (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
    (m3-lower e_RR
-             (gentufa e_parse (close shorthand (pred x_Q x_witness)))
+             (gentufa e_parse e_continuation)
              e_Q_body)
    --------------------------------------------- "L5.2"
-   (m3-lower e_RR (gentufa e_parse (cardinal e_n x_P x_Q))
+   (m3-lower e_RR (gentufa e_parse (cardinal e_force e_n x_P x_Q))
              (Bind (x_witness :: Referents Entity)
                    (SelectExactly e_n e_P)
                e_Q_body))]
 
-  [(where e_out (termset-out e_n1 x_P1 e_n2 x_P2 x_Q))
+  [(where e_out (termset-out e_force e_n1 x_P1 e_n2 x_P2 x_Q))
    --------------------------------------------- "L5.3"
    (m3-lower e_RR
-             (gentufa e_parse (termset e_n1 x_P1 e_n2 x_P2 x_Q)) e_out)]
+             (gentufa e_parse
+                      (termset e_force e_n1 x_P1 e_n2 x_P2 x_Q)) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q e_var))) e_body)
    (where e_out (nuclear-out e_var e_type e_body))
@@ -449,9 +474,10 @@
    (m3-lower e_RR (gentufa e_parse (na e_source))
              (ClauseNot (DirectClause e_body)))]
 
-  [(where e_out (scalar-out e_kind x_P e_arg))
+  [(where e_out (scalar-out e_force e_kind x_P e_arg))
    --------------------------------------------- "L5.11"
-   (m3-lower e_RR (gentufa e_parse (scalar e_kind x_P e_arg)) e_out)]
+   (m3-lower e_RR
+             (gentufa e_parse (scalar e_force e_kind x_P e_arg)) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse
                             (clause-connect e_kind e_left e_right)) e_clause)
@@ -470,13 +496,15 @@
    (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
    (m3-lower e_RR (gentufa e_parse
                             (nuclear x_witness (Referents Entity) x_Q)) e_Q)
-   (where e_out (threshold-out e_kind e_P e_Q))
+   (where e_out (threshold-out e_force e_kind e_P e_Q))
    --------------------------------------------- "L5.28"
-   (m3-lower e_RR (gentufa e_parse (threshold e_kind x_P x_Q)) e_out)]
+   (m3-lower e_RR
+             (gentufa e_parse (threshold e_force e_kind x_P x_Q)) e_out)]
 
-  [(where e_out (grade-out x_R e_arg))
+  [(where e_out (grade-out e_force x_R e_arg))
    --------------------------------------------- "L5.29"
-   (m3-lower e_RR (gentufa e_parse (grade x_R e_arg)) e_out)] )
+   (m3-lower e_RR
+             (gentufa e_parse (grade e_force x_R e_arg)) e_out)] )
 
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
@@ -970,6 +998,13 @@
              #:when (or (not kind) (eq? kind (gentufa-terminal-kind terminal))))
     (gentufa-terminal-text terminal)))
 
+(define (terminal-signatures value)
+  (for/list ([terminal (in-list (gentufa-terminals value))])
+    (list (gentufa-terminal-kind terminal)
+          (gentufa-terminal-text terminal)
+          (gentufa-terminal-start terminal)
+          (gentufa-terminal-stop terminal))))
+
 (define (first-terminal value kind)
   (define found (terminal-texts value kind))
   (and (pair? found) (first found)))
@@ -987,12 +1022,57 @@
 (define (rr-has? fields name value)
   (member value (rr-value fields name)))
 
-(define (require-row fields relation)
+(define (same-members? left right)
+  (and (= (length left) (length right))
+       (for/and ([item (in-list left)])
+         (= (count (lambda (candidate) (equal? candidate item)) left)
+            (count (lambda (candidate) (equal? candidate item)) right)))))
+
+(define (require-readings fields expected rule)
+  (define actual (rr-value fields 'readings))
+  (if (same-members? actual expected)
+      #t
+      (no-lowering rule 'rr-missing
+                   "RR.readings does not exactly select this lowering path"
+                   (hasheq 'expected expected 'actual actual))))
+
+(define (require-rows fields expected rule)
+  (define actual (rr-value fields 'rows))
+  (define wanted (remove-duplicates expected))
+  (if (same-members? actual wanted)
+      #t
+      (no-lowering rule 'rr-missing
+                   "RR.rows does not exactly select every lexical row used"
+                   (hasheq 'expected wanted 'actual actual))))
+
+(define (require-row-present fields relation rule)
   (if (member relation (rr-value fields 'rows))
       #t
-      (no-lowering "L1.1" 'rr-missing
-                   "RR.rows does not select the parsed lexical relation"
+      (no-lowering rule 'rr-missing
+                   "RR.rows omits a lexical row used by the parse"
                    relation)))
+
+(define (require-sites fields expected rule)
+  (define actual (rr-value fields 'sites))
+  (if (equal? actual expected)
+      #t
+      (no-lowering rule 'rr-missing
+                   "RR.sites kind/order/dependencies do not match the rule"
+                   (hasheq 'expected expected 'actual actual))))
+
+(define (first-failure . checks)
+  (findf no-lowering? checks))
+
+(define (require-empty-resolution-fields fields rule)
+  (define unexpected
+    (for/list ([name (in-list '(attach stores anaphora))]
+               #:when (pair? (rr-value fields name)))
+      (cons name (rr-value fields name))))
+  (if (null? unexpected)
+      #t
+      (no-lowering rule 'rr-missing
+                   "this M3 path has no consumer for nonempty RR fields"
+                   unexpected)))
 
 (define (parsed-relation subtree)
   (define gismu (remove-duplicates (terminal-texts subtree 'Gismu)))
@@ -1001,48 +1081,93 @@
         [else #f]))
 
 (define (sumti-view subtree)
+  ;; Choose the outer construct before any recursively contained sumti. A
+  ;; recursive `first-tag` without this precedence can mistake a possessor or
+  ;; relative-clause sumti for the entire term and silently erase its host.
+  (define lahe (first-tag subtree 'LaheSumti))
+  (define descriptor (first-tag subtree 'DescriptorWithGadriSumti))
+  (define quantified (first-tag subtree 'DescriptorWithoutGadriSumti))
+  (define named (first-tag subtree 'NameSumti))
+  (define pro (first-tag subtree 'ProSumti))
   (cond
-    [(first-tag subtree 'ProSumti)
-     => (lambda (node)
-          (define word (first-terminal node 'Cmavo))
-          (cond [(hash-ref reference-values word #f) => (lambda (value) `(value ,value))]
-                [(equal? word "zi'o") '(deleted)]
-                [else (no-lowering "L1.4" 'rule-underspecified
-                                   "unsupported parsed pro-sumti" word)]))]
-    [(first-tag subtree 'NameSumti)
-     => (lambda (node)
-          (define name (first-terminal node 'Cmevla))
-          (if name `(name ,name)
-              (no-lowering "L3.3" 'rule-underspecified
-                           "name parse has no cmevla" #f)))]
-    [(first-tag subtree 'LaheSumti)
-     => (lambda (node)
-          (define op (first-terminal (hash-ref node 'lahe) 'Cmavo))
-          (define inner (sumti-view (hash-ref node 'inner_sumti)))
-          (if (no-lowering? inner) inner `(lahe ,op ,inner)))]
-    [(first-tag subtree 'DescriptorWithGadriSumti)
-     => (lambda (node)
-          (define gadri (first-terminal (hash-ref node 'description) 'Cmavo))
-          (define tail (hash-ref node 'tail))
-          (define relation (parsed-relation tail))
-          (define quantifier-node (first-tag tail 'PaRunQuantifier))
-          (define count
-            (and quantifier-node
-                 (hash-ref number-values
-                           (first-terminal quantifier-node 'Cmavo) #f)))
-          (if (and gadri relation)
-              `(description ,gadri ,relation ,count)
-              (no-lowering "L3.1" 'rule-underspecified
-                           "descriptor parse lacks gadri or relation" node)))]
-    [(first-tag subtree 'DescriptorWithoutGadriSumti)
-     => (lambda (node)
-          (define quantifier-node (hash-ref node 'quantifier))
-          (define q-word (first-terminal quantifier-node 'Cmavo))
-          (define relation (parsed-relation (hash-ref node 'selbri)))
-          (define quantity (hash-ref number-values q-word q-word))
-          (if relation `(quantifier ,quantity ,relation)
-              (no-lowering "L5.2" 'rule-underspecified
-                           "quantifier parse lacks relation" node)))]
+    [lahe
+     (define op (first-terminal (hash-ref lahe 'lahe) 'Cmavo))
+     (define inner (sumti-view (hash-ref lahe 'inner_sumti)))
+     (cond [(not op)
+            (no-lowering "L3.14" 'rule-underspecified
+                         "LAhE parse has no operator" lahe)]
+           [(no-lowering? inner) inner]
+           [else `(lahe ,op ,inner)])]
+    [descriptor
+     (cond
+       [(or (has-tag? descriptor 'RestrictiveBridiRelativeClause)
+            (has-tag? descriptor 'NonrestrictiveBridiRelativeClause)
+            (has-tag? descriptor 'RelativeClause))
+        (no-lowering "L4" 'out-of-fragment
+                     "relative-clause description is outside F₀-M3"
+                     (terminal-texts descriptor))]
+       [else
+        (define gadri
+          (first-terminal (hash-ref descriptor 'description) 'Cmavo))
+        (define tail (hash-ref descriptor 'tail))
+        (define leading (hash-ref tail 'leading_tail_elements (lambda () #hasheq())))
+        (define quantifier-node (first-tag tail 'PaRunQuantifier))
+        (define quantifier-word
+          (and quantifier-node (first-terminal quantifier-node 'Cmavo)))
+        (define count
+          (and quantifier-word
+               (hash-ref number-values quantifier-word #f)))
+        (define relations
+          (remove-duplicates (terminal-texts tail 'Gismu)))
+        (define cmavo (terminal-texts descriptor 'Cmavo))
+        (cond
+          [(and (hash? leading) (positive? (hash-count leading)))
+           (no-lowering "L3.11" 'rule-underspecified
+                        "description has unimplemented leading semantic children"
+                        (terminal-texts leading))]
+          [(not (and gadri (= (length relations) 1)))
+           (no-lowering "L3.1" 'rule-underspecified
+                        "descriptor must contain exactly one supported relation"
+                        relations)]
+          [(not (same-members? cmavo
+                               (filter values (list gadri quantifier-word))))
+           (no-lowering "L3.1" 'rule-underspecified
+                        "descriptor contains unconsumed cmavo"
+                        cmavo)]
+          [else `(description ,gadri ,(string->symbol (first relations)) ,count)])])]
+    [quantified
+     (define quantifier-node (hash-ref quantified 'quantifier))
+     (define q-word (first-terminal quantifier-node 'Cmavo))
+     (define relations
+       (remove-duplicates
+        (terminal-texts (hash-ref quantified 'selbri) 'Gismu)))
+     (define cmavo (terminal-texts quantified 'Cmavo))
+     (define quantity (and q-word (hash-ref number-values q-word q-word)))
+     (if (and q-word (= (length relations) 1)
+              (equal? cmavo (list q-word)))
+         `(quantifier ,quantity ,(string->symbol (first relations)))
+         (no-lowering "L5.2" 'rule-underspecified
+                      "quantified sumti has unconsumed semantic children"
+                      (hasheq 'cmavo cmavo 'relations relations)))]
+    [named
+     (define names (terminal-texts named 'Cmevla))
+     (define cmavo (terminal-texts named 'Cmavo))
+     (if (and (= (length names) 1) (equal? cmavo '("la")))
+         `(name ,(first names))
+         (no-lowering "L3.3" 'rule-underspecified
+                      "name sumti has unconsumed semantic children"
+                      (hasheq 'cmavo cmavo 'names names)))]
+    [pro
+     (define words (terminal-texts pro 'Cmavo))
+     (if (not (= (length words) 1))
+         (no-lowering "L1.4" 'rule-underspecified
+                      "pro-sumti has unconsumed semantic children" words)
+         (let ([word (first words)])
+           (cond [(hash-ref reference-values word #f)
+                  => (lambda (value) `(value ,value))]
+                 [(equal? word "zi'o") '(deleted)]
+                 [else (no-lowering "L1.4" 'rule-underspecified
+                                    "unsupported parsed pro-sumti" word)])))]
     [else
      (no-lowering "M3" 'out-of-fragment
                   "unsupported gentufa sumti construct"
@@ -1054,53 +1179,110 @@
   (cond
     [(and (has-tag? connected-term 'JoiConnective)
           (member "fa'u" (terminal-texts connected-term 'Cmavo)))
+     (define cmavo (terminal-texts connected-term 'Cmavo))
      (define values
-       (for/list ([word (in-list (terminal-texts connected-term 'Cmavo))]
+       (for/list ([word (in-list cmavo)]
                   #:when (hash-has-key? reference-values word))
          (hash-ref reference-values word)))
-     (if (pair? values)
+     (if (and (= (count (lambda (word) (equal? word "fa'u")) cmavo) 1)
+              (= (length values) 2)
+              (= (length cmavo) 3))
          `(zip-values ,values)
          (no-lowering "L5.21" 'rule-underspecified
-                      "fa'u connectee has no referential values" connected-term))]
+                      "fa'u connectee has unconsumed semantic children" cmavo))]
     [(first-tag connected-term 'PlaceTaggedSumtiTerm)
      => (lambda (node)
           (define fa (first-terminal (hash-ref node 'fa) 'Cmavo))
           (define label (hash "fa" 1 "fe" 2 "fi" 3 "fo" 4 "fu" 5))
           (define sumti (sumti-view (hash-ref node 'sumti)))
-          (if (no-lowering? sumti) sumti
-              `(label ,(hash-ref label fa) ,sumti)))]
+          (define accounted
+            (append (terminal-signatures (hash-ref node 'fa))
+                    (terminal-signatures (hash-ref node 'sumti))))
+          (cond [(no-lowering? sumti) sumti]
+                [(not (and fa (hash-has-key? label fa)
+                           (same-members? (terminal-signatures node)
+                                          accounted)))
+                 (no-lowering "L1.4" 'rule-underspecified
+                              "FA term has unconsumed semantic children"
+                              (terminal-texts node))]
+                [else `(label ,(hash-ref label fa) ,sumti)]))]
     [else (sumti-view connected-term)]))
 
 (define (selbri-view subtree)
   (define relation (parsed-relation subtree))
   (define gismu (remove-duplicates (terminal-texts subtree 'Gismu)))
   (define cmavo (terminal-texts subtree 'Cmavo))
+  (define conversion-words
+    (filter (lambda (word) (member word '("se" "te" "ve" "xe"))) cmavo))
+  (define scalar-word
+    (findf (lambda (word) (member word '("na'e" "to'e" "no'e"))) cmavo))
+  (define negated? (has-tag? subtree 'NegatedSelbri))
+  (define expected-cmavo
+    (append conversion-words
+            (if scalar-word (list scalar-word) '())
+            (if negated? '("na") '())
+            (if (equal? relation '|co'e|) '("co'e") '())))
   (cond
     [(not relation)
      (no-lowering "L1.1" 'rule-underspecified
                   "selbri parse has no supported lexical relation" cmavo)]
+    [(> (length gismu) 2)
+     (no-lowering "L1.10" 'rule-underspecified
+                  "selbri has an unsupported relation composition" gismu)]
+    [(not (same-members? cmavo expected-cmavo))
+     (no-lowering "L1.1" 'rule-underspecified
+                  "selbri contains unconsumed cmavo" cmavo)]
+    [(or (> (length conversion-words) 1)
+         (and (pair? conversion-words)
+              (not (equal? conversion-words '("se")))))
+     (no-lowering "L1.4" 'rule-underspecified
+                  "only one se conversion is mechanically implemented"
+                  conversion-words)]
+    [(and scalar-word (or negated? (pair? conversion-words)))
+     (no-lowering "L5.11" 'rule-underspecified
+                  "combined scalar, negation, or conversion is unimplemented"
+                  cmavo)]
     [else
      (hasheq 'relation relation
              'tanru (and (>= (length gismu) 2)
                          (map string->symbol (take-right gismu 2)))
-             'conversion (and (member "se" cmavo) 'se)
+             'conversion (and (equal? conversion-words '("se")) 'se)
              'scalar (and (has-tag? subtree 'ScalarNegatedTanruUnit)
-                          (cond [(member "na'e" cmavo) 'OtherThan]
-                                [(member "to'e" cmavo) 'Opposite]
-                                [(member "no'e" cmavo) 'Neutral]
+                          (cond [(equal? scalar-word "na'e") 'OtherThan]
+                                [(equal? scalar-word "to'e") 'Opposite]
+                                [(equal? scalar-word "no'e") 'Neutral]
                                 [else #f]))
-             'negated (has-tag? subtree 'NegatedSelbri))]))
+             'negated negated?)]))
 
-(define (collect-bridi-terms bridi)
+(define (collect-bridi-terms bridi tail-root)
   (define leading (hash-ref bridi 'leading_terms (lambda () '())))
-  (define tail (first-tag bridi 'SelbriSimpleBridiTail))
+  (define tail (first-tag tail-root 'SelbriSimpleBridiTail))
   (define trailing (if tail (hash-ref tail 'terms (lambda () '())) '()))
   (append leading trailing))
 
 (define (termset-views term-node)
-  (for/list ([descriptor (in-list
-                          (tag-values term-node 'DescriptorWithoutGadriSumti))])
-    (sumti-view (hasheq 'DescriptorWithoutGadriSumti descriptor))))
+  (define descriptors (tag-values term-node 'DescriptorWithoutGadriSumti))
+  (define connectives (tag-values term-node 'CeheConnective))
+  (define accounted
+    (append
+     (append-map terminal-signatures descriptors)
+     (append-map terminal-signatures connectives)))
+  (cond
+    [(or (not (= (length descriptors) 2))
+         (not (= (length connectives) 1))
+         (not (equal? (terminal-texts (first connectives) 'Cmavo) '("ce'e")))
+         (not (same-members? (terminal-signatures term-node) accounted)))
+     (no-lowering "L5.3" 'rule-underspecified
+                  "termset has unconsumed or malformed semantic children"
+                  (hasheq 'descriptors (length descriptors)
+                          'connectives (map terminal-texts connectives)
+                          'all (terminal-signatures term-node)
+                          'accounted accounted))]
+    [else
+     (define views
+       (for/list ([descriptor (in-list descriptors)])
+         (sumti-view (hasheq 'DescriptorWithoutGadriSumti descriptor))))
+     (or (findf no-lowering? views) views)]))
 
 (define (bridi-view statement)
   (define bridi
@@ -1109,30 +1291,46 @@
   (if (not bridi)
       (no-lowering "L1.1" 'out-of-fragment
                    "gentufa statement has no supported bridi node" #f)
-      (let* ([tail (first-tag bridi 'SelbriSimpleBridiTail)]
+      (let* ([tail-root (hash-ref bridi 'bridi_tail (lambda () bridi))]
+             [tail (first-tag tail-root 'SelbriSimpleBridiTail)]
              [selbri (and tail (selbri-view (hash-ref tail 'selbri)))])
         (if (or (not selbri) (no-lowering? selbri))
             (or selbri (no-lowering "L1.1" 'rule-underspecified
                                     "bridi tail has no simple selbri" #f))
-            (let ([term-nodes (collect-bridi-terms bridi)])
-              (if (and (= (length term-nodes) 1)
-                       (has-tag? (first term-nodes) 'CeheConnective))
-                  (hasheq 'selbri selbri
-                          'terms (termset-views (first term-nodes))
-                          'termset #t)
-                  (let ([terms (map term-view term-nodes)])
-                    (if (ormap no-lowering? terms)
-                        (findf no-lowering? terms)
-                        (hasheq 'selbri selbri 'terms terms
-                                'termset #f)))))))))
+            (let* ([term-nodes (collect-bridi-terms bridi tail-root)]
+                   [cu-node (hash-ref bridi 'cu (lambda () #f))]
+                   [accounted-terminals
+                    (append (terminal-signatures (hash-ref tail 'selbri))
+                            (append-map terminal-signatures term-nodes)
+                            (if cu-node (terminal-signatures cu-node) '()))])
+              (cond
+                [(not (same-members? (terminal-signatures bridi)
+                                     accounted-terminals))
+                 (no-lowering "L1.1" 'rule-underspecified
+                              "bridi contains unconsumed direct terminals"
+                              (hasheq 'all (terminal-signatures bridi)
+                                      'accounted accounted-terminals))]
+                [(and (= (length term-nodes) 1)
+                      (has-tag? (first term-nodes) 'CeheConnective))
+                 (define views (termset-views (first term-nodes)))
+                 (if (no-lowering? views) views
+                     (hasheq 'selbri selbri
+                             'terms views
+                             'termset #t))]
+                [else
+                 (define terms (map term-view term-nodes))
+                 (if (ormap no-lowering? terms)
+                     (findf no-lowering? terms)
+                     (hasheq 'selbri selbri 'terms terms
+                             'termset #f))]))))))
 
-(define (force-from-rr fields)
+(define (force-from-rr fields [markers '()])
   (define force (rr-value fields 'force))
-  (cond [(member 'assert force) 'assert]
-        [(member 'mention force) 'mention]
-        [(null? force) #f]
+  (cond [(equal? force (cons 'assert markers)) 'assert]
+        [(equal? force (cons 'mention markers)) 'mention]
         [else (no-lowering "L1.2" 'rr-missing
-                           "RR.force has no supported consumer" force)]))
+                           "RR.force must select exactly one supported consumer"
+                           (hasheq 'expected-markers markers 'actual force))]))
 
 (define (close-mode-from-rr fields [negated? #f] [connected? #f])
   (define readings (rr-value fields 'readings))
@@ -1142,92 +1340,167 @@
                           "RR.readings lacks actual mode" readings))]
         [else 'shorthand]))
 
+(define (validated-path fields rule readings rows sites
+                        #:force? [force? #f]
+                        #:force-markers [force-markers '()])
+  (define checks
+    (list (require-readings fields readings rule)
+          (require-rows fields rows rule)
+          (require-sites fields sites rule)
+          (require-empty-resolution-fields fields rule)))
+  (define failure (apply first-failure checks))
+  (cond [failure failure]
+        [force?
+         (define force (force-from-rr fields force-markers))
+         (if (no-lowering? force) force force)]
+        [(null? (rr-value fields 'force)) #t]
+        [else
+         (no-lowering rule 'rr-missing
+                      "RR.force is nonempty on a path with no force consumer"
+                      (rr-value fields 'force))]))
+
 (define (ordinary-fills terms)
   (define next 1)
   (define fills (make-hash))
   (define deleted '())
+  (define unsupported '())
   (for ([term (in-list terms)])
     (match term
       [`(label ,label (value ,value))
-       (hash-set! fills label value)
-       (set! next (max next (add1 label)))]
+       (if (or (hash-has-key? fills label) (member label deleted))
+           (set! unsupported (cons `(duplicate-label ,label) unsupported))
+           (begin
+             (hash-set! fills label value)
+             (set! next (max next (add1 label)))))]
+      [`(label ,label (deleted))
+       (if (or (hash-has-key? fills label) (member label deleted))
+           (set! unsupported (cons `(duplicate-label ,label) unsupported))
+           (begin
+             (set! deleted (cons label deleted))
+             (set! next (max next (add1 label)))))]
       [`(value ,value)
+       (let loop ()
+         (when (or (hash-has-key? fills next) (member next deleted))
+           (set! next (add1 next))
+           (loop)))
        (hash-set! fills next value)
        (set! next (add1 next))]
       [`(deleted)
        (set! deleted (cons next deleted))
        (set! next (add1 next))]
-      [_ (void)]))
-  (values fills (reverse deleted)))
+      [_ (set! unsupported (cons term unsupported))]))
+  (values fills (reverse deleted) (reverse unsupported)))
+
+(define (se-base-label label)
+  (case label [(1) 2] [(2) 1] [else label]))
+
+(define (route-place-map fills deleted conversion)
+  (if (eq? conversion 'se)
+      (values
+       (for/hash ([(label value) (in-hash fills)])
+         (values (se-base-label label) value))
+       (map se-base-label deleted))
+      (values fills deleted)))
+
+(define (fill-arguments fills deleted total)
+  (define live-labels
+    (filter (lambda (label) (not (member label deleted)))
+            (range 1 (add1 total))))
+  (define filled-labels (sort (hash-keys fills) <))
+  (define positional-prefix (take live-labels (min (length live-labels)
+                                                    (length filled-labels))))
+  (define positions
+    (map (lambda (label) (index-of live-labels label)) filled-labels))
+  (cond
+    [(equal? filled-labels positional-prefix)
+     (map (lambda (label) (hash-ref fills label)) filled-labels)]
+    [(and (pair? positions)
+          (andmap exact-nonnegative-integer? positions)
+          (equal? positions
+                  (range (first positions) (+ (first positions)
+                                              (length positions)))))
+     (cons (string->symbol (format ":~a" (first filled-labels)))
+           (map (lambda (label) (hash-ref fills label)) filled-labels))]
+    [else
+     (append*
+      (for/list ([label (in-list filled-labels)])
+        (list (string->symbol (format ":~a" label))
+              (hash-ref fills label))))]))
 
 (define (application-source view fields inv)
   (define selbri (hash-ref view 'selbri))
   (define relation (hash-ref selbri 'relation))
-  (define row-check (require-row fields relation))
+  (define row-check (require-row-present fields relation "L1.1"))
   (if (no-lowering? row-check)
       row-check
-      (let-values ([(fills deleted) (ordinary-fills (hash-ref view 'terms))])
+      (let-values ([(surface-fills surface-deleted unsupported)
+                    (ordinary-fills (hash-ref view 'terms))])
+        (if (pair? unsupported)
+            (no-lowering "L1.4" 'rule-underspecified
+                         "parsed term cannot be placed without dropping it"
+                         unsupported)
+            (let-values ([(fills deleted)
+                          (route-place-map
+                           surface-fills surface-deleted
+                           (hash-ref selbri 'conversion #f))])
         (define row (inventory-row inv relation))
         (if (not row)
             (no-lowering "L1.1" 'row-missing
                          "selected lexical row is absent" relation)
             (let* ([total (row-decl-total row)]
-                   [ordered
-                    (for/list ([label (in-range 1 (add1 total))]
-                               #:when (hash-has-key? fills label))
-                      (hash-ref fills label))]
+                   [bad-labels
+                    (filter (lambda (label) (or (< label 1) (> label total)))
+                            (append (hash-keys fills) deleted))]
+                   [arguments (fill-arguments fills deleted total)]
                    [base
                     (cond
-                      [(pair? deleted)
-                       `(drop ,relation ,(first deleted) ,@ordered)]
                       [(hash-ref selbri 'conversion #f)
-                       (define routed
-                         (if (>= (length ordered) 2)
-                             (list (second ordered) (first ordered))
-                             ordered))
-                       `(route (application ,relation ,@routed))]
+                       `(route (application ,relation ,@arguments))]
+                      [(pair? deleted)
+                       `(drop ,relation ,deleted ,@arguments)]
                       [(not (equal? (sort (hash-keys fills) <)
                                     (range 1 (add1 (hash-count fills)))))
-                       (define labels (sort (hash-keys fills) <))
-                       (if (and (pair? labels)
-                                (equal? labels
-                                        (range (first labels)
-                                               (+ (first labels)
-                                                  (length labels)))))
-                           `(route
-                             (application
-                              ,relation
-                              ,(string->symbol (format ":~a" (first labels)))
-                              ,@(map (lambda (label) (hash-ref fills label)) labels)))
-                           `(route
-                             (application
-                              ,relation
-                              ,@(append*
-                                 (for/list ([label (in-list labels)])
-                                   (list
-                                    (string->symbol (format ":~a" label))
-                                    (hash-ref fills label)))))))]
+                       `(route (application ,relation ,@arguments))]
                       [(hash-ref selbri 'tanru #f)
                        (match-define (list modifier head)
                          (hash-ref selbri 'tanru))
-                       `(tanru ,modifier ,head ,@ordered)]
-                      [else `(pred ,relation ,@ordered)])]
+                       `(tanru ,modifier ,head ,@arguments)]
+                      [else `(pred ,relation ,@arguments)])]
                    [provided (+ (hash-count fills) (length deleted))])
-              (if (< provided total) `(omit ,base) base))))))
+              (cond
+                [(pair? bad-labels)
+                 (no-lowering "L1.4" 'rule-underspecified
+                              "place label falls outside the selected row"
+                              bad-labels)]
+                [(and (hash-ref selbri 'conversion #f) (pair? deleted))
+                 (no-lowering "L1.5" 'rule-underspecified
+                              "combined conversion and place deletion is unimplemented"
+                              deleted)]
+                [else (if (< provided total) `(omit ,base) base)]))))))))
 
 (define (view->sigma view category fields inv)
   (define selbri (hash-ref view 'selbri))
   (define relation (hash-ref selbri 'relation))
   (define negated? (hash-ref selbri 'negated))
   (define terms (hash-ref view 'terms))
+  (define sentence? (eq? category 'sentence))
+  (define (readings extras)
+    (append (if sentence? '(actual) '()) extras))
+  (define (force-or-none)
+    (if sentence? (force-from-rr fields) 'none))
   (cond
     [(and (= (length terms) 2)
           (andmap (lambda (term)
                     (match term [`(zip-values ,(? list?)) #t] [_ #f]))
                   terms))
-     (match* ((first terms) (second terms))
-       [(`(zip-values ,left) `(zip-values ,right))
-        `(zip ,relation ,left ,right)])]
+     (define check
+       (validated-path fields "L5.21" (readings '(zip)) (list relation) '()
+                       #:force? sentence?))
+     (if (no-lowering? check) check
+         (match* ((first terms) (second terms))
+           [(`(zip-values ,left) `(zip-values ,right))
+            (define source `(zip ,relation ,left ,right))
+            (if sentence? `(force ,check ,source) source)]))]
     [(hash-ref view 'termset)
      (if (and (= (length terms) 2)
               (andmap (lambda (term)
@@ -1235,7 +1508,12 @@
                       terms))
          (match* ((first terms) (second terms))
            [(`(quantifier ,n1 ,p1) `(quantifier ,n2 ,p2))
-            `(termset ,n1 ,p1 ,n2 ,p2 ,relation)])
+            (define check
+              (validated-path fields "L5.3" (readings '(full-product))
+                              (list p1 p2 relation) '()
+                              #:force? sentence?))
+            (if (no-lowering? check) check
+                `(termset ,(force-or-none) ,n1 ,p1 ,n2 ,p2 ,relation))])
          (no-lowering "L5.3" 'rule-underspecified
                       "termset shape is not mechanically supported" terms))]
     [(and (= (length terms) 1)
@@ -1244,40 +1522,52 @@
        [`(description ,gadri ,predicate ,count)
         (case (string->symbol gadri)
           [(lo)
-           (define row-check (require-row fields relation))
-           (define force (force-from-rr fields))
-           (cond [(no-lowering? row-check) row-check]
-                 [(no-lowering? force) force]
-                 [else `(lo ,predicate ,relation
-                            ,(if negated? 'negative 'positive) ,force)])]
+           (define check
+             (validated-path fields "L3.1" (readings '())
+                             (list predicate relation) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(lo ,predicate ,relation
+                    ,(if negated? 'negative 'positive) ,(force-or-none)))]
           [(le)
-           (define row-check (require-row fields relation))
-           (define force (force-from-rr fields))
-           (cond [(no-lowering? row-check) row-check]
-                 [(no-lowering? force) force]
-                 [else `(le ,predicate
-                            (description ,relation
-                                         ,(if negated? 'negative 'positive)
-                                         ,force))])]
-          [(|lo'i|) `(collection-set ,predicate)]
+           (define check
+             (validated-path fields "L3.2" (readings '(le))
+                             (list predicate relation 'skicu) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(le ,predicate
+                    (description ,relation
+                                 ,(if negated? 'negative 'positive)
+                                 ,(force-or-none))))]
+          [(|lo'i|)
+           (no-lowering "L3.6" 'out-of-fragment
+                        "lo'i bridi argument lowering is not implemented" terms)]
           [(|lo'e|)
-           (if (rr-has? fields 'readings 'typical)
-               `(force ,(force-from-rr fields) (generic ,predicate ,relation))
-               (no-lowering "L3.4" 'rr-missing
-                            "lo'e needs the selected typical reading" #f))]
+           (define check
+             (validated-path fields "L3.4" (readings '(typical))
+                             (list predicate relation) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               (if sentence?
+                   `(force ,check (generic ,predicate ,relation))
+                   `(generic ,predicate ,relation)))]
           [else (no-lowering "L3.1" 'rule-underspecified
                              "unsupported parsed gadri" gadri)])])]
     [(and (= (length terms) 1)
           (match (first terms) [`(name ,_) #t] [_ #f]))
      (match-define `(name ,name) (first terms))
-     (define force (force-from-rr fields))
-     (if (no-lowering? force) force
-         `(la ,name ,relation ,force))]
+     (define check
+       (validated-path fields "L3.3" (readings '(name)) (list relation) '()
+                       #:force? sentence?))
+     (if (no-lowering? check) check
+         `(la ,name ,relation ,(force-or-none)))]
     [(and (= (length terms) 1)
           (match (first terms) [`(lahe ,_ ,_) #t] [_ #f]))
      (match (first terms)
        [`(lahe "lu'o" (description "le" ,predicate ,(? number? count)))
-        `(luho ,count ,predicate)]
+        (no-lowering "L3.14" 'rule-underspecified
+                     "LAhE bridi argument lowering is not implemented"
+                     (first terms))]
        [_ (no-lowering "L3.14" 'rule-underspecified
                        "unsupported LAhE parse" (first terms))])]
     [(and (= (length terms) 1)
@@ -1286,27 +1576,39 @@
        [`(quantifier ,quantity ,predicate)
         (cond
           [(equal? quantity "ro")
-           (if (rr-has? fields 'readings 'importing)
-               `(force ,(force-from-rr fields) (every ,predicate ,relation))
-               (no-lowering "L5.1" 'rr-missing
-                            "ro description needs importing reading" #f))]
+           (define check
+             (validated-path fields "L5.1" (readings '(importing))
+                             (list predicate relation) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               (if sentence?
+                   `(force ,check (every ,predicate ,relation))
+                   `(every ,predicate ,relation)))]
           [(number? quantity)
-           (if (rr-has? fields 'readings 'witness-set)
-               `(cardinal ,quantity ,predicate ,relation)
-               (no-lowering "L5.2" 'rr-missing
-                            "numeric quantifier needs witness-set reading" #f))]
+           (define check
+             (validated-path fields "L5.2" (readings '(witness-set))
+                             (list predicate relation) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(cardinal ,(force-or-none) ,quantity ,predicate ,relation))]
           [(equal? quantity "so'i")
-           (if (and (rr-has? fields 'readings 'many)
-                    (pair? (rr-value fields 'sites)))
-               `(threshold many ,predicate ,relation)
-               (no-lowering "L5.28" 'rr-missing
-                            "so'i needs many reading and threshold site" #f))]
+           (define expected-sites `((threshold many (deps ()))))
+           (define check
+             (validated-path fields "L5.28" (readings '(many))
+                             (list predicate relation) expected-sites
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(threshold ,(force-or-none) many ,predicate ,relation))]
           [(equal? quantity "du'e")
-           (if (and (rr-has? fields 'readings 'too-many)
-                    (pair? (rr-value fields 'sites)))
-               `(threshold too-many ,predicate ,relation)
-               (no-lowering "L5.28" 'rr-missing
-                            "du'e needs too-many reading and sites" #f))]
+           (define expected-sites
+             `((purpose too-many (deps ()))
+               (threshold too-many (deps (purpose)))))
+           (define check
+             (validated-path fields "L5.28" (readings '(too-many))
+                             (list predicate relation) expected-sites
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(threshold ,(force-or-none) too-many ,predicate ,relation))]
           [else (no-lowering "L5.2" 'rule-underspecified
                              "unsupported parsed quantity" quantity)])])]
     [else
@@ -1315,37 +1617,74 @@
         (no-lowering "L1.10" 'rule-underspecified
                      "tanru parse has no resolved head-place fill" selbri)]
        [(hash-ref selbri 'scalar #f)
-        (if (not (and (rr-has? fields 'readings 'other-than)
-                      (pair? (rr-value fields 'sites))))
+        (define expected-sites `((contrast-domain ,relation (deps ()))))
+        (define check
+          (validated-path fields "L5.11" (readings '(other-than))
+                          (list relation) expected-sites #:force? sentence?))
+        (if (no-lowering? check) check
+            (if (not (= (length terms) 1))
             (no-lowering "L5.11" 'rr-missing
-                         "scalar reading needs kind and contrast-domain site" #f)
-            (if (not (pair? terms))
-            (no-lowering "L5.11" 'rr-missing
-                         "scalar bridi lacks its argument" #f)
+                         "scalar bridi must have exactly one argument" terms)
             (match (first terms)
               [`(value ,argument)
-               `(scalar ,(hash-ref selbri 'scalar) ,relation ,argument)]
+               `(scalar ,(force-or-none) ,(hash-ref selbri 'scalar)
+                        ,relation ,argument)]
               [_ (no-lowering "L5.11" 'rule-underspecified
                               "unsupported scalar argument" (first terms))])))]
        [(equal? relation '|co'e|)
-        (if (and (rr-has? fields 'readings 'ellipsis)
-                 (pair? (rr-value fields 'sites))
-                 (= (length terms) 2))
-            `(cohe (Row (1 (Referents Entity)) (2 (Referents Entity)))
-                   ,@(for/list ([term (in-list terms)])
-                       (match term [`(value ,value) value])))
-            (no-lowering "L1.8" 'rr-missing
-                         "co'e needs two arguments plus RR.readings/sites" terms))]
-       [(rr-has? fields 'readings 'gradable)
-        (if (and (pair? (rr-value fields 'sites)) (= (length terms) 1))
+        (define check
+          (validated-path fields "L1.8" (readings '(ellipsis)) '()
+                          '((relation cohe (deps ()))) #:force? sentence?))
+        (if (or (no-lowering? check) (not (= (length terms) 2)))
+            (if (no-lowering? check) check
+                (no-lowering "L1.8" 'rule-underspecified
+                             "co'e requires exactly two placed arguments" terms))
+            (let ([values
+                   (for/list ([term (in-list terms)])
+                     (match term [`(value ,value) value] [_ #f]))])
+              (if (member #f values)
+                  (no-lowering "L1.8" 'rule-underspecified
+                               "co'e has an unsupported argument" terms)
+                  `(cohe ,(force-or-none)
+                         (Row (1 (Referents Entity)) (2 (Referents Entity)))
+                         ,@values))))]
+       [(member 'gradable (rr-value fields 'readings))
+        (define expected-sites
+          `((scale ,relation (deps ()))
+            (cutoff ,relation (deps (scale)))))
+        (define check
+          (validated-path fields "L5.29" (readings '(gradable))
+                          (list relation) expected-sites #:force? sentence?))
+        (if (and (not (no-lowering? check)) (= (length terms) 1))
             (match (first terms)
-              [`(value ,argument) `(grade ,relation ,argument)]
+              [`(value ,argument) `(grade ,(force-or-none) ,relation ,argument)]
               [_ (no-lowering "L5.29" 'rule-underspecified
                               "unsupported gradable argument" (first terms))])
-            (no-lowering "L5.29" 'rr-missing
-                         "gradable reading needs scale/cutoff sites" #f))]
+            (if (no-lowering? check) check
+                (no-lowering "L5.29" 'rule-underspecified
+                             "gradable bridi requires exactly one argument"
+                             terms)))]
        [else
-        (define app (application-source view fields inv))
+        (define tanru (hash-ref selbri 'tanru #f))
+        (define expected-rows
+          (if tanru tanru (list relation)))
+        (define expected-sites
+          (if tanru
+              `((tanru-link
+                 ,(string->symbol
+                   (format "~a-~a" (first tanru) (second tanru)))
+                 (deps ())))
+              '()))
+        (define expected-readings (if sentence? '(actual) '()))
+        (define check
+          (validated-path fields "L1.1" expected-readings
+                          expected-rows expected-sites #:force? sentence?))
+        ;; Structural placement is checked before the RR agreement check so an
+        ;; unconsumed parsed term is reported as the adapter defect it is,
+        ;; rather than being masked by the extra row that term selected.
+        (define placed (application-source view fields inv))
+        (define app (if (no-lowering? placed) placed
+                        (if (no-lowering? check) check placed)))
         (if (no-lowering? app) app
             (cond
               [(eq? category 'predication) app]
@@ -1358,13 +1697,9 @@
                             "content-level connective lowering is not formed"
                             relation)]
               [else
-               (define force (force-from-rr fields))
-               (if (no-lowering? force) force
-                   (let ([mode (close-mode-from-rr fields negated?)])
-                     (if (no-lowering? mode) mode
-                         `(force ,force
-                                 (close ,mode
-                                        ,(if negated? `(na ,app) app))))))]))])]))
+               `(force ,check
+                       (close ,(if negated? 'actual 'shorthand)
+                              ,(if negated? `(na ,app) app)))]))])]))
 
 (define (statement->sigma statement category fields inv)
   (define connection (first-tag statement 'IStatementConnection))
@@ -1378,26 +1713,55 @@
             (no-lowering "L5.12" 'rule-underspecified
                          "unsupported statement connection shape" connection)
             (let* ([left-view (bridi-view leading)]
-                   [right-view (bridi-view (hash-ref tail 'trailing_statement))]
-                   [jek (first-terminal (hash-ref tail 'connective) 'Cmavo)]
+                   [trailing (hash-ref tail 'trailing_statement)]
+                   [connective (hash-ref tail 'connective)]
+                   [right-view (bridi-view trailing)]
+                   [connective-words (terminal-texts connective 'Cmavo)]
+                   [jek (and (= (length connective-words) 1)
+                             (first connective-words))]
+                   [all-terminals (terminal-signatures connection)]
+                   [separators
+                    (filter (lambda (entry)
+                              (match entry
+                                [`(Cmavo "i" ,_ ,_) #t]
+                                [_ #f]))
+                            all-terminals)]
+                   [accounted
+                    (append (terminal-signatures leading)
+                            (terminal-signatures trailing)
+                            (terminal-signatures connective)
+                            separators)]
                    [kind (cond [(equal? jek "je") 'and]
                                [(equal? jek "ja") 'or]
                                [else #f])])
               (if (or (no-lowering? left-view) (no-lowering? right-view)
-                      (not kind))
+                      (not kind) (not (= (length separators) 1))
+                      (not (same-members? all-terminals accounted)))
                   (or (and (no-lowering? left-view) left-view)
                       (and (no-lowering? right-view) right-view)
                       (no-lowering "L5.12" 'rule-underspecified
-                                   "unsupported parsed connective" jek))
-                  (let ([left (application-source left-view fields inv)]
-                        [right (application-source right-view fields inv)]
-                        [force (force-from-rr fields)])
-                    (if (or (no-lowering? left) (no-lowering? right)
-                            (no-lowering? force))
+                                   "statement connection has unconsumed children"
+                                   (hasheq 'connective connective-words
+                                           'all all-terminals
+                                           'accounted accounted)))
+                  (let* ([left-relation
+                          (hash-ref (hash-ref left-view 'selbri) 'relation)]
+                         [right-relation
+                          (hash-ref (hash-ref right-view 'selbri) 'relation)]
+                         [check
+                          (validated-path
+                           fields "L5.12" '(actual)
+                           (list left-relation right-relation) '()
+                           #:force? #t #:force-markers '(connected))]
+                         [left (if (no-lowering? check) check
+                                   (application-source left-view fields inv))]
+                         [right (if (no-lowering? check) check
+                                    (application-source right-view fields inv))])
+                    (if (or (no-lowering? left) (no-lowering? right))
                         (or (and (no-lowering? left) left)
                             (and (no-lowering? right) right)
-                            force)
-                        `(force ,force
+                            check)
+                        `(force ,check
                                 (close actual
                                        (sentence-connect ,kind ,left ,right)))))))))
       (let ([view (bridi-view statement)])
@@ -1413,12 +1777,28 @@
         (cond
           [(no-lowering? view) view]
           [(match view [`(description "lo'i" ,predicate ,_) #t] [_ #f])
-           (match view [`(description ,_ ,predicate ,_) `(collection-set ,predicate)])]
+           (match-define `(description "lo'i" ,predicate ,_) view)
+           (define check
+             (validated-path fields "L3.6" '(lohi)
+                             (list predicate 'selcmi) '() #:force? #t))
+           (if (no-lowering? check) check
+               (if (eq? check 'mention)
+                   `(collection-set ,predicate)
+                   (no-lowering "L3.6" 'rr-missing
+                                "lo'i utterance requires mention force" check)))]
           [(match view [`(lahe "lu'o" (description "le" ,predicate ,count)) #t]
                        [_ #f])
-           (match view
-             [`(lahe ,_ (description ,_ ,predicate ,count))
-              `(luho ,count ,predicate)])]
+           (match-define
+             `(lahe "lu'o" (description "le" ,predicate ,count)) view)
+           (define check
+             (validated-path fields "L3.14" '(le inner-pa)
+                             (list predicate 'skicu)
+                             '((group-basis luho (deps ()))) #:force? #t))
+           (if (no-lowering? check) check
+               (if (eq? check 'mention)
+                   `(luho ,count ,predicate)
+                   (no-lowering "L3.14" 'rr-missing
+                                "lu'o utterance requires mention force" check)))]
           [else (no-lowering "M3" 'out-of-fragment
                              "unsupported parsed terms fragment" view)]))))
 
@@ -1707,6 +2087,89 @@
                      (core-redex-adapter-term left-adapter)
                      (core-redex-adapter-term right-adapter)))
 
+(define (binder-variables binder)
+  (define flat
+    (if (and (= (length binder) 1) (list? (first binder)))
+        (first binder)
+        binder))
+  (define separator (index-of flat '::))
+  (if separator
+      (filter symbol? (take flat separator))
+      '()))
+
+;; A location-independent but binding-sensitive retrieval-site certificate.
+;; Each entry fixes traversal order, Context/Vague kind, and the enclosing
+;; binders on which the site's computation depends. Binder ids are structural,
+;; so alpha-renaming cannot change the certificate and cannot disguise a
+;; changed dependency.
+(define (site-signatures datum)
+  (define binder-ordinal 0)
+  (define site-ordinal 0)
+  (define signatures '())
+  (define (extend env variables [track? #t])
+    (for/fold ([result env]) ([variable (in-list variables)])
+      (if track?
+          (begin
+            (set! binder-ordinal (add1 binder-ordinal))
+            (hash-set result variable binder-ordinal))
+          (hash-set result variable #f))))
+  (define (dependencies node env)
+    (define found (mutable-set))
+    (define (scan value scope)
+      (cond
+        [(symbol? value)
+         (define id (hash-ref scope value #f))
+         (when id (set-add! found id))]
+        [(not (list? value)) (void)]
+        [else
+         (match value
+           [`(λ ,binder ,body)
+            (scan body (extend scope (binder-variables binder) #f))]
+           [`(Let ,binder ,rhs ,body)
+            (scan rhs scope)
+            (scan body (extend scope (binder-variables binder) #f))]
+           [`(Bind . ,pieces)
+            (define body (last pieces))
+            (define alternating (drop-right pieces 1))
+            (define current scope)
+            (for ([index (in-range 0 (length alternating) 2)])
+              (scan (list-ref alternating (add1 index)) current)
+              (set! current
+                    (extend current
+                            (binder-variables (list-ref alternating index))
+                            #f)))
+            (scan body current)]
+           [_ (for ([child (in-list value)]) (scan child scope))])]))
+    (scan node env)
+    (sort (set->list found) <))
+  (define (walk node env)
+    (when (list? node)
+      (define head (datum-head node))
+      (when (member head '(Context Vague))
+        (set! site-ordinal (add1 site-ordinal))
+        (set! signatures
+              (cons `(site ,site-ordinal ,head ,(dependencies node env))
+                    signatures)))
+      (match node
+        [`(λ ,binder ,body)
+         (walk body (extend env (binder-variables binder)))]
+        [`(Let ,binder ,rhs ,body)
+         (walk rhs env)
+         (walk body (extend env (binder-variables binder)))]
+        [`(Bind . ,pieces)
+         (define body (last pieces))
+         (define alternating (drop-right pieces 1))
+         (define current env)
+         (for ([index (in-range 0 (length alternating) 2)])
+           (walk (list-ref alternating (add1 index)) current)
+           (set! current
+                 (extend current
+                         (binder-variables (list-ref alternating index)))))
+         (walk body current)]
+        [_ (for ([child (in-list node)]) (walk child env))])))
+  (walk datum (hash))
+  (reverse signatures))
+
 (define (normalize-core core-term rr [inv (load-inventory)])
   (define datum (if (or (core-list? core-term) (core-atom? core-term))
                     (core->plain core-term)
@@ -1812,17 +2275,23 @@
           (remove-duplicates
            (append (normalization-expansions produced-normal)
                    (normalization-expansions expected-normal))))
-        (if (redex-alpha-equivalent?
-             (normalization-datum produced-normal)
-             (normalization-datum expected-normal))
+        (define produced-datum (normalization-datum produced-normal))
+        (define expected-datum (normalization-datum expected-normal))
+        (define alpha-match?
+          (redex-alpha-equivalent? produced-datum expected-datum))
+        (define site-match?
+          (equal? (site-signatures produced-datum)
+                  (site-signatures expected-datum)))
+        (if (and alpha-match? site-match?)
             (case-report source ordinal index 'in-fragment/matched #f
                          (lowered-rules result) expansions "matched"
-                         (normalization-datum produced-normal)
-                         (normalization-datum expected-normal))
+                         produced-datum expected-datum)
             (case-report source ordinal index 'in-fragment/mismatch #f
-                         (lowered-rules result) expansions "normalized terms differ"
-                         (normalization-datum produced-normal)
-                         (normalization-datum expected-normal)))]
+                         (lowered-rules result) expansions
+                         (cond [(not alpha-match?) "normalized terms differ"]
+                               [else
+                                "retrieval-site kind/order/dependencies differ"])
+                         produced-datum expected-datum))]
        [else
         (define disposition
           (if (eq? (no-lowering-cause result) 'out-of-fragment)
@@ -1858,6 +2327,7 @@
   (define reports '())
   (define fence-reports '())
   (define fixture-property-total 0)
+  (define structural-eligible-total 0)
   (define fixture-property-failures '())
   (for ([candidate (in-list (lowering-manifest-candidates manifest))])
     (define key (cons (lowering-candidate-source candidate)
@@ -1874,6 +2344,7 @@
         (define report
           (run-candidate-case candidate candidate-case parse-case rr-case target inv))
         (unless (lowering-case-unresolved candidate-case)
+          (set! structural-eligible-total (add1 structural-eligible-total))
           (define sigma (parse-case->sigma parse-case (rr-case-fields rr-case) inv))
           (unless (no-lowering? sigma)
             (set! fixture-property-total (add1 fixture-property-total))
@@ -1934,6 +2405,8 @@
     (printf "lowering formed coverage: ~a/~a rules; unformed=~a\n"
             (set-count matched-rules) (length (fragment-rule-ids manifest))
             (string-join unformed ","))
+    (printf "structurally lowered from gentufa/RR: ~a/~a eligible cases\n"
+            fixture-property-total structural-eligible-total)
     (printf "deterministic fixture derivations: ~a/~a outputs type-check~a\n"
             (- fixture-property-total (length fixture-property-failures))
             fixture-property-total

@@ -411,6 +411,18 @@
 ;; binder spelling shifts the written Context column, so the site ids differ.
 (check-not-equal? (elaboration-sites (elaborate-core alpha-site-left))
                   (elaboration-sites (elaborate-core alpha-site-right)))
+(check-equal? (site-signatures (plain alpha-site-left))
+              (site-signatures (plain alpha-site-right)))
+(check-not-equal?
+ (site-signatures
+  '(Bind ($x :: Entity) (Context)
+     (Vague (Admissible $x))))
+ (site-signatures
+  '(Bind ($renamed :: Entity) (Context)
+     (Vague (Admissible Speaker)))))
+(check-not-equal?
+ (site-signatures '(Bind ($x :: Entity) (Context) (Vague (Use $x))))
+ (site-signatures '(Bind ($x :: Entity) (Vague (Use Speaker)) (Context))))
 
 (define close-normal
   (normalize-core (datum->core '(Close (klama Speaker)))
@@ -549,6 +561,78 @@
   (check-equal? (first (plain (lowered-term sample-1-assert))) 'Assert)
   (check-equal? (first (plain (lowered-term sample-1-mention))) 'Mention))
 
+(define (rr-with rr . updates)
+  (struct-copy
+   rr-case rr
+   [fields
+    (for/fold ([fields (rr-case-fields rr)])
+              ([entry (in-list updates)])
+      (hash-set fields (car entry) (cdr entry)))]))
+
+(define (check-mention-force source ordinal [index 1])
+  (define-values (parse-case rr) (case-input source ordinal index))
+  (define result (lower parse-case (rr-with rr (cons 'force '(mention)))))
+  (check-true (lowered? result)
+              (format "~a#~a.~a accepts Mention force" source ordinal index))
+  (when (lowered? result)
+    (define symbols (flatten (plain (lowered-term result))))
+    (check-not-false (member 'Mention symbols))
+    (check-false (member 'Assert symbols))))
+
+;; Every sentence-category special path consumes RR.force; none retains an
+;; example-specific Assert.
+(check-mention-force "samples.md" 46)   ; termset
+(check-mention-force "samples.md" 48)   ; many threshold
+(check-mention-force "samples.md" 59)   ; scalar
+(check-mention-force "samples.md" 63 1) ; grade
+(check-mention-force "samples.md" 63 3) ; co'e
+
+;; L5.2's frozen case is Content. Reclassifying that same parse as a sentence
+;; exercises the general sentence consumer without adding a corpus fixture.
+(define-values (cardinal-content-parse cardinal-content-rr)
+  (case-input "spec.md" 9))
+(define cardinal-sentence-result
+  (lower (hash-set cardinal-content-parse 'category "sentence")
+         (rr-with cardinal-content-rr
+                  (cons 'readings '(actual witness-set))
+                  (cons 'force '(mention)))))
+(check-true (lowered? cardinal-sentence-result))
+(when (lowered? cardinal-sentence-result)
+  (check-not-false
+   (member 'Mention (flatten (plain (lowered-term cardinal-sentence-result))))))
+(define cardinal-content-with-force
+  (lower cardinal-content-parse
+         (rr-with cardinal-content-rr (cons 'force '(assert)))))
+(check-true (no-lowering? cardinal-content-with-force))
+(check-equal? (no-lowering-cause cardinal-content-with-force) 'rr-missing)
+
+(define capable-result
+  (lower sample-1-parse
+         (rr-with sample-1-rr (cons 'readings '(capable)))))
+(check-true (no-lowering? capable-result))
+(check-equal? (no-lowering-cause capable-result) 'rr-missing)
+(define unused-attach-result
+  (lower sample-1-parse
+         (rr-with sample-1-rr (cons 'attach '(unconsumed)))))
+(check-true (no-lowering? unused-attach-result))
+(check-equal? (no-lowering-cause unused-attach-result) 'rr-missing)
+
+(define-values (description-row-parse description-row-rr)
+  (case-input "samples.md" 19))
+(define missing-restrictor-row
+  (lower description-row-parse
+         (rr-with description-row-rr (cons 'rows '(blabi)))))
+(check-true (no-lowering? missing-restrictor-row))
+(check-equal? (no-lowering-cause missing-restrictor-row) 'rr-missing)
+
+(define-values (grade-parse grade-rr) (case-input "samples.md" 63 1))
+(define bogus-grade-sites
+  (lower grade-parse
+         (rr-with grade-rr
+                  (cons 'sites '((bogus barda (deps ())))))))
+(check-true (no-lowering? bogus-grade-sites))
+(check-equal? (no-lowering-cause bogus-grade-sites) 'rr-missing)
+
 (define (rename-json-key value old new)
   (cond
     [(hash? value)
@@ -566,6 +650,136 @@
     [(list? value) (map (lambda (child) (rename-json-text child old new)) value)]
     [(and (string? value) (string=? value old)) new]
     [else value]))
+
+(define (update-first-json-tag value wanted update)
+  (define changed? #f)
+  (define (walk node)
+    (cond
+      [(hash? node)
+       (for/hasheq ([(key child) (in-hash node)])
+         (cond
+           [(and (not changed?) (eq? key wanted))
+            (set! changed? #t)
+            (values key (update child))]
+           [else (values key (walk child))]))]
+      [(list? node) (map walk node)]
+      [else node]))
+  (define result (walk value))
+  (unless changed? (error 'update-first-json-tag "tag not found: ~a" wanted))
+  result)
+
+(define (synthetic-terminal kind text [start 0])
+  (hasheq kind (hasheq 'phonemes text 'span (list start (add1 start)))))
+
+(define (synthetic-pro text [start 0])
+  (hasheq 'ConnectedTerm
+          (hasheq 'ProSumti (synthetic-terminal 'Cmavo text start))))
+
+(define synthetic-mi (synthetic-pro "mi"))
+(define synthetic-ti (synthetic-pro "ti"))
+(define synthetic-zio (synthetic-pro "zi'o" 10))
+(define synthetic-zio-2 (synthetic-pro "zi'o" 11))
+(define synthetic-fa-mi
+  (hasheq
+   'ConnectedTerm
+   (hasheq 'PlaceTaggedSumtiTerm
+           (hasheq 'fa (synthetic-terminal 'Cmavo "fa")
+                   'sumti (hasheq 'ProSumti
+                                  (synthetic-terminal 'Cmavo "mi"))))))
+
+;; A handled bridi must account for every direct semantic term. Adding a
+;; second term beside the formerly sole description is refused, not silently
+;; converted to a tavla/blabi application with the description erased.
+(define nonsole-description-parse
+  (hash-set
+   description-row-parse 'parse
+   (update-first-json-tag
+    (hash-ref description-row-parse 'parse) 'SelbriSimpleBridiTail
+    (lambda (tail)
+      (hash-set tail 'terms
+                (append (hash-ref tail 'terms (lambda () '()))
+                        (list synthetic-mi)))))))
+(define nonsole-description-sigma
+  (parse-case->sigma nonsole-description-parse
+                     (rr-case-fields description-row-rr)))
+(check-true (no-lowering? nonsole-description-sigma))
+(check-equal? (no-lowering-cause nonsole-description-sigma)
+              'rule-underspecified)
+
+;; Recursive descendant search may not substitute a possessor or relative
+;; clause for its containing description.
+(define possessive-description-parse
+  (hash-set
+   description-row-parse 'parse
+   (update-first-json-tag
+    (hash-ref description-row-parse 'parse) 'DescriptorWithGadriSumti
+    (lambda (descriptor)
+      (hash-update
+       descriptor 'tail
+       (lambda (tail)
+         (hash-set tail 'leading_tail_elements
+                   (hasheq 'tail_sumti
+                           (hasheq 'ProSumti
+                                   (synthetic-terminal 'Cmavo "mi"))))))))))
+(define possessive-description-sigma
+  (parse-case->sigma possessive-description-parse
+                     (rr-case-fields description-row-rr)))
+(check-true (no-lowering? possessive-description-sigma))
+(check-equal? (no-lowering-rule possessive-description-sigma) "L3.11")
+
+(define relative-description-parse
+  (hash-set
+   description-row-parse 'parse
+   (update-first-json-tag
+    (hash-ref description-row-parse 'parse) 'DescriptorWithGadriSumti
+    (lambda (descriptor)
+      (hash-set descriptor 'probe-relative
+                (hasheq 'RestrictiveBridiRelativeClause
+                        (synthetic-terminal 'Cmavo "poi")))))))
+(define relative-description-sigma
+  (parse-case->sigma relative-description-parse
+                     (rr-case-fields description-row-rr)))
+(check-true (no-lowering? relative-description-sigma))
+(check-equal? (no-lowering-cause relative-description-sigma)
+              'out-of-fragment)
+
+;; Place labels are routed through conversion before application. Surface fa
+;; under se is base x2, even when it is the only fill.
+(define-values (conversion-parse conversion-rr) (case-input "samples.md" 5))
+(define se-fa-parse
+  (hash-set
+   conversion-parse 'parse
+   (update-first-json-tag
+    (hash-ref conversion-parse 'parse) 'BridiWithLeadingTerms
+    (lambda (bridi)
+      (hash-set
+       (hash-set bridi 'leading_terms (list synthetic-fa-mi))
+       'bridi_tail
+       (update-first-json-tag
+        (hash-ref bridi 'bridi_tail) 'SelbriSimpleBridiTail
+        (lambda (tail) (hash-set tail 'terms '()))))))))
+(check-equal?
+ (parse-case->sigma se-fa-parse (rr-case-fields conversion-rr))
+ '(force assert
+    (close shorthand
+           (omit (route (application klama :2 Speaker))))))
+
+;; Every zi'o remains a distinct DropPlace and later positional terms advance
+;; past both deleted labels.
+(define-values (deletion-parse deletion-rr) (case-input "samples.md" 4))
+(define repeated-deletion-parse
+  (hash-set
+   deletion-parse 'parse
+   (update-first-json-tag
+    (hash-ref deletion-parse 'parse) 'SelbriSimpleBridiTail
+    (lambda (tail)
+      (hash-set tail 'terms
+                (list synthetic-zio synthetic-zio-2 synthetic-ti))))))
+(check-equal?
+ (parse-case->sigma repeated-deletion-parse (rr-case-fields deletion-rr))
+ '(force assert
+    (close shorthand
+           (omit (drop klama (2 3) Speaker This)))))
 
 (define bogus-parse
   (hash-set sample-1-parse 'parse
