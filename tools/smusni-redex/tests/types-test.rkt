@@ -629,7 +629,7 @@
   (infer-text
    (format "{λ [$x :: Referents Entity]
               (∃ {λ [$e :: Referents Locution]
-                (∧ (LocutionOf $e CurrentToken)
+                (∧ (LocutionOf CurrentToken $e)
                    (skicu Speaker $x Audience ~a :Eventuality $e))})}" le-property)))
  '(Fn ((Referents Entity)) Content))
 (check-not-exn
@@ -640,7 +640,8 @@
              (Mention $people)}" le-property))))
 (check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker)"))))
 (check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker Audience)"))))
-(check-true (type-error? (lambda () (infer-text "(LocutionOf Speaker CurrentToken)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf {λ [$e :: Referents Locution] (mlatu $e)} CurrentToken)"))))
 (check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken CurrentToken)"))))
 
 ;; codex_2's #48 review: r and P are coupled — P's parameter is checked against
@@ -661,3 +662,15 @@
    (infer-text
     "{λ [$e :: Referents Eventuality]
        (SpeakerDescribes $e {λ [$y :: Referents Entity] (mlatu $y)})}")))
+
+;; §3.1: collection and sign object sorts sit under Entity (codex_2, #48).
+(check-true (type-compatible? '(Group Entity) 'Entity))
+(check-true (type-compatible? '(Referents (Group Entity)) '(Referents Entity)))
+(check-true (type-compatible? '(Set Entity) 'Entity))
+(check-false (type-compatible? 'Entity '(Group Entity)))
+(check-false (type-compatible? '(Group Entity) 'Eventuality))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$g :: Referents (Group Entity)]
+       (SpeakerDescribes $g {λ [$y :: Referents Entity] (mlatu $y)})}")))

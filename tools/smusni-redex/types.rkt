@@ -208,6 +208,11 @@
      (raise-type (first nodes) "type constructor must be a symbol")]
     [else `(,first-type ,@(map parse-type-node (rest nodes)))]))
 
+(define (first-order-collection-type? type)
+  (and (list? type) (pair? type)
+       (member (first type) '(Set Group List Sign SignToken))
+       (andmap first-order-type? (rest type))))
+
 (define (first-order-type? type)
   (cond
     [(symbol? type)
@@ -306,6 +311,10 @@
 (define (type-compatible? actual expected)
   (cond
     [(or (equal? actual 'Unknown) (equal? expected 'Unknown)) #t]
+    ;; §3.1's sort tree places the collection and sign object sorts under
+    ;; Entity: a Set/Group/List/Sign/SignToken object stands where an Entity
+    ;; is expected (and, covariantly, inside Referents).
+    [(and (eq? expected 'Entity) (first-order-collection-type? actual)) #t]
     [(equal? actual expected) #t]
     [(subsort? actual expected) #t]
     ;; ClauseContent is transparent to its EFn representation, never to
@@ -1197,13 +1206,13 @@
        (raise-type node "LocutionOf takes a locution reference and an utterance token"))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (ensure-compatible (first arguments) (typing-type (first results))
-                        '(Referents Locution))
-     (ensure-compatible (second arguments) (typing-type (second results))
                         '(Referents UtteranceToken))
+     (ensure-compatible (second arguments) (typing-type (second results))
+                        '(Referents Locution))
      (merge-results 'Content results)]
     [(eq? head 'SpeakerDescribes)
      ;; §12: (SpeakerDescribes r P) ≝ (∃ {λ [$e :: Referents Locution]
-     ;;   (∧ (LocutionOf $e CurrentToken) (skicu Speaker r Audience P :Eventuality $e))})
+     ;;   (∧ (LocutionOf CurrentToken $e) (skicu Speaker r Audience P :Eventuality $e))})
      ;; Every skicu place is filled and P is handed to x4 as a value, so the
      ;; form is pure whatever P's arrow; r lifts to its singleton reference.
      (unless (= (length arguments) 2)
