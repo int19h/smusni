@@ -410,6 +410,16 @@
    "(Assert (CloseClause {λ [$e :: Referents Eventuality] (gerku Speaker)}))"))
  '(Act Assertion))
 
+(check-equal?
+ (typing-type (infer-text "(Mention Speaker)"))
+ '(Act Expressive))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{Let [$a :: Act Assertion] (Mention Speaker) (Mention $a)}"))))
+
 (check-true
  (type-error?
   (lambda ()

@@ -61,6 +61,11 @@ scope, whereas `Exactly 0 = No` still does. `Card` and its
 `GlobalExactly`/`Most` consumers carry the projective finite-set definedness
 obligation.
 
+## Checker fidelity follow-ups (#13)
+
+- `Mention` constructs `Act<Expressive>` and is rejected where an assertion
+  act is required; displaying a value never supplies assertion force.
+
 ## Model-bank profiles
 
 The model bank prints decision status before every verdict:

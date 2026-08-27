@@ -892,7 +892,7 @@
     [(eq? head 'Mention)
      (unless (= (length arguments) 1) (raise-type node "Mention takes one value"))
      (define value (infer-core (first arguments) env inv))
-     (merge-results '(Act Assertion) (list value))]
+     (merge-results '(Act Expressive) (list value))]
     [(eq? head 'Ask)
      (unless (= (length arguments) 1) (raise-type node "Ask takes one Query"))
      (define query (infer-core (first arguments) env inv))
