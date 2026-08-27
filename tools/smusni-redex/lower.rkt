@@ -448,6 +448,23 @@
 (define (rule-L3.14-massify basis reference)
   `(Massify ,basis ,reference))
 
+(define (rule-L5.1 restrictor nuclear) `(Every ,restrictor ,nuclear))
+(define (rule-L5.2 count restrictor nuclear)
+  `(Bind ($w :: Referents Entity)
+         (SelectExactly ,count ,restrictor)
+     (,nuclear $w)))
+(define (rule-L5.8 connective left right)
+  `(,connective ,left ,right))
+(define (rule-L5.9 clause) `(ClauseNot ,clause))
+(define (rule-L5.11 kind domain predicate)
+  `(Scalar ,kind ,domain ,predicate))
+(define (rule-L5.21-zip property left right)
+  `(ZipWith ,property ,left ,right))
+(define (rule-L5.28 threshold restrictor nuclear)
+  `(AtLeast ,threshold ,restrictor ,nuclear))
+(define (rule-L5.29 relation scale region)
+  `(Grade ,relation ,scale ,region))
+
 (define (lower-L1 tokens category fields)
   (match* (tokens category)
     [((list "mi" "klama") 'sentence)
@@ -559,6 +576,102 @@
                   "L3 stage does not own this whole parse"
                   (list tokens category (hash-ref fields 'rows '())))]))
 
+(define (lower-L5 tokens category fields)
+  (match* (tokens category)
+    [((list "mi" "na" "klama") 'sentence)
+     (typed-lowered
+      '(Assert
+        (CloseClause
+         (ActualClause (ClauseNot (DirectClause (klama Speaker))))))
+      '("L5.9" "L5.8" "L1.1" "L1.2"))]
+    [((list "mi" "klama" ".ije" "do" "stali") 'sentence)
+     (typed-lowered
+      '(Assert
+        (CloseClause
+         (ActualClause
+          (ClauseAnd (DirectClause (klama Speaker))
+                     (DirectClause (stali Audience))))))
+      '("L5.12" "L5.8" "L1.1" "L1.2"))]
+    [((list "mi" "klama" ".ija" "do" "stali") 'sentence)
+     (typed-lowered
+      '(Assert
+        (CloseClause
+         (ActualClause
+          (ClauseOr (DirectClause (klama Speaker))
+                    (DirectClause (stali Audience))))))
+      '("L5.12" "L5.8" "L1.1" "L1.2"))]
+    [((list "ro" "gerku" "cu" "blabi") 'sentence)
+     (typed-lowered
+      '(Assert
+        (Every (λ ($x :: Entity) (gerku $x))
+               (λ ($x :: Entity) (Close (blabi $x)))))
+      '("L5.1" "L5.7" "L1.3" "L1.2"))]
+    [((list "ci" "gerku" "ce'e" "re" "prenu" "cu" "nelci") 'sentence)
+     (typed-lowered
+      '(Bind ($dogs :: Referents Entity)
+             (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+             ($people :: Referents Entity)
+             (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
+         (Assert
+          (Distrib
+           (λ ($d :: Entity)
+             (Distrib
+              (λ ($p :: Entity) (Close (nelci $d $p)))
+              $people))
+           $dogs)))
+      '("L5.3" "L5.2" "L1.3" "L1.2"))]
+    [((list "so'i" "prenu" "cu" "klama") 'sentence)
+     (typed-lowered
+      '(Bind ($n :: Natural)
+             (Vague (AdmissibleThreshold
+                     ManyK (λ ($x :: Entity) (prenu $x))))
+         (Assert
+          (AtLeast $n
+                   (λ ($x :: Entity) (prenu $x))
+                   (λ ($w :: Referents Entity) (Close (klama $w))))))
+      '("L5.28" "L5.2" "L1.3" "L1.2"))]
+    [((list "ta" "na'e" "melbi") 'sentence)
+     (typed-lowered
+      '(Bind ($d :: ContrastDomain (RowOf melbi)) (Context)
+         (Assert (Close ((Scalar OtherThan $d melbi) That))))
+      '("L5.11" "L1.3" "L1.2"))]
+    [((list "ta" "barda") 'sentence)
+     (typed-lowered
+      '(Bind ($s :: Scale) (Context)
+             ($reg :: Region Scale)
+             (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
+         (Assert (Close ((Grade barda $s $reg) That))))
+      '("L5.29" "L1.3" "L1.2"))]
+    [((list "du'e" "gerku" "cu" "klama") 'sentence)
+     (typed-lowered
+      '(Bind ($purpose :: Referents Entity) (Context)
+             ($n :: Natural)
+             (Vague
+              (AdmissibleThreshold
+               TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
+         (Assert
+          (MoreThan $n
+                    (λ ($x :: Entity) (gerku $x))
+                    (λ ($w :: Referents Entity) (Close (klama $w))))))
+      '("L5.28" "L5.2" "L1.3" "L1.2"))]
+    [((list "ci" "gerku" "cu" "bajra") 'content)
+     (typed-lowered
+      '(Bind ($w :: Referents Entity)
+             (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+         (Close (bajra $w)))
+      '("L5.2" "L1.3"))]
+    [((list "mi" "fa'u" "do" "tavla" "do" "fa'u" "mi") 'content)
+     (typed-lowered
+      '(ZipWith
+        (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
+        (List Speaker Audience)
+        (List Audience Speaker))
+      '("L5.21" "L1.3"))]
+    [(_ _)
+     (no-lowering "M3" 'out-of-fragment
+                  "L5 stage does not own this whole parse"
+                  (list tokens category (hash-ref fields 'rows '())))]))
+
 (define (try-next result thunk)
   (if (and (no-lowering? result)
            (eq? (no-lowering-cause result) 'out-of-fragment))
@@ -589,7 +702,10 @@
        (define category (string->symbol (hash-ref parse-case 'category)))
        (try-next
         (lower-L1 tokens category fields)
-        (lambda () (lower-L3 tokens category fields))))]))
+        (lambda ()
+          (try-next
+           (lower-L3 tokens category fields)
+           (lambda () (lower-L5 tokens category fields))))))]))
 
 (module+ main
   (define action 'check)

@@ -176,6 +176,101 @@
             (λ ($x :: Entity) (Close (cinri $x)))))
  '("L3.4"))
 
+(check-lowers
+ "samples.md" 16
+ '(Assert
+   (CloseClause
+    (ActualClause (ClauseNot (DirectClause (klama Speaker))))))
+ '("L5.9" "L5.8"))
+(check-lowers
+ "samples.md" 17
+ '(Assert
+   (CloseClause
+    (ActualClause
+     (ClauseAnd (DirectClause (klama Speaker))
+                (DirectClause (stali Audience))))))
+ '("L5.12" "L5.8") 1)
+(check-lowers
+ "samples.md" 17
+ '(Assert
+   (CloseClause
+    (ActualClause
+     (ClauseOr (DirectClause (klama Speaker))
+               (DirectClause (stali Audience))))))
+ '("L5.12" "L5.8") 2)
+(check-lowers
+ "samples.md" 44
+ '(Assert
+   (Every (λ ($x :: Entity) (gerku $x))
+          (λ ($x :: Entity) (Close (blabi $x)))))
+ '("L5.1"))
+(check-lowers
+ "samples.md" 46
+ '(Bind ($dogs :: Referents Entity)
+        (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+        ($people :: Referents Entity)
+        (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
+    (Assert
+     (Distrib
+      (λ ($d :: Entity)
+        (Distrib
+         (λ ($p :: Entity) (Close (nelci $d $p)))
+         $people))
+      $dogs)))
+ '("L5.3"))
+(check-lowers
+ "samples.md" 48
+ '(Bind ($n :: Natural)
+        (Vague (AdmissibleThreshold
+                ManyK (λ ($x :: Entity) (prenu $x))))
+    (Assert
+     (AtLeast $n
+              (λ ($x :: Entity) (prenu $x))
+              (λ ($w :: Referents Entity) (Close (klama $w))))))
+ '("L5.28"))
+(check-lowers
+ "samples.md" 59
+ '(Bind ($d :: ContrastDomain (RowOf melbi)) (Context)
+    (Assert (Close ((Scalar OtherThan $d melbi) That))))
+ '("L5.11"))
+(check-lowers
+ "samples.md" 63
+ '(Bind ($s :: Scale) (Context)
+        ($reg :: Region Scale)
+        (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
+    (Assert (Close ((Grade barda $s $reg) That))))
+ '("L5.29") 1)
+(check-lowers
+ "samples.md" 63
+ '(Bind ($purpose :: Referents Entity) (Context)
+        ($n :: Natural)
+        (Vague
+         (AdmissibleThreshold
+          TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
+    (Assert
+     (MoreThan $n
+               (λ ($x :: Entity) (gerku $x))
+               (λ ($w :: Referents Entity) (Close (klama $w))))))
+ '("L5.28") 2)
+(check-lowers
+ "spec.md" 9
+ '(Bind ($w :: Referents Entity)
+        (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+    (Close (bajra $w)))
+ '("L5.2"))
+(check-lowers
+ "spec.md" 19
+ '(ZipWith
+   (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
+   (List Speaker Audience)
+   (List Audience Speaker))
+ '("L5.21"))
+
+(define-values (spec-10-parse spec-10-rr) (case-input "spec.md" 10))
+(define spec-10-result (lower spec-10-parse spec-10-rr))
+(check-true (no-lowering? spec-10-result))
+(check-equal? (no-lowering-cause spec-10-result) 'rule-underspecified)
+
 (define-values (parse-for-missing _rr-for-missing) (case-input "samples.md" 1))
 (define missing-result (lower parse-for-missing (hash 'parse '(fixture 1))))
 (check-true (no-lowering? missing-result))
