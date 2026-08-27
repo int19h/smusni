@@ -249,7 +249,7 @@
  (fence "spec.md" 9 specimen "4da2df77645deee22f6ddfbb87b1418fa7bfecc5"
         (origin "surface")
         (rules "L5.2"))
- (fence "spec.md" 10 specimen "a15294b018e4042b2b06bd4bb50dd1c36d844909"
+ (fence "spec.md" 10 specimen "30c6bd5c2676ca42a0ec03c53a93c7fdcf91b92d"
         (origin "surface")
         (rules "L5.2" "L0.1"))
  (fence
