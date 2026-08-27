@@ -29,7 +29,7 @@
           AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
           Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Aggregate
           CanonicalAggregateAt Tanru Scalar Grade JaiRaise DuhuRel NiRel
-          SuhuRel JeiRel StructuredQuote OpaqueQuote WordSign InterpretContent
+          SuhuRel JeiRel InterpretContent
           RealizedContent AmountValue ZipWith))
 
 (define-language SmusniStatic
@@ -148,6 +148,12 @@
           (append extra-obligations
                   (append-map typing-obligations results))
           (append extra-gaps (append-map typing-gaps results))))
+
+(define (suspend-results type results)
+  ;; First-class act constructors package their payloads without running them.
+  (typing type empty-effects
+          (append-map typing-obligations results)
+          (append-map typing-gaps results)))
 
 (define (type-constructor? value)
   (member value '(Referents Set Group List Act ActOccurrence RefComp PerfComp
@@ -288,6 +294,15 @@
                     #:when (eq? (first edge) actual))
              (subsort? (second edge) expected (set-add seen actual))))))
 
+(define (function-type? type)
+  (match type
+    [`(,arrow ,(? list?) ,_) (member arrow '(Fn EFn))]
+    [_ #f]))
+
+(define (arrow-compatible? actual expected)
+  (or (eq? actual expected)
+      (and (eq? actual 'Fn) (eq? expected 'EFn))))
+
 (define (type-compatible? actual expected)
   (cond
     [(or (equal? actual 'Unknown) (equal? expected 'Unknown)) #t]
@@ -307,6 +322,20 @@
             [_ #f])) #t]
     ;; Singleton lifting is a typing rule, never an object-language operator.
     [(match expected [`(Referents ,inner) (type-compatible? actual inner)] [_ #f]) #t]
+    ;; Functions are contravariant in every parameter and covariant in their
+    ;; result.  A pure function refines the corresponding effectful function.
+    ;; The token-sort spelling used by Utterance/Sign is handled explicitly in
+    ;; those entry-notation rules, never by relaxing this function rule.
+    [(and (function-type? actual) (function-type? expected))
+     (match* (actual expected)
+       [(`(,arrow-a ,params-a ,result-a) `(,arrow-e ,params-e ,result-e))
+        (and (arrow-compatible? arrow-a arrow-e)
+             (= (length params-a) (length params-e))
+             (for/and ([param-a (in-list params-a)]
+                       [param-e (in-list params-e)])
+               (type-compatible? param-e param-a))
+             (type-compatible? result-a result-e))])]
+    [(or (function-type? actual) (function-type? expected)) #f]
     [(and (list? actual) (list? expected)
           (= (length actual) (length expected))
           (eq? (first actual) (first expected)))
@@ -317,14 +346,6 @@
                 (for/and ([l (in-list left)] [r (in-list right)])
                   (type-compatible? l r)))
            (type-compatible? left right)))]
-    ;; A pure function is admissible where an effectful function is allowed.
-    [(match* (actual expected)
-       [(`(Fn ,params-a ,result-a) `(EFn ,params-e ,result-e))
-        (and (= (length params-a) (length params-e))
-             (andmap values
-                     (map type-compatible? params-e params-a))
-             (type-compatible? result-a result-e))]
-       [(_ _) #f]) #t]
     [else #f]))
 
 (define (ensure-compatible node actual expected)
@@ -887,17 +908,17 @@
      (unless (= (length arguments) 1) (raise-type node "~a takes Content" head))
      (define content (infer-core (first arguments) env inv))
      (ensure-compatible (first arguments) (typing-type content) 'Content)
-     (merge-results `(Act ,(if (eq? head 'Assert) 'Assertion 'Expressive))
-                    (list content))]
+     (suspend-results `(Act ,(if (eq? head 'Assert) 'Assertion 'Expressive))
+                      (list content))]
     [(eq? head 'Mention)
      (unless (= (length arguments) 1) (raise-type node "Mention takes one value"))
      (define value (infer-core (first arguments) env inv))
-     (merge-results '(Act Assertion) (list value))]
+     (suspend-results '(Act Expressive) (list value))]
     [(eq? head 'Ask)
      (unless (= (length arguments) 1) (raise-type node "Ask takes one Query"))
      (define query (infer-core (first arguments) env inv))
      (match (typing-type query)
-       [`(Query ,_) (merge-results '(Act Question) (list query))]
+       [`(Query ,_) (suspend-results '(Act Question) (list query))]
        [other (raise-type node "Ask requires Query, got ~e" other)])]
     [(eq? head 'ContextualAnswer)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
@@ -1184,15 +1205,11 @@
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (match (typing-type (second results))
        [`(Group ,inner)
-        (ensure-compatible (first arguments) (typing-type (first results))
-                           `(DecompositionBasis (Group ,inner) ,inner))
-        (merge-results `(Referents ,inner) results
+       (ensure-compatible (first arguments) (typing-type (first results))
+                          `(DecompositionBasis (Group ,inner) ,inner))
+       (merge-results `(Referents ,inner) results
+                       #:effects (set 'projective)
                        #:obligations '(complete-group-cover-defined))]
-       [`(Referents (Group ,inner))
-        (ensure-compatible (first arguments) (typing-type (first results))
-                           `(DecompositionBasis (Group ,inner) ,inner))
-        (merge-results `(Referents ,inner) results
-                       #:obligations '(sole-group-and-complete-cover-defined))]
        [other (raise-type (second arguments)
                           "components_κ requires one Group<T>, got ~e" other)])]
     [(eq? head 'List)
@@ -1205,12 +1222,32 @@
      (unless (= (length arguments) 2)
        (raise-type node "~a entry notation takes binder and fact body" head))
      (define bindings (parse-binder-group (first arguments)))
-     (define body (infer-body (second arguments) (extend-env env bindings) inv))
+     (unless (= (length bindings) 1)
+       (raise-type (first arguments) "~a entry notation binds one token" head))
+     (define binding (first bindings))
+     (define declared-type (cdr binding))
+     (define internal-type
+       (case head
+         [(Utterance)
+          (unless (equal? declared-type 'UtteranceToken)
+            (raise-type (first arguments)
+                        "Utterance entry binder is ascribed UtteranceToken"))
+          '(Referents UtteranceToken)]
+         [(Sign)
+          (match declared-type
+            [`(SignToken ,kind) `(Referents (SignToken ,kind))]
+            [other
+             (raise-type (first arguments)
+                         "Sign entry binder is ascribed SignToken<K>, got ~e"
+                         other)])]))
+     (define internal-binding (cons (car binding) internal-type))
+     (define body
+       (infer-body (second arguments)
+                   (extend-env env (list internal-binding)) inv))
      (ensure-compatible (second arguments) (typing-type body) 'Content)
-     (merge-results (if (eq? head 'Utterance)
-                        '(Sign Sentence)
-                        '(Sign UnknownKind))
-                    (list body))]
+     (unless (pure-typing? body)
+       (raise-type (second arguments) "~a entry property must be pure" head))
+     (merge-results `(Fn (,internal-type) Content) (list body))]
     [(eq? head 'At)
      (unless (= (length arguments) 3)
        (raise-type node "At takes relation, bare numeral/Eventuality label, and value"))
@@ -1258,12 +1295,35 @@
           (raise-type (second arguments) "label ~a is outside row ~e" label row))]
        [_ (void)])
      (merge-results '(PredTerm Derived 0 #f) (list relation))]
-    [(member head '(StructuredQuote OpaqueQuote WordSign InterpretContent
-                                    RealizedContent AmountValue ZipWith))
+    [(member head '(OpaqueQuote WordSign NameSign LetteralSign))
+     (unless (= (length arguments) 1)
+       (raise-type node "~a takes one Text operand" head))
+     (define operand (infer-core (first arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type operand) 'Text)
+     (define kind
+       (case head
+         [(OpaqueQuote) 'Opaque]
+         [(WordSign) 'Word]
+         [(NameSign) 'Name]
+         [(LetteralSign) 'Letteral]))
+     (merge-results `(Sign ,kind) (list operand))]
+    [(eq? head 'SentenceSign)
+     (unless (= (length arguments) 1)
+       (raise-type node "SentenceSign takes one Content operand"))
+     (define operand (infer-core (first arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type operand) 'Content)
+     (suspend-results '(Sign Sentence) (list operand))]
+    [(eq? head 'StructuredQuote)
+     (unless (= (length arguments) 1)
+       (raise-type node "StructuredQuote takes one entry operand"))
+     (define operand (infer-core (first arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type operand)
+                        '(Fn ((Referents UtteranceToken)) Content))
+     (merge-results '(Sign Structured) (list operand))]
+    [(member head '(InterpretContent RealizedContent AmountValue ZipWith))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (define type
        (case head
-         [(OpaqueQuote WordSign StructuredQuote) '(Sign Sentence)]
          [(InterpretContent RealizedContent) 'Content]
          [(AmountValue) 'Number]
          [(ZipWith) 'Content]))

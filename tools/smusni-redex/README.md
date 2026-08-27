@@ -61,6 +61,25 @@ scope, whereas `Exactly 0 = No` still does. `Card` and its
 `GlobalExactly`/`Most` consumers carry the projective finite-set definedness
 obligation.
 
+## Checker fidelity follow-ups (#13)
+
+- `Mention` constructs `Act<Expressive>` and is rejected where an assertion
+  act is required; displaying a value never supplies assertion force.
+- Sign constructors return their §7.5 kind (`Opaque`, `Structured`, `Name`,
+  `Sentence`, `Letteral`, or `Word`) instead of collapsing quotation and word
+  signs to `Sign<Sentence>`.
+- `components_κ` accepts exactly one `Group<T>` object and records the
+  complete-cover definedness obligation; plural group references require an
+  explicit sole-group projection before crossing.
+- `Fn`/`EFn` parameters are contravariant and results covariant. The §7.4/§7.5
+  `Utterance`/`Sign` entry spellings keep their token-sort binder annotations,
+  but their dedicated rules bind and return the singleton-lifted token-reference
+  properties. The implemented `Assert`, `Express`, `Ask`, and `Mention`
+  constructors suspend their payload effects, so described acts remain inert
+  while a direct effect in an entry fact is still rejected; no general
+  parameter-position lift is used for that notation. `SentenceSign` likewise
+  stages its Content operand inertly.
+
 ## Model-bank profiles
 
 The model bank prints decision status before every verdict:

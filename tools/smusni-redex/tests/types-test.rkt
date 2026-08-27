@@ -51,6 +51,24 @@
   (type-compatible (Fn ((Referents Eventuality)) Content) ClauseContent)))
 (check-false (judgment-holds (type-compatible ClauseContent Content)))
 
+;; Function parameters are contravariant; the singleton value lift does not
+;; make a member-level effectful property usable as a reference property.
+(check-false
+ (type-compatible? '(EFn (Entity) Content)
+                   '(EFn ((Referents Entity)) Content)))
+(check-true
+ (type-compatible? '(Fn (Entity) Content)
+                   '(Fn (Eventuality) Content)))
+(check-false
+ (type-compatible? '(Fn (Eventuality) Content)
+                   '(Fn (Entity) Content)))
+(check-true
+ (type-compatible? '(Fn (Entity) Eventuality)
+                   '(EFn (Entity) Entity)))
+(check-false
+ (type-compatible? '(EFn (Entity) Entity)
+                   '(Fn (Entity) Entity)))
+
 (check-equal?
  (typing-type
   (infer-text
@@ -335,14 +353,34 @@
        {Bind [$g :: Referents (Group Entity)] (Massify $k Speaker)
          (Mention $g)}}")))
 
-(check-equal?
- (typing-type
+(define one-group-components
   (infer-text
    "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
         [$g :: Group Entity]]
       (components_κ $k $g)}"))
- '(Fn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
-      (Referents Entity)))
+
+(check-equal?
+ (typing-type one-group-components)
+ '(EFn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
+       (Referents Entity)))
+
+(check-not-false
+ (member 'complete-group-cover-defined
+         (typing-obligations one-group-components)))
+
+(check-l0.1-rejection
+ "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
+      [$g :: Group Entity]]
+    (SetOf {λ [$x :: Referents Entity]
+      (Among $x (components_κ $k $g))})}")
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
+          [$groups :: Referents (Group Entity)]]
+        (components_κ $k $groups)}"))))
 
 (check-true
  (type-error?
@@ -410,6 +448,16 @@
    "(Assert (CloseClause {λ [$e :: Referents Eventuality] (gerku Speaker)}))"))
  '(Act Assertion))
 
+(check-equal?
+ (typing-type (infer-text "(Mention Speaker)"))
+ '(Act Expressive))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{Let [$a :: Act Assertion] (Mention Speaker) (Mention $a)}"))))
+
 (check-true
  (type-error?
   (lambda ()
@@ -445,6 +493,67 @@
   (lambda ()
     (infer-text
      "{λ [$g :: Group (PredTerm R)] (Mention $g)}"))))
+
+(check-equal? (typing-type (infer-text "(OpaqueQuote \"mi klama\")"))
+              '(Sign Opaque))
+(check-equal? (typing-type (infer-text "(WordSign \"klama\")"))
+              '(Sign Word))
+(check-equal? (typing-type (infer-text "(NameSign \"djan\")"))
+              '(Sign Name))
+(check-equal? (typing-type (infer-text "(LetteralSign \"by\")"))
+              '(Sign Letteral))
+(check-equal? (typing-type (infer-text "(SentenceSign (Close (gerku Speaker)))"))
+              '(Sign Sentence))
+(check-true
+ (pure-typing?
+  (infer-text
+   "(SentenceSign
+      {Bind [$x :: Entity] (Context) (Close (klama $x))})")))
+(check-equal?
+ (typing-type
+  (infer-text
+   "(StructuredQuote
+      (Utterance {$u :: UtteranceToken}
+        {(Realizes $u (Assert (Close (gerku Speaker))))}))"))
+ '(Sign Structured))
+
+(check-equal?
+ (typing-type
+  (infer-text
+   "(Utterance {$u :: UtteranceToken}
+      {(Realizes $u (Assert (Close (gerku Speaker))))})"))
+ '(Fn ((Referents UtteranceToken)) Content))
+
+(check-true
+ (pure-typing?
+  (infer-text
+   "(Utterance {$u :: UtteranceToken}
+      {(Realizes $u (Assert (Close (klama Speaker))))})")))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "(Utterance {$u :: UtteranceToken}
+        {{Bind [$x :: Entity] (Context)
+           (Realizes $u (Assert (Close (gerku $x))))}})"))))
+
+(check-equal?
+ (typing-type
+  (infer-text
+   "(Sign {$s :: SignToken MathExpression}
+      {(TextOf $s \"re te'a ci\")})"))
+ '(Fn ((Referents (SignToken MathExpression))) Content))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "(Utterance {$u :: Referents UtteranceToken}
+        {(Realizes $u (Assert (Close (gerku Speaker))))})"))))
+
+(check-true (type-error? (lambda () (infer-text "(WordSign Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(SentenceSign \"mi klama\")"))))
 
 (check-true
  (type-error?
