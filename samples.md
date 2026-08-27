@@ -394,8 +394,9 @@ a covert group.
 ```lisp
 ; lo'i gerku — a set object via selcmi (xorxes' lujvo: place 2 = members) [P5]
 {Bind [$base :: Referents Entity]
-        (Local (Refer {λ [$x :: Entity] (gerku $x)})) ; ordinary base;
-                                                        ; but not a surface DR
+        (Local (Refer {λ [$x :: Entity] (gerku $x)})) ; ordinary base via the
+                                                        ; §5.3 member lift; not
+                                                        ; a surface DR
   {Bind [$sets :: Referents (Set Entity)]
           (Refer {λ [$s :: Set Entity]
             (Close (selcmi $s $base))})
@@ -415,6 +416,8 @@ partial-friendly layer:
            (Refer {λ [$g :: Group Entity]
              (CompleteGunmaAt $κ $g $base)})
       (Mention $groups)}}}
+; the outer restrictor is member-level: by the §5.3 lift the reference is
+; CoveredBy that property — each qualifying group qualifies individually
 ```
 
 Neither object unwraps to its members implicitly. A maximal all-dogs base is

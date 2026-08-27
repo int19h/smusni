@@ -40,11 +40,13 @@ bounded pass-throughs rather than full signature checks. A normal run permits
 only exact hash-bound findings in `expected-findings.sexp`; use
 `tools/check-smusni --strict` to fail while any such document debt remains.
 
-`Refer` deliberately admits an `EFn` restrictor. Unlike the pure positions
-(`SetOf`, quantifier/Generic restrictors, and the `Select*` family), a
-description property may sequence retrieval sites; the returned referent is
-still introduced by `Refer` itself. This choice is pinned by a positive static
-test and must not be generalized to the pure positions.
+`Refer` admits an `EFn` restrictor at the *reference* level (spec §5.3): a
+description property may sequence retrieval sites, and the returned referent
+is still introduced by `Refer` itself. A *member-level* restrictor
+(`Fn (T) Content`) is the §5.3 `CoveredBy` lift and must be pure; an
+effectful member-level restrictor is rejected. Both halves are pinned by
+static tests and must not be generalized to the pure positions (`SetOf`,
+quantifier/Generic restrictors, and the `Select*` family).
 
 ## Model-bank profiles
 

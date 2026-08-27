@@ -92,14 +92,14 @@
  (fence "samples.md" 29 specimen "29247d0e41f1bb65c00865d8a8adcf57cf6fbafb"
         (origin "surface")
         (rules "L7.1"))
- (fence "samples.md" 30 specimen "c5deba4b14c6d8bdc0cc2f9ab092492c7993c40f"
+ (fence "samples.md" 30 specimen "bb927fff8f0424bed33e08d63acaa232f3cca35c"
         (origin "surface")
         (rules "L3.5" "L3.6"))
  (fence
   "samples.md"
   31
   schema
-  "5e039ba77ddd394a407bab625ac3a23b4a39a59f"
+  "a6b81beecc7005ac4cdc5349fd2bb0d9f812e9f1"
   (note "descriptor lowering schema with an explicit dependency-profile metavariable"))
  (fence
   "samples.md"

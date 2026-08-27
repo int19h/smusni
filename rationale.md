@@ -104,7 +104,9 @@ collapsing any two produces wrong meanings:
   inaccessible after its scope closes and re-quantifies under negation
   (`lo mlatu na jbena` keeps *the* cat; `∃` would not). Why not ι (the
   definite)? xorlo `lo` claims no uniqueness. This is the dynamic
-  indefinite of DRT/DPL, plural from birth.
+  indefinite of DRT/DPL, plural from birth. Its restrictor is a property of
+  the plurality (`EFn`, effects sequenced under `Refer`); a member-level
+  property enters only through the pure `CoveredBy` lift (§1.7b).
 - **`Context`** — *intend and recover*. Witness: `mi klama`
   (destination), `co'e` (the relation meant here), `zu'i` (the usual
   value), `sutra klama` (the occurrence's intended modification link), and
@@ -432,6 +434,44 @@ P-external residue makes both `ko'a R` and `lo R` fail. The rejected
 description-only placement reopens only if speakers accept the same resolved
 `R_p(r)` as nuclear predication while forbidding r specifically as a `lo R`
 referent. No such witness survived the design audit.
+
+**The member-level lift (#33/#34; human-adopted 2026-08-26).** The same
+no-residue law closes the one seam P39 left open: a `Refer` restrictor
+written over the *member* sort — the hidden `lo'i`/`loi` base `λx. gerku x`,
+or the outer collection property `λg. CompleteGunmaAt κ g base`, which has
+no lexical row to supply a plural extension. Its denotation is the defined
+lift `Refer Q ≝ Refer (λr. CoveredBy Q r)`; nothing new enters, because
+P39's equation and `MaxRefer` already are this lift. Each rejected
+completion fails a witness. *Singleton-only* (one member, which is `Q`)
+loses xorlo's number-neutrality and contradicts L3.6's several-object
+result. *Some member is `Q`* lets `lo gerku` carry a cat into `ri`.
+*`Distrib` alone* — the textbook plural-logic restrictor, "X are Fs" iff
+each of X is F — is right wherever every plurality has individuals among
+it, and that is exactly the assumption §4.8 declines: in guskant's
+Condition₁ universe a bread reference has no unit among it, so `Distrib
+gerku` holds of bread and `lo gerku` could denote a loaf; the overlap
+conjunct is what the atomless boundary costs. *Reference-level only* forces
+L3.6 to spell its per-object condition by hand, which is the lift again.
+*Lexical-only* is silent for every non-lexical restrictor. The lift is pure
+by construction — it sits under `∀`/`∃` — so a member property whose
+formation needs contextual sites (official `gerku`'s breed place, a `gunma`
+basis) has them bound outside the `Refer` and shared, as the comprehension
+forms already require; site identity makes the hoist meaning-preserving.
+The reference-level restrictor itself is `EFn`, because `lo nu mi klama`
+must sequence its omitted-place sites inside the event property (L9.6), and
+`Local` still projects a hidden base's introductions exactly as §5.2 says.
+The record supports the shape from both sides. The BPFK definition
+`lo [PA] broda = zo'e noi ke'a broda [gi'e zilkancu li PA lo broda]` applies
+the restrictor to the plural referent and counts by the unit `lo broda`;
+guskant's commentary gives plural constants a reference-level axiom
+(`ganai C broda gi su'oi da zo'u da broda`) and the atomless Condition₁;
+xorxes's "`{lo broda}` always refers to brodas" (2014-02-07, "Individuals
+and xorlo", Message-ID in the References) is the member-level intuition the
+lift makes exact; and plural logic's distributive restrictor (Boolos, McKay,
+Oliver & Smiley) together with Link's sum-closure of the singular noun are
+the literature's two halves of the same equation, the atomistic and the
+lexical one. Cost: the two spellings of one restrictor coincide only for
+count-profile rows, so a specimen should write each row at one level.
 
 ### 1.7c Composite personal pro-sumti are plural, not constituted groups
 
