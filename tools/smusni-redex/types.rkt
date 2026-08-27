@@ -29,7 +29,7 @@
           AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
           Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Aggregate
           CanonicalAggregateAt Tanru Scalar Grade JaiRaise DuhuRel NiRel
-          SuhuRel JeiRel StructuredQuote OpaqueQuote WordSign InterpretContent
+          SuhuRel JeiRel InterpretContent
           RealizedContent AmountValue ZipWith))
 
 (define-language SmusniStatic
@@ -1258,12 +1258,33 @@
           (raise-type (second arguments) "label ~a is outside row ~e" label row))]
        [_ (void)])
      (merge-results '(PredTerm Derived 0 #f) (list relation))]
-    [(member head '(StructuredQuote OpaqueQuote WordSign InterpretContent
-                                    RealizedContent AmountValue ZipWith))
+    [(member head '(OpaqueQuote WordSign NameSign LetteralSign))
+     (unless (= (length arguments) 1)
+       (raise-type node "~a takes one Text operand" head))
+     (define operand (infer-core (first arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type operand) 'Text)
+     (define kind
+       (case head
+         [(OpaqueQuote) 'Opaque]
+         [(WordSign) 'Word]
+         [(NameSign) 'Name]
+         [(LetteralSign) 'Letteral]))
+     (merge-results `(Sign ,kind) (list operand))]
+    [(eq? head 'SentenceSign)
+     (unless (= (length arguments) 1)
+       (raise-type node "SentenceSign takes one Content operand"))
+     (define operand (infer-core (first arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type operand) 'Content)
+     (merge-results '(Sign Sentence) (list operand))]
+    [(eq? head 'StructuredQuote)
+     (unless (= (length arguments) 1)
+       (raise-type node "StructuredQuote takes one entry operand"))
+     (define operand (infer-core (first arguments) env inv))
+     (merge-results '(Sign Structured) (list operand))]
+    [(member head '(InterpretContent RealizedContent AmountValue ZipWith))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (define type
        (case head
-         [(OpaqueQuote WordSign StructuredQuote) '(Sign Sentence)]
          [(InterpretContent RealizedContent) 'Content]
          [(AmountValue) 'Number]
          [(ZipWith) 'Content]))

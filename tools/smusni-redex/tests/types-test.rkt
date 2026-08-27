@@ -456,6 +456,27 @@
     (infer-text
      "{λ [$g :: Group (PredTerm R)] (Mention $g)}"))))
 
+(check-equal? (typing-type (infer-text "(OpaqueQuote \"mi klama\")"))
+              '(Sign Opaque))
+(check-equal? (typing-type (infer-text "(WordSign \"klama\")"))
+              '(Sign Word))
+(check-equal? (typing-type (infer-text "(NameSign \"djan\")"))
+              '(Sign Name))
+(check-equal? (typing-type (infer-text "(LetteralSign \"by\")"))
+              '(Sign Letteral))
+(check-equal? (typing-type (infer-text "(SentenceSign (Close (gerku Speaker)))"))
+              '(Sign Sentence))
+(check-equal?
+ (typing-type
+  (infer-text
+   "(StructuredQuote
+      (Utterance {$u :: UtteranceToken}
+        {(Realizes $u (Assert (Close (gerku Speaker))))}))"))
+ '(Sign Structured))
+
+(check-true (type-error? (lambda () (infer-text "(WordSign Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(SentenceSign \"mi klama\")"))))
+
 (check-true
  (type-error?
   (lambda ()

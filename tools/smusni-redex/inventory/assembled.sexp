@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "9c4d3a80a8133a02aa628b7a84823b50adca179a")
+ (core-sha1 "409be7d79fca3966bb2a04718a37359c3d80199b")
  (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature
@@ -141,6 +141,7 @@
   JoiPred
   JoiTanru
   Let
+  LetteralSign
   List
   Local
   Massify
@@ -151,6 +152,7 @@
   MoreThan
   Most
   NahiObjection
+  NameSign
   Named
   NiRel
   No
@@ -170,6 +172,7 @@
   SelectAtLeast
   SelectExactly
   SelectSome
+  SentenceSign
   Set
   SetOf
   Sign

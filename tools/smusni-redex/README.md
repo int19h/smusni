@@ -65,6 +65,9 @@ obligation.
 
 - `Mention` constructs `Act<Expressive>` and is rejected where an assertion
   act is required; displaying a value never supplies assertion force.
+- Sign constructors return their §7.5 kind (`Opaque`, `Structured`, `Name`,
+  `Sentence`, `Letteral`, or `Word`) instead of collapsing quotation and word
+  signs to `Sign<Sentence>`.
 
 ## Model-bank profiles
 
