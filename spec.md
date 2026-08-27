@@ -1162,6 +1162,7 @@ quantifier. The **global** exact reading — "the dog-runners number
 exactly three, and no others" —
 
 ```lisp
+; ci gerku cu bajra — under the marked global reading
 ; the marked global strengthening (not the bare-PA default); bajra's
 ; surface/limbs/gait sites are hoisted outside the comprehension (L0.1)
 {Bind [$surface :: Referents Entity] (Context)
