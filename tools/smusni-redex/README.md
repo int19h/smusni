@@ -56,8 +56,10 @@ pure member restrictor and a reference-level nuclear scope, `Every` takes a
 member-level nuclear scope, and `GlobalExactly`/`Most` require both operands
 to be pure because both run inside `SetOf` comprehensions. Exporting GQs keep
 their witness-introduction effect (with the literal-zero `AtLeast`/`Exactly`
-exceptions), while `Card` and its `GlobalExactly`/`Most` consumers carry the
-projective finite-set definedness obligation.
+exceptions); `AtLeast 0` is effect-free `⊤` and does not evaluate its nuclear
+scope, whereas `Exactly 0 = No` still does. `Card` and its
+`GlobalExactly`/`Most` consumers carry the projective finite-set definedness
+obligation.
 
 ## Model-bank profiles
 

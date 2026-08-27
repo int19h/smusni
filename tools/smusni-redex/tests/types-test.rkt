@@ -253,6 +253,17 @@
    (lambda ()
      (infer-text (format "(SetOf {λ [$z :: Entity] ~a})" content)))))
 
+;; AtLeast 0 is top and never evaluates Q; Exactly 0 is No and does evaluate
+;; Q under negation, so an effectful Q distinguishes the two zero cases.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    (format "(SetOf {λ [$z :: Entity] (AtLeast 0 ~a ~a)})"
+            pure-entity-restrictor effectful-reference-nuclear))))
+(check-l0.1-rejection
+ (format "(SetOf {λ [$z :: Entity] (Exactly 0 ~a ~a)})"
+         pure-entity-restrictor effectful-reference-nuclear))
+
 ;; Card's finite-set definedness projects, including through the two §12
 ;; comparison forms that are defined with Card.
 (for ([content

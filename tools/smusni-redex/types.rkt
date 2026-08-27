@@ -1041,13 +1041,17 @@
                     head other)])
      (merge-results 'Content results
                     #:effects
-                    (gq-result-effects
-                     (third results)
-                     #:exports?
-                     (case head
-                       [(MoreThan) #t]
-                       [(Exactly AtLeast) (not (literal-zero? (first arguments)))]
-                       [else #f])))]
+                    (if (and (eq? head 'AtLeast)
+                             (literal-zero? (first arguments)))
+                        empty-effects
+                        (gq-result-effects
+                         (third results)
+                         #:exports?
+                         (case head
+                           [(MoreThan) #t]
+                           [(Exactly AtLeast)
+                            (not (literal-zero? (first arguments)))]
+                           [else #f]))))]
     [(member head '(Some No))
      (unless (= (length arguments) 2)
        (raise-type node "~a takes restrictor and nuclear scope" head))
