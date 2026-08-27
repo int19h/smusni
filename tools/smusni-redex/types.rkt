@@ -1184,15 +1184,10 @@
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (match (typing-type (second results))
        [`(Group ,inner)
-        (ensure-compatible (first arguments) (typing-type (first results))
-                           `(DecompositionBasis (Group ,inner) ,inner))
-        (merge-results `(Referents ,inner) results
+       (ensure-compatible (first arguments) (typing-type (first results))
+                          `(DecompositionBasis (Group ,inner) ,inner))
+       (merge-results `(Referents ,inner) results
                        #:obligations '(complete-group-cover-defined))]
-       [`(Referents (Group ,inner))
-        (ensure-compatible (first arguments) (typing-type (first results))
-                           `(DecompositionBasis (Group ,inner) ,inner))
-        (merge-results `(Referents ,inner) results
-                       #:obligations '(sole-group-and-complete-cover-defined))]
        [other (raise-type (second arguments)
                           "components_κ requires one Group<T>, got ~e" other)])]
     [(eq? head 'List)

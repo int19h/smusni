@@ -335,14 +335,28 @@
        {Bind [$g :: Referents (Group Entity)] (Massify $k Speaker)
          (Mention $g)}}")))
 
-(check-equal?
- (typing-type
+(define one-group-components
   (infer-text
    "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
         [$g :: Group Entity]]
       (components_κ $k $g)}"))
+
+(check-equal?
+ (typing-type one-group-components)
  '(Fn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
       (Referents Entity)))
+
+(check-not-false
+ (member 'complete-group-cover-defined
+         (typing-obligations one-group-components)))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
+          [$groups :: Referents (Group Entity)]]
+        (components_κ $k $groups)}"))))
 
 (check-true
  (type-error?

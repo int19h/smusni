@@ -68,6 +68,9 @@ obligation.
 - Sign constructors return their §7.5 kind (`Opaque`, `Structured`, `Name`,
   `Sentence`, `Letteral`, or `Word`) instead of collapsing quotation and word
   signs to `Sign<Sentence>`.
+- `components_κ` accepts exactly one `Group<T>` object and records the
+  complete-cover definedness obligation; plural group references require an
+  explicit sole-group projection before crossing.
 
 ## Model-bank profiles
 
