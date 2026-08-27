@@ -3641,8 +3641,9 @@ the lexical `skicu` (official x4 the description property); the defined
 form fixes the describing event as this utterance's own locution:
 
 ```text
-LocutionOf : Referents<Locution> × Referents<UtteranceToken> → Content
-                ; the token's uttering event (§7.4's entry predicate)
+LocutionOf : Referents<UtteranceToken> × Referents<Locution> → Content
+                ; the token's uttering event — token first, like §7.4's
+                ; other entry predicates (SpeakerOf, AudienceOf, …)
 (SpeakerDescribes r P) : Content
    ; r : Referents<T>, T ≤ Entity — the described reference (a member
    ; lifts to its singleton, §3.2); P : EFn<(Referents<T>), Content> —
@@ -3650,7 +3651,7 @@ LocutionOf : Referents<Locution> × Referents<UtteranceToken> → Content
    ; form is pure whatever P's arrow
 (SpeakerDescribes r P) ≝
   (∃ {λ [$e :: Referents Locution]
-    (∧ (LocutionOf $e CurrentToken)
+    (∧ (LocutionOf CurrentToken $e)
        (skicu Speaker r Audience P :Eventuality $e))})
 ```
 
