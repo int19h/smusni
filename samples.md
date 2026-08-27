@@ -909,7 +909,7 @@ own lexical presupposition, never from `kau`.
 ## 8. Intended underspecification and soritical vagueness
 
 ```lisp
-; sutra klama — one intended link recovered at this occurrence [spec §6.2]
+; mi sutra klama — one intended link recovered at this occurrence [spec §6.2]
 (Assert
   (Close ((Tanru sutra klama) Speaker)))
 ; ≗ {Bind [$link :: PredTerm (RowOf klama)]
