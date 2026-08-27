@@ -4926,6 +4926,10 @@ used for source verification are noted per entry.
   Philosophy* 81(8), 1984, pp. 430–449.
 - **Oliver & Smiley** — Oliver, Alex and Smiley, Timothy, *Plural
   Logic*, 2nd edition, Oxford University Press, 2016.
+- **McKay** — McKay, Thomas J., *Plural Predication*, Oxford University
+  Press, 2006 (non-distributive predication with `among` as the plural
+  primitive; the source of the xorlo page's “distributively” vocabulary;
+  rationale §1.7b's plural-logic restrictor).
 - **Wand** — Wand, Mitchell, "The Theory of Fexprs is Trivial",
   *Lisp and Symbolic Computation* 10(3), 1998, pp. 189–199 (the ground
   for the rejected unrestricted-operand-reflection alternative discussed
