@@ -1203,7 +1203,7 @@
      (merge-results `(PredTerm ,head 0 #f) results)]
     [(eq? head 'LocutionOf)
      (unless (= (length arguments) 2)
-       (raise-type node "LocutionOf takes a locution reference and an utterance token"))
+       (raise-type node "LocutionOf takes an utterance token and a locution reference"))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (ensure-compatible (first arguments) (typing-type (first results))
                         '(Referents UtteranceToken))
