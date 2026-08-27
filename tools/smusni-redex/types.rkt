@@ -24,7 +24,7 @@
 (struct exn:fail:smusni exn:fail (source line column) #:transparent)
 
 (define pass-through-forms
-  '(Every No Exactly AtLeast MoreThan Reciprocate CardBasis CoRef Named
+  '(Reciprocate CardBasis CoRef Named
           Realizes SpeakerOf EvidentialBasis Happiness Unhappiness Desire
           AdmissibleCutoff AdmissibleThreshold MetalinguisticallyDefective
           Contrast JaiRoleAdmissible CompleteGunmaAt GunmaAt Aggregate
@@ -80,6 +80,63 @@
 (define (pure-typing? result)
   (not (for/or ([effect (in-set (typing-effects result))])
          (dynamic-effect? effect))))
+
+(define (same-parameter-type? left right)
+  ;; Parameter identity is stricter than the one-way singleton lift used at
+  ;; referential value positions.  A member property and a reference property
+  ;; are not interchangeable GQ operands.
+  (and (type-compatible? left right)
+       (type-compatible? right left)))
+
+(define (pure-property-domain node result position)
+  (match (typing-type result)
+    [`(Fn (,domain) Content)
+     (unless (pure-typing? result)
+       (raise-type node
+                   "~a violates the L0.1 pure-position requirement"
+                   position))
+     domain]
+    [`(EFn (,_) Content)
+     (raise-type node
+                 "~a must be a pure Fn under L0.1"
+                 position)]
+    [other
+     (raise-type node
+                 "~a must be a pure unary property per L0.1, got ~e"
+                 position other)]))
+
+(define (property-domain node result position)
+  (match (typing-type result)
+    [`(,arrow (,domain) Content)
+     #:when (member arrow '(Fn EFn))
+     domain]
+    ['ClauseContent '(Referents Eventuality)]
+    [other
+     (raise-type node "~a must be a unary Fn or EFn property, got ~e"
+                 position other)]))
+
+(define (ensure-same-property-domain node left right position)
+  (unless (same-parameter-type? left right)
+    (raise-type node "~a domain mismatch: ~e versus ~e" position left right)))
+
+(define (effectful-property? result)
+  (match (typing-type result)
+    [`(EFn (,_ ...) Content) #t]
+    ['ClauseContent #t]
+    [_ #f]))
+
+(define (gq-result-effects nuclear #:exports? exports?)
+  (define effects
+    (if (effectful-property? nuclear)
+        (set 'effectful-call)
+        empty-effects))
+  (if exports? (set-add effects 'refer) effects))
+
+(define card-definedness-effects (set 'projective))
+(define card-definedness-obligations '(finite-set-cardinality-defined))
+
+(define (literal-zero? node)
+  (and (core-atom? node) (equal? (core-atom-value node) 0)))
 
 (define (merge-results type results
                        #:effects [extra-effects empty-effects]
@@ -426,20 +483,32 @@
                       restriction-type))
         (merge-results expected (list restriction) #:effects (set 'refer))]
        [_ (raise-type node "Refer requires RefComp<Referents<T>> expected type")])]
-    [(member head '(SelectExactly SelectAtLeast))
+    [(member head '(SelectExactly SelectAtLeast SelectSome SelectAllBut))
      (match expected
        [`(RefComp (Referents ,inner))
         (define arguments (rest (core-list-elements node)))
-        (unless (= (length arguments) 2)
-          (raise-type node "~a takes a count and restrictor" head))
-        (define count-result (infer-core (first arguments) env inv))
-        (ensure-compatible (first arguments) (typing-type count-result) 'Natural)
-        (define restriction (infer-core (second arguments) env inv))
-        (unless (type-compatible? (typing-type restriction) `(Fn (,inner) Content))
-          (raise-type (second arguments) "selection restrictor has wrong type"))
-        (unless (pure-typing? restriction)
-          (raise-type (second arguments) "selection restrictor must be pure"))
-        (merge-results expected (list count-result restriction) #:effects (set 'refer))]
+        (define counted? (not (eq? head 'SelectSome)))
+        (define expected-arity (if counted? 2 1))
+        (unless (= (length arguments) expected-arity)
+          (raise-type node (if counted?
+                               "~a takes a count and restrictor"
+                               "~a takes one restrictor")
+                      head))
+        (define count-results
+          (if counted?
+              (let ([count-result (infer-core (first arguments) env inv)])
+                (ensure-compatible (first arguments) (typing-type count-result) 'Natural)
+                (list count-result))
+              '()))
+        (define restriction-node (last arguments))
+        (define restriction (infer-core restriction-node env inv))
+        (define domain
+          (pure-property-domain restriction-node restriction
+                                (format "~a restrictor" head)))
+        (ensure-same-property-domain restriction-node domain inner
+                                     (format "~a restrictor" head))
+        (merge-results expected (append count-results (list restriction))
+                       #:effects (set 'refer))]
        [_ (raise-type node "~a requires RefComp<Referents<T>> expected type" head)])]
     [(eq? head 'Local)
      (match expected
@@ -525,7 +594,8 @@
           (define declared-type (cdr binding))
           (define computation
             (if (member (application-head computation-node)
-                        '(Context Vague Refer SelectExactly SelectAtLeast Local
+                        '(Context Vague Refer SelectExactly SelectAtLeast SelectSome
+                                  SelectAllBut Local
                                   Massify JoiGroup))
                 (infer-with-expected computation-node current-env inv
                                      `(RefComp ,declared-type))
@@ -909,16 +979,17 @@
     [(eq? head 'SetOf)
      (unless (= (length arguments) 1) (raise-type node "SetOf takes a pure property"))
      (define property (infer-core (first arguments) env inv))
-     (match (typing-type property)
-       [`(Fn (,domain) Content)
-        (unless (pure-typing? property) (raise-type node "SetOf property must be pure"))
-        (merge-results `(Set ,domain) (list property))]
-       [other (raise-type node "SetOf requires pure unary property, got ~e" other)])]
+     (define domain
+       (pure-property-domain (first arguments) property "SetOf property"))
+     (merge-results `(Set ,domain) (list property))]
     [(eq? head 'Card)
      (unless (= (length arguments) 1) (raise-type node "Card takes Set<T>"))
      (define set-result (infer-core (first arguments) env inv))
      (match (typing-type set-result)
-       [`(Set ,_) (merge-results 'Cardinal (list set-result))]
+       [`(Set ,_)
+        (merge-results 'Cardinal (list set-result)
+                       #:effects card-definedness-effects
+                       #:obligations card-definedness-obligations)]
        [other (raise-type node "Card requires Set<T>, got ~e" other)])]
     [(eq? head 'CardBasis)
      (unless (= (length arguments) 2) (raise-type node "CardBasis takes reference and basis"))
@@ -949,21 +1020,116 @@
         (merge-results 'Content (list property reference))]
        [(left right)
         (raise-type node "CoveredBy types are incompatible: ~e, ~e" left right)])]
-    [(member head '(Every No Exactly AtLeast MoreThan))
+    [(member head '(Exactly AtLeast MoreThan AtMost FewerThan))
+     (unless (= (length arguments) 3)
+       (raise-type node "~a takes count, restrictor, and nuclear scope" head))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
-     (merge-results 'Content results)]
+     (ensure-compatible (first arguments) (typing-type (first results)) 'Natural)
+     (define restrictor-domain
+       (pure-property-domain (second arguments) (second results)
+                             (format "~a restrictor" head)))
+     (define nuclear-domain
+       (property-domain (third arguments) (third results)
+                        (format "~a nuclear scope" head)))
+     (match nuclear-domain
+       [`(Referents ,inner)
+        (ensure-same-property-domain (third arguments) restrictor-domain inner
+                                     (format "~a restrictor/nuclear" head))]
+       [other
+        (raise-type (third arguments)
+                    "~a nuclear scope must be reference-level EFn<(Referents<T>), Content>, got parameter ~e"
+                    head other)])
+     (merge-results 'Content results
+                    #:effects
+                    (if (and (eq? head 'AtLeast)
+                             (literal-zero? (first arguments)))
+                        empty-effects
+                        (gq-result-effects
+                         (third results)
+                         #:exports?
+                         (case head
+                           [(MoreThan) #t]
+                           [(Exactly AtLeast)
+                            (not (literal-zero? (first arguments)))]
+                           [else #f]))))]
+    [(member head '(Some No))
+     (unless (= (length arguments) 2)
+       (raise-type node "~a takes restrictor and nuclear scope" head))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (define restrictor-domain
+       (pure-property-domain (first arguments) (first results)
+                             (format "~a restrictor" head)))
+     (define nuclear-domain
+       (property-domain (second arguments) (second results)
+                        (format "~a nuclear scope" head)))
+     (match nuclear-domain
+       [`(Referents ,inner)
+        (ensure-same-property-domain (second arguments) restrictor-domain inner
+                                     (format "~a restrictor/nuclear" head))]
+       [other
+        (raise-type (second arguments)
+                    "~a nuclear scope must be reference-level EFn<(Referents<T>), Content>, got parameter ~e"
+                    head other)])
+     (merge-results 'Content results
+                    #:effects
+                    (gq-result-effects (second results)
+                                       #:exports? (eq? head 'Some)))]
+    [(eq? head 'Every)
+     (unless (= (length arguments) 2)
+       (raise-type node "Every takes restrictor and nuclear scope"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (define restrictor-domain
+       (pure-property-domain (first arguments) (first results) "Every restrictor"))
+     (define nuclear-domain
+       (property-domain (second arguments) (second results) "Every nuclear scope"))
+     (ensure-same-property-domain (second arguments) restrictor-domain nuclear-domain
+                                  "Every restrictor/nuclear")
+     (merge-results 'Content results
+                    #:effects (gq-result-effects (second results) #:exports? #t))]
+    [(member head '(GlobalExactly Most))
+     (define counted? (eq? head 'GlobalExactly))
+     (define expected-arity (if counted? 3 2))
+     (unless (= (length arguments) expected-arity)
+       (raise-type node (if counted?
+                            "GlobalExactly takes count, restrictor, and nuclear scope"
+                            "Most takes restrictor and nuclear scope")))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (when counted?
+       (ensure-compatible (first arguments) (typing-type (first results)) 'Natural))
+     (define restrictor-index (if counted? 1 0))
+     (define nuclear-index (if counted? 2 1))
+     (define restrictor-domain
+       (pure-property-domain (list-ref arguments restrictor-index)
+                             (list-ref results restrictor-index)
+                             (format "~a restrictor" head)))
+     (define nuclear-domain
+       (pure-property-domain (list-ref arguments nuclear-index)
+                             (list-ref results nuclear-index)
+                             (format "~a nuclear scope" head)))
+     (ensure-same-property-domain (list-ref arguments nuclear-index)
+                                  restrictor-domain nuclear-domain
+                                  (format "~a restrictor/nuclear" head))
+     (merge-results 'Content results
+                    #:effects card-definedness-effects
+                    #:obligations card-definedness-obligations)]
     [(eq? head 'Generic)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (unless (member (length results) '(3 4))
        (raise-type node "Generic takes mode, optional holder, restrictor, nuclear scope"))
      (define restrictor (list-ref results (- (length results) 2)))
      (define nuclear (last results))
-     (match* ((typing-type restrictor) (typing-type nuclear))
-       [(`(Fn (,left) Content) `(,arrow (,right) Content))
-        #:when (and (member arrow '(Fn EFn)) (type-compatible? left right))
-        (merge-results 'Content results)]
-       [(left right)
-        (raise-type node "Generic restrictor/nuclear mismatch: ~e, ~e" left right)])]
+     (define restrictor-node (list-ref arguments (- (length arguments) 2)))
+     (define nuclear-node (last arguments))
+     (define restrictor-domain
+       (pure-property-domain restrictor-node restrictor "Generic restrictor"))
+     (define nuclear-domain
+       (property-domain nuclear-node nuclear "Generic nuclear scope"))
+     (ensure-same-property-domain nuclear-node restrictor-domain nuclear-domain
+                                  "Generic restrictor/nuclear")
+     (merge-results 'Content results
+                    #:effects (if (effectful-property? nuclear)
+                                  (set 'effectful-call)
+                                  empty-effects))]
     [(eq? head 'Reciprocate)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results 'Content results)]

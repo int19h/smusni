@@ -48,6 +48,19 @@ effectful member-level restrictor is rejected. Both halves are pinned by
 static tests and must not be generalized to the pure positions (`SetOf`,
 quantifier/Generic restrictors, and the `Select*` family).
 
+Gate 3b enforces those pure positions directly. `SetOf`, all four
+`Select*` members, `Generic`, and the §12 GQ family reject an effectful
+restrictor with an `L0.1` pure-position diagnostic. The concrete GQs have their
+normative signatures rather than pass-through typing: witness forms take a
+pure member restrictor and a reference-level nuclear scope, `Every` takes a
+member-level nuclear scope, and `GlobalExactly`/`Most` require both operands
+to be pure because both run inside `SetOf` comprehensions. Exporting GQs keep
+their witness-introduction effect (with the literal-zero `AtLeast`/`Exactly`
+exceptions); `AtLeast 0` is effect-free `⊤` and does not evaluate its nuclear
+scope, whereas `Exactly 0 = No` still does. `Card` and its
+`GlobalExactly`/`Most` consumers carry the projective finite-set definedness
+obligation.
+
 ## Model-bank profiles
 
 The model bank prints decision status before every verdict:

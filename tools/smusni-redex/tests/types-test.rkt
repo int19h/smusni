@@ -1,6 +1,7 @@
 #lang racket
 
 (require rackunit
+         racket/set
          redex/reduction-semantics
          "../syntax.rkt"
          "../types.rkt")
@@ -12,6 +13,37 @@
   (with-handlers ([exn:fail:smusni? (lambda (_) #t)])
     (thunk)
     #f))
+
+(define (type-error-matches? pattern thunk)
+  (with-handlers ([exn:fail:smusni?
+                   (lambda (error) (regexp-match? pattern (exn-message error)))])
+    (thunk)
+    #f))
+
+(define pure-entity-restrictor
+  "{λ [$x :: Entity] (gerku $x)}")
+
+(define effectful-entity-restrictor
+  "{λ [$x :: Entity]
+      {Bind [$s :: Scale] (Context) (gerku $x)}}")
+
+(define pure-member-nuclear
+  "{λ [$x :: Entity] (Close (jmaji $x))}")
+
+(define pure-reference-nuclear
+  "{λ [$w :: Referents Entity] (Close (jmaji $w))}")
+
+(define effectful-reference-nuclear
+  "{λ [$w :: Referents Entity]
+      {Bind [$s :: Scale] (Context) (Close (jmaji $w))}}")
+
+(define effectful-member-nuclear
+  "{λ [$x :: Entity]
+      {Bind [$s :: Scale] (Context) (Close (jmaji $x))}}")
+
+(define (check-l0.1-rejection text)
+  (check-true
+   (type-error-matches? #rx"L0[.]1" (lambda () (infer-text text)))))
 
 (check-true (judgment-holds (type-compatible Natural Number)))
 (check-true
@@ -71,6 +103,190 @@
     (infer-text
      "{λ [$f :: EFn ((Referents Entity)) Content]
         (SetOf {λ [$x :: Entity] ($f $x)})}"))))
+
+;; #9 M2 gate 3b: every pure position accepts a pure property and rejects an
+;; effectful one with the L0.1 hoisting diagnostic.
+(check-not-exn
+ (lambda () (infer-text (format "(SetOf ~a)" pure-entity-restrictor))))
+(check-l0.1-rejection
+ (format "(SetOf ~a)" effectful-entity-restrictor))
+
+;; The gate is effect-class complete, not just a Context-site spelling check.
+(for ([restrictor
+       (in-list
+        (list
+         "{λ [$x :: Entity]
+             {Bind [$n :: Natural] (Vague) (gerku $x)}}"
+         "{λ [$x :: Entity]
+             {Bind [$r :: Referents Entity]
+                   (Refer {λ [$y :: Entity] (gerku $y)})
+               (gerku $x)}}"
+         "{λ [$x :: Entity]
+             {Bind [$r :: Referents Entity]
+                   (SelectSome {λ [$y :: Entity] (gerku $y)})
+               (gerku $x)}}"
+         "{λ [$x :: Entity]
+             (Presuppose (gerku $x) (gerku $x))}"))])
+  (check-l0.1-rejection (format "(SetOf ~a)" restrictor)))
+
+(for ([head (in-list '(SelectExactly SelectAtLeast SelectSome SelectAllBut))])
+  (define counted? (not (eq? head 'SelectSome)))
+  (define (selection restrictor)
+    (if counted?
+        (format "(~a 1 ~a)" head restrictor)
+        (format "(~a ~a)" head restrictor)))
+  (check-not-exn
+   (lambda ()
+     (infer-text
+      (format "{Bind [$w :: Referents Entity] ~a (Mention $w)}"
+              (selection pure-entity-restrictor)))))
+  (check-l0.1-rejection
+   (format "{Bind [$w :: Referents Entity] ~a (Mention $w)}"
+           (selection effectful-entity-restrictor))))
+
+(check-not-exn
+ (lambda ()
+   (infer-text
+    (format "(Generic Typical ~a ~a)"
+            pure-entity-restrictor effectful-member-nuclear))))
+(check-l0.1-rejection
+ (format "(Generic Typical ~a ~a)"
+         effectful-entity-restrictor pure-member-nuclear))
+
+(define counted-witness-gqs '(Exactly AtLeast MoreThan AtMost FewerThan))
+(define uncounted-witness-gqs '(Some No))
+
+(for ([head (in-list counted-witness-gqs)])
+  (check-not-exn
+   (lambda ()
+     (infer-text
+      (format "(~a 1 ~a ~a)"
+              head pure-entity-restrictor effectful-reference-nuclear))))
+  (check-l0.1-rejection
+   (format "(~a 1 ~a ~a)"
+           head effectful-entity-restrictor pure-reference-nuclear)))
+
+(for ([head (in-list uncounted-witness-gqs)])
+  (check-not-exn
+   (lambda ()
+     (infer-text
+      (format "(~a ~a ~a)"
+              head pure-entity-restrictor effectful-reference-nuclear))))
+  (check-l0.1-rejection
+   (format "(~a ~a ~a)"
+           head effectful-entity-restrictor pure-reference-nuclear)))
+
+;; ClauseContent is the transparent EFn<Referents<Eventuality>, Content>
+;; alias and remains usable as an event-witness nuclear scope.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [[$p :: Fn (Eventuality) Content] [$c :: ClauseContent]]
+       (Exactly 1 $p $c)}")))
+
+;; Every is the member-level exception among the cardinal/logical GQs.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "(Every {λ [$x :: Entity] (datka $x)}
+       {λ [$duck :: Entity]
+         (CloseClause (CapableClause (DirectClause (flulimna $duck))))})")))
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     (format "(Every ~a ~a)"
+             pure-entity-restrictor pure-reference-nuclear)))))
+(check-l0.1-rejection
+ (format "(Every ~a ~a)"
+         effectful-entity-restrictor pure-member-nuclear))
+
+;; GlobalExactly and Most put both operands inside SetOf.
+(for ([text (in-list
+             (list (format "(GlobalExactly 1 ~a ~a)"
+                           pure-entity-restrictor pure-member-nuclear)
+                   (format "(Most ~a ~a)"
+                           pure-entity-restrictor pure-member-nuclear)))])
+  (check-not-exn (lambda () (infer-text text))))
+
+(for ([text (in-list
+             (list (format "(GlobalExactly 1 ~a ~a)"
+                           effectful-entity-restrictor pure-member-nuclear)
+                   (format "(GlobalExactly 1 ~a ~a)"
+                           pure-entity-restrictor effectful-member-nuclear)
+                   (format "(Most ~a ~a)"
+                           effectful-entity-restrictor pure-member-nuclear)
+                   (format "(Most ~a ~a)"
+                           pure-entity-restrictor effectful-member-nuclear)))])
+  (check-l0.1-rejection text))
+
+;; Defined GQ results retain the effects of their §12 expansions. Exporting
+;; forms introduce a witness, except for the two literal-zero boundaries.
+(for ([content
+       (in-list
+        (list (format "(Exactly 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtLeast 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Some ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(MoreThan 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Every ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)))])
+  (check-l0.1-rejection
+   (format "(SetOf {λ [$z :: Entity] ~a})" content)))
+
+(for ([content
+       (in-list
+        (list (format "(No ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtMost 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(FewerThan 1 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(AtLeast 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)
+              (format "(Exactly 0 ~a ~a)"
+                      pure-entity-restrictor pure-reference-nuclear)))])
+  (check-not-exn
+   (lambda ()
+     (infer-text (format "(SetOf {λ [$z :: Entity] ~a})" content)))))
+
+;; AtLeast 0 is top and never evaluates Q; Exactly 0 is No and does evaluate
+;; Q under negation, so an effectful Q distinguishes the two zero cases.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    (format "(SetOf {λ [$z :: Entity] (AtLeast 0 ~a ~a)})"
+            pure-entity-restrictor effectful-reference-nuclear))))
+(check-l0.1-rejection
+ (format "(SetOf {λ [$z :: Entity] (Exactly 0 ~a ~a)})"
+         pure-entity-restrictor effectful-reference-nuclear))
+
+;; Card's finite-set definedness projects, including through the two §12
+;; comparison forms that are defined with Card.
+(for ([content
+       (in-list
+        (list (format "(GlobalExactly 1 ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)
+              (format "(Most ~a ~a)"
+                      pure-entity-restrictor pure-member-nuclear)))])
+  (check-l0.1-rejection
+   (format "(SetOf {λ [$z :: Entity] ~a})" content)))
+
+(define standalone-some
+  (infer-text
+   (format "(Some ~a ~a)"
+           pure-entity-restrictor pure-reference-nuclear)))
+(check-true (set-member? (typing-effects standalone-some) 'refer))
+
+(define finite-card
+  (infer-text (format "(Card (SetOf ~a))" pure-entity-restrictor)))
+(check-equal? (typing-type finite-card) 'Cardinal)
+(check-true (set-member? (typing-effects finite-card) 'projective))
+(check-not-false
+ (member 'finite-set-cardinality-defined (typing-obligations finite-card)))
 
 (check-not-exn
  (lambda ()
