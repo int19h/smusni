@@ -1373,8 +1373,12 @@ genuinely fought:
   unanchored denotation, and §2 licenses only same-denotation spellings.
   Rejected: writing the anchored property out in every specimen (verbose,
   and the corpus loses its brief spelling) and keeping the brief spelling
-  as a labelled stand-in (one spelling with two denotations). `voi` stays
-  unanchored under L4.3; whether it should anchor is a separate question.
+  as a labelled stand-in (one spelling with two denotations). `voi` anchors
+  likewise through `SpeakerDescribesUnaddressed` (#49, adopted 2026-08-27):
+  deleting the audience place removes the addressee, not the reason for the
+  anchor. Rejected: the unanchored existential the pre-#49 L4.3 stated —
+  satisfied by any past describing of the referent, near-vacuous as a
+  restriction, and an asymmetry with `le` nothing in CLL 8 or P10 motivates.
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual

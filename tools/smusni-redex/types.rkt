@@ -1210,13 +1210,13 @@
      (ensure-compatible (second arguments) (typing-type (second results))
                         '(Referents Locution))
      (merge-results 'Content results)]
-    [(eq? head 'SpeakerDescribes)
+    [(member head '(SpeakerDescribes SpeakerDescribesUnaddressed))
      ;; §12: (SpeakerDescribes r P) ≝ (∃ {λ [$e :: Referents Locution]
      ;;   (∧ (LocutionOf CurrentToken $e) (skicu Speaker r Audience P :Eventuality $e))})
      ;; Every skicu place is filled and P is handed to x4 as a value, so the
      ;; form is pure whatever P's arrow; r lifts to its singleton reference.
      (unless (= (length arguments) 2)
-       (raise-type node "SpeakerDescribes takes the described reference and a description property"))
+       (raise-type node "~a takes the described reference and a description property" head))
      (define reference (infer-core (first arguments) env inv))
      (define property (infer-core (second arguments) env inv))
      ;; r's actual reference type (a member lifts to its singleton, §3.2) must
@@ -1228,8 +1228,8 @@
          [other `(Referents ,other)]))
      (unless (first-order-type? (second reference-type))
        (raise-type (first arguments)
-                   "SpeakerDescribes describes a first-order reference, got ~e"
-                   (typing-type reference)))
+                   "~a describes a first-order reference, got ~e"
+                   head (typing-type reference)))
      (match (typing-type property)
        [`(,arrow (,domain) Content)
         #:when (and (member arrow '(Fn EFn))
@@ -1237,8 +1237,8 @@
         (void)]
        [other
         (raise-type (second arguments)
-                    "SpeakerDescribes description property must accept the described reference ~e, got ~e"
-                    reference-type other)])
+                    "~a description property must accept the described reference ~e, got ~e"
+                    head reference-type other)])
      (merge-results 'Content (list reference property))]
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold

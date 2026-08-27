@@ -83,7 +83,8 @@ obligation.
 The `le` description form `SpeakerDescribes` (#41 item 1) is typed by its §12
 signature — described reference (member or plural) and a unary description
 property — and is pure; `LocutionOf` and the `CurrentToken` constant carry the
-sorts its definition needs. `type-compatible?` places the §3.1 collection and
+sorts its definition needs; `SpeakerDescribesUnaddressed` (`voi`, #49) shares the
+rule with the audience place deleted. `type-compatible?` places the §3.1 collection and
 sign object sorts (`Set`, `Group`, `List`, `Sign`, `SignToken`) under `Entity`.
 
 ## Model-bank profiles

@@ -186,6 +186,7 @@
   (form SpeakerOf primitive special P generic "spec §7.4")
   (form LocutionOf primitive special P generic "spec §7.4")
   (form SpeakerDescribes defined special O surface "spec §12")
+  (form SpeakerDescribesUnaddressed defined special O surface "spec §12")
   (form EvidentialBasis primitive special P generic "spec §7.6")
   (form Happiness primitive special P generic "spec §7.6")
   (form Unhappiness primitive special P generic "spec §7.6")
