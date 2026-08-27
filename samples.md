@@ -552,11 +552,12 @@ classes, which no single referent could verify (rationale §1.9).
         (Refer {λ [$x :: Referents Entity]
           (∧ (SpeakerDescribes $x            ; the le-head:
                {λ [$y :: Referents Entity] (gerku $y)}) ; "my dog"
-             (Close ((DropPlace skicu 3) Speaker $x       ; the voi
-               {λ [$y :: Referents Entity] (blabi $y)})))})   ; restriction
+             (SpeakerDescribesUnaddressed $x       ; the voi
+               {λ [$y :: Referents Entity] (blabi $y)}))})   ; restriction
   (Assert (Close (jbena $dog)))}
 ; the voi conjunct's audience place is DELETED; not omitted — a voi
 ; description has no audience role; the le-head keeps its audience.
+; Both anchor the describing event to this utterance's locution (#49).
 ; Three-way contrast: poi (veridical restriction; in the property);
 ; noi (projective supplement; below); voi (non-veridical restriction
 ; through the describer).

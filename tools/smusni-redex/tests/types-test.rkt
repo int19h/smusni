@@ -674,3 +674,18 @@
    (infer-text
     "{λ [$g :: Referents (Group Entity)]
        (SpeakerDescribes $g {λ [$y :: Referents Entity] (mlatu $y)})}")))
+
+;; #49: voi anchors through the audience-deleted sibling form.
+(define unaddressed
+  (infer-text (format "{λ [$x :: Referents Entity] (SpeakerDescribesUnaddressed $x ~a)}" le-property)))
+(check-equal? (typing-type unaddressed) '(Fn ((Referents Entity)) Content))
+(check-true (pure-typing? unaddressed))
+(check-true (type-error? (lambda () (infer-text "(SpeakerDescribesUnaddressed Speaker)"))))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{Bind [$dog :: Referents Entity]
+       (Refer {λ [$x :: Referents Entity]
+         (∧ (SpeakerDescribes $x {λ [$y :: Referents Entity] (gerku $y)})
+            (SpeakerDescribesUnaddressed $x {λ [$y :: Referents Entity] (blabi $y)}))})
+       (Assert (Close (jbena $dog)))}")))

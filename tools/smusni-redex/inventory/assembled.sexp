@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "ca7a5283d9dd836bc55600a567a199342b047e70")
+ (core-sha1 "a0d3945d54d2de7ad8ca31ef3b2218e7381d91b9")
  (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature
@@ -180,6 +180,7 @@
   Sign
   Some
   SpeakerDescribes
+  SpeakerDescribesUnaddressed
   SpeakerOf
   StateClause
   StructuredQuote

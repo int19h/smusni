@@ -2989,8 +2989,10 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
 
 - **L4.1** `poi` → conjunct in the reference property;
 - **L4.2** `noi` → `Supplement` anchored at the referent (P7);
-- **L4.3** `voi` → the audience-deleted `skicu` (`(DropPlace skicu 3)`, P10)
-  restrictively;
+- **L4.3** `voi` → `SpeakerDescribesUnaddressed` (§12: the audience-deleted
+  `skicu`, `(DropPlace skicu 3)`, anchored to this utterance's own locution
+  exactly as `le` is, P10; #49) as a restrictive conjunct in the reference
+  property;
 - **L4.4** `goi` → discourse-scoped binding;
 - **L4.5** `ke'a` → the property's parameter.
 - **L4.6** Outer `poi` after `ku` → restriction on the outer selection;
@@ -3653,12 +3655,19 @@ LocutionOf : Referents<UtteranceToken> × Referents<Locution> → Content
   (∃ {λ [$e :: Referents Locution]
     (∧ (LocutionOf CurrentToken $e)
        (skicu Speaker r Audience P :Eventuality $e))})
+(SpeakerDescribesUnaddressed r P) : Content
+   ; voi (L4.3): the same r and P, the audience place deleted
+(SpeakerDescribesUnaddressed r P) ≝
+  (∃ {λ [$e :: Referents Locution]
+    (∧ (LocutionOf CurrentToken $e)
+       ((DropPlace skicu 3) Speaker r P :Eventuality $e))})
 ```
 
-The form is the term: no other spelling abbreviates it (§2), which is why
-the samples book displays it verbatim. `voi` (L4.3) uses the
-audience-deleted `skicu` under ordinary `Close` and does not go through
-this form.
+Each form is the term: no other spelling abbreviates it (§2), which is why
+the samples book displays them verbatim. `voi` (L4.3) goes through the
+sibling form: deleting `skicu`'s audience place removes the addressee, not
+the reason for the anchor — a `voi` description is likewise constituted by
+this utterance's own locution (#49).
 
 **Temporal incidence** (ROI's interface; P35). Declared:
 
