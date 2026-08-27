@@ -2,14 +2,13 @@
   ;; Ratchet: the count of §11 lowering judgments cited by at least one
   ;; surface specimen must never fall below this floor; raise it whenever
   ;; coverage grows.
-  (cited-floor 68)
+  (cited-floor 69)
   ;; Exact counts of §11's numbered clauses: total, lowering judgments,
   ;; gap, note, reading. Any change to §11's clause set must update these.
   (rule-counts 147 126 9 6 6)
   ;; Lowering judgments no surface specimen cites yet (gap/note/reading
   ;; rules are outside F₀ and never appear here). Each entry names the issue
   ;; that owns the missing coverage (#9 M3 corpus).
-  (uncovered "L0.1" "#9")
   (uncovered "L1.8" "#9")
   (uncovered "L2.1" "#9")
   (uncovered "L2.2" "#9")

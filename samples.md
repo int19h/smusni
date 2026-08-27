@@ -24,11 +24,12 @@ actual-reading shorthand for
 clause-event or CAhA choice matters expand it.
 CLL and dictionary citations follow the editions listed in the
 specification's References section.
-Displays assume the resolved rows of the checker's fixture lexicon
-(`tools/smusni-redex/inventory/fixtures.sexp`; official rows are #12's), and
-a lexical predicate written bare in a pure position — `{λ [$x :: Entity]
-(gerku $x)}` — abbreviates L0.1's hoisted form for the resolved row
-(spec §11).
+Displays carry provisional row assumptions pending #12's official rows — a
+specimen reads each predicate with the arity its display uses — and the
+checker's fixture lexicon (`tools/smusni-redex/inventory/fixtures.sexp`)
+mirrors those assumptions rather than authorizing them; a lexical
+predicate written bare in a pure position — `{λ [$x :: Entity] (gerku $x)}`
+— abbreviates L0.1's hoisted form for the assumed row (spec §11).
 
 ## 1. Predication and closure
 

@@ -1262,16 +1262,23 @@ and closes the event place; the position then receives exactly the resolved
 lexical property `R_p` that P39 and the lexicon's unit profiles already
 name. Meaning is preserved because a site retrieves once per dependency
 tuple per performance and introduces nothing (§5.3): moving it changes its
-place, not its tuple, so no reading is created or lost, and the order of
-hoisted binds is immaterial (the Kimi session's argument in #9's review,
-adopted; no meaning-changing minimal pair was found for `Generic`, whose
-holder is a fixed parameter). A site that would depend on the
-comprehension's own variable makes the position ill-formed — the right
-verdict, since such a comprehension has no pure meaning. **Cost.** Hoisted
-terms are longer, and the corpus's bare displays
-(`{λ [$x :: Entity] (gerku $x)}`) are abbreviations relative to the resolved
-row — honest only because L0.1 says so and the samples book declares its
-fixture-row assumption.
+place, not its tuple, so no reading is created or lost; hoisted binds are
+ordered by their dependencies, and only independent hoists commute (the
+Kimi session's argument in #9's review, adopted, and narrowed to
+dependency-independent sites after the codex_2/kimi_2 exact review of the
+first M2 head; no meaning-changing minimal pair was found for `Generic`,
+whose holder is a fixed parameter). `Vague` sites hoist by the same
+reasoning under VC3 — one precisification per parameter per binding site —
+since a site that cannot depend on the comprehension variable has the same
+precisification at every instantiation. Introductions are not hoisted: a
+`Refer` or selection inside a comprehension would need a binder-width law
+no rule states, so such a scope has no pure form unless its reference is
+bound outside. A site that would depend on the comprehension's own
+variable makes the position ill-formed — the right verdict, since such a
+comprehension has no pure meaning. **Cost.** Hoisted terms are longer, and
+the corpus's bare displays (`{λ [$x :: Entity] (gerku $x)}`) are
+abbreviations relative to the assumed row — honest only because L0.1 says
+so and the samples book states its provisional row assumptions.
 
 **The one semantic choice.** `Close` inside L0.1 fixes the actual mode for
 restrictor-internal predications: `lo bajra` describes actual runners

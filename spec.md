@@ -2783,7 +2783,9 @@ relative to a resolved reading: a finite record `RR` attached to one
 utterance in a transcript, whose fields are exactly the ⊳ decisions the
 rules mark and the resolver stores §5.4–§5.6 presuppose. It is pure data —
 it carries no world, information state, or capture (those are §5's
-carriers) — and it never occurs free in a lowered term: a term mentions
+carriers; in particular the segment stack that `NewTopic`/`Resume` operate
+on, §5.1 and §7.2, of which `RR` records only the resolver's selections) —
+and it never occurs free in a lowered term: a term mentions
 only core forms, lexical constants, and the values `RR` selected (a label,
 a row, a binder width), never `RR` itself. Its fields, each with the rules
 that consume it:
@@ -2794,7 +2796,7 @@ that consume it:
 | `attach` | UI target selection (L11.1), `vu'o` widening (L4.9), `xi` indexing (L12.9), `ce'u goi`/`ce'u xi` (L9.3), `.i TAG bo` grouping (L5.15) | L4, L5, L9, L11, L12 |
 | `readings` | per site: the tenseless reading (L6.4), the CAhA mode (L6.6), `bi'i` normalization (L5.19), `ji'i` position (L12.17), `n mai`/`mo'o` level (L11.14), `tu'a`'s sort by host place (L9.11) | L5, L6, L9, L11, L12 |
 | `rows` | the resolved lexical row per selbri occurrence with its conversion routing (L1.1, L1.4); the fixed row per `bu'a` variable (L5.5) | L1, L5 |
-| `stores` | KOhA assignments (L8.3), letteral bindings (L12.4), `cei`/`go'i` templates (L5.6, L8.4), the active `do` (L8.10), the segment stack and its level (L8.12), `da'o` cancellations (L8.11) | L2, L5, L8, L12 |
+| `stores` | KOhA assignments (L8.3), letteral bindings (L12.4), `cei`/`go'i` templates (L5.6, L8.4), the active `do` (L8.10), the resolver's segment selections — the `ni'o` level opened and the segment a `no'i` resumes (L8.12), never §5.1's semantic stack itself — and `da'o` cancellations (L8.11) | L2, L5, L8, L12 |
 | `sites` | for every `Context`/`Vague` site: the dependency profile beyond §5.3's computed minimum, the source of its admissibility constraint (lexicon or reading), and its binder width (§12's export contract) | L1.6, L1.10, L2.2, L6.10, L8.3, L8.8, L9.11, L9.13, L11.14, L12.13, L12.16 |
 | `anaphora` | `ri`/`ra`/`ru` counting results (L8.1), `di'u`-series spans (L8.8), `ra'o` reopening marks (L8.7) | L8 |
 | `force` | the nearest performed clause per `ko` (L2.4); the force of each sentence-level connection host (L5.12) | L2, L5 |
@@ -2833,34 +2835,49 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
 - **L0.1** Before a property enters a pure position — a `SetOf`
   comprehension, a selection restrictor (§5.6), a quantifier or `Generic`
   restrictor (§4.10, §5.8), or the member-level `Refer` lift (§5.3) — every
-  `Context` and `Vague` site it would contain is bound outside that
-  position by `Bind`, with the dependency profile `RR.sites` declares, and
-  its event place is closed by `Close`, whose `DirectClause` with no
-  remaining defaultable place is pure (§4.6):
+  `Context` and `Vague` site it would contain — an omitted defaultable
+  place, a tanru link, a basis, a contrast domain, a scale, a cutoff or
+  threshold — is bound outside that position by `Bind`, with the dependency
+  profile `RR.sites` declares, and the event place is closed by `Close`,
+  whose `DirectClause` with no remaining defaultable place is pure (§4.6).
+  Writing `s₁ … sₖ` for those site computations (each a `(Context …)` or a
+  `(Vague …)`) and `ℓ₁ … ℓⱼ` for the omitted places among them:
 
   ```text
-  RR ⊢ P with unfilled defaultable places ℓ₁ … ℓₖ
-  ────────────────────────────────────────────────
-  {Bind [$v₁ :: T₁] (Context …) … [$vₖ :: Tₖ] (Context …)
-    ⟨pure position over {λ [$x :: T] (Close (P :ℓ $x :ℓ₁ $v₁ … :ℓₖ $vₖ))}⟩}
+  RR ⊢ P whose formation would contain the sites s₁ … sₖ
+  ──────────────────────────────────────────────────────
+  {Bind [$v₁ :: T₁] s₁ … [$vₖ :: Tₖ] sₖ
+    ⟨pure position over {λ [$x :: T] (Close (P :ℓ $x :ℓ₁ $v₁ … :ℓⱼ $vⱼ …))}⟩}
   ```
 
-  Hoisted sites may depend on binders outside the pure position, never on
-  `$x`; a site that would depend on `$x` makes the position ill-formed —
-  correctly, since such a comprehension has no pure meaning. Hoisting
-  preserves meaning because a site retrieves once per distinct dependency
-  tuple per performance and introduces nothing (§5.3): moving it outside
-  changes its place, not its tuple, and the order of hoisted `Bind`s is
-  immaterial. `Close` here fixes the **actual mode** for
-  restrictor-internal predications — a description's or comprehension's
-  restrictor predicates in its own actual mode and is not under the host
-  clause's CAhA, which governs the main predication only (P24); the
-  alternative, inheriting the host's clause former, is recorded as
-  rejected (rationale §2.11). A reference-level `Refer` restrictor is `EFn`,
-  not a pure position, and keeps its sites inside (L9.6). A lexical
-  predicate written bare in a pure position — `{λ [$x :: Entity]
-  (gerku $x)}` — abbreviates this hoisted form for the resolved row, the
-  display convention the samples book declares in its preamble.
+  where a `$v` bound for a non-place site stands at that site's use (the
+  link, basis, domain, scale, or region operand). Hoisted sites may depend
+  on binders outside the pure position, never on `$x`; a site that would
+  depend on `$x` makes the position ill-formed — correctly, since such a
+  comprehension has no pure meaning. The `Bind`s are ordered by dependency:
+  a site whose constraint or profile mentions another hoisted site's value
+  is bound inside that site's `Bind` (a `Vague` cutoff riding a `Context`
+  scale, §6.4, binds after the scale); independent hoists commute. Hoisting
+  preserves meaning because both kinds of site are functions of their
+  dependency tuple alone: a `Context` site retrieves once per distinct
+  tuple per performance and introduces nothing (§5.3), and a `Vague` site
+  takes one precisification per parameter per binding site, independent of
+  everything it does not depend on (VC3, §6.5) — so with `$x` excluded, a
+  site's value or precisification is the same at every instantiation of the
+  pure position, and binding it once outside changes its place, not its
+  tuple. Introductions are not hoisted: a property that would introduce a
+  referent (`Refer`, a selection) inside a pure position has no pure form,
+  and its reference must already be bound outside (§12). `Close` here fixes
+  the **actual mode** for restrictor-internal predications — a
+  description's or comprehension's restrictor predicates in its own actual
+  mode and is not under the host clause's CAhA, which governs the main
+  predication only (P24); the alternative, inheriting the host's clause
+  former, is recorded as rejected (rationale §2.11). A reference-level
+  `Refer` restrictor is `EFn`, not a pure position, and keeps its sites
+  inside (§5.3; L9.6 for `nu`). A lexical predicate written bare in a pure
+  position — `{λ [$x :: Entity] (gerku $x)}` — abbreviates this hoisted
+  form for the row the specimen assumes, the display convention the samples
+  book declares in its preamble.
 
 **Predication and places** (L1).
 
@@ -3401,9 +3418,10 @@ arithmetic demands.
 
 `GlobalExactly` and `Most` place their operands inside `SetOf`, so
 **both operands must be pure there**: the mapping hoists a nuclear
-scope's contextual sites and introductions out of the comprehension
-first (L0.1; site identity, §5.3, makes the hoist meaning-preserving), and
-an unhoistable nuclear scope simply has no global reading.
+scope's `Context`/`Vague` sites out of the comprehension first (L0.1), and a
+nuclear scope that would introduce a referent has no global reading unless
+that reference is already bound outside the comprehension — introductions
+are not hoisted.
 
 `no prenu cu jmaji` is `(No prenu-property {λ [$w :: Referents Entity] (Close (jmaji $w))})` —
 "no people-witness gathers", the reading a distributive quantifier

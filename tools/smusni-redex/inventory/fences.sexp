@@ -251,7 +251,7 @@
         (rules "L5.2"))
  (fence "spec.md" 10 specimen "a15294b018e4042b2b06bd4bb50dd1c36d844909"
         (origin "surface")
-        (rules "L5.2"))
+        (rules "L5.2" "L0.1"))
  (fence
   "spec.md"
   11
