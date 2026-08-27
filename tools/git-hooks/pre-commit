@@ -1,0 +1,12 @@
+#!/bin/sh
+# Refuse commits in the shared checkout (the main worktree). Every session
+# works in a linked worktree; the shared checkout stays on main, clean, and is
+# only ever fast-forwarded. Installed via: git config core.hooksPath tools/git-hooks
+git_dir=$(git rev-parse --path-format=absolute --git-dir)
+common_dir=$(git rev-parse --path-format=absolute --git-common-dir)
+if [ "$git_dir" = "$common_dir" ]; then
+  echo "pre-commit: refusing to commit in the shared checkout ($(git rev-parse --show-toplevel))." >&2
+  echo "           Work in a worktree: git worktree add ~/work/<name> -b <branch> origin/main" >&2
+  exit 1
+fi
+exit 0

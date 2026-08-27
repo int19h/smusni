@@ -213,7 +213,10 @@ or durable issue update was silently skipped.
   issue in the same turn; a proposed semantic change stays in review until the
   human partner authorizes it.
 - Implementation assignments use separate worktrees/branches; a review names
-  the exact commit under review.
+  the exact commit under review. The shared checkout (`~/git/smusni`) stays on
+  `main`, clean, and is only ever fast-forwarded — it is every session's live
+  read of the documents, never anyone's workspace; `tools/git-hooks/` enforces
+  the commit side (`git config core.hooksPath tools/git-hooks`).
 - An exact-commit review reviews the **code** at that commit: the logic, the
   path from declared inputs to outputs, and the claims the announcement makes
   about the mechanism. It is adversarial about correctness and quality, not

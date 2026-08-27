@@ -426,6 +426,15 @@ judgment that the documents lack value.
   consumers.
 - Use the client's structured patch/edit facility for file authoring (Codex:
   `apply_patch`); never shell redirection. Preserve unrelated worktree changes.
+- **The shared checkout (`~/git/smusni`) is read-only and stays on `main`.**
+  Every session reads live documents there and fast-forwards it after a merge
+  (`git pull --ff-only`); no session checks out a branch, edits, stashes, or
+  commits there. All work happens in a per-session worktree:
+  `git worktree add ~/work/<name> -b <branch> origin/main`. The tracked hooks
+  in `tools/git-hooks/` (`git config core.hooksPath tools/git-hooks`, set once
+  per clone) refuse commits in the shared checkout and warn when it leaves
+  `main`. Uncommitted work found there is preserved (patch + stash) and
+  announced, never discarded and never silently adopted.
 - Run `python3 review/checks.py` after documentation edits and report any
   limitation it exposes; do not call a corpus synchronized when
   corpus-integrity, link, term-balance, or pin checks fail.

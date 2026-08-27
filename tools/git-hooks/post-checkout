@@ -1,0 +1,14 @@
+#!/bin/sh
+# Warn when the shared checkout (the main worktree) leaves main. It cannot
+# block the checkout; it makes the mistake loud. Linked worktrees are exempt.
+git_dir=$(git rev-parse --path-format=absolute --git-dir)
+common_dir=$(git rev-parse --path-format=absolute --git-common-dir)
+branch_flag=$3
+if [ "$git_dir" = "$common_dir" ] && [ "$branch_flag" = "1" ]; then
+  branch=$(git branch --show-current)
+  if [ "$branch" != "main" ]; then
+    echo "post-checkout: WARNING — the shared checkout must stay on main (now on '${branch:-detached}')." >&2
+    echo "               Run: git checkout main && git pull --ff-only ; do your work in a worktree." >&2
+  fi
+fi
+exit 0
