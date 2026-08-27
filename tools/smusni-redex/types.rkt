@@ -1208,6 +1208,7 @@
        (ensure-compatible (first arguments) (typing-type (first results))
                           `(DecompositionBasis (Group ,inner) ,inner))
        (merge-results `(Referents ,inner) results
+                       #:effects (set 'projective)
                        #:obligations '(complete-group-cover-defined))]
        [other (raise-type (second arguments)
                           "components_κ requires one Group<T>, got ~e" other)])]
@@ -1311,7 +1312,7 @@
        (raise-type node "SentenceSign takes one Content operand"))
      (define operand (infer-core (first arguments) env inv))
      (ensure-compatible (first arguments) (typing-type operand) 'Content)
-     (merge-results '(Sign Sentence) (list operand))]
+     (suspend-results '(Sign Sentence) (list operand))]
     [(eq? head 'StructuredQuote)
      (unless (= (length arguments) 1)
        (raise-type node "StructuredQuote takes one entry operand"))

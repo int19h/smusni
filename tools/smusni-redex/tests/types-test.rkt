@@ -361,12 +361,18 @@
 
 (check-equal?
  (typing-type one-group-components)
- '(Fn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
-      (Referents Entity)))
+ '(EFn ((DecompositionBasis (Group Entity) Entity) (Group Entity))
+       (Referents Entity)))
 
 (check-not-false
  (member 'complete-group-cover-defined
          (typing-obligations one-group-components)))
+
+(check-l0.1-rejection
+ "{λ [[$k :: DecompositionBasis (Group Entity) Entity]
+      [$g :: Group Entity]]
+    (SetOf {λ [$x :: Referents Entity]
+      (Among $x (components_κ $k $g))})}")
 
 (check-true
  (type-error?
@@ -498,6 +504,11 @@
               '(Sign Letteral))
 (check-equal? (typing-type (infer-text "(SentenceSign (Close (gerku Speaker)))"))
               '(Sign Sentence))
+(check-true
+ (pure-typing?
+  (infer-text
+   "(SentenceSign
+      {Bind [$x :: Entity] (Context) (Close (klama $x))})")))
 (check-equal?
  (typing-type
   (infer-text

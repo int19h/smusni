@@ -74,9 +74,11 @@ obligation.
 - `Fn`/`EFn` parameters are contravariant and results covariant. The §7.4/§7.5
   `Utterance`/`Sign` entry spellings keep their token-sort binder annotations,
   but their dedicated rules bind and return the singleton-lifted token-reference
-  properties. Force constructors suspend their payload effects, so described
-  acts remain inert while a direct effect in an entry fact is still rejected;
-  no general parameter-position lift is used for that notation.
+  properties. The implemented `Assert`, `Express`, `Ask`, and `Mention`
+  constructors suspend their payload effects, so described acts remain inert
+  while a direct effect in an entry fact is still rejected; no general
+  parameter-position lift is used for that notation. `SentenceSign` likewise
+  stages its Content operand inertly.
 
 ## Model-bank profiles
 
