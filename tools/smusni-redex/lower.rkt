@@ -85,11 +85,14 @@
 
 (define-metafunction SmusniM3
   pure-out : e x -> e
-  [(pure-out lexical x_P) (λ ($x :: Entity) (x_P $x))]
+  [(pure-out lexical x_P) (λ (x_ref :: Entity) (x_P x_ref))
+   (where x_ref ,(variable-not-in (term x_P) '$x))]
   [(pure-out described x_P)
-   (λ ($x :: Entity)
+   (λ (x_ref :: Entity)
      (SpeakerDescribes
-      $x (λ ($y :: Referents Entity) (x_P $y))))])
+      x_ref (λ (x_unit :: Referents Entity) (x_P x_unit))))
+   (where x_ref ,(variable-not-in (term x_P) '$x))
+   (where x_unit ,(variable-not-in (term (x_P x_ref)) '$y))])
 
 (define-metafunction SmusniM3
   apply* : e (e ...) -> e
@@ -110,7 +113,9 @@
   route-out : e -> e
   [(route-out (application x_R e_arg ...)) (x_R e_arg ...)]
   [(route-out (se-lambda x_R))
-   (λ ($new1 $new2 :: Referents Entity) (x_R $new2 $new1))])
+   (λ (x_left x_right :: Referents Entity) (x_R x_right x_left))
+   (where x_left ,(variable-not-in (term x_R) '$new1))
+   (where x_right ,(variable-not-in (term (x_R x_left)) '$new2))])
 
 (define-metafunction SmusniM3
   connective-out : e e e -> e
@@ -123,43 +128,86 @@
 (define-metafunction SmusniM3
   cohe-out : e e e -> e
   [(cohe-out e_row e_left e_right)
-   (Bind ($r :: PredTerm e_row) (Context)
-     (Assert (Close ($r e_left e_right))))])
+   (Bind (x_relation :: PredTerm e_row) (Context)
+     (Assert (Close (x_relation e_left e_right))))
+   (where x_relation
+          ,(variable-not-in (term (e_row e_left e_right)) '$r))])
 
 (define-metafunction SmusniM3
   termset-out : e x e x x -> e
   [(termset-out e_n1 e_P1 e_n2 e_P2 x_Q)
-   (Bind ($left :: Referents Entity)
-         (SelectExactly e_n1 (λ ($x :: Entity) (e_P1 $x)))
-         ($right :: Referents Entity)
-         (SelectExactly e_n2 (λ ($x :: Entity) (e_P2 $x)))
+   (Bind (x_left_set :: Referents Entity)
+         (SelectExactly e_n1 (λ (x_left_unit :: Entity)
+                               (e_P1 x_left_unit)))
+         (x_right_set :: Referents Entity)
+         (SelectExactly e_n2 (λ (x_right_unit :: Entity)
+                               (e_P2 x_right_unit)))
      (Assert
       (Distrib
-       (λ ($l :: Entity)
-         (Distrib (λ ($r :: Entity) (Close (x_Q $l $r))) $right))
-       $left)))])
+       (λ (x_left :: Entity)
+         (Distrib (λ (x_right :: Entity)
+                    (Close (x_Q x_left x_right)))
+                  x_right_set))
+       x_left_set)))
+   (where x_left_set
+          ,(variable-not-in (term (e_n1 e_P1 e_n2 e_P2 x_Q)) '$left))
+   (where x_left_unit
+          ,(variable-not-in (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set)) '$x))
+   (where x_right_set
+          ,(variable-not-in
+            (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set x_left_unit))
+            '$right))
+   (where x_right_unit
+          ,(variable-not-in
+            (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set x_left_unit
+                        x_right_set))
+            '$x))
+   (where x_left
+          ,(variable-not-in
+            (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set x_left_unit
+                        x_right_set x_right_unit))
+            '$l))
+   (where x_right
+          ,(variable-not-in
+            (term (e_n1 e_P1 e_n2 e_P2 x_Q x_left_set x_left_unit
+                        x_right_set x_right_unit x_left))
+            '$r))])
 
 (define-metafunction SmusniM3
   grade-out : x e -> e
   [(grade-out x_R e_arg)
-   (Bind ($s :: Scale) (Context)
-         ($reg :: Region Scale)
-         (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
-     (Assert (Close ((Grade x_R $s $reg) e_arg))))])
+   (Bind (x_scale :: Scale) (Context)
+         (x_region :: Region Scale)
+         (Vague (λ (x_cutoff :: Region Scale)
+                  (AdmissibleCutoff x_scale x_cutoff)))
+     (Assert (Close ((Grade x_R x_scale x_region) e_arg))))
+   (where x_scale ,(variable-not-in (term (x_R e_arg)) '$s))
+   (where x_region
+          ,(variable-not-in (term (x_R e_arg x_scale)) '$reg))
+   (where x_cutoff
+          ,(variable-not-in (term (x_R e_arg x_scale x_region)) '$r))])
 
 (define-metafunction SmusniM3
   scalar-out : e x e -> e
   [(scalar-out e_kind x_R e_arg)
-   (Bind ($d :: ContrastDomain (RowOf x_R)) (Context)
-     (Assert (Close ((Scalar e_kind $d x_R) e_arg))))])
+   (Bind (x_domain :: ContrastDomain (RowOf x_R)) (Context)
+     (Assert (Close ((Scalar e_kind x_domain x_R) e_arg))))
+   (where x_domain
+          ,(variable-not-in (term (e_kind x_R e_arg)) '$d))])
 
 (define-metafunction SmusniM3
   zip-out : x (e ...) (e ...) -> e
   [(zip-out x_R (e_left ...) (e_right ...))
    (ZipWith
-    (λ ($left $right :: Referents Entity) (Close (x_R $left $right)))
+    (λ (x_left x_right :: Referents Entity)
+      (Close (x_R x_left x_right)))
     (List e_left ...)
-    (List e_right ...))])
+    (List e_right ...))
+   (where x_left
+          ,(variable-not-in (term (x_R e_left ... e_right ...)) '$left))
+   (where x_right
+          ,(variable-not-in
+            (term (x_R e_left ... e_right ... x_left)) '$right))])
 
 (define-metafunction SmusniM3
   nuclear-out : e e e -> e
@@ -189,22 +237,33 @@
   [(le-out x_P e_continuation x_ref e_body)
    (Bind (x_ref :: Referents Entity)
          (Refer
-          (λ ($described :: Referents Entity)
+          (λ (x_described :: Referents Entity)
             (SpeakerDescribes
-             $described (λ ($unit :: Referents Entity) (x_P $unit)))))
-     e_body)])
+             x_described
+             (λ (x_unit :: Referents Entity) (x_P x_unit)))))
+     e_body)
+   (where x_described
+          ,(variable-not-in
+            (term (x_P e_continuation x_ref e_body)) '$described))
+   (where x_unit
+          ,(variable-not-in
+            (term (x_P e_continuation x_ref e_body x_described)) '$unit))])
 
 (define-metafunction SmusniM3
   threshold-out : e e e -> e
   [(threshold-out many e_P e_Q)
-   (Bind ($n :: Natural)
+   (Bind (x_threshold :: Natural)
          (Vague (AdmissibleThreshold ManyK e_P))
-     (Assert (AtLeast $n e_P e_Q)))]
+     (Assert (AtLeast x_threshold e_P e_Q)))
+   (where x_threshold ,(variable-not-in (term (e_P e_Q)) '$n))]
   [(threshold-out too-many e_P e_Q)
-   (Bind ($purpose :: Referents Entity) (Context)
-         ($n :: Natural)
-         (Vague (AdmissibleThreshold TooManyK e_P $purpose))
-     (Assert (MoreThan $n e_P e_Q)))])
+   (Bind (x_purpose :: Referents Entity) (Context)
+         (x_threshold :: Natural)
+         (Vague (AdmissibleThreshold TooManyK e_P x_purpose))
+     (Assert (MoreThan x_threshold e_P e_Q)))
+   (where x_purpose ,(variable-not-in (term (e_P e_Q)) '$purpose))
+   (where x_threshold
+          ,(variable-not-in (term (e_P e_Q x_purpose)) '$n))])
 
 (define-metafunction SmusniM3
   display-normalize : e e -> e
@@ -259,13 +318,15 @@
    (m3-lower e_RR (gentufa e_parse (tanru x_M x_H e_arg ...)) e_out)]
 
   [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$r))
+   (where x_unit
+          ,(variable-not-in (term (e_RR e_parse x_P x_Q x_ref)) '$unit))
    (where e_continuation
           (description-source e_force x_Q e_polarity x_ref))
    (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    --------------------------------------------- "L3.1"
    (m3-lower e_RR (gentufa e_parse (lo x_P x_Q e_polarity e_force))
              (Bind (x_ref :: Referents Entity)
-                   (Refer (λ ($unit :: Referents Entity) (x_P $unit)))
+                   (Refer (λ (x_unit :: Referents Entity) (x_P x_unit)))
                e_body))]
 
   [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P e_continuation))
@@ -278,65 +339,89 @@
              e_out)]
 
   [(where x_ref ,(variable-not-in (term (e_RR e_parse e_name x_Q)) '$r))
+   (where x_named
+          ,(variable-not-in (term (e_RR e_parse e_name x_Q x_ref)) '$named))
    (where e_continuation
           (description-source e_force x_Q positive-omit x_ref))
    (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    --------------------------------------------- "L3.3"
    (m3-lower e_RR (gentufa e_parse (la e_name x_Q e_force))
              (Bind (x_ref :: Referents Entity)
-                   (Refer (λ ($named :: Referents Entity)
-                            (Named e_name $named)))
+                   (Refer (λ (x_named :: Referents Entity)
+                            (Named e_name x_named)))
                e_body))]
 
-  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
-   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $x))) e_Q_body)
+  [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$x))
+   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR
+             (gentufa e_parse (close shorthand (pred x_Q x_unit))) e_Q_body)
    --------------------------------------------- "L3.4"
    (m3-lower e_RR (gentufa e_parse (generic x_P x_Q))
-             (Generic Typical e_P (λ ($x :: Entity) e_Q_body)))]
+             (Generic Typical e_P (λ (x_unit :: Entity) e_Q_body)))]
 
-  [--------------------------------------------- "L3.5"
+  [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P)) '$x))
+   --------------------------------------------- "L3.5"
    (m3-lower e_RR (gentufa e_parse (collection-base x_P))
-             (Local (Refer (λ ($x :: Entity) (x_P $x)))))]
+             (Local (Refer (λ (x_unit :: Entity) (x_P x_unit)))))]
 
-  [(m3-lower e_RR (gentufa e_parse (collection-base x_P)) e_base)
+  [(where x_base ,(variable-not-in (term (e_RR e_parse x_P)) '$base))
+   (where x_sets
+          ,(variable-not-in (term (e_RR e_parse x_P x_base)) '$sets))
+   (where x_set
+          ,(variable-not-in (term (e_RR e_parse x_P x_base x_sets)) '$s))
+   (m3-lower e_RR (gentufa e_parse (collection-base x_P)) e_base)
    --------------------------------------------- "L3.6"
    (m3-lower e_RR (gentufa e_parse (collection-set x_P))
-             (Bind ($base :: Referents Entity) e_base
-               (Bind ($sets :: Referents (Set Entity))
-                     (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
-                 (Mention $sets))))]
+             (Bind (x_base :: Referents Entity) e_base
+               (Bind (x_sets :: Referents (Set Entity))
+                     (Refer (λ (x_set :: Set Entity)
+                              (Close (selcmi x_set x_base))))
+                 (Mention x_sets))))]
 
   [(m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_P)
    --------------------------------------------- "L3.9"
    (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P))
              (SelectExactly e_n e_P))]
 
-  [(m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P)) e_selection)
+  [(where x_people
+          ,(variable-not-in (term (e_RR e_parse e_n x_P)) '$people))
+   (where x_basis
+          ,(variable-not-in
+            (term (e_RR e_parse e_n x_P x_people)) '$κ))
+   (where x_aggregate
+          ,(variable-not-in
+            (term (e_RR e_parse e_n x_P x_people x_basis)) '$aggregate))
+   (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P)) e_selection)
    --------------------------------------------- "L3.14"
    (m3-lower e_RR (gentufa e_parse (luho e_n x_P))
-             (Bind ($people :: Referents Entity) (Local e_selection)
-               (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
+             (Bind (x_people :: Referents Entity) (Local e_selection)
+               (Bind (x_basis :: DecompositionBasis (Group Entity) Entity)
                      (Context (GroupBasisConstraint |lu'o| Entity) deps…)
-                 (Bind ($aggregate :: Referents (Group Entity))
-                       (Massify $κ $people)
-                   (Mention $aggregate)))))]
+                 (Bind (x_aggregate :: Referents (Group Entity))
+                       (Massify x_basis x_people)
+                   (Mention x_aggregate)))))]
 
   [(m3-lower e_RR
              (gentufa e_parse (le x_P (pure described x_P))) e_property)
    --------------------------------------------- "L3.15"
    (m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_property)]
 
-  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
-   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $x))) e_Q_body)
+  [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$x))
+   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR
+             (gentufa e_parse (close shorthand (pred x_Q x_unit))) e_Q_body)
    --------------------------------------------- "L5.1"
    (m3-lower e_RR (gentufa e_parse (every x_P x_Q))
-             (Every e_P (λ ($x :: Entity) e_Q_body)))]
+             (Every e_P (λ (x_unit :: Entity) e_Q_body)))]
 
-  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
-   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $w))) e_Q_body)
+  [(where x_witness ,(variable-not-in (term (e_RR e_parse e_n x_P x_Q)) '$w))
+   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR
+             (gentufa e_parse (close shorthand (pred x_Q x_witness)))
+             e_Q_body)
    --------------------------------------------- "L5.2"
    (m3-lower e_RR (gentufa e_parse (cardinal e_n x_P x_Q))
-             (Bind ($w :: Referents Entity)
+             (Bind (x_witness :: Referents Entity)
                    (SelectExactly e_n e_P)
                e_Q_body))]
 
@@ -380,9 +465,11 @@
    (m3-lower e_RR
              (gentufa e_parse (zip x_R (e_left ...) (e_right ...))) e_out)]
 
-  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+  [(where x_witness
+          ,(variable-not-in (term (e_RR e_parse e_kind x_P x_Q)) '$w))
+   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
    (m3-lower e_RR (gentufa e_parse
-                            (nuclear $w (Referents Entity) x_Q)) e_Q)
+                            (nuclear x_witness (Referents Entity) x_Q)) e_Q)
    (where e_out (threshold-out e_kind e_P e_Q))
    --------------------------------------------- "L5.28"
    (m3-lower e_RR (gentufa e_parse (threshold e_kind x_P x_Q)) e_out)]
@@ -1507,15 +1594,24 @@
        [explicit-event
         ;; The explicit-event case is already fully written at its use sites;
         ;; retain it rather than inventing a second display spelling.
-        (values `(Close ,operand) '("Close explicit-event (§4.6/L1.3)"))]
+       (values `(Close ,operand) '("Close explicit-event (§4.6/L1.3)"))]
        [else
         (define missing
-          (for/list ([label (in-range 1 (add1 total))]
-                     #:unless (hash-has-key? fills label))
-            (cons label (string->symbol (format "$ctx~a" label)))))
+          (let-values
+              ([(entries _avoid)
+                (for/fold ([entries '()] [avoid operand])
+                          ([label (in-range 1 (add1 total))]
+                           #:unless (hash-has-key? fills label))
+                  (define variable
+                    (variable-not-in
+                     avoid (string->symbol (format "$ctx~a" label))))
+                  (values (cons (cons label variable) entries)
+                          (cons variable avoid)))])
+            (reverse entries)))
         (for ([entry (in-list missing)])
           (hash-set! fills (car entry) (cdr entry)))
-        (define event-variable '$event)
+        (define event-variable
+          (variable-not-in (cons (map cdr missing) operand) '$event))
         (define labelled-arguments
           (append*
            (for/list ([label (in-range 1 (add1 total))])

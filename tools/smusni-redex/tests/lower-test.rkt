@@ -347,6 +347,20 @@
  (redex-alpha-equivalent?
   '(λ ($x :: Entity) (λ ($y :: Entity) (nelci $x $y)))
   '(λ ($y :: Entity) (λ ($x :: Entity) (nelci $x $y)))))
+
+;; Rule construction itself avoids capturing variables supplied by an unseen
+;; source view; alpha-equivalence is not being used to hide capture afterward.
+(define capture-safe-pure
+  (judgment-holds
+   (m3-lower rr (gentufa parse (pure lexical $x)) e_output)
+   e_output))
+(check-equal? (length capture-safe-pure) 1)
+(match (first capture-safe-pure)
+  [`(λ (,binder :: Entity) ($x ,use))
+   (check-equal? binder use)
+   (check-not-equal? binder '$x)]
+  [other (fail-check (format "unexpected capture test output: ~e" other))])
+
 (check-true
  (redex-alpha-equivalent?
   '(Bind ($x :: Entity) (Context)
@@ -415,6 +429,21 @@
                                                 (symbol->string value)))
                                normalized-symbols)))
               4)
+
+(define capture-safe-close
+  (normalization-datum
+   (normalize-core (datum->core '(Close (klama $ctx2 $event)))
+                   (hash 'rows '(klama)))))
+(check-equal?
+ capture-safe-close
+ '(CloseClause
+   (ActualClause
+    (λ ($event1 :: Referents Eventuality)
+      (Bind ($ctx3 :: Referents Entity) (Context)
+        (Bind ($ctx4 :: Referents Entity) (Context)
+          (Bind ($ctx5 :: Referents Entity) (Context)
+            (klama :1 $ctx2 :2 $event :3 $ctx3 :4 $ctx4 :5 $ctx5
+                   :Eventuality $event1))))))))
 
 (define force-normal
   (normalize-core (datum->core '(Assert (gerku Speaker)))
@@ -529,12 +558,41 @@
     [(list? value) (map (lambda (child) (rename-json-key child old new)) value)]
     [else value]))
 
+(define (rename-json-text value old new)
+  (cond
+    [(hash? value)
+     (for/hasheq ([(key child) (in-hash value)])
+       (values key (rename-json-text child old new)))]
+    [(list? value) (map (lambda (child) (rename-json-text child old new)) value)]
+    [(and (string? value) (string=? value old)) new]
+    [else value]))
+
 (define bogus-parse
   (hash-set sample-1-parse 'parse
             (rename-json-key (hash-ref sample-1-parse 'parse)
                              'BridiStatement 'BogusStatement)))
 (define bogus-result (lower bogus-parse sample-1-rr))
 (check-true (no-lowering? bogus-result))
+
+;; The mechanism is not restricted to the frozen surface corpus: a lexical
+;; terminal never seen at this tree position flows through the same construct
+;; translation, with its independently selected RR row.
+(define unseen-lexical-parse
+  (hash-set*
+   sample-1-parse
+   'surface "mi tavla"
+   'source_comment "mi tavla"
+   'parse (rename-json-text (hash-ref sample-1-parse 'parse)
+                            "kláma" "távla")))
+(define unseen-lexical-rr
+  (struct-copy rr-case sample-1-rr
+               [fields (hash-set (rr-case-fields sample-1-rr)
+                                 'rows '(tavla))]))
+(define unseen-lexical-result (lower unseen-lexical-parse unseen-lexical-rr))
+(check-true (lowered? unseen-lexical-result))
+(when (lowered? unseen-lexical-result)
+  (check-equal? (plain (lowered-term unseen-lexical-result))
+                '(Assert (Close (tavla Speaker)))))
 
 (define no-row-rr
   (struct-copy rr-case sample-1-rr
