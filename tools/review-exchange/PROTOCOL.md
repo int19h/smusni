@@ -214,6 +214,17 @@ or durable issue update was silently skipped.
   human partner authorizes it.
 - Implementation assignments use separate worktrees/branches; a review names
   the exact commit under review.
+- An exact-commit review reviews the **code** at that commit: the logic, the
+  path from declared inputs to outputs, and the claims the announcement makes
+  about the mechanism. It is adversarial about correctness and quality, not
+  about the announcement's literal test report: when the implementer states
+  the command, head, test count, and result, and that matches the checks the
+  reviewer intended, the reviewer does not re-run them. Reviewer effort goes
+  to the *additional* checks a specific part needs — unseen inputs,
+  mutations, hand derivations — and a check that proved warranted is asked
+  for as a test in the same PR, so the next review inherits it. Re-run the
+  suites only when the report is missing, incomplete, stale against the
+  head, or does not match the intended run.
 
 ## Commands
 

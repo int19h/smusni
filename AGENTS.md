@@ -210,10 +210,21 @@ a substitute for it.
 - Mark examples as illustrative and say when a list is exhaustive.
 - Ask the report to describe the mechanism and its generality, not only the
   gate results.
-- Review the path from input to output before the tests: look for
-  fixture-keyed matches, literals that should be data, clauses equal to
-  expected outputs, and declared inputs that are never read. Ask what the
-  code does with an input it has never seen.
+- Review the code, not the gate. Read the path from input to output before
+  the tests: look for fixture-keyed matches, literals that should be data,
+  clauses equal to expected outputs, and declared inputs that are never
+  read. Ask what the code does with an input it has never seen.
+- Adversarial means not presupposing the implementation is correct or
+  well made; it does not mean distrusting a literal report. When the
+  implementer reports the exact run — command, head, test count, result —
+  and it matches the run you intended, take it as read: re-running the
+  suites to confirm a green result spends tokens and finds nothing the
+  report did not say. Re-run only when a report is missing, incomplete, or
+  does not match the head or the intended checks.
+- Run the *additional* manual checks a specific part of the logic needs to
+  establish correctness — unseen inputs, mutations, hand derivations — and
+  when such a check was warranted, have it added to the test suite so the
+  next review inherits it instead of repeating it.
 - A least-effort reading that makes a requirement vacuous is a finding, not a
   style preference; reject it even when every gate passes.
 
@@ -406,7 +417,10 @@ judgment that the documents lack value.
 - Lead with the current outcome, then the evidence and tradeoffs.
 - For reviews, actively seek counterexamples, contradictions, unstated
   assumptions, edition drift, non sequiturs, and apparently sourced claims that
-  the source does not support.
+  the source does not support. For code, review the logic itself; accept a
+  literal, exact test report rather than re-running it, and spend the effort
+  on checks the report could not have covered (see *Delegated
+  implementation*).
 - Before changing a semantic rule, trace every normative and derivative
   consumer with `rg`; after changing it, synchronize or explicitly queue those
   consumers.
