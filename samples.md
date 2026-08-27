@@ -308,8 +308,8 @@ distributed.
 ; le mlatu cu blabi              [pin P10]
 {Bind [$it :: Referents Entity]
         (Refer {λ [$x :: Referents Entity]
-          (Close (skicu Speaker $x Audience
-            {λ [$y :: Referents Entity] (mlatu $y)}))})
+          (SpeakerDescribes $x
+            {λ [$y :: Referents Entity] (mlatu $y)})})
   (Assert (Close (blabi $it)))}
 ```
 
@@ -318,10 +318,10 @@ non-veridical (the "cat" may be a raccoon), speaker-specific — lowered
 through `skicu` itself (official x4 is the description property;
 guskant's own `le` expansion is this term in Lojban), with the describing
 event anchored to this very utterance's locution by the mapping clause:
-saying `le mlatu` *is* the describing. (`Close` above is the brief
-spelling; the anchoring clause identifies the describing event with the
-utterance token's locution, §7.4, rather than closing it
-existentially.)
+saying `le mlatu` *is* the describing. (`SpeakerDescribes` is §12's
+defined form, displayed as itself: its definition identifies the
+describing event with the utterance token's locution, §7.4, rather than
+closing it existentially — #41.)
 
 ```lisp
 ; la .alis. klama
@@ -484,8 +484,8 @@ committee is asserted rather than derived from that cover.
     [$committee :: Referents (Group Entity)]]
   {Bind [$people :: Referents Entity]
         (Local (SelectExactly 3 {λ [$x :: Entity]
-          (Close (skicu Speaker $x Audience
-            {λ [$y :: Referents Entity] (prenu $y)}))}))
+          (SpeakerDescribes $x
+            {λ [$y :: Referents Entity] (prenu $y)})}))
     {Bind [$described :: Referents (Group Entity)]
           (Refer {λ [$g :: Group Entity]
                    (CompleteGunmaAt $κ $g $people)})
@@ -499,8 +499,8 @@ separate operations:
 ; lu'o le ci prenu — canonical aggregate of the selected people
 {Bind [$people :: Referents Entity]
       (Local (SelectExactly 3 {λ [$x :: Entity]
-        (Close (skicu Speaker $x Audience
-          {λ [$y :: Referents Entity] (prenu $y)}))}))
+        (SpeakerDescribes $x
+          {λ [$y :: Referents Entity] (prenu $y)})}))
   {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
         (Context (GroupBasisConstraint lu'o Entity) deps…)
     {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
@@ -550,8 +550,8 @@ classes, which no single referent could verify (rationale §1.9).
 ; le gerku voi blabi cu jbena — voi: non-veridical restriction  [pin P10]
 {Bind [$dog :: Referents Entity]
         (Refer {λ [$x :: Referents Entity]
-          (∧ (Close (skicu Speaker $x Audience            ; the le-head:
-               {λ [$y :: Referents Entity] (gerku $y)})) ; "my dog"
+          (∧ (SpeakerDescribes $x            ; the le-head:
+               {λ [$y :: Referents Entity] (gerku $y)}) ; "my dog"
              (Close ((DropPlace skicu 3) Speaker $x       ; the voi
                {λ [$y :: Referents Entity] (blabi $y)})))})   ; restriction
   (Assert (Close (jbena $dog)))}
@@ -581,9 +581,10 @@ the description.
 ; mi tavla le pendo goi ko'a — aliasing is shared binding
 {Bind [$friend :: Referents Entity]
         (Refer {λ [$x :: Referents Entity]
-          (Close (skicu Speaker $x Audience
-            {λ [$y :: Referents Entity] (pendo $y)}))})
+          (SpeakerDescribes $x
+            {λ [$y :: Referents Entity] (Close (pendo $y))})})
   (Assert (Close (tavla Speaker $friend)))}
+; the second place of pendo is omitted inside the description — one Context site (L1.6)
 ; later ko'a occurrences consume the same binding.  [pin P16]
 ```
 

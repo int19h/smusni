@@ -613,3 +613,64 @@
        (Mention $r)}")))
 
 (displayln "typing tests: ok")
+
+;; #41 item 1: the le description is the §12 defined form SpeakerDescribes —
+;; pure at both levels, and its written-out definition types the same way.
+(define le-property "{λ [$y :: Referents Entity] (mlatu $y)}")
+(define described-reference
+  (infer-text (format "{λ [$x :: Referents Entity] (SpeakerDescribes $x ~a)}" le-property)))
+(check-equal? (typing-type described-reference) '(Fn ((Referents Entity)) Content))
+(check-true (pure-typing? described-reference))
+(define described-member
+  (infer-text (format "{λ [$x :: Entity] (SpeakerDescribes $x ~a)}" le-property)))
+(check-equal? (typing-type described-member) '(Fn (Entity) Content))
+(check-equal?
+ (typing-type
+  (infer-text
+   (format "{λ [$x :: Referents Entity]
+              (∃ {λ [$e :: Referents Locution]
+                (∧ (LocutionOf CurrentToken $e)
+                   (skicu Speaker $x Audience ~a :Eventuality $e))})}" le-property)))
+ '(Fn ((Referents Entity)) Content))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    (format "{Bind [$people :: Referents Entity]
+               (Local (SelectExactly 3 {λ [$x :: Entity] (SpeakerDescribes $x ~a)}))
+             (Mention $people)}" le-property))))
+(check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker Audience)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf {λ [$e :: Referents Locution] (mlatu $e)} CurrentToken)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken CurrentToken)"))))
+
+;; codex_2's #48 review: r and P are coupled — P's parameter is checked against
+;; r's actual reference type, for every first-order T including collections.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$g :: Referents (Group Entity)]
+       (SpeakerDescribes $g {λ [$y :: Referents (Group Entity)] (mlatu $y)})}")))
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [$x :: Referents Entity]
+        (SpeakerDescribes $x {λ [$y :: Referents Eventuality] (mlatu $y)})}"))))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$e :: Referents Eventuality]
+       (SpeakerDescribes $e {λ [$y :: Referents Entity] (mlatu $y)})}")))
+
+;; §3.1: collection and sign object sorts sit under Entity (codex_2, #48).
+(check-true (type-compatible? '(Group Entity) 'Entity))
+(check-true (type-compatible? '(Referents (Group Entity)) '(Referents Entity)))
+(check-true (type-compatible? '(Set Entity) 'Entity))
+(check-false (type-compatible? 'Entity '(Group Entity)))
+(check-false (type-compatible? '(Group Entity) 'Eventuality))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$g :: Referents (Group Entity)]
+       (SpeakerDescribes $g {λ [$y :: Referents Entity] (mlatu $y)})}")))

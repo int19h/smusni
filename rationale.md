@@ -1367,7 +1367,14 @@ genuinely fought:
   precedent, and the anchoring clause answered act-vs-identification:
   `le` lowers through `skicu` with the describing event anchored to
   this utterance's locution — performative, true by construction.
-  `voi` = audience-deleted `skicu`.
+  `voi` = audience-deleted `skicu`. The `le` property is the §12 defined
+  form `SpeakerDescribes` (#41 item 1, adopted 2026-08-27): the earlier
+  display `(Close (skicu …))` was a valid core term with a weaker,
+  unanchored denotation, and §2 licenses only same-denotation spellings.
+  Rejected: writing the anchored property out in every specimen (verbose,
+  and the corpus loses its brief spelling) and keeping the brief spelling
+  as a labelled stand-in (one spelling with two denotations). `voi` stays
+  unanchored under L4.3; whether it should anchor is a separate question.
 - **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual

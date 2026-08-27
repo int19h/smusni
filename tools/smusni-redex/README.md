@@ -80,6 +80,12 @@ obligation.
   parameter-position lift is used for that notation. `SentenceSign` likewise
   stages its Content operand inertly.
 
+The `le` description form `SpeakerDescribes` (#41 item 1) is typed by its §12
+signature — described reference (member or plural) and a unary description
+property — and is pure; `LocutionOf` and the `CurrentToken` constant carry the
+sorts its definition needs. `type-compatible?` places the §3.1 collection and
+sign object sorts (`Set`, `Group`, `List`, `Sign`, `SignToken`) under `Entity`.
+
 ## Model-bank profiles
 
 The model bank prints decision status before every verdict:

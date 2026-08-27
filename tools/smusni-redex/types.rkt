@@ -208,6 +208,11 @@
      (raise-type (first nodes) "type constructor must be a symbol")]
     [else `(,first-type ,@(map parse-type-node (rest nodes)))]))
 
+(define (first-order-collection-type? type)
+  (and (list? type) (pair? type)
+       (member (first type) '(Set Group List Sign SignToken))
+       (andmap first-order-type? (rest type))))
+
 (define (first-order-type? type)
   (cond
     [(symbol? type)
@@ -306,6 +311,10 @@
 (define (type-compatible? actual expected)
   (cond
     [(or (equal? actual 'Unknown) (equal? expected 'Unknown)) #t]
+    ;; §3.1's sort tree places the collection and sign object sorts under
+    ;; Entity: a Set/Group/List/Sign/SignToken object stands where an Entity
+    ;; is expected (and, covariantly, inside Referents).
+    [(and (eq? expected 'Entity) (first-order-collection-type? actual)) #t]
     [(equal? actual expected) #t]
     [(subsort? actual expected) #t]
     ;; ClauseContent is transparent to its EFn representation, never to
@@ -1192,6 +1201,45 @@
     [(member head '(Tanru Scalar Grade JaiRaise))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results `(PredTerm ,head 0 #f) results)]
+    [(eq? head 'LocutionOf)
+     (unless (= (length arguments) 2)
+       (raise-type node "LocutionOf takes an utterance token and a locution reference"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (ensure-compatible (first arguments) (typing-type (first results))
+                        '(Referents UtteranceToken))
+     (ensure-compatible (second arguments) (typing-type (second results))
+                        '(Referents Locution))
+     (merge-results 'Content results)]
+    [(eq? head 'SpeakerDescribes)
+     ;; §12: (SpeakerDescribes r P) ≝ (∃ {λ [$e :: Referents Locution]
+     ;;   (∧ (LocutionOf CurrentToken $e) (skicu Speaker r Audience P :Eventuality $e))})
+     ;; Every skicu place is filled and P is handed to x4 as a value, so the
+     ;; form is pure whatever P's arrow; r lifts to its singleton reference.
+     (unless (= (length arguments) 2)
+       (raise-type node "SpeakerDescribes takes the described reference and a description property"))
+     (define reference (infer-core (first arguments) env inv))
+     (define property (infer-core (second arguments) env inv))
+     ;; r's actual reference type (a member lifts to its singleton, §3.2) must
+     ;; be first-order, and P must accept every member of r: the description
+     ;; property's parameter is checked against r's type, not against Entity.
+     (define reference-type
+       (match (typing-type reference)
+         [`(Referents ,inner) `(Referents ,inner)]
+         [other `(Referents ,other)]))
+     (unless (first-order-type? (second reference-type))
+       (raise-type (first arguments)
+                   "SpeakerDescribes describes a first-order reference, got ~e"
+                   (typing-type reference)))
+     (match (typing-type property)
+       [`(,arrow (,domain) Content)
+        #:when (and (member arrow '(Fn EFn))
+                    (type-compatible? reference-type domain))
+        (void)]
+       [other
+        (raise-type (second arguments)
+                    "SpeakerDescribes description property must accept the described reference ~e, got ~e"
+                    reference-type other)])
+     (merge-results 'Content (list reference property))]
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold
                           MetalinguisticallyDefective Contrast JaiRoleAdmissible
