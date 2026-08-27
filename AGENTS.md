@@ -178,6 +178,45 @@ start fresh sessions that attest to a full load before reviewing, let the
 reviewing generation make the first fix pass, retire the previous
 generation after handoff) is in `PROTOCOL.md`.
 
+## Delegated implementation
+
+Implementation work is often briefed by one model session and executed by
+another. Both roles owe the same discipline: the goal is the specified
+mechanism; an acceptance criterion is a bar that mechanism must clear, never
+a substitute for it.
+
+**For the implementing session.**
+
+- A table from the known inputs to precomposed outputs, a clause that emits
+  the expected result, matching on the test corpus's surface strings, or
+  hard-coding the fixture set is not an implementation, however green the
+  gates. Reporting it as one is a false report of completion.
+- "Do X — for example Y and Z" means do X in general; Y and Z illustrate it.
+  Implement the general requirement; when its extent is unclear, ask before
+  coding rather than choosing the narrowest reading.
+- Consume the inputs the specification says the mechanism consumes. A
+  mechanism that ignores a declared input is not that mechanism.
+- What cannot be done generally is reported as not done, with the specific
+  obstacle and evidence — never filled with defaults, stubs, or
+  transcriptions, and never counted among the results.
+- Announce what the code actually does, including any hand-authored data on
+  the path from input to output, and how many cases the general path handles.
+
+**For the briefing or reviewing session.**
+
+- State the goal as a mechanism with its inputs and outputs, and say what must
+  be computed versus what may be data. When a shortcut is plausible, forbid it
+  by name.
+- Mark examples as illustrative and say when a list is exhaustive.
+- Ask the report to describe the mechanism and its generality, not only the
+  gate results.
+- Review the path from input to output before the tests: look for
+  fixture-keyed matches, literals that should be data, clauses equal to
+  expected outputs, and declared inputs that are never read. Ask what the
+  code does with an input it has never seen.
+- A least-effort reading that makes a requirement vacuous is a finding, not a
+  style preference; reject it even when every gate passes.
+
 ## Hard constraints
 
 - **No implementation residue.** The core defines meaning, not a processor.
