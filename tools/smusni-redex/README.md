@@ -162,3 +162,13 @@ report-only unless the manifest promises them; under-specified rules remain
 visible #9 findings. Per-case dispositions are authoritative, and a documented
 precedence produces the stable fence summary. Formed-rule coverage is printed
 separately from M1's focal-citation ratchet.
+
+The executable rules are the `(I I O)` Redex judgment `m3-lower`; its named
+clauses are live §11 ids, and formed attribution is read from
+`build-derivations`, never a manual counter. The display normalizer is a Redex
+metafunction applied to both sides, and `SmusniBinding` declares canonical
+binding forms for λ, `Let`, and `Bind` so comparison uses Redex
+`alpha-equivalent?`. `redex-check` revalidates every fixture derivation through
+`types.rkt`. The bounded `#:satisfying` generator is also attempted; this Redex
+version rejects generation for the judgment's ellipsis patterns, so the report
+labels the run fixture-only rather than describing it as randomized testing.

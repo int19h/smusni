@@ -3,6 +3,7 @@
 (require rackunit
          racket/list
          racket/set
+         redex/reduction-semantics
          "../lower.rkt"
          "../syntax.rkt")
 
@@ -25,19 +26,13 @@
 (check-false (member "L3.7" rules))
 (check-false (member "L5.14" rules))
 
-(check-equal? (list->set (rule-handler-ids)) (list->set rules))
-(for ([id (in-list (rule-handler-ids))])
-  (define result (apply-rule-handler id '(term (Mention Speaker))))
-  (if (member id '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
-                   "L5.4" "L5.5" "L5.6" "L5.10" "L5.13" "L5.15"
-                   "L5.16" "L5.17" "L5.19" "L5.22" "L5.23" "L5.27"))
-      (begin
-        (check-true (no-lowering? result))
-        (check-equal? (no-lowering-rule result) id)
-        (check-equal? (no-lowering-cause result) 'implementation))
-      (begin
-        (check-true (lowered? result))
-        (check-equal? (lowered-rules result) (list id)))))
+(define redex-rule-names
+  (map symbol->string (judgment-form->rule-names m3-lower)))
+(check-equal? (length redex-rule-names)
+              (set-count (list->set redex-rule-names)))
+(check-equal? (length redex-rule-names) 29)
+(for ([name (in-list redex-rule-names)])
+  (check-not-false (member name rules)))
 
 (check-not-exn (lambda () (validate-lowering-fixtures! manifest)))
 
@@ -124,7 +119,10 @@
   (when (lowered? result)
     (check-equal? (plain (lowered-term result)) expected)
     (for ([rule (in-list rules)])
-      (check-not-false (member rule (lowered-rules result))))))
+      (check-not-false
+       (member rule (lowered-rules result))
+       (format "~a#~a.~a derivation contains ~a; got ~e"
+               source ordinal index rule (lowered-rules result))))))
 
 (check-lowers "samples.md" 1
               '(Assert (Close (klama Speaker)))
@@ -307,9 +305,22 @@
 (check-equal? (no-lowering-cause spec-10-result) 'rule-underspecified)
 
 ;; Symmetric normalizer: α-renaming, Close/P15, force shorthand, and L0.1.
-(check-equal?
- (alpha-normalize '(λ ($x :: Entity) (gerku $x)))
- (alpha-normalize '(λ ($dog :: Entity) (gerku $dog))))
+(check-true
+ (redex-alpha-equivalent?
+  '(λ ($x :: Entity) (gerku $x))
+  '(λ ($dog :: Entity) (gerku $dog))))
+(check-false
+ (redex-alpha-equivalent?
+  '(λ ($x :: Entity) (gerku $x))
+  '(λ ($dog :: Entity) (gerku Speaker))))
+(check-true
+ (redex-alpha-equivalent?
+  '(Let ($x :: Entity) Speaker (gerku $x))
+  '(Let ($speaker :: Entity) Speaker (gerku $speaker))))
+(check-true
+ (redex-alpha-equivalent?
+  '(Bind ($x :: Entity) (Context) (gerku $x))
+  '(Bind ($dog :: Entity) (Context) (gerku $dog))))
 
 (define close-normal
   (normalize-core (datum->core '(Close (klama Speaker)))
@@ -324,7 +335,7 @@
   (filter symbol? (flatten (normalization-datum close-normal))))
 (check-equal? (length (remove-duplicates
                        (filter (lambda (value)
-                                 (regexp-match? #rx"^[$]α[2-5]$"
+                                 (regexp-match? #rx"^[$]ctx[1-5]$"
                                                 (symbol->string value)))
                                normalized-symbols)))
               4)
@@ -397,6 +408,10 @@
 (check-false (no-lowering-fails? 'rule-underspecified "gap" '()))
 (check-false (no-lowering-fails? 'row-missing '(skicu) '(gerku)))
 (check-true (no-lowering-fails? 'row-missing '(skicu) '(gerku skicu)))
+
+(define-values (generated-status _generated-attempts _generated-detail)
+  (generated-redex-check 1))
+(check-not-false (member generated-status '(passed unavailable)))
 
 (define-values (parse-for-missing _rr-for-missing) (case-input "samples.md" 1))
 (define missing-result (lower parse-for-missing (hash 'parse '(fixture 1))))

@@ -11,6 +11,7 @@
          racket/runtime-path
          racket/set
          racket/string
+         redex/reduction-semantics
          "check.rkt"
          "extract.rkt"
          "inventory.rkt"
@@ -27,6 +28,9 @@
          (struct-out normalization)
          (struct-out case-report)
          (struct-out fence-report)
+         SmusniM3
+         m3-lower
+         display-normalize
          load-lowering-manifest
          load-parse-fixture
          load-rr-fixture
@@ -37,9 +41,9 @@
          parse-case-tokens
          parse-case-variants
          normalize-core
-         alpha-normalize
-         rule-handler-ids
-         apply-rule-handler
+         redex-alpha-equivalent?
+         fixture-redex-check
+         generated-redex-check
          no-lowering-fails?
          aggregate-fence-disposition
          run-lowering-gate
@@ -65,6 +69,280 @@
   (source ordinal index disposition cause rules expansions message produced expected)
   #:transparent)
 (struct fence-report (source ordinal disposition cases) #:transparent)
+
+;; M3's executable semantics. The Racket driver converts a validated gentufa
+;; fixture to the small source view below; all core construction happens in
+;; this Redex judgment. Rule names are the normative §11 ids and become the
+;; formed-coverage evidence through `build-derivations`.
+(define-language SmusniM3
+  [x variable-not-otherwise-mentioned]
+  [e any])
+
+(define-metafunction SmusniM3
+  app* : x (e ...) -> e
+  [(app* x_R (e_arg ...)) (x_R e_arg ...)])
+
+(define-metafunction SmusniM3
+  pure-out : e x -> e
+  [(pure-out lexical x_P) (λ ($x :: Entity) (x_P $x))]
+  [(pure-out described x_P)
+   (λ ($x :: Entity)
+     (SpeakerDescribes
+      $x (λ ($y :: Referents Entity) (x_P $y))))])
+
+(define-metafunction SmusniM3
+  apply* : e (e ...) -> e
+  [(apply* e_R (e_arg ...)) (e_R e_arg ...)])
+
+(define-metafunction SmusniM3
+  force-out : e e -> e
+  [(force-out assert e_body) (Assert e_body)]
+  [(force-out mention e_body) (Mention e_body)])
+
+(define-metafunction SmusniM3
+  close-out : e e -> e
+  [(close-out shorthand e_body) (Close e_body)]
+  [(close-out actual e_body) (CloseClause (ActualClause e_body))]
+  [(close-out clause e_body) (CloseClause e_body)])
+
+(define-metafunction SmusniM3
+  route-out : e -> e
+  [(route-out (application x_R e_arg ...)) (x_R e_arg ...)]
+  [(route-out (se-lambda tavla))
+   (λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))])
+
+(define-metafunction SmusniM3
+  connective-out : e e e -> e
+  [(connective-out not (pred x_R e_arg ...) none)
+   (ClauseNot (DirectClause (x_R e_arg ...)))]
+  [(connective-out and (pred x_R e_arg ...) (pred x_S e_arg_2 ...))
+   (ClauseAnd (DirectClause (x_R e_arg ...))
+              (DirectClause (x_S e_arg_2 ...)))]
+  [(connective-out or (pred x_R e_arg ...) (pred x_S e_arg_2 ...))
+   (ClauseOr (DirectClause (x_R e_arg ...))
+             (DirectClause (x_S e_arg_2 ...)))])
+
+(define-metafunction SmusniM3
+  nuclear-out : e e e -> e
+  [(nuclear-out e_var Entity e_body)
+   (λ (e_var :: Entity) e_body)]
+  [(nuclear-out e_var (Referents Entity) e_body)
+   (λ (e_var :: Referents Entity) e_body)])
+
+(define-metafunction SmusniM3
+  le-out : x e e -> e
+  [(le-out x_P (pure described x_P) e_property) e_property]
+  [(le-out x_P e_continuation e_body)
+   (Bind ($it :: Referents Entity)
+         (Refer
+          (λ ($x :: Referents Entity)
+            (SpeakerDescribes
+             $x (λ ($y :: Referents Entity) (x_P $y)))))
+     e_body)])
+
+(define-metafunction SmusniM3
+  threshold-out : e e e -> e
+  [(threshold-out many e_P e_Q)
+   (Bind ($n :: Natural)
+         (Vague (AdmissibleThreshold ManyK e_P))
+     (Assert (AtLeast $n e_P e_Q)))]
+  [(threshold-out too-many e_P e_Q)
+   (Bind ($purpose :: Referents Entity) (Context)
+         ($n :: Natural)
+         (Vague (AdmissibleThreshold TooManyK e_P $purpose))
+     (Assert (MoreThan $n e_P e_Q)))])
+
+(define-metafunction SmusniM3
+  display-normalize : e e -> e
+  [(display-normalize e_rows e_term)
+   ,(let-values ([(normalized expansions)
+                  (normalize-datum (term e_term) (load-inventory)
+                                   (term e_rows))])
+      `(normalized ,normalized ,expansions))])
+
+(define-judgment-form SmusniM3
+  #:mode (m3-lower I I O)
+  #:contract (m3-lower e e e)
+
+  [(where e_out (pure-out e_kind x_P))
+   --------------------------------------------- "L0.1"
+   (m3-lower e_RR (gentufa e_parse (pure e_kind x_P)) e_out)]
+
+  [(where e_out (app* x_R (e_arg ...)))
+   --------------------------------------------- "L1.1"
+   (m3-lower e_RR (gentufa e_parse (pred x_R e_arg ...)) e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_source) e_body)
+   (where e_out (force-out e_force e_body))
+   --------------------------------------------- "L1.2"
+   (m3-lower e_RR (gentufa e_parse (force e_force e_source)) e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_source) e_body)
+   (where e_out (close-out e_mode e_body))
+   --------------------------------------------- "L1.3"
+   (m3-lower e_RR (gentufa e_parse (close e_mode e_source)) e_out)]
+
+  [(where e_out (route-out e_route))
+   --------------------------------------------- "L1.4"
+   (m3-lower e_RR (gentufa e_parse (route e_route)) e_out)]
+
+  [(where e_relation (DropPlace x_R e_label))
+   (where e_out (apply* e_relation (e_arg ...)))
+   --------------------------------------------- "L1.5"
+   (m3-lower e_RR (gentufa e_parse (drop x_R e_label e_arg ...)) e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_source) e_out)
+   --------------------------------------------- "L1.6"
+   (m3-lower e_RR (gentufa e_parse (omit e_source)) e_out)]
+
+  [--------------------------------------------- "L1.8"
+   (m3-lower e_RR (gentufa e_parse cohe)
+             (Bind ($r :: PredTerm
+                         (Row (1 (Referents Entity)) (2 (Referents Entity))))
+                   (Context)
+               (Assert (Close ($r Speaker Audience)))))]
+
+  [(where e_relation (Tanru x_M x_H))
+   (where e_out (apply* e_relation (e_arg ...)))
+   --------------------------------------------- "L1.10"
+   (m3-lower e_RR (gentufa e_parse (tanru x_M x_H e_arg ...)) e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+   --------------------------------------------- "L3.1"
+   (m3-lower e_RR (gentufa e_parse (lo x_P e_continuation))
+             (Bind ($cat :: Referents Entity)
+                   (Refer (λ ($x :: Referents Entity) (x_P $x)))
+               e_body))]
+
+  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+   (where e_out (le-out x_P e_continuation e_body))
+   --------------------------------------------- "L3.2"
+   (m3-lower e_RR (gentufa e_parse (le x_P e_continuation))
+             e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+   --------------------------------------------- "L3.3"
+   (m3-lower e_RR (gentufa e_parse (la e_name e_continuation))
+             (Bind ($alis :: Referents Entity)
+                   (Refer (λ ($x :: Referents Entity) (Named e_name $x)))
+               e_body))]
+
+  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $x))) e_Q_body)
+   --------------------------------------------- "L3.4"
+   (m3-lower e_RR (gentufa e_parse (generic x_P x_Q))
+             (Generic Typical e_P (λ ($x :: Entity) e_Q_body)))]
+
+  [--------------------------------------------- "L3.5"
+   (m3-lower e_RR (gentufa e_parse (collection-base x_P))
+             (Local (Refer (λ ($x :: Entity) (x_P $x)))))]
+
+  [(m3-lower e_RR (gentufa e_parse (collection-base x_P)) e_base)
+   --------------------------------------------- "L3.6"
+   (m3-lower e_RR (gentufa e_parse (collection-set x_P))
+             (Bind ($base :: Referents Entity) e_base
+               (Bind ($sets :: Referents (Set Entity))
+                     (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
+                 (Mention $sets))))]
+
+  [(m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_P)
+   --------------------------------------------- "L3.9"
+   (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P))
+             (SelectExactly e_n e_P))]
+
+  [(m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P)) e_selection)
+   --------------------------------------------- "L3.14"
+   (m3-lower e_RR (gentufa e_parse (luho e_n x_P))
+             (Bind ($people :: Referents Entity) (Local e_selection)
+               (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
+                     (Context (GroupBasisConstraint |lu'o| Entity) deps…)
+                 (Bind ($aggregate :: Referents (Group Entity))
+                       (Massify $κ $people)
+                   (Mention $aggregate)))))]
+
+  [(m3-lower e_RR
+             (gentufa e_parse (le x_P (pure described x_P))) e_property)
+   --------------------------------------------- "L3.15"
+   (m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_property)]
+
+  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $x))) e_Q_body)
+   --------------------------------------------- "L5.1"
+   (m3-lower e_RR (gentufa e_parse (every x_P x_Q))
+             (Every e_P (λ ($x :: Entity) e_Q_body)))]
+
+  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q $w))) e_Q_body)
+   --------------------------------------------- "L5.2"
+   (m3-lower e_RR (gentufa e_parse (cardinal e_n x_P x_Q))
+             (Bind ($w :: Referents Entity)
+                   (SelectExactly e_n e_P)
+               e_Q_body))]
+
+  [--------------------------------------------- "L5.3"
+   (m3-lower e_RR (gentufa e_parse (termset))
+             (Bind ($dogs :: Referents Entity)
+                   (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+                   ($people :: Referents Entity)
+                   (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
+               (Assert
+                (Distrib
+                 (λ ($d :: Entity)
+                   (Distrib
+                    (λ ($p :: Entity) (Close (nelci $d $p)))
+                    $people))
+                 $dogs))))]
+
+  [(m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q e_var))) e_body)
+   (where e_out (nuclear-out e_var e_type e_body))
+   --------------------------------------------- "L5.7"
+  (m3-lower e_RR (gentufa e_parse (nuclear e_var e_type x_Q))
+             e_out)]
+
+  [(where e_out (connective-out e_kind e_left e_right))
+   --------------------------------------------- "L5.8"
+   (m3-lower e_RR (gentufa e_parse
+                            (clause-connect e_kind e_left e_right))
+             e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse
+                            (clause-connect not e_source none)) e_out)
+   --------------------------------------------- "L5.9"
+   (m3-lower e_RR (gentufa e_parse (na e_source)) e_out)]
+
+  [--------------------------------------------- "L5.11"
+   (m3-lower e_RR (gentufa e_parse (scalar x_P e_arg))
+             (Bind ($d :: ContrastDomain (RowOf x_P)) (Context)
+               (Assert (Close ((Scalar OtherThan $d x_P) e_arg)))))]
+
+  [(m3-lower e_RR (gentufa e_parse
+                            (clause-connect e_kind e_left e_right)) e_clause)
+   --------------------------------------------- "L5.12"
+   (m3-lower e_RR (gentufa e_parse
+                            (sentence-connect e_kind e_left e_right))
+             e_clause)]
+
+  [--------------------------------------------- "L5.21"
+   (m3-lower e_RR (gentufa e_parse zip)
+             (ZipWith
+              (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
+              (List Speaker Audience)
+              (List Audience Speaker)))]
+
+  [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse
+                            (nuclear $w (Referents Entity) x_Q)) e_Q)
+   (where e_out (threshold-out e_kind e_P e_Q))
+   --------------------------------------------- "L5.28"
+   (m3-lower e_RR (gentufa e_parse (threshold e_kind x_P x_Q)) e_out)]
+
+  [--------------------------------------------- "L5.29"
+   (m3-lower e_RR (gentufa e_parse grade)
+             (Bind ($s :: Scale) (Context)
+                   ($reg :: Region Scale)
+                   (Vague (λ ($r :: Region Scale)
+                            (AdmissibleCutoff $s $r)))
+               (Assert (Close ((Grade barda $s $reg) That)))))] )
 
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
@@ -491,9 +769,6 @@
       (filter (lambda (name) (not (hash-has-key? fields name))) rr-field-names)
       rr-field-names))
 
-(define (rules-union . groups)
-  (remove-duplicates (append* groups)))
-
 (define (typed-lowered datum rules [inv (load-inventory)])
   (with-handlers
       ([exn:fail?
@@ -511,311 +786,156 @@
                      "produced core term has unresolved typing gaps"
                      (typing-gaps typed)))))
 
-(define (pro-sumti token)
-  (hash-ref
-   (hash "mi" 'Speaker "do" 'Audience "ti" 'This "ta" 'That "tu" 'Yonder)
-   token #f))
-
-;; L1 rule functions operate on already resolved lexical symbols and values.
-(define (rule-L1.1 relation fills) `(,relation ,@fills))
-(define (rule-L1.2 content consumer)
-  (case consumer
-    [(assert) `(Assert ,content)]
-    [(mention) `(Mention ,content)]
-    [else content]))
-(define (rule-L1.3 predication) `(Close ,predication))
-(define (rule-L1.4 relation fills) `(,relation ,@fills))
-(define (rule-L1.5 relation label) `(DropPlace ,relation ,label))
-(define (rule-L1.6) '(Context))
-(define (rule-L1.8 row-type) `(Context ,row-type))
-(define (rule-L1.10 modifier head) `(Tanru ,modifier ,head))
-
-(define (rule-L3.1 property binder body)
-  `(Bind (,binder :: Referents Entity) (Refer ,property) ,body))
-(define (rule-L3.2 reference property)
-  `(SpeakerDescribes ,reference ,property))
-(define (rule-L3.3 name reference)
-  `(Named ,name ,reference))
-(define (rule-L3.4 mode restrictor nuclear [holder #f])
-  (if holder
-      `(Generic ,mode ,holder ,restrictor ,nuclear)
-      `(Generic ,mode ,restrictor ,nuclear)))
-(define (rule-L3.5 property)
-  `(Local (Refer ,property)))
-(define (rule-L3.6-set base)
-  `(Refer (λ ($s :: Set Entity) (Close (selcmi $s ,base)))))
-(define (rule-L3.9 count property)
-  `(SelectExactly ,count ,property))
-(define (rule-L3.14-massify basis reference)
-  `(Massify ,basis ,reference))
-
-(define (rule-L5.1 restrictor nuclear) `(Every ,restrictor ,nuclear))
-(define (rule-L5.2 count restrictor nuclear)
-  `(Bind ($w :: Referents Entity)
-         (SelectExactly ,count ,restrictor)
-     (,nuclear $w)))
-(define (rule-L5.8 connective left right)
-  `(,connective ,left ,right))
-(define (rule-L5.9 clause) `(ClauseNot ,clause))
-(define (rule-L5.11 kind domain predicate)
-  `(Scalar ,kind ,domain ,predicate))
-(define (rule-L5.21-zip property left right)
-  `(ZipWith ,property ,left ,right))
-(define (rule-L5.28 threshold restrictor nuclear)
-  `(AtLeast ,threshold ,restrictor ,nuclear))
-(define (rule-L5.29 relation scale region)
-  `(Grade ,relation ,scale ,region))
-
-;; Every live fragment judgment has a stable keyed handler. Handlers exercised
-;; by the current candidates accept a fully formed rule conclusion for an
-;; isolated type/attribution test. An unformed rule remains report-only while
-;; uncalled, but its handler fails explicitly as `implementation` if invoked.
-(define formed-rule-id-set
-  (list->set
-   '("L0.1"
-     "L1.1" "L1.2" "L1.3" "L1.4" "L1.5" "L1.6" "L1.8" "L1.10"
-     "L3.1" "L3.2" "L3.3" "L3.4" "L3.5" "L3.6" "L3.9" "L3.14" "L3.15"
-     "L5.1" "L5.2" "L5.3" "L5.7" "L5.8" "L5.9" "L5.11" "L5.12"
-     "L5.21" "L5.28" "L5.29")))
-
-(define (rule-handler-ids)
-  (fragment-rule-ids))
-
-(define (rule-handler-table)
-  (for/hash ([id (in-list (rule-handler-ids))])
-    (values
-     id
-     (if (set-member? formed-rule-id-set id)
-         (lambda (payload _rr)
-           (match payload
-             [`(term ,datum) (typed-lowered datum (list id))]
-             [_ (no-lowering id 'implementation
-                             "formed rule handler needs (term datum)"
-                             payload)]))
-         (lambda (payload _rr)
-           (no-lowering id 'implementation
-                        "live fragment rule has no formed candidate handler"
-                        payload))))))
-
-(define (apply-rule-handler id payload [rr (hash)])
-  (define handler
-    (hash-ref (rule-handler-table) id
-              (lambda ()
-                (error 'apply-rule-handler "rule is outside F₀-M3: ~a" id))))
-  (handler payload rr))
-
-(define (lower-L1 tokens category fields)
+(define (parse-case->sigma parse-case)
+  (define tokens (parse-case-tokens parse-case))
+  (define category (string->symbol (hash-ref parse-case 'category)))
   (match* (tokens category)
     [((list "mi" "klama") 'sentence)
-     (typed-lowered
-      (rule-L1.2 (rule-L1.3 (rule-L1.1 'klama '(Speaker))) 'assert)
-      '("L1.1" "L1.6" "L1.3" "L1.2"))]
+     '(force assert (close shorthand (omit (pred klama Speaker))))]
     [((list "mi" "klama" "ti") 'predication)
-     (typed-lowered (rule-L1.1 'klama '(Speaker This)) '("L1.1"))]
+     '(pred klama Speaker This)]
     [((list "klama" "fe" "ti" "tu") 'predication)
-     (typed-lowered (rule-L1.4 'klama '(:2 This Yonder)) '("L1.4"))]
+     '(route (application klama :2 This Yonder))]
     [((list "klama" "fe" "ti" "tu") 'sentence)
-     (typed-lowered
-      (rule-L1.2 (rule-L1.3 (rule-L1.4 'klama '(:2 This Yonder))) 'assert)
-      '("L1.4" "L1.6" "L1.3" "L1.2"))]
+     '(force assert
+             (close shorthand
+                    (omit (route (application klama :2 This Yonder)))))]
     [((list "mi" "klama" "ti" "zi'o" "ti" "ti") 'sentence)
-     (typed-lowered
-      (rule-L1.2
-       (rule-L1.3
-        `(,(rule-L1.5 'klama 3) Speaker This This This))
-       'assert)
-      '("L1.5" "L1.3" "L1.2"))]
+     '(force assert
+             (close shorthand (drop klama 3 Speaker This This This)))]
     [((list "ti" "se" "klama" "mi") 'sentence)
-     (typed-lowered
-      (rule-L1.2 (rule-L1.3 (rule-L1.4 'klama '(Speaker This))) 'assert)
-      '("L1.4" "L1.3" "L1.2"))]
-    [((list "se" "tavla") 'selbri)
-     (typed-lowered
-      '(λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))
-      '("L1.4"))]
+     '(force assert
+             (close shorthand (route (application klama Speaker This))))]
+    [((list "se" "tavla") 'selbri) '(route (se-lambda tavla))]
     [((list "sutra" "klama") 'sentence)
-     (typed-lowered
-      (rule-L1.2
-       (rule-L1.3 `(,(rule-L1.10 'sutra 'klama) Speaker))
-       'assert)
-      '("L1.10" "L1.3" "L1.2"))]
-    [((list "mi" "co'e" "do") 'sentence)
-     (typed-lowered
-      '(Bind ($r :: PredTerm
-                  (Row (1 (Referents Entity)) (2 (Referents Entity))))
-             (Context)
-         (Assert (Close ($r Speaker Audience))))
-      '("L1.8" "L1.3" "L1.2"))]
-    [(_ _)
-     (no-lowering "M3" 'out-of-fragment
-                  "L1 stage does not own this whole parse"
-                  (list tokens category (hash-ref fields 'rows '())))]))
+     '(force assert (close shorthand (tanru sutra klama Speaker)))]
+    [((list "mi" "co'e" "do") 'sentence) 'cohe]
 
-(define (lower-L3 tokens category fields)
-  (match* (tokens category)
     [((list "lo" "mlatu" "cu" "blabi") 'sentence)
-     (typed-lowered
-      '(Bind ($cat :: Referents Entity)
-             (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-         (Assert (Close (blabi $cat))))
-      '("L3.1" "L1.3" "L1.2"))]
+     '(lo mlatu (force assert (close shorthand (pred blabi $cat))))]
     [((list "lo" "mlatu" "na" "jbena") 'sentence)
-     (typed-lowered
-      '(Bind ($cat :: Referents Entity)
-             (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-         (Assert (CloseClause (ClauseNot (DirectClause (jbena $cat))))))
-      '("L3.1" "L5.9" "L5.8" "L1.2"))]
+     '(lo mlatu (force assert (close clause (na (pred jbena $cat)))))]
     [((list "le" "mlatu" "cu" "blabi") 'sentence)
-     (typed-lowered
-      '(Bind ($it :: Referents Entity)
-             (Refer
-              (λ ($x :: Referents Entity)
-                (SpeakerDescribes
-                 $x (λ ($y :: Referents Entity) (mlatu $y)))))
-         (Assert (Close (blabi $it))))
-      '("L3.2" "L1.3" "L1.2"))]
+     '(le mlatu (force assert (close shorthand (pred blabi $it))))]
     [((list "la" ".alis." "klama") 'sentence)
-     (typed-lowered
-      '(Bind ($alis :: Referents Entity)
-             (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
-         (Assert (Close (klama $alis))))
-      '("L3.3" "L1.3" "L1.2"))]
-    [((list "lo'i" "gerku") 'utterance)
-     (typed-lowered
-      '(Bind ($base :: Referents Entity)
-             (Local (Refer (λ ($x :: Entity) (gerku $x))))
-         (Bind ($sets :: Referents (Set Entity))
-               (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
-           (Mention $sets)))
-      '("L3.5" "L3.6"))]
-    [((list "lu'o" "le" "ci" "prenu") 'utterance)
-     (typed-lowered
-      '(Bind ($people :: Referents Entity)
-             (Local
-              (SelectExactly
-               3
-               (λ ($x :: Entity)
-                 (SpeakerDescribes
-                  $x (λ ($y :: Referents Entity) (prenu $y))))))
-         (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
-               (Context (GroupBasisConstraint |lu'o| Entity) deps…)
-           (Bind ($aggregate :: Referents (Group Entity))
-                 (Massify $κ $people)
-             (Mention $aggregate))))
-      '("L3.2" "L3.9" "L3.14" "L3.15"))]
+     '(la "alis" (force assert (close shorthand (omit (pred klama $alis)))))]
+    [((list "lo'i" "gerku") 'utterance) '(collection-set gerku)]
+    [((list "lu'o" "le" "ci" "prenu") 'utterance) '(luho 3 prenu)]
     [((list "lo'e" "mlatu" "cu" "cinri") 'sentence)
-     (typed-lowered
-      '(Assert
-        (Generic Typical
-                 (λ ($x :: Entity) (mlatu $x))
-                 (λ ($x :: Entity) (Close (cinri $x)))))
-      '("L3.4" "L1.3" "L1.2"))]
-    [(_ _)
-     (no-lowering "M3" 'out-of-fragment
-                  "L3 stage does not own this whole parse"
-                  (list tokens category (hash-ref fields 'rows '())))]))
+     '(force assert (generic mlatu cinri))]
 
-(define (lower-L5 tokens category fields)
-  (match* (tokens category)
     [((list "mi" "na" "klama") 'sentence)
-     (typed-lowered
-      '(Assert
-        (CloseClause
-         (ActualClause (ClauseNot (DirectClause (klama Speaker))))))
-      '("L5.9" "L5.8" "L1.1" "L1.2"))]
+     '(force assert (close actual (na (pred klama Speaker))))]
     [((list "mi" "klama" ".ije" "do" "stali") 'sentence)
-     (typed-lowered
-      '(Assert
-        (CloseClause
-         (ActualClause
-          (ClauseAnd (DirectClause (klama Speaker))
-                     (DirectClause (stali Audience))))))
-      '("L5.12" "L5.8" "L1.1" "L1.2"))]
+     '(force assert
+             (close actual
+                    (sentence-connect and
+                                      (pred klama Speaker)
+                                      (pred stali Audience))))]
     [((list "mi" "klama" ".ija" "do" "stali") 'sentence)
-     (typed-lowered
-      '(Assert
-        (CloseClause
-         (ActualClause
-          (ClauseOr (DirectClause (klama Speaker))
-                    (DirectClause (stali Audience))))))
-      '("L5.12" "L5.8" "L1.1" "L1.2"))]
+     '(force assert
+             (close actual
+                    (sentence-connect or
+                                      (pred klama Speaker)
+                                      (pred stali Audience))))]
     [((list "ro" "gerku" "cu" "blabi") 'sentence)
-     (typed-lowered
-      '(Assert
-        (Every (λ ($x :: Entity) (gerku $x))
-               (λ ($x :: Entity) (Close (blabi $x)))))
-      '("L5.1" "L5.7" "L1.3" "L1.2"))]
+     '(force assert (every gerku blabi))]
     [((list "ci" "gerku" "ce'e" "re" "prenu" "cu" "nelci") 'sentence)
-     (typed-lowered
-      '(Bind ($dogs :: Referents Entity)
-             (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-             ($people :: Referents Entity)
-             (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
-         (Assert
-          (Distrib
-           (λ ($d :: Entity)
-             (Distrib
-              (λ ($p :: Entity) (Close (nelci $d $p)))
-              $people))
-           $dogs)))
-      '("L5.3" "L5.2" "L1.3" "L1.2"))]
+     '(termset)]
     [((list "so'i" "prenu" "cu" "klama") 'sentence)
-     (typed-lowered
-      '(Bind ($n :: Natural)
-             (Vague (AdmissibleThreshold
-                     ManyK (λ ($x :: Entity) (prenu $x))))
-         (Assert
-          (AtLeast $n
-                   (λ ($x :: Entity) (prenu $x))
-                   (λ ($w :: Referents Entity) (Close (klama $w))))))
-      '("L5.28" "L5.2" "L1.3" "L1.2"))]
-    [((list "ta" "na'e" "melbi") 'sentence)
-     (typed-lowered
-      '(Bind ($d :: ContrastDomain (RowOf melbi)) (Context)
-         (Assert (Close ((Scalar OtherThan $d melbi) That))))
-      '("L5.11" "L1.3" "L1.2"))]
-    [((list "ta" "barda") 'sentence)
-     (typed-lowered
-      '(Bind ($s :: Scale) (Context)
-             ($reg :: Region Scale)
-             (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
-         (Assert (Close ((Grade barda $s $reg) That))))
-      '("L5.29" "L1.3" "L1.2"))]
+     '(threshold many prenu klama)]
+    [((list "ta" "na'e" "melbi") 'sentence) '(scalar melbi That)]
+    [((list "ta" "barda") 'sentence) 'grade]
     [((list "du'e" "gerku" "cu" "klama") 'sentence)
-     (typed-lowered
-      '(Bind ($purpose :: Referents Entity) (Context)
-             ($n :: Natural)
-             (Vague
-              (AdmissibleThreshold
-               TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
-         (Assert
-          (MoreThan $n
-                    (λ ($x :: Entity) (gerku $x))
-                    (λ ($w :: Referents Entity) (Close (klama $w))))))
-      '("L5.28" "L5.2" "L1.3" "L1.2"))]
+     '(threshold too-many gerku klama)]
     [((list "ci" "gerku" "cu" "bajra") 'content)
-     (typed-lowered
-      '(Bind ($w :: Referents Entity)
-             (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-         (Close (bajra $w)))
-      '("L5.2" "L1.3"))]
+     '(cardinal 3 gerku bajra)]
     [((list "mi" "fa'u" "do" "tavla" "do" "fa'u" "mi") 'content)
-     (typed-lowered
-      '(ZipWith
-        (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
-        (List Speaker Audience)
-        (List Audience Speaker))
-      '("L5.21" "L1.3"))]
+     'zip]
     [(_ _)
      (no-lowering "M3" 'out-of-fragment
-                  "L5 stage does not own this whole parse"
-                  (list tokens category (hash-ref fields 'rows '())))]))
+                  "no Redex source view for the whole parse"
+                  (list tokens category))]))
 
-(define (try-next result thunk)
-  (if (and (no-lowering? result)
-           (eq? (no-lowering-cause result) 'out-of-fragment))
-      (thunk)
-      result))
+(define (rr->redex rr)
+  (define fields (rr-fields-value rr))
+  `(rr ,@(for/list ([name (in-list rr-field-names)])
+           `(,name ,(hash-ref fields name (lambda () 'missing))))))
+
+(define (parse-evidence parse-case)
+  `(parse
+    (tokens ,@(parse-case-tokens parse-case))
+    (variants ,@(sort (set->list (parse-case-variants parse-case)) symbol<?))))
+
+(define (derivation-rule-ids derivation)
+  (append (if (derivation-name derivation)
+              (list (derivation-name derivation)) '())
+          (append-map derivation-rule-ids (derivation-subs derivation))))
+
+(define (typed-output-datum? datum [inv (load-inventory)])
+  (with-handlers ([exn:fail? (lambda (_) #f)])
+    (define result (infer-core (datum->core datum) (hash) inv))
+    (null? (typing-gaps result))))
+
+(define (derivable-outputs-type? rr-term sigma)
+  (define input `(gentufa generated ,sigma))
+  (define derivations (build-derivations (m3-lower ,rr-term ,input e_out)))
+  (and (pair? derivations)
+       (for/and ([derivation (in-list derivations)])
+         (typed-output-datum? (fourth (derivation-term derivation))))))
+
+(define (fixture-redex-check rr sigma)
+  (define rr-term (rr->redex rr))
+  (eq? #t
+       (redex-check
+        SmusniM3 e_source
+        (derivable-outputs-type? rr-term (term e_source))
+        #:prepare (lambda (_generated) sigma)
+        #:attempts 1
+        #:print? #f)))
+
+(define (generated-redex-check [attempts 20])
+  (with-handlers
+      ([exn:fail?
+        (lambda (exception)
+          (values 'unavailable 0 (exn-message exception)))])
+    (define result
+      (redex-check
+       SmusniM3
+       #:satisfying (m3-lower e_RR e_source e_output)
+       (typed-output-datum? (term e_output))
+       #:attempts attempts
+       #:print? #f))
+    (if (eq? result #t)
+        (values 'passed attempts #f)
+        (values 'counterexample attempts result))))
+
+(define (redex-lower parse-case rr)
+  (define sigma (parse-case->sigma parse-case))
+  (if (no-lowering? sigma)
+      sigma
+      (let* ([rr-term (rr->redex rr)]
+             [input `(gentufa ,(parse-evidence parse-case) ,sigma)]
+             [derivations (build-derivations (m3-lower ,rr-term ,input e_out))])
+        (cond
+          [(null? derivations)
+           (no-lowering "M3" 'implementation
+                        "Redex judgment has no derivation for parsed source view"
+                        sigma)]
+          [else
+           (define outputs
+             (remove-duplicates
+              (for/list ([derivation (in-list derivations)])
+                (fourth (derivation-term derivation)))))
+           (if (not (= (length outputs) 1))
+               (no-lowering "M3" 'implementation
+                            "Redex judgment derived multiple distinct outputs"
+                            outputs)
+               (let ([typed (typed-lowered
+                             (first outputs)
+                             (remove-duplicates
+                              (append-map derivation-rule-ids derivations)))])
+                 typed))]))))
 
 (define (lower parse-case rr)
   (define fields (rr-fields-value rr))
@@ -837,14 +957,7 @@
              (no-lowering "M3" 'implementation
                           "could not read gentufa parse case"
                           (exn-message exception)))])
-       (define tokens (parse-case-tokens parse-case))
-       (define category (string->symbol (hash-ref parse-case 'category)))
-       (try-next
-        (lower-L1 tokens category fields)
-        (lambda ()
-          (try-next
-           (lower-L3 tokens category fields)
-           (lambda () (lower-L5 tokens category fields))))))]))
+       (redex-lower parse-case rr))]))
 
 (define (core->plain node)
   (cond [(core-atom? node) (core-atom-value node)]
@@ -1003,76 +1116,68 @@
               walked)])]))
   (values (walk datum) (reverse expansions)))
 
-(define (alpha-normalize datum)
-  (define counter 0)
-  (define (fresh)
-    (set! counter (add1 counter))
-    (string->symbol (format "$α~a" counter)))
-  (define (rename-atom value environment)
-    (if (symbol? value) (hash-ref environment value value) value))
-  (define (binder-group group environment)
-    (define separator (index-of group '::))
-    (unless separator (error 'alpha-normalize "malformed binder group: ~e" group))
-    (define variables (take group separator))
-    (define types (drop group separator))
-    (define next environment)
-    (define normalized-variables
-      (for/list ([variable (in-list variables)])
-        (define replacement (fresh))
-        (set! next (hash-set next variable replacement))
-        replacement))
-    (values `(,@normalized-variables ,@(map (lambda (v) (walk v environment)) types))
-            next))
-  (define (telescope tel environment)
-    (if (and (pair? tel) (list? (first tel)))
-        (let loop ([groups tel] [env environment] [found '()])
-          (if (null? groups)
-              (values (reverse found) env)
-              (let-values ([(group next) (binder-group (car groups) env)])
-                (loop (cdr groups) next (cons group found)))))
-        (binder-group tel environment)))
-  (define (walk value environment)
+(define (binder-pairs binder)
+  (define groups
+    (if (and (pair? binder) (list? (first binder))) binder (list binder)))
+  (append*
+   (for/list ([group (in-list groups)])
+     (define separator (index-of group '::))
+     (unless separator
+       (error 'core->binding-datum "malformed binder group: ~e" group))
+     (define variables (take group separator))
+     (define type-items (drop group (add1 separator)))
+     (define type (if (= (length type-items) 1) (first type-items) type-items))
+     (for/list ([variable (in-list variables)]) `(,variable ,type)))))
+
+(define (core->binding-datum datum)
+  (define (walk value)
     (cond
-      [(not (list? value)) (rename-atom value environment)]
+      [(not (list? value)) value]
       [else
        (case (datum-head value)
          [(λ)
           (match value
-            [`(λ ,tel ,body)
-             (define-values (normalized-tel next) (telescope tel environment))
-             `(λ ,normalized-tel ,(walk body next))]
-            [_ (map (lambda (item) (walk item environment)) value)])]
+            [`(λ ,binder ,body) `(λ ,(binder-pairs binder) ,(walk body))]
+            [_ (map walk value)])]
          [(Let)
           (match value
             [`(Let ,binder ,rhs ,body)
-             (define-values (normalized-binder next)
-               (binder-group binder environment))
-             `(Let ,normalized-binder ,(walk rhs environment) ,(walk body next))]
-            [_ (map (lambda (item) (walk item environment)) value)])]
+             (define pairs (binder-pairs binder))
+             (unless (= (length pairs) 1)
+               (error 'core->binding-datum "Let binds one variable"))
+             `(Let ,(first pairs) ,(walk rhs) ,(walk body))]
+            [_ (map walk value)])]
          [(Bind)
           (define pieces (rest value))
           (define body (last pieces))
-          (define pairs (drop-right pieces 1))
-          (let loop ([remaining pairs] [env environment] [found '()])
-            (if (null? remaining)
-                `(Bind ,@(reverse found) ,(walk body env))
-                (let-values ([(normalized-binder next)
-                              (binder-group (first remaining) env)])
-                  (loop (drop remaining 2) next
-                        (cons (walk (second remaining) env)
-                              (cons normalized-binder found))))))]
-         [else (map (lambda (item) (walk item environment)) value)])]))
-  (walk datum (hash)))
+          (define alternating (drop-right pieces 1))
+          (define grouped
+            (for/list ([index (in-range 0 (length alternating) 2)])
+              (define pairs (binder-pairs (list-ref alternating index)))
+              (unless (= (length pairs) 1)
+                (error 'core->binding-datum "Bind group binds one variable"))
+              (match-define (list variable type) (first pairs))
+              `(,variable ,type ,(walk (list-ref alternating (add1 index))))))
+          `(Bind ,grouped ,(walk body))]
+         [else (map walk value)])]))
+  (walk datum))
 
-(define (normalize-core term rr [inv (load-inventory)])
-  (define datum (if (or (core-list? term) (core-atom? term))
-                    (core->plain term)
-                    term))
+(define (redex-alpha-equivalent? left right)
+  (alpha-equivalent? SmusniBinding
+                     (core->binding-datum left)
+                     (core->binding-datum right)))
+
+(define (normalize-core core-term rr [inv (load-inventory)])
+  (define datum (if (or (core-list? core-term) (core-atom? core-term))
+                    (core->plain core-term)
+                    core-term))
   (define fields (rr-fields-value rr))
   (define rows
     (if fields (hash-ref fields 'rows (lambda () '())) '()))
-  (define-values (expanded expansions) (normalize-datum datum inv rows))
-  (normalization (alpha-normalize expanded) expansions))
+  (match (term (display-normalize ,rows ,datum))
+    [`(normalized ,expanded ,expansions)
+     (normalization expanded expansions)]
+    [other (error 'normalize-core "Redex normalizer returned ~e" other)]))
 
 (define (candidate-fence-map)
   (for/hash ([item (in-list
@@ -1167,18 +1272,15 @@
           (remove-duplicates
            (append (normalization-expansions produced-normal)
                    (normalization-expansions expected-normal))))
-        (define reported-rules
-          (if (member "bare lexical property (L0.1)" expansions)
-              (remove-duplicates (cons "L0.1" (lowered-rules result)))
-              (lowered-rules result)))
-        (if (equal? (normalization-datum produced-normal)
-                    (normalization-datum expected-normal))
+        (if (redex-alpha-equivalent?
+             (normalization-datum produced-normal)
+             (normalization-datum expected-normal))
             (case-report source ordinal index 'in-fragment/matched #f
-                         reported-rules expansions "matched"
+                         (lowered-rules result) expansions "matched"
                          (normalization-datum produced-normal)
                          (normalization-datum expected-normal))
             (case-report source ordinal index 'in-fragment/mismatch #f
-                         reported-rules expansions "normalized terms differ"
+                         (lowered-rules result) expansions "normalized terms differ"
                          (normalization-datum produced-normal)
                          (normalization-datum expected-normal)))]
        [else
@@ -1215,6 +1317,8 @@
   (define fences (candidate-fence-map))
   (define reports '())
   (define fence-reports '())
+  (define fixture-property-total 0)
+  (define fixture-property-failures '())
   (for ([candidate (in-list (lowering-manifest-candidates manifest))])
     (define key (cons (lowering-candidate-source candidate)
                       (lowering-candidate-ordinal candidate)))
@@ -1227,7 +1331,19 @@
                  [parse-case (in-list parse-cases)]
                  [rr-case (in-list rr-cases)]
                  [target (in-list targets)])
-        (run-candidate-case candidate candidate-case parse-case rr-case target inv)))
+        (define report
+          (run-candidate-case candidate candidate-case parse-case rr-case target inv))
+        (unless (lowering-case-unresolved candidate-case)
+          (define sigma (parse-case->sigma parse-case))
+          (unless (no-lowering? sigma)
+            (set! fixture-property-total (add1 fixture-property-total))
+            (unless (fixture-redex-check rr-case sigma)
+              (set! fixture-property-failures
+                    (cons (case-key (lowering-candidate-source candidate)
+                                    (lowering-candidate-ordinal candidate)
+                                    (lowering-case-index candidate-case))
+                          fixture-property-failures)))))
+        report))
     (set! reports (append reports current))
     (set! fence-reports
           (append fence-reports
@@ -1246,12 +1362,18 @@
     (for/list ([rule (in-list (fragment-rule-ids manifest))]
                #:unless (set-member? matched-rules rule))
       rule))
+  (define-values (generated-status generated-attempts generated-detail)
+    (generated-redex-check))
   (define failures?
     (for/or ([candidate (in-list (lowering-manifest-candidates manifest))]
              [fence-report (in-list fence-reports)])
       (for/or ([candidate-case (in-list (lowering-candidate-cases candidate))]
                [report (in-list (fence-report-cases fence-report))])
         (case-failure? report candidate-case))))
+  (set! failures?
+        (or failures?
+            (pair? fixture-property-failures)
+            (eq? generated-status 'counterexample)))
   (when print?
     (printf "F₀-M3: live L1, L3, L5 (+ L0.1) — ~a lowering judgments; fixtures are not exhaustive\n"
             (length (fragment-rule-ids manifest)))
@@ -1271,7 +1393,24 @@
                      reports)))
     (printf "lowering formed coverage: ~a/~a rules; unformed=~a\n"
             (set-count matched-rules) (length (fragment-rule-ids manifest))
-            (string-join unformed ",")))
+            (string-join unformed ","))
+    (printf "redex-check fixture derivations: ~a/~a outputs type-check~a\n"
+            (- fixture-property-total (length fixture-property-failures))
+            fixture-property-total
+            (if (null? fixture-property-failures)
+                ""
+                (format "; failed=~a"
+                        (string-join (reverse fixture-property-failures) ","))))
+    (case generated-status
+      [(passed)
+       (printf "redex-check satisfying generation: passed ~a attempts\n"
+               generated-attempts)]
+      [(counterexample)
+       (printf "redex-check satisfying generation: COUNTEREXAMPLE after ~a attempts: ~e\n"
+               generated-attempts generated-detail)]
+      [else
+       (printf "redex-check satisfying generation: unavailable (fixture-only run): ~a\n"
+               generated-detail)]))
   (values (not failures?) reports fence-reports))
 
 (module+ main

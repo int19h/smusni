@@ -11,7 +11,8 @@
          read-core-specimen
          core->datum
          validate-core-form
-         SmusniSurface)
+         SmusniSurface
+         SmusniBinding)
 
 (struct core-atom (value source line column position span) #:transparent)
 (struct core-list (elements source line column position span) #:transparent)
@@ -19,6 +20,23 @@
 (define-language SmusniSurface
   [atom variable-not-otherwise-mentioned natural string]
   [term atom (node term ...)])
+
+;; Canonical derived representation for Redex binding-aware comparison. The
+;; concrete reader retains the document's flat binder notation; M3 translates
+;; it to this grouped shape before calling `alpha-equivalent?`.
+(define-language SmusniBinding
+  [x variable-not-otherwise-mentioned]
+  [τ any]
+  [a variable-not-otherwise-mentioned natural string]
+  [t a
+     (λ ((x τ) ...) t)
+     (Let (x τ) t t)
+     (Bind ((x τ t) ...) t)
+     (t t ...)]
+  #:binding-forms
+  (λ ((x τ) ...) t #:refers-to (shadow x ...))
+  (Let (x τ) t_rhs t_body #:refers-to x)
+  (Bind ((x τ t_rhs) ...) t_body #:refers-to (shadow x ...)))
 
 (define (syntax-location stx)
   (values (syntax-source stx)
