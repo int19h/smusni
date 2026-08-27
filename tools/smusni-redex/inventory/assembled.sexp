@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "8764c5af8ef233f988b4e2d11cd8b967b149bd98")
+ (core-sha1 "ca7a5283d9dd836bc55600a567a199342b047e70")
  (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature
@@ -59,6 +59,7 @@
   AttachedAddress
   AttachedDisplay
   Audience
+  CurrentToken
   DoOOthers
   Hearsay
   Host
@@ -144,6 +145,7 @@
   LetteralSign
   List
   Local
+  LocutionOf
   Massify
   MeiRel
   Mention
@@ -177,6 +179,7 @@
   SetOf
   Sign
   Some
+  SpeakerDescribes
   SpeakerOf
   StateClause
   StructuredQuote

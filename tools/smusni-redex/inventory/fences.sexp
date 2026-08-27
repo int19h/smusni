@@ -68,7 +68,7 @@
  (fence "samples.md" 21 specimen "2876852d13a2e58a91e2a64a38a429d66119040d"
         (origin "surface")
         (rules "L3.1" "L5.9"))
- (fence "samples.md" 22 specimen "68fd3b480a697f1f7f5d93e6ad02cbfd92541bab"
+ (fence "samples.md" 22 specimen "00fe2e7f046eae70ff325b29c40883a520b61c01"
         (origin "surface")
         (rules "L3.2"))
  (fence "samples.md" 23 specimen "51894d5541b6381e478bca7b33a039b6f96feab4"
@@ -107,10 +107,10 @@
   schema
   "be009658e693cb9135c1a2af639e731f0bda6b86"
   (note "joi lowering schema with an explicit dependency-profile metavariable"))
- (fence "samples.md" 33 specimen "0053b0ad0158260b7a1f5c1863a3a60b7d695ead"
+ (fence "samples.md" 33 specimen "b9f173b27ac4961fb1b1b8325c921a535e7a7266"
         (origin "surface")
         (rules "L3.12" "L3.9" "L3.15" "L3.2" "L12.7"))
- (fence "samples.md" 34 specimen "3fb669c310769bfcc41ab0e61e89c0ad41147dd3"
+ (fence "samples.md" 34 specimen "0381ec3ed5e5eefb48e813e4d611efdafc4c7e78"
         (origin "surface")
         (rules "L3.14" "L3.2" "L3.9" "L3.15"))
  (fence "samples.md" 35 specimen "096965489fcedaa8d5f2785b3fb7bd0ab3f05100"
@@ -122,13 +122,13 @@
  (fence "samples.md" 37 specimen "ccf68ce3fb78ffc5ac02f46b6273afaf35e01275"
         (origin "surface")
         (rules "L4.1"))
- (fence "samples.md" 38 specimen "5af448ae9b9bd7501e692d569c52f597fe7ee753"
+ (fence "samples.md" 38 specimen "837486deebfcfd483ca50875b4cfd0d88d8902d6"
         (origin "surface")
         (rules "L4.3"))
  (fence "samples.md" 39 specimen "bf1bff37b3eff8fbcd7f2aea46b3fa08def64d3a"
         (origin "surface")
         (rules "L4.2"))
- (fence "samples.md" 40 specimen "dac8ad12b46365a0c1d8f1960c64873de7205e78"
+ (fence "samples.md" 40 specimen "31905249109a13167a5b4ae9dd36e8fb1445d03f"
         (origin "surface")
         (rules "L4.4"))
  (fence "samples.md" 41 specimen "e5727916b51b996f029d9a75c1165b472e38580f"

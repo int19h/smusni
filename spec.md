@@ -2931,24 +2931,15 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   declares a unit profile, P already has §10's `CoveredBy` plural extension;
   collective, kind-like, and substance modes use their own declared lexical
   extensions.
-- **L3.2** `le P` → `Refer` via `skicu(Speaker, ·, Audience, P)` with the
-  anchoring clause — the describing event is this utterance's own locution.
-  The anchored reference property, in full, conjoins the locution fact at the
-  utterance's own token u₀ (the `dei` value, §7.4):
-
-  ```text
-  {λ [$r :: Referents Entity]
-    (∃ {λ [$e :: Referents Locution]
-      (∧ (LocutionOf $e u₀)
-         (skicu :1 Speaker :2 $r :3 Audience :4 P :Eventuality $e))})}
-  ```
-
-  for which `(Close (skicu Speaker $r Audience P))` is the **licensed display
-  abbreviation** (P10; the samples book's brief spelling) — an abbreviation of
-  this term, not a local reinterpretation of `Close` — and the speaker's
-  commitment that the audience can identify the referent is a cooperative-use
-  commitment stated here in prose, not machinery; non-veridical,
-  speaker-identifying.
+- **L3.2** `le P` → `Refer` through the defined form `SpeakerDescribes`
+  (§12): the reference property is `{λ [$r :: Referents Entity]
+  (SpeakerDescribes $r P)}`, whose definition anchors the describing event to
+  this utterance's own locution — the locution fact holds at the utterance's
+  own token `CurrentToken` (the `dei` value, §7.4). One spelling, one
+  denotation: `le` specimens display `SpeakerDescribes` itself, never a
+  weaker core term standing in for it (#41). The speaker's commitment that
+  the audience can identify the referent is a cooperative-use commitment
+  stated here in prose, not machinery; non-veridical, speaker-identifying.
 - **L3.3** `la N` → `Refer` via naming (`Named`/`NameSign`).
 - **L3.4** `lo'e P`/`le'e P` → `Generic(Typical|Stereotypical, [Speaker], P,
   ·)` at their predication (§5.8).
@@ -3644,6 +3635,29 @@ so the `fa'u` specimen expands completely:
 ```
 
 (`Holds`, `Reify`'s primitive inverse, is declared with it in §9.1.)
+
+**Speaker description** (`le`; P10, L3.2). The description relation is
+the lexical `skicu` (official x4 the description property); the defined
+form fixes the describing event as this utterance's own locution:
+
+```text
+LocutionOf : Referents<Locution> × Referents<UtteranceToken> → Content
+                ; the token's uttering event (§7.4's entry predicate)
+(SpeakerDescribes r P) : Content
+   ; r : Referents<T>, T ≤ Entity — the described reference (a member
+   ; lifts to its singleton, §3.2); P : EFn<(Referents<T>), Content> —
+   ; the description property, handed to skicu's x4 as a value, so the
+   ; form is pure whatever P's arrow
+(SpeakerDescribes r P) ≝
+  (∃ {λ [$e :: Referents Locution]
+    (∧ (LocutionOf $e CurrentToken)
+       (skicu Speaker r Audience P :Eventuality $e))})
+```
+
+The form is the term: no other spelling abbreviates it (§2), which is why
+the samples book displays it verbatim. `voi` (L4.3) uses the
+audience-deleted `skicu` under ordinary `Close` and does not go through
+this form.
 
 **Temporal incidence** (ROI's interface; P35). Declared:
 

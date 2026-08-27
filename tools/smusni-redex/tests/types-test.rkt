@@ -613,3 +613,32 @@
        (Mention $r)}")))
 
 (displayln "typing tests: ok")
+
+;; #41 item 1: the le description is the §12 defined form SpeakerDescribes —
+;; pure at both levels, and its written-out definition types the same way.
+(define le-property "{λ [$y :: Referents Entity] (mlatu $y)}")
+(define described-reference
+  (infer-text (format "{λ [$x :: Referents Entity] (SpeakerDescribes $x ~a)}" le-property)))
+(check-equal? (typing-type described-reference) '(Fn ((Referents Entity)) Content))
+(check-true (pure-typing? described-reference))
+(define described-member
+  (infer-text (format "{λ [$x :: Entity] (SpeakerDescribes $x ~a)}" le-property)))
+(check-equal? (typing-type described-member) '(Fn (Entity) Content))
+(check-equal?
+ (typing-type
+  (infer-text
+   (format "{λ [$x :: Referents Entity]
+              (∃ {λ [$e :: Referents Locution]
+                (∧ (LocutionOf $e CurrentToken)
+                   (skicu Speaker $x Audience ~a :Eventuality $e))})}" le-property)))
+ '(Fn ((Referents Entity)) Content))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    (format "{Bind [$people :: Referents Entity]
+               (Local (SelectExactly 3 {λ [$x :: Entity] (SpeakerDescribes $x ~a)}))
+             (Mention $people)}" le-property))))
+(check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker)"))))
+(check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker Audience)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf Speaker CurrentToken)"))))
+(check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken CurrentToken)"))))

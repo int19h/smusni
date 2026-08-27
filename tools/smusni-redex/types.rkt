@@ -1192,6 +1192,35 @@
     [(member head '(Tanru Scalar Grade JaiRaise))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
      (merge-results `(PredTerm ,head 0 #f) results)]
+    [(eq? head 'LocutionOf)
+     (unless (= (length arguments) 2)
+       (raise-type node "LocutionOf takes a locution reference and an utterance token"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (ensure-compatible (first arguments) (typing-type (first results))
+                        '(Referents Locution))
+     (ensure-compatible (second arguments) (typing-type (second results))
+                        '(Referents UtteranceToken))
+     (merge-results 'Content results)]
+    [(eq? head 'SpeakerDescribes)
+     ;; §12: (SpeakerDescribes r P) ≝ (∃ {λ [$e :: Referents Locution]
+     ;;   (∧ (LocutionOf $e CurrentToken) (skicu Speaker r Audience P :Eventuality $e))})
+     ;; Every skicu place is filled and P is handed to x4 as a value, so the
+     ;; form is pure whatever P's arrow; r lifts to its singleton reference.
+     (unless (= (length arguments) 2)
+       (raise-type node "SpeakerDescribes takes the described reference and a description property"))
+     (define reference (infer-core (first arguments) env inv))
+     (define property (infer-core (second arguments) env inv))
+     (ensure-compatible (first arguments) (typing-type reference) '(Referents Entity))
+     (match (typing-type property)
+       [`(,arrow (,domain) Content)
+        #:when (and (member arrow '(Fn EFn))
+                    (type-compatible? domain '(Referents Entity)))
+        (void)]
+       [other
+        (raise-type (second arguments)
+                    "SpeakerDescribes description property must be a unary property of a reference, got ~e"
+                    other)])
+     (merge-results 'Content (list reference property))]
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold
                           MetalinguisticallyDefective Contrast JaiRoleAdmissible
