@@ -29,6 +29,8 @@
          validate-lowering-fixtures!
          refresh-parses!
          fragment-rule-ids
+         datum->core
+         parse-case-tokens
          lower)
 
 (define-runtime-path tool-dir ".")
@@ -360,12 +362,143 @@
     (load-rr-fixture candidate inv))
   (void))
 
-;; Filled in by the rule stages. Keeping the result boundary executable in the
-;; fixture stage prevents later implementations from using an error term.
-(define (lower parse rr)
-  (no-lowering "M3" 'implementation
-               "lowering rule stages are not installed"
-               (list parse rr)))
+(define (datum->core datum [source 'lowering])
+  (define (walk value)
+    (if (list? value)
+        (core-list (map walk value) source #f #f #f #f)
+        (core-atom value source #f #f #f #f)))
+  (define ast (walk datum))
+  (validate-core-form ast)
+  ast)
+
+(define (parse-case-tokens parse-case)
+  (define surface (json-ref parse-case 'surface 'parse-case-tokens))
+  (unless (string? surface)
+    (error 'parse-case-tokens "case has no surface string"))
+  (define raw (json-ref parse-case 'parse 'parse-case-tokens))
+  (unless (and (hash? raw) (hash-has-key? raw 'RegularText))
+    (error 'parse-case-tokens "case is not a gentufa RegularText parse"))
+  (string-split surface))
+
+(define (rr-fields-value rr)
+  (cond [(rr-case? rr) (rr-case-fields rr)]
+        [(hash? rr) rr]
+        [else #f]))
+
+(define (missing-rr-fields fields)
+  (if fields
+      (filter (lambda (name) (not (hash-has-key? fields name))) rr-field-names)
+      rr-field-names))
+
+(define (rules-union . groups)
+  (remove-duplicates (append* groups)))
+
+(define (typed-lowered datum rules [inv (load-inventory)])
+  (with-handlers
+      ([exn:fail?
+        (lambda (exception)
+          (no-lowering (if (null? rules) "M3" (last rules))
+                       'implementation
+                       "produced core term does not type-check"
+                       (exn-message exception)))])
+    (define ast (datum->core datum))
+    (define typed (infer-core ast (hash) inv))
+    (if (null? (typing-gaps typed))
+        (lowered ast rules)
+        (no-lowering (if (null? rules) "M3" (last rules))
+                     'implementation
+                     "produced core term has unresolved typing gaps"
+                     (typing-gaps typed)))))
+
+(define (pro-sumti token)
+  (hash-ref
+   (hash "mi" 'Speaker "do" 'Audience "ti" 'This "ta" 'That "tu" 'Yonder)
+   token #f))
+
+;; L1 rule functions operate on already resolved lexical symbols and values.
+(define (rule-L1.1 relation fills) `(,relation ,@fills))
+(define (rule-L1.2 content consumer)
+  (case consumer
+    [(assert) `(Assert ,content)]
+    [(mention) `(Mention ,content)]
+    [else content]))
+(define (rule-L1.3 predication) `(Close ,predication))
+(define (rule-L1.4 relation fills) `(,relation ,@fills))
+(define (rule-L1.5 relation label) `(DropPlace ,relation ,label))
+(define (rule-L1.6) '(Context))
+(define (rule-L1.8 row-type) `(Context ,row-type))
+(define (rule-L1.10 modifier head) `(Tanru ,modifier ,head))
+
+(define (lower-L1 tokens category fields)
+  (match* (tokens category)
+    [((list "mi" "klama") 'sentence)
+     (typed-lowered
+      (rule-L1.2 (rule-L1.3 (rule-L1.1 'klama '(Speaker))) 'assert)
+      '("L1.1" "L1.6" "L1.3" "L1.2"))]
+    [((list "mi" "klama" "ti") 'predication)
+     (typed-lowered (rule-L1.1 'klama '(Speaker This)) '("L1.1"))]
+    [((list "klama" "fe" "ti" "tu") 'predication)
+     (typed-lowered (rule-L1.4 'klama '(:2 This Yonder)) '("L1.4"))]
+    [((list "klama" "fe" "ti" "tu") 'sentence)
+     (typed-lowered
+      (rule-L1.2 (rule-L1.3 (rule-L1.4 'klama '(:2 This Yonder))) 'assert)
+      '("L1.4" "L1.6" "L1.3" "L1.2"))]
+    [((list "mi" "klama" "ti" "zi'o" "ti" "ti") 'sentence)
+     (typed-lowered
+      (rule-L1.2
+       (rule-L1.3
+        `(,(rule-L1.5 'klama 3) Speaker This This This))
+       'assert)
+      '("L1.5" "L1.3" "L1.2"))]
+    [((list "ti" "se" "klama" "mi") 'sentence)
+     (typed-lowered
+      (rule-L1.2 (rule-L1.3 (rule-L1.4 'klama '(Speaker This))) 'assert)
+      '("L1.4" "L1.3" "L1.2"))]
+    [((list "se" "tavla") 'selbri)
+     (typed-lowered
+      '(λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))
+      '("L1.4"))]
+    [((list "sutra" "klama") 'sentence)
+     (typed-lowered
+      (rule-L1.2
+       (rule-L1.3 `(,(rule-L1.10 'sutra 'klama) Speaker))
+       'assert)
+      '("L1.10" "L1.3" "L1.2"))]
+    [((list "mi" "co'e" "do") 'sentence)
+     (typed-lowered
+      '(Bind ($r :: PredTerm
+                  (Row (1 (Referents Entity)) (2 (Referents Entity))))
+             (Context)
+         (Assert (Close ($r Speaker Audience))))
+      '("L1.8" "L1.3" "L1.2"))]
+    [(_ _)
+     (no-lowering "M3" 'out-of-fragment
+                  "L1 stage does not own this whole parse"
+                  (list tokens category (hash-ref fields 'rows '())))]))
+
+(define (lower parse-case rr)
+  (define fields (rr-fields-value rr))
+  (define missing (missing-rr-fields fields))
+  (cond
+    [(pair? missing)
+     (no-lowering "M3" 'rr-missing
+                  "required RR fields are absent" missing)]
+    [(not (hash? parse-case))
+     (no-lowering "M3" 'implementation
+                  "lower expects one parse-case JSON object" parse-case)]
+    [(not (string? (hash-ref parse-case 'surface #f)))
+     (no-lowering "M3" 'rule-underspecified
+                  "candidate has no Lojban surface parse" #f)]
+    [else
+     (with-handlers
+         ([exn:fail?
+           (lambda (exception)
+             (no-lowering "M3" 'implementation
+                          "could not read gentufa parse case"
+                          (exn-message exception)))])
+       (lower-L1 (parse-case-tokens parse-case)
+                 (string->symbol (hash-ref parse-case 'category))
+                 fields))]))
 
 (module+ main
   (define action 'check)

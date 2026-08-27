@@ -3,7 +3,8 @@
 (require rackunit
          racket/list
          racket/set
-         "../lower.rkt")
+         "../lower.rkt"
+         "../syntax.rkt")
 
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
@@ -61,6 +62,66 @@
 (define absent
   (lower 'parse 'rr))
 (check-true (no-lowering? absent))
-(check-equal? (no-lowering-cause absent) 'implementation)
+(check-equal? (no-lowering-cause absent) 'rr-missing)
+
+(define (candidate-at source ordinal)
+  (findf (lambda (candidate)
+           (and (string=? (lowering-candidate-source candidate) source)
+                (= (lowering-candidate-ordinal candidate) ordinal)))
+         (lowering-manifest-candidates manifest)))
+
+(define (case-input source ordinal [index 1])
+  (define candidate (candidate-at source ordinal))
+  (define parse-case
+    (list-ref (hash-ref (load-parse-fixture candidate) 'cases) (sub1 index)))
+  (define rr
+    (list-ref (rr-fixture-cases (load-rr-fixture candidate)) (sub1 index)))
+  (values parse-case rr))
+
+(define (plain node)
+  (cond [(core-atom? node) (core-atom-value node)]
+        [else (map plain (core-list-elements node))]))
+
+(define (check-lowers source ordinal expected rules [index 1])
+  (define-values (parse-case rr) (case-input source ordinal index))
+  (define result (lower parse-case rr))
+  (check-true (lowered? result) (format "~a#~a.~a lowers" source ordinal index))
+  (when (lowered? result)
+    (check-equal? (plain (lowered-term result)) expected)
+    (for ([rule (in-list rules)])
+      (check-not-false (member rule (lowered-rules result))))))
+
+(check-lowers "samples.md" 1
+              '(Assert (Close (klama Speaker)))
+              '("L1.1" "L1.3" "L1.6"))
+(check-lowers "samples.md" 3
+              '(Assert (Close (klama :2 This Yonder)))
+              '("L1.4" "L1.6"))
+(check-lowers "samples.md" 4
+              '(Assert (Close ((DropPlace klama 3) Speaker This This This)))
+              '("L1.5"))
+(check-lowers "samples.md" 5
+              '(Assert (Close (klama Speaker This)))
+              '("L1.4"))
+(check-lowers "samples.md" 58
+              '(Assert (Close ((Tanru sutra klama) Speaker)))
+              '("L1.10"))
+(check-lowers "samples.md" 63
+              '(Bind ($r :: PredTerm
+                         (Row (1 (Referents Entity)) (2 (Referents Entity))))
+                     (Context)
+                 (Assert (Close ($r Speaker Audience))))
+              '("L1.8") 3)
+(check-lowers "spec.md" 1 '(klama Speaker This) '("L1.1"))
+(check-lowers "spec.md" 2 '(klama :2 This Yonder) '("L1.4"))
+(check-lowers "spec.md" 4
+              '(λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))
+              '("L1.4"))
+
+(define-values (parse-for-missing _rr-for-missing) (case-input "samples.md" 1))
+(define missing-result (lower parse-for-missing (hash 'parse '(fixture 1))))
+(check-true (no-lowering? missing-result))
+(check-equal? (no-lowering-cause missing-result) 'rr-missing)
+(check-not-false (member 'rows (no-lowering-detail missing-result)))
 
 (displayln "lowering fixture tests: ok")
