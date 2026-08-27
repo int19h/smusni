@@ -312,7 +312,8 @@
  (alpha-normalize '(λ ($dog :: Entity) (gerku $dog))))
 
 (define close-normal
-  (normalize-core (datum->core '(Close (klama Speaker))) (hash)))
+  (normalize-core (datum->core '(Close (klama Speaker)))
+                  (hash 'rows '(klama))))
 (check-not-false
  (member "Close (§4.6/L1.3)" (normalization-expansions close-normal)))
 (check-not-false
@@ -329,7 +330,8 @@
               4)
 
 (define force-normal
-  (normalize-core (datum->core '(Assert (gerku Speaker))) (hash)))
+  (normalize-core (datum->core '(Assert (gerku Speaker)))
+                  (hash 'rows '(gerku))))
 (check-equal? (normalization-datum force-normal)
               '(Assert (CloseClause (ActualClause (StateClause (gerku Speaker))))))
 (check-not-false
@@ -338,7 +340,8 @@
 
 (define l0-normal
   (normalize-core
-   (datum->core '(SetOf (λ ($x :: Entity) (gerku $x)))) (hash)))
+   (datum->core '(SetOf (λ ($x :: Entity) (gerku $x))))
+   (hash 'rows '(gerku))))
 (check-not-false
  (member "bare lexical property (L0.1)"
          (normalization-expansions l0-normal)))
@@ -346,7 +349,7 @@
   (normalize-core
    (datum->core
     '(Refer (λ ($x :: Referents Entity) (mlatu $x))))
-   (hash)))
+   (hash 'rows '(mlatu))))
 (check-false
  (member "bare lexical property (L0.1)"
          (normalization-expansions reference-refer-normal)))

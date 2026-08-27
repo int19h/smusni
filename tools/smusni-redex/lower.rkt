@@ -297,13 +297,16 @@
       [else
        (error 'load-rr-fixture "invalid RR field at ~a#~a.~a: ~e"
               source ordinal index field)]))
-  (unless (set=? (list->set (hash-keys fields)) (list->set rr-field-names))
+  (define unknown
+    (filter (lambda (name) (not (member name rr-field-names)))
+            (hash-keys fields)))
+  (when (pair? unknown)
     (error 'load-rr-fixture
-           "RR fields at ~a#~a.~a must be exactly ~e, got ~e"
-           source ordinal index rr-field-names (sort (hash-keys fields) symbol<?)))
+           "RR fixture at ~a#~a.~a has unknown fields ~e"
+           source ordinal index (sort unknown symbol<?)))
   (make-immutable-hash (hash->list fields)))
 
-(define (load-rr-fixture candidate [inv (load-inventory)])
+(define (load-rr-fixture candidate [_inv (load-inventory)])
   (define path (candidate-rr-path candidate))
   (unless (file-exists? path)
     (error 'load-rr-fixture "missing RR fixture ~a" path))
@@ -327,13 +330,9 @@
                           (lowering-candidate-cases candidate)))
        (error 'load-rr-fixture "RR case indexes drift: ~a" path))
      (for ([case (in-list cases)])
-       (define rows (hash-ref (rr-case-fields case) 'rows))
+       (define rows (hash-ref (rr-case-fields case) 'rows (lambda () '())))
        (unless (and (list? rows) (andmap symbol? rows))
-         (error 'load-rr-fixture "RR rows must be a symbol list: ~a" path))
-       (for ([row (in-list rows)])
-         (unless (inventory-row inv row)
-           (error 'load-rr-fixture "RR references missing fixture row ~a: ~a"
-                  row path))))
+         (error 'load-rr-fixture "RR rows must be a symbol list: ~a" path)))
      (rr-fixture source ordinal digest cases)]
     [else (error 'load-rr-fixture "unsupported RR fixture: ~a" path)]))
 
@@ -569,8 +568,8 @@
 
 ;; Every live fragment judgment has a stable keyed handler. Handlers exercised
 ;; by the current candidates accept a fully formed rule conclusion for an
-;; isolated type/attribution test; unformed handlers fail explicitly rather
-;; than pretending that absence of a candidate is an implementation.
+;; isolated type/attribution test. An unformed rule remains report-only while
+;; uncalled, but its handler fails explicitly as `implementation` if invoked.
 (define formed-rule-id-set
   (list->set
    '("L0.1"
@@ -895,9 +894,9 @@
     (match-define (cons _label variable) entry)
     (binding-datum variable '(Referents Entity) '(Context) result)))
 
-(define (expand-close-datum operand inv)
+(define (expand-close-datum operand inv rr-rows)
   (define head (datum-head operand))
-  (define row (and head (inventory-row inv head)))
+  (define row (and head (member head rr-rows) (inventory-row inv head)))
   (cond
     [(not row) (values `(Close ,operand) '())]
     [else
@@ -966,7 +965,7 @@
           (eq? (list-ref flat (add1 separator)) 'Referents))]
     [_ #f]))
 
-(define (normalize-datum datum inv)
+(define (normalize-datum datum inv rr-rows)
   (define expansions '())
   (define (note! text)
     (unless (member text expansions) (set! expansions (cons text expansions))))
@@ -978,7 +977,7 @@
                         (walk item (datum-head value) index)))
        (match walked
          [`(Close ,operand)
-          (define-values (expanded fired) (expand-close-datum operand inv))
+          (define-values (expanded fired) (expand-close-datum operand inv rr-rows))
           (for ([entry (in-list fired)]) (note! entry))
           expanded]
          [`(Assert ,content)
@@ -997,7 +996,8 @@
               (match walked
                 [`(λ ,binder ,body)
                  (note! "bare lexical property (L0.1)")
-                 (define-values (expanded fired) (expand-close-datum body inv))
+                 (define-values (expanded fired)
+                   (expand-close-datum body inv rr-rows))
                  (for ([entry (in-list fired)]) (note! entry))
                  `(λ ,binder ,expanded)])
               walked)])]))
@@ -1068,7 +1068,10 @@
   (define datum (if (or (core-list? term) (core-atom? term))
                     (core->plain term)
                     term))
-  (define-values (expanded expansions) (normalize-datum datum inv))
+  (define fields (rr-fields-value rr))
+  (define rows
+    (if fields (hash-ref fields 'rows (lambda () '())) '()))
+  (define-values (expanded expansions) (normalize-datum datum inv rows))
   (normalization (alpha-normalize expanded) expansions))
 
 (define (candidate-fence-map)
@@ -1083,6 +1086,12 @@
 
 (define (case-key source ordinal index)
   (format "~a#~a.~a" source ordinal index))
+
+(define (expected-parse-reference candidate candidate-case)
+  (list (format "parses/~a.json"
+                (fixture-base-name (lowering-candidate-source candidate)
+                                   (lowering-candidate-ordinal candidate)))
+        (lowering-case-index candidate-case)))
 
 (define (no-lowering-fails? cause detail promised-rows)
   (case cause
@@ -1127,14 +1136,27 @@
      (case-report source ordinal index 'unresolved #f '() '()
                   unresolved #f (core->plain target))]
     [else
-     (define missing-rows
-       (missing-fixture-rows (rr-case-fields rr-case) inv))
+     (define fields (rr-case-fields rr-case))
+     (define promised-but-absent
+       (filter (lambda (row)
+                 (not (member row (hash-ref fields 'rows (lambda () '())))))
+               (lowering-case-promised-rows candidate-case)))
+     (define bad-parse-reference?
+       (not (equal? (hash-ref fields 'parse (lambda () #f))
+                    (expected-parse-reference candidate candidate-case))))
+     (define missing-rows (missing-fixture-rows fields inv))
      (define result
-       (if (pair? missing-rows)
-           (no-lowering "M3" 'row-missing
-                        "RR references rows absent from fixture lexicon"
-                        missing-rows)
-           (lower parse-case rr-case)))
+       (cond
+         [(or bad-parse-reference? (pair? promised-but-absent))
+          (no-lowering
+           "M3" 'rr-missing
+           "RR parse reference or promised rows are incomplete"
+           (append (if bad-parse-reference? '(parse) '()) promised-but-absent))]
+         [(pair? missing-rows)
+          (no-lowering "M3" 'row-missing
+                       "RR references rows absent from fixture lexicon"
+                       missing-rows)]
+         [else (lower parse-case rr-case)]))
      (cond
        [(lowered? result)
         (define produced-normal
