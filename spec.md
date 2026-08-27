@@ -128,7 +128,8 @@ The core denotes **resolved readings**. Processes that turn a text into a
 reading — anaphora resolution (which antecedent `ri` takes), erasure
 (`si`/`sa`/`su`), elliptical expansion (`go'i`, `no'a`), sticky-tense
 propagation (`ki`), indicator target selection — are **text-to-reading
-rules**. They are normative (the mapping annex states them; a conforming
+rules**. They are normative (the mapping annex states them, and their
+outcomes form the resolved-reading datum `RR` of §11; a conforming
 reading of a Lojban text must obey them) but they contribute no term
 constructors: the calculus sees their *results* — variable bindings, token
 identities, expanded content — never the processes themselves. A
@@ -1161,8 +1162,13 @@ quantifier. The **global** exact reading — "the dog-runners number
 exactly three, and no others" —
 
 ```lisp
-; the marked global strengthening (not the bare-PA default)
-(= (Card (SetOf {λ [$x :: Entity] (∧ (gerku $x) (bajra $x))})) 3)
+; the marked global strengthening (not the bare-PA default); bajra's
+; surface/limbs/gait sites are hoisted outside the comprehension (L0.1)
+{Bind [$surface :: Referents Entity] (Context)
+      [$limbs :: Referents Entity] (Context)
+      [$gait :: Referents Entity] (Context)
+  (= (Card (SetOf {λ [$x :: Entity]
+              (∧ (gerku $x) (Close (bajra $x $surface $limbs $gait)))})) 3)}
 ```
 
 is a distinct, stronger meaning, named `GlobalExactly` in the library and
@@ -1448,8 +1454,8 @@ Three primitive computations answer §1.4:
   for every member property, lexical or not (L3.6's `CompleteGunmaAt κ g
   base` included). The lift is a purity-demanding position (§3.3): a member
   property whose formation needs contextual sites has them bound outside the
-  `Refer` and shared — the hoisting the comprehension forms already require
-  (§12) — and an effectful member-level restrictor is not a term. A
+  `Refer` and shared by the hoisting rule L0.1 (§11) — and an effectful
+  member-level restrictor is not a term. A
   member-level λ therefore always displays a *unit* property; a row whose
   plural satisfaction is collective, kind-like, or substance-like is written
   at reference level with its own lexical extension (§10, P39). The
@@ -2725,7 +2731,8 @@ official-row clause is:
 predicate. When `gunma` occurs inside a position requiring a pure property
 (a selection restrictor, the member-level `Refer` lift, or a `SetOf`
 comprehension — §3.3), the mapping hoists this κ binding outside that
-property and shares the captured value; it never hides `Context` in a `Fn`.
+property and shares the captured value (L0.1); it never hides `Context` in a
+`Fn`.
 
 The working dictionary wording for the adopted group row is: **“x1 is a
 jointly constituted group/team/aggregate whole with x2 among its components
@@ -2770,6 +2777,90 @@ a text-to-reading decision that the resolved-reading datum owns (#9). A
 specimen cites the lowering judgments whose schemas it instantiates as its
 focal claims, never every rule its sub-terms touch, and never a gap, note,
 or reading rule.
+
+**The resolved-reading datum** (`RR`; #9). Every lowering judgment below is
+relative to a resolved reading: a finite record `RR` attached to one
+utterance in a transcript, whose fields are exactly the ⊳ decisions the
+rules mark and the resolver stores §5.4–§5.6 presuppose. It is pure data —
+it carries no world, information state, or capture (those are §5's
+carriers) — and it never occurs free in a lowered term: a term mentions
+only core forms, lexical constants, and the values `RR` selected (a label,
+a row, a binder width), never `RR` itself. Its fields, each with the rules
+that consume it:
+
+| Field | Content | Consumers |
+|---|---|---|
+| `parse` | the resolved parse after `si`/`sa`/`su` erasure (L1.9) — an input to the relation, never a normalization the calculus defines | every rule |
+| `attach` | UI target selection (L11.1), `vu'o` widening (L4.9), `xi` indexing (L12.9), `ce'u goi`/`ce'u xi` (L9.3), `.i TAG bo` grouping (L5.15) | L4, L5, L9, L11, L12 |
+| `readings` | per site: the tenseless reading (L6.4), the CAhA mode (L6.6), `bi'i` normalization (L5.19), `ji'i` position (L12.17), `n mai`/`mo'o` level (L11.14), `tu'a`'s sort by host place (L9.11) | L5, L6, L9, L11, L12 |
+| `rows` | the resolved lexical row per selbri occurrence with its conversion routing (L1.1, L1.4); the fixed row per `bu'a` variable (L5.5) | L1, L5 |
+| `stores` | KOhA assignments (L8.3), letteral bindings (L12.4), `cei`/`go'i` templates (L5.6, L8.4), the active `do` (L8.10), the segment stack and its level (L8.12), `da'o` cancellations (L8.11) | L2, L5, L8, L12 |
+| `sites` | for every `Context`/`Vague` site: the dependency profile beyond §5.3's computed minimum, the source of its admissibility constraint (lexicon or reading), and its binder width (§12's export contract) | L1.6, L1.10, L2.2, L6.10, L8.3, L8.8, L9.11, L9.13, L11.14, L12.13, L12.16 |
+| `anaphora` | `ri`/`ra`/`ru` counting results (L8.1), `di'u`-series spans (L8.8), `ra'o` reopening marks (L8.7) | L8 |
+| `force` | the nearest performed clause per `ko` (L2.4); the force of each sentence-level connection host (L5.12) | L2, L5 |
+
+Three boundaries keep the table exact. Mechanical ⊳ rewrites — the
+affirmer override (L5.10, P31), numeral syntax (L12.15), implicit `ce'u` at
+the first unfilled place (L9.7, P12), and the utterance-level scope of bare
+interrogatives (L10.2) — have no choice to record and are premises of the
+rules that consume them, not fields. Story time (L6.5) contributes nothing
+to any lowered term and has no field; a tense anchor it informs arrives as
+an ordinary `readings` value. `sites` carries declared extras only: §5.3
+computes the minimum profile as a formation condition, and every dependence
+beyond it — for an unconstrained `(Context)`, every dependence — must be
+in `RR`. Reading selection, which `RR` a text receives, is not decided by
+the relation: where a rule says reading-multiple with no default, the
+relation takes each `RR` separately.
+
+Each rule is a typed judgment relative to `RR` — `RR ⊢ sumti ⇝ c :
+RefComp (Referents T)` (or a first-order value for `li`/`me'o`), `RR ⊢
+selbri ⇝ p : PredTerm ρ`, `RR ⊢ bridi ⇝ C : ClauseContent`, `RR ⊢
+sentence ⇝ a : Act F`, `RR ⊢ text ⇝ d : Discourse`, `RR ⊢ term-list ⇝
+fills over ρ` — whose side conditions are the formation conditions this
+document already states (`Close` undefined at a non-defaultable place,
+§4.6; a force conflict has no resolved reading, L5.12; incompatible `bu'a`
+rows, L5.5). A constituent with no derivable conclusion has no lowering:
+the relation is partial by construction, and no rule produces an `Undef`,
+a diagnostic, or a placeholder term. That partiality is resolution failure
+only; denotational partiality (§1.7, P21) stays in the semantics and is
+never converted into the absence of a derivation. The supported fragment
+F₀ is defined extensionally by the rule table — a construction is in F₀
+exactly when a lowering judgment maps it under some `RR` — and §15's
+adequacy claim quantifies over constituents in F₀ after `RR` resolution.
+
+**Hoisting** (L0; #9).
+
+- **L0.1** Before a property enters a pure position — a `SetOf`
+  comprehension, a selection restrictor (§5.6), a quantifier or `Generic`
+  restrictor (§4.10, §5.8), or the member-level `Refer` lift (§5.3) — every
+  `Context` and `Vague` site it would contain is bound outside that
+  position by `Bind`, with the dependency profile `RR.sites` declares, and
+  its event place is closed by `Close`, whose `DirectClause` with no
+  remaining defaultable place is pure (§4.6):
+
+  ```text
+  RR ⊢ P with unfilled defaultable places ℓ₁ … ℓₖ
+  ────────────────────────────────────────────────
+  {Bind [$v₁ :: T₁] (Context …) … [$vₖ :: Tₖ] (Context …)
+    ⟨pure position over {λ [$x :: T] (Close (P :ℓ $x :ℓ₁ $v₁ … :ℓₖ $vₖ))}⟩}
+  ```
+
+  Hoisted sites may depend on binders outside the pure position, never on
+  `$x`; a site that would depend on `$x` makes the position ill-formed —
+  correctly, since such a comprehension has no pure meaning. Hoisting
+  preserves meaning because a site retrieves once per distinct dependency
+  tuple per performance and introduces nothing (§5.3): moving it outside
+  changes its place, not its tuple, and the order of hoisted `Bind`s is
+  immaterial. `Close` here fixes the **actual mode** for
+  restrictor-internal predications — a description's or comprehension's
+  restrictor predicates in its own actual mode and is not under the host
+  clause's CAhA, which governs the main predication only (P24); the
+  alternative, inheriting the host's clause former, is recorded as
+  rejected (rationale §2.11). A reference-level `Refer` restrictor is `EFn`,
+  not a pure position, and keeps its sites inside (L9.6). A lexical
+  predicate written bare in a pure position — `{λ [$x :: Entity]
+  (gerku $x)}` — abbreviates this hoisted form for the resolved row, the
+  display convention the samples book declares in its preamble.
 
 **Predication and places** (L1).
 
@@ -3311,7 +3402,7 @@ arithmetic demands.
 `GlobalExactly` and `Most` place their operands inside `SetOf`, so
 **both operands must be pure there**: the mapping hoists a nuclear
 scope's contextual sites and introductions out of the comprehension
-first (site identity, §5.3, makes the hoist meaning-preserving), and
+first (L0.1; site identity, §5.3, makes the hoist meaning-preserving), and
 an unhoistable nuclear scope simply has no global reading.
 
 `no prenu cu jmaji` is `(No prenu-property {λ [$w :: Referents Entity] (Close (jmaji $w))})` —

@@ -5,10 +5,11 @@
   (cited-floor 68)
   ;; Exact counts of §11's numbered clauses: total, lowering judgments,
   ;; gap, note, reading. Any change to §11's clause set must update these.
-  (rule-counts 146 125 9 6 6)
+  (rule-counts 147 126 9 6 6)
   ;; Lowering judgments no surface specimen cites yet (gap/note/reading
   ;; rules are outside F₀ and never appear here). Each entry names the issue
   ;; that owns the missing coverage (#9 M3 corpus).
+  (uncovered "L0.1" "#9")
   (uncovered "L1.8" "#9")
   (uncovered "L2.1" "#9")
   (uncovered "L2.2" "#9")

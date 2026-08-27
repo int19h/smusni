@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
  (core-sha1 "f31b0d4543393231b8d3121981f8fd2eb6e16533")
- (fixture-sha1 "16331ecfbe976cb1a4fb9e3e8e452a10d958cd57")
+ (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature
   Achievement
