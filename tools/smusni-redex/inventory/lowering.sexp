@@ -29,7 +29,7 @@
   (candidate "samples.md" 21 "2876852d13a2e58a91e2a64a38a429d66119040d"
     (rules "L3.1" "L5.9")
     (case 1 "lo mlatu na jbena" sentence (promised-rows mlatu jbena)))
-  (candidate "samples.md" 22 "68fd3b480a697f1f7f5d93e6ad02cbfd92541bab"
+  (candidate "samples.md" 22 "00fe2e7f046eae70ff325b29c40883a520b61c01"
     (rules "L3.2")
     (case 1 "le mlatu cu blabi" sentence (promised-rows mlatu blabi skicu)))
   (candidate "samples.md" 23 "51894d5541b6381e478bca7b33a039b6f96feab4"
@@ -38,7 +38,7 @@
   (candidate "samples.md" 30 "bb927fff8f0424bed33e08d63acaa232f3cca35c"
     (rules "L3.5" "L3.6")
     (case 1 "lo'i gerku" utterance (promised-rows gerku selcmi)))
-  (candidate "samples.md" 34 "3fb669c310769bfcc41ab0e61e89c0ad41147dd3"
+  (candidate "samples.md" 34 "0381ec3ed5e5eefb48e813e4d611efdafc4c7e78"
     (rules "L3.14" "L3.2" "L3.9" "L3.15")
     (case 1 "lu'o le ci prenu" utterance (promised-rows prenu skicu)))
   (candidate "samples.md" 36 "dcea1ed0a217abde9363445f09a21d766080cca6"
