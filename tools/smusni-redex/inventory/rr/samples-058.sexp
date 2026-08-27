@@ -1,5 +1,5 @@
 (smusni-rr-fixture 1
-  (fence "samples.md" 58 "bb119d6c918c79eb106582945612008b1629ed9c")
+  (fence "samples.md" 58 "29a4047bce86b1331b60c73b6c86d3a1692b7f97")
   (case 1 (rr
     (parse ("parses/samples-058.json" 1)) ; every rule
     (attach ()) (readings (actual))       ; L1.3

@@ -148,7 +148,9 @@
 (check-lowers "samples.md" 5
               '(Assert (Close (klama Speaker This)))
               '("L1.4"))
-(check-does-not-lower "samples.md" 58 'rule-underspecified "L1.10")
+(check-lowers "samples.md" 58
+              '(Assert (Close ((Tanru sutra klama) Speaker)))
+              '("L1.10" "L1.6"))
 (check-lowers "samples.md" 63
               '(Bind ($r :: PredTerm
                          (Row (1 (Referents Entity)) (2 (Referents Entity))))
@@ -491,7 +493,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              26)
+              27)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -500,7 +502,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/no-lowering))
                      reports)
-              1)
+              0)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report)
                             'out-of-fragment))

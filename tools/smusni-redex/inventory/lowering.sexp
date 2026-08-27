@@ -54,9 +54,9 @@
   (candidate "samples.md" 48 "7803f54fed3fbabeeb36b7fed9b4b6264bee058c"
     (rules "L5.28")
     (case 1 "so'i prenu cu klama" sentence (promised-rows prenu klama)))
-  (candidate "samples.md" 58 "bb119d6c918c79eb106582945612008b1629ed9c"
+  (candidate "samples.md" 58 "29a4047bce86b1331b60c73b6c86d3a1692b7f97"
     (rules "L1.10")
-    (case 1 "sutra klama" sentence (promised-rows sutra klama)))
+    (case 1 "mi sutra klama" sentence (promised-rows sutra klama)))
   (candidate "samples.md" 59 "d18b550e979e80e4ef5a9c15530e135e9dc7f869"
     (rules "L5.11")
     (case 1 "ta na'e melbi" sentence (promised-rows melbi)))
