@@ -1,0 +1,189 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lo mlatu na jbena"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "NegatedSelbri": {
+                                                "inner_selbri": {
+                                                  "UntaggedSelbri": {
+                                                    "CoSelbri": {
+                                                      "leading_selbri": {
+                                                        "leading_selbri": {
+                                                          "first_unit": {
+                                                            "first": {
+                                                              "LinkedTanruUnit": {
+                                                                "base": {
+                                                                  "base": {
+                                                                    "WordTanruUnit": {
+                                                                      "Plain": {
+                                                                        "PlainWord": {
+                                                                          "Gismu": {
+                                                                            "phonemes": "jbéna",
+                                                                            "span": [
+                                                                              12,
+                                                                              17
+                                                                            ]
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "na": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "na",
+                                                        "span": [
+                                                          9,
+                                                          11
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "DescriptorWithGadriSumti": {
+                                                        "description": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "lo",
+                                                                "span": [
+                                                                  0,
+                                                                  2
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "tail": {
+                                                          "leading_tail_elements": {},
+                                                          "tail": {
+                                                            "RelationDescriptionTail": {
+                                                              "selbri": {
+                                                                "UntaggedSelbri": {
+                                                                  "CoSelbri": {
+                                                                    "leading_selbri": {
+                                                                      "leading_selbri": {
+                                                                        "first_unit": {
+                                                                          "first": {
+                                                                            "LinkedTanruUnit": {
+                                                                              "base": {
+                                                                                "base": {
+                                                                                  "WordTanruUnit": {
+                                                                                    "Plain": {
+                                                                                      "PlainWord": {
+                                                                                        "Gismu": {
+                                                                                          "phonemes": "mlátu",
+                                                                                          "span": [
+                                                                                            3,
+                                                                                            8
+                                                                                          ]
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lo mlatu na jbena",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "2876852d13a2e58a91e2a64a38a429d66119040d",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 21,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

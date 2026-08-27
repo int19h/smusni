@@ -1,0 +1,11 @@
+(smusni-rr-fixture 1
+  (fence "samples.md" 58 "bb119d6c918c79eb106582945612008b1629ed9c")
+  (case 1 (rr
+    (parse ("parses/samples-058.json" 1)) ; every rule
+    (attach ()) (readings (actual))       ; L1.3
+    (rows (sutra klama))                  ; L1.10
+    (stores ())
+    (sites ((tanru-link sutra-klama (deps ())))) ; L1.10
+    (anaphora ())
+    (force (assert)))))                   ; L1.2
+)

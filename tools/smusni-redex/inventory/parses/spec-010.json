@@ -1,0 +1,17 @@
+{
+  "cases": [
+    {
+      "category": "content",
+      "command": [],
+      "index": 1,
+      "parse": false,
+      "surface": false,
+      "unresolved": "#9: missing Lojban surface comment"
+    }
+  ],
+  "fence_sha1": "a15294b018e4042b2b06bd4bb50dd1c36d844909",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 10,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "spec.md"
+}

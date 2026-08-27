@@ -1,0 +1,389 @@
+#lang racket
+
+(require json
+         racket/cmdline
+         racket/file
+         racket/list
+         racket/match
+         racket/path
+         racket/port
+         racket/runtime-path
+         racket/set
+         racket/string
+         "check.rkt"
+         "extract.rkt"
+         "inventory.rkt"
+         "syntax.rkt"
+         "types.rkt")
+
+(provide (struct-out lowering-case)
+         (struct-out lowering-candidate)
+         (struct-out lowering-manifest)
+         (struct-out rr-case)
+         (struct-out rr-fixture)
+         (struct-out no-lowering)
+         (struct-out lowered)
+         load-lowering-manifest
+         load-parse-fixture
+         load-rr-fixture
+         validate-lowering-fixtures!
+         refresh-parses!
+         fragment-rule-ids
+         lower)
+
+(define-runtime-path tool-dir ".")
+(define manifest-path (build-path tool-dir "inventory" "lowering.sexp"))
+(define parse-dir (build-path tool-dir "inventory" "parses"))
+(define rr-dir (build-path tool-dir "inventory" "rr"))
+
+(struct lowering-case (index surface category promised-rows unresolved)
+  #:transparent)
+(struct lowering-candidate (source ordinal digest rules cases) #:transparent)
+(struct lowering-manifest (families rule-count candidates) #:transparent)
+(struct rr-case (index fields) #:transparent)
+(struct rr-fixture (source ordinal digest cases) #:transparent)
+
+;; `no-lowering` is a result of the derived relation, never a core term.
+(struct no-lowering (rule cause premise detail) #:transparent)
+(struct lowered (term rules) #:transparent)
+
+(define rr-field-names
+  '(parse attach readings rows stores sites anaphora force))
+(define no-lowering-causes
+  '(rr-missing row-missing rule-underspecified implementation out-of-fragment))
+
+(define (source-stem source)
+  (path->string (path-replace-extension (file-name-from-path source) #"")))
+
+(define (fixture-base-name source ordinal)
+  (format "~a-~a" (source-stem source)
+          (~r ordinal #:min-width 3 #:pad-string "0")))
+
+(define (candidate-parse-path candidate)
+  (build-path parse-dir
+              (string-append
+               (fixture-base-name (lowering-candidate-source candidate)
+                                  (lowering-candidate-ordinal candidate))
+               ".json")))
+
+(define (candidate-rr-path candidate)
+  (build-path rr-dir
+              (string-append
+               (fixture-base-name (lowering-candidate-source candidate)
+                                  (lowering-candidate-ordinal candidate))
+               ".sexp")))
+
+(define (parse-case-datum datum source ordinal)
+  (match datum
+    [`(case ,(? exact-positive-integer? index) ,surface ,(? symbol? category)
+            (promised-rows ,(? symbol? rows) ...) ,clauses ...)
+     (unless (or (string? surface) (eq? surface #f))
+       (error 'load-lowering-manifest
+              "~a#~a case ~a surface must be a string or #f"
+              source ordinal index))
+     (define unresolved #f)
+     (for ([clause (in-list clauses)])
+       (match clause
+         [`(unresolved ,(? string? note)) (set! unresolved note)]
+         [else
+          (error 'load-lowering-manifest
+                 "invalid case clause in ~a#~a.~a: ~e"
+                 source ordinal index clause)]))
+     (when (and (not surface) (not unresolved))
+       (error 'load-lowering-manifest
+              "~a#~a.~a without a surface needs an unresolved reason"
+              source ordinal index))
+     (lowering-case index surface category rows unresolved)]
+    [else
+     (error 'load-lowering-manifest
+            "invalid candidate case in ~a#~a: ~e" source ordinal datum)]))
+
+(define (parse-candidate-datum datum)
+  (match datum
+    [`(candidate ,(? string? source) ,(? exact-positive-integer? ordinal)
+                 ,(? string? digest) (rules ,(? string? rules) ...) ,cases ...)
+     (define parsed-cases
+       (for/list ([case-datum (in-list cases)])
+         (parse-case-datum case-datum source ordinal)))
+     (unless (equal? (map lowering-case-index parsed-cases)
+                     (range 1 (add1 (length parsed-cases))))
+       (error 'load-lowering-manifest
+              "~a#~a case indexes must be consecutive from 1" source ordinal))
+     (lowering-candidate source ordinal digest rules parsed-cases)]
+    [else (error 'load-lowering-manifest "invalid candidate: ~e" datum)]))
+
+(define (load-lowering-manifest [path manifest-path])
+  (match (call-with-input-file path read)
+    [`(smusni-lowering-manifest 1
+        (fragment (families ,(? string? families) ...)
+                  (lowering-judgments ,(? exact-positive-integer? count)))
+        ,candidate-data ...)
+     (define candidates (map parse-candidate-datum candidate-data))
+     (define keys
+       (for/list ([candidate (in-list candidates)])
+         (cons (lowering-candidate-source candidate)
+               (lowering-candidate-ordinal candidate))))
+     (unless (= (length keys) (set-count (list->set keys)))
+       (error 'load-lowering-manifest "duplicate candidate fence key"))
+     (lowering-manifest families count candidates)]
+    [else (error 'load-lowering-manifest "unsupported lowering manifest")]))
+
+(define (fragment-rule-ids [manifest (load-lowering-manifest)]
+                           [rules (spec-rules)])
+  (define family-prefixes
+    (for/list ([family (in-list (lowering-manifest-families manifest))])
+      (string-append family ".")))
+  (define ids
+    (for/list ([rule (in-list rules)]
+               #:when (and (eq? (cdr rule) 'map)
+                           (for/or ([prefix (in-list family-prefixes)])
+                             (string-prefix? (car rule) prefix))))
+      (car rule)))
+  (unless (= (length ids) (lowering-manifest-rule-count manifest))
+    (error 'fragment-rule-ids
+           "manifest records ~a lowering judgments, live spec has ~a: ~e"
+           (lowering-manifest-rule-count manifest) (length ids) ids))
+  ids)
+
+(define (manifest-candidate-map manifest)
+  (for/hash ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (values (cons (lowering-candidate-source candidate)
+                  (lowering-candidate-ordinal candidate))
+            candidate)))
+
+(define (validate-candidates-against-fences! manifest)
+  (define classified
+    (classify-fences (read-all-fences) (load-manifest)))
+  (define by-key
+    (for/hash ([item (in-list classified)])
+      (values (cons (fence-source item) (fence-ordinal item)) item)))
+  (for ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (define key (cons (lowering-candidate-source candidate)
+                      (lowering-candidate-ordinal candidate)))
+    (define item
+      (hash-ref by-key key
+                (lambda ()
+                  (error 'validate-lowering-fixtures!
+                         "candidate fence does not exist: ~e" key))))
+    (unless (eq? (fence-kind item) 'specimen)
+      (error 'validate-lowering-fixtures! "candidate is not a specimen: ~e" key))
+    (unless (string=? (fence-digest item) (lowering-candidate-digest candidate))
+      (error 'validate-lowering-fixtures!
+             "stale candidate digest for ~a#~a"
+             (car key) (cdr key)))
+    (unless (equal? (fence-rules item) (lowering-candidate-rules candidate))
+      (error 'validate-lowering-fixtures!
+             "candidate rules drifted for ~a#~a" (car key) (cdr key)))
+    (define forms (read-core-forms (fence-content item)))
+    (unless (= (length forms) (length (lowering-candidate-cases candidate)))
+      (error 'validate-lowering-fixtures!
+             "candidate ~a#~a has ~a core forms but ~a lowering cases"
+             (car key) (cdr key) (length forms)
+             (length (lowering-candidate-cases candidate))))))
+
+(define (read-json-file path)
+  (call-with-input-file path read-json))
+
+(define (json-ref object key who)
+  (unless (hash? object) (error who "expected JSON object, got ~e" object))
+  (hash-ref object key
+            (lambda () (error who "missing JSON field ~a" key))))
+
+(define (load-parse-fixture candidate)
+  (define path (candidate-parse-path candidate))
+  (unless (file-exists? path)
+    (error 'load-parse-fixture "missing parse fixture ~a" path))
+  (define data (read-json-file path))
+  (unless (equal? (json-ref data 'schema 'load-parse-fixture)
+                  "smusni-gentufa-parse-fixture-1")
+    (error 'load-parse-fixture "unsupported parse fixture schema: ~a" path))
+  (unless (and (equal? (json-ref data 'source 'load-parse-fixture)
+                       (lowering-candidate-source candidate))
+               (equal? (json-ref data 'ordinal 'load-parse-fixture)
+                       (lowering-candidate-ordinal candidate))
+               (equal? (json-ref data 'fence_sha1 'load-parse-fixture)
+                       (lowering-candidate-digest candidate)))
+    (error 'load-parse-fixture "parse metadata drift: ~a" path))
+  (define fixture-cases (json-ref data 'cases 'load-parse-fixture))
+  (unless (= (length fixture-cases)
+             (length (lowering-candidate-cases candidate)))
+    (error 'load-parse-fixture "parse case count drift: ~a" path))
+  (for ([expected (in-list (lowering-candidate-cases candidate))]
+        [actual (in-list fixture-cases)])
+    (unless (and (= (json-ref actual 'index 'load-parse-fixture)
+                    (lowering-case-index expected))
+                 (equal? (json-ref actual 'surface 'load-parse-fixture)
+                         (lowering-case-surface expected))
+                 (equal? (string->symbol
+                          (json-ref actual 'category 'load-parse-fixture))
+                         (lowering-case-category expected)))
+      (error 'load-parse-fixture "parse case metadata drift: ~a" path))
+    (if (lowering-case-surface expected)
+        (unless (hash? (json-ref actual 'parse 'load-parse-fixture))
+          (error 'load-parse-fixture "case ~a has no raw parse: ~a"
+                 (lowering-case-index expected) path))
+        (unless (eq? (json-ref actual 'parse 'load-parse-fixture) #f)
+          (error 'load-parse-fixture "unresolved case unexpectedly has a parse: ~a"
+                 path))))
+  data)
+
+(define (parse-rr-fields field-data source ordinal index)
+  (define fields (make-hash))
+  (for ([field (in-list field-data)])
+    (match field
+      [`(,(? symbol? name) ,value)
+       (when (hash-has-key? fields name)
+         (error 'load-rr-fixture "duplicate RR field ~a at ~a#~a.~a"
+                name source ordinal index))
+       (hash-set! fields name value)]
+      [else
+       (error 'load-rr-fixture "invalid RR field at ~a#~a.~a: ~e"
+              source ordinal index field)]))
+  (unless (set=? (list->set (hash-keys fields)) (list->set rr-field-names))
+    (error 'load-rr-fixture
+           "RR fields at ~a#~a.~a must be exactly ~e, got ~e"
+           source ordinal index rr-field-names (sort (hash-keys fields) symbol<?)))
+  (make-immutable-hash (hash->list fields)))
+
+(define (load-rr-fixture candidate [inv (load-inventory)])
+  (define path (candidate-rr-path candidate))
+  (unless (file-exists? path)
+    (error 'load-rr-fixture "missing RR fixture ~a" path))
+  (match (call-with-input-file path read)
+    [`(smusni-rr-fixture 1
+        (fence ,(? string? source) ,(? exact-positive-integer? ordinal)
+               ,(? string? digest))
+        ,case-data ...)
+     (unless (and (string=? source (lowering-candidate-source candidate))
+                  (= ordinal (lowering-candidate-ordinal candidate))
+                  (string=? digest (lowering-candidate-digest candidate)))
+       (error 'load-rr-fixture "RR metadata drift: ~a" path))
+     (define cases
+       (for/list ([datum (in-list case-data)])
+         (match datum
+           [`(case ,(? exact-positive-integer? index) (rr ,fields ...))
+            (rr-case index (parse-rr-fields fields source ordinal index))]
+           [else (error 'load-rr-fixture "invalid RR case in ~a: ~e" path datum)])))
+     (unless (equal? (map rr-case-index cases)
+                     (map lowering-case-index
+                          (lowering-candidate-cases candidate)))
+       (error 'load-rr-fixture "RR case indexes drift: ~a" path))
+     (for ([case (in-list cases)])
+       (define rows (hash-ref (rr-case-fields case) 'rows))
+       (unless (and (list? rows) (andmap symbol? rows))
+         (error 'load-rr-fixture "RR rows must be a symbol list: ~a" path))
+       (for ([row (in-list rows)])
+         (unless (inventory-row inv row)
+           (error 'load-rr-fixture "RR references missing fixture row ~a: ~a"
+                  row path))))
+     (rr-fixture source ordinal digest cases)]
+    [else (error 'load-rr-fixture "unsupported RR fixture: ~a" path)]))
+
+(define (capture-command executable arguments [stdin #f])
+  (define out (open-output-string))
+  (define err (open-output-string))
+  (define ok?
+    (parameterize ([current-output-port out]
+                   [current-error-port err]
+                   [current-input-port
+                    (if stdin (open-input-string stdin) (current-input-port))])
+      (apply system* executable arguments)))
+  (values ok? (get-output-string out) (get-output-string err)))
+
+(define (jbotci-path)
+  (or (find-executable-path "jbotci")
+      (error 'refresh-parses! "jbotci is not on PATH")))
+
+(define (jbotci-version executable)
+  (define-values (ok? out err) (capture-command executable '("--version")))
+  (unless ok? (error 'refresh-parses! "jbotci --version failed: ~a" err))
+  (string-trim out))
+
+(define (gentufa-parse executable surface)
+  (define-values (ok? out err)
+    (capture-command executable (list "gentufa" "--format" "json" surface)))
+  (unless ok?
+    (error 'refresh-parses! "gentufa failed for ~s: ~a" surface err))
+  (call-with-input-string out read-json))
+
+(define (pretty-json-string value)
+  (define compact (jsexpr->string value))
+  (define jq (find-executable-path "jq"))
+  (if jq
+      (let-values ([(ok? out err) (capture-command jq '(".") compact)])
+        (if ok? out
+            (error 'refresh-parses! "jq failed while formatting JSON: ~a" err)))
+      (string-append compact "\n")))
+
+(define (parse-fixture-jsexpr candidate executable version)
+  (hasheq
+   'schema "smusni-gentufa-parse-fixture-1"
+   'source (lowering-candidate-source candidate)
+   'ordinal (lowering-candidate-ordinal candidate)
+   'fence_sha1 (lowering-candidate-digest candidate)
+   'jbotci_version version
+   'cases
+   (for/list ([case (in-list (lowering-candidate-cases candidate))])
+     (define surface (lowering-case-surface case))
+     (hasheq
+      'index (lowering-case-index case)
+      'surface (or surface #f)
+      'category (symbol->string (lowering-case-category case))
+      'command (if surface
+                   (list "jbotci" "gentufa" "--format" "json" surface)
+                   '())
+      'parse (if surface (gentufa-parse executable surface) #f)
+      'unresolved (or (lowering-case-unresolved case) #f)))))
+
+(define (refresh-parses! [manifest (load-lowering-manifest)])
+  (make-directory* parse-dir)
+  (define executable (jbotci-path))
+  (define version (jbotci-version executable))
+  (for ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (define content
+      (pretty-json-string (parse-fixture-jsexpr candidate executable version)))
+    (call-with-output-file (candidate-parse-path candidate)
+      #:exists 'truncate/replace
+      (lambda (out) (display content out))))
+  (printf "lowering parses refreshed: ~a fences, ~a cases; ~a\n"
+          (length (lowering-manifest-candidates manifest))
+          (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
+            (length (lowering-candidate-cases candidate)))
+          version))
+
+(define (validate-lowering-fixtures! [manifest (load-lowering-manifest)])
+  (fragment-rule-ids manifest)
+  (validate-candidates-against-fences! manifest)
+  (define inv (load-inventory))
+  (for ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (load-parse-fixture candidate)
+    (load-rr-fixture candidate inv))
+  (void))
+
+;; Filled in by the rule stages. Keeping the result boundary executable in the
+;; fixture stage prevents later implementations from using an error term.
+(define (lower parse rr)
+  (no-lowering "M3" 'implementation
+               "lowering rule stages are not installed"
+               (list parse rr)))
+
+(module+ main
+  (define action 'check)
+  (command-line
+   #:program "lower.rkt"
+   #:once-each
+   [("--refresh-parses") "regenerate tracked gentufa parse fixtures"
+    (set! action 'refresh)]
+   [("--check") "validate tracked lowering fixtures (default)"
+    (set! action 'check)])
+  (define manifest (load-lowering-manifest))
+  (case action
+    [(refresh) (refresh-parses! manifest)]
+    [(check)
+     (validate-lowering-fixtures! manifest)
+     (printf "F₀-M3: live L1, L3, L5 (+ L0.1) — ~a lowering judgments; fixtures are not exhaustive\n"
+             (length (fragment-rule-ids manifest)))
+     (printf "lowering fixtures: ~a candidate fences, ~a ordered cases\n"
+             (length (lowering-manifest-candidates manifest))
+             (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
+               (length (lowering-candidate-cases candidate))))]))

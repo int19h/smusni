@@ -1,0 +1,114 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "sutra klama"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "RelationOnlyBridi": {
+                              "BridiTailWithPossibleTailTerms": {
+                                "first": {
+                                  "first": {
+                                    "first": {
+                                      "SelbriSimpleBridiTail": {
+                                        "selbri": {
+                                          "UntaggedSelbri": {
+                                            "CoSelbri": {
+                                              "leading_selbri": {
+                                                "leading_selbri": {
+                                                  "additional_units": [
+                                                    {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "kláma",
+                                                                      "span": [
+                                                                        6,
+                                                                        11
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  ],
+                                                  "first_unit": {
+                                                    "first": {
+                                                      "LinkedTanruUnit": {
+                                                        "base": {
+                                                          "base": {
+                                                            "WordTanruUnit": {
+                                                              "Plain": {
+                                                                "PlainWord": {
+                                                                  "Gismu": {
+                                                                    "phonemes": "sútra",
+                                                                    "span": [
+                                                                      0,
+                                                                      5
+                                                                    ]
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "sutra klama",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "bb119d6c918c79eb106582945612008b1629ed9c",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 58,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

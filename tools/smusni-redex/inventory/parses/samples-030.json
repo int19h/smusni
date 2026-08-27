@@ -1,0 +1,119 @@
+{
+  "cases": [
+    {
+      "category": "utterance",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lo'i gerku"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "DescriptorWithGadriSumti": {
+                                                  "description": {
+                                                    "Plain": {
+                                                      "PlainWord": {
+                                                        "Cmavo": {
+                                                          "phonemes": "lo'i",
+                                                          "span": [
+                                                            0,
+                                                            4
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "tail": {
+                                                    "leading_tail_elements": {},
+                                                    "tail": {
+                                                      "RelationDescriptionTail": {
+                                                        "selbri": {
+                                                          "UntaggedSelbri": {
+                                                            "CoSelbri": {
+                                                              "leading_selbri": {
+                                                                "leading_selbri": {
+                                                                  "first_unit": {
+                                                                    "first": {
+                                                                      "LinkedTanruUnit": {
+                                                                        "base": {
+                                                                          "base": {
+                                                                            "WordTanruUnit": {
+                                                                              "Plain": {
+                                                                                "PlainWord": {
+                                                                                  "Gismu": {
+                                                                                    "phonemes": "gérku",
+                                                                                    "span": [
+                                                                                      5,
+                                                                                      10
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lo'i gerku",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "bb927fff8f0424bed33e08d63acaa232f3cca35c",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 30,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

@@ -1,0 +1,183 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lo mlatu cu blabi"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "blábi",
+                                                                      "span": [
+                                                                        12,
+                                                                        17
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "cu": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "cu",
+                                      "span": [
+                                        9,
+                                        11
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "DescriptorWithGadriSumti": {
+                                                        "description": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "lo",
+                                                                "span": [
+                                                                  0,
+                                                                  2
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "tail": {
+                                                          "leading_tail_elements": {},
+                                                          "tail": {
+                                                            "RelationDescriptionTail": {
+                                                              "selbri": {
+                                                                "UntaggedSelbri": {
+                                                                  "CoSelbri": {
+                                                                    "leading_selbri": {
+                                                                      "leading_selbri": {
+                                                                        "first_unit": {
+                                                                          "first": {
+                                                                            "LinkedTanruUnit": {
+                                                                              "base": {
+                                                                                "base": {
+                                                                                  "WordTanruUnit": {
+                                                                                    "Plain": {
+                                                                                      "PlainWord": {
+                                                                                        "Gismu": {
+                                                                                          "phonemes": "mlátu",
+                                                                                          "span": [
+                                                                                            3,
+                                                                                            8
+                                                                                          ]
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lo mlatu cu blabi",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "9e3967b0e16d7c22d263f5dd3e873c8babd43e84",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 19,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

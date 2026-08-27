@@ -1,0 +1,169 @@
+{
+  "cases": [
+    {
+      "category": "utterance",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lu'o le ci prenu"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "LaheSumti": {
+                                                  "inner_sumti": {
+                                                    "base_sumti": {
+                                                      "leading_sumti": {
+                                                        "leading_sumti": {
+                                                          "leading_sumti": {
+                                                            "SimpleSumti": {
+                                                              "base_sumti": {
+                                                                "SumtiBase": {
+                                                                  "DescriptorWithGadriSumti": {
+                                                                    "description": {
+                                                                      "Plain": {
+                                                                        "PlainWord": {
+                                                                          "Cmavo": {
+                                                                            "phonemes": "le",
+                                                                            "span": [
+                                                                              5,
+                                                                              7
+                                                                            ]
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "tail": {
+                                                                      "leading_tail_elements": {},
+                                                                      "tail": {
+                                                                        "QuantifierRelationDescriptionTail": {
+                                                                          "quantifier": {
+                                                                            "PaRunQuantifier": {
+                                                                              "number": {
+                                                                                "first_number": {
+                                                                                  "Plain": {
+                                                                                    "PlainWord": {
+                                                                                      "Cmavo": {
+                                                                                        "phonemes": "ci",
+                                                                                        "span": [
+                                                                                          8,
+                                                                                          10
+                                                                                        ]
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          },
+                                                                          "selbri": {
+                                                                            "UntaggedSelbri": {
+                                                                              "CoSelbri": {
+                                                                                "leading_selbri": {
+                                                                                  "leading_selbri": {
+                                                                                    "first_unit": {
+                                                                                      "first": {
+                                                                                        "LinkedTanruUnit": {
+                                                                                          "base": {
+                                                                                            "base": {
+                                                                                              "WordTanruUnit": {
+                                                                                                "Plain": {
+                                                                                                  "PlainWord": {
+                                                                                                    "Gismu": {
+                                                                                                      "phonemes": "prénu",
+                                                                                                      "span": [
+                                                                                                        11,
+                                                                                                        16
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "lahe": {
+                                                    "Plain": {
+                                                      "PlainWord": {
+                                                        "Cmavo": {
+                                                          "phonemes": "lu'o",
+                                                          "span": [
+                                                            0,
+                                                            4
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lu'o le ci prenu",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "3fb669c310769bfcc41ab0e61e89c0ad41147dd3",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 34,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}
