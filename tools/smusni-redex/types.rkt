@@ -1210,16 +1210,26 @@
        (raise-type node "SpeakerDescribes takes the described reference and a description property"))
      (define reference (infer-core (first arguments) env inv))
      (define property (infer-core (second arguments) env inv))
-     (ensure-compatible (first arguments) (typing-type reference) '(Referents Entity))
+     ;; r's actual reference type (a member lifts to its singleton, §3.2) must
+     ;; be first-order, and P must accept every member of r: the description
+     ;; property's parameter is checked against r's type, not against Entity.
+     (define reference-type
+       (match (typing-type reference)
+         [`(Referents ,inner) `(Referents ,inner)]
+         [other `(Referents ,other)]))
+     (unless (first-order-type? (second reference-type))
+       (raise-type (first arguments)
+                   "SpeakerDescribes describes a first-order reference, got ~e"
+                   (typing-type reference)))
      (match (typing-type property)
        [`(,arrow (,domain) Content)
         #:when (and (member arrow '(Fn EFn))
-                    (type-compatible? domain '(Referents Entity)))
+                    (type-compatible? reference-type domain))
         (void)]
        [other
         (raise-type (second arguments)
-                    "SpeakerDescribes description property must be a unary property of a reference, got ~e"
-                    other)])
+                    "SpeakerDescribes description property must accept the described reference ~e, got ~e"
+                    reference-type other)])
      (merge-results 'Content (list reference property))]
     [(member head '(Named Realizes SpeakerOf EvidentialBasis Happiness Unhappiness
                           Desire AdmissibleCutoff AdmissibleThreshold

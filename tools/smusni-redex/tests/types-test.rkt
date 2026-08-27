@@ -642,3 +642,22 @@
 (check-true (type-error? (lambda () (infer-text "(SpeakerDescribes Speaker Audience)"))))
 (check-true (type-error? (lambda () (infer-text "(LocutionOf Speaker CurrentToken)"))))
 (check-true (type-error? (lambda () (infer-text "(LocutionOf CurrentToken CurrentToken)"))))
+
+;; codex_2's #48 review: r and P are coupled — P's parameter is checked against
+;; r's actual reference type, for every first-order T including collections.
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$g :: Referents (Group Entity)]
+       (SpeakerDescribes $g {λ [$y :: Referents (Group Entity)] (mlatu $y)})}")))
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "{λ [$x :: Referents Entity]
+        (SpeakerDescribes $x {λ [$y :: Referents Eventuality] (mlatu $y)})}"))))
+(check-not-exn
+ (lambda ()
+   (infer-text
+    "{λ [$e :: Referents Eventuality]
+       (SpeakerDescribes $e {λ [$y :: Referents Entity] (mlatu $y)})}")))
