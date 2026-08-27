@@ -176,10 +176,16 @@ selected view consumes; leftover counts, tanru, conversion, scalar/negation,
 labels, or deletions refuse the case. Ordinary fills first form a labelled
 place map, and conversion routes those labels to the base row before
 application; each `zi'o` remains a distinct `DropPlace` deletion.
+The same path certificate covers lexical selbri units, JOI/termset and
+sentence connectives, root statements, and fragments; special handlers do not
+bypass it through recursive descendant search.
 
 RR force, readings, selected rows, and site kind/order/dependencies are
 validated exactly for the selected rule path. A nonempty RR field with no M3
-consumer is rejected rather than ignored. Mutation regressions require tree
+consumer is rejected rather than ignored. Candidate-visible semantic gaps are
+reported only after that exact validation, so malformed RR remains a failing
+`rr-missing` result rather than a non-failing unsupported-rule report. Mutation
+regressions require tree
 structure changes to block lowering, exercise unseen lexical and place
 combinations, and require every RR change to alter or reject output. The report
 prints the number of eligible cases for which the gentufa/RR translation

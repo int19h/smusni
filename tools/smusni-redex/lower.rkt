@@ -1043,9 +1043,52 @@
 (define tail-semantic-tags (seteq 'SelbriSimpleBridiTail))
 (define transparent-tail-path-keys
   (seteq 'bridi_tail 'BridiTailWithPossibleTailTerms 'first))
+(define root-semantic-tags
+  (seteq 'IStatementConnection 'BridiStatement 'FragmentStatement))
+(define transparent-root-path-keys
+  (seteq 'RegularText 'paragraphs 'TextParagraphWithAdditionalNiho 'first
+         'SimpleParagraph 'initial 'StatementOrFragmentStatement
+         'StatementBase))
+(define joi-semantic-tags (seteq 'JoiConnective))
+(define transparent-joi-path-keys
+  (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
+         'continuations 'connective 'JoikConnective))
+(define termset-descriptor-path-keys
+  (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
+         'continuations 'sumti 'SimpleSumti 'SumtiBase))
+(define termset-connective-path-keys
+  (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
+         'continuations 'connective))
+(define connection-tail-tags (seteq 'SimpleIConnectiveStatementTail))
+(define transparent-connection-tail-keys (seteq 'continuations))
+(define jek-tags (seteq 'JekConnective))
+(define transparent-jek-path-keys
+  (seteq 'IStandardStatementConnective 'connective))
+(define fragment-tags (seteq 'TermsFragment))
+(define transparent-fragment-path-keys (seteq 'FragmentStatement))
+(define supported-special-connective-keys
+  (seteq 'joi 'cehe 'ja 'Plain 'PlainWord 'Cmavo 'phonemes 'span))
+(define supported-selbri-keys
+  (seteq 'UntaggedSelbri 'CoSelbri 'leading_selbri 'additional_units
+         'first_unit 'first 'LinkedTanruUnit 'base 'WordTanruUnit
+         'TanruUnitAtom 'conversions 'ScalarNegatedTanruUnit 'nahe
+         'inner_unit 'inner_selbri 'NegatedSelbri 'na 'GohaWordTanruUnit
+         'Plain 'PlainWord 'Gismu 'Cmavo 'phonemes 'span))
 
-(define (direct-semantic-node subtree semantic-tags rule
-                              [transparent-keys transparent-term-path-keys])
+(define (unrecognized-hash-keys value supported)
+  (define found (mutable-set))
+  (define (walk node)
+    (cond
+      [(hash? node)
+       (for ([(key child) (in-hash node)])
+         (unless (set-member? supported key) (set-add! found key))
+         (walk child))]
+      [(list? node) (for ([child (in-list node)]) (walk child))]
+      [else (void)]))
+  (walk value)
+  (sort (set->list found) symbol<?))
+
+(define (semantic-node-candidates subtree semantic-tags)
   (define candidates '())
   (define (walk node path)
     (cond
@@ -1058,20 +1101,31 @@
       [(list? node) (for ([child (in-list node)]) (walk child path))]
       [else (void)]))
   (walk subtree '())
+  (reverse candidates))
+
+(define (unrecognized-semantic-path-keys candidates transparent-keys)
+  (remove-duplicates
+   (append-map
+    (lambda (candidate)
+      (filter (lambda (key) (not (set-member? transparent-keys key)))
+              (third candidate)))
+    candidates)))
+
+(define (direct-semantic-node subtree semantic-tags rule
+                              [transparent-keys transparent-term-path-keys])
+  (define candidates (semantic-node-candidates subtree semantic-tags))
   (cond
     [(not (= (length candidates) 1))
      (no-lowering rule 'rule-underspecified
                   "term does not have exactly one direct semantic construct"
                   (map (lambda (candidate)
                          (list (first candidate) (third candidate)))
-                       (reverse candidates)))]
+                       candidates))]
     [else
      (define candidate (first candidates))
      (define path (third candidate))
      (define unrecognized
-       (filter (lambda (key)
-                 (not (set-member? transparent-keys key)))
-               path))
+       (unrecognized-semantic-path-keys candidates transparent-keys))
      (if (null? unrecognized)
          candidate
          (no-lowering rule 'rule-underspecified
@@ -1239,19 +1293,33 @@
 
 (define (term-view connected-term)
   (cond
-    [(and (has-tag? connected-term 'JoiConnective)
-          (member "fa'u" (terminal-texts connected-term 'Cmavo)))
+    [(member "fa'u" (terminal-texts connected-term 'Cmavo))
+     (define direct-joi
+       (direct-semantic-node connected-term joi-semantic-tags "L5.21"
+                             transparent-joi-path-keys))
+     (define unknown-joi-keys
+       (if (list? direct-joi)
+           (unrecognized-hash-keys (second direct-joi)
+                                   supported-special-connective-keys)
+           '()))
      (define cmavo (terminal-texts connected-term 'Cmavo))
      (define values
        (for/list ([word (in-list cmavo)]
                   #:when (hash-has-key? reference-values word))
          (hash-ref reference-values word)))
-     (if (and (= (count (lambda (word) (equal? word "fa'u")) cmavo) 1)
-              (= (length values) 2)
-              (= (length cmavo) 3))
-         `(zip-values ,values)
-         (no-lowering "L5.21" 'rule-underspecified
-                      "fa'u connectee has unconsumed semantic children" cmavo))]
+     (cond [(no-lowering? direct-joi) direct-joi]
+           [(pair? unknown-joi-keys)
+            (no-lowering "L5.21" 'rule-underspecified
+                         "fa'u connective has an unknown inner wrapper"
+                         unknown-joi-keys)]
+           [(and (= (count (lambda (word) (equal? word "fa'u")) cmavo) 1)
+                 (= (length values) 2)
+                 (= (length cmavo) 3))
+            `(zip-values ,values)]
+           [else
+            (no-lowering "L5.21" 'rule-underspecified
+                         "fa'u connectee has unconsumed semantic children"
+                         cmavo)])]
     [else
      (define direct
        (direct-semantic-node connected-term term-semantic-tags "L1.4"))
@@ -1277,6 +1345,8 @@
         (sumti-view (hasheq (first direct) (second direct)))])]))
 
 (define (selbri-view subtree)
+  (define unknown-keys
+    (unrecognized-hash-keys subtree supported-selbri-keys))
   (define relation (parsed-relation subtree))
   (define gismu (remove-duplicates (terminal-texts subtree 'Gismu)))
   (define cmavo (terminal-texts subtree 'Cmavo))
@@ -1291,6 +1361,10 @@
             (if negated? '("na") '())
             (if (equal? relation '|co'e|) '("co'e") '())))
   (cond
+    [(pair? unknown-keys)
+     (no-lowering "L1.1" 'rule-underspecified
+                  "selbri contains an unknown grammar wrapper"
+                  unknown-keys)]
     [(not relation)
      (no-lowering "L1.1" 'rule-underspecified
                   "selbri parse has no supported lexical relation" cmavo)]
@@ -1330,6 +1404,24 @@
 (define (termset-views term-node)
   (define descriptors (tag-values term-node 'DescriptorWithoutGadriSumti))
   (define connectives (tag-values term-node 'CeheConnective))
+  (define descriptor-candidates
+    (semantic-node-candidates term-node
+                              (seteq 'DescriptorWithoutGadriSumti)))
+  (define connective-candidates
+    (semantic-node-candidates term-node (seteq 'CeheConnective)))
+  (define unknown-paths
+    (append
+     (unrecognized-semantic-path-keys descriptor-candidates
+                                      termset-descriptor-path-keys)
+     (unrecognized-semantic-path-keys connective-candidates
+                                      termset-connective-path-keys)))
+  (define unknown-connective-keys
+    (remove-duplicates
+     (append-map
+      (lambda (connective)
+        (unrecognized-hash-keys connective
+                                supported-special-connective-keys))
+      connectives)))
   (define accounted
     (append
      (append-map terminal-signatures descriptors)
@@ -1337,12 +1429,16 @@
   (cond
     [(or (not (= (length descriptors) 2))
          (not (= (length connectives) 1))
+         (pair? unknown-paths)
+         (pair? unknown-connective-keys)
          (not (equal? (terminal-texts (first connectives) 'Cmavo) '("ce'e")))
          (not (same-members? (terminal-signatures term-node) accounted)))
      (no-lowering "L5.3" 'rule-underspecified
                   "termset has unconsumed or malformed semantic children"
                   (hasheq 'descriptors (length descriptors)
                           'connectives (map terminal-texts connectives)
+                          'unknown-paths unknown-paths
+                          'unknown-connective-keys unknown-connective-keys
                           'all (terminal-signatures term-node)
                           'accounted accounted))]
     [else
@@ -1739,12 +1835,31 @@
                    `(every ,predicate ,relation)))]
           [(number? quantity)
            (if (member 'global-exact (rr-value fields 'readings))
-               (no-lowering
-                "L5.2" 'rule-underspecified
-                "GlobalExactly plus L0.1 hoisting is not in the M3 fragment"
-                (hasheq 'quantity quantity 'predicate predicate
-                        'relation relation
-                        'sites (rr-value fields 'sites)))
+               (let* ([row (inventory-row inv relation)]
+                      [expected-sites
+                       (and row
+                            (for/list ([label
+                                        (in-range 2
+                                                  (add1 (row-decl-total row)))])
+                              `(omit
+                                ,(string->symbol
+                                  (format "~a-~a" relation label))
+                                (deps ()))))]
+                      [check
+                       (if expected-sites
+                           (validated-path fields "L5.2" '(global-exact)
+                                           (list predicate relation)
+                                           expected-sites)
+                           (no-lowering "L5.2" 'row-missing
+                                        "global reading row is absent"
+                                        relation))])
+                 (if (no-lowering? check) check
+                     (no-lowering
+                      "L5.2" 'rule-underspecified
+                      "GlobalExactly plus L0.1 hoisting is not in the M3 fragment"
+                      (hasheq 'quantity quantity 'predicate predicate
+                              'relation relation
+                              'sites expected-sites))))
                (let ([check
                       (validated-path fields "L5.2"
                                       (readings '(witness-set))
@@ -1863,19 +1978,34 @@
                               ,(if negated? `(na ,app) app)))]))])]))
 
 (define (statement->sigma statement category fields inv)
-  (define connection (first-tag statement 'IStatementConnection))
+  (define connection
+    (and (hash? statement)
+         (hash-ref statement 'IStatementConnection (lambda () #f))))
   (if connection
       (let* ([leading (hash-ref connection 'leading_statement)]
              [continuations (hash-ref connection 'continuations)]
-             [tail (and (= (length continuations) 1)
-                        (first-tag (first continuations)
-                                   'SimpleIConnectiveStatementTail))])
-        (if (not tail)
+             [direct-tail
+              (and (= (length continuations) 1)
+                   (direct-semantic-node
+                    (first continuations) connection-tail-tags "L5.12"
+                    transparent-connection-tail-keys))]
+             [tail (and (list? direct-tail) (second direct-tail))])
+        (if (or (not tail) (no-lowering? direct-tail))
+            (or (and (no-lowering? direct-tail) direct-tail)
             (no-lowering "L5.12" 'rule-underspecified
-                         "unsupported statement connection shape" connection)
+                         "unsupported statement connection shape" connection))
             (let* ([left-view (bridi-view leading)]
                    [trailing (hash-ref tail 'trailing_statement)]
                    [connective (hash-ref tail 'connective)]
+                   [direct-jek
+                    (direct-semantic-node connective jek-tags "L5.12"
+                                          transparent-jek-path-keys)]
+                   [unknown-jek-keys
+                    (if (list? direct-jek)
+                        (unrecognized-hash-keys
+                         (second direct-jek)
+                         supported-special-connective-keys)
+                        '())]
                    [right-view (bridi-view trailing)]
                    [tanru-connection?
                     (and (not (no-lowering? left-view))
@@ -1902,11 +2032,13 @@
                                [(equal? jek "ja") 'or]
                                [else #f])])
               (if (or (no-lowering? left-view) (no-lowering? right-view)
+                      (no-lowering? direct-jek) (pair? unknown-jek-keys)
                       tanru-connection? (not kind)
                       (not (= (length separators) 1))
                       (not (same-members? all-terminals accounted)))
                   (or (and (no-lowering? left-view) left-view)
                       (and (no-lowering? right-view) right-view)
+                      (and (no-lowering? direct-jek) direct-jek)
                       (and tanru-connection?
                            (no-lowering
                             "L1.10" 'rule-underspecified
@@ -1920,6 +2052,8 @@
                       (no-lowering "L5.12" 'rule-underspecified
                                    "statement connection has unconsumed children"
                                    (hasheq 'connective connective-words
+                                           'unknown-connective-keys
+                                           unknown-jek-keys
                                            'all all-terminals
                                            'accounted accounted)))
                   (let* ([left-relation
@@ -1946,13 +2080,29 @@
         (if (no-lowering? view) view (view->sigma view category fields inv)))))
 
 (define (fragment->sigma raw fields inv)
-  (define fragment (first-tag raw 'TermsFragment))
-  (if (not fragment)
-      (no-lowering "M3" 'out-of-fragment
-                   "parse is neither a supported statement nor terms fragment" #f)
-      (let* ([terms (tag-values fragment 'ConnectedTerm)]
-             [view (and (= (length terms) 1) (term-view (first terms)))])
+  (define direct-fragment
+    (direct-semantic-node raw fragment-tags "M3"
+                          transparent-fragment-path-keys))
+  (if (no-lowering? direct-fragment)
+      direct-fragment
+      (let* ([fragment (second direct-fragment)]
+             [terms (hash-ref fragment 'terms (lambda () #f))]
+             [direct-terms?
+              (and (list? terms)
+                   (for/and ([term (in-list terms)])
+                     (and (hash? term)
+                          (= (hash-count term) 1)
+                          (hash-has-key? term 'ConnectedTerm))))]
+             [view (and direct-terms? (= (length terms) 1)
+                        (term-view (first terms)))])
         (cond
+          [(not direct-terms?)
+           (no-lowering "M3" 'rule-underspecified
+                        "terms fragment has an unknown direct term wrapper"
+                        (and (list? terms)
+                             (map (lambda (term)
+                                    (and (hash? term) (hash-keys term)))
+                                  terms)))]
           [(no-lowering? view) view]
           [(match view [`(description "lo'i" ,predicate ,count) #t] [_ #f])
            (match-define `(description "lo'i" ,predicate ,count) view)
@@ -1990,14 +2140,20 @@
 (define (parse-case->sigma parse-case fields [inv (load-inventory)])
   (define raw (hash-ref parse-case 'parse))
   (define category (string->symbol (hash-ref parse-case 'category)))
+  (define direct-root
+    (direct-semantic-node raw root-semantic-tags "M3"
+                          transparent-root-path-keys))
   (cond
-    [(first-tag raw 'TermsFragment) (fragment->sigma raw fields inv)]
-    [(first-tag raw 'IStatementConnection)
-     (statement->sigma raw category fields inv)]
-    [(first-tag raw 'BridiStatement)
-     => (lambda (statement) (statement->sigma statement category fields inv))]
-    [(first-tag raw 'FragmentStatement)
-     => (lambda (fragment) (fragment->sigma fragment fields inv))]
+    [(no-lowering? direct-root) direct-root]
+    [(eq? (first direct-root) 'IStatementConnection)
+     (statement->sigma
+      (hasheq 'IStatementConnection (second direct-root)) category fields inv)]
+    [(eq? (first direct-root) 'BridiStatement)
+     (statement->sigma
+      (hasheq 'BridiStatement (second direct-root)) category fields inv)]
+    [(eq? (first direct-root) 'FragmentStatement)
+     (fragment->sigma
+      (hasheq 'FragmentStatement (second direct-root)) fields inv)]
     [else
      (no-lowering "M3" 'out-of-fragment
                   "gentufa parse has no supported statement root"

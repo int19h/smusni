@@ -635,6 +635,19 @@
 (check-true (no-lowering? bogus-grade-sites))
 (check-equal? (no-lowering-cause bogus-grade-sites) 'rr-missing)
 
+;; Candidate-visible semantic gaps are reported only after their declared RR
+;; inputs validate. Malformed global-reading data is rr-missing, never the same
+;; non-failing gap result as a valid but unsupported reading.
+(for ([mutation
+       (in-list
+        (list (rr-with spec-10-rr (cons 'sites '()))
+              (rr-with spec-10-rr (cons 'attach '(unconsumed)))
+              (rr-with spec-10-rr
+                       (cons 'readings '(global-exact extra)))))] )
+  (define result (lower spec-10-parse mutation))
+  (check-true (no-lowering? result))
+  (check-equal? (no-lowering-cause result) 'rr-missing))
+
 (define (rename-json-key value old new)
   (cond
     [(hash? value)
@@ -870,10 +883,8 @@
       (hash-update
        tail 'selbri
        (lambda (selbri)
-         (hash-set selbri 'probe-conversion
-                   (hasheq 'TanruUnitAtom
-                           (hasheq 'conversions
-                                   (list (synthetic-terminal 'Cmavo "se" 16)))))))))))
+         (hash-set selbri 'conversions
+                   (list (synthetic-terminal 'Cmavo "se" 16)))))))))
 (define tanru-converted-sigma
   (parse-case->sigma tanru-converted-parse (rr-case-fields tanru-rr)))
 (check-true (no-lowering? tanru-converted-sigma))
@@ -896,6 +907,61 @@
   (lower unknown-tag-wrapper-parse tagged-rr))
 (check-true (no-lowering? unknown-tag-wrapper-result))
 (check-equal? (no-lowering-cause unknown-tag-wrapper-result)
+              'rule-underspecified)
+
+(define-values (zip-parse zip-rr) (case-input "spec.md" 19))
+(define unknown-joi-wrapper-result
+  (lower
+   (hash-set zip-parse 'parse
+             (rename-json-key (hash-ref zip-parse 'parse)
+                              'JoikConnective 'UnknownJoiWrapper))
+   zip-rr))
+(check-true (no-lowering? unknown-joi-wrapper-result))
+(check-equal? (no-lowering-cause unknown-joi-wrapper-result)
+              'rule-underspecified)
+
+(define unknown-selbri-wrapper-result
+  (lower
+   (hash-set sample-1-parse 'parse
+             (rename-json-key (hash-ref sample-1-parse 'parse)
+                              'WordTanruUnit 'UnknownSelbriWrapper))
+   sample-1-rr))
+(check-true (no-lowering? unknown-selbri-wrapper-result))
+(check-equal? (no-lowering-cause unknown-selbri-wrapper-result)
+              'rule-underspecified)
+
+(define-values (termset-parse termset-rr) (case-input "samples.md" 46))
+(define unknown-termset-wrapper-result
+  (lower
+   (hash-set termset-parse 'parse
+             (rename-json-key (hash-ref termset-parse 'parse)
+                              'continuations 'UnknownTermsetWrapper))
+   termset-rr))
+(check-true (no-lowering? unknown-termset-wrapper-result))
+(check-equal? (no-lowering-cause unknown-termset-wrapper-result)
+              'rule-underspecified)
+
+(define-values (connection-parse connection-rr) (case-input "samples.md" 17))
+(define unknown-connection-wrapper-result
+  (lower
+   (hash-set connection-parse 'parse
+             (rename-json-key (hash-ref connection-parse 'parse)
+                              'IStandardStatementConnective
+                              'UnknownConnectionWrapper))
+   connection-rr))
+(check-true (no-lowering? unknown-connection-wrapper-result))
+(check-equal? (no-lowering-cause unknown-connection-wrapper-result)
+              'rule-underspecified)
+
+(define-values (fragment-parse fragment-rr) (case-input "samples.md" 30))
+(define unknown-fragment-wrapper-result
+  (lower
+   (hash-set fragment-parse 'parse
+             (rename-json-key (hash-ref fragment-parse 'parse)
+                              'ConnectedTerm 'UnknownFragmentTermWrapper))
+   fragment-rr))
+(check-true (no-lowering? unknown-fragment-wrapper-result))
+(check-equal? (no-lowering-cause unknown-fragment-wrapper-result)
               'rule-underspecified)
 
 ;; The mechanism is not restricted to the frozen surface corpus: a lexical
