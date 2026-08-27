@@ -69,6 +69,7 @@
   (source ordinal index disposition cause rules expansions message produced expected)
   #:transparent)
 (struct fence-report (source ordinal disposition cases) #:transparent)
+(struct gentufa-terminal (kind text start stop) #:transparent)
 
 ;; M3's executable semantics. The Racket driver converts a validated gentufa
 ;; fixture to the small source view below; all core construction happens in
@@ -108,19 +109,57 @@
 (define-metafunction SmusniM3
   route-out : e -> e
   [(route-out (application x_R e_arg ...)) (x_R e_arg ...)]
-  [(route-out (se-lambda tavla))
-   (λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1))])
+  [(route-out (se-lambda x_R))
+   (λ ($new1 $new2 :: Referents Entity) (x_R $new2 $new1))])
 
 (define-metafunction SmusniM3
   connective-out : e e e -> e
-  [(connective-out not (pred x_R e_arg ...) none)
-   (ClauseNot (DirectClause (x_R e_arg ...)))]
-  [(connective-out and (pred x_R e_arg ...) (pred x_S e_arg_2 ...))
-   (ClauseAnd (DirectClause (x_R e_arg ...))
-              (DirectClause (x_S e_arg_2 ...)))]
-  [(connective-out or (pred x_R e_arg ...) (pred x_S e_arg_2 ...))
-   (ClauseOr (DirectClause (x_R e_arg ...))
-             (DirectClause (x_S e_arg_2 ...)))])
+  [(connective-out not e_left none) (ClauseNot (DirectClause e_left))]
+  [(connective-out and e_left e_right)
+   (ClauseAnd (DirectClause e_left) (DirectClause e_right))]
+  [(connective-out or e_left e_right)
+   (ClauseOr (DirectClause e_left) (DirectClause e_right))])
+
+(define-metafunction SmusniM3
+  cohe-out : e e e -> e
+  [(cohe-out e_row e_left e_right)
+   (Bind ($r :: PredTerm e_row) (Context)
+     (Assert (Close ($r e_left e_right))))])
+
+(define-metafunction SmusniM3
+  termset-out : e x e x x -> e
+  [(termset-out e_n1 e_P1 e_n2 e_P2 x_Q)
+   (Bind ($left :: Referents Entity)
+         (SelectExactly e_n1 (λ ($x :: Entity) (e_P1 $x)))
+         ($right :: Referents Entity)
+         (SelectExactly e_n2 (λ ($x :: Entity) (e_P2 $x)))
+     (Assert
+      (Distrib
+       (λ ($l :: Entity)
+         (Distrib (λ ($r :: Entity) (Close (x_Q $l $r))) $right))
+       $left)))])
+
+(define-metafunction SmusniM3
+  grade-out : x e -> e
+  [(grade-out x_R e_arg)
+   (Bind ($s :: Scale) (Context)
+         ($reg :: Region Scale)
+         (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
+     (Assert (Close ((Grade x_R $s $reg) e_arg))))])
+
+(define-metafunction SmusniM3
+  scalar-out : e x e -> e
+  [(scalar-out e_kind x_R e_arg)
+   (Bind ($d :: ContrastDomain (RowOf x_R)) (Context)
+     (Assert (Close ((Scalar e_kind $d x_R) e_arg))))])
+
+(define-metafunction SmusniM3
+  zip-out : x (e ...) (e ...) -> e
+  [(zip-out x_R (e_left ...) (e_right ...))
+   (ZipWith
+    (λ ($left $right :: Referents Entity) (Close (x_R $left $right)))
+    (List e_left ...)
+    (List e_right ...))])
 
 (define-metafunction SmusniM3
   nuclear-out : e e e -> e
@@ -130,14 +169,29 @@
    (λ (e_var :: Referents Entity) e_body)])
 
 (define-metafunction SmusniM3
-  le-out : x e e -> e
-  [(le-out x_P (pure described x_P) e_property) e_property]
-  [(le-out x_P e_continuation e_body)
-   (Bind ($it :: Referents Entity)
+  description-source : e x e x -> e
+  [(description-source e_force x_Q positive x_ref)
+   (force e_force (close shorthand (pred x_Q x_ref)))]
+  [(description-source e_force x_Q positive-omit x_ref)
+   (force e_force (close shorthand (omit (pred x_Q x_ref))))]
+  [(description-source e_force x_Q negative x_ref)
+   (force e_force (close clause (na (pred x_Q x_ref))))])
+
+(define-metafunction SmusniM3
+  le-cont-source : e x -> e
+  [(le-cont-source (pure described x_P) x_ref) (pure described x_P)]
+  [(le-cont-source (description x_Q e_polarity e_force) x_ref)
+   (description-source e_force x_Q e_polarity x_ref)])
+
+(define-metafunction SmusniM3
+  le-out : x e x e -> e
+  [(le-out x_P (pure described x_P) x_ref e_property) e_property]
+  [(le-out x_P e_continuation x_ref e_body)
+   (Bind (x_ref :: Referents Entity)
          (Refer
-          (λ ($x :: Referents Entity)
+          (λ ($described :: Referents Entity)
             (SpeakerDescribes
-             $x (λ ($y :: Referents Entity) (x_P $y)))))
+             $described (λ ($unit :: Referents Entity) (x_P $unit)))))
      e_body)])
 
 (define-metafunction SmusniM3
@@ -195,36 +249,43 @@
    --------------------------------------------- "L1.6"
    (m3-lower e_RR (gentufa e_parse (omit e_source)) e_out)]
 
-  [--------------------------------------------- "L1.8"
-   (m3-lower e_RR (gentufa e_parse cohe)
-             (Bind ($r :: PredTerm
-                         (Row (1 (Referents Entity)) (2 (Referents Entity))))
-                   (Context)
-               (Assert (Close ($r Speaker Audience)))))]
+  [(where e_out (cohe-out e_row e_left e_right))
+   --------------------------------------------- "L1.8"
+   (m3-lower e_RR (gentufa e_parse (cohe e_row e_left e_right)) e_out)]
 
   [(where e_relation (Tanru x_M x_H))
    (where e_out (apply* e_relation (e_arg ...)))
    --------------------------------------------- "L1.10"
    (m3-lower e_RR (gentufa e_parse (tanru x_M x_H e_arg ...)) e_out)]
 
-  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+  [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$r))
+   (where e_continuation
+          (description-source e_force x_Q e_polarity x_ref))
+   (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    --------------------------------------------- "L3.1"
-   (m3-lower e_RR (gentufa e_parse (lo x_P e_continuation))
-             (Bind ($cat :: Referents Entity)
-                   (Refer (λ ($x :: Referents Entity) (x_P $x)))
+   (m3-lower e_RR (gentufa e_parse (lo x_P x_Q e_polarity e_force))
+             (Bind (x_ref :: Referents Entity)
+                   (Refer (λ ($unit :: Referents Entity) (x_P $unit)))
                e_body))]
 
-  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
-   (where e_out (le-out x_P e_continuation e_body))
+  [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P e_continuation))
+                                  '$r))
+   (where e_source (le-cont-source e_continuation x_ref))
+   (m3-lower e_RR (gentufa e_parse e_source) e_body)
+   (where e_out (le-out x_P e_continuation x_ref e_body))
    --------------------------------------------- "L3.2"
    (m3-lower e_RR (gentufa e_parse (le x_P e_continuation))
              e_out)]
 
-  [(m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+  [(where x_ref ,(variable-not-in (term (e_RR e_parse e_name x_Q)) '$r))
+   (where e_continuation
+          (description-source e_force x_Q positive-omit x_ref))
+   (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    --------------------------------------------- "L3.3"
-   (m3-lower e_RR (gentufa e_parse (la e_name e_continuation))
-             (Bind ($alis :: Referents Entity)
-                   (Refer (λ ($x :: Referents Entity) (Named e_name $x)))
+   (m3-lower e_RR (gentufa e_parse (la e_name x_Q e_force))
+             (Bind (x_ref :: Referents Entity)
+                   (Refer (λ ($named :: Referents Entity)
+                            (Named e_name $named)))
                e_body))]
 
   [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
@@ -279,19 +340,10 @@
                    (SelectExactly e_n e_P)
                e_Q_body))]
 
-  [--------------------------------------------- "L5.3"
-   (m3-lower e_RR (gentufa e_parse (termset))
-             (Bind ($dogs :: Referents Entity)
-                   (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-                   ($people :: Referents Entity)
-                   (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
-               (Assert
-                (Distrib
-                 (λ ($d :: Entity)
-                   (Distrib
-                    (λ ($p :: Entity) (Close (nelci $d $p)))
-                    $people))
-                 $dogs))))]
+  [(where e_out (termset-out e_n1 x_P1 e_n2 x_P2 x_Q))
+   --------------------------------------------- "L5.3"
+   (m3-lower e_RR
+             (gentufa e_parse (termset e_n1 x_P1 e_n2 x_P2 x_Q)) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q e_var))) e_body)
    (where e_out (nuclear-out e_var e_type e_body))
@@ -299,21 +351,22 @@
   (m3-lower e_RR (gentufa e_parse (nuclear e_var e_type x_Q))
              e_out)]
 
-  [(where e_out (connective-out e_kind e_left e_right))
+  [(m3-lower e_RR (gentufa e_parse e_left) e_left_clause)
+   (m3-lower e_RR (gentufa e_parse e_right) e_right_clause)
+   (where e_out (connective-out e_kind e_left_clause e_right_clause))
    --------------------------------------------- "L5.8"
    (m3-lower e_RR (gentufa e_parse
                             (clause-connect e_kind e_left e_right))
              e_out)]
 
-  [(m3-lower e_RR (gentufa e_parse
-                            (clause-connect not e_source none)) e_out)
+  [(m3-lower e_RR (gentufa e_parse e_source) e_body)
    --------------------------------------------- "L5.9"
-   (m3-lower e_RR (gentufa e_parse (na e_source)) e_out)]
+   (m3-lower e_RR (gentufa e_parse (na e_source))
+             (ClauseNot (DirectClause e_body)))]
 
-  [--------------------------------------------- "L5.11"
-   (m3-lower e_RR (gentufa e_parse (scalar x_P e_arg))
-             (Bind ($d :: ContrastDomain (RowOf x_P)) (Context)
-               (Assert (Close ((Scalar OtherThan $d x_P) e_arg)))))]
+  [(where e_out (scalar-out e_kind x_P e_arg))
+   --------------------------------------------- "L5.11"
+   (m3-lower e_RR (gentufa e_parse (scalar e_kind x_P e_arg)) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse
                             (clause-connect e_kind e_left e_right)) e_clause)
@@ -322,12 +375,10 @@
                             (sentence-connect e_kind e_left e_right))
              e_clause)]
 
-  [--------------------------------------------- "L5.21"
-   (m3-lower e_RR (gentufa e_parse zip)
-             (ZipWith
-              (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
-              (List Speaker Audience)
-              (List Audience Speaker)))]
+  [(where e_out (zip-out x_R (e_left ...) (e_right ...)))
+   --------------------------------------------- "L5.21"
+   (m3-lower e_RR
+             (gentufa e_parse (zip x_R (e_left ...) (e_right ...))) e_out)]
 
   [(m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
    (m3-lower e_RR (gentufa e_parse
@@ -336,13 +387,9 @@
    --------------------------------------------- "L5.28"
    (m3-lower e_RR (gentufa e_parse (threshold e_kind x_P x_Q)) e_out)]
 
-  [--------------------------------------------- "L5.29"
-   (m3-lower e_RR (gentufa e_parse grade)
-             (Bind ($s :: Scale) (Context)
-                   ($reg :: Region Scale)
-                   (Vague (λ ($r :: Region Scale)
-                            (AdmissibleCutoff $s $r)))
-               (Assert (Close ((Grade barda $s $reg) That)))))] )
+  [(where e_out (grade-out x_R e_arg))
+   --------------------------------------------- "L5.29"
+   (m3-lower e_RR (gentufa e_parse (grade x_R e_arg)) e_out)] )
 
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
@@ -786,76 +833,523 @@
                      "produced core term has unresolved typing gaps"
                      (typing-gaps typed)))))
 
-(define (parse-case->sigma parse-case)
-  (define tokens (parse-case-tokens parse-case))
-  (define category (string->symbol (hash-ref parse-case 'category)))
-  (match* (tokens category)
-    [((list "mi" "klama") 'sentence)
-     '(force assert (close shorthand (omit (pred klama Speaker))))]
-    [((list "mi" "klama" "ti") 'predication)
-     '(pred klama Speaker This)]
-    [((list "klama" "fe" "ti" "tu") 'predication)
-     '(route (application klama :2 This Yonder))]
-    [((list "klama" "fe" "ti" "tu") 'sentence)
-     '(force assert
-             (close shorthand
-                    (omit (route (application klama :2 This Yonder)))))]
-    [((list "mi" "klama" "ti" "zi'o" "ti" "ti") 'sentence)
-     '(force assert
-             (close shorthand (drop klama 3 Speaker This This This)))]
-    [((list "ti" "se" "klama" "mi") 'sentence)
-     '(force assert
-             (close shorthand (route (application klama Speaker This))))]
-    [((list "se" "tavla") 'selbri) '(route (se-lambda tavla))]
-    [((list "sutra" "klama") 'sentence)
-     '(force assert (close shorthand (tanru sutra klama Speaker)))]
-    [((list "mi" "co'e" "do") 'sentence) 'cohe]
+(define (unstress text)
+  (list->string
+   (filter (lambda (character) (not (char=? character #\u0301)))
+           (string->list (string-normalize-nfd text)))))
 
-    [((list "lo" "mlatu" "cu" "blabi") 'sentence)
-     '(lo mlatu (force assert (close shorthand (pred blabi $cat))))]
-    [((list "lo" "mlatu" "na" "jbena") 'sentence)
-     '(lo mlatu (force assert (close clause (na (pred jbena $cat)))))]
-    [((list "le" "mlatu" "cu" "blabi") 'sentence)
-     '(le mlatu (force assert (close shorthand (pred blabi $it))))]
-    [((list "la" ".alis." "klama") 'sentence)
-     '(la "alis" (force assert (close shorthand (omit (pred klama $alis)))))]
-    [((list "lo'i" "gerku") 'utterance) '(collection-set gerku)]
-    [((list "lu'o" "le" "ci" "prenu") 'utterance) '(luho 3 prenu)]
-    [((list "lo'e" "mlatu" "cu" "cinri") 'sentence)
-     '(force assert (generic mlatu cinri))]
+(define (gentufa-terminals value)
+  (define found '())
+  (define (walk node [kind #f])
+    (cond
+      [(hash? node)
+       (if (and kind (hash-has-key? node 'phonemes)
+                (hash-has-key? node 'span))
+           (match (hash-ref node 'span)
+             [(list start stop)
+              (set! found
+                    (cons (gentufa-terminal
+                           kind (unstress (hash-ref node 'phonemes)) start stop)
+                          found))]
+             [_ (void)])
+           (for ([(key child) (in-hash node)]) (walk child key)))]
+      [(list? node) (for ([child (in-list node)]) (walk child kind))]
+      [else (void)]))
+  (walk value)
+  (sort (remove-duplicates found) < #:key gentufa-terminal-start))
 
-    [((list "mi" "na" "klama") 'sentence)
-     '(force assert (close actual (na (pred klama Speaker))))]
-    [((list "mi" "klama" ".ije" "do" "stali") 'sentence)
-     '(force assert
-             (close actual
-                    (sentence-connect and
-                                      (pred klama Speaker)
-                                      (pred stali Audience))))]
-    [((list "mi" "klama" ".ija" "do" "stali") 'sentence)
-     '(force assert
-             (close actual
-                    (sentence-connect or
-                                      (pred klama Speaker)
-                                      (pred stali Audience))))]
-    [((list "ro" "gerku" "cu" "blabi") 'sentence)
-     '(force assert (every gerku blabi))]
-    [((list "ci" "gerku" "ce'e" "re" "prenu" "cu" "nelci") 'sentence)
-     '(termset)]
-    [((list "so'i" "prenu" "cu" "klama") 'sentence)
-     '(threshold many prenu klama)]
-    [((list "ta" "na'e" "melbi") 'sentence) '(scalar melbi That)]
-    [((list "ta" "barda") 'sentence) 'grade]
-    [((list "du'e" "gerku" "cu" "klama") 'sentence)
-     '(threshold too-many gerku klama)]
-    [((list "ci" "gerku" "cu" "bajra") 'content)
-     '(cardinal 3 gerku bajra)]
-    [((list "mi" "fa'u" "do" "tavla" "do" "fa'u" "mi") 'content)
-     'zip]
-    [(_ _)
+(define (tag-values value wanted)
+  (define found '())
+  (define (walk node)
+    (cond
+      [(hash? node)
+       (for ([(key child) (in-hash node)])
+         (when (eq? key wanted) (set! found (cons child found)))
+         (walk child))]
+      [(list? node) (for ([child (in-list node)]) (walk child))]
+      [else (void)]))
+  (walk value)
+  (reverse found))
+
+(define (first-tag value wanted)
+  (define values (tag-values value wanted))
+  (and (pair? values) (first values)))
+
+(define (has-tag? value wanted)
+  (pair? (tag-values value wanted)))
+
+(define (terminal-texts value [kind #f])
+  (for/list ([terminal (in-list (gentufa-terminals value))]
+             #:when (or (not kind) (eq? kind (gentufa-terminal-kind terminal))))
+    (gentufa-terminal-text terminal)))
+
+(define (first-terminal value kind)
+  (define found (terminal-texts value kind))
+  (and (pair? found) (first found)))
+
+(define number-values
+  (hash "no" 0 "pa" 1 "re" 2 "ci" 3 "vo" 4 "mu" 5
+        "xa" 6 "ze" 7 "bi" 8 "so" 9))
+
+(define reference-values
+  (hash "mi" 'Speaker "do" 'Audience "ti" 'This "ta" 'That "tu" 'Yonder))
+
+(define (rr-value fields name)
+  (hash-ref fields name (lambda () '())))
+
+(define (rr-has? fields name value)
+  (member value (rr-value fields name)))
+
+(define (require-row fields relation)
+  (if (member relation (rr-value fields 'rows))
+      #t
+      (no-lowering "L1.1" 'rr-missing
+                   "RR.rows does not select the parsed lexical relation"
+                   relation)))
+
+(define (parsed-relation subtree)
+  (define gismu (remove-duplicates (terminal-texts subtree 'Gismu)))
+  (cond [(pair? gismu) (string->symbol (last gismu))]
+        [(member "co'e" (terminal-texts subtree 'Cmavo)) '|co'e|]
+        [else #f]))
+
+(define (sumti-view subtree)
+  (cond
+    [(first-tag subtree 'ProSumti)
+     => (lambda (node)
+          (define word (first-terminal node 'Cmavo))
+          (cond [(hash-ref reference-values word #f) => (lambda (value) `(value ,value))]
+                [(equal? word "zi'o") '(deleted)]
+                [else (no-lowering "L1.4" 'rule-underspecified
+                                   "unsupported parsed pro-sumti" word)]))]
+    [(first-tag subtree 'NameSumti)
+     => (lambda (node)
+          (define name (first-terminal node 'Cmevla))
+          (if name `(name ,name)
+              (no-lowering "L3.3" 'rule-underspecified
+                           "name parse has no cmevla" #f)))]
+    [(first-tag subtree 'LaheSumti)
+     => (lambda (node)
+          (define op (first-terminal (hash-ref node 'lahe) 'Cmavo))
+          (define inner (sumti-view (hash-ref node 'inner_sumti)))
+          (if (no-lowering? inner) inner `(lahe ,op ,inner)))]
+    [(first-tag subtree 'DescriptorWithGadriSumti)
+     => (lambda (node)
+          (define gadri (first-terminal (hash-ref node 'description) 'Cmavo))
+          (define tail (hash-ref node 'tail))
+          (define relation (parsed-relation tail))
+          (define quantifier-node (first-tag tail 'PaRunQuantifier))
+          (define count
+            (and quantifier-node
+                 (hash-ref number-values
+                           (first-terminal quantifier-node 'Cmavo) #f)))
+          (if (and gadri relation)
+              `(description ,gadri ,relation ,count)
+              (no-lowering "L3.1" 'rule-underspecified
+                           "descriptor parse lacks gadri or relation" node)))]
+    [(first-tag subtree 'DescriptorWithoutGadriSumti)
+     => (lambda (node)
+          (define quantifier-node (hash-ref node 'quantifier))
+          (define q-word (first-terminal quantifier-node 'Cmavo))
+          (define relation (parsed-relation (hash-ref node 'selbri)))
+          (define quantity (hash-ref number-values q-word q-word))
+          (if relation `(quantifier ,quantity ,relation)
+              (no-lowering "L5.2" 'rule-underspecified
+                           "quantifier parse lacks relation" node)))]
+    [else
      (no-lowering "M3" 'out-of-fragment
-                  "no Redex source view for the whole parse"
-                  (list tokens category))]))
+                  "unsupported gentufa sumti construct"
+                  (sort (set->list (parse-case-variants
+                                    (hasheq 'parse subtree 'surface "")))
+                        symbol<?))]))
+
+(define (term-view connected-term)
+  (cond
+    [(and (has-tag? connected-term 'JoiConnective)
+          (member "fa'u" (terminal-texts connected-term 'Cmavo)))
+     (define values
+       (for/list ([word (in-list (terminal-texts connected-term 'Cmavo))]
+                  #:when (hash-has-key? reference-values word))
+         (hash-ref reference-values word)))
+     (if (pair? values)
+         `(zip-values ,values)
+         (no-lowering "L5.21" 'rule-underspecified
+                      "fa'u connectee has no referential values" connected-term))]
+    [(first-tag connected-term 'PlaceTaggedSumtiTerm)
+     => (lambda (node)
+          (define fa (first-terminal (hash-ref node 'fa) 'Cmavo))
+          (define label (hash "fa" 1 "fe" 2 "fi" 3 "fo" 4 "fu" 5))
+          (define sumti (sumti-view (hash-ref node 'sumti)))
+          (if (no-lowering? sumti) sumti
+              `(label ,(hash-ref label fa) ,sumti)))]
+    [else (sumti-view connected-term)]))
+
+(define (selbri-view subtree)
+  (define relation (parsed-relation subtree))
+  (define gismu (remove-duplicates (terminal-texts subtree 'Gismu)))
+  (define cmavo (terminal-texts subtree 'Cmavo))
+  (cond
+    [(not relation)
+     (no-lowering "L1.1" 'rule-underspecified
+                  "selbri parse has no supported lexical relation" cmavo)]
+    [else
+     (hasheq 'relation relation
+             'tanru (and (>= (length gismu) 2)
+                         (map string->symbol (take-right gismu 2)))
+             'conversion (and (member "se" cmavo) 'se)
+             'scalar (and (has-tag? subtree 'ScalarNegatedTanruUnit)
+                          (cond [(member "na'e" cmavo) 'OtherThan]
+                                [(member "to'e" cmavo) 'Opposite]
+                                [(member "no'e" cmavo) 'Neutral]
+                                [else #f]))
+             'negated (has-tag? subtree 'NegatedSelbri))]))
+
+(define (collect-bridi-terms bridi)
+  (define leading (hash-ref bridi 'leading_terms (lambda () '())))
+  (define tail (first-tag bridi 'SelbriSimpleBridiTail))
+  (define trailing (if tail (hash-ref tail 'terms (lambda () '())) '()))
+  (append leading trailing))
+
+(define (termset-views term-node)
+  (for/list ([descriptor (in-list
+                          (tag-values term-node 'DescriptorWithoutGadriSumti))])
+    (sumti-view (hasheq 'DescriptorWithoutGadriSumti descriptor))))
+
+(define (bridi-view statement)
+  (define bridi
+    (or (first-tag statement 'BridiWithLeadingTerms)
+        (first-tag statement 'RelationOnlyBridi)))
+  (if (not bridi)
+      (no-lowering "L1.1" 'out-of-fragment
+                   "gentufa statement has no supported bridi node" #f)
+      (let* ([tail (first-tag bridi 'SelbriSimpleBridiTail)]
+             [selbri (and tail (selbri-view (hash-ref tail 'selbri)))])
+        (if (or (not selbri) (no-lowering? selbri))
+            (or selbri (no-lowering "L1.1" 'rule-underspecified
+                                    "bridi tail has no simple selbri" #f))
+            (let ([term-nodes (collect-bridi-terms bridi)])
+              (if (and (= (length term-nodes) 1)
+                       (has-tag? (first term-nodes) 'CeheConnective))
+                  (hasheq 'selbri selbri
+                          'terms (termset-views (first term-nodes))
+                          'termset #t)
+                  (let ([terms (map term-view term-nodes)])
+                    (if (ormap no-lowering? terms)
+                        (findf no-lowering? terms)
+                        (hasheq 'selbri selbri 'terms terms
+                                'termset #f)))))))))
+
+(define (force-from-rr fields)
+  (define force (rr-value fields 'force))
+  (cond [(member 'assert force) 'assert]
+        [(member 'mention force) 'mention]
+        [(null? force) #f]
+        [else (no-lowering "L1.2" 'rr-missing
+                           "RR.force has no supported consumer" force)]))
+
+(define (close-mode-from-rr fields [negated? #f] [connected? #f])
+  (define readings (rr-value fields 'readings))
+  (cond [(or negated? connected?)
+         (if (member 'actual readings) 'actual
+             (no-lowering "L1.3" 'rr-missing
+                          "RR.readings lacks actual mode" readings))]
+        [else 'shorthand]))
+
+(define (ordinary-fills terms)
+  (define next 1)
+  (define fills (make-hash))
+  (define deleted '())
+  (for ([term (in-list terms)])
+    (match term
+      [`(label ,label (value ,value))
+       (hash-set! fills label value)
+       (set! next (max next (add1 label)))]
+      [`(value ,value)
+       (hash-set! fills next value)
+       (set! next (add1 next))]
+      [`(deleted)
+       (set! deleted (cons next deleted))
+       (set! next (add1 next))]
+      [_ (void)]))
+  (values fills (reverse deleted)))
+
+(define (application-source view fields inv)
+  (define selbri (hash-ref view 'selbri))
+  (define relation (hash-ref selbri 'relation))
+  (define row-check (require-row fields relation))
+  (if (no-lowering? row-check)
+      row-check
+      (let-values ([(fills deleted) (ordinary-fills (hash-ref view 'terms))])
+        (define row (inventory-row inv relation))
+        (if (not row)
+            (no-lowering "L1.1" 'row-missing
+                         "selected lexical row is absent" relation)
+            (let* ([total (row-decl-total row)]
+                   [ordered
+                    (for/list ([label (in-range 1 (add1 total))]
+                               #:when (hash-has-key? fills label))
+                      (hash-ref fills label))]
+                   [base
+                    (cond
+                      [(pair? deleted)
+                       `(drop ,relation ,(first deleted) ,@ordered)]
+                      [(hash-ref selbri 'conversion #f)
+                       (define routed
+                         (if (>= (length ordered) 2)
+                             (list (second ordered) (first ordered))
+                             ordered))
+                       `(route (application ,relation ,@routed))]
+                      [(not (equal? (sort (hash-keys fills) <)
+                                    (range 1 (add1 (hash-count fills)))))
+                       (define labels (sort (hash-keys fills) <))
+                       (if (and (pair? labels)
+                                (equal? labels
+                                        (range (first labels)
+                                               (+ (first labels)
+                                                  (length labels)))))
+                           `(route
+                             (application
+                              ,relation
+                              ,(string->symbol (format ":~a" (first labels)))
+                              ,@(map (lambda (label) (hash-ref fills label)) labels)))
+                           `(route
+                             (application
+                              ,relation
+                              ,@(append*
+                                 (for/list ([label (in-list labels)])
+                                   (list
+                                    (string->symbol (format ":~a" label))
+                                    (hash-ref fills label)))))))]
+                      [(hash-ref selbri 'tanru #f)
+                       (match-define (list modifier head)
+                         (hash-ref selbri 'tanru))
+                       `(tanru ,modifier ,head ,@ordered)]
+                      [else `(pred ,relation ,@ordered)])]
+                   [provided (+ (hash-count fills) (length deleted))])
+              (if (< provided total) `(omit ,base) base))))))
+
+(define (view->sigma view category fields inv)
+  (define selbri (hash-ref view 'selbri))
+  (define relation (hash-ref selbri 'relation))
+  (define negated? (hash-ref selbri 'negated))
+  (define terms (hash-ref view 'terms))
+  (cond
+    [(and (= (length terms) 2)
+          (andmap (lambda (term)
+                    (match term [`(zip-values ,(? list?)) #t] [_ #f]))
+                  terms))
+     (match* ((first terms) (second terms))
+       [(`(zip-values ,left) `(zip-values ,right))
+        `(zip ,relation ,left ,right)])]
+    [(hash-ref view 'termset)
+     (if (and (= (length terms) 2)
+              (andmap (lambda (term)
+                        (match term [`(quantifier ,(? number?) ,_) #t] [_ #f]))
+                      terms))
+         (match* ((first terms) (second terms))
+           [(`(quantifier ,n1 ,p1) `(quantifier ,n2 ,p2))
+            `(termset ,n1 ,p1 ,n2 ,p2 ,relation)])
+         (no-lowering "L5.3" 'rule-underspecified
+                      "termset shape is not mechanically supported" terms))]
+    [(and (= (length terms) 1)
+          (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
+     (match (first terms)
+       [`(description ,gadri ,predicate ,count)
+        (case (string->symbol gadri)
+          [(lo)
+           (define row-check (require-row fields relation))
+           (define force (force-from-rr fields))
+           (cond [(no-lowering? row-check) row-check]
+                 [(no-lowering? force) force]
+                 [else `(lo ,predicate ,relation
+                            ,(if negated? 'negative 'positive) ,force)])]
+          [(le)
+           (define row-check (require-row fields relation))
+           (define force (force-from-rr fields))
+           (cond [(no-lowering? row-check) row-check]
+                 [(no-lowering? force) force]
+                 [else `(le ,predicate
+                            (description ,relation
+                                         ,(if negated? 'negative 'positive)
+                                         ,force))])]
+          [(|lo'i|) `(collection-set ,predicate)]
+          [(|lo'e|)
+           (if (rr-has? fields 'readings 'typical)
+               `(force ,(force-from-rr fields) (generic ,predicate ,relation))
+               (no-lowering "L3.4" 'rr-missing
+                            "lo'e needs the selected typical reading" #f))]
+          [else (no-lowering "L3.1" 'rule-underspecified
+                             "unsupported parsed gadri" gadri)])])]
+    [(and (= (length terms) 1)
+          (match (first terms) [`(name ,_) #t] [_ #f]))
+     (match-define `(name ,name) (first terms))
+     (define force (force-from-rr fields))
+     (if (no-lowering? force) force
+         `(la ,name ,relation ,force))]
+    [(and (= (length terms) 1)
+          (match (first terms) [`(lahe ,_ ,_) #t] [_ #f]))
+     (match (first terms)
+       [`(lahe "lu'o" (description "le" ,predicate ,(? number? count)))
+        `(luho ,count ,predicate)]
+       [_ (no-lowering "L3.14" 'rule-underspecified
+                       "unsupported LAhE parse" (first terms))])]
+    [(and (= (length terms) 1)
+          (match (first terms) [`(quantifier ,_ ,_) #t] [_ #f]))
+     (match (first terms)
+       [`(quantifier ,quantity ,predicate)
+        (cond
+          [(equal? quantity "ro")
+           (if (rr-has? fields 'readings 'importing)
+               `(force ,(force-from-rr fields) (every ,predicate ,relation))
+               (no-lowering "L5.1" 'rr-missing
+                            "ro description needs importing reading" #f))]
+          [(number? quantity)
+           (if (rr-has? fields 'readings 'witness-set)
+               `(cardinal ,quantity ,predicate ,relation)
+               (no-lowering "L5.2" 'rr-missing
+                            "numeric quantifier needs witness-set reading" #f))]
+          [(equal? quantity "so'i")
+           (if (and (rr-has? fields 'readings 'many)
+                    (pair? (rr-value fields 'sites)))
+               `(threshold many ,predicate ,relation)
+               (no-lowering "L5.28" 'rr-missing
+                            "so'i needs many reading and threshold site" #f))]
+          [(equal? quantity "du'e")
+           (if (and (rr-has? fields 'readings 'too-many)
+                    (pair? (rr-value fields 'sites)))
+               `(threshold too-many ,predicate ,relation)
+               (no-lowering "L5.28" 'rr-missing
+                            "du'e needs too-many reading and sites" #f))]
+          [else (no-lowering "L5.2" 'rule-underspecified
+                             "unsupported parsed quantity" quantity)])])]
+    [else
+     (cond
+       [(and (hash-ref selbri 'tanru #f) (null? terms))
+        (no-lowering "L1.10" 'rule-underspecified
+                     "tanru parse has no resolved head-place fill" selbri)]
+       [(hash-ref selbri 'scalar #f)
+        (if (not (and (rr-has? fields 'readings 'other-than)
+                      (pair? (rr-value fields 'sites))))
+            (no-lowering "L5.11" 'rr-missing
+                         "scalar reading needs kind and contrast-domain site" #f)
+            (if (not (pair? terms))
+            (no-lowering "L5.11" 'rr-missing
+                         "scalar bridi lacks its argument" #f)
+            (match (first terms)
+              [`(value ,argument)
+               `(scalar ,(hash-ref selbri 'scalar) ,relation ,argument)]
+              [_ (no-lowering "L5.11" 'rule-underspecified
+                              "unsupported scalar argument" (first terms))])))]
+       [(equal? relation '|co'e|)
+        (if (and (rr-has? fields 'readings 'ellipsis)
+                 (pair? (rr-value fields 'sites))
+                 (= (length terms) 2))
+            `(cohe (Row (1 (Referents Entity)) (2 (Referents Entity)))
+                   ,@(for/list ([term (in-list terms)])
+                       (match term [`(value ,value) value])))
+            (no-lowering "L1.8" 'rr-missing
+                         "co'e needs two arguments plus RR.readings/sites" terms))]
+       [(rr-has? fields 'readings 'gradable)
+        (if (and (pair? (rr-value fields 'sites)) (= (length terms) 1))
+            (match (first terms)
+              [`(value ,argument) `(grade ,relation ,argument)]
+              [_ (no-lowering "L5.29" 'rule-underspecified
+                              "unsupported gradable argument" (first terms))])
+            (no-lowering "L5.29" 'rr-missing
+                         "gradable reading needs scale/cutoff sites" #f))]
+       [else
+        (define app (application-source view fields inv))
+        (if (no-lowering? app) app
+            (cond
+              [(eq? category 'predication) app]
+              [(eq? category 'selbri)
+               (if (hash-ref selbri 'conversion #f)
+                   `(route (se-lambda ,relation))
+                   app)]
+              [(eq? category 'content)
+               (no-lowering "L5.21" 'out-of-fragment
+                            "content-level connective lowering is not formed"
+                            relation)]
+              [else
+               (define force (force-from-rr fields))
+               (if (no-lowering? force) force
+                   (let ([mode (close-mode-from-rr fields negated?)])
+                     (if (no-lowering? mode) mode
+                         `(force ,force
+                                 (close ,mode
+                                        ,(if negated? `(na ,app) app))))))]))])]))
+
+(define (statement->sigma statement category fields inv)
+  (define connection (first-tag statement 'IStatementConnection))
+  (if connection
+      (let* ([leading (hash-ref connection 'leading_statement)]
+             [continuations (hash-ref connection 'continuations)]
+             [tail (and (= (length continuations) 1)
+                        (first-tag (first continuations)
+                                   'SimpleIConnectiveStatementTail))])
+        (if (not tail)
+            (no-lowering "L5.12" 'rule-underspecified
+                         "unsupported statement connection shape" connection)
+            (let* ([left-view (bridi-view leading)]
+                   [right-view (bridi-view (hash-ref tail 'trailing_statement))]
+                   [jek (first-terminal (hash-ref tail 'connective) 'Cmavo)]
+                   [kind (cond [(equal? jek "je") 'and]
+                               [(equal? jek "ja") 'or]
+                               [else #f])])
+              (if (or (no-lowering? left-view) (no-lowering? right-view)
+                      (not kind))
+                  (or (and (no-lowering? left-view) left-view)
+                      (and (no-lowering? right-view) right-view)
+                      (no-lowering "L5.12" 'rule-underspecified
+                                   "unsupported parsed connective" jek))
+                  (let ([left (application-source left-view fields inv)]
+                        [right (application-source right-view fields inv)]
+                        [force (force-from-rr fields)])
+                    (if (or (no-lowering? left) (no-lowering? right)
+                            (no-lowering? force))
+                        (or (and (no-lowering? left) left)
+                            (and (no-lowering? right) right)
+                            force)
+                        `(force ,force
+                                (close actual
+                                       (sentence-connect ,kind ,left ,right)))))))))
+      (let ([view (bridi-view statement)])
+        (if (no-lowering? view) view (view->sigma view category fields inv)))))
+
+(define (fragment->sigma raw fields inv)
+  (define fragment (first-tag raw 'TermsFragment))
+  (if (not fragment)
+      (no-lowering "M3" 'out-of-fragment
+                   "parse is neither a supported statement nor terms fragment" #f)
+      (let* ([terms (tag-values fragment 'ConnectedTerm)]
+             [view (and (= (length terms) 1) (term-view (first terms)))])
+        (cond
+          [(no-lowering? view) view]
+          [(match view [`(description "lo'i" ,predicate ,_) #t] [_ #f])
+           (match view [`(description ,_ ,predicate ,_) `(collection-set ,predicate)])]
+          [(match view [`(lahe "lu'o" (description "le" ,predicate ,count)) #t]
+                       [_ #f])
+           (match view
+             [`(lahe ,_ (description ,_ ,predicate ,count))
+              `(luho ,count ,predicate)])]
+          [else (no-lowering "M3" 'out-of-fragment
+                             "unsupported parsed terms fragment" view)]))))
+
+(define (parse-case->sigma parse-case fields [inv (load-inventory)])
+  (define raw (hash-ref parse-case 'parse))
+  (define category (string->symbol (hash-ref parse-case 'category)))
+  (cond
+    [(first-tag raw 'TermsFragment) (fragment->sigma raw fields inv)]
+    [(first-tag raw 'IStatementConnection)
+     (statement->sigma raw category fields inv)]
+    [(first-tag raw 'BridiStatement)
+     => (lambda (statement) (statement->sigma statement category fields inv))]
+    [(first-tag raw 'FragmentStatement)
+     => (lambda (fragment) (fragment->sigma fragment fields inv))]
+    [else
+     (no-lowering "M3" 'out-of-fragment
+                  "gentufa parse has no supported statement root"
+                  (sort (set->list (parse-case-variants parse-case)) symbol<?))]))
 
 (define (rr->redex rr)
   (define fields (rr-fields-value rr))
@@ -909,7 +1403,7 @@
         (values 'counterexample attempts result))))
 
 (define (redex-lower parse-case rr)
-  (define sigma (parse-case->sigma parse-case))
+  (define sigma (parse-case->sigma parse-case (rr-fields-value rr)))
   (if (no-lowering? sigma)
       sigma
       (let* ([rr-term (rr->redex rr)]
@@ -1284,7 +1778,7 @@
         (define report
           (run-candidate-case candidate candidate-case parse-case rr-case target inv))
         (unless (lowering-case-unresolved candidate-case)
-          (define sigma (parse-case->sigma parse-case))
+          (define sigma (parse-case->sigma parse-case (rr-case-fields rr-case) inv))
           (unless (no-lowering? sigma)
             (set! fixture-property-total (add1 fixture-property-total))
             (unless (fixture-derivation-check rr-case sigma)

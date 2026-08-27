@@ -163,6 +163,13 @@ visible #9 findings. Per-case dispositions are authoritative, and a documented
 precedence produces the stable fence summary. Formed-rule coverage is printed
 separately from M1's focal-citation ratchet.
 
+The parse-to-source adapter recursively inspects tagged gentufa constructs
+(`BridiStatement`, bridi/selbri/term nodes, descriptors, quantifiers,
+connections, termsets, and LAhE) and treats terminal lexemes as data. It never
+dispatches on a whole surface-token sentence. RR force, readings, selected
+rows, and sites are consumed on that path; mutation regressions require tree
+structure changes to block lowering and RR changes to alter or reject output.
+
 The executable rules are the `(I I O)` Redex judgment `m3-lower`; its named
 clauses are live §11 ids, and formed attribution is read from
 `build-derivations`, never a manual counter. The display normalizer is a Redex

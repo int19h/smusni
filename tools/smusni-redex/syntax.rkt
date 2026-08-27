@@ -259,7 +259,13 @@
 (define (redex-adapter->core adapter)
   (unless (core-redex-adapter? adapter)
     (raise-argument-error 'redex-adapter->core "core-redex-adapter?" adapter))
-  ;; The adapter retains the source-located AST as the metadata sidecar. M3's
-  ;; Redex use is comparison-only, so round-tripping must return it byte-for-
-  ;; byte rather than synthesize locations or site identities.
-  (core-redex-adapter-original adapter))
+  (define original (core-redex-adapter-original adapter))
+  (define expected
+    (core-redex-adapter-term (core->redex-adapter original)))
+  (unless (alpha-equivalent? SmusniCore expected
+                             (core-redex-adapter-term adapter))
+    (error 'redex-adapter->core
+           "adapter term is not alpha-equivalent to its source-located AST"))
+  ;; The validated metadata sidecar supplies the exact locations and site
+  ;; identity; synthesizing fresh locations would not be lossless.
+  original)

@@ -118,12 +118,23 @@
   (define result (lower parse-case rr))
   (check-true (lowered? result) (format "~a#~a.~a lowers" source ordinal index))
   (when (lowered? result)
-    (check-equal? (plain (lowered-term result)) expected)
+    (check-true
+     (redex-alpha-equivalent? (plain (lowered-term result)) expected)
+     (format "~a#~a.~a output is alpha-equivalent to expected"
+             source ordinal index))
     (for ([rule (in-list rules)])
       (check-not-false
        (member rule (lowered-rules result))
        (format "~a#~a.~a derivation contains ~a; got ~e"
                source ordinal index rule (lowered-rules result))))))
+
+(define (check-does-not-lower source ordinal cause rule [index 1])
+  (define-values (parse-case rr) (case-input source ordinal index))
+  (define result (lower parse-case rr))
+  (check-true (no-lowering? result))
+  (when (no-lowering? result)
+    (check-equal? (no-lowering-cause result) cause)
+    (check-equal? (no-lowering-rule result) rule)))
 
 (check-lowers "samples.md" 1
               '(Assert (Close (klama Speaker)))
@@ -137,9 +148,7 @@
 (check-lowers "samples.md" 5
               '(Assert (Close (klama Speaker This)))
               '("L1.4"))
-(check-lowers "samples.md" 58
-              '(Assert (Close ((Tanru sutra klama) Speaker)))
-              '("L1.10"))
+(check-does-not-lower "samples.md" 58 'rule-underspecified "L1.10")
 (check-lowers "samples.md" 63
               '(Bind ($r :: PredTerm
                          (Row (1 (Referents Entity)) (2 (Referents Entity))))
@@ -215,7 +224,7 @@
  '(Assert
    (CloseClause
     (ActualClause (ClauseNot (DirectClause (klama Speaker))))))
- '("L5.9" "L5.8"))
+ '("L5.9"))
 (check-lowers
  "samples.md" 17
  '(Assert
@@ -363,6 +372,12 @@
    'adapter-roundtrip))
 (define located-adapter (core->redex-adapter located-core))
 (check-equal? (redex-adapter->core located-adapter) located-core)
+(check-exn
+ exn:fail?
+ (lambda ()
+   (redex-adapter->core
+    (struct-copy core-redex-adapter located-adapter
+                 [term '(blabi Speaker)]))))
 (check-equal?
  (elaboration-sites (elaborate-core (redex-adapter->core located-adapter)))
  (elaboration-sites (elaborate-core located-core)))
@@ -426,8 +441,8 @@
  (member "bare lexical property (L0.1)"
          (normalization-expansions reference-refer-normal)))
 
-;; Full candidate run: all parseable cases match; the one filed missing-surface
-;; document defect remains visible and non-failing.
+;; Full candidate run: structurally formed cases match; the honest unformed
+;; and missing-surface dispositions remain visible/non-failing.
 (define-values (gate-ok? reports fence-reports)
   (run-lowering-gate #:print? #f))
 (check-true gate-ok?)
@@ -435,11 +450,21 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              27)
+              26)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
               1)
+(check-equal? (count (lambda (report)
+                       (eq? (case-report-disposition report)
+                            'in-fragment/no-lowering))
+                     reports)
+              1)
+(check-equal? (count (lambda (report)
+                       (eq? (case-report-disposition report)
+                            'out-of-fragment))
+                     reports)
+              0)
 (check-equal? (length reports) 28)
 (check-equal? (length fence-reports) 25)
 (define fence-17-report
@@ -479,5 +504,57 @@
 (check-true (no-lowering? missing-result))
 (check-equal? (no-lowering-cause missing-result) 'rr-missing)
 (check-not-false (member 'rows (no-lowering-detail missing-result)))
+
+;; Input mutations must affect or block lowering: neither parse structure nor
+;; RR fields are decorative fixture metadata.
+(define-values (sample-1-parse sample-1-rr) (case-input "samples.md" 1))
+(define sample-1-assert (lower sample-1-parse sample-1-rr))
+(define sample-1-mention-rr
+  (struct-copy rr-case sample-1-rr
+               [fields (hash-set (rr-case-fields sample-1-rr)
+                                 'force '(mention))]))
+(define sample-1-mention (lower sample-1-parse sample-1-mention-rr))
+(check-true (lowered? sample-1-assert))
+(check-true (lowered? sample-1-mention))
+(when (and (lowered? sample-1-assert) (lowered? sample-1-mention))
+  (check-equal? (first (plain (lowered-term sample-1-assert))) 'Assert)
+  (check-equal? (first (plain (lowered-term sample-1-mention))) 'Mention))
+
+(define (rename-json-key value old new)
+  (cond
+    [(hash? value)
+     (for/hasheq ([(key child) (in-hash value)])
+       (values (if (eq? key old) new key)
+               (rename-json-key child old new)))]
+    [(list? value) (map (lambda (child) (rename-json-key child old new)) value)]
+    [else value]))
+
+(define bogus-parse
+  (hash-set sample-1-parse 'parse
+            (rename-json-key (hash-ref sample-1-parse 'parse)
+                             'BridiStatement 'BogusStatement)))
+(define bogus-result (lower bogus-parse sample-1-rr))
+(check-true (no-lowering? bogus-result))
+
+(define no-row-rr
+  (struct-copy rr-case sample-1-rr
+               [fields (hash-set (rr-case-fields sample-1-rr) 'rows '())]))
+(define no-row-result (lower sample-1-parse no-row-rr))
+(check-true (no-lowering? no-row-result))
+(check-equal? (no-lowering-cause no-row-result) 'rr-missing)
+
+(define-values (negative-parse negative-rr) (case-input "samples.md" 16))
+(define no-reading-rr
+  (struct-copy rr-case negative-rr
+               [fields (hash-set (rr-case-fields negative-rr) 'readings '())]))
+(check-equal? (no-lowering-cause (lower negative-parse no-reading-rr))
+              'rr-missing)
+
+(define-values (cohe-parse cohe-rr) (case-input "samples.md" 63 3))
+(define no-sites-rr
+  (struct-copy rr-case cohe-rr
+               [fields (hash-set (rr-case-fields cohe-rr) 'sites '())]))
+(check-equal? (no-lowering-cause (lower cohe-parse no-sites-rr))
+              'rr-missing)
 
 (displayln "lowering fixture tests: ok")
