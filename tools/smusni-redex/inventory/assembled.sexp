@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "409be7d79fca3966bb2a04718a37359c3d80199b")
+ (core-sha1 "8764c5af8ef233f988b4e2d11cd8b967b149bd98")
  (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
  (sorts
   AbstractNature

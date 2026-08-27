@@ -177,7 +177,7 @@
   (form LetteralSign primitive special O surface "spec §7.5")
   (form WordSign primitive special O surface "spec §7.5")
   (form Utterance defined special O generic "spec §7.4")
-  (form Sign primitive special O generic "spec §7.5")
+  (form Sign defined special O generic "spec §7.5")
   (form InterpretContent primitive special O surface "spec §7.5")
   (form RealizedContent primitive special O surface "spec §7.4")
   (form Realizes primitive special P generic "spec §7.4")

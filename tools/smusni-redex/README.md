@@ -71,6 +71,12 @@ obligation.
 - `components_κ` accepts exactly one `Group<T>` object and records the
   complete-cover definedness obligation; plural group references require an
   explicit sole-group projection before crossing.
+- `Fn`/`EFn` parameters are contravariant and results covariant. The §7.4/§7.5
+  `Utterance`/`Sign` entry spellings keep their token-sort binder annotations,
+  but their dedicated rules bind and return the singleton-lifted token-reference
+  properties. Force constructors suspend their payload effects, so described
+  acts remain inert while a direct effect in an entry fact is still rejected;
+  no general parameter-position lift is used for that notation.
 
 ## Model-bank profiles
 

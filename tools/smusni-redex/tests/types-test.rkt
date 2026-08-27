@@ -51,6 +51,24 @@
   (type-compatible (Fn ((Referents Eventuality)) Content) ClauseContent)))
 (check-false (judgment-holds (type-compatible ClauseContent Content)))
 
+;; Function parameters are contravariant; the singleton value lift does not
+;; make a member-level effectful property usable as a reference property.
+(check-false
+ (type-compatible? '(EFn (Entity) Content)
+                   '(EFn ((Referents Entity)) Content)))
+(check-true
+ (type-compatible? '(Fn (Entity) Content)
+                   '(Fn (Eventuality) Content)))
+(check-false
+ (type-compatible? '(Fn (Eventuality) Content)
+                   '(Fn (Entity) Content)))
+(check-true
+ (type-compatible? '(Fn (Entity) Eventuality)
+                   '(EFn (Entity) Entity)))
+(check-false
+ (type-compatible? '(EFn (Entity) Entity)
+                   '(Fn (Entity) Entity)))
+
 (check-equal?
  (typing-type
   (infer-text
@@ -487,6 +505,41 @@
       (Utterance {$u :: UtteranceToken}
         {(Realizes $u (Assert (Close (gerku Speaker))))}))"))
  '(Sign Structured))
+
+(check-equal?
+ (typing-type
+  (infer-text
+   "(Utterance {$u :: UtteranceToken}
+      {(Realizes $u (Assert (Close (gerku Speaker))))})"))
+ '(Fn ((Referents UtteranceToken)) Content))
+
+(check-true
+ (pure-typing?
+  (infer-text
+   "(Utterance {$u :: UtteranceToken}
+      {(Realizes $u (Assert (Close (klama Speaker))))})")))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "(Utterance {$u :: UtteranceToken}
+        {{Bind [$x :: Entity] (Context)
+           (Realizes $u (Assert (Close (gerku $x))))}})"))))
+
+(check-equal?
+ (typing-type
+  (infer-text
+   "(Sign {$s :: SignToken MathExpression}
+      {(TextOf $s \"re te'a ci\")})"))
+ '(Fn ((Referents (SignToken MathExpression))) Content))
+
+(check-true
+ (type-error?
+  (lambda ()
+    (infer-text
+     "(Utterance {$u :: Referents UtteranceToken}
+        {(Realizes $u (Assert (Close (gerku Speaker))))})"))))
 
 (check-true (type-error? (lambda () (infer-text "(WordSign Speaker)"))))
 (check-true (type-error? (lambda () (infer-text "(SentenceSign \"mi klama\")"))))
