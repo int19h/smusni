@@ -656,18 +656,23 @@
   (define forms (read-core-forms (fence-content item)))
   (for/list ([form (in-list forms)])
     (define line-index (sub1 (or (core-list-line form) 1)))
-    (define comment
-      (for/first ([index (in-range (sub1 line-index) -1 -1)]
-                  #:do [(define match
-                           (regexp-match #px"^;[ ]?(.*)$"
-                                         (list-ref lines index)))]
-                  #:when match)
-        (second match)))
-    (unless comment
+    (define comments
+      (let loop ([index (sub1 line-index)] [found '()])
+        (cond
+          [(negative? index) found]
+          [else
+           (define match
+             (regexp-match #px"^;[ ]?(.*)$" (list-ref lines index)))
+           (if match
+               (loop (sub1 index) (cons (second match) found))
+               found)])))
+    (unless (pair? comments)
       (error 'candidate-source-comments
              "~a#~a form at line ~a has no leading comment"
              (fence-source item) (fence-ordinal item) (core-list-line form)))
-    comment))
+    ;; §2 defines the first line of the contiguous comment header as the
+    ;; Lojban source. Later lines explain the reading and must not replace it.
+    (first comments)))
 
 (define (read-json-file path)
   (call-with-input-file path read-json))
@@ -1016,6 +1021,63 @@
 (define reference-values
   (hash "mi" 'Speaker "do" 'Audience "ti" 'This "ta" 'That "tu" 'Yonder))
 
+(define sumti-semantic-tags
+  (seteq 'ProSumti 'NameSumti 'LaheSumti
+         'DescriptorWithGadriSumti 'DescriptorWithoutGadriSumti))
+
+(define term-semantic-tags
+  (set-add sumti-semantic-tags 'PlaceTaggedSumtiTerm))
+
+;; These are grammar-only wrappers on the direct path from a connected term
+;; (or a LAhE inner sumti) to its first semantic construct. A handler may look
+;; through these wrappers, but never through an unrecognized node merely
+;; because a familiar descendant and the same terminal multiset remain.
+(define transparent-term-path-keys
+  (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'Sumti 'sumti
+         'base_sumti 'leading_sumti 'SimpleSumti 'SumtiBase 'inner_sumti))
+
+(define bridi-semantic-tags (seteq 'BridiWithLeadingTerms 'RelationOnlyBridi))
+(define transparent-bridi-path-keys
+  (seteq 'BridiStatement 'bridi 'StatementBase 'StatementOrFragmentStatement
+         'leading_statement 'trailing_statement))
+(define tail-semantic-tags (seteq 'SelbriSimpleBridiTail))
+(define transparent-tail-path-keys
+  (seteq 'bridi_tail 'BridiTailWithPossibleTailTerms 'first))
+
+(define (direct-semantic-node subtree semantic-tags rule
+                              [transparent-keys transparent-term-path-keys])
+  (define candidates '())
+  (define (walk node path)
+    (cond
+      [(hash? node)
+       (for ([(key child) (in-hash node)])
+         (define next-path (append path (list key)))
+         (if (set-member? semantic-tags key)
+             (set! candidates (cons (list key child path) candidates))
+             (walk child next-path)))]
+      [(list? node) (for ([child (in-list node)]) (walk child path))]
+      [else (void)]))
+  (walk subtree '())
+  (cond
+    [(not (= (length candidates) 1))
+     (no-lowering rule 'rule-underspecified
+                  "term does not have exactly one direct semantic construct"
+                  (map (lambda (candidate)
+                         (list (first candidate) (third candidate)))
+                       (reverse candidates)))]
+    [else
+     (define candidate (first candidates))
+     (define path (third candidate))
+     (define unrecognized
+       (filter (lambda (key)
+                 (not (set-member? transparent-keys key)))
+               path))
+     (if (null? unrecognized)
+         candidate
+         (no-lowering rule 'rule-underspecified
+                      "semantic construct is nested under an unknown wrapper"
+                      (hasheq 'path path 'unknown unrecognized)))]))
+
 (define (rr-value fields name)
   (hash-ref fields name (lambda () '())))
 
@@ -1081,24 +1143,21 @@
         [else #f]))
 
 (define (sumti-view subtree)
-  ;; Choose the outer construct before any recursively contained sumti. A
-  ;; recursive `first-tag` without this precedence can mistake a possessor or
-  ;; relative-clause sumti for the entire term and silently erase its host.
-  (define lahe (first-tag subtree 'LaheSumti))
-  (define descriptor (first-tag subtree 'DescriptorWithGadriSumti))
-  (define quantified (first-tag subtree 'DescriptorWithoutGadriSumti))
-  (define named (first-tag subtree 'NameSumti))
-  (define pro (first-tag subtree 'ProSumti))
+  (define direct (direct-semantic-node subtree sumti-semantic-tags "M3"))
+  (define tag (and (list? direct) (first direct)))
+  (define node (and (list? direct) (second direct)))
   (cond
-    [lahe
-     (define op (first-terminal (hash-ref lahe 'lahe) 'Cmavo))
-     (define inner (sumti-view (hash-ref lahe 'inner_sumti)))
+    [(no-lowering? direct) direct]
+    [(eq? tag 'LaheSumti)
+     (define op (first-terminal (hash-ref node 'lahe) 'Cmavo))
+     (define inner (sumti-view (hash-ref node 'inner_sumti)))
      (cond [(not op)
             (no-lowering "L3.14" 'rule-underspecified
-                         "LAhE parse has no operator" lahe)]
+                         "LAhE parse has no operator" node)]
            [(no-lowering? inner) inner]
            [else `(lahe ,op ,inner)])]
-    [descriptor
+    [(eq? tag 'DescriptorWithGadriSumti)
+     (define descriptor node)
      (cond
        [(or (has-tag? descriptor 'RestrictiveBridiRelativeClause)
             (has-tag? descriptor 'NonrestrictiveBridiRelativeClause)
@@ -1135,7 +1194,8 @@
                         "descriptor contains unconsumed cmavo"
                         cmavo)]
           [else `(description ,gadri ,(string->symbol (first relations)) ,count)])])]
-    [quantified
+    [(eq? tag 'DescriptorWithoutGadriSumti)
+     (define quantified node)
      (define quantifier-node (hash-ref quantified 'quantifier))
      (define q-word (first-terminal quantifier-node 'Cmavo))
      (define relations
@@ -1149,7 +1209,8 @@
          (no-lowering "L5.2" 'rule-underspecified
                       "quantified sumti has unconsumed semantic children"
                       (hasheq 'cmavo cmavo 'relations relations)))]
-    [named
+    [(eq? tag 'NameSumti)
+     (define named node)
      (define names (terminal-texts named 'Cmevla))
      (define cmavo (terminal-texts named 'Cmavo))
      (if (and (= (length names) 1) (equal? cmavo '("la")))
@@ -1157,7 +1218,8 @@
          (no-lowering "L3.3" 'rule-underspecified
                       "name sumti has unconsumed semantic children"
                       (hasheq 'cmavo cmavo 'names names)))]
-    [pro
+    [(eq? tag 'ProSumti)
+     (define pro node)
      (define words (terminal-texts pro 'Cmavo))
      (if (not (= (length words) 1))
          (no-lowering "L1.4" 'rule-underspecified
@@ -1190,23 +1252,29 @@
          `(zip-values ,values)
          (no-lowering "L5.21" 'rule-underspecified
                       "fa'u connectee has unconsumed semantic children" cmavo))]
-    [(first-tag connected-term 'PlaceTaggedSumtiTerm)
-     => (lambda (node)
-          (define fa (first-terminal (hash-ref node 'fa) 'Cmavo))
-          (define label (hash "fa" 1 "fe" 2 "fi" 3 "fo" 4 "fu" 5))
-          (define sumti (sumti-view (hash-ref node 'sumti)))
-          (define accounted
-            (append (terminal-signatures (hash-ref node 'fa))
-                    (terminal-signatures (hash-ref node 'sumti))))
-          (cond [(no-lowering? sumti) sumti]
-                [(not (and fa (hash-has-key? label fa)
-                           (same-members? (terminal-signatures node)
-                                          accounted)))
-                 (no-lowering "L1.4" 'rule-underspecified
-                              "FA term has unconsumed semantic children"
-                              (terminal-texts node))]
-                [else `(label ,(hash-ref label fa) ,sumti)]))]
-    [else (sumti-view connected-term)]))
+    [else
+     (define direct
+       (direct-semantic-node connected-term term-semantic-tags "L1.4"))
+     (cond
+       [(no-lowering? direct) direct]
+       [(eq? (first direct) 'PlaceTaggedSumtiTerm)
+        (define node (second direct))
+        (define fa (first-terminal (hash-ref node 'fa) 'Cmavo))
+        (define label (hash "fa" 1 "fe" 2 "fi" 3 "fo" 4 "fu" 5))
+        (define sumti (sumti-view (hash-ref node 'sumti)))
+        (define accounted
+          (append (terminal-signatures (hash-ref node 'fa))
+                  (terminal-signatures (hash-ref node 'sumti))))
+        (cond [(no-lowering? sumti) sumti]
+              [(not (and fa (hash-has-key? label fa)
+                         (same-members? (terminal-signatures node)
+                                        accounted)))
+               (no-lowering "L1.4" 'rule-underspecified
+                            "FA term has unconsumed semantic children"
+                            (terminal-texts node))]
+              [else `(label ,(hash-ref label fa) ,sumti)])]
+       [else
+        (sumti-view (hasheq (first direct) (second direct)))])]))
 
 (define (selbri-view subtree)
   (define relation (parsed-relation subtree))
@@ -1254,9 +1322,8 @@
                                 [else #f]))
              'negated negated?)]))
 
-(define (collect-bridi-terms bridi tail-root)
+(define (collect-bridi-terms bridi tail)
   (define leading (hash-ref bridi 'leading_terms (lambda () '())))
-  (define tail (first-tag tail-root 'SelbriSimpleBridiTail))
   (define trailing (if tail (hash-ref tail 'terms (lambda () '())) '()))
   (append leading trailing))
 
@@ -1285,19 +1352,23 @@
      (or (findf no-lowering? views) views)]))
 
 (define (bridi-view statement)
-  (define bridi
-    (or (first-tag statement 'BridiWithLeadingTerms)
-        (first-tag statement 'RelationOnlyBridi)))
-  (if (not bridi)
-      (no-lowering "L1.1" 'out-of-fragment
-                   "gentufa statement has no supported bridi node" #f)
-      (let* ([tail-root (hash-ref bridi 'bridi_tail (lambda () bridi))]
-             [tail (first-tag tail-root 'SelbriSimpleBridiTail)]
+  (define direct-bridi
+    (direct-semantic-node statement bridi-semantic-tags "L1.1"
+                          transparent-bridi-path-keys))
+  (if (no-lowering? direct-bridi)
+      direct-bridi
+      (let* ([bridi (second direct-bridi)]
+             [tail-root (hash-ref bridi 'bridi_tail (lambda () bridi))]
+             [direct-tail
+              (direct-semantic-node tail-root tail-semantic-tags "L1.1"
+                                    transparent-tail-path-keys)]
+             [tail (and (list? direct-tail) (second direct-tail))]
              [selbri (and tail (selbri-view (hash-ref tail 'selbri)))])
         (if (or (not selbri) (no-lowering? selbri))
-            (or selbri (no-lowering "L1.1" 'rule-underspecified
+            (or (and (no-lowering? direct-tail) direct-tail)
+                selbri (no-lowering "L1.1" 'rule-underspecified
                                     "bridi tail has no simple selbri" #f))
-            (let* ([term-nodes (collect-bridi-terms bridi tail-root)]
+            (let* ([term-nodes (collect-bridi-terms bridi tail)]
                    [cu-node (hash-ref bridi 'cu (lambda () #f))]
                    [accounted-terminals
                     (append (terminal-signatures (hash-ref tail 'selbri))
@@ -1363,16 +1434,19 @@
   (define next 1)
   (define fills (make-hash))
   (define deleted '())
+  (define explicit-labels '())
   (define unsupported '())
   (for ([term (in-list terms)])
     (match term
       [`(label ,label (value ,value))
+       (set! explicit-labels (cons label explicit-labels))
        (if (or (hash-has-key? fills label) (member label deleted))
            (set! unsupported (cons `(duplicate-label ,label) unsupported))
            (begin
              (hash-set! fills label value)
              (set! next (max next (add1 label)))))]
       [`(label ,label (deleted))
+       (set! explicit-labels (cons label explicit-labels))
        (if (or (hash-has-key? fills label) (member label deleted))
            (set! unsupported (cons `(duplicate-label ,label) unsupported))
            (begin
@@ -1389,7 +1463,8 @@
        (set! deleted (cons next deleted))
        (set! next (add1 next))]
       [_ (set! unsupported (cons term unsupported))]))
-  (values fills (reverse deleted) (reverse unsupported)))
+  (values fills (reverse deleted) (reverse unsupported)
+          (reverse explicit-labels)))
 
 (define (se-base-label label)
   (case label [(1) 2] [(2) 1] [else label]))
@@ -1433,7 +1508,7 @@
   (define row-check (require-row-present fields relation "L1.1"))
   (if (no-lowering? row-check)
       row-check
-      (let-values ([(surface-fills surface-deleted unsupported)
+      (let-values ([(surface-fills surface-deleted unsupported explicit-labels)
                     (ordinary-fills (hash-ref view 'terms))])
         (if (pair? unsupported)
             (no-lowering "L1.4" 'rule-underspecified
@@ -1476,19 +1551,91 @@
                  (no-lowering "L1.5" 'rule-underspecified
                               "combined conversion and place deletion is unimplemented"
                               deleted)]
+                [(and (hash-ref selbri 'tanru #f)
+                      (or (hash-ref selbri 'conversion #f)
+                          (pair? deleted)
+                          (pair? explicit-labels)))
+                 (no-lowering "L1.10" 'rule-underspecified
+                              "tanru combined with conversion, FA, or deletion is unimplemented"
+                              (hasheq 'conversion
+                                      (hash-ref selbri 'conversion #f)
+                                      'labels explicit-labels
+                                      'deleted deleted))]
                 [else (if (< provided total) `(omit ,base) base)]))))))))
 
 (define (view->sigma view category fields inv)
   (define selbri (hash-ref view 'selbri))
   (define relation (hash-ref selbri 'relation))
   (define negated? (hash-ref selbri 'negated))
+  (define tanru (hash-ref selbri 'tanru #f))
   (define terms (hash-ref view 'terms))
   (define sentence? (eq? category 'sentence))
   (define (readings extras)
     (append (if sentence? '(actual) '()) extras))
   (define (force-or-none)
     (if sentence? (force-from-rr fields) 'none))
+  (define view-shape
+    (cond
+      [(hash-ref view 'termset) 'termset]
+      [(and (= (length terms) 2)
+            (andmap (lambda (term)
+                      (match term [`(zip-values ,(? list?)) #t] [_ #f]))
+                    terms))
+       'zip]
+      [(and (= (length terms) 1)
+            (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
+       'description]
+      [(and (= (length terms) 1)
+            (match (first terms) [`(name ,_) #t] [_ #f]))
+       'name]
+      [(and (= (length terms) 1)
+            (match (first terms) [`(lahe ,_ ,_) #t] [_ #f]))
+       'lahe]
+      [(and (= (length terms) 1)
+            (match (first terms) [`(quantifier ,_ ,_) #t] [_ #f]))
+       'quantifier]
+      [(hash-ref selbri 'scalar #f) 'scalar]
+      [(equal? relation '|co'e|) 'cohe]
+      [(member 'gradable (rr-value fields 'readings)) 'grade]
+      [else 'ordinary]))
+  (define active-modifiers
+    (append (if tanru '(tanru) '())
+            (if (hash-ref selbri 'conversion #f) '(conversion) '())
+            (if (hash-ref selbri 'scalar #f) '(scalar) '())
+            (if negated? '(negated) '())))
+  (define allowed-modifiers
+    (case view-shape
+      [(ordinary) '(tanru conversion negated)]
+      [(description) '(negated)]
+      [(scalar) '(scalar)]
+      [else '()]))
+  (define modifier-residue
+    (filter (lambda (modifier) (not (member modifier allowed-modifiers)))
+            active-modifiers))
   (cond
+    [(pair? modifier-residue)
+     (define first-residue (first modifier-residue))
+     (no-lowering
+      (case first-residue
+        [(tanru) "L1.10"] [(conversion) "L1.4"]
+        [(scalar) "L5.11"] [(negated) "L5.9"])
+      'rule-underspecified
+      "parsed selbri modifier is not consumed by this view composition"
+      (hasheq 'shape view-shape 'active active-modifiers
+              'allowed allowed-modifiers 'residue modifier-residue))]
+    [(and tanru
+          (or (hash-ref view 'termset)
+              (hash-ref selbri 'scalar #f)
+              (member 'gradable (rr-value fields 'readings))
+              (not (andmap (lambda (term)
+                             (match term [`(value ,_) #t] [_ #f]))
+                           terms))))
+     (no-lowering "L1.10" 'rule-underspecified
+                  "tanru has an unconsumed sibling modifier or term form"
+                  (hasheq 'terms terms
+                          'conversion (hash-ref selbri 'conversion #f)
+                          'scalar (hash-ref selbri 'scalar #f)
+                          'readings (rr-value fields 'readings)))]
     [(and (= (length terms) 2)
           (andmap (lambda (term)
                     (match term [`(zip-values ,(? list?)) #t] [_ #f]))
@@ -1520,7 +1667,13 @@
           (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
      (match (first terms)
        [`(description ,gadri ,predicate ,count)
-        (case (string->symbol gadri)
+        (if count
+            (no-lowering (if (zero? count) "L3.10" "L3.9")
+                         'rule-underspecified
+                         "inner description quantity is not implemented on this path"
+                         (hasheq 'gadri gadri 'count count
+                                 'predicate predicate))
+            (case (string->symbol gadri)
           [(lo)
            (define check
              (validated-path fields "L3.1" (readings '())
@@ -1551,8 +1704,8 @@
                (if sentence?
                    `(force ,check (generic ,predicate ,relation))
                    `(generic ,predicate ,relation)))]
-          [else (no-lowering "L3.1" 'rule-underspecified
-                             "unsupported parsed gadri" gadri)])])]
+              [else (no-lowering "L3.1" 'rule-underspecified
+                                 "unsupported parsed gadri" gadri)]))])]
     [(and (= (length terms) 1)
           (match (first terms) [`(name ,_) #t] [_ #f]))
      (match-define `(name ,name) (first terms))
@@ -1585,12 +1738,21 @@
                    `(force ,check (every ,predicate ,relation))
                    `(every ,predicate ,relation)))]
           [(number? quantity)
-           (define check
-             (validated-path fields "L5.2" (readings '(witness-set))
-                             (list predicate relation) '()
-                             #:force? sentence?))
-           (if (no-lowering? check) check
-               `(cardinal ,(force-or-none) ,quantity ,predicate ,relation))]
+           (if (member 'global-exact (rr-value fields 'readings))
+               (no-lowering
+                "L5.2" 'rule-underspecified
+                "GlobalExactly plus L0.1 hoisting is not in the M3 fragment"
+                (hasheq 'quantity quantity 'predicate predicate
+                        'relation relation
+                        'sites (rr-value fields 'sites)))
+               (let ([check
+                      (validated-path fields "L5.2"
+                                      (readings '(witness-set))
+                                      (list predicate relation) '()
+                                      #:force? sentence?)])
+                 (if (no-lowering? check) check
+                     `(cardinal ,(force-or-none) ,quantity
+                                ,predicate ,relation))))]
           [(equal? quantity "so'i")
            (define expected-sites `((threshold many (deps ()))))
            (define check
@@ -1665,7 +1827,6 @@
                              "gradable bridi requires exactly one argument"
                              terms)))]
        [else
-        (define tanru (hash-ref selbri 'tanru #f))
         (define expected-rows
           (if tanru tanru (list relation)))
         (define expected-sites
@@ -1716,6 +1877,12 @@
                    [trailing (hash-ref tail 'trailing_statement)]
                    [connective (hash-ref tail 'connective)]
                    [right-view (bridi-view trailing)]
+                   [tanru-connection?
+                    (and (not (no-lowering? left-view))
+                         (not (no-lowering? right-view))
+                         (or (hash-ref (hash-ref left-view 'selbri) 'tanru #f)
+                             (hash-ref (hash-ref right-view 'selbri)
+                                       'tanru #f)))]
                    [connective-words (terminal-texts connective 'Cmavo)]
                    [jek (and (= (length connective-words) 1)
                              (first connective-words))]
@@ -1735,10 +1902,21 @@
                                [(equal? jek "ja") 'or]
                                [else #f])])
               (if (or (no-lowering? left-view) (no-lowering? right-view)
-                      (not kind) (not (= (length separators) 1))
+                      tanru-connection? (not kind)
+                      (not (= (length separators) 1))
                       (not (same-members? all-terminals accounted)))
                   (or (and (no-lowering? left-view) left-view)
                       (and (no-lowering? right-view) right-view)
+                      (and tanru-connection?
+                           (no-lowering
+                            "L1.10" 'rule-underspecified
+                            "tanru inside a sentence connection is unimplemented"
+                            (list (and (not (no-lowering? left-view))
+                                       (hash-ref (hash-ref left-view 'selbri)
+                                                 'tanru #f))
+                                  (and (not (no-lowering? right-view))
+                                       (hash-ref (hash-ref right-view 'selbri)
+                                                 'tanru #f)))))
                       (no-lowering "L5.12" 'rule-underspecified
                                    "statement connection has unconsumed children"
                                    (hasheq 'connective connective-words
@@ -1776,16 +1954,23 @@
              [view (and (= (length terms) 1) (term-view (first terms)))])
         (cond
           [(no-lowering? view) view]
-          [(match view [`(description "lo'i" ,predicate ,_) #t] [_ #f])
-           (match-define `(description "lo'i" ,predicate ,_) view)
-           (define check
-             (validated-path fields "L3.6" '(lohi)
-                             (list predicate 'selcmi) '() #:force? #t))
-           (if (no-lowering? check) check
-               (if (eq? check 'mention)
-                   `(collection-set ,predicate)
-                   (no-lowering "L3.6" 'rr-missing
-                                "lo'i utterance requires mention force" check)))]
+          [(match view [`(description "lo'i" ,predicate ,count) #t] [_ #f])
+           (match-define `(description "lo'i" ,predicate ,count) view)
+           (if count
+               (no-lowering (if (zero? count) "L3.10" "L3.9")
+                            'rule-underspecified
+                            "inner quantity on a collection fragment is unimplemented"
+                            (hasheq 'count count 'predicate predicate))
+               (let ([check
+                      (validated-path fields "L3.6" '(lohi)
+                                      (list predicate 'selcmi) '()
+                                      #:force? #t)])
+                 (if (no-lowering? check) check
+                     (if (eq? check 'mention)
+                         `(collection-set ,predicate)
+                         (no-lowering "L3.6" 'rr-missing
+                                      "lo'i utterance requires mention force"
+                                      check)))))]
           [(match view [`(lahe "lu'o" (description "le" ,predicate ,count)) #t]
                        [_ #f])
            (match-define

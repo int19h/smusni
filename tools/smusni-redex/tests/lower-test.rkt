@@ -70,16 +70,16 @@
                 (= (lowering-candidate-ordinal candidate) 10)))
          (lowering-manifest-candidates manifest)))
 (define spec-10-case (first (lowering-candidate-cases spec-10)))
-(check-false (lowering-case-surface spec-10-case))
-(check-true (string-contains? (lowering-case-unresolved spec-10-case)
-                              "missing Lojban surface"))
-(check-false
- (hash-ref (first (hash-ref (load-parse-fixture spec-10) 'cases)) 'parse))
+(check-equal? (lowering-case-surface spec-10-case) "ci gerku cu bajra")
+(check-false (lowering-case-unresolved spec-10-case))
+(check-true
+ (hash? (hash-ref (first (hash-ref (load-parse-fixture spec-10) 'cases))
+                  'parse)))
 (check-true
  (string-prefix?
   (hash-ref (first (hash-ref (load-parse-fixture spec-10) 'cases))
             'source_comment)
-  "surface/limbs/gait sites"))
+  "ci gerku cu bajra"))
 
 (define absent
   (lower 'parse 'rr))
@@ -497,12 +497,12 @@
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
-              1)
+              0)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report)
                             'in-fragment/no-lowering))
                      reports)
-              0)
+              1)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report)
                             'out-of-fragment))
@@ -678,6 +678,7 @@
           (hasheq 'ProSumti (synthetic-terminal 'Cmavo text start))))
 
 (define synthetic-mi (synthetic-pro "mi"))
+(define synthetic-do (synthetic-pro "do" 12))
 (define synthetic-ti (synthetic-pro "ti"))
 (define synthetic-zio (synthetic-pro "zi'o" 10))
 (define synthetic-zio-2 (synthetic-pro "zi'o" 11))
@@ -688,6 +689,13 @@
            (hasheq 'fa (synthetic-terminal 'Cmavo "fa")
                    'sumti (hasheq 'ProSumti
                                   (synthetic-terminal 'Cmavo "mi"))))))
+(define synthetic-fe-ti
+  (hasheq
+   'ConnectedTerm
+   (hasheq 'PlaceTaggedSumtiTerm
+           (hasheq 'fa (synthetic-terminal 'Cmavo "fe" 13)
+                   'sumti (hasheq 'ProSumti
+                                  (synthetic-terminal 'Cmavo "ti" 14))))))
 
 ;; A handled bridi must account for every direct semantic term. Adding a
 ;; second term beside the formerly sole description is refused, not silently
@@ -745,6 +753,45 @@
 (check-equal? (no-lowering-cause relative-description-sigma)
               'out-of-fragment)
 
+(define (add-inner-count parse-case word)
+  (hash-set
+   parse-case 'parse
+   (update-first-json-tag
+    (hash-ref parse-case 'parse) 'DescriptorWithGadriSumti
+    (lambda (descriptor)
+      (hash-update
+       descriptor 'tail
+       (lambda (tail)
+         (hash-set
+          tail 'probe-quantifier
+          (hasheq 'PaRunQuantifier
+                  (hasheq 'number
+                          (hasheq 'first_number
+                                  (synthetic-terminal 'Cmavo word 15)))))))))))
+
+;; Inner PA is computed by sumti-view and therefore must either contribute a
+;; selection or block the path. Ordinary descriptions and collections do not
+;; currently compose it, so both refuse instead of becoming uncounted.
+(define-values (le-parse le-rr) (case-input "samples.md" 22))
+(define counted-le-sigma
+  (parse-case->sigma (add-inner-count le-parse "ci")
+                     (rr-case-fields le-rr)))
+(check-true (no-lowering? counted-le-sigma))
+(check-equal? (no-lowering-rule counted-le-sigma) "L3.9")
+(define no-le-sigma
+  (parse-case->sigma (add-inner-count le-parse "no")
+                     (rr-case-fields le-rr)))
+(check-true (no-lowering? no-le-sigma))
+(check-equal? (no-lowering-rule no-le-sigma) "L3.10")
+
+(define-values (collection-parse collection-rr)
+  (case-input "samples.md" 30))
+(define counted-collection-sigma
+  (parse-case->sigma (add-inner-count collection-parse "ci")
+                     (rr-case-fields collection-rr)))
+(check-true (no-lowering? counted-collection-sigma))
+(check-equal? (no-lowering-rule counted-collection-sigma) "L3.9")
+
 ;; Place labels are routed through conversion before application. Surface fa
 ;; under se is base x2, even when it is the only fill.
 (define-values (conversion-parse conversion-rr) (case-input "samples.md" 5))
@@ -783,12 +830,73 @@
     (close shorthand
            (omit (drop klama (2 3) Speaker This)))))
 
+(define-values (tanru-parse tanru-rr) (case-input "samples.md" 58))
+(define (tanru-with-terms leading trailing)
+  (hash-set
+   tanru-parse 'parse
+   (update-first-json-tag
+    (hash-ref tanru-parse 'parse) 'BridiWithLeadingTerms
+    (lambda (bridi)
+      (hash-set
+       (hash-set bridi 'leading_terms leading)
+       'bridi_tail
+       (update-first-json-tag
+        (hash-ref bridi 'bridi_tail) 'SelbriSimpleBridiTail
+        (lambda (tail) (hash-set tail 'terms trailing))))))))
+
+;; A tanru former may not disappear behind the routing/deletion branches.
+;; These combinations are not implemented, so the complete view is refused.
+(define tanru-fa-sigma
+  (parse-case->sigma (tanru-with-terms (list synthetic-fe-ti) '())
+                     (rr-case-fields tanru-rr)))
+(check-true (no-lowering? tanru-fa-sigma))
+(check-equal? (no-lowering-rule tanru-fa-sigma) "L1.10")
+
+(define tanru-delete-sigma
+  (parse-case->sigma (tanru-with-terms (list synthetic-mi)
+                                      (list synthetic-zio))
+                     (rr-case-fields tanru-rr)))
+(check-true (no-lowering? tanru-delete-sigma))
+(check-equal? (no-lowering-rule tanru-delete-sigma) "L1.10")
+
+(define tanru-converted-parse
+  (hash-set
+   (tanru-with-terms (list synthetic-mi) (list synthetic-do)) 'parse
+   (update-first-json-tag
+    (hash-ref (tanru-with-terms (list synthetic-mi) (list synthetic-do))
+              'parse)
+    'SelbriSimpleBridiTail
+    (lambda (tail)
+      (hash-update
+       tail 'selbri
+       (lambda (selbri)
+         (hash-set selbri 'probe-conversion
+                   (hasheq 'TanruUnitAtom
+                           (hasheq 'conversions
+                                   (list (synthetic-terminal 'Cmavo "se" 16)))))))))))
+(define tanru-converted-sigma
+  (parse-case->sigma tanru-converted-parse (rr-case-fields tanru-rr)))
+(check-true (no-lowering? tanru-converted-sigma))
+(check-equal? (no-lowering-rule tanru-converted-sigma) "L1.10")
+
 (define bogus-parse
   (hash-set sample-1-parse 'parse
             (rename-json-key (hash-ref sample-1-parse 'parse)
                              'BridiStatement 'BogusStatement)))
 (define bogus-result (lower bogus-parse sample-1-rr))
 (check-true (no-lowering? bogus-result))
+
+(define-values (tagged-parse tagged-rr) (case-input "samples.md" 3))
+(define unknown-tag-wrapper-parse
+  (hash-set tagged-parse 'parse
+            (rename-json-key (hash-ref tagged-parse 'parse)
+                             'PlaceTaggedSumtiTerm
+                             'UnknownTermWrapper)))
+(define unknown-tag-wrapper-result
+  (lower unknown-tag-wrapper-parse tagged-rr))
+(check-true (no-lowering? unknown-tag-wrapper-result))
+(check-equal? (no-lowering-cause unknown-tag-wrapper-result)
+              'rule-underspecified)
 
 ;; The mechanism is not restricted to the frozen surface corpus: a lexical
 ;; terminal never seen at this tree position flows through the same construct

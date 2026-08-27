@@ -78,10 +78,9 @@
   (candidate "spec.md" 9 "4da2df77645deee22f6ddfbb87b1418fa7bfecc5"
     (rules "L5.2")
     (case 1 "ci gerku cu bajra" content (promised-rows gerku bajra)))
-  (candidate "spec.md" 10 "a15294b018e4042b2b06bd4bb50dd1c36d844909"
+  (candidate "spec.md" 10 "30c6bd5c2676ca42a0ec03c53a93c7fdcf91b92d"
     (rules "L5.2" "L0.1")
-    (case 1 #f content (promised-rows gerku bajra)
-          (unresolved "#9: missing Lojban surface comment")))
+    (case 1 "ci gerku cu bajra" content (promised-rows gerku bajra)))
   (candidate "spec.md" 19 "a9c634f7bd73b38f2bdda307801f658a9257861d"
     (rules "L5.21")
     (case 1 "mi fa'u do tavla do fa'u mi" content (promised-rows tavla))))

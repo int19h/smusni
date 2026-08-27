@@ -168,8 +168,13 @@ The parse-to-source adapter recursively inspects tagged gentufa constructs
 connections, termsets, and LAhE) and treats terminal lexemes as data. It never
 dispatches on a whole surface-token sentence. Each handled construct accounts
 for all of its direct semantic terminals and terms; an unsupported child makes
-the case `no-lowering` instead of disappearing. Ordinary fills first form a
-labelled place map, and conversion routes those labels to the base row before
+the case `no-lowering` instead of disappearing. Familiar descendants are
+accepted only through recognized transparent gentufa wrapper paths, so an
+unknown parent construct cannot disappear while its terminals survive. Before
+building σ, the adapter compares every active parsed modifier with the set the
+selected view consumes; leftover counts, tanru, conversion, scalar/negation,
+labels, or deletions refuse the case. Ordinary fills first form a labelled
+place map, and conversion routes those labels to the base row before
 application; each `zi'o` remains a distinct `DropPlace` deletion.
 
 RR force, readings, selected rows, and site kind/order/dependencies are
