@@ -42,7 +42,7 @@
          parse-case-variants
          normalize-core
          redex-alpha-equivalent?
-         fixture-redex-check
+         fixture-derivation-check
          generated-redex-check
          no-lowering-fails?
          aggregate-fence-disposition
@@ -872,6 +872,10 @@
               (list (derivation-name derivation)) '())
           (append-map derivation-rule-ids (derivation-subs derivation))))
 
+(define (derivation-trace derivation)
+  `(,(or (derivation-name derivation) 'unnamed)
+    ,@(map derivation-trace (derivation-subs derivation))))
+
 (define (typed-output-datum? datum [inv (load-inventory)])
   (with-handlers ([exn:fail? (lambda (_) #f)])
     (define result (infer-core (datum->core datum) (hash) inv))
@@ -884,15 +888,9 @@
        (for/and ([derivation (in-list derivations)])
          (typed-output-datum? (fourth (derivation-term derivation))))))
 
-(define (fixture-redex-check rr sigma)
+(define (fixture-derivation-check rr sigma)
   (define rr-term (rr->redex rr))
-  (eq? #t
-       (redex-check
-        SmusniM3 e_source
-        (derivable-outputs-type? rr-term (term e_source))
-        #:prepare (lambda (_generated) sigma)
-        #:attempts 1
-        #:print? #f)))
+  (derivable-outputs-type? rr-term sigma))
 
 (define (generated-redex-check [attempts 20])
   (with-handlers
@@ -922,20 +920,16 @@
            (no-lowering "M3" 'implementation
                         "Redex judgment has no derivation for parsed source view"
                         sigma)]
+          [(not (= (length derivations) 1))
+           (no-lowering
+            "M3" 'implementation
+            "Redex judgment has multiple derivations; attribution is ambiguous"
+            (map derivation-trace derivations))]
           [else
-           (define outputs
-             (remove-duplicates
-              (for/list ([derivation (in-list derivations)])
-                (fourth (derivation-term derivation)))))
-           (if (not (= (length outputs) 1))
-               (no-lowering "M3" 'implementation
-                            "Redex judgment derived multiple distinct outputs"
-                            outputs)
-               (let ([typed (typed-lowered
-                             (first outputs)
-                             (remove-duplicates
-                              (append-map derivation-rule-ids derivations)))])
-                 typed))]))))
+           (define derivation (first derivations))
+           (typed-lowered
+            (fourth (derivation-term derivation))
+            (remove-duplicates (derivation-rule-ids derivation)))]))))
 
 (define (lower parse-case rr)
   (define fields (rr-fields-value rr))
@@ -1116,56 +1110,12 @@
               walked)])]))
   (values (walk datum) (reverse expansions)))
 
-(define (binder-pairs binder)
-  (define groups
-    (if (and (pair? binder) (list? (first binder))) binder (list binder)))
-  (append*
-   (for/list ([group (in-list groups)])
-     (define separator (index-of group '::))
-     (unless separator
-       (error 'core->binding-datum "malformed binder group: ~e" group))
-     (define variables (take group separator))
-     (define type-items (drop group (add1 separator)))
-     (define type (if (= (length type-items) 1) (first type-items) type-items))
-     (for/list ([variable (in-list variables)]) `(,variable ,type)))))
-
-(define (core->binding-datum datum)
-  (define (walk value)
-    (cond
-      [(not (list? value)) value]
-      [else
-       (case (datum-head value)
-         [(λ)
-          (match value
-            [`(λ ,binder ,body) `(λ ,(binder-pairs binder) ,(walk body))]
-            [_ (map walk value)])]
-         [(Let)
-          (match value
-            [`(Let ,binder ,rhs ,body)
-             (define pairs (binder-pairs binder))
-             (unless (= (length pairs) 1)
-               (error 'core->binding-datum "Let binds one variable"))
-             `(Let ,(first pairs) ,(walk rhs) ,(walk body))]
-            [_ (map walk value)])]
-         [(Bind)
-          (define pieces (rest value))
-          (define body (last pieces))
-          (define alternating (drop-right pieces 1))
-          (define grouped
-            (for/list ([index (in-range 0 (length alternating) 2)])
-              (define pairs (binder-pairs (list-ref alternating index)))
-              (unless (= (length pairs) 1)
-                (error 'core->binding-datum "Bind group binds one variable"))
-              (match-define (list variable type) (first pairs))
-              `(,variable ,type ,(walk (list-ref alternating (add1 index))))))
-          `(Bind ,grouped ,(walk body))]
-         [else (map walk value)])]))
-  (walk datum))
-
 (define (redex-alpha-equivalent? left right)
-  (alpha-equivalent? SmusniBinding
-                     (core->binding-datum left)
-                     (core->binding-datum right)))
+  (define left-adapter (core->redex-adapter (datum->core left 'alpha-left)))
+  (define right-adapter (core->redex-adapter (datum->core right 'alpha-right)))
+  (alpha-equivalent? SmusniCore
+                     (core-redex-adapter-term left-adapter)
+                     (core-redex-adapter-term right-adapter)))
 
 (define (normalize-core core-term rr [inv (load-inventory)])
   (define datum (if (or (core-list? core-term) (core-atom? core-term))
@@ -1337,7 +1287,7 @@
           (define sigma (parse-case->sigma parse-case))
           (unless (no-lowering? sigma)
             (set! fixture-property-total (add1 fixture-property-total))
-            (unless (fixture-redex-check rr-case sigma)
+            (unless (fixture-derivation-check rr-case sigma)
               (set! fixture-property-failures
                     (cons (case-key (lowering-candidate-source candidate)
                                     (lowering-candidate-ordinal candidate)
@@ -1394,7 +1344,7 @@
     (printf "lowering formed coverage: ~a/~a rules; unformed=~a\n"
             (set-count matched-rules) (length (fragment-rule-ids manifest))
             (string-join unformed ","))
-    (printf "redex-check fixture derivations: ~a/~a outputs type-check~a\n"
+    (printf "deterministic fixture derivations: ~a/~a outputs type-check~a\n"
             (- fixture-property-total (length fixture-property-failures))
             fixture-property-total
             (if (null? fixture-property-failures)
@@ -1409,7 +1359,7 @@
        (printf "redex-check satisfying generation: COUNTEREXAMPLE after ~a attempts: ~e\n"
                generated-attempts generated-detail)]
       [else
-       (printf "redex-check satisfying generation: unavailable (fixture-only run): ~a\n"
+       (printf "redex-check satisfying generation: unavailable; seed=n/a attempts=0 size-profile=n/a (fixture-only deterministic coverage): ~a\n"
                generated-detail)]))
   (values (not failures?) reports fence-reports))
 

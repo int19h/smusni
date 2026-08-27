@@ -4,6 +4,7 @@
          racket/list
          racket/set
          redex/reduction-semantics
+         "../elaborate.rkt"
          "../lower.rkt"
          "../syntax.rkt")
 
@@ -321,6 +322,66 @@
  (redex-alpha-equivalent?
   '(Bind ($x :: Entity) (Context) (gerku $x))
   '(Bind ($dog :: Entity) (Context) (gerku $dog))))
+(check-true
+ (redex-alpha-equivalent?
+  '(Bind ($x :: Entity) (Context)
+         ($y :: Entity) (Refer (λ ($r :: Entity) (nelci $x $r)))
+     (nelci $x $y))
+  '(Bind ($cat :: Entity) (Context)
+         ($friend :: Entity) (Refer (λ ($z :: Entity) (nelci $cat $z)))
+     (nelci $cat $friend))))
+(check-true
+ (redex-alpha-equivalent?
+  '(λ ($x :: Entity) (λ ($y :: Entity) (nelci $x $y)))
+  '(λ ($y :: Entity) (λ ($x :: Entity) (nelci $y $x)))))
+(check-false
+ (redex-alpha-equivalent?
+  '(λ ($x :: Entity) (λ ($y :: Entity) (nelci $x $y)))
+  '(λ ($y :: Entity) (λ ($x :: Entity) (nelci $x $y)))))
+(check-true
+ (redex-alpha-equivalent?
+  '(Bind ($x :: Entity) (Context)
+         ($x :: Entity) (Context)
+     (gerku $x))
+  '(Bind ($cat :: Entity) (Context)
+         ($dog :: Entity) (Context)
+     (gerku $dog))))
+(check-false
+ (redex-alpha-equivalent?
+  '(Bind ($x :: Entity) (Context)
+         ($x :: Entity) (Context)
+     (gerku $x))
+  '(Bind ($cat :: Entity) (Context)
+         ($dog :: Entity) (Context)
+     (gerku $cat))))
+
+(define located-core
+  (read-core-specimen
+   "{Bind [$x :: Entity] (Context)\n
+      [$y :: Entity] (Context)\n
+      (nelci $x $y)}"
+   'adapter-roundtrip))
+(define located-adapter (core->redex-adapter located-core))
+(check-equal? (redex-adapter->core located-adapter) located-core)
+(check-equal?
+ (elaboration-sites (elaborate-core (redex-adapter->core located-adapter)))
+ (elaboration-sites (elaborate-core located-core)))
+
+(define alpha-site-left
+  (read-core-specimen
+   "{Bind [$x :: Entity] (Context)\n  (gerku $x)}" 'site-alpha))
+(define alpha-site-right
+  (read-core-specimen
+   "{Bind [$dog :: Entity] (Context)\n  (gerku $dog)}" 'site-alpha))
+(check-true
+ (alpha-equivalent?
+  SmusniCore
+  (core-redex-adapter-term (core->redex-adapter alpha-site-left))
+  (core-redex-adapter-term (core->redex-adapter alpha-site-right))))
+;; Binding equivalence does not rewrite source-derived site identity: changing
+;; binder spelling shifts the written Context column, so the site ids differ.
+(check-not-equal? (elaboration-sites (elaborate-core alpha-site-left))
+                  (elaboration-sites (elaborate-core alpha-site-right)))
 
 (define close-normal
   (normalize-core (datum->core '(Close (klama Speaker)))

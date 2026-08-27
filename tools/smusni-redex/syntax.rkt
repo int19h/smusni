@@ -10,12 +10,17 @@
          read-core-forms
          read-core-specimen
          core->datum
+         core->plain-datum
+         core->redex-adapter
+         redex-adapter->core
          validate-core-form
          SmusniSurface
-         SmusniBinding)
+         SmusniCore
+         (struct-out core-redex-adapter))
 
 (struct core-atom (value source line column position span) #:transparent)
 (struct core-list (elements source line column position span) #:transparent)
+(struct core-redex-adapter (term original) #:transparent)
 
 (define-language SmusniSurface
   [atom variable-not-otherwise-mentioned natural string]
@@ -24,7 +29,7 @@
 ;; Canonical derived representation for Redex binding-aware comparison. The
 ;; concrete reader retains the document's flat binder notation; M3 translates
 ;; it to this grouped shape before calling `alpha-equivalent?`.
-(define-language SmusniBinding
+(define-language SmusniCore
   [x variable-not-otherwise-mentioned]
   [τ any]
   [a variable-not-otherwise-mentioned natural string]
@@ -36,7 +41,8 @@
   #:binding-forms
   (λ ((x τ) ...) t #:refers-to (shadow x ...))
   (Let (x τ) t_rhs t_body #:refers-to x)
-  (Bind ((x τ t_rhs) ...) t_body #:refers-to (shadow x ...)))
+  (Bind ((x τ t_rhs) #:...bind (clauses x (shadow clauses x)))
+        t_body #:refers-to clauses))
 
 (define (syntax-location stx)
   (values (syntax-source stx)
@@ -190,3 +196,70 @@
     [(core-atom value _ _ _ _ _) value]
     [(core-list elements _ _ _ _ _)
      `(node ,@(map core->datum elements))]))
+
+(define (core->plain-datum form)
+  (match form
+    [(core-atom value _ _ _ _ _) value]
+    [(core-list elements _ _ _ _ _)
+     (map core->plain-datum elements)]))
+
+(define (adapter-binder-pairs binder)
+  (define groups
+    (if (and (pair? binder) (list? (first binder))) binder (list binder)))
+  (append*
+   (for/list ([group (in-list groups)])
+     (define separator (index-of group '::))
+     (unless separator
+       (error 'core->redex-adapter "malformed binder group: ~e" group))
+     (define variables (take group separator))
+     (define type-items (drop group (add1 separator)))
+     (define type (if (= (length type-items) 1) (first type-items) type-items))
+     (for/list ([variable (in-list variables)]) `(,variable ,type)))))
+
+(define (plain->redex-binding datum)
+  (define (walk value)
+    (cond
+      [(not (list? value)) value]
+      [else
+       (case (and (pair? value) (symbol? (first value)) (first value))
+         [(λ)
+          (match value
+            [`(λ ,binder ,body)
+             `(λ ,(adapter-binder-pairs binder) ,(walk body))]
+            [_ (map walk value)])]
+         [(Let)
+          (match value
+            [`(Let ,binder ,rhs ,body)
+             (define pairs (adapter-binder-pairs binder))
+             (unless (= (length pairs) 1)
+               (error 'core->redex-adapter "Let binds one variable"))
+             `(Let ,(first pairs) ,(walk rhs) ,(walk body))]
+            [_ (map walk value)])]
+         [(Bind)
+          (define pieces (rest value))
+          (define body (last pieces))
+          (define alternating (drop-right pieces 1))
+          (define grouped
+            (for/list ([index (in-range 0 (length alternating) 2)])
+              (define pairs
+                (adapter-binder-pairs (list-ref alternating index)))
+              (unless (= (length pairs) 1)
+                (error 'core->redex-adapter "Bind group binds one variable"))
+              (match-define (list variable type) (first pairs))
+              `(,variable ,type ,(walk (list-ref alternating (add1 index))))))
+          `(Bind ,grouped ,(walk body))]
+         [else (map walk value)])]))
+  (walk datum))
+
+(define (core->redex-adapter form)
+  (core-redex-adapter
+   (plain->redex-binding (core->plain-datum form))
+   form))
+
+(define (redex-adapter->core adapter)
+  (unless (core-redex-adapter? adapter)
+    (raise-argument-error 'redex-adapter->core "core-redex-adapter?" adapter))
+  ;; The adapter retains the source-located AST as the metadata sidecar. M3's
+  ;; Redex use is comparison-only, so round-tripping must return it byte-for-
+  ;; byte rather than synthesize locations or site identities.
+  (core-redex-adapter-original adapter))
