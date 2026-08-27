@@ -25,6 +25,20 @@
 (check-false (member "L3.7" rules))
 (check-false (member "L5.14" rules))
 
+(check-equal? (list->set (rule-handler-ids)) (list->set rules))
+(for ([id (in-list (rule-handler-ids))])
+  (define result (apply-rule-handler id '(term (Mention Speaker))))
+  (if (member id '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
+                   "L5.4" "L5.5" "L5.6" "L5.10" "L5.13" "L5.15"
+                   "L5.16" "L5.17" "L5.19" "L5.22" "L5.23" "L5.27"))
+      (begin
+        (check-true (no-lowering? result))
+        (check-equal? (no-lowering-rule result) id)
+        (check-equal? (no-lowering-cause result) 'implementation))
+      (begin
+        (check-true (lowered? result))
+        (check-equal? (lowered-rules result) (list id)))))
+
 (check-not-exn (lambda () (validate-lowering-fixtures! manifest)))
 
 (define samples-17
@@ -39,6 +53,13 @@
 (check-equal? (length (hash-ref samples-17-parse 'cases)) 2)
 (for ([case (in-list (hash-ref samples-17-parse 'cases))])
   (check-true (hash? (hash-ref case 'parse))))
+(define samples-17-first (first (hash-ref samples-17-parse 'cases)))
+(check-equal? (parse-case-tokens samples-17-first)
+              '("mi" "klama" ".ije" "do" "stali"))
+(check-true (set-member? (parse-case-variants samples-17-first)
+                         'IStatementConnection))
+(check-equal? (hash-ref samples-17-first 'source_comment)
+              "mi klama .ije do stali — joint State; one assertion")
 
 (define samples-63
   (findf (lambda (candidate)
@@ -58,6 +79,11 @@
                               "missing Lojban surface"))
 (check-false
  (hash-ref (first (hash-ref (load-parse-fixture spec-10) 'cases)) 'parse))
+(check-true
+ (string-prefix?
+  (hash-ref (first (hash-ref (load-parse-fixture spec-10) 'cases))
+            'source_comment)
+  "surface/limbs/gait sites"))
 
 (define absent
   (lower 'parse 'rr))
@@ -77,6 +103,15 @@
   (define rr
     (list-ref (rr-fixture-cases (load-rr-fixture candidate)) (sub1 index)))
   (values parse-case rr))
+
+(define-values (description-parse _description-rr) (case-input "samples.md" 19))
+(check-true (set-member? (parse-case-variants description-parse)
+                         'DescriptorWithGadriSumti))
+(define-values (quantity-parse _quantity-rr) (case-input "spec.md" 9))
+(check-true (set-member? (parse-case-variants quantity-parse)
+                         'DescriptorWithoutGadriSumti))
+(check-true (set-member? (parse-case-variants quantity-parse)
+                         'PaRunQuantifier))
 
 (define (plain node)
   (cond [(core-atom? node) (core-atom-value node)]
@@ -163,7 +198,7 @@
             (SpeakerDescribes
              $x (λ ($y :: Referents Entity) (prenu $y))))))
     (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
-          (Context (GroupBasisConstraint lu'o Entity) deps…)
+          (Context (GroupBasisConstraint |lu'o| Entity) deps…)
       (Bind ($aggregate :: Referents (Group Entity))
             (Massify $κ $people)
         (Mention $aggregate))))
@@ -270,6 +305,95 @@
 (define spec-10-result (lower spec-10-parse spec-10-rr))
 (check-true (no-lowering? spec-10-result))
 (check-equal? (no-lowering-cause spec-10-result) 'rule-underspecified)
+
+;; Symmetric normalizer: α-renaming, Close/P15, force shorthand, and L0.1.
+(check-equal?
+ (alpha-normalize '(λ ($x :: Entity) (gerku $x)))
+ (alpha-normalize '(λ ($dog :: Entity) (gerku $dog))))
+
+(define close-normal
+  (normalize-core (datum->core '(Close (klama Speaker))) (hash)))
+(check-not-false
+ (member "Close (§4.6/L1.3)" (normalization-expansions close-normal)))
+(check-not-false
+ (member "4 omitted places (P15/L1.6)"
+         (normalization-expansions close-normal)))
+(check-false (member 'Close (flatten (normalization-datum close-normal))))
+(define normalized-symbols
+  (filter symbol? (flatten (normalization-datum close-normal))))
+(check-equal? (length (remove-duplicates
+                       (filter (lambda (value)
+                                 (regexp-match? #rx"^[$]α[2-5]$"
+                                                (symbol->string value)))
+                               normalized-symbols)))
+              4)
+
+(define force-normal
+  (normalize-core (datum->core '(Assert (gerku Speaker))) (hash)))
+(check-equal? (normalization-datum force-normal)
+              '(Assert (CloseClause (ActualClause (StateClause (gerku Speaker))))))
+(check-not-false
+ (member "force-boundary clause shorthand (§2)"
+         (normalization-expansions force-normal)))
+
+(define l0-normal
+  (normalize-core
+   (datum->core '(SetOf (λ ($x :: Entity) (gerku $x)))) (hash)))
+(check-not-false
+ (member "bare lexical property (L0.1)"
+         (normalization-expansions l0-normal)))
+(define reference-refer-normal
+  (normalize-core
+   (datum->core
+    '(Refer (λ ($x :: Referents Entity) (mlatu $x))))
+   (hash)))
+(check-false
+ (member "bare lexical property (L0.1)"
+         (normalization-expansions reference-refer-normal)))
+
+;; Full candidate run: all parseable cases match; the one filed missing-surface
+;; document defect remains visible and non-failing.
+(define-values (gate-ok? reports fence-reports)
+  (run-lowering-gate #:print? #f))
+(check-true gate-ok?)
+(check-equal? (count (lambda (report)
+                       (eq? (case-report-disposition report)
+                            'in-fragment/matched))
+                     reports)
+              27)
+(check-equal? (count (lambda (report)
+                       (eq? (case-report-disposition report) 'unresolved))
+                     reports)
+              1)
+(check-equal? (length reports) 28)
+(check-equal? (length fence-reports) 25)
+(define fence-17-report
+  (findf (lambda (report)
+           (and (string=? (fence-report-source report) "samples.md")
+                (= (fence-report-ordinal report) 17)))
+         fence-reports))
+(check-equal? (length (fence-report-cases fence-17-report)) 2)
+(check-equal? (fence-report-disposition fence-17-report)
+              'in-fragment/matched)
+
+;; Fence aggregation is deterministic and preserves a failing case over a
+;; report-only case regardless of traversal order.
+(define report-unresolved
+  (case-report "s" 1 1 'unresolved #f '() '() "gap" #f #f))
+(define report-implementation
+  (case-report "s" 1 2 'in-fragment/no-lowering 'implementation
+               '() '() "bug" #f #f))
+(check-equal?
+ (aggregate-fence-disposition (list report-unresolved report-implementation))
+ 'in-fragment/no-lowering)
+(check-equal?
+ (aggregate-fence-disposition (list report-implementation report-unresolved))
+ 'in-fragment/no-lowering)
+(check-true (no-lowering-fails? 'rr-missing '(force) '()))
+(check-true (no-lowering-fails? 'implementation "bug" '()))
+(check-false (no-lowering-fails? 'rule-underspecified "gap" '()))
+(check-false (no-lowering-fails? 'row-missing '(skicu) '(gerku)))
+(check-true (no-lowering-fails? 'row-missing '(skicu) '(gerku skicu)))
 
 (define-values (parse-for-missing _rr-for-missing) (case-input "samples.md" 1))
 (define missing-result (lower parse-for-missing (hash 'parse '(fixture 1))))

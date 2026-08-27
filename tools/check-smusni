@@ -8,5 +8,5 @@ python3 tools/check-docs.py .
 raco test tools/smusni-redex/tests/*.rkt
 racket tools/smusni-redex/inventory.rkt --check
 racket tools/smusni-redex/extract.rkt --check
+racket tools/smusni-redex/lower.rkt --check
 racket tools/smusni-redex/check.rkt "$@"
-

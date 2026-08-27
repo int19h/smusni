@@ -139,3 +139,26 @@ coverage must raise the floor, so ledgering a rule instead of writing its
 specimen is a failing move and any lowered floor is a visible diff. Citing a
 rule is a claim about the specimen; it is not checked semantically until #9
 M3.
+
+## Executable lowering (#9 M3)
+
+M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
+(46 lowering judgments; fixtures are explicitly not exhaustive).
+`inventory/lowering.sexp` identifies candidate fence keys, while one tracked
+`gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
+preserve ordered cases. Refresh parser fixtures deliberately with:
+
+```sh
+racket tools/smusni-redex/lower.rkt --refresh-parses
+```
+
+The ordinary check never invokes jbotci. It attempts each candidate case as a
+whole term, type-checks every produced core term, symmetrically normalizes only
+the documented Close, omitted-place, force-boundary, and L0.1 display
+conventions, and compares modulo α-renaming. Reports distinguish matched,
+mismatch, unresolved, out-of-fragment, and in-fragment `no-lowering` results.
+Missing RR fields and implementation failures fail the gate; missing rows are
+report-only unless the manifest promises them; under-specified rules remain
+visible #9 findings. Per-case dispositions are authoritative, and a documented
+precedence produces the stable fence summary. Formed-rule coverage is printed
+separately from M1's focal-citation ratchet.

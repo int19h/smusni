@@ -168,6 +168,7 @@
           }
         }
       },
+      "source_comment": "ti se klama mi — conversion consumed by the mapping; no Se operator",
       "surface": "ti se klama mi",
       "unresolved": false
     }

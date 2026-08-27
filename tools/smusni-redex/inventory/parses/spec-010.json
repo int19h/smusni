@@ -5,6 +5,7 @@
       "command": [],
       "index": 1,
       "parse": false,
+      "source_comment": "surface/limbs/gait sites are hoisted outside the comprehension (L0.1)",
       "surface": false,
       "unresolved": "#9: missing Lojban surface comment"
     }

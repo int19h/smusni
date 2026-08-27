@@ -116,6 +116,7 @@
           }
         }
       },
+      "source_comment": "ta barda — gradable predication: Context scale; Vague cutoff  [spec §6.4]",
       "surface": "ta barda",
       "unresolved": false
     },
@@ -289,6 +290,7 @@
           }
         }
       },
+      "source_comment": "du'e gerku cu klama — Vague threshold; Context purpose  [spec §6.4]",
       "surface": "du'e gerku cu klama",
       "unresolved": false
     },
@@ -445,6 +447,7 @@
           }
         }
       },
+      "source_comment": "mi co'e do — elliptical selbri: Context; not Vague   [spec §6.1]",
       "surface": "mi co'e do",
       "unresolved": false
     }

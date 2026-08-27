@@ -7,6 +7,7 @@
          racket/match
          racket/path
          racket/port
+         racket/pretty
          racket/runtime-path
          racket/set
          racket/string
@@ -23,6 +24,9 @@
          (struct-out rr-fixture)
          (struct-out no-lowering)
          (struct-out lowered)
+         (struct-out normalization)
+         (struct-out case-report)
+         (struct-out fence-report)
          load-lowering-manifest
          load-parse-fixture
          load-rr-fixture
@@ -31,6 +35,14 @@
          fragment-rule-ids
          datum->core
          parse-case-tokens
+         parse-case-variants
+         normalize-core
+         alpha-normalize
+         rule-handler-ids
+         apply-rule-handler
+         no-lowering-fails?
+         aggregate-fence-disposition
+         run-lowering-gate
          lower)
 
 (define-runtime-path tool-dir ".")
@@ -48,6 +60,11 @@
 ;; `no-lowering` is a result of the derived relation, never a core term.
 (struct no-lowering (rule cause premise detail) #:transparent)
 (struct lowered (term rules) #:transparent)
+(struct normalization (datum expansions) #:transparent)
+(struct case-report
+  (source ordinal index disposition cause rules expansions message produced expected)
+  #:transparent)
+(struct fence-report (source ordinal disposition cases) #:transparent)
 
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
@@ -183,6 +200,35 @@
              (car key) (cdr key) (length forms)
              (length (lowering-candidate-cases candidate))))))
 
+(define (candidate-source-comments candidate)
+  (define item
+    (for/first ([fence (in-list
+                        (classify-fences (read-all-fences) (load-manifest)))]
+                #:when (and
+                        (string=? (fence-source fence)
+                                  (lowering-candidate-source candidate))
+                        (= (fence-ordinal fence)
+                           (lowering-candidate-ordinal candidate))))
+      fence))
+  (unless item
+    (error 'candidate-source-comments "candidate fence is absent"))
+  (define lines (string-split (fence-content item) "\n" #:trim? #f))
+  (define forms (read-core-forms (fence-content item)))
+  (for/list ([form (in-list forms)])
+    (define line-index (sub1 (or (core-list-line form) 1)))
+    (define comment
+      (for/first ([index (in-range (sub1 line-index) -1 -1)]
+                  #:do [(define match
+                           (regexp-match #px"^;[ ]?(.*)$"
+                                         (list-ref lines index)))]
+                  #:when match)
+        (second match)))
+    (unless comment
+      (error 'candidate-source-comments
+             "~a#~a form at line ~a has no leading comment"
+             (fence-source item) (fence-ordinal item) (core-list-line form)))
+    comment))
+
 (define (read-json-file path)
   (call-with-input-file path read-json))
 
@@ -207,19 +253,29 @@
                        (lowering-candidate-digest candidate)))
     (error 'load-parse-fixture "parse metadata drift: ~a" path))
   (define fixture-cases (json-ref data 'cases 'load-parse-fixture))
+  (define source-comments (candidate-source-comments candidate))
   (unless (= (length fixture-cases)
              (length (lowering-candidate-cases candidate)))
     (error 'load-parse-fixture "parse case count drift: ~a" path))
   (for ([expected (in-list (lowering-candidate-cases candidate))]
-        [actual (in-list fixture-cases)])
+        [actual (in-list fixture-cases)]
+        [source-comment (in-list source-comments)])
     (unless (and (= (json-ref actual 'index 'load-parse-fixture)
                     (lowering-case-index expected))
                  (equal? (json-ref actual 'surface 'load-parse-fixture)
                          (lowering-case-surface expected))
                  (equal? (string->symbol
                           (json-ref actual 'category 'load-parse-fixture))
-                         (lowering-case-category expected)))
+                         (lowering-case-category expected))
+                 (equal? (json-ref actual 'source_comment 'load-parse-fixture)
+                         source-comment))
       (error 'load-parse-fixture "parse case metadata drift: ~a" path))
+    (when (lowering-case-surface expected)
+      (unless (string-contains? source-comment
+                                (lowering-case-surface expected))
+        (error 'load-parse-fixture
+               "surface ~s is not present in its source comment ~s: ~a"
+               (lowering-case-surface expected) source-comment path)))
     (if (lowering-case-surface expected)
         (unless (hash? (json-ref actual 'parse 'load-parse-fixture))
           (error 'load-parse-fixture "case ~a has no raw parse: ~a"
@@ -318,6 +374,7 @@
       (string-append compact "\n")))
 
 (define (parse-fixture-jsexpr candidate executable version)
+  (define source-comments (candidate-source-comments candidate))
   (hasheq
    'schema "smusni-gentufa-parse-fixture-1"
    'source (lowering-candidate-source candidate)
@@ -325,11 +382,13 @@
    'fence_sha1 (lowering-candidate-digest candidate)
    'jbotci_version version
    'cases
-   (for/list ([case (in-list (lowering-candidate-cases candidate))])
+   (for/list ([case (in-list (lowering-candidate-cases candidate))]
+              [source-comment (in-list source-comments)])
      (define surface (lowering-case-surface case))
      (hasheq
       'index (lowering-case-index case)
       'surface (or surface #f)
+      'source_comment source-comment
       'category (symbol->string (lowering-case-category case))
       'command (if surface
                    (list "jbotci" "gentufa" "--format" "json" surface)
@@ -371,6 +430,41 @@
   (validate-core-form ast)
   ast)
 
+(define (parse-case-variants parse-case)
+  (define raw (json-ref parse-case 'parse 'parse-case-variants))
+  (define variants (mutable-set))
+  (define (walk value)
+    (cond
+      [(hash? value)
+       (for ([(key child) (in-hash value)])
+         (set-add! variants key)
+         (walk child))]
+      [(list? value) (for ([child (in-list value)]) (walk child))]
+      [else (void)]))
+  (walk raw)
+  (list->set (set->list variants)))
+
+(define (parse-terminal-spans raw)
+  (define found '())
+  (define (walk value)
+    (cond
+      [(hash? value)
+       (when (and (hash-has-key? value 'phonemes)
+                  (hash-has-key? value 'span))
+         (match (hash-ref value 'span)
+           [(list (? exact-nonnegative-integer? start)
+                  (? exact-nonnegative-integer? stop))
+            (set! found (cons (cons start stop) found))]
+           [_ (void)]))
+       (for ([child (in-hash-values value)]) (walk child))]
+      [(list? value) (for ([child (in-list value)]) (walk child))]
+      [else (void)]))
+  (walk raw)
+  (remove-duplicates found))
+
+(define (spans-overlap? left right)
+  (and (< (car left) (cdr right)) (< (car right) (cdr left))))
+
 (define (parse-case-tokens parse-case)
   (define surface (json-ref parse-case 'surface 'parse-case-tokens))
   (unless (string? surface)
@@ -378,7 +472,15 @@
   (define raw (json-ref parse-case 'parse 'parse-case-tokens))
   (unless (and (hash? raw) (hash-has-key? raw 'RegularText))
     (error 'parse-case-tokens "case is not a gentufa RegularText parse"))
-  (string-split surface))
+  (define terminal-spans (parse-terminal-spans raw))
+  (define token-spans (regexp-match-positions* #px"[^[:space:]]+" surface))
+  (for/list ([span (in-list token-spans)])
+    (unless (for/or ([terminal (in-list terminal-spans)])
+              (spans-overlap? span terminal))
+      (error 'parse-case-tokens
+             "surface token ~s has no terminal in the stored gentufa parse"
+             (substring surface (car span) (cdr span))))
+    (substring surface (car span) (cdr span))))
 
 (define (rr-fields-value rr)
   (cond [(rr-case? rr) (rr-case-fields rr)]
@@ -464,6 +566,44 @@
   `(AtLeast ,threshold ,restrictor ,nuclear))
 (define (rule-L5.29 relation scale region)
   `(Grade ,relation ,scale ,region))
+
+;; Every live fragment judgment has a stable keyed handler. Handlers exercised
+;; by the current candidates accept a fully formed rule conclusion for an
+;; isolated type/attribution test; unformed handlers fail explicitly rather
+;; than pretending that absence of a candidate is an implementation.
+(define formed-rule-id-set
+  (list->set
+   '("L0.1"
+     "L1.1" "L1.2" "L1.3" "L1.4" "L1.5" "L1.6" "L1.8" "L1.10"
+     "L3.1" "L3.2" "L3.3" "L3.4" "L3.5" "L3.6" "L3.9" "L3.14" "L3.15"
+     "L5.1" "L5.2" "L5.3" "L5.7" "L5.8" "L5.9" "L5.11" "L5.12"
+     "L5.21" "L5.28" "L5.29")))
+
+(define (rule-handler-ids)
+  (fragment-rule-ids))
+
+(define (rule-handler-table)
+  (for/hash ([id (in-list (rule-handler-ids))])
+    (values
+     id
+     (if (set-member? formed-rule-id-set id)
+         (lambda (payload _rr)
+           (match payload
+             [`(term ,datum) (typed-lowered datum (list id))]
+             [_ (no-lowering id 'implementation
+                             "formed rule handler needs (term datum)"
+                             payload)]))
+         (lambda (payload _rr)
+           (no-lowering id 'implementation
+                        "live fragment rule has no formed candidate handler"
+                        payload))))))
+
+(define (apply-rule-handler id payload [rr (hash)])
+  (define handler
+    (hash-ref (rule-handler-table) id
+              (lambda ()
+                (error 'apply-rule-handler "rule is outside F₀-M3: ~a" id))))
+  (handler payload rr))
 
 (define (lower-L1 tokens category fields)
   (match* (tokens category)
@@ -559,7 +699,7 @@
                  (SpeakerDescribes
                   $x (λ ($y :: Referents Entity) (prenu $y))))))
          (Bind ($κ :: DecompositionBasis (Group Entity) Entity)
-               (Context (GroupBasisConstraint lu'o Entity) deps…)
+               (Context (GroupBasisConstraint |lu'o| Entity) deps…)
            (Bind ($aggregate :: Referents (Group Entity))
                  (Massify $κ $people)
              (Mention $aggregate))))
@@ -707,6 +847,411 @@
            (lower-L3 tokens category fields)
            (lambda () (lower-L5 tokens category fields))))))]))
 
+(define (core->plain node)
+  (cond [(core-atom? node) (core-atom-value node)]
+        [(core-list? node) (map core->plain (core-list-elements node))]
+        [else node]))
+
+(define (datum-head datum)
+  (and (list? datum) (pair? datum) (symbol? (first datum)) (first datum)))
+
+(define (label-symbol? value)
+  (and (symbol? value)
+       (string-prefix? (symbol->string value) ":")))
+
+(define (numeric-label value)
+  (and (label-symbol? value)
+       (let ([text (substring (symbol->string value) 1)])
+         (and (regexp-match? #px"^[1-9][0-9]*$" text)
+              (string->number text)))))
+
+(define (fill-map arguments total)
+  (define result (make-hash))
+  (define event #f)
+  (let loop ([rest arguments] [next 1])
+    (cond
+      [(null? rest) (values result event)]
+      [(and (pair? (cdr rest)) (label-symbol? (car rest)))
+       (define label (car rest))
+       (define value (cadr rest))
+       (if (eq? label ':Eventuality)
+           (set! event value)
+           (let ([number (numeric-label label)])
+             (when number (hash-set! result number value))))
+       (loop (cddr rest) next)]
+      [else
+       (define available
+         (for/first ([index (in-range next (add1 total))]
+                     #:unless (hash-has-key? result index))
+           index))
+       (when available (hash-set! result available (car rest)))
+       (loop (cdr rest) (if available (add1 available) next))])))
+
+(define (binding-datum variable type computation body)
+  `(Bind (,variable :: ,@type) ,computation ,body))
+
+(define (wrap-contexts missing body)
+  (for/fold ([result body]) ([entry (in-list (reverse missing))])
+    (match-define (cons _label variable) entry)
+    (binding-datum variable '(Referents Entity) '(Context) result)))
+
+(define (expand-close-datum operand inv)
+  (define head (datum-head operand))
+  (define row (and head (inventory-row inv head)))
+  (cond
+    [(not row) (values `(Close ,operand) '())]
+    [else
+     (define total (row-decl-total row))
+     (define-values (fills explicit-event) (fill-map (rest operand) total))
+     (cond
+       [explicit-event
+        ;; The explicit-event case is already fully written at its use sites;
+        ;; retain it rather than inventing a second display spelling.
+        (values `(Close ,operand) '("Close explicit-event (§4.6/L1.3)"))]
+       [else
+        (define missing
+          (for/list ([label (in-range 1 (add1 total))]
+                     #:unless (hash-has-key? fills label))
+            (cons label (string->symbol (format "$ctx~a" label)))))
+        (for ([entry (in-list missing)])
+          (hash-set! fills (car entry) (cdr entry)))
+        (define event-variable '$event)
+        (define labelled-arguments
+          (append*
+           (for/list ([label (in-range 1 (add1 total))])
+             (list (string->symbol (format ":~a" label))
+                   (hash-ref fills label)))))
+        (define application `(,head ,@labelled-arguments))
+        (define expanded
+          (case (row-decl-event-mode row)
+            [(direct-event)
+             `(CloseClause
+               (ActualClause
+                (λ (,event-variable :: Referents Eventuality)
+                  ,(wrap-contexts
+                    missing
+                    `(,head ,@labelled-arguments :Eventuality ,event-variable)))))]
+            [else
+             (wrap-contexts
+              missing
+              `(CloseClause (ActualClause (StateClause ,application))))]))
+        (values expanded
+                (append '("Close (§4.6/L1.3)")
+                        (if (null? missing)
+                            '()
+                            (list (format "~a omitted place~a (P15/L1.6)"
+                                          (length missing)
+                                          (if (= (length missing) 1) "" "s"))))))])]))
+
+(define pure-position-heads
+  '(SetOf SelectExactly SelectAtLeast SelectSome SelectAllBut
+          Every No Exactly AtLeast Some AtMost MoreThan FewerThan
+          GlobalExactly Most Generic Refer))
+
+(define (lexical-property-lambda? datum inv)
+  (match datum
+    [`(λ ,_binder ,body)
+     (define head (datum-head body))
+     (and head (inventory-row inv head) body)]
+    [_ #f]))
+
+(define (reference-level-lambda? datum)
+  (match datum
+    [`(λ ,binder ,_body)
+     (define flat (if (and (pair? binder) (list? (first binder)))
+                      (first binder) binder))
+     (define separator (index-of flat '::))
+     (and separator
+          (pair? (drop flat (add1 separator)))
+          (eq? (list-ref flat (add1 separator)) 'Referents))]
+    [_ #f]))
+
+(define (normalize-datum datum inv)
+  (define expansions '())
+  (define (note! text)
+    (unless (member text expansions) (set! expansions (cons text expansions))))
+  (define (walk value [parent #f] [operand-index #f])
+    (cond
+      [(not (list? value)) value]
+      [else
+       (define walked (for/list ([item (in-list value)] [index (in-naturals)])
+                        (walk item (datum-head value) index)))
+       (match walked
+         [`(Close ,operand)
+          (define-values (expanded fired) (expand-close-datum operand inv))
+          (for ([entry (in-list fired)]) (note! entry))
+          expanded]
+         [`(Assert ,content)
+          (if (member (datum-head content) '(Close CloseClause))
+              walked
+              (begin
+                (note! "force-boundary clause shorthand (§2)")
+                `(Assert (CloseClause (ActualClause (StateClause ,content))))))]
+         [else
+          (define property
+            (and parent (member parent pure-position-heads)
+                 (not (and (eq? parent 'Refer)
+                           (reference-level-lambda? walked)))
+                 (lexical-property-lambda? walked inv)))
+          (if property
+              (match walked
+                [`(λ ,binder ,body)
+                 (note! "bare lexical property (L0.1)")
+                 (define-values (expanded fired) (expand-close-datum body inv))
+                 (for ([entry (in-list fired)]) (note! entry))
+                 `(λ ,binder ,expanded)])
+              walked)])]))
+  (values (walk datum) (reverse expansions)))
+
+(define (alpha-normalize datum)
+  (define counter 0)
+  (define (fresh)
+    (set! counter (add1 counter))
+    (string->symbol (format "$α~a" counter)))
+  (define (rename-atom value environment)
+    (if (symbol? value) (hash-ref environment value value) value))
+  (define (binder-group group environment)
+    (define separator (index-of group '::))
+    (unless separator (error 'alpha-normalize "malformed binder group: ~e" group))
+    (define variables (take group separator))
+    (define types (drop group separator))
+    (define next environment)
+    (define normalized-variables
+      (for/list ([variable (in-list variables)])
+        (define replacement (fresh))
+        (set! next (hash-set next variable replacement))
+        replacement))
+    (values `(,@normalized-variables ,@(map (lambda (v) (walk v environment)) types))
+            next))
+  (define (telescope tel environment)
+    (if (and (pair? tel) (list? (first tel)))
+        (let loop ([groups tel] [env environment] [found '()])
+          (if (null? groups)
+              (values (reverse found) env)
+              (let-values ([(group next) (binder-group (car groups) env)])
+                (loop (cdr groups) next (cons group found)))))
+        (binder-group tel environment)))
+  (define (walk value environment)
+    (cond
+      [(not (list? value)) (rename-atom value environment)]
+      [else
+       (case (datum-head value)
+         [(λ)
+          (match value
+            [`(λ ,tel ,body)
+             (define-values (normalized-tel next) (telescope tel environment))
+             `(λ ,normalized-tel ,(walk body next))]
+            [_ (map (lambda (item) (walk item environment)) value)])]
+         [(Let)
+          (match value
+            [`(Let ,binder ,rhs ,body)
+             (define-values (normalized-binder next)
+               (binder-group binder environment))
+             `(Let ,normalized-binder ,(walk rhs environment) ,(walk body next))]
+            [_ (map (lambda (item) (walk item environment)) value)])]
+         [(Bind)
+          (define pieces (rest value))
+          (define body (last pieces))
+          (define pairs (drop-right pieces 1))
+          (let loop ([remaining pairs] [env environment] [found '()])
+            (if (null? remaining)
+                `(Bind ,@(reverse found) ,(walk body env))
+                (let-values ([(normalized-binder next)
+                              (binder-group (first remaining) env)])
+                  (loop (drop remaining 2) next
+                        (cons (walk (second remaining) env)
+                              (cons normalized-binder found))))))]
+         [else (map (lambda (item) (walk item environment)) value)])]))
+  (walk datum (hash)))
+
+(define (normalize-core term rr [inv (load-inventory)])
+  (define datum (if (or (core-list? term) (core-atom? term))
+                    (core->plain term)
+                    term))
+  (define-values (expanded expansions) (normalize-datum datum inv))
+  (normalization (alpha-normalize expanded) expansions))
+
+(define (candidate-fence-map)
+  (for/hash ([item (in-list
+                    (classify-fences (read-all-fences) (load-manifest)))])
+    (values (cons (fence-source item) (fence-ordinal item)) item)))
+
+(define (missing-fixture-rows fields inv)
+  (for/list ([row (in-list (hash-ref fields 'rows '()))]
+             #:unless (inventory-row inv row))
+    row))
+
+(define (case-key source ordinal index)
+  (format "~a#~a.~a" source ordinal index))
+
+(define (no-lowering-fails? cause detail promised-rows)
+  (case cause
+    [(rr-missing implementation) #t]
+    [(row-missing)
+     (for/or ([row (in-list (if (list? detail) detail '()))])
+       (and (member row promised-rows) #t))]
+    [else #f]))
+
+(define (case-failure? report candidate-case)
+  (case (case-report-disposition report)
+    [(in-fragment/mismatch) #t]
+    [(in-fragment/no-lowering)
+     (no-lowering-fails? (case-report-cause report)
+                         (case-report-message report)
+                         (lowering-case-promised-rows candidate-case))]
+    [else #f]))
+
+(define disposition-rank
+  (hash 'in-fragment/mismatch 100
+        'in-fragment/no-lowering 80
+        'unresolved 60
+        'out-of-fragment 40
+        'in-fragment/matched 0))
+
+(define (aggregate-fence-disposition reports)
+  (case-report-disposition
+   (argmax (lambda (report)
+             (+ (hash-ref disposition-rank (case-report-disposition report))
+                (if (member (case-report-cause report)
+                            '(rr-missing implementation))
+                    10 0)))
+           reports)))
+
+(define (run-candidate-case candidate candidate-case parse-case rr-case target inv)
+  (define source (lowering-candidate-source candidate))
+  (define ordinal (lowering-candidate-ordinal candidate))
+  (define index (lowering-case-index candidate-case))
+  (define unresolved (lowering-case-unresolved candidate-case))
+  (cond
+    [unresolved
+     (case-report source ordinal index 'unresolved #f '() '()
+                  unresolved #f (core->plain target))]
+    [else
+     (define missing-rows
+       (missing-fixture-rows (rr-case-fields rr-case) inv))
+     (define result
+       (if (pair? missing-rows)
+           (no-lowering "M3" 'row-missing
+                        "RR references rows absent from fixture lexicon"
+                        missing-rows)
+           (lower parse-case rr-case)))
+     (cond
+       [(lowered? result)
+        (define produced-normal
+          (normalize-core (lowered-term result) (rr-case-fields rr-case) inv))
+        (define expected-normal
+          (normalize-core target (rr-case-fields rr-case) inv))
+        (define expansions
+          (remove-duplicates
+           (append (normalization-expansions produced-normal)
+                   (normalization-expansions expected-normal))))
+        (define reported-rules
+          (if (member "bare lexical property (L0.1)" expansions)
+              (remove-duplicates (cons "L0.1" (lowered-rules result)))
+              (lowered-rules result)))
+        (if (equal? (normalization-datum produced-normal)
+                    (normalization-datum expected-normal))
+            (case-report source ordinal index 'in-fragment/matched #f
+                         reported-rules expansions "matched"
+                         (normalization-datum produced-normal)
+                         (normalization-datum expected-normal))
+            (case-report source ordinal index 'in-fragment/mismatch #f
+                         reported-rules expansions "normalized terms differ"
+                         (normalization-datum produced-normal)
+                         (normalization-datum expected-normal)))]
+       [else
+        (define disposition
+          (if (eq? (no-lowering-cause result) 'out-of-fragment)
+              'out-of-fragment
+              'in-fragment/no-lowering))
+        (case-report source ordinal index disposition
+                     (no-lowering-cause result) '() '()
+                     (no-lowering-detail result) #f (core->plain target))])]))
+
+(define (print-case-report report)
+  (printf "  ~a: ~a" (case-key (case-report-source report)
+                               (case-report-ordinal report)
+                               (case-report-index report))
+          (case-report-disposition report))
+  (when (case-report-cause report) (printf "/~a" (case-report-cause report)))
+  (when (pair? (case-report-rules report))
+    (printf " rules=~a" (string-join (case-report-rules report) ",")))
+  (when (pair? (case-report-expansions report))
+    (printf " expansions=~s" (case-report-expansions report)))
+  (newline)
+  (when (eq? (case-report-disposition report) 'in-fragment/mismatch)
+    (printf "    produced: ~a\n" (pretty-format (case-report-produced report)))
+    (printf "    expected: ~a\n" (pretty-format (case-report-expected report))))
+  (when (member (case-report-disposition report)
+                '(unresolved out-of-fragment in-fragment/no-lowering))
+    (printf "    reason: ~e\n" (case-report-message report))))
+
+(define (run-lowering-gate #:print? [print? #t])
+  (define manifest (load-lowering-manifest))
+  (validate-lowering-fixtures! manifest)
+  (define inv (load-inventory))
+  (define fences (candidate-fence-map))
+  (define reports '())
+  (define fence-reports '())
+  (for ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (define key (cons (lowering-candidate-source candidate)
+                      (lowering-candidate-ordinal candidate)))
+    (define item (hash-ref fences key))
+    (define targets (read-core-forms (fence-content item)))
+    (define parse-cases (hash-ref (load-parse-fixture candidate) 'cases))
+    (define rr-cases (rr-fixture-cases (load-rr-fixture candidate inv)))
+    (define current
+      (for/list ([candidate-case (in-list (lowering-candidate-cases candidate))]
+                 [parse-case (in-list parse-cases)]
+                 [rr-case (in-list rr-cases)]
+                 [target (in-list targets)])
+        (run-candidate-case candidate candidate-case parse-case rr-case target inv)))
+    (set! reports (append reports current))
+    (set! fence-reports
+          (append fence-reports
+                  (list (fence-report (lowering-candidate-source candidate)
+                                      (lowering-candidate-ordinal candidate)
+                                      (aggregate-fence-disposition current)
+                                      current)))))
+  (define matched-rules
+    (for*/set ([report (in-list reports)]
+               #:when (eq? (case-report-disposition report)
+                           'in-fragment/matched)
+               [rule (in-list (case-report-rules report))]
+               #:when (member rule (fragment-rule-ids manifest)))
+      rule))
+  (define unformed
+    (for/list ([rule (in-list (fragment-rule-ids manifest))]
+               #:unless (set-member? matched-rules rule))
+      rule))
+  (define failures?
+    (for/or ([candidate (in-list (lowering-manifest-candidates manifest))]
+             [fence-report (in-list fence-reports)])
+      (for/or ([candidate-case (in-list (lowering-candidate-cases candidate))]
+               [report (in-list (fence-report-cases fence-report))])
+        (case-failure? report candidate-case))))
+  (when print?
+    (printf "F₀-M3: live L1, L3, L5 (+ L0.1) — ~a lowering judgments; fixtures are not exhaustive\n"
+            (length (fragment-rule-ids manifest)))
+    (for ([fence-report (in-list fence-reports)])
+      (for ([report (in-list (fence-report-cases fence-report))])
+        (print-case-report report))
+      (printf "  fence ~a#~a: ~a\n"
+              (fence-report-source fence-report)
+              (fence-report-ordinal fence-report)
+              (fence-report-disposition fence-report)))
+    (for ([disposition (in-list
+                        '(in-fragment/matched in-fragment/mismatch
+                          in-fragment/no-lowering unresolved out-of-fragment))])
+      (printf "lowering ~a: ~a cases\n" disposition
+              (count (lambda (report)
+                       (eq? (case-report-disposition report) disposition))
+                     reports)))
+    (printf "lowering formed coverage: ~a/~a rules; unformed=~a\n"
+            (set-count matched-rules) (length (fragment-rule-ids manifest))
+            (string-join unformed ",")))
+  (values (not failures?) reports fence-reports))
+
 (module+ main
   (define action 'check)
   (command-line
@@ -720,10 +1265,6 @@
   (case action
     [(refresh) (refresh-parses! manifest)]
     [(check)
-     (validate-lowering-fixtures! manifest)
-     (printf "F₀-M3: live L1, L3, L5 (+ L0.1) — ~a lowering judgments; fixtures are not exhaustive\n"
-             (length (fragment-rule-ids manifest)))
-     (printf "lowering fixtures: ~a candidate fences, ~a ordered cases\n"
-             (length (lowering-manifest-candidates manifest))
-             (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
-               (length (lowering-candidate-cases candidate))))]))
+     (define-values (ok? _case-reports _fence-reports)
+       (run-lowering-gate))
+     (unless ok? (exit 1))]))

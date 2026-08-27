@@ -248,6 +248,7 @@
           }
         }
       },
+      "source_comment": "mi klama .ije do stali — joint State; one assertion",
       "surface": "mi klama .ije do stali",
       "unresolved": false
     },
@@ -499,6 +500,7 @@
           }
         }
       },
+      "source_comment": "mi klama .ija do stali — branch-relative event; one assertion",
       "surface": "mi klama .ija do stali",
       "unresolved": false
     }
