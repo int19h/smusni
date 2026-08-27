@@ -3,7 +3,7 @@
   ;; adjudicated lexical resource. The numeral is the complete ordinary-place
   ;; count used by this bounded checker; an application with fewer fills stays
   ;; an open PredTerm and must be closed explicitly.
-  (row bajra 5 direct-event "fixture; official row pending #12")
+  (row bajra 4 direct-event "fixture; official row: surface/limbs/gait (jbovlaste); pending #12")
   (row balvi 2 holding-state "fixture binary tense-facet projection; pending #12")
   (row barda 2 holding-state "fixture; official row pending #12")
   (row batci 3 direct-event "fixture; official row pending #12")

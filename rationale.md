@@ -1228,6 +1228,68 @@ and that is what makes the reservation cheap: adopting the family
 later fills a declared hole instead of reopening the bridge.
 
 
+### 2.11 The resolved-reading datum and hoisting
+
+**Why a datum, and why it is not implementation residue.** §11 marks a
+dozen decisions ⊳ — anaphora counting, erasure, template expansion,
+attachment, tense and CAhA readings, dependency profiles, binder widths —
+and says the calculus sees only their results. Without a named carrier
+those results were appealed to informally, and coverage claims quantified
+over "all resolved readings" that no one could enumerate. `RR` names the
+carrier as pure data: a finite record whose fields are exactly the ⊳
+decisions plus the resolver stores §5.4–§5.6 presuppose. The residue test
+of §2.7 is passed by construction — `RR` denotes nothing, holds no world,
+information state, or capture, never occurs in a term, and survives
+α-conversion and re-serialization trivially because it holds only selected
+values (a label, a row, a width). Three exclusions keep it honest:
+mechanical rewrites (the affirmer override, numeral syntax, implicit
+`ce'u`, bare-interrogative scope) have no choice to record and are rule
+premises; story time contributes nothing to any term and has no field;
+`sites` carries only declared extras over §5.3's computed minimum, so the
+default discipline lives in one place. Reading selection — which `RR` a
+text receives — is not decided by the relation: reading-multiplicity stays
+where §11 states it. (The mechanical-rewrite boundary was the Gemini
+session's observation in #9's design review, generalized by the Kimi
+session.)
+
+**Why hoisting is a lowering rule, not a former.** A lexical row applied at
+one place is an open `PredTerm` whose remaining defaultable places would be
+`Context` sites, i.e. effects — yet comprehensions, selections, quantifier
+and `Generic` restrictors, and the member-level `Refer` lift demand purity
+(§3.3). A "pure projection" former in the core would be machinery for a
+notational problem. L0.1 instead binds the sites outside the pure position
+and closes the event place; the position then receives exactly the resolved
+lexical property `R_p` that P39 and the lexicon's unit profiles already
+name. Meaning is preserved because a site retrieves once per dependency
+tuple per performance and introduces nothing (§5.3): moving it changes its
+place, not its tuple, so no reading is created or lost; hoisted binds are
+ordered by their dependencies, and only independent hoists commute (the
+Kimi session's argument in #9's review, adopted, and narrowed to
+dependency-independent sites after the codex_2/kimi_2 exact review of the
+first M2 head; no meaning-changing minimal pair was found for `Generic`,
+whose holder is a fixed parameter). `Vague` sites hoist by the same
+reasoning under VC3 — one precisification per parameter per binding site —
+since a site that cannot depend on the comprehension variable has the same
+precisification at every instantiation. Introductions are not hoisted: a
+`Refer` or selection inside a comprehension would need a binder-width law
+no rule states, so such a scope has no pure form unless its reference is
+bound outside. A site that would depend on the comprehension's own
+variable makes the position ill-formed — the right verdict, since such a
+comprehension has no pure meaning. **Cost.** Hoisted terms are longer, and
+the corpus's bare displays (`{λ [$x :: Entity] (gerku $x)}`) are
+abbreviations relative to the assumed row — honest only because L0.1 says
+so and the samples book states its provisional row assumptions.
+
+**The one semantic choice.** `Close` inside L0.1 fixes the actual mode for
+restrictor-internal predications: `lo bajra` describes actual runners
+whatever CAhA the host clause carries — `ka'e` on the main bridi does not
+turn its description's restrictor into a capability claim. The alternative,
+inheriting the host's clause former into every restrictor, is coherent and
+was recorded as rejected for want of any attested reading that needs it;
+P24's reading-multiplicity governs the main predication only. Reopen on a
+minimal pair in which a description under a capability host must itself be
+read as capability.
+
 ## 3. Pin arguments
 
 Condensed; each pin's full context is in spec §13. The ones that were
