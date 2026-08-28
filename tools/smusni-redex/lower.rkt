@@ -50,6 +50,7 @@
          site-signatures
          fixture-derivation-check
          generated-redex-check
+         no-lowering-causes
          no-lowering-fails?
          aggregate-fence-disposition
          run-parse-mutation-sweeps

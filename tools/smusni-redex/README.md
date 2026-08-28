@@ -298,3 +298,75 @@ non-failing `no-reading` cause. Malformed or incomplete profiles remain failing
 `rr-missing` results; `no-reading` is never a validation bypass or a semantic
 gap. The gate promotes samples #71 and #72 as verified L5.30 cases and keeps
 the generated in-place fixture free of RR or expected-output data.
+
+## Redex port Phase 0 instruments (#52)
+
+`port-phase0.rkt` adds migration instruments without changing semantic
+behavior. `inventory/definitions.sexp` classifies the live definition heads
+extracted from `spec.md`; the denominator is the extracted head/section set,
+not a recorded glyph count. Normative status is separate from migration state:
+`none`, `legacy-hybrid`, `a0`, or `ported`. `GlobalExactly` and `Close` name
+their existing hybrid implementations without satisfying the target-port
+gate; 76 written definitions are normatively executable while the target has
+zero ported cases. A new head, removed head, stale branch, or an `a0`/`ported`
+entry without real named metafunction/relation cases fails. Target cases are
+structurally wrapped around their actual Redex clauses and keyed by production
+module plus binding. Target modules must first enter the tracked production
+module allowlist; comments, test-only definitions, and same-name bindings
+in another module cannot satisfy the gate. Nested test submodules and duplicate
+case ids/binding registrations are rejected. Legacy-hybrid bindings are
+likewise resolved structurally in their named production module. The report prints
+every blocked and non-mechanical entry, including `Most` under #66 and the
+split equal/unequal `ZipWith` domains under #52/#41.
+
+`inventory/infer-core-branches.sexp` classifies the top-level dispatch of the
+legacy inference engine by function, syntax-derived stable id, source pattern,
+exact live source range, and source digest. A call-graph check requires every
+top-level helper reachable from `infer-core` to be registered (91 inference
+handlers plus 34 non-`infer-` helpers). Twenty-three internal `cond`/`match`/
+`if` arms in the formerly whole-function handlers are classified separately,
+including all 13 `infer-bind` arms. Digests make changes to nested handler logic
+stale even when line counts do not move. Metadata refresh refuses a changed
+branch/helper/decision denominator; new handlers must be classified first.
+The partition is substantive rather than blanket: 21 helpers and 16 internal
+decisions are semantic mechanisms that determine types/effects/obligations,
+12 helpers and 6 decisions are syntactic/control auxiliaries, and one of each
+is an external diagnostic path, with a mechanism-specific reason per entry.
+The adjacent diagnostic taxonomy permits term/constructor/location,
+inventory declarations, no-derivation, and explicitly non-authoritative
+instrumentation as evidence. It forbids a semantic fallback or a duplicate
+typing-premise evaluator in the future explainer.
+
+The frozen differential corpus contains deduplicated terms and environments
+observed from every classified fence and from executing every pre-port semantic
+checker test, including lowering mutations. The Phase 0 instrument's own
+self-test is excluded to avoid making the frozen input recursively depend on
+the oracle that reads it. Test/spec digests make the corpus stale when those
+sources change. In Phase 0 the “new” side intentionally calls the old engine
+again. Adversarial self-tests mutate type, effects, obligations, failure class,
+source rule, gap status, derivation count, and waiver scope so the gate is not
+merely a reflexivity check. Zero unwaived live differences proves the oracle
+plumbing without claiming that the port exists. `port-waivers.sexp` is empty;
+any later disagreement must name its case, exact allowed fields, and durable
+finding. Used waivers are tracked by their full identity, so two field-scoped
+waivers for one case cannot hide an unused entry. Every replay case's recorded
+inventory digests must match the live inventory or the corpus requires a
+deliberate refresh.
+
+The benchmark replays all 96 specimen-term occurrences for five warm runs in
+old-only, new-only, and side-by-side modes. Timing starts after load/warmup,
+while each mode runs in a fresh child process so peak RSS is not inherited from
+an earlier mode. Its tracked baseline
+records the exact pre-port head, corpus digest, full-gate measurement, and the
+pre-registered #52 triggers. Trigger evaluation is report-only until Phase B;
+Phase 0 has no ported clauses, so clause-hotspot reporting is explicitly
+unavailable rather than fabricated.
+
+Regenerate the two mechanical artifacts deliberately after reviewing their
+source changes:
+
+```sh
+racket tools/smusni-redex/port-phase0.rkt --refresh-branches
+racket tools/smusni-redex/port-phase0.rkt --refresh-corpus
+racket tools/smusni-redex/port-phase0.rkt --refresh-baseline --full-gate-ms N
+```

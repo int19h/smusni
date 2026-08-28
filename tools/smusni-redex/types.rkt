@@ -17,11 +17,19 @@
          infer-specimen-forms
          pass-through-forms
          pure-typing?
+         current-infer-core-observer
          SmusniStatic
          type-compatible)
 
 (struct typing (type effects obligations gaps) #:transparent)
 (struct exn:fail:smusni exn:fail (source line column) #:transparent)
+
+;; Phase 0's differential-corpus collector observes only externally requested
+;; inference roots. Recursive calls are deliberately suppressed so the hook
+;; cannot change inference order or turn implementation subterms into corpus
+;; cases. The default observer is inert.
+(define current-infer-core-observer (make-parameter #f))
+(define current-infer-core-depth (make-parameter 0))
 
 (define pass-through-forms
   '(Reciprocate CardBasis CoRef Named
@@ -1409,9 +1417,14 @@
                     #:gaps (list (format "no typing rule for form ~a" head))) ]))
 
 (define (infer-core node [env (hash)] [inv (load-inventory)])
-  (cond
-    [(core-atom? node) (infer-atom node env inv)]
-    [else (infer-application node env inv)]))
+  (define depth (current-infer-core-depth))
+  (define observer (current-infer-core-observer))
+  (when (and observer (zero? depth))
+    (observer node env inv))
+  (parameterize ([current-infer-core-depth (add1 depth)])
+    (cond
+      [(core-atom? node) (infer-atom node env inv)]
+      [else (infer-application node env inv)])))
 
 (define (infer-specimen-forms forms [inv (load-inventory)])
   (for/list ([form (in-list forms)])
