@@ -1362,7 +1362,8 @@ def main(argv: list[str] | None = None) -> int:
         if a.command == "wait":
             actor = a.actor or os.environ.get(BINDING_ENV, "").strip() or "unknown"
             print(f"WAIT_INTERRUPTED actor={actor}")
-        return 130
+            return 130
+        raise
     except ExchangeError as exc:
         print(f"ERROR {exc}", file=sys.stderr)
         return exc.code

@@ -329,6 +329,20 @@ class ExchangeTest(unittest.TestCase):
         self.assertEqual([message.id.split("-", 2)[2] for message in result.messages], ["first", "second"])
         self.assertEqual(clock.now, 6)
 
+    def test_wait_uses_set_difference_not_lexicographic_high_water(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        older_draft = self.new(f1, c1, slug="a-older-draft")
+        self.fill(older_draft)
+        older_id = Path(older_draft).stem
+        baseline_id = self.publish_message(f1, c1, "z-baseline")
+        self.assertLess(older_id, baseline_id)
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.run_tool("publish", "--actor", f1, older_draft))
+
+        result = self.wait(c1, clock, idle=4, debounce=2)
+
+        self.assertEqual([message.id for message in result.messages], [older_id])
+
     def test_wait_ignores_unrelated_and_default_broadcast_traffic(self):
         f1, c1, k1 = self.join("fable"), self.join("codex"), self.join("kimi")
         clock = FakeClock()
@@ -339,6 +353,19 @@ class ExchangeTest(unittest.TestCase):
 
         self.assertEqual(result.outcome, "empty")
         self.assertEqual(result.messages, [])
+        self.assertEqual(clock.now, 4)
+
+    def test_wait_unrelated_traffic_does_not_extend_active_batch(self):
+        f1, c1, k1 = self.join("fable"), self.join("codex"), self.join("kimi")
+        clock = FakeClock()
+        qualifying = []
+        clock.schedule(1, lambda: qualifying.append(self.publish_message(f1, c1, "qualifying")))
+        clock.schedule(2, lambda: self.publish_message(f1, k1, "other-actor"))
+        clock.schedule(3, lambda: self.publish_message(f1, "all", "excluded-broadcast"))
+
+        result = self.wait(c1, clock, idle=10, debounce=3)
+
+        self.assertEqual([message.id for message in result.messages], qualifying)
         self.assertEqual(clock.now, 4)
 
     def test_wait_can_include_broadcasts(self):
@@ -425,6 +452,22 @@ class ExchangeTest(unittest.TestCase):
             EXCHANGE.cmd_wait(self.registry(), f1, idle_timeout=1, debounce=1, include_broadcasts=False)
         self.assertEqual(invalid.exception.code, EXCHANGE.EXIT_VALIDATION)
 
+    def test_wait_aborts_on_validation_error_after_baseline(self):
+        c1 = self.join("codex")
+        clock = FakeClock()
+        messages = self.spool / "messages"
+
+        def introduce_error():
+            messages.mkdir(exist_ok=True)
+            (messages / "broken.md").write_text("not front matter")
+
+        clock.schedule(1, introduce_error)
+
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "validation errors") as invalid:
+            self.wait(c1, clock, idle=4, debounce=2)
+        self.assertEqual(invalid.exception.code, EXCHANGE.EXIT_VALIDATION)
+        self.assertEqual(clock.now, 1)
+
     def test_wait_output_is_stable_and_reuses_status_view(self):
         f1, c1 = self.join("fable"), self.join("codex")
         clock = FakeClock()
@@ -488,6 +531,10 @@ class ExchangeTest(unittest.TestCase):
 
         self.assertEqual(code, 130)
         self.assertEqual(output.getvalue(), f"WAIT_INTERRUPTED actor={c1}\n")
+
+        with mock.patch.object(EXCHANGE, "cmd_status", side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                EXCHANGE.main(["--root", str(self.tmp), "status", "--actor", c1])
 
     # ---- legacy history
 
