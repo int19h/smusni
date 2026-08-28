@@ -1559,6 +1559,20 @@ genuinely fought:
   a constituted group. The independent post-xorlo discussion converges on
   this shape, while current CLL only records the project's own amendment.
   Exact context constraints, costs, and reopening evidence are in §1.7c.
+- **P41 (in-situ scope).** Exposed by the executable lowering (#56
+  increment 3, PR #61): §4.1 orders `Bind`-forming argument computations
+  among themselves and P18/P26 settle connective and prenexed scope, but
+  nothing said whether a description bound in another place sits outside an
+  in-situ quantifier or inside its nuclear scope. Adopted (#62, 2026-08-28):
+  descriptions outside, quantifiers over the body in surface order — the
+  reading xorlo already gives when the description is the sole term, since
+  `lo` introduces one referent at its own site and is no quantifier. The
+  alternative, full surface interleaving (CLL 16's `lo` = `su'o lo`), would
+  make the same `lo mlatu` mean different things depending on what precedes
+  it and contradict the gadri baseline; a speaker who wants the co-varying
+  reading says `su'o mlatu` or restricts the quantifier. Cost: the pre-xorlo
+  intuition is not honoured without marking. Reopening evidence: minimal
+  pairs showing the unmarked co-varying default among xorlo-era speakers.
 
 ## 4. What would change our minds
 

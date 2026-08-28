@@ -143,7 +143,7 @@ M3.
 ## Executable lowering (#9 M3)
 
 M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
-(46 lowering judgments; fixtures are explicitly not exhaustive).
+(47 lowering judgments after L5.30; fixtures are explicitly not exhaustive).
 `inventory/lowering.sexp` identifies candidate fence keys, while one tracked
 `gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
 preserve ordered cases. The same refresh maintains an offline gentufa fixture

@@ -565,7 +565,8 @@ computations `Bind` in source order before any fill forms, and the
 ⊳ anaphora-resolution rules (`ri`'s recency counting, CLL ch. 7) read
 the *text's* sumti order — so reordering a sentence can change which
 term the mapping produces, while never changing what any one term
-means. And `At` itself is no
+means. In-situ generalized quantifiers are not such computations: they
+apply to the clause body after them (§11 L5.30, P41). And `At` itself is no
 new primitive: with `PredTerm` a transparent alias (§3.3), the literal
 fill is partial application of the row function —
 `(At R ℓ v) ≝ {λ [$rest :: Record (RowMinus ρ ℓ)]
@@ -3018,7 +3019,7 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   (CLL 8.8 attests the incidental case; the restrictive rule is this
   specification's extension; pin P34).
 
-**Quantification and connectives** (L5; P2, P17, P18).
+**Quantification and connectives** (L5; P2, P17, P18, P41).
 
 - **L5.1** `ro` over descriptions → the library's importing `Every` (§12:
   `MaxRefer`'s presupposed nonemptiness, member-level `Distrib`, and export
@@ -3117,6 +3118,17 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   additionally bind a `Context` standard (§6.1, §6.4).
 - **L5.29** Gradable predication (`ta barda`) → `Grade` over a
   `Context`-recovered scale and a `Vague` cutoff region (§6.4).
+- **L5.30** In-situ scope (P41): a bridi's `Bind`-forming argument
+  computations — descriptions (L3.1–L3.3), inner-PA selections (L3.9), the
+  §5.6 selections — are formed at clause level in source order (§4.1) around
+  the clause; each in-situ generalized quantifier (L5.1, L5.2, L5.28) then
+  applies to the clause body, several in surface order with the leftmost
+  outermost (CLL 16.2, as P26 for prenexes). No in-situ quantifier scopes
+  over a description bound in another place: `ro gerku cu tavla lo mlatu`
+  has one contextual cat plurality, while `ro gerku cu tavla su'o mlatu`
+  lets the cats vary with the dog. A description co-varies only when it
+  sits syntactically inside the quantifier's restrictor or nuclear
+  predicate (a relative clause, an abstraction).
 
 **Events, tense, modals** (L6; P8, P24).
 
@@ -4421,6 +4433,18 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   problem. Reopens only on ordinary unmarked uses that require a constituted
   group's own properties rather than neutral plural predication or #24's
   cardinality interface.
+- **P41** In-situ scope. Descriptions, names, and selections bind at clause
+  level in source order (§4.1); every in-situ generalized quantifier applies
+  to the clause body, several in surface order (CLL 16.2, as P26 for
+  prenexes); a description referent never co-varies with a quantifier
+  witness unless the description sits syntactically inside the quantifier's
+  restrictor or nuclear predicate (§11 L5.30). `ro gerku cu tavla lo mlatu`
+  has one contextual cat plurality; `ro gerku cu tavla su'o mlatu` lets the
+  cats vary. The pre-xorlo reading — `lo` as `su'o lo`, scoping left to right
+  with every other sumti (CLL 16) — is the coherent rejected alternative;
+  under xorlo `lo` is not a quantifier and its referent is fixed at its own
+  site (§5.3). Reopens on speaker evidence that competent xorlo-era speakers
+  default to the co-varying reading for `ro … lo …` (#62).
 
 ## 14. Gap register
 

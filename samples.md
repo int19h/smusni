@@ -1216,7 +1216,34 @@ sequences its effects before the body. The
 linguistic quotation `lu mi klama li'u` remains a sign (§7.5); there is
 no baseline constructor for quoted core notation.
 
-## 13. Meanings without analyses
+## 13. In-situ scope
+
+A description bound in one place and a quantifier in another do not
+interleave: the description's `Bind` is formed at clause level in source
+order (spec §4.1), and the quantifier applies to the clause body (spec §11
+L5.30, pin P41). Two quantifiers scope in surface order.
+
+```lisp
+; ro gerku cu tavla lo mlatu — the cats are one contextual plurality;
+; every dog talks to them                                       [pin P41]
+{Bind [$cats :: Referents Entity]
+        (Refer {λ [$x :: Referents Entity] (mlatu $x)})
+  (Assert
+    (Every {λ [$x :: Entity] (gerku $x)}
+           {λ [$dog :: Entity] (Close (tavla $dog $cats))}))}
+```
+
+```lisp
+; ro gerku cu tavla su'o mlatu — two quantifiers: surface order is scope
+; order; the cats may vary with the dog                         [pin P41]
+(Assert
+  (Every {λ [$x :: Entity] (gerku $x)}
+         {λ [$dog :: Entity]
+           (Some {λ [$y :: Entity] (mlatu $y)}
+                 {λ [$w :: Referents Entity] (Close (tavla $dog $w))})}))
+```
+
+## 14. Meanings without analyses
 
 Gap-register illustrations (spec §14) — sentences the core deliberately
 does not yet analyze, kept as obligations:

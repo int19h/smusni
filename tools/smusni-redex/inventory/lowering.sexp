@@ -2,7 +2,7 @@
   ;; Candidate keys remain M1 fence keys. Ordered cases correspond to the
   ;; fence's top-level core forms; the surface is the Lojban portion of that
   ;; form's own leading comment. `#f` records a missing surface header.
-  (fragment (families "L0" "L1" "L3" "L5") (lowering-judgments 46))
+  (fragment (families "L0" "L1" "L3" "L5") (lowering-judgments 47))
 
   (candidate "samples.md" 1 "738f3c4cc9a19d8708f73af84f65571286474905"
     (rules "L1.1" "L1.3" "L1.6")
