@@ -14,11 +14,11 @@
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
 (check-equal? (lowering-manifest-rule-count manifest) 47)
-(check-equal? (length (lowering-manifest-candidates manifest)) 27)
+(check-equal? (length (lowering-manifest-candidates manifest)) 29)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
    (length (lowering-candidate-cases candidate)))
- 30)
+ 32)
 
 (define rules (fragment-rule-ids manifest))
 (check-equal? (length rules) 47)
@@ -34,7 +34,7 @@
   (map symbol->string (judgment-form->rule-names m3-lower)))
 (check-equal? (length redex-rule-names)
               (set-count (list->set redex-rule-names)))
-(check-equal? (length redex-rule-names) 31)
+(check-equal? (length redex-rule-names) 32)
 (for ([name (in-list redex-rule-names)])
   (check-not-false (member name rules)))
 
@@ -266,6 +266,23 @@
    (Every (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity) (Close (blabi $x)))))
  '("L5.1"))
+(check-lowers
+ "samples.md" 71
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Every (λ ($dog :: Entity) (gerku $dog))
+            (λ ($dog :: Entity) (Close (tavla $dog $cats))))))
+ '("L5.30" "L5.1" "L3.1"))
+(check-lowers
+ "samples.md" 72
+ '(Assert
+   (Every (λ ($dog :: Entity) (gerku $dog))
+          (λ ($dog :: Entity)
+            (Some (λ ($cat :: Entity) (mlatu $cat))
+                  (λ ($cats :: Referents Entity)
+                    (Close (tavla $dog $cats)))))))
+ '("L5.30" "L5.1" "L5.2"))
 (check-lowers
  "samples.md" 46
  '(Bind ($dogs :: Referents Entity)
@@ -586,7 +603,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              30)
+              32)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -601,8 +618,8 @@
                             'out-of-fragment))
                      reports)
               0)
-(check-equal? (length reports) 30)
-(check-equal? (length fence-reports) 27)
+(check-equal? (length reports) 32)
+(check-equal? (length fence-reports) 29)
 (define fence-17-report
   (findf (lambda (report)
            (and (string=? (fence-report-source report) "samples.md")
@@ -626,6 +643,7 @@
  (aggregate-fence-disposition (list report-implementation report-unresolved))
  'in-fragment/no-lowering)
 (check-true (no-lowering-fails? 'rr-missing '(force) '()))
+(check-false (no-lowering-fails? 'no-reading '(defined absence) '()))
 (check-true (no-lowering-fails? 'implementation "bug" '()))
 (check-false (no-lowering-fails? 'rule-underspecified "gap" '()))
 (check-false (no-lowering-fails? 'row-missing '(skicu) '(gerku)))
@@ -701,6 +719,34 @@
 (check-true (no-lowering? cardinal-content-with-force))
 (check-equal? (no-lowering-cause cardinal-content-with-force) 'rr-missing)
 
+;; The sole-term marked-global path is category-polymorphic too: Content has
+;; no force, while a sentence consumes Assert or Mention outside the completed
+;; GlobalExactly term after the same site validation.
+(define global-sentence-parse
+  (hash-set spec-10-parse 'category "sentence"))
+(for ([force '(assert mention)] [head '(Assert Mention)])
+  (define result
+    (lower global-sentence-parse
+           (rr-with spec-10-rr
+                    (cons 'readings '(actual global-exact))
+                    (cons 'force (list force)))))
+  (check-true (lowered? result)
+              (format "sole global sentence accepts ~a" force))
+  (when (lowered? result)
+    (define datum (plain (lowered-term result)))
+    (check-not-false (member 'GlobalExactly (flatten datum)))
+    (check-not-false (member head (flatten datum)))
+    (check-equal? (count (lambda (item) (member item '(Assert Mention)))
+                         (flatten datum))
+                  1)))
+(define malformed-global-sentence-force
+  (lower global-sentence-parse
+         (rr-with spec-10-rr
+                  (cons 'readings '(actual global-exact))
+                  (cons 'force '(assert extra)))))
+(check-true (no-lowering? malformed-global-sentence-force))
+(check-equal? (no-lowering-cause malformed-global-sentence-force) 'rr-missing)
+
 (define capable-result
   (lower sample-1-parse
          (rr-with sample-1-rr (cons 'readings '(capable)))))
@@ -735,6 +781,7 @@
        (in-list
         (list (rr-with spec-10-rr (cons 'sites '()))
               (rr-with spec-10-rr (cons 'attach '(unconsumed)))
+              (rr-with spec-10-rr (cons 'force '(assert)))
               (rr-with spec-10-rr
                        (cons 'readings '(global-exact extra)))))] )
   (define result (lower spec-10-parse mutation))
@@ -956,6 +1003,673 @@
 (for ([entry (in-list structural-probe-expectations)])
   (check-equal? (real-leads (first entry)) (second entry) (first entry)))
 
+(define-runtime-path in-place-probe-path
+  "../inventory/parses/in-place-probes.json")
+(define in-place-probe-fixture
+  (call-with-input-file in-place-probe-path read-json))
+(check-equal? (hash-ref in-place-probe-fixture 'schema)
+              "smusni-gentufa-in-place-probe-fixture-1")
+(check-true (string? (hash-ref in-place-probe-fixture 'jbotci_version)))
+(define in-place-probe-cases (hash-ref in-place-probe-fixture 'cases))
+(check-equal? (length in-place-probe-cases) 45)
+(define in-place-probes
+  (for/hash ([case (in-list in-place-probe-cases)]
+             [expected-index (in-naturals 1)])
+    (define surface (hash-ref case 'surface))
+    (check-equal? (hash-ref case 'index) expected-index)
+    (check-equal? (hash-ref case 'category) "sentence")
+    (check-equal? (hash-ref case 'command)
+                  (list "jbotci" "gentufa" "--format" "json" surface))
+    (values surface case)))
+(check-equal? (hash-count in-place-probes) (length in-place-probe-cases))
+
+(define (in-place-rr surface readings rows [sites '()])
+  (define case
+    (hash-ref in-place-probes surface
+              (lambda () (error 'lower-test "missing in-place probe: ~s"
+                                surface))))
+  (rr-case
+   (hash-ref case 'index)
+   (hash 'parse (list "in-place-probes.json" (hash-ref case 'index))
+         'attach '()
+         'readings readings
+         'rows rows
+         'stores '()
+         'sites sites
+         'anaphora '()
+         'force '(assert))))
+
+(define (check-in-place-lowers surface readings rows expected rules
+                               [sites '()])
+  (define case (hash-ref in-place-probes surface))
+  (define result (lower case (in-place-rr surface readings rows sites)))
+  (check-true (lowered? result) (format "~a lowers" surface))
+  (when (lowered? result)
+    (check-true (redex-alpha-equivalent? (plain (lowered-term result)) expected)
+                (format "~a output" surface))
+    (for ([rule (in-list rules)])
+      (check-not-false (member rule (lowered-rules result))
+                       (format "~a uses ~a" surface rule)))))
+
+(check-in-place-lowers
+ "lo gerku cu tavla mi" '(actual) '(gerku tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Assert (Close (tavla $dog Speaker))))
+ '("L3.1" "L1.1"))
+(check-in-place-lowers
+ "mi tavla lo gerku" '(actual) '(gerku tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Assert (Close (tavla Speaker $dog))))
+ '("L3.1" "L1.1"))
+(check-in-place-lowers
+ "lo gerku cu tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($cat :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (mlatu $y)))
+      (Assert (Close (tavla $dog $cat)))))
+ '("L3.1"))
+(check-in-place-lowers
+ "mi tavla le mlatu" '(actual le) '(tavla mlatu skicu)
+ '(Bind ($cat :: Referents Entity)
+        (Refer
+         (λ ($x :: Referents Entity)
+           (SpeakerDescribes
+            $x (λ ($y :: Referents Entity) (mlatu $y)))))
+    (Assert (Close (tavla Speaker $cat))))
+ '("L3.2"))
+(check-in-place-lowers
+ "mi tavla la .alis." '(actual name) '(tavla)
+ '(Bind ($alis :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
+    (Assert (Close (tavla Speaker $alis))))
+ '("L3.3"))
+(check-in-place-lowers
+ "ci gerku cu tavla mi" '(actual witness-set) '(gerku tavla)
+ '(Bind ($dogs :: Referents Entity)
+        (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+    (Assert (Close (tavla $dogs Speaker))))
+ '("L5.2" "L0.1"))
+(check-in-place-lowers
+ "mi tavla ci gerku" '(actual witness-set) '(gerku tavla)
+ '(Bind ($dogs :: Referents Entity)
+        (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+    (Assert (Close (tavla Speaker $dogs))))
+ '("L5.2" "L0.1"))
+(check-in-place-lowers
+ "le ci prenu cu tavla mi" '(actual le inner-pa) '(prenu tavla skicu)
+ '(Bind ($people :: Referents Entity)
+        (SelectExactly
+         3
+         (λ ($x :: Entity)
+           (SpeakerDescribes
+            $x (λ ($y :: Referents Entity) (prenu $y)))))
+    (Assert (Close (tavla $people Speaker))))
+ '("L3.2" "L3.9" "L3.15"))
+(check-in-place-lowers
+ "mi tavla lo ci gerku" '(actual inner-pa) '(gerku tavla)
+ '(Bind ($dogs :: Referents Entity)
+        (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+    (Assert (Close (tavla Speaker $dogs))))
+ '("L3.1" "L3.9" "L0.1"))
+(check-in-place-lowers
+ "lo no gerku cu tavla mi" '(actual) '(gerku tavla)
+ '(Assert
+   (No (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Referents Entity) (Close (tavla $w Speaker)))))
+ '("L3.10" "L0.1"))
+(check-in-place-lowers
+ "mi tavla lo no gerku" '(actual) '(gerku tavla)
+ '(Assert
+   (No (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Referents Entity) (Close (tavla Speaker $w)))))
+ '("L3.10" "L0.1"))
+(check-in-place-lowers
+ "lo gerku cu se tavla mi" '(actual) '(gerku tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Assert (Close (tavla Speaker $dog))))
+ '("L3.1" "L1.4"))
+(check-in-place-lowers
+ "mi tavla ro gerku" '(actual importing) '(gerku tavla)
+ '(Assert
+   (Every (λ ($x :: Entity) (gerku $x))
+          (λ ($y :: Entity) (Close (tavla Speaker $y)))))
+ '("L5.1" "L0.1"))
+(check-in-place-lowers
+ "lo gerku cu tavla la .alis." '(actual name) '(gerku tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($alis :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (Named "alis" $y)))
+      (Assert (Close (tavla $dog $alis)))))
+ '("L3.1" "L3.3"))
+(check-in-place-lowers
+ "ci gerku cu tavla re mlatu" '(actual witness-set) '(gerku mlatu tavla)
+ '(Assert
+   (Exactly 3 (λ ($x :: Entity) (gerku $x))
+            (λ ($dogs :: Referents Entity)
+              (Exactly 2 (λ ($y :: Entity) (mlatu $y))
+                       (λ ($cats :: Referents Entity)
+                         (Close (tavla $dogs $cats)))))))
+ '("L5.30" "L5.2" "L0.1"))
+(check-in-place-lowers
+ "lo prenu cu klama lo gerku lo mlatu" '(actual)
+ '(prenu gerku mlatu klama)
+ '(Bind ($people :: Referents Entity)
+        (Refer (λ ($p :: Referents Entity) (prenu $p)))
+    (Bind ($dogs :: Referents Entity)
+          (Refer (λ ($d :: Referents Entity) (gerku $d)))
+      (Bind ($cats :: Referents Entity)
+            (Refer (λ ($c :: Referents Entity) (mlatu $c)))
+        (Assert (Close (klama $people $dogs $cats))))))
+ '("L3.1"))
+(check-in-place-lowers
+ "lo gerku na tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($cat :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (mlatu $y)))
+      (Assert
+       (CloseClause (ClauseNot (DirectClause (tavla $dog $cat)))))))
+ '("L3.1" "L5.9"))
+(check-in-place-lowers
+ "lo gerku cu tavla lo gerku" '(actual) '(gerku tavla)
+ '(Bind ($first :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($second :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (gerku $y)))
+      (Assert (Close (tavla $first $second)))))
+ '("L3.1"))
+(check-in-place-lowers
+ "lo gerku cu se tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($cat :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (mlatu $y)))
+      (Assert (Close (tavla $cat $dog)))))
+ '("L3.1" "L1.4"))
+(check-in-place-lowers
+ "lo gerku cu sutra klama" '(actual) '(gerku sutra klama)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Assert (Close ((Tanru sutra klama) $dog))))
+ '("L3.1" "L1.10")
+ '((tanru-link sutra-klama (deps ()))))
+
+;; The same composition can feed a Content consumer without inventing force.
+(define content-in-place-case
+  (hash-set (hash-ref in-place-probes "mi tavla lo gerku")
+            'category "content"))
+(define content-in-place-rr
+  (struct-copy
+   rr-case (in-place-rr "mi tavla lo gerku" '(actual) '(gerku tavla))
+   [fields
+    (hash-set
+     (hash-set
+      (rr-case-fields
+       (in-place-rr "mi tavla lo gerku" '(actual) '(gerku tavla)))
+      'readings '())
+     'force '())]))
+(define content-in-place-result
+  (lower content-in-place-case content-in-place-rr))
+(check-true (lowered? content-in-place-result))
+(when (lowered? content-in-place-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term content-in-place-result))
+    '(Bind ($dog :: Referents Entity)
+           (Refer (λ ($x :: Referents Entity) (gerku $x)))
+       (Close (tavla Speaker $dog))))))
+
+;; The general path consumes the same complete RR input as the sole-term path.
+(define in-place-base-surface "mi tavla lo gerku")
+(define in-place-base-case (hash-ref in-place-probes in-place-base-surface))
+(define in-place-base-rr
+  (in-place-rr in-place-base-surface '(actual) '(gerku tavla)))
+(for ([mutation
+       (in-list
+        (list
+         (lambda (fields) (hash-set fields 'readings '(actual le)))
+         (lambda (fields) (hash-set fields 'rows '(tavla)))
+         (lambda (fields) (hash-set fields 'attach '(unexpected)))))])
+  (define result
+    (lower in-place-base-case
+           (struct-copy rr-case in-place-base-rr
+                        [fields (mutation (rr-case-fields in-place-base-rr))])))
+  (check-true (no-lowering? result))
+  (check-equal? (no-lowering-cause result) 'rr-missing))
+(define in-place-mention-result
+  (lower in-place-base-case
+         (struct-copy
+          rr-case in-place-base-rr
+          [fields (hash-set (rr-case-fields in-place-base-rr)
+                            'force '(mention))])))
+(check-true (lowered? in-place-mention-result))
+(when (lowered? in-place-mention-result)
+  (check-not-false (member 'Mention
+                           (flatten (plain (lowered-term
+                                            in-place-mention-result))))))
+
+(check-in-place-lowers
+ "ro gerku cu tavla lo mlatu" '(actual importing) '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+    (Assert
+     (Every (λ ($dog :: Entity) (gerku $dog))
+            (λ ($dog :: Entity) (Close (tavla $dog $cats))))))
+ '("L5.30" "L5.1" "L3.1"))
+(check-in-place-lowers
+ "ro gerku cu tavla su'o mlatu" '(actual importing witness-set)
+ '(gerku mlatu tavla)
+ '(Assert
+   (Every (λ ($dog :: Entity) (gerku $dog))
+          (λ ($dog :: Entity)
+            (Some (λ ($cat :: Entity) (mlatu $cat))
+                  (λ ($cats :: Referents Entity)
+                    (Close (tavla $dog $cats)))))))
+ '("L5.30" "L5.1" "L5.2"))
+(check-in-place-lowers
+ "lo mlatu cu tavla ro gerku" '(actual importing) '(mlatu gerku tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Every (λ ($dog :: Entity) (gerku $dog))
+            (λ ($dog :: Entity) (Close (tavla $cats $dog))))))
+ '("L5.30" "L5.1" "L3.1"))
+(check-in-place-lowers
+ "lo mlatu cu tavla lo no gerku" '(actual) '(mlatu gerku tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (No (λ ($dog :: Entity) (gerku $dog))
+         (λ ($dogs :: Referents Entity)
+           (Close (tavla $cats $dogs))))))
+ '("L5.30" "L3.10" "L3.1"))
+(check-in-place-lowers
+ "su'o gerku cu tavla lo mlatu" '(actual witness-set)
+ '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Some (λ ($dog :: Entity) (gerku $dog))
+           (λ ($dogs :: Referents Entity)
+             (Close (tavla $dogs $cats))))))
+ '("L5.30" "L5.2" "L3.1"))
+(check-in-place-lowers
+ "lo mlatu cu tavla su'o gerku" '(actual witness-set)
+ '(mlatu gerku tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Some (λ ($dog :: Entity) (gerku $dog))
+           (λ ($dogs :: Referents Entity)
+             (Close (tavla $cats $dogs))))))
+ '("L5.30" "L5.2" "L3.1"))
+
+;; A sole `su'o` is itself a Content former. Sentence force therefore wraps
+;; the completed `Some`; it must never enter the nuclear property. Check both
+;; argument positions and all three consumer modes on live gentufa trees.
+(define (check-lone-some surface rows expected-nuclear)
+  (define parse-case (hash-ref in-place-probes surface))
+  (define assert-rr (in-place-rr surface '(actual witness-set) rows))
+  (for ([force '(assert mention)] [head '(Assert Mention)])
+    (define result
+      (lower parse-case
+             (rr-with assert-rr (cons 'force (list force)))))
+    (check-true (lowered? result) (format "~a accepts ~a" surface force))
+    (when (lowered? result)
+      (check-true
+       (redex-alpha-equivalent?
+        (plain (lowered-term result))
+        `(,head
+          (Some (λ ($dog :: Entity) (gerku $dog))
+                (λ ($dogs :: Referents Entity) ,expected-nuclear))))
+       (format "~a keeps ~a outside Some" surface force))))
+  (define content-result
+    (lower (hash-set parse-case 'category "content")
+           (rr-with assert-rr
+                    (cons 'readings '(witness-set))
+                    (cons 'force '()))))
+  (check-true (lowered? content-result)
+              (format "~a has a force-free Content reading" surface))
+  (when (lowered? content-result)
+    (check-true
+     (redex-alpha-equivalent?
+      (plain (lowered-term content-result))
+      `(Some (λ ($dog :: Entity) (gerku $dog))
+             (λ ($dogs :: Referents Entity) ,expected-nuclear)))
+     (format "~a Content is bare Some" surface))))
+
+(check-lone-some "su'o gerku cu tavla mi" '(gerku tavla)
+                 '(Close (tavla $dogs Speaker)))
+(check-lone-some "mi tavla su'o gerku" '(gerku tavla)
+                 '(Close (tavla Speaker $dogs)))
+
+(check-in-place-lowers
+ "ci gerku cu tavla lo mlatu" '(actual witness-set)
+ '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Exactly 3 (λ ($dog :: Entity) (gerku $dog))
+              (λ ($dogs :: Referents Entity)
+                (Close (tavla $dogs $cats))))))
+ '("L5.30" "L5.2" "L3.1"))
+(check-in-place-lowers
+ "lo mlatu cu tavla ci gerku" '(actual witness-set)
+ '(mlatu gerku tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Assert
+     (Exactly 3 (λ ($dog :: Entity) (gerku $dog))
+              (λ ($dogs :: Referents Entity)
+                (Close (tavla $cats $dogs))))))
+ '("L5.30" "L5.2" "L3.1"))
+(check-in-place-lowers
+ "so'i gerku cu tavla lo mlatu" '(actual many)
+ '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Bind ($n :: Natural)
+          (Vague (AdmissibleThreshold
+                  ManyK (λ ($dog :: Entity) (gerku $dog))))
+      (Assert
+       (AtLeast $n
+                (λ ($dog :: Entity) (gerku $dog))
+                (λ ($dogs :: Referents Entity)
+                  (Close (tavla $dogs $cats)))))))
+ '("L5.30" "L5.28" "L3.1")
+ '((threshold many (deps ()))))
+(check-in-place-lowers
+ "lo gerku cu tavla so'i mlatu" '(actual many)
+ '(gerku mlatu tavla)
+ '(Bind ($dogs :: Referents Entity)
+        (Refer (λ ($dog :: Referents Entity) (gerku $dog)))
+    (Bind ($n :: Natural)
+          (Vague (AdmissibleThreshold
+                  ManyK (λ ($cat :: Entity) (mlatu $cat))))
+      (Assert
+       (AtLeast $n
+                (λ ($cat :: Entity) (mlatu $cat))
+                (λ ($cats :: Referents Entity)
+                  (Close (tavla $dogs $cats)))))))
+ '("L5.30" "L5.28" "L3.1")
+ '((threshold many (deps ()))))
+(check-in-place-lowers
+ "ci gerku cu tavla la .alis." '(actual witness-set name)
+ '(gerku tavla)
+ '(Bind ($alis :: Referents Entity)
+        (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+    (Assert
+     (Exactly 3 (λ ($dog :: Entity) (gerku $dog))
+              (λ ($dogs :: Referents Entity)
+                (Close (tavla $dogs $alis))))))
+ '("L5.30" "L5.2" "L3.3"))
+(check-in-place-lowers
+ "la .alis. cu tavla ci gerku" '(actual name witness-set)
+ '(gerku tavla)
+ '(Bind ($alis :: Referents Entity)
+        (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+    (Assert
+     (Exactly 3 (λ ($dog :: Entity) (gerku $dog))
+              (λ ($dogs :: Referents Entity)
+                (Close (tavla $alis $dogs))))))
+ '("L5.30" "L5.2" "L3.3"))
+(check-in-place-lowers
+ "le ci prenu cu tavla re gerku" '(actual le inner-pa witness-set)
+ '(prenu gerku tavla skicu)
+ '(Bind ($people :: Referents Entity)
+        (SelectExactly
+         3
+         (λ ($person :: Entity)
+           (SpeakerDescribes
+            $person (λ ($p :: Referents Entity) (prenu $p)))))
+    (Assert
+     (Exactly 2 (λ ($dog :: Entity) (gerku $dog))
+              (λ ($dogs :: Referents Entity)
+                (Close (tavla $people $dogs))))))
+ '("L5.30" "L3.9" "L5.2"))
+
+(check-in-place-lowers
+ "mi tavla so'i gerku" '(actual many) '(gerku tavla)
+ '(Bind ($n :: Natural)
+        (Vague (AdmissibleThreshold
+                ManyK (λ ($x :: Entity) (gerku $x))))
+    (Assert
+     (AtLeast $n
+              (λ ($x :: Entity) (gerku $x))
+              (λ ($w :: Referents Entity)
+                (Close (tavla Speaker $w))))))
+ '("L5.28" "L0.1")
+ '((threshold many (deps ()))))
+(check-in-place-lowers
+ "mi tavla du'e gerku" '(actual too-many) '(gerku tavla)
+ '(Bind ($purpose :: Referents Entity) (Context)
+        ($n :: Natural)
+        (Vague
+         (AdmissibleThreshold
+          TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
+    (Assert
+     (MoreThan $n
+               (λ ($x :: Entity) (gerku $x))
+               (λ ($w :: Referents Entity)
+                 (Close (tavla Speaker $w))))))
+ '("L5.28" "L0.1")
+ '((purpose too-many (deps ()))
+   (threshold too-many (deps (purpose)))))
+(check-in-place-lowers
+ "mi tavla le no gerku" '(actual le) '(gerku tavla skicu)
+ '(Assert
+   (No
+    (λ ($x :: Entity)
+      (SpeakerDescribes
+       $x (λ ($y :: Referents Entity) (gerku $y))))
+    (λ ($w :: Referents Entity) (Close (tavla Speaker $w)))))
+ '("L3.10" "L3.15"))
+(check-in-place-lowers
+ "la .alis. cu tavla mi" '(actual name) '(tavla)
+ '(Bind ($alis :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
+    (Assert (Close (tavla $alis Speaker))))
+ '("L3.3"))
+
+(check-in-place-lowers
+ "lo no gerku cu tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+    (Assert
+     (No (λ ($dog :: Entity) (gerku $dog))
+         (λ ($dogs :: Referents Entity)
+           (Close (tavla $dogs $cats))))))
+ '("L5.30" "L3.10" "L3.1"))
+
+(define global-in-place-result
+  (lower (hash-ref in-place-probes "mi tavla ci gerku")
+         (in-place-rr "mi tavla ci gerku"
+                      '(actual global-exact) '(gerku tavla)
+                      '((omit nuclear-tavla-3 (deps ()))))))
+(check-true (lowered? global-in-place-result))
+(when (lowered? global-in-place-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term global-in-place-result))
+    '(Bind ($place3 :: Referents Entity) (Context)
+       (Assert
+        (GlobalExactly
+         3
+         (λ ($dog :: Entity) (gerku $dog))
+         (λ ($dog :: Entity) (Close (tavla Speaker $dog $place3))))))))
+  (for ([rule '("L5.30" "L5.2" "L0.1")])
+    (check-not-false (member rule (lowered-rules global-in-place-result)))))
+
+(check-in-place-lowers
+ "ci gerku cu tavla lo mlatu" '(actual global-exact)
+ '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Bind ($place3 :: Referents Entity) (Context)
+      (Assert
+       (GlobalExactly
+        3
+        (λ ($dog :: Entity) (gerku $dog))
+        (λ ($dog :: Entity) (Close (tavla $dog $cats $place3)))))))
+ '("L5.30" "L5.2" "L0.1" "L3.1")
+ '((omit nuclear-tavla-3 (deps ()))))
+(check-in-place-lowers
+ "lo mlatu cu tavla ci gerku" '(actual global-exact)
+ '(gerku mlatu tavla)
+ '(Bind ($cats :: Referents Entity)
+        (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
+    (Bind ($place3 :: Referents Entity) (Context)
+      (Assert
+       (GlobalExactly
+        3
+        (λ ($dog :: Entity) (gerku $dog))
+        (λ ($dog :: Entity) (Close (tavla $cats $dog $place3)))))))
+ '("L5.30" "L5.2" "L0.1" "L3.1")
+ '((omit nuclear-tavla-3 (deps ()))))
+(check-in-place-lowers
+ "ro gerku cu tavla ci mlatu" '(actual importing global-exact)
+ '(gerku mlatu tavla)
+ '(Assert
+   (Every
+    (λ ($dog :: Entity) (gerku $dog))
+    (λ ($dog :: Entity)
+      (Bind ($place3 :: Referents Entity) (Context)
+        (GlobalExactly
+         3
+         (λ ($cat :: Entity) (mlatu $cat))
+         (λ ($cat :: Entity) (Close (tavla $dog $cat $place3))))))))
+ '("L5.30" "L5.1" "L5.2" "L0.1")
+ '((omit nuclear-tavla-3 (deps ()))))
+(define outer-global-mixed-rr
+  (in-place-rr "ci gerku cu tavla ro mlatu"
+               '(actual global-exact importing) '(gerku mlatu tavla)
+               '((omit nuclear-tavla-3 (deps ())))))
+(define outer-global-mixed-result
+  (lower
+   (hash-ref in-place-probes "ci gerku cu tavla ro mlatu")
+   outer-global-mixed-rr))
+(check-true (no-lowering? outer-global-mixed-result))
+(check-equal? (no-lowering-rule outer-global-mixed-result) "L5.2")
+(check-equal? (no-lowering-cause outer-global-mixed-result) 'no-reading)
+
+(define multi-place-global-sites
+  '((omit restrictor-klama-2 (deps ()))
+    (omit restrictor-klama-3 (deps ()))
+    (omit restrictor-klama-4 (deps ()))
+    (omit restrictor-klama-5 (deps ()))
+    (omit nuclear-tavla-3 (deps ()))))
+(check-in-place-lowers
+ "ci klama cu tavla mi" '(actual global-exact) '(klama tavla)
+ '(Bind ($r2 :: Referents Entity) (Context)
+        ($r3 :: Referents Entity) (Context)
+        ($r4 :: Referents Entity) (Context)
+        ($r5 :: Referents Entity) (Context)
+        ($n3 :: Referents Entity) (Context)
+    (Assert
+     (GlobalExactly
+      3
+      (λ ($traveler :: Entity)
+        (Close (klama $traveler $r2 $r3 $r4 $r5)))
+      (λ ($talker :: Entity) (Close (tavla $talker Speaker $n3))))))
+ '("L5.30" "L5.2" "L0.1") multi-place-global-sites)
+(define missing-multi-place-global-result
+  (lower
+   (hash-ref in-place-probes "ci klama cu tavla mi")
+   (in-place-rr "ci klama cu tavla mi" '(actual global-exact)
+                '(klama tavla) (rest multi-place-global-sites))))
+(check-true (no-lowering? missing-multi-place-global-result))
+(check-equal? (no-lowering-rule missing-multi-place-global-result) "L5.2")
+(check-equal? (no-lowering-cause missing-multi-place-global-result)
+              'rr-missing)
+
+(define (check-boundary-rr-mutations surface valid-rr mutations)
+  (define parse-case (hash-ref in-place-probes surface))
+  (for ([mutation (in-list mutations)])
+    (define result
+      (lower parse-case
+             (struct-copy
+              rr-case valid-rr
+              [fields (mutation (rr-case-fields valid-rr))])))
+    (check-true (no-lowering? result)
+                (format "~a malformed RR refuses" surface))
+    (when (no-lowering? result)
+      (check-equal? (no-lowering-cause result) 'rr-missing
+                    (format "~a malformed RR is failing" surface)))))
+
+;; `no-reading` is available only after the exact combined RR profile passes.
+;; Every malformed variant remains a failing rr-missing result.
+(check-boundary-rr-mutations
+ "ci gerku cu tavla ro mlatu" outer-global-mixed-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings '(actual global-exact)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '()))
+  (lambda (fields) (hash-set fields 'sites
+                             '((omit nuclear-tavla-2 (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(mention extra)))))
+
+(define mixed-scope-rr
+  (in-place-rr "ro gerku cu tavla lo mlatu"
+               '(actual importing) '(gerku mlatu tavla)))
+(check-boundary-rr-mutations
+ "ro gerku cu tavla lo mlatu" mixed-scope-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings '(actual importing le)))
+  (lambda (fields) (hash-set fields 'readings '(actual)))
+  (lambda (fields) (hash-set fields 'rows '(gerku mlatu tavla extra-row)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '((unexpected (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(assert unexpected)))))
+
+(define global-in-place-rr
+  (in-place-rr "mi tavla ci gerku"
+               '(actual global-exact) '(gerku tavla)
+               '((omit nuclear-tavla-3 (deps ())))))
+(check-boundary-rr-mutations
+ "mi tavla ci gerku" global-in-place-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings
+                             '(actual global-exact witness-set)))
+  (lambda (fields) (hash-set fields 'readings '(actual)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla extra-row)))
+  (lambda (fields) (hash-set fields 'rows '(tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '()))
+  (lambda (fields) (hash-set fields 'sites '((unexpected (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(assert unexpected)))))
+
+(define unvalidated-global-profile-result
+  (lower (hash-ref in-place-probes "ci gerku cu klama mi")
+         (in-place-rr "ci gerku cu klama mi"
+                      '(actual global-exact) '(gerku klama))))
+(check-true (no-lowering? unvalidated-global-profile-result))
+(check-equal? (no-lowering-rule unvalidated-global-profile-result) "L5.2")
+(check-equal? (no-lowering-cause unvalidated-global-profile-result)
+              'rr-missing)
+
+;; Surface order, not routed place order, controls computation order.
+(define routed-order-result
+  (lower (hash-ref in-place-probes "fi lo mlatu fa lo gerku cu klama")
+         (in-place-rr "fi lo mlatu fa lo gerku cu klama"
+                      '(actual) '(mlatu gerku klama))))
+(check-true (lowered? routed-order-result))
+(when (lowered? routed-order-result)
+  (match (plain (lowered-term routed-order-result))
+    [`(Bind (,first :: Referents Entity) ,first-computation
+        (Bind (,second :: Referents Entity) ,second-computation ,body))
+     (check-not-equal? first second)
+     (check-not-false (member 'mlatu (flatten first-computation)))
+     (check-not-false (member 'gerku (flatten second-computation)))
+     (check-equal? body `(Assert (Close (klama :1 ,second :3 ,first))))]
+    [other (fail-check (format "unexpected routed-order term: ~e" other))]))
+
 ;; The probe's exception boundary classifies only parser failures. A defect in
 ;; any post-parse stage must escape and fail the probe instead of weakening an
 ;; absence claim through a false parse-error record.
@@ -1051,20 +1765,51 @@
                             (hasheq 'first_number
                                     (synthetic-terminal 'Cmavo word 15)))))))))))))
 
-;; Inner PA is computed by sumti-view and therefore must either contribute a
-;; selection or block the path. Ordinary descriptions and collections do not
-;; currently compose it, so both refuse instead of becoming uncounted.
+;; Inner PA is computed by sumti-view and composes through the same L3.9
+;; selection source used by lu'o. The RR must select that reading explicitly.
 (define-values (le-parse le-rr) (case-input "samples.md" 22))
+(define le-ci-fields
+  (hash-set (rr-case-fields le-rr) 'readings '(actual le inner-pa)))
+(define le-ci-rr (struct-copy rr-case le-rr [fields le-ci-fields]))
 (define counted-le-sigma
   (parse-case->sigma (add-inner-count le-parse "ci")
-                     (rr-case-fields le-rr)))
-(check-true (no-lowering? counted-le-sigma))
-(check-equal? (no-lowering-rule counted-le-sigma) "L3.9")
+                     le-ci-fields))
+(check-false (no-lowering? counted-le-sigma))
+(define counted-le-result
+  (lower (add-inner-count le-parse "ci") le-ci-rr))
+(check-true (lowered? counted-le-result))
+(when (lowered? counted-le-result)
+  (check-not-false (member "L3.9" (lowered-rules counted-le-result)))
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term counted-le-result))
+    '(Bind ($r :: Referents Entity)
+           (SelectExactly
+            3
+            (λ ($x :: Entity)
+              (SpeakerDescribes
+               $x (λ ($y :: Referents Entity) (mlatu $y)))))
+       (Assert (Close (blabi $r)))))))
+(define le-no-fields
+  (hash-set (rr-case-fields le-rr) 'readings '(actual le)))
+(define le-no-rr (struct-copy rr-case le-rr [fields le-no-fields]))
 (define no-le-sigma
   (parse-case->sigma (add-inner-count le-parse "no")
-                     (rr-case-fields le-rr)))
-(check-true (no-lowering? no-le-sigma))
-(check-equal? (no-lowering-rule no-le-sigma) "L3.10")
+                     le-no-fields))
+(check-false (no-lowering? no-le-sigma))
+(define no-le-result (lower (add-inner-count le-parse "no") le-no-rr))
+(check-true (lowered? no-le-result))
+(when (lowered? no-le-result)
+  (check-not-false (member "L3.10" (lowered-rules no-le-result)))
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term no-le-result))
+    '(Assert
+      (No
+       (λ ($x :: Entity)
+         (SpeakerDescribes
+          $x (λ ($y :: Referents Entity) (mlatu $y))))
+       (λ ($w :: Referents Entity) (Close (blabi $w))))))))
 
 (define explicit-zero-lo-result
   (lower (add-inner-count description-row-parse "no") description-row-rr))
