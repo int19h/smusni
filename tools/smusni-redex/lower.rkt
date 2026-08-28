@@ -118,7 +118,22 @@
     "lo gerku cu tavla lo gerku"
     "lo gerku cu se tavla lo mlatu"
     "ci gerku cu klama mi"
-    "lo gerku cu sutra klama"))
+    "lo gerku cu sutra klama"
+    "ro gerku cu tavla su'o mlatu"
+    "ci gerku cu tavla lo mlatu"
+    "lo mlatu cu tavla ci gerku"
+    "so'i gerku cu tavla lo mlatu"
+    "lo gerku cu tavla so'i mlatu"
+    "ci gerku cu tavla la .alis."
+    "la .alis. cu tavla ci gerku"
+    "le ci prenu cu tavla re gerku"
+    "ci klama cu tavla mi"
+    "lo mlatu cu tavla ro gerku"
+    "lo mlatu cu tavla lo no gerku"
+    "su'o gerku cu tavla lo mlatu"
+    "lo mlatu cu tavla su'o gerku"
+    "ro gerku cu tavla ci mlatu"
+    "ci gerku cu tavla ro mlatu"))
 
 (struct lowering-case (index surface category promised-rows unresolved)
   #:transparent)
@@ -179,9 +194,25 @@
       `(,(hash-ref site-variables key) ,type
         (Context ,@dependency-variables))))
   (define (property-datum role member)
-    (match-define `(property ,_ ,relation ,total ,event-mode)
-      (findf (lambda (property) (eq? (second property) role)) properties))
-    (define fills (make-hash (list (cons 1 member))))
+    (define property
+      (findf (lambda (candidate) (eq? (second candidate) role)) properties))
+    (match-define
+      (or `(property ,_ ,relation ,total ,event-mode)
+          `(property ,_ ,relation ,total ,event-mode
+                     ,_ (fills ,_ ...)))
+      property)
+    (define actual-member-label
+      (match property
+        [`(property ,_ ,_ ,_ ,_) 1]
+        [`(property ,_ ,_ ,_ ,_ ,label (fills ,_ ...)) label]))
+    (define actual-fixed-fills
+      (match property
+        [`(property ,_ ,_ ,_ ,_) '()]
+        [`(property ,_ ,_ ,_ ,_ ,_ (fills ,fills ...)) fills]))
+    (define fills (make-hash (list (cons actual-member-label member))))
+    (for ([fill (in-list actual-fixed-fills)])
+      (match-define `(fill ,label ,value) fill)
+      (hash-set! fills label value))
     (for ([site (in-list site-data)])
       (match site
         [`(site ,key ,(== role) ,_relation ,label ,_type (deps ,_ ...))
@@ -201,10 +232,16 @@
             ,(property-datum 'restrictor restrictor-member)
             ,(property-datum 'nuclear nuclear-member)))
 
-(define (compose-global-exactly quantity hoisted)
+(define (compose-global-exactly quantity force hoisted)
   (match hoisted
     [`(hoisted ,bindings ,restrictor ,nuclear)
-     (define body `(GlobalExactly ,quantity ,restrictor ,nuclear))
+     (define content `(GlobalExactly ,quantity ,restrictor ,nuclear))
+     (define body
+       (case force
+         [(none) content]
+         [(assert) `(Assert ,content)]
+         [(mention) `(Mention ,content)]
+         [else (error 'compose-global-exactly "invalid force: ~e" force)]))
      (if (null? bindings)
          body
          `(Bind
@@ -257,6 +294,7 @@
 
 (define-metafunction SmusniM3
   force-out : e e -> e
+  [(force-out none e_body) e_body]
   [(force-out assert e_body) (Assert e_body)]
   [(force-out mention e_body) (Mention e_body)])
 
@@ -449,17 +487,27 @@
   [(cardinal-sources witness e_force e_n x_P e_Q () () x_witness)
    ((l0 (pure lexical x_P))
     (cardinal-cont-source e_force e_Q x_witness))]
-  [(cardinal-sources global none e_n x_P x_Q e_properties e_sites x_unused)
+  [(cardinal-sources exactly none e_n x_P e_Q () () x_witness)
+   ((l0 (pure lexical x_P))
+    (cardinal-cont-source none e_Q x_witness))]
+  [(cardinal-sources some none e_unused x_P e_Q () () x_witness)
+   ((l0 (pure lexical x_P))
+    (cardinal-cont-source none e_Q x_witness))]
+  [(cardinal-sources global e_force e_n x_P x_Q e_properties e_sites x_unused)
    ((l0 (global-hoist e_properties e_sites)))])
 
 (define-metafunction SmusniM3
-  cardinal-compose : e e x (e ...) -> e
-  [(cardinal-compose witness e_n x_witness (e_P e_Q_body))
+  cardinal-compose : e e e x (e ...) -> e
+  [(cardinal-compose witness e_force e_n x_witness (e_P e_Q_body))
    (Bind (x_witness :: Referents Entity)
          (SelectExactly e_n e_P)
      e_Q_body)]
-  [(cardinal-compose global e_n x_unused (e_hoisted))
-   ,(compose-global-exactly (term e_n) (term e_hoisted))])
+  [(cardinal-compose exactly e_force e_n x_witness (e_P e_Q_body))
+   (Exactly e_n e_P (λ (x_witness :: Referents Entity) e_Q_body))]
+  [(cardinal-compose some e_force e_unused x_witness (e_P e_Q_body))
+   (Some e_P (λ (x_witness :: Referents Entity) e_Q_body))]
+  [(cardinal-compose global e_force e_n x_unused (e_hoisted))
+   ,(compose-global-exactly (term e_n) (term e_force) (term e_hoisted))])
 
 (define-metafunction SmusniM3
   le-out : x e x (e ...) -> e
@@ -705,7 +753,7 @@
                             e_properties e_sites x_witness))
    (m3-lower e_RR (gentufa e_parse e_subsource) e_part) ...
    (where e_out
-          (cardinal-compose e_mode e_n x_witness (e_part ...)))
+          (cardinal-compose e_mode e_force e_n x_witness (e_part ...)))
    --------------------------------------------- "L5.2"
    (m3-lower e_RR
              (gentufa e_parse
@@ -781,7 +829,11 @@
   [(where e_out (grade-out e_force x_R e_arg))
    --------------------------------------------- "L5.29"
    (m3-lower e_RR
-             (gentufa e_parse (grade e_force x_R e_arg)) e_out)] )
+             (gentufa e_parse (grade e_force x_R e_arg)) e_out)]
+
+  [(m3-lower e_RR (gentufa e_parse e_source) e_out)
+   --------------------------------------------- "L5.30"
+   (m3-lower e_RR (gentufa e_parse (in-situ e_source)) e_out)] )
 
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
@@ -2349,17 +2401,24 @@
        [else #f])]
     [`(name ,name) `(name ,name)]
     [`(quantifier ,(? number? quantity) ,predicate)
-     (and (not (member 'global-exact (rr-value fields 'readings)))
-          `(cardinal ,quantity ,predicate))]
+     (if (member 'global-exact (rr-value fields 'readings))
+         `(global-cardinal ,quantity ,predicate)
+         `(cardinal ,quantity ,predicate))]
+    [`(quantifier "su'o" ,predicate) `(some ,predicate)]
     [`(quantifier "ro" ,predicate) `(every ,predicate)]
     [`(quantifier "so'i" ,predicate) `(threshold many ,predicate)]
     [`(quantifier "du'e" ,predicate) `(threshold too-many ,predicate)]
     [_ #f]))
 
 (define (in-place-argument-composition? terms fields)
-  (or (for/or ([term (in-list terms)]) (argument-spec term fields))
+  (define specs
+    (filter values
+            (for/list ([term (in-list terms)])
+              (argument-spec term fields))))
+  (or (for/or ([spec (in-list specs)])
+        (not (eq? (first spec) 'global-cardinal)))
       (and (> (length terms) 1)
-           (ormap argument-like-term? terms))))
+           (or (pair? specs) (ormap argument-like-term? terms)))))
 
 (define (replace-argument-payload term payload)
   (match term
@@ -2371,6 +2430,8 @@
     [`(le ,_) '(le)]
     [`(name ,_) '(name)]
     [`(cardinal ,_ ,_) '(witness-set)]
+    [`(global-cardinal ,_ ,_) '(global-exact)]
+    [`(some ,_) '(witness-set)]
     [`(inner-pa described ,_ ,_) '(le inner-pa)]
     [`(inner-pa lexical ,_ ,_) '(inner-pa)]
     [`(inner-no described ,_) '(le)]
@@ -2386,6 +2447,8 @@
     [`(le ,predicate) (list predicate 'skicu)]
     [`(name ,_) '()]
     [`(cardinal ,_ ,predicate) (list predicate)]
+    [`(global-cardinal ,_ ,predicate) (list predicate)]
+    [`(some ,predicate) (list predicate)]
     [`(inner-pa lexical ,_ ,predicate) (list predicate)]
     [`(inner-pa described ,_ ,predicate) (list predicate 'skicu)]
     [`(inner-no lexical ,predicate) (list predicate)]
@@ -2402,8 +2465,12 @@
        (threshold too-many (deps (purpose))))]
     [_ '()]))
 
-(define (non-bind-argument-spec? spec)
-  (member (first spec) '(inner-no every threshold)))
+(define (description-argument-spec? spec)
+  (member (first spec) '(lo le name inner-pa)))
+
+(define (quantified-argument-spec? spec)
+  (member (first spec)
+          '(cardinal some inner-no every threshold global-cardinal)))
 
 (define (argument-wrapper spec variable body)
   (match spec
@@ -2418,6 +2485,49 @@
     [`(inner-pa described ,quantity ,predicate)
      `(le ,predicate (select ,quantity (argument ,variable ,body)))]
     [_ (error 'argument-wrapper "unsupported Bind argument: ~e" spec)]))
+
+(define (force-consuming-quantifier-spec? spec l530?)
+  (or (member (first spec) '(inner-no every threshold global-cardinal))
+      (and l530? (member (first spec) '(cardinal some)))))
+
+(define (quantifier-wrapper spec variable body force l530?)
+  (match spec
+    [`(cardinal ,quantity ,predicate)
+     (define source
+       `(cardinal ,(if l530? 'exactly 'witness) none ,quantity ,predicate
+                  (argument ,variable ,body) () ()))
+     (if (and l530? (not (eq? force 'none)))
+         `(force ,force ,source) source)]
+    [`(some ,predicate)
+     (define source
+       `(cardinal some none none ,predicate
+                  (argument ,variable ,body) () ()))
+     (if (and l530? (not (eq? force 'none)))
+         `(force ,force ,source) source)]
+    [`(inner-no ,basis ,predicate)
+     `(inner-no ,basis ,predicate ,force (argument ,variable ,body))]
+    [`(every ,predicate)
+     (define source `(every ,predicate (argument ,variable ,body)))
+     (if (eq? force 'none) source `(force ,force ,source))]
+    [`(threshold ,kind ,predicate)
+     `(threshold ,force ,kind ,predicate (argument ,variable ,body))]
+    [`(global-cardinal ,quantity ,predicate ,relation ,properties ,sites)
+     `(cardinal global ,force ,quantity ,predicate ,relation
+                ,properties ,sites)]
+    [_ (error 'quantifier-wrapper "unsupported in-situ quantifier: ~e" spec)]))
+
+(define (compose-in-situ-quantifiers bindings body force l530?)
+  (cond
+    [(null? bindings) (if (eq? force 'none) body `(force ,force ,body))]
+    [else
+     (define binding (first bindings))
+     (define spec (second binding))
+     (define consumes? (force-consuming-quantifier-spec? spec l530?))
+     (define inner
+       (compose-in-situ-quantifiers (rest bindings) body
+                                    (if consumes? 'none force) l530?))
+     (quantifier-wrapper spec (first binding) inner
+                         (if consumes? force 'none) l530?)]))
 
 (define (in-place-argument-source view category fields inv)
   (define selbri (hash-ref view 'selbri))
@@ -2439,39 +2549,35 @@
          (set! unsupported (append unsupported (list term)))
          term]
         [else term])))
-  (define non-bindings
+  (define description-bindings
     (filter (lambda (binding)
-              (non-bind-argument-spec? (second binding)))
+              (description-argument-spec? (second binding)))
             bindings))
-  (define global-cardinals
-    (for/list ([term (in-list unsupported)]
-               #:when (and (member 'global-exact
-                                   (rr-value fields 'readings))
-                           (match (argument-payload term)
-                             [`(quantifier ,(? number?) ,_) #t]
-                             [_ #f])))
-      (match (argument-payload term)
-        [`(quantifier ,quantity ,predicate)
-         `(global-cardinal ,quantity ,predicate)])))
-  (define global-in-place-sites
+  (define quantifier-bindings
+    (filter (lambda (binding)
+              (quantified-argument-spec? (second binding)))
+            bindings))
+  (define global-bindings
+    (filter (lambda (binding)
+              (eq? (first (second binding)) 'global-cardinal))
+            bindings))
+  (define global-cardinals (map second global-bindings))
+  (define global-plan
     (cond
-      [(null? global-cardinals) '()]
-      [(and (= (length global-cardinals) 1) (null? bindings))
-       (define predicate (third (first global-cardinals)))
+      [(null? global-bindings) `(global-plan () () ())]
+      [(and (= (length global-bindings) 1)
+            (equal? (last quantifier-bindings) (first global-bindings))
+            (not (hash-ref selbri 'tanru #f))
+            (not (hash-ref selbri 'negated)))
+       (match-define (list global-variable
+                           `(global-cardinal ,_quantity ,predicate))
+         (first global-bindings))
        (define host-row (inventory-row inv relation))
        (define restrictor-row (inventory-row inv predicate))
-       (define validation-terms
-         (for/list ([term (in-list terms)])
-           (if (and (member 'global-exact (rr-value fields 'readings))
-                    (match (argument-payload term)
-                      [`(quantifier ,(? number?) ,_) #t]
-                      [_ #f]))
-               (replace-argument-payload term '(value $global-witness))
-               term)))
        (and
         host-row restrictor-row
         (let-values ([(surface-fills surface-deleted surface-unsupported _)
-                      (ordinary-fills validation-terms)])
+                      (ordinary-fills transformed)])
           (let-values ([(fills deleted)
                         (route-place-map
                          surface-fills surface-deleted
@@ -2480,23 +2586,66 @@
               (filter (lambda (label)
                         (or (< label 1) (> label (row-decl-total host-row))))
                       (append (hash-keys fills) deleted)))
+            (define member-label
+              (for/first ([(label value) (in-hash fills)]
+                          #:when (eq? value global-variable))
+                label))
             (and
              (null? surface-unsupported) (null? bad-labels)
-             (append
-              (for/list ([label (in-range 2
-                                         (add1 (row-decl-total restrictor-row)))])
-                `(omit
-                  ,(string->symbol
-                    (format "restrictor-~a-~a" predicate label))
-                  (deps ())))
-              (for/list ([label (in-range 1 (add1 (row-decl-total host-row)))]
-                         #:unless (or (hash-has-key? fills label)
-                                     (member label deleted)))
-                `(omit
-                  ,(string->symbol
-                    (format "nuclear-~a-~a" relation label))
-                  (deps ()))))))))]
+             (null? deleted) member-label
+             (let* ([restrictor-labels
+                     (range 2 (add1 (row-decl-total restrictor-row)))]
+                    [nuclear-labels
+                     (for/list ([label
+                                 (in-range 1 (add1 (row-decl-total host-row)))]
+                                #:unless (hash-has-key? fills label))
+                       label)]
+                    [rr-sites
+                     (append
+                      (for/list ([label (in-list restrictor-labels)])
+                        `(omit
+                          ,(string->symbol
+                            (format "restrictor-~a-~a" predicate label))
+                          (deps ())))
+                      (for/list ([label (in-list nuclear-labels)])
+                        `(omit
+                          ,(string->symbol
+                            (format "nuclear-~a-~a" relation label))
+                          (deps ()))))]
+                    [site-data
+                     (append
+                      (for/list ([label (in-list restrictor-labels)])
+                        `(site
+                          ,(string->symbol
+                            (format "restrictor-~a-~a" predicate label))
+                          restrictor ,predicate ,label
+                          ,(row-slot-type predicate label inv) (deps)))
+                      (for/list ([label (in-list nuclear-labels)])
+                        `(site
+                          ,(string->symbol
+                            (format "nuclear-~a-~a" relation label))
+                          nuclear ,relation ,label
+                          ,(row-slot-type relation label inv) (deps))))]
+                    [fixed-fills
+                     (for/list ([(label value) (in-hash fills)]
+                                #:unless (= label member-label))
+                       `(fill ,label ,value))]
+                    [properties
+                     `((property restrictor ,predicate
+                                ,(row-decl-total restrictor-row)
+                                ,(row-decl-event-mode restrictor-row))
+                       (property nuclear ,relation
+                                 ,(row-decl-total host-row)
+                                 ,(row-decl-event-mode host-row)
+                                 ,member-label (fills ,@fixed-fills)))])
+               `(global-plan ,rr-sites ,properties ,site-data))))))]
       [else #f]))
+  (define global-in-place-sites
+    (and global-plan (second global-plan)))
+  (define global-properties
+    (and global-plan (third global-plan)))
+  (define global-site-data
+    (and global-plan (fourth global-plan)))
   (define host-rows
     (if (hash-ref selbri 'tanru #f)
         (hash-ref selbri 'tanru)
@@ -2524,16 +2673,9 @@
     (and global-in-place-sites
          (append expected-sites global-in-place-sites)))
   (define boundary?
-    (or (pair? global-cardinals)
-        (and (pair? non-bindings) (> (length bindings) 1))))
+    (and (pair? global-cardinals) (not global-plan)))
   (define boundary-rule
-    (cond
-      [(pair? global-cardinals) "L5.2"]
-      [(pair? non-bindings)
-       (case (first (second (first non-bindings)))
-         [(inner-no) "L3.10"] [(every) "L5.1"]
-         [(threshold) "L5.28"] [else "L1.4"])]
-      [else "L1.1"]))
+    (if (pair? global-cardinals) "L5.2" "L1.1"))
   (define boundary-check
     (cond
       [(not boundary?) #f]
@@ -2550,27 +2692,18 @@
     [(and boundary-check (no-lowering? boundary-check)) boundary-check]
     [(pair? unsupported)
      (no-lowering
-      (if (pair? global-cardinals) "L5.2" "L1.4") 'rule-underspecified
-      (if (pair? global-cardinals)
-          "marked global quantification yields Content and exports no witness value for an argument place"
-          "argument term has no general in-place binder composition")
+      "L1.4" 'rule-underspecified
+      "argument term has no general in-place binder composition"
       unsupported)]
-    [(and (pair? non-bindings) (> (length bindings) 1))
-     (no-lowering
-      (case (first (second (first non-bindings)))
-        [(inner-no) "L3.10"] [(every) "L5.1"]
-        [(threshold) "L5.28"] [else "L1.4"])
-      'rule-underspecified
-      "spec §4.1 orders Bind computations but does not settle in-situ scope between a generalized quantifier and another computed argument"
-      (map second bindings))]
     [(not (member category '(sentence content)))
      (no-lowering "L1.1" 'rule-underspecified
                   "in-place argument computations require a clause consumer"
                   category)]
     [else
      (define check
-       (validated-path fields "L1.1" expected-readings expected-rows
-                       expected-sites #:force? (eq? category 'sentence)))
+       (validated-path fields (if (pair? global-bindings) "L5.2" "L1.1")
+                       expected-readings expected-rows
+                       all-expected-sites #:force? (eq? category 'sentence)))
      (define placed
        (application-source (hash-set view 'terms transformed) fields inv))
      (cond
@@ -2580,38 +2713,29 @@
         (define close-source
           `(close ,(if (hash-ref selbri 'negated) 'clause 'shorthand)
                   ,(if (hash-ref selbri 'negated) `(na ,placed) placed)))
-        (define non-binding
-          (and (pair? non-bindings) (first non-bindings)))
-        (cond
-          [non-binding
-           (match-define (list variable spec) non-binding)
-           (match spec
-             [`(inner-no ,basis ,predicate)
-              (if (eq? category 'sentence)
-                  `(inner-no ,basis ,predicate ,check
-                             (argument ,variable ,close-source))
-                  (no-lowering "L3.10" 'rule-underspecified
-                               "inner no needs a formed force consumer"
-                               category))]
-             [`(every ,predicate)
-              (define source
-                `(every ,predicate (argument ,variable ,close-source)))
-              (if (eq? category 'sentence) `(force ,check ,source) source)]
-             [`(threshold ,kind ,predicate)
-              (if (eq? category 'sentence)
-                  `(threshold ,check ,kind ,predicate
-                              (argument ,variable ,close-source))
-                  (no-lowering "L5.28" 'rule-underspecified
-                               "threshold argument needs a formed force consumer"
-                               category))])]
-          [else
-           (define base
-             (if (eq? category 'sentence)
-                 `(force ,check ,close-source)
-                 close-source))
-           (foldr (lambda (binding body)
-                    (argument-wrapper (second binding) (first binding) body))
-                  base bindings)])])]))
+        (define l530?
+          (and (pair? quantifier-bindings)
+               (or (pair? description-bindings)
+                   (> (length quantifier-bindings) 1)
+                   (pair? global-bindings))))
+        (define quantified-source
+          (compose-in-situ-quantifiers
+           (for/list ([binding (in-list quantifier-bindings)])
+             (match binding
+               [(list variable `(global-cardinal ,quantity ,predicate))
+                (list variable
+                      `(global-cardinal ,quantity ,predicate ,relation
+                                        ,global-properties ,global-site-data))]
+               [_ binding]))
+           close-source
+           (if (eq? category 'sentence) check 'none) l530?))
+        (define described-source
+          (foldr (lambda (binding body)
+                   (argument-wrapper (second binding) (first binding) body))
+                 quantified-source description-bindings))
+        (if l530?
+            `(in-situ ,described-source)
+            described-source)])]))
 
 (define (view->sigma view category fields inv)
   (define selbri (hash-ref view 'selbri))

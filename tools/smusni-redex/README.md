@@ -272,15 +272,20 @@ with the same L3/L5 Redex source used by the former sole-term path. It never
 selects a handler by place or specimen key. Inner PA reaches its selection
 through an L3.9 subderivation; it is not copied into the adapter.
 
-Several Bind-forming arguments wrap in source order, as required by spec §4.1,
-before their routed fills form. Routed place order therefore cannot reorder
-effects. A generalized quantifier such as `ro`, inner `no`, or a threshold can
-compose at any single place, but combining one with another computed in-situ
-argument remains an explicit `rule-underspecified` refusal: §4.1 orders Bind
-computations and does not independently settle generalized-quantifier scope.
-The marked global-exact reading likewise has no exported witness binder for an
-argument place and is not treated as witness-set selection. Exact combined RR
-validation precedes both boundary dispositions. The global boundary derives
-role-qualified omitted-site identities from the restrictor and routed nuclear
-row when that profile is mechanically available; an unvalidated profile is a
-failing `rr-missing`, never a non-failing semantic gap.
+L5.30 applies the P41 partition after placement. Descriptions, names, and
+nonzero inner PA wrap at clause level in source order, outside every in-situ
+quantifier. Quantified sumti then nest in their own surface order, leftmost
+outermost: direct witness selections use the §12 `Exactly`/`Some` content forms,
+while `Every`, inner `No`, thresholds, and marked `GlobalExactly` take the
+placed body abstracted at their argument position. Termsets stay on L5.3.
+Force is introduced once at the first Content-forming quantifier; selection and
+threshold effects remain in their defined positions rather than being copied
+by the adapter.
+
+Exact combined RR validation precedes composition. Marked global readings
+derive role-qualified omitted-site identities from both the restrictor and the
+routed nuclear row; their Context computations are hoisted outside the pure
+`GlobalExactly` operands. A profile that cannot be validated is a failing
+`rr-missing`, never a guessed lowering. The gate promotes samples #71 and #72
+as verified L5.30 cases and keeps the generated in-place fixture free of RR or
+expected-output data.

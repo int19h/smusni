@@ -71,6 +71,14 @@
     (case 1 "ta barda" sentence (promised-rows barda))
     (case 2 "du'e gerku cu klama" sentence (promised-rows gerku klama))
     (case 3 "mi co'e do" sentence (promised-rows)))
+  (candidate "samples.md" 71 "e5a3a20cbbc62b1cc8319b03e21c2980781391f5"
+    (rules "L5.30" "L5.1" "L3.1")
+    (case 1 "ro gerku cu tavla lo mlatu" sentence
+          (promised-rows gerku mlatu tavla)))
+  (candidate "samples.md" 72 "9e9e7af59a1f4e4f5eef994dd1d2f230dbaf21e4"
+    (rules "L5.30" "L5.1" "L5.2")
+    (case 1 "ro gerku cu tavla su'o mlatu" sentence
+          (promised-rows gerku mlatu tavla)))
 
   (candidate "spec.md" 1 "e11b80722140960fac027e32c07ce60254e32614"
     (rules "L1.1" "L1.3")
