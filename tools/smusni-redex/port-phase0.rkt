@@ -25,6 +25,8 @@
          (struct-out branch-entry)
          (struct-out helper-observation)
          (struct-out helper-entry)
+         (struct-out decision-observation)
+         (struct-out decision-entry)
          (struct-out diagnostic-taxonomy)
          (struct-out port-case)
          (struct-out port-record)
@@ -38,6 +40,8 @@
          load-infer-branches
          extract-infer-helpers
          load-infer-helpers
+         extract-infer-decisions
+         load-infer-decisions
          refresh-infer-branch-metadata!
          infer-branch-findings
          load-diagnostic-taxonomy
@@ -230,7 +234,7 @@
                        (section ,(? string? section)) (status ,raw-status)
                        (port-state ,(? symbol? port-state))
                        (dependencies ,(? symbol? dependencies) ...)
-                       (legacy-implementations ,(? symbol? legacy) ...)
+                       (legacy-implementations ,legacy ...)
                        (implementations ,implementations ...)
                        (domains ,raw-domains ...)
                        (reason ,(? string? reason)))
@@ -278,9 +282,12 @@
              #:when (regexp-match? #px"[.]rkt$" (path->string path)))
     path))
 
+(define (source-relative-string path)
+  (path->string (find-relative-path repo-root (simplify-path path))))
+
 (define (definition-implementation-index)
   (define index (make-hash))
-  (define (walk node)
+  (define (walk node module-path)
     (when (syntax? node)
       (define parts (syntax-list node))
       (when parts
@@ -301,19 +308,51 @@
                                    (eq? (syntax-e (first case-parts))
                                         'definition-case)))
               (syntax-e (second case-parts))))
-          (hash-set! index (cons kind name) cases))
-        (for ([part (in-list parts)]) (walk part)))))
+          (hash-set! index (list module-path kind name) cases))
+        (for ([part (in-list parts)]) (walk part module-path)))))
   (for ([path (in-list (racket-sources))])
-    (walk (read-module-syntax path)))
+    (walk (read-module-syntax path) (source-relative-string path)))
+  index)
+
+(define (module-binding-index)
+  (define index (make-hash))
+  (define (record! module-path name)
+    (hash-update! index module-path (lambda (names) (set-add names name)) (set)))
+  (define (walk node module-path)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (when parts
+        (define head (and (pair? parts) (syntax-e (first parts))))
+        (cond
+          [(eq? head 'define)
+           (define target (and (>= (length parts) 2) (syntax->datum (second parts))))
+           (cond [(symbol? target) (record! module-path target)]
+                 [(pair? target) (record! module-path (car target))])]
+          [(member head '(define-metafunction define-judgment-form))
+           (when (>= (length parts) 3)
+             (record! module-path (syntax-e (third parts))))]
+          [(member head '(define-definition-metafunction))
+           (when (>= (length parts) 3)
+             (record! module-path (syntax-e (third parts))))]
+          [(member head '(define-definition-relation))
+           (when (>= (length parts) 2)
+             (record! module-path (syntax-e (second parts))))])
+        (unless (eq? head 'define)
+          (for ([part (in-list parts)]) (walk part module-path))))))
+  (for ([path (in-list (racket-sources))])
+    (define module-path (source-relative-string path))
+    (walk (read-module-syntax path) module-path))
   index)
 
 (define (implementation-defined? implementation index)
   (match implementation
-    [`(metafunction ,(? symbol? name) (cases ,(? symbol? cases) ...))
-     (define actual (hash-ref index (cons 'metafunction name) #f))
+    [`(metafunction ,(? string? module-path) ,(? symbol? name)
+                    (cases ,(? symbol? cases) ...))
+     (define actual (hash-ref index (list module-path 'metafunction name) #f))
      (and actual (set=? (list->set cases) (list->set actual)))]
-    [`(relation ,(? symbol? name) (cases ,(? symbol? cases) ...))
-     (define actual (hash-ref index (cons 'relation name) #f))
+    [`(relation ,(? string? module-path) ,(? symbol? name)
+                (cases ,(? symbol? cases) ...))
+     (define actual (hash-ref index (list module-path 'relation name) #f))
      (and actual (set=? (list->set cases) (list->set actual)))]
     [_ #f]))
 
@@ -370,15 +409,17 @@
     (unless (= (length names) (set-count (list->set names)))
       (note! "definition ~a has duplicate domain entries"
              (definition-entry-id entry))))
-  (define source-text
-    (string-join (for/list ([path (in-list (racket-sources))])
-                   (file->string path)) "\n"))
+  (define bindings (module-binding-index))
   (for ([entry (in-list entries)]
         #:when (eq? (definition-entry-port-state entry) 'legacy-hybrid))
-    (for ([name (in-list (definition-entry-legacy-implementations entry))])
-      (unless (string-contains? source-text (symbol->string name))
-        (note! "legacy-hybrid definition ~a names missing legacy implementation ~a"
-               (definition-entry-id entry) name))))
+    (for ([binding (in-list (definition-entry-legacy-implementations entry))])
+      (match binding
+        [`(binding ,(? string? module-path) ,(? symbol? name))
+         (unless (set-member? (hash-ref bindings module-path (set)) name)
+           (note! "legacy-hybrid definition ~a names missing binding ~a in ~a"
+                  (definition-entry-id entry) name module-path))]
+        [_ (note! "legacy-hybrid definition ~a has invalid binding reference ~e"
+                  (definition-entry-id entry) binding)])))
   (define implementation-index (definition-implementation-index))
   (for ([entry (in-list entries)]
         #:when (member (definition-entry-port-state entry) '(a0 ported)))
@@ -399,6 +440,12 @@
 (struct helper-observation (function start-line end-line source-sha1)
   #:transparent)
 (struct helper-entry (id function start-line end-line source-sha1 class reason)
+  #:transparent)
+(struct decision-observation
+  (function kind pattern ordinal start-line end-line source-sha1)
+  #:transparent)
+(struct decision-entry
+  (id function kind pattern ordinal start-line end-line source-sha1 class reason)
   #:transparent)
 
 (define dispatch-functions
@@ -569,6 +616,12 @@
     (sha1 (open-input-string (symbol->string function))))
   (format "H.~a.~a" function (substring digest 0 10)))
 
+(define (canonical-decision-id function kind pattern ordinal)
+  (define digest
+    (sha1 (open-input-string
+           (format "~a|~a|~s|~a" function kind pattern ordinal))))
+  (format "D.~a.~a" function (substring digest 0 10)))
+
 (define (extract-infer-branches [path types-path])
   (define module (read-module-syntax path))
   (define source-text (file->string path))
@@ -635,6 +688,57 @@
                          (syntax-source-digest definition source-text)))
    symbol<? #:key helper-observation-function))
 
+(define (extract-infer-decisions [path types-path])
+  (define module (read-module-syntax path))
+  (define source-text (file->string path))
+  (define found '())
+  (define ordinals (make-hash))
+  (define (record! function kind pattern stx)
+    (define ordinal-key (list function kind pattern))
+    (define ordinal (add1 (hash-ref ordinals ordinal-key 0)))
+    (hash-set! ordinals ordinal-key ordinal)
+    (set! found
+          (cons (decision-observation
+                 function kind pattern ordinal (syntax-line stx)
+                 (syntax-end-line stx source-text)
+                 (syntax-source-digest stx source-text))
+                found)))
+  (define (walk function node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (when parts
+        (define head (and (pair? parts) (syntax-e (first parts))))
+        (case head
+          [(cond)
+           (for ([clause (in-list (rest parts))])
+             (define clause-parts (syntax-list clause))
+             (when (and clause-parts (pair? clause-parts))
+               (record! function 'cond (syntax->datum (first clause-parts))
+                        clause)))]
+          [(match match* case)
+           (for ([clause (in-list (drop parts 2))])
+             (define clause-parts (syntax-list clause))
+             (when (and clause-parts (pair? clause-parts))
+               (record! function head (syntax->datum (first clause-parts))
+                        clause)))]
+          [(if)
+           (when (= (length parts) 4)
+             (define condition (syntax->datum (second parts)))
+             (record! function 'if `(,condition then) (third parts))
+             (record! function 'if `(,condition else) (fourth parts)))]
+          [else (void)])
+        (for ([part (in-list parts)]) (walk function part)))))
+  (for ([function (in-list entry-functions)])
+    (walk function (find-function module function)))
+  (sort found string<?
+        #:key (lambda (item)
+                (format "~a:~a:~a:~s"
+                        (decision-observation-function item)
+                        (~r (decision-observation-start-line item)
+                            #:min-width 6 #:pad-string "0")
+                        (decision-observation-kind item)
+                        (decision-observation-pattern item)))))
+
 (define (load-infer-branches [path infer-branches-path])
   (match (call-with-input-file path read)
     [`(smusni-infer-core-branches 1 ,raw-entries ...)
@@ -673,6 +777,29 @@
          [_ (error 'load-infer-helpers "invalid helper entry: ~e" raw)]))]
     [_ (error 'load-infer-helpers "unsupported infer-core helper inventory")]))
 
+(define (load-infer-decisions [path infer-branches-path])
+  (match (call-with-input-file path read)
+    [`(smusni-infer-core-branches 1 ,raw-entries ...)
+     (for/list ([raw (in-list raw-entries)]
+                #:when (and (pair? raw) (eq? (first raw) 'decision)))
+       (match raw
+         [`(decision (id ,(? string? id)) (function ,(? symbol? function))
+                    (kind ,(? symbol? kind)) (pattern ,pattern)
+                    (ordinal ,(? exact-positive-integer? ordinal))
+                    (source-lines ,(? exact-positive-integer? start)
+                                  ,(? exact-positive-integer? end))
+                    (source-sha1 ,(? string? source-sha1))
+                    (class ,(? symbol? class)) (reason ,(? string? reason)))
+          (unless (member class branch-classes)
+            (error 'load-infer-decisions "unknown decision class ~e" class))
+          (unless (sentence? reason)
+            (error 'load-infer-decisions "decision ~a needs one-sentence reason"
+                   id))
+          (decision-entry id function kind pattern ordinal start end source-sha1
+                          class reason)]
+         [_ (error 'load-infer-decisions "invalid decision entry: ~e" raw)]))]
+    [_ (error 'load-infer-decisions "unsupported infer decision inventory")]))
+
 (define (refresh-infer-branch-metadata! [path infer-branches-path])
   (define raw (call-with-input-file path read))
   (define observed
@@ -683,6 +810,13 @@
   (define helper-observed
     (for/hash ([item (in-list (extract-infer-helpers))])
       (values (helper-observation-function item) item)))
+  (define decision-observed
+    (for/hash ([item (in-list (extract-infer-decisions))])
+      (values (list (decision-observation-function item)
+                    (decision-observation-kind item)
+                    (decision-observation-pattern item)
+                    (decision-observation-ordinal item))
+              item)))
   (match-define `(smusni-infer-core-branches 1 ,raw-entries ...) raw)
   (define recorded-branch-keys
     (for/set ([entry (in-list raw-entries)]
@@ -695,9 +829,18 @@
               #:when (and (pair? entry) (eq? (first entry) 'helper)))
       (match entry
         [`(helper (id ,_) (function ,function) . ,_) function])))
+  (define recorded-decision-keys
+    (for/set ([entry (in-list raw-entries)]
+              #:when (and (pair? entry) (eq? (first entry) 'decision)))
+      (match entry
+        [`(decision (id ,_) (function ,function) (kind ,kind)
+                    (pattern ,pattern) (ordinal ,ordinal) . ,_)
+         (list function kind pattern ordinal)])))
   (unless (and (set=? recorded-branch-keys (list->set (hash-keys observed)))
                (set=? recorded-helper-names
-                      (list->set (hash-keys helper-observed))))
+                      (list->set (hash-keys helper-observed)))
+               (set=? recorded-decision-keys
+                      (list->set (hash-keys decision-observed))))
     (error 'refresh-infer-branch-metadata!
            "branch/helper denominator changed; classify new or removed handlers before refreshing metadata"))
   (define refreshed
@@ -721,6 +864,18 @@
                                 ,(helper-observation-end-line live))
                   (source-sha1 ,(helper-observation-source-sha1 live))
                   (class ,class) (reason ,reason))]
+        [`(decision (id ,id) (function ,function) (kind ,kind)
+                    (pattern ,pattern) (ordinal ,ordinal)
+                    (source-lines ,_ ,_) (source-sha1 ,_)
+                    (class ,class) (reason ,reason))
+         (define key (list function kind pattern ordinal))
+         (define live (hash-ref decision-observed key))
+         `(decision (id ,id) (function ,function) (kind ,kind)
+                    (pattern ,pattern) (ordinal ,ordinal)
+                    (source-lines ,(decision-observation-start-line live)
+                                  ,(decision-observation-end-line live))
+                    (source-sha1 ,(decision-observation-source-sha1 live))
+                    (class ,class) (reason ,reason))]
         [`(branch (id ,id) (function ,function) (pattern ,pattern)
                   (source-lines ,_ ,_) (class ,class) (reason ,reason))
          (define live (hash-ref observed (cons function pattern)))
@@ -746,7 +901,9 @@
 (define (infer-branch-findings [observed (extract-infer-branches)]
                                [entries (load-infer-branches)]
                                [helper-observed (extract-infer-helpers)]
-                               [helper-entries (load-infer-helpers)])
+                               [helper-entries (load-infer-helpers)]
+                               [decision-observed (extract-infer-decisions)]
+                               [decision-entries (load-infer-decisions)])
   (define findings '())
   (define (note! format-string . arguments)
     (set! findings (cons (apply format format-string arguments) findings)))
@@ -822,6 +979,52 @@
   (for ([(function entry) (in-hash helper-entries-by-name)])
     (unless (hash-has-key? helper-observed-by-name function)
       (note! "reachable helper entry ~a is stale" (helper-entry-id entry))))
+  (define (decision-key item)
+    (list (if (decision-entry? item) (decision-entry-function item)
+              (decision-observation-function item))
+          (if (decision-entry? item) (decision-entry-kind item)
+              (decision-observation-kind item))
+          (if (decision-entry? item) (decision-entry-pattern item)
+              (decision-observation-pattern item))
+          (if (decision-entry? item) (decision-entry-ordinal item)
+              (decision-observation-ordinal item))))
+  (define decision-observed-by-key
+    (for/hash ([item (in-list decision-observed)])
+      (values (decision-key item) item)))
+  (define decision-entries-by-key (make-hash))
+  (for ([entry (in-list decision-entries)])
+    (define key (decision-key entry))
+    (when (hash-has-key? decision-entries-by-key key)
+      (note! "duplicate internal decision key ~e" key))
+    (hash-set! decision-entries-by-key key entry)
+    (define expected-id
+      (canonical-decision-id (decision-entry-function entry)
+                             (decision-entry-kind entry)
+                             (decision-entry-pattern entry)
+                             (decision-entry-ordinal entry)))
+    (unless (string=? (decision-entry-id entry) expected-id)
+      (note! "internal decision id ~a is not its canonical stable id ~a"
+             (decision-entry-id entry) expected-id)))
+  (for ([(key observation) (in-hash decision-observed-by-key)])
+    (define entry (hash-ref decision-entries-by-key key #f))
+    (cond
+      [(not entry)
+       (note! "unclassified internal decision ~e at ~a-~a"
+              key (decision-observation-start-line observation)
+              (decision-observation-end-line observation))]
+      [(not (and (= (decision-entry-start-line entry)
+                    (decision-observation-start-line observation))
+                 (= (decision-entry-end-line entry)
+                    (decision-observation-end-line observation))))
+       (note! "internal decision ~a source range is stale"
+              (decision-entry-id entry))]
+      [(not (string=? (decision-entry-source-sha1 entry)
+                      (decision-observation-source-sha1 observation)))
+       (note! "internal decision ~a source digest is stale"
+              (decision-entry-id entry))]))
+  (for ([(key entry) (in-hash decision-entries-by-key)])
+    (unless (hash-has-key? decision-observed-by-key key)
+      (note! "internal decision entry ~a is stale" (decision-entry-id entry))))
   (reverse findings))
 
 (struct diagnostic-taxonomy
@@ -1133,14 +1336,12 @@
       (define waiver
         (waiver-for waivers (port-case-id item) difference-fields))
       (if waiver
-          (set-add! used-waivers (port-case-id item))
+          (set-add! used-waivers waiver)
           (set! differences
                 (cons (list item difference-fields old new) differences)))))
   (define stale-waivers
     (for/list ([waiver (in-list waivers)]
-               #:unless (match waiver
-                          [`(waiver (case ,id) . ,_)
-                           (set-member? used-waivers id)]))
+               #:unless (set-member? used-waivers waiver))
       waiver))
   (when print?
     (printf "port differential: ~a cases; differences=~a waivers=~a stale-waivers=~a\n"
@@ -1429,6 +1630,11 @@
     (printf "reachable helpers ~a: ~a\n" class
             (count (lambda (entry) (eq? (helper-entry-class entry) class))
                    helpers)))
+  (define decisions (load-infer-decisions))
+  (for ([class (in-list branch-classes)])
+    (printf "internal decisions ~a: ~a\n" class
+            (count (lambda (entry) (eq? (decision-entry-class entry) class))
+                   decisions)))
   (printf "diagnostic taxonomy: typing=~a no-lowering=~a allowed-evidence=~a forbidden-evidence=~a\n"
           (length (diagnostic-taxonomy-typing-causes taxonomy))
           (length (diagnostic-taxonomy-no-lowering-causes taxonomy))

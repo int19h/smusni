@@ -25,6 +25,8 @@
   comment-only-toy : n -> n
   ;; definition-case:comment-only
   [(comment-only-toy n) n])
+(define-definition-relation structural-toy-relation Phase0StructuralToy n
+  (definition-case zero-step (--> 0 1 "zero-step")))
 
 ;; P0.1: the live extractor, not a recorded glyph count, supplies the gate's
 ;; denominator. The current counts are ratchets, while mutation checks prove
@@ -78,7 +80,9 @@
 (define falsely-implemented
   (struct-copy definition-entry first-definition
                [status 'executable] [issue #f] [port-state 'ported]
-               [implementations '((metafunction missing-definition
+               [implementations '((metafunction
+                                    "tools/smusni-redex/port-phase0.rkt"
+                                    missing-definition
                                     (cases missing-case)))]))
 (check-not-false
  (findf (lambda (message) (string-contains? message "missing implementation"))
@@ -104,10 +108,34 @@
 (define implementation-index (definition-implementation-index))
 (check-true
  (implementation-defined?
-  '(metafunction structural-toy (cases identity)) implementation-index))
+  '(metafunction "tools/smusni-redex/tests/phase0-test.rkt"
+                 structural-toy (cases identity)) implementation-index))
 (check-false
  (implementation-defined?
-  '(metafunction comment-only-toy (cases comment-only)) implementation-index))
+  '(metafunction "tools/smusni-redex/tests/phase0-test.rkt"
+                 comment-only-toy (cases comment-only)) implementation-index))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/port-phase0.rkt"
+                 structural-toy (cases identity)) implementation-index))
+(check-true
+ (implementation-defined?
+  '(relation "tools/smusni-redex/tests/phase0-test.rkt"
+             structural-toy-relation (cases zero-step)) implementation-index))
+(define global-entry
+  (findf (lambda (entry)
+           (string=? (definition-entry-id entry) "D12.GlobalExactly"))
+         definitions))
+(define wrong-legacy-binding
+  (struct-copy definition-entry global-entry
+               [legacy-implementations
+                '((binding "tools/smusni-redex/tests/phase0-test.rkt"
+                           expand-global-exactly-datum))]))
+(check-not-false
+ (findf (lambda (message) (string-contains? message "missing binding"))
+        (definition-ledger-findings
+         observations
+         (cons wrong-legacy-binding (remove global-entry definitions)))))
 (define zipwith
   (findf (lambda (entry) (string=? (definition-entry-id entry) "D12.ZipWith"))
          definitions))
@@ -125,10 +153,14 @@
 (define branch-ledger (load-infer-branches))
 (define live-helpers (extract-infer-helpers))
 (define helper-ledger (load-infer-helpers))
+(define live-decisions (extract-infer-decisions))
+(define decision-ledger (load-infer-decisions))
 (check-equal? (length live-branches) 91)
 (check-equal? (length branch-ledger) 91)
 (check-equal? (length live-helpers) 34)
 (check-equal? (length helper-ledger) 34)
+(check-equal? (length live-decisions) 23)
+(check-equal? (length decision-ledger) 23)
 (check-equal? (infer-branch-findings live-branches branch-ledger) '())
 (check-equal? (count (lambda (entry)
                        (eq? (branch-entry-class entry) 'semantic-clause))
@@ -152,6 +184,19 @@
                             'external-gap-or-diagnostic))
                      helper-ledger)
               1)
+(check-equal? (count (lambda (entry)
+                       (eq? (decision-entry-class entry) 'auxiliary))
+                     decision-ledger)
+              22)
+(check-equal? (count (lambda (entry)
+                       (eq? (decision-entry-class entry)
+                            'external-gap-or-diagnostic))
+                     decision-ledger)
+              1)
+(check-equal? (count (lambda (entry)
+                       (eq? (decision-entry-function entry) 'infer-bind))
+                     decision-ledger)
+              13)
 (define synthetic-branch
   (branch-observation 'infer-application '(eq? head 'Tomorrow) 999 1000
                       "synthetic"))
@@ -196,6 +241,25 @@
           (string-contains? message "reachable helper"))
         (infer-branch-findings live-branches branch-ledger live-helpers
                                (cons stale-helper (rest helper-ledger)))))
+(define synthetic-decision
+  (decision-observation 'infer-bind 'if '(tomorrow then) 1 999 1000
+                        "synthetic"))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "unclassified internal decision"))
+        (infer-branch-findings live-branches branch-ledger live-helpers
+                               helper-ledger
+                               (cons synthetic-decision live-decisions)
+                               decision-ledger)))
+(define stale-decision
+  (struct-copy decision-entry (first decision-ledger)
+               [source-sha1 "stale-decision-digest"]))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "internal decision"))
+        (infer-branch-findings live-branches branch-ledger live-helpers
+                               helper-ledger live-decisions
+                               (cons stale-decision (rest decision-ledger)))))
 (check-equal? (diagnostic-taxonomy-findings) '())
 
 ;; The observer is inert by default and records only externally requested
@@ -296,6 +360,20 @@
 (check-true waived-ok?)
 (check-equal? waived-differences '())
 (check-equal? waived-stale '())
+(define duplicate-case-waivers
+  '((waiver (case "oracle-self-test") (fields type)
+            (finding "self-test-type") (reason "The type waiver is used."))
+    (waiver (case "oracle-self-test") (fields effects)
+            (finding "self-test-effects") (reason "The effects waiver is unused."))))
+(define-values (duplicate-waiver-ok? _duplicate-differences duplicate-stale)
+  (run-differential
+   (list oracle-case) duplicate-case-waivers
+   #:old-engine (constant-engine success-record)
+   #:new-engine
+   (constant-engine (struct-copy port-record success-record [type 'Natural]))
+   #:print? #f))
+(check-false duplicate-waiver-ok?)
+(check-equal? duplicate-stale (list (second duplicate-case-waivers)))
 
 ;; P0.4: the tracked baseline names the exact pre-port head, 96 specimen-term
 ;; executions, five warm runs, and every pre-registered trigger.

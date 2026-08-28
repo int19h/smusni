@@ -309,7 +309,11 @@ not a recorded glyph count. Normative status is separate from migration state:
 their existing hybrid implementations without satisfying the target-port
 gate; 76 written definitions are normatively executable while the target has
 zero ported cases. A new head, removed head, stale branch, or an `a0`/`ported`
-entry without real named metafunction/relation cases fails. The report prints
+entry without real named metafunction/relation cases fails. Target cases are
+structurally wrapped around their actual Redex clauses and keyed by production
+module plus binding; comments, test-only definitions, and same-name bindings
+in another module cannot satisfy the gate. Legacy-hybrid bindings are likewise
+resolved structurally in their named module. The report prints
 every blocked and non-mechanical entry, including `Most` under #66 and the
 split equal/unequal `ZipWith` domains under #52/#41.
 
@@ -317,9 +321,11 @@ split equal/unequal `ZipWith` domains under #52/#41.
 legacy inference engine by function, syntax-derived stable id, source pattern,
 exact live source range, and source digest. A call-graph check requires every
 top-level helper reachable from `infer-core` to be registered (91 inference
-handlers plus 34 non-`infer-` helpers), and the digest makes changes to nested
-handler logic stale even when line counts do not move. Metadata refresh refuses
-a changed branch/helper denominator; new handlers must be classified first.
+handlers plus 34 non-`infer-` helpers). Twenty-three internal `cond`/`match`/
+`if` arms in the formerly whole-function handlers are classified separately,
+including all 13 `infer-bind` arms. Digests make changes to nested handler logic
+stale even when line counts do not move. Metadata refresh refuses a changed
+branch/helper/decision denominator; new handlers must be classified first.
 The adjacent diagnostic taxonomy permits term/constructor/location,
 inventory declarations, no-derivation, and explicitly non-authoritative
 instrumentation as evidence. It forbids a semantic fallback or a duplicate
@@ -336,7 +342,10 @@ source rule, gap status, derivation count, and waiver scope so the gate is not
 merely a reflexivity check. Zero unwaived live differences proves the oracle
 plumbing without claiming that the port exists. `port-waivers.sexp` is empty;
 any later disagreement must name its case, exact allowed fields, and durable
-finding.
+finding. Used waivers are tracked by their full identity, so two field-scoped
+waivers for one case cannot hide an unused entry. Every replay case's recorded
+inventory digests must match the live inventory or the corpus requires a
+deliberate refresh.
 
 The benchmark replays all 96 specimen-term occurrences for five warm runs in
 old-only, new-only, and side-by-side modes. Timing starts after load/warmup,
