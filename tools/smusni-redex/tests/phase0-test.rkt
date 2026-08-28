@@ -21,6 +21,8 @@
 (define-definition-metafunction Phase0StructuralToy
   structural-toy : n -> n
   (definition-case identity [(structural-toy n) n]))
+(define-definition-metafunction Phase0StructuralToy
+  empty-structural-toy : n -> n)
 (define-metafunction Phase0StructuralToy
   comment-only-toy : n -> n
   ;; definition-case:comment-only
@@ -106,6 +108,8 @@
                      definitions)
               0)
 (define implementation-index (definition-implementation-index))
+(define test-inclusive-index
+  (definition-implementation-index #:include-tests? #t))
 (check-false
  (implementation-defined?
   '(metafunction "tools/smusni-redex/tests/phase0-test.rkt"
@@ -122,6 +126,12 @@
  (implementation-defined?
   '(relation "tools/smusni-redex/tests/phase0-test.rkt"
              structural-toy-relation (cases zero-step)) implementation-index))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/tests/phase0-test.rkt"
+                 empty-structural-toy (cases))
+  test-inclusive-index
+  #:allowed-modules '("tools/smusni-redex/tests/phase0-test.rkt")))
 (check-false
  (implementation-defined?
   '(metafunction "tools/smusni-redex/port-support.rkt"
@@ -148,6 +158,14 @@
  (implementation-defined?
   '(metafunction "tools/smusni-redex/lower.rkt"
                  future-metafunction (cases same)) duplicate-case-index))
+(define empty-relation-index
+  (hash (list "tools/smusni-redex/lower.rkt"
+              'relation 'future-relation)
+        (case-registration '() #f)))
+(check-false
+ (implementation-defined?
+  '(relation "tools/smusni-redex/lower.rkt"
+             future-relation (cases)) empty-relation-index))
 (define duplicate-binding-index
   (hash (list "tools/smusni-redex/lower.rkt"
               'metafunction 'future-metafunction)

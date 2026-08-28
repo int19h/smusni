@@ -302,15 +302,16 @@
 
 (define production-modules (delay (load-production-modules)))
 
-(define (production-module-path? module-path)
-  (and (member module-path (force production-modules)) #t))
+(define (production-module-path? module-path
+                                 [allowed-modules (force production-modules)])
+  (and (member module-path allowed-modules) #t))
 
 (struct case-registration (cases duplicate-binding?) #:transparent)
 
 (define (source-relative-string path)
   (path->string (find-relative-path repo-root (simplify-path path))))
 
-(define (definition-implementation-index)
+(define (definition-implementation-index #:include-tests? [include-tests? #f])
   (define index (make-hash))
   (define (record! key cases)
     (define prior (hash-ref index key #f))
@@ -345,7 +346,7 @@
           (for ([part (in-list parts)]) (walk part module-path #f))))))
   (for* ([path (in-list (racket-sources))]
          [module-path (in-value (source-relative-string path))]
-        #:when (production-module-path? module-path))
+         #:when (or include-tests? (production-module-path? module-path)))
     (walk (read-module-syntax path) module-path #t))
   index)
 
@@ -381,15 +382,19 @@
     (walk (read-module-syntax path) module-path #t))
   index)
 
-(define (implementation-defined? implementation index)
+(define (implementation-defined? implementation index
+                                 #:allowed-modules
+                                 [allowed-modules (force production-modules)])
   (match implementation
     [`(metafunction ,(? string? module-path) ,(? symbol? name)
                     (cases ,(? symbol? cases) ...))
      (define registration
-       (and (production-module-path? module-path)
+       (and (production-module-path? module-path allowed-modules)
             (hash-ref index (list module-path 'metafunction name) #f)))
      (and registration
           (not (case-registration-duplicate-binding? registration))
+          (pair? cases)
+          (pair? (case-registration-cases registration))
           (= (length cases) (set-count (list->set cases)))
           (= (length (case-registration-cases registration))
              (set-count (list->set (case-registration-cases registration))))
@@ -398,10 +403,12 @@
     [`(relation ,(? string? module-path) ,(? symbol? name)
                 (cases ,(? symbol? cases) ...))
      (define registration
-       (and (production-module-path? module-path)
+       (and (production-module-path? module-path allowed-modules)
             (hash-ref index (list module-path 'relation name) #f)))
      (and registration
           (not (case-registration-duplicate-binding? registration))
+          (pair? cases)
+          (pair? (case-registration-cases registration))
           (= (length cases) (set-count (list->set cases)))
           (= (length (case-registration-cases registration))
              (set-count (list->set (case-registration-cases registration))))
