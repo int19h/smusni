@@ -3554,17 +3554,20 @@
 
 (define (structural-rule-leads raw)
   (define leads (mutable-set))
+  (define (quoted-path? path)
+    (for/or ([key (in-list path)])
+      (member key '(QuotedSumti TextQuote RawQuote ZoiQuote LohuQuote))))
   (define words
     (for/list ([candidate
                 (in-list (semantic-node-candidates raw (seteq 'Cmavo)))]
-               #:unless (for/or ([key (in-list (third candidate))])
-                          (member key '(QuotedSumti TextQuote RawQuote
-                                                   ZoiQuote LohuQuote))))
+               #:unless (quoted-path? (third candidate)))
       (unstress (hash-ref (second candidate) 'phonemes ""))))
   (define (lead! rule) (set-add! leads rule))
   (when (member "fi'a" words) (lead! "L1.7"))
-  (for ([descriptor
-         (in-list (tag-values raw 'DescriptorWithGadriSumti))])
+  (for ([candidate
+         (in-list (semantic-node-candidates raw (seteq 'DescriptorWithGadriSumti)))]
+        #:unless (quoted-path? (third candidate)))
+    (define descriptor (second candidate))
     (define gadri (first-terminal (hash-ref descriptor 'description) 'Cmavo))
     (define tail (hash-ref descriptor 'tail (lambda () #hasheq())))
     (define leading
@@ -3588,20 +3591,29 @@
     (lead! "L5.10"))
   (define joi-candidates
     (filter (lambda (candidate)
-              (member "joi" (terminal-texts (second candidate) 'Cmavo)))
+              (and (not (quoted-path? (third candidate)))
+                   (member "joi" (terminal-texts (second candidate) 'Cmavo))))
             (semantic-node-candidates raw (seteq 'JoiConnective))))
   (for ([candidate (in-list joi-candidates)])
     (define path (third candidate))
     (cond [(member 'IStatementConnection path) (lead! "L5.13")]
           [(member 'CoSelbri path) (lead! "L5.17")]
           [else (lead! "L5.22")]))
-  (when (or (> (length joi-candidates) 1)
-            (and (pair? joi-candidates) (member "se" words)))
+  (define chain-paths (map (lambda (c) (drop-right (third c) (min 2 (length (third c))))) joi-candidates))
+  (define has-multiple-joi?
+    (> (length chain-paths) (set-count (list->set chain-paths))))
+  (define has-se-joi?
+    (for/or ([candidate (in-list joi-candidates)])
+      (member "se" (terminal-texts (second candidate) 'Cmavo))))
+  (when (or has-multiple-joi? has-se-joi?)
     (lead! "L5.23"))
   (for ([candidate
-         (in-list (semantic-node-candidates raw (seteq 'JekConnective)))])
+         (in-list (semantic-node-candidates raw (seteq 'JekConnective)))]
+        #:unless (quoted-path? (third candidate)))
     (when (member 'CoSelbri (third candidate)) (lead! "L5.16")))
-  (when (and (has-tag? raw 'IStatementConnection) (member "bo" words))
+  (when (and (for/or ([cand (in-list (semantic-node-candidates raw (seteq 'IStatementConnection)))])
+               (not (quoted-path? (third cand))))
+             (member "bo" words))
     (lead! "L5.15"))
   (when (for/or ([word (in-list words)])
           (member word '("bi'o" "bi'i" "mi'i")))
