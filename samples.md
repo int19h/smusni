@@ -684,9 +684,11 @@ projects; only the universal is negated. Bare-logic `ro da` carries no
 presupposition.
 
 ```lisp
-; lo xo prenu cu jmaji — ... no — inner-no answer      [pin P22]
-; the answer "no" is elliptical lo no prenu cu jmaji (guskant);
-; which lowers through the zero-count special case; never Refer:
+; lo no prenu cu jmaji — inner-no                       [pin P22]
+; the answer "no" to the question lo xo prenu cu jmaji is elliptical
+; for this sentence (guskant); the question itself is an OpenQ (L10.2)
+; and records no answer; the answer lowers through the zero-count
+; special case; never Refer:
 (Assert
   (No {λ [$x :: Entity] (prenu $x)}
       {λ [$w :: Referents Entity] (Close (jmaji $w))}))
