@@ -12,11 +12,11 @@
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
 (check-equal? (lowering-manifest-rule-count manifest) 46)
-(check-equal? (length (lowering-manifest-candidates manifest)) 27)
+(check-equal? (length (lowering-manifest-candidates manifest)) 26)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
    (length (lowering-candidate-cases candidate)))
- 30)
+ 29)
 
 (define rules (fragment-rule-ids manifest))
 (check-equal? (length rules) 46)
@@ -258,12 +258,6 @@
    (Every (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity) (Close (blabi $x)))))
  '("L5.1"))
-(check-lowers
- "samples.md" 45
- '(Assert
-   (No (λ ($x :: Entity) (prenu $x))
-       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
- '("L3.10" "L0.1" "L5.7"))
 (check-lowers
  "samples.md" 46
  '(Bind ($dogs :: Referents Entity)
@@ -584,7 +578,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              30)
+              29)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -599,8 +593,8 @@
                             'out-of-fragment))
                      reports)
               0)
-(check-equal? (length reports) 30)
-(check-equal? (length fence-reports) 27)
+(check-equal? (length reports) 29)
+(check-equal? (length fence-reports) 26)
 (define fence-17-report
   (findf (lambda (report)
            (and (string=? (fence-report-source report) "samples.md")
@@ -893,6 +887,17 @@
                      (rr-case-fields le-rr)))
 (check-true (no-lowering? no-le-sigma))
 (check-equal? (no-lowering-rule no-le-sigma) "L3.10")
+
+(define explicit-zero-lo-result
+  (lower (add-inner-count description-row-parse "no") description-row-rr))
+(check-true (lowered? explicit-zero-lo-result))
+(when (lowered? explicit-zero-lo-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term explicit-zero-lo-result))
+    '(Assert
+      (No (λ ($x :: Entity) (mlatu $x))
+          (λ ($w :: Referents Entity) (Close (blabi $w))))))))
 
 (define-values (collection-parse collection-rr)
   (case-input "samples.md" 30))

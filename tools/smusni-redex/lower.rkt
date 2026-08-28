@@ -83,7 +83,7 @@
   #:transparent)
 (struct probe-record
   (source ordinal index provenance surface category disposition rule detail
-          rules)
+          rules structural-leads)
   #:transparent)
 
 (define (site-variable-suggestion key)
@@ -2254,12 +2254,14 @@
      (match (first terms)
        [`(description ,gadri ,predicate ,count)
         (cond
+          [(equal? count '(unresolved-count xo))
+           (no-lowering
+            "L3.10" 'rule-underspecified
+            "xo needs a separate answer input; RR.readings cannot supply it"
+            (hasheq 'gadri gadri 'predicate predicate))]
           [(and (equal? gadri "lo") (not negated?)
-                (or (equal? count '(unresolved-count xo))
-                    (and (number? count) (zero? count))))
-           (define expected-readings
-             (readings (if (equal? count '(unresolved-count xo))
-                           '(inner-no) '())))
+                (number? count) (zero? count))
+           (define expected-readings (readings '()))
            (define check
              (validated-path fields "L3.10" expected-readings
                              (list predicate relation) '()
@@ -3549,6 +3551,60 @@
   (string-trim
    (regexp-replace #px"[ ]+\\[[^]]*\\][ ]*$" before-dash "")))
 
+(define (structural-rule-leads raw)
+  (define leads (mutable-set))
+  (define words (terminal-texts raw 'Cmavo))
+  (define (lead! rule) (set-add! leads rule))
+  (when (member "fi'a" words) (lead! "L1.7"))
+  (for ([descriptor
+         (in-list (tag-values raw 'DescriptorWithGadriSumti))])
+    (define gadri (first-terminal (hash-ref descriptor 'description) 'Cmavo))
+    (define tail (hash-ref descriptor 'tail (lambda () #hasheq())))
+    (define leading
+      (and (hash? tail)
+           (hash-ref tail 'leading_tail_elements (lambda () #hasheq()))))
+    (when (and (hash? leading) (positive? (hash-count leading)))
+      (lead! "L3.11"))
+    (when (member gadri '("lei" "le'i")) (lead! "L3.12"))
+    (when (member gadri '("lai" "la'i")) (lead! "L3.13"))
+    (define quantifier (first-tag tail 'PaRunQuantifier))
+    (when (and quantifier
+               (equal? (first-terminal quantifier 'Cmavo) "no"))
+      (lead! "L3.10")))
+  (when (member "da'a" words) (lead! "L5.4"))
+  (when (for/or ([word (in-list words)])
+          (member word '("bu'a" "bu'e" "bu'i")))
+    (lead! "L5.5"))
+  (when (member "cei" words) (lead! "L5.6"))
+  (when (for/or ([word (in-list words)])
+          (member word '("ja'a" "je'a")))
+    (lead! "L5.10"))
+  (define joi-candidates
+    (filter (lambda (candidate)
+              (member "joi" (terminal-texts (second candidate) 'Cmavo)))
+            (semantic-node-candidates raw (seteq 'JoiConnective))))
+  (for ([candidate (in-list joi-candidates)])
+    (define path (third candidate))
+    (cond [(member 'IStatementConnection path) (lead! "L5.13")]
+          [(member 'CoSelbri path) (lead! "L5.17")]
+          [else (lead! "L5.22")]))
+  (when (or (> (length joi-candidates) 1)
+            (and (pair? joi-candidates) (member "se" words)))
+    (lead! "L5.23"))
+  (for ([candidate
+         (in-list (semantic-node-candidates raw (seteq 'JekConnective)))])
+    (when (member 'CoSelbri (third candidate)) (lead! "L5.16")))
+  (when (and (has-tag? raw 'IStatementConnection) (member "bo" words))
+    (lead! "L5.15"))
+  (when (for/or ([word (in-list words)])
+          (member word '("bi'o" "bi'i" "mi'i")))
+    (lead! "L5.19"))
+  (when (for/or ([word (in-list words)])
+          (member word '("ku'a" "jo'e" "pi'u")))
+    (lead! "L5.27"))
+  (filter (lambda (rule) (set-member? leads rule))
+          increment-2-unformed-rules))
+
 (define (probe-category target)
   (with-handlers ([exn:fail? (lambda (_) 'content)])
     (match (typing-type (infer-core target))
@@ -3610,6 +3666,9 @@
     (printf " rule=~a" (probe-record-rule record)))
   (when (pair? (probe-record-rules record))
     (printf " rules=~a" (string-join (probe-record-rules record) ",")))
+  (when (pair? (probe-record-structural-leads record))
+    (printf " structural-leads=~a"
+            (string-join (probe-record-structural-leads record) ",")))
   (when (probe-record-detail record)
     (define rendered (format "~e" (probe-record-detail record)))
     (printf " detail=~a"
@@ -3643,6 +3702,11 @@
       [candidate
        (define parse-cases (hash-ref (load-parse-fixture candidate) 'cases))
        (define rr-cases (rr-fixture-cases (load-rr-fixture candidate inv)))
+       (unless (= (length (lowering-candidate-cases candidate))
+                  (length parse-cases) (length rr-cases) (length forms))
+         (error 'run-probe-all
+                "verified fence cardinality mismatch: ~a#~a"
+                (fence-source item) (fence-ordinal item)))
        (for ([candidate-case (in-list (lowering-candidate-cases candidate))]
              [parse-case (in-list parse-cases)]
              [rr (in-list rr-cases)]
@@ -3658,9 +3722,14 @@
                  (lowering-case-category candidate-case)
                  (case-report-disposition report)
                  (case-report-cause report) (case-report-message report)
-                 (case-report-rules report))
+                 (case-report-rules report)
+                 (structural-rule-leads (hash-ref parse-case 'parse)))
                 records)))]
       [else
+       (unless (= (length forms) (length comments))
+         (error 'run-probe-all
+                "surface fence form/comment cardinality mismatch: ~a#~a"
+                (fence-source item) (fence-ordinal item)))
        (for ([target (in-list forms)] [comment (in-list comments)]
              [index (in-naturals 1)])
          (define surface (surface-from-source-comment comment))
@@ -3671,7 +3740,8 @@
                  (lambda (exception)
                    (probe-record (fence-source item) (fence-ordinal item)
                                  index 'unverified-skeleton surface category
-                                 'parse-error #f (exn-message exception) '()))])
+                                 'parse-error #f (exn-message exception) '()
+                                 '()))])
              (define raw (gentufa-parse executable surface))
              (define fields (probe-skeleton-fields raw category version inv))
              (define parse-case
@@ -3687,12 +3757,13 @@
                   `(diagnostic-target-match
                     ,(probe-normalized-match? result target fields inv)
                     never-promotion-evidence)
-                  (lowered-rules result))
+                  (lowered-rules result) (structural-rule-leads raw))
                  (probe-record
                   (fence-source item) (fence-ordinal item) index
                   'unverified-skeleton surface category
                   'unverified-skeleton/refused
-                  (no-lowering-rule result) (no-lowering-detail result) '()))))
+                  (no-lowering-rule result) (no-lowering-detail result) '()
+                  (structural-rule-leads raw)))))
          (set! records (cons record records)))]))
   (set! records (reverse records))
   (define verified-formed
@@ -3726,20 +3797,34 @@
             (set-count verified-formed)
             (if (null? promoted) "none" (string-join promoted ",")))
     (for ([rule (in-list increment-2-unformed-rules)])
-      (define hits
+      (define structural-hits
+        (remove-duplicates
+         (for/list ([record (in-list records)]
+                    #:when (member rule
+                                   (probe-record-structural-leads record)))
+           (format "~a#~a" (probe-record-source record)
+                   (probe-record-ordinal record)))))
+      (define citation-hits
         (for/list ([item (in-list fences)]
                    #:when (member rule (fence-rules item)))
           (format "~a#~a" (fence-source item) (fence-ordinal item))))
       (printf "increment-2 rule ~a: ~a\n" rule
               (cond
                 [(set-member? verified-formed rule)
-                 (format "formed; verified candidates=~a"
-                         (if (null? hits) "<derived subrule>"
-                             (string-join hits ",")))]
-                [(null? hits) "no specimen in the corpus"]
+                 (format "formed; structural leads=~a; citations=~a"
+                         (if (null? structural-hits) "<derived subrule>"
+                             (string-join structural-hits ","))
+                         (if (null? citation-hits) "none"
+                             (string-join citation-hits ",")))]
+                [(null? structural-hits)
+                 (format "no structural lead in the corpus; citations=~a"
+                         (if (null? citation-hits) "none"
+                             (string-join citation-hits ",")))]
                 [else
-                 (format "surface specimens=~a; not formed"
-                         (string-join hits ","))])))
+                 (format "unverified structural leads=~a; citations=~a; not formed"
+                         (string-join structural-hits ",")
+                         (if (null? citation-hits) "none"
+                             (string-join citation-hits ",")))])))
     )
   (values records (set-count verified-formed) promoted))
 

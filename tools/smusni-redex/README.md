@@ -237,6 +237,9 @@ evidence. The command writes no fixture and is not part of `tools/check-smusni`.
 
 The report prints every case, the first refusal where applicable, verified vs
 skeleton totals, formed coverage before/after the increment, promoted verified
-candidates, and the exhaustive disposition of the 17 starting rule IDs. M4
-increment 2 promotes only specimens with reviewed eight-field RR: currently
-samples #45 (L3.10 inner zero) and #27 (L5.22 constitution-bearing `joi`).
+candidates, and the exhaustive disposition of the 17 starting rule IDs.
+Rule leads come from parse constructs/loci; focal citations are printed only as
+a cross-check. M4 increment 2 promotes only specimens with reviewed eight-field
+RR: currently samples #27 (L5.22 constitution-bearing `joi`). Samples #45 keeps
+surface `xo`; its separate prose answer `no` is not an RR reading and therefore
+cannot promote L3.10. The generic explicit inner-zero clause remains tested.

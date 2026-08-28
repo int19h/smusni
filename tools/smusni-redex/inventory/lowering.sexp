@@ -50,9 +50,6 @@
   (candidate "samples.md" 44 "8eac378a0dbb7e9bb101843b6c5f2217febf3ca7"
     (rules "L5.1")
     (case 1 "ro gerku cu blabi" sentence (promised-rows gerku blabi)))
-  (candidate "samples.md" 45 "1a575b6f5bb94517627d63ad1a30f80d0a825446"
-    (rules "L10.2" "L3.10")
-    (case 1 "lo xo prenu cu jmaji" sentence (promised-rows prenu jmaji)))
   (candidate "samples.md" 46 "16d5445b9f0efb113e3a9f4a03224a1f770d4959"
     (rules "L5.3")
     (case 1 "ci gerku ce'e re prenu cu nelci" sentence
