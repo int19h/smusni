@@ -1,0 +1,801 @@
+(smusni-infer-core-branches
+ 1
+ (branch
+  (id "B.infer-application.c1e3d65f94")
+  (function infer-application)
+  (pattern (member head '(Context Vague Refer)))
+  (source-lines 775 778)
+  (source-sha1 "1c04961ce3ea8e4b1e0e061d559c8c303d23a13e")
+  (class external-gap-or-diagnostic)
+  (reason
+   "This branch rejects unbound retrieval computations and contributes no positive typing conclusion."))
+ (branch
+  (id "B.infer-application.bcb5013b9d")
+  (function infer-application)
+  (pattern (not head))
+  (source-lines 779 806)
+  (source-sha1 "a5eb89b56ec6fec29d6e338a0a50ee4f76d7117e")
+  (class semantic-clause)
+  (reason
+   "This branch types higher-order application, with its unsupported-operator fallback dispositioned externally during B."))
+ (branch
+  (id "B.infer-application.3b0db6994d")
+  (function infer-application)
+  (pattern (member head '(∧ ∨ →)))
+  (source-lines 807 807)
+  (source-sha1 "25aa24b550e593e7ea752e6a0690e7b746fa4e73")
+  (class auxiliary)
+  (reason
+   "This branch dispatches logical heads to the separately classified logical typing rule."))
+ (branch
+  (id "B.infer-application.0470265b29")
+  (function infer-application)
+  (pattern (eq? head '¬))
+  (source-lines 808 810)
+  (source-sha1 "f4e6256d9f41c39e768a360e1af55457d933a628")
+  (class semantic-clause)
+  (reason
+   "This branch enforces unary negation before applying the logical typing rule."))
+ (branch
+  (id "B.infer-application.0bf5acce49")
+  (function infer-application)
+  (pattern (member head '(∀ ∃)))
+  (source-lines 811 811)
+  (source-sha1 "20282f3d410ec70065e4debdb7056d7a2f43e935")
+  (class auxiliary)
+  (reason
+   "This branch dispatches quantifier heads to the separately classified quantifier typing rule."))
+ (branch
+  (id "B.infer-application.b79f85070e")
+  (function infer-application)
+  (pattern (eq? head '=))
+  (source-lines 812 820)
+  (source-sha1 "a53b92db48982523f52791b119342eae9bcec084")
+  (class semantic-clause)
+  (reason "This branch types equality over compatible operands."))
+ (branch
+  (id "B.infer-application.94519d3b4f")
+  (function infer-application)
+  (pattern (eq? head '∈))
+  (source-lines 821 832)
+  (source-sha1 "4d651bfca228bf47a50f6b40691cb81206f1d70b")
+  (class semantic-clause)
+  (reason "This branch types membership over one value and a matching set."))
+ (branch
+  (id "B.infer-application.6cfa6811cd")
+  (function infer-application)
+  (pattern (eq? head 'Among))
+  (source-lines 833 842)
+  (source-sha1 "9628fcd42389403f04b071769ae5d972f35d5094")
+  (class semantic-clause)
+  (reason
+   "This branch types plural inclusion over compatible reference types."))
+ (branch
+  (id "B.infer-application.665abbb3b1")
+  (function infer-application)
+  (pattern (eq? head 'Combine))
+  (source-lines 843 861)
+  (source-sha1 "8c64e847935837316d2d7962cdd76953d133f6e1")
+  (class semantic-clause)
+  (reason
+   "This branch types nonempty plural combination over a common member sort."))
+ (branch
+  (id "B.infer-application.bde5b49090")
+  (function infer-application)
+  (pattern
+   (or (member head '(+ −))
+       (and (symbol? head) (string=? (symbol->string head) "te'a"))))
+  (source-lines 862 867)
+  (source-sha1 "d76e3ef594b021d572ca416b39cf16d8973094b1")
+  (class semantic-clause)
+  (reason "This branch types the currently supported numeric operations."))
+ (branch
+  (id "B.infer-application.811e56b325")
+  (function infer-application)
+  (pattern (member head '(λ Let Bind)))
+  (source-lines 868 872)
+  (source-sha1 "632b5217d47867e53364e94667f42fedb8987d75")
+  (class auxiliary)
+  (reason
+   "This branch dispatches direct binders to their separately classified typing rules."))
+ (branch
+  (id "B.infer-application.cc707a6b93")
+  (function infer-application)
+  (pattern (eq? head 'Close))
+  (source-lines 873 897)
+  (source-sha1 "8016e05d01e7cc8a9cf5c4b5e31e16e53d234171")
+  (class semantic-clause)
+  (reason
+   "This branch types closure according to row saturation and event mode."))
+ (branch
+  (id "B.infer-application.5a4d305035")
+  (function infer-application)
+  (pattern (eq? head 'CloseClause))
+  (source-lines 898 902)
+  (source-sha1 "6b75e8f03e95d0de0449af4fafeb1f76097c2265")
+  (class semantic-clause)
+  (reason "This branch types closure of ClauseContent."))
+ (branch
+  (id "B.infer-application.8d934f7b94")
+  (function infer-application)
+  (pattern (eq? head 'DirectClause))
+  (source-lines 903 908)
+  (source-sha1 "91ee332b1fff7672b9328c26c119934f4f8412d6")
+  (class semantic-clause)
+  (reason
+   "This branch types direct clause construction from a predicate term."))
+ (branch
+  (id "B.infer-application.9f2b657aca")
+  (function infer-application)
+  (pattern (eq? head 'StateClause))
+  (source-lines 909 913)
+  (source-sha1 "6c5dfeb3b386eb546f72f781ec06c077206e6a10")
+  (class semantic-clause)
+  (reason "This branch types state-clause construction from Content."))
+ (branch
+  (id "B.infer-application.06cd2851dd")
+  (function infer-application)
+  (pattern (member head '(ActualClause CapableClause ClauseNot)))
+  (source-lines 914 918)
+  (source-sha1 "0e750fa08711e195fac8259107b470573c6b259a")
+  (class semantic-clause)
+  (reason "This branch types unary clause-event formers."))
+ (branch
+  (id "B.infer-application.df4748010c")
+  (function infer-application)
+  (pattern (member head '(ClauseAnd ClauseOr)))
+  (source-lines 919 923)
+  (source-sha1 "c55fd184306e94efc173d58ecdbdb73055cd28d5")
+  (class semantic-clause)
+  (reason "This branch types binary clause-event formers."))
+ (branch
+  (id "B.infer-application.75814622a9")
+  (function infer-application)
+  (pattern (member head '(Assert Express)))
+  (source-lines 924 929)
+  (source-sha1 "bfba8abbf027ab86a7fa1744b72450c077f5ed61")
+  (class semantic-clause)
+  (reason
+   "This branch types force-tagged act construction while suspending Content effects."))
+ (branch
+  (id "B.infer-application.549235b955")
+  (function infer-application)
+  (pattern (eq? head 'Mention))
+  (source-lines 930 933)
+  (source-sha1 "dc6e18ed5b91dd8149374e9e42c1ddac5243edf6")
+  (class semantic-clause)
+  (reason "This branch types expressive mention of one value."))
+ (branch
+  (id "B.infer-application.2184af511c")
+  (function infer-application)
+  (pattern (eq? head 'Ask))
+  (source-lines 934 939)
+  (source-sha1 "3e0ea9a1c3e7583ce0cea199eaeeb0d683898751")
+  (class semantic-clause)
+  (reason "This branch types question acts from Query values."))
+ (branch
+  (id "B.infer-application.d52dadd27f")
+  (function infer-application)
+  (pattern (eq? head 'ContextualAnswer))
+  (source-lines 940 943)
+  (source-sha1 "9bfa14ab2a76cbe1de3b515928d2fc631284b5ae")
+  (class external-gap-or-diagnostic)
+  (reason
+   "This branch is the explicit fixture gap for contextual-answer domain inference."))
+ (branch
+  (id "B.infer-application.71541ce89b")
+  (function infer-application)
+  (pattern (eq? head 'Answer))
+  (source-lines 944 950)
+  (source-sha1 "64fd463fbde020358b89a7a164a6cfa923387039")
+  (class semantic-clause)
+  (reason "This branch types answers against a Query domain."))
+ (branch
+  (id "B.infer-application.4201c9cb5e")
+  (function infer-application)
+  (pattern (eq? head 'Polar))
+  (source-lines 951 955)
+  (source-sha1 "49042644cc063ab446210bb5cfd9c4095663dbdf")
+  (class semantic-clause)
+  (reason "This branch types polar query construction."))
+ (branch
+  (id "B.infer-application.40e7e0d30d")
+  (function infer-application)
+  (pattern (eq? head 'OpenQ))
+  (source-lines 956 965)
+  (source-sha1 "d93ef525d58cef2bbf3400d77c0e8649cedd7946")
+  (class semantic-clause)
+  (reason "This branch types open query construction from a function."))
+ (branch
+  (id "B.infer-application.bcd3c43b96")
+  (function infer-application)
+  (pattern (eq? head 'Perform))
+  (source-lines 966 975)
+  (source-sha1 "1401848200f6cbe18669cc775f642786b489f3c4")
+  (class semantic-clause)
+  (reason
+   "This branch types performance of an act into an occurrence computation."))
+ (branch
+  (id "B.infer-application.b05067fda3")
+  (function infer-application)
+  (pattern (eq? head 'Do))
+  (source-lines 976 985)
+  (source-sha1 "bb77f391a23a3ba5ba31b8f2b7847e9a4fcf9527")
+  (class semantic-clause)
+  (reason "This branch types discourse sequencing."))
+ (branch
+  (id "B.infer-application.5ef40f9d65")
+  (function infer-application)
+  (pattern (eq? head 'Reify))
+  (source-lines 986 992)
+  (source-sha1 "613cc6f083da0d63ac7ad948f7db23fb06658088")
+  (class semantic-clause)
+  (reason "This branch types Content reification."))
+ (branch
+  (id "B.infer-application.c9d126e725")
+  (function infer-application)
+  (pattern (eq? head 'Holds))
+  (source-lines 993 998)
+  (source-sha1 "d63738fbef8a8ac600d6c33557fab31fca748653")
+  (class semantic-clause)
+  (reason "This branch types the inverse proposition bridge."))
+ (branch
+  (id "B.infer-application.352ec4cb99")
+  (function infer-application)
+  (pattern (eq? head 'EventOfContent))
+  (source-lines 999 1004)
+  (source-sha1 "57e44938d62ad777167de10cbbc6b258dbedf9c0")
+  (class semantic-clause)
+  (reason "This branch types clause-event projection."))
+ (branch
+  (id "B.infer-application.bef09b7879")
+  (function infer-application)
+  (pattern (eq? head 'Presuppose))
+  (source-lines 1005 1010)
+  (source-sha1 "61997fffd0790900382109cf95ea5cc01d992cc5")
+  (class semantic-clause)
+  (reason "This branch types projective presupposition."))
+ (branch
+  (id "B.infer-application.19d76065b1")
+  (function infer-application)
+  (pattern (eq? head 'Supplement))
+  (source-lines 1011 1016)
+  (source-sha1 "1c50b13c58ca3cac300cf24f1a68481006a16324")
+  (class semantic-clause)
+  (reason "This branch types projective supplements."))
+ (branch
+  (id "B.infer-application.23128cb1e5")
+  (function infer-application)
+  (pattern (eq? head 'SetOf))
+  (source-lines 1017 1022)
+  (source-sha1 "b30ea76fa2146116c032145385302c6065164cba")
+  (class semantic-clause)
+  (reason "This branch types pure set comprehension."))
+ (branch
+  (id "B.infer-application.ba2a5eae47")
+  (function infer-application)
+  (pattern (eq? head 'Card))
+  (source-lines 1023 1031)
+  (source-sha1 "dc8763e3cb8163112416e6e5c3b700ac5e30a660")
+  (class semantic-clause)
+  (reason
+   "This branch types partial finite-set cardinality with its obligation."))
+ (branch
+  (id "B.infer-application.92ef536358")
+  (function infer-application)
+  (pattern (eq? head 'CardBasis))
+  (source-lines 1032 1035)
+  (source-sha1 "6104a2ab931ffad7bfa008234062ea02fc544be1")
+  (class semantic-clause)
+  (reason "This branch types plural-basis cardinality."))
+ (branch
+  (id "B.infer-application.1058ba945b")
+  (function infer-application)
+  (pattern (eq? head 'Distrib))
+  (source-lines 1036 1046)
+  (source-sha1 "bd74e1f1f582501eeb8d0f0207b9861b61cbefc5")
+  (class semantic-clause)
+  (reason "This branch types distribution over a matching plural reference."))
+ (branch
+  (id "B.infer-application.4a46f40d6d")
+  (function infer-application)
+  (pattern (eq? head 'CoveredBy))
+  (source-lines 1047 1060)
+  (source-sha1 "80ace6b585b548061b208a5750033f61ccb4503d")
+  (class semantic-clause)
+  (reason "This branch types the pure unit-cover relation."))
+ (branch
+  (id "B.infer-application.fbc2736adc")
+  (function infer-application)
+  (pattern (member head '(Exactly AtLeast MoreThan AtMost FewerThan)))
+  (source-lines 1061 1092)
+  (source-sha1 "cd7d034bb405ff4178e302cff467215585b9d54b")
+  (class semantic-clause)
+  (reason
+   "This branch types counted witness quantifiers and their export effects."))
+ (branch
+  (id "B.infer-application.62993a9be6")
+  (function infer-application)
+  (pattern (member head '(Some No)))
+  (source-lines 1093 1114)
+  (source-sha1 "0225d9f11f01635fc91332b2a4e2520bebb732cb")
+  (class semantic-clause)
+  (reason
+   "This branch types uncounted witness quantifiers and their export effects."))
+ (branch
+  (id "B.infer-application.32e6d797b9")
+  (function infer-application)
+  (pattern (eq? head 'Every))
+  (source-lines 1115 1126)
+  (source-sha1 "99833bf8b06538399ebd0cabe9e5d6cc4a99c18a")
+  (class semantic-clause)
+  (reason "This branch types member-level universal quantification."))
+ (branch
+  (id "B.infer-application.3bf7014637")
+  (function infer-application)
+  (pattern (member head '(GlobalExactly Most)))
+  (source-lines 1127 1152)
+  (source-sha1 "317a4301d5e303d1f1c319e30414400bdf330820")
+  (class semantic-clause)
+  (reason
+   "This branch types pure global cardinal quantification and its definedness obligation."))
+ (branch
+  (id "B.infer-application.9c64e02ab5")
+  (function infer-application)
+  (pattern (eq? head 'Generic))
+  (source-lines 1153 1170)
+  (source-sha1 "0b4302ff0c835bc1707cf4320c2251050fdd904e")
+  (class semantic-clause)
+  (reason
+   "This branch types generic quantification over compatible properties."))
+ (branch
+  (id "B.infer-application.7e59ad1f80")
+  (function infer-application)
+  (pattern (eq? head 'Reciprocate))
+  (source-lines 1171 1173)
+  (source-sha1 "6a78f51e346636d6328314f4bf7bfd756d82ae33")
+  (class semantic-clause)
+  (reason "This branch types reciprocal Content."))
+ (branch
+  (id "B.infer-application.e0a5f1cd29")
+  (function infer-application)
+  (pattern (eq? head 'JoiPred))
+  (source-lines 1174 1194)
+  (source-sha1 "0fa55931fe3d4d23d4e196f619850eb4c93688b0")
+  (class semantic-clause)
+  (reason "This branch types contribution-basis predicate composition."))
+ (branch
+  (id "B.infer-application.2d70998349")
+  (function infer-application)
+  (pattern (eq? head 'MeiRel))
+  (source-lines 1195 1205)
+  (source-sha1 "91f9dc030acb17e803462e399c142b596e8fdf78")
+  (class semantic-clause)
+  (reason
+   "This branch types positive MEI relations while its zero case remains an external gap that B must split."))
+ (branch
+  (id "B.infer-application.a2b9314ec4")
+  (function infer-application)
+  (pattern (member head '(DuhuRel NiRel SuhuRel JeiRel)))
+  (source-lines 1206 1208)
+  (source-sha1 "3dc346f3d2ae87a842a10661e146cf78982845c4")
+  (class semantic-clause)
+  (reason "This branch types the abstraction-relation family."))
+ (branch
+  (id "B.infer-application.ffa846a1d1")
+  (function infer-application)
+  (pattern (member head '(Tanru Scalar Grade JaiRaise)))
+  (source-lines 1209 1211)
+  (source-sha1 "7bd1279485a2b3509ceaad998f6104950fb208d9")
+  (class semantic-clause)
+  (reason "This branch types derived predicate-term formers."))
+ (branch
+  (id "B.infer-application.11fdbcad2d")
+  (function infer-application)
+  (pattern (eq? head 'LocutionOf))
+  (source-lines 1212 1220)
+  (source-sha1 "1b86c8fdc9cb97f15bf86a65fc0549ef447ec4e7")
+  (class semantic-clause)
+  (reason "This branch types locution anchoring."))
+ (branch
+  (id "B.infer-application.ed3af7d0b4")
+  (function infer-application)
+  (pattern (member head '(SpeakerDescribes SpeakerDescribesUnaddressed)))
+  (source-lines 1221 1250)
+  (source-sha1 "c110ed6b023041417e4d7d3f710345c87f6408a5")
+  (class semantic-clause)
+  (reason
+   "This branch types speaker-description properties over compatible references."))
+ (branch
+  (id "B.infer-application.bf9a4573c8")
+  (function infer-application)
+  (pattern
+   (member
+    head
+    '(Named
+      Realizes
+      SpeakerOf
+      EvidentialBasis
+      Happiness
+      Unhappiness
+      Desire
+      AdmissibleCutoff
+      AdmissibleThreshold
+      MetalinguisticallyDefective
+      Contrast
+      JaiRoleAdmissible
+      CompleteGunmaAt
+      GunmaAt
+      Aggregate
+      CanonicalAggregateAt
+      CoRef)))
+  (source-lines 1251 1257)
+  (source-sha1 "4412711eeb72983a0d45913a848283851ae1d44d")
+  (class semantic-clause)
+  (reason
+   "This grouped branch assigns Content to individually ledgered semantic formers that B must split."))
+ (branch
+  (id "B.infer-application.8259335bcd")
+  (function infer-application)
+  (pattern (eq? head 'components_κ))
+  (source-lines 1258 1270)
+  (source-sha1 "1e2f88908b2b72b80afd9d93902dfa4ea9070ddc")
+  (class semantic-clause)
+  (reason
+   "This branch types partial component projection and its definedness obligation."))
+ (branch
+  (id "B.infer-application.c394c81546")
+  (function infer-application)
+  (pattern (eq? head 'List))
+  (source-lines 1271 1276)
+  (source-sha1 "6dd15f98027c6fa51558ba19bdaa0f7caae19526")
+  (class semantic-clause)
+  (reason "This branch types homogeneous list construction."))
+ (branch
+  (id "B.infer-application.7b73cf54c8")
+  (function infer-application)
+  (pattern (member head '(Utterance Sign)))
+  (source-lines 1277 1306)
+  (source-sha1 "573e48088de779bcdec0fe2180cda330f976c10f")
+  (class semantic-clause)
+  (reason
+   "This branch types pure entry-notation properties over token references."))
+ (branch
+  (id "B.infer-application.6cf3db89ff")
+  (function infer-application)
+  (pattern (eq? head 'At))
+  (source-lines 1307 1333)
+  (source-sha1 "6adf40ab6ebd309e04462374bf266d279e06f6c6")
+  (class semantic-clause)
+  (reason "This branch types labelled row filling."))
+ (branch
+  (id "B.infer-application.c993a8a196")
+  (function infer-application)
+  (pattern (eq? head 'DropPlace))
+  (source-lines 1334 1353)
+  (source-sha1 "0f1df23136557caa108a70287412a8945699324b")
+  (class semantic-clause)
+  (reason "This branch types labelled row deletion."))
+ (branch
+  (id "B.infer-application.9673f48b69")
+  (function infer-application)
+  (pattern (member head '(OpaqueQuote WordSign NameSign LetteralSign)))
+  (source-lines 1354 1365)
+  (source-sha1 "8d3c083fac21197bda772694183f822598aacc1c")
+  (class semantic-clause)
+  (reason "This branch types atomic sign constructors from Text."))
+ (branch
+  (id "B.infer-application.ac1fbaa0d4")
+  (function infer-application)
+  (pattern (eq? head 'SentenceSign))
+  (source-lines 1366 1371)
+  (source-sha1 "52228cc5da4c22b32fb9fd4abaeaa299eb57fe6f")
+  (class semantic-clause)
+  (reason
+   "This branch types sentence signs while suspending Content effects."))
+ (branch
+  (id "B.infer-application.2571a0349d")
+  (function infer-application)
+  (pattern (eq? head 'StructuredQuote))
+  (source-lines 1372 1378)
+  (source-sha1 "d629d40f8b62e7352da82466c036b5928b6ac840")
+  (class semantic-clause)
+  (reason
+   "This branch types structured quotation over an utterance-token property."))
+ (branch
+  (id "B.infer-application.709b19b5b1")
+  (function infer-application)
+  (pattern
+   (member head '(InterpretContent RealizedContent AmountValue ZipWith)))
+  (source-lines 1379 1386)
+  (source-sha1 "c8a505c48e1c49c8d8cda1453a063ee59433cdd5")
+  (class semantic-clause)
+  (reason
+   "This grouped branch assigns the documented result types to four semantic formers that B must split."))
+ (branch
+  (id "B.infer-application.6d8fa6ea04")
+  (function infer-application)
+  (pattern (inventory-row inv head))
+  (source-lines 1387 1388)
+  (source-sha1 "cae25b5075c7f4d9c55fea3e832ce417e80b4432")
+  (class auxiliary)
+  (reason
+   "This branch dispatches declared lexical rows to the separately classified lexical application rule."))
+ (branch
+  (id "B.infer-application.6ee7fcc327")
+  (function infer-application)
+  (pattern (and (symbol? head) (string-prefix? (symbol->string head) "$")))
+  (source-lines 1389 1413)
+  (source-sha1 "be25482911f30622a5133b5cabe4337623d7343f")
+  (class semantic-clause)
+  (reason
+   "This branch types application of bound functions, clause contents, and predicate terms."))
+ (branch
+  (id "B.infer-application.2a55186a97")
+  (function infer-application)
+  (pattern else)
+  (source-lines 1414 1417)
+  (source-sha1 "672bf8081ea24a54772e07f82ae6196b2ea18eca")
+  (class external-gap-or-diagnostic)
+  (reason
+   "This fallback emits an external unknown-form gap and must not become a semantic judgment clause."))
+ (branch
+  (id "B.infer-atom.8bc9025d28")
+  (function infer-atom)
+  (pattern (number? value))
+  (source-lines 422 422)
+  (source-sha1 "07aba0d524876b64b6b67128cea7eb1fb5f2934b")
+  (class semantic-clause)
+  (reason "This branch types numeric literals as Natural."))
+ (branch
+  (id "B.infer-atom.ce74e4d595")
+  (function infer-atom)
+  (pattern (string? value))
+  (source-lines 423 423)
+  (source-sha1 "9d40e732afc45990a3a6367b07020db9c94ac71c")
+  (class semantic-clause)
+  (reason "This branch types string literals as Text."))
+ (branch
+  (id "B.infer-atom.ab531e0313")
+  (function infer-atom)
+  (pattern (and (symbol? value) (string-prefix? (symbol->string value) "$")))
+  (source-lines 424 427)
+  (source-sha1 "95b81a4dc9f0721b442510c3199ad6347ed8cb2e")
+  (class semantic-clause)
+  (reason "This branch types variables by environment lookup."))
+ (branch
+  (id "B.infer-atom.7e75d87b10")
+  (function infer-atom)
+  (pattern (and (symbol? value) (string-prefix? (symbol->string value) ":")))
+  (source-lines 428 429)
+  (source-sha1 "db1401daa727858c8fbc184085370429dd1fe855")
+  (class auxiliary)
+  (reason
+   "This branch recognizes the checker adapter's label-token notation."))
+ (branch
+  (id "B.infer-atom.1b4c787ae8")
+  (function infer-atom)
+  (pattern (member value '(MiAOthers MaAOthers DoOOthers)))
+  (source-lines 430 437)
+  (source-sha1 "60d7bafea1a8534eb89b0c0394d4a68263414982")
+  (class semantic-clause)
+  (reason "This branch types projectively defined participant pluralities."))
+ (branch
+  (id "B.infer-atom.5f8bc73861")
+  (function infer-atom)
+  (pattern (hash-has-key? (inventory-constants inv) value))
+  (source-lines 438 440)
+  (source-sha1 "158c52ccb6263d91274fd484a8ca4bb2c850f146")
+  (class auxiliary)
+  (reason
+   "This branch retrieves a declared constant type from the adapter-supplied inventory."))
+ (branch
+  (id "B.infer-atom.1ace338ee9")
+  (function infer-atom)
+  (pattern (inventory-row inv value))
+  (source-lines 441 442)
+  (source-sha1 "335ed687187e9f735704d7827b62077746177fe7")
+  (class auxiliary)
+  (reason
+   "This branch retrieves a declared lexical row from the adapter-supplied inventory."))
+ (branch
+  (id "B.infer-atom.ce9b6fda22")
+  (function infer-atom)
+  (pattern (inventory-name-declared? inv value))
+  (source-lines 443 444)
+  (source-sha1 "fb249055176e46d4795f9a144f69dd4d7690cfa8")
+  (class auxiliary)
+  (reason
+   "This branch recognizes other declared form names through the inventory."))
+ (branch
+  (id "B.infer-atom.a73027c966")
+  (function infer-atom)
+  (pattern else)
+  (source-lines 445 447)
+  (source-sha1 "f5bc4460ceca78b55f9674292bbcfb1f9c5a851d")
+  (class external-gap-or-diagnostic)
+  (reason
+   "This fallback emits an undeclared-atom gap and must not become a semantic judgment clause."))
+ (branch
+  (id "B.infer-bind.d2472c4d61")
+  (function infer-bind)
+  (pattern entry)
+  (source-lines 598 649)
+  (source-sha1 "50de211666a45c41c1f6f066050e635ec34d19fa")
+  (class semantic-clause)
+  (reason
+   "This function implements expected-type-directed, left-to-right computation binding."))
+ (branch
+  (id "B.infer-body.a875a325a5")
+  (function infer-body)
+  (pattern entry)
+  (source-lines 449 450)
+  (source-sha1 "4822d2d65f0e0f1b4087bb3b7bfa2e16053abf02")
+  (class auxiliary)
+  (reason "This helper removes display braces and delegates to inference."))
+ (branch
+  (id "B.infer-core.c0a70a27c2")
+  (function infer-core)
+  (pattern (core-atom? node))
+  (source-lines 1426 1426)
+  (source-sha1 "4196cda9cf5c9cb87801f4b404842c13725d4833")
+  (class auxiliary)
+  (reason "This root branch dispatches atoms to the classified atom rules."))
+ (branch
+  (id "B.infer-core.6c46012b17")
+  (function infer-core)
+  (pattern else)
+  (source-lines 1427 1427)
+  (source-sha1 "278331bbd1f846ed8a0152a59c9e24c73061cc8f")
+  (class auxiliary)
+  (reason
+   "This root branch dispatches compound terms to the classified application rules."))
+ (branch
+  (id "B.infer-lambda.f1215811eb")
+  (function infer-lambda)
+  (pattern entry)
+  (source-lines 452 460)
+  (source-sha1 "6ed4a69365a757d5e58d65e50fae9d15230d0229")
+  (class semantic-clause)
+  (reason
+   "This function types direct lambdas and selects Fn versus EFn from body effects."))
+ (branch
+  (id "B.infer-let.2b0457eb02")
+  (function infer-let)
+  (pattern entry)
+  (source-lines 462 471)
+  (source-sha1 "fb56e5d45695c885d1bf7649a1865c4752d188f3")
+  (class semantic-clause)
+  (reason "This function types pure direct Let binding."))
+ (branch
+  (id "B.infer-lexical-application.0da2d391c2")
+  (function infer-lexical-application)
+  (pattern entry)
+  (source-lines 651 677)
+  (source-sha1 "264d4e5f679f335533a43c057e6c2eb71a0b8cad")
+  (class semantic-clause)
+  (reason "This function types lexical row filling and saturation."))
+ (branch
+  (id "B.infer-logical.3ed044b854")
+  (function infer-logical)
+  (pattern entry)
+  (source-lines 748 752)
+  (source-sha1 "31dc6972d51182255f865c44dcd5b1e1242b38b8")
+  (class semantic-clause)
+  (reason "This function types Content-valued logical operations."))
+ (branch
+  (id "B.infer-predterm-application.60a142ba82")
+  (function infer-predterm-application)
+  (pattern `(PredTerm ,row ,filled ,event-already?))
+  (source-lines 726 739)
+  (source-sha1 "857a2db1974510682a92ccdb0622819dde664a34")
+  (class semantic-clause)
+  (reason
+   "This branch types application of an explicitly saturated-state predicate term."))
+ (branch
+  (id "B.infer-predterm-application.8a1532e2f6")
+  (function infer-predterm-application)
+  (pattern `(PredTerm ,row))
+  (source-lines 740 742)
+  (source-sha1 "281b08c9eaf0dab050795a48f309dde709e2c79a")
+  (class auxiliary)
+  (reason
+   "This branch normalizes a short predicate-term type into the full application rule."))
+ (branch
+  (id "B.infer-predterm-application.01d739af63")
+  (function infer-predterm-application)
+  (pattern `(PredTerm ,row ,filled))
+  (source-lines 743 745)
+  (source-sha1 "4d009a882fd27064f387db3bf571dab45da2a403")
+  (class auxiliary)
+  (reason
+   "This branch normalizes a partially filled predicate-term type into the full application rule."))
+ (branch
+  (id "B.infer-predterm-application.a90e55b334")
+  (function infer-predterm-application)
+  (pattern other)
+  (source-lines 746 746)
+  (source-sha1 "0d6001b95188200ae6888a542468055ca74f35c5")
+  (class external-gap-or-diagnostic)
+  (reason
+   "This branch reports a non-predicate application and contributes no positive typing conclusion."))
+ (branch
+  (id "B.infer-quantifier.1716ec1069")
+  (function infer-quantifier)
+  (pattern entry)
+  (source-lines 754 767)
+  (source-sha1 "87fa12dc2610f4631bd334e8dff34c43b4a0faf4")
+  (class semantic-clause)
+  (reason
+   "This function types first-order Content-valued quantifier properties."))
+ (branch
+  (id "B.infer-with-expected.e97d779317")
+  (function infer-with-expected)
+  (pattern (eq? head 'Context))
+  (source-lines 482 486)
+  (source-sha1 "5db85f5e8e7e772cee6b62dd274603b1141d5ce3")
+  (class semantic-clause)
+  (reason
+   "This branch checks Context against an expected reference-computation type."))
+ (branch
+  (id "B.infer-with-expected.47a9be9597")
+  (function infer-with-expected)
+  (pattern (eq? head 'Vague))
+  (source-lines 487 491)
+  (source-sha1 "bade96c0fedf5569a06311f97a2bcc9bb3d7bfdc")
+  (class semantic-clause)
+  (reason
+   "This branch checks Vague against an expected reference-computation type."))
+ (branch
+  (id "B.infer-with-expected.e1c62efca4")
+  (function infer-with-expected)
+  (pattern (eq? head 'Refer))
+  (source-lines 492 523)
+  (source-sha1 "7ed63d7d2c2dd0d1055ae6dde40684f8f8ac86dd")
+  (class semantic-clause)
+  (reason
+   "This branch checks referential selection against its expected member type."))
+ (branch
+  (id "B.infer-with-expected.7a5e253d43")
+  (function infer-with-expected)
+  (pattern
+   (member head '(SelectExactly SelectAtLeast SelectSome SelectAllBut)))
+  (source-lines 524 550)
+  (source-sha1 "ff1547f55126ace62b2591ad521e76e4317dd1c2")
+  (class semantic-clause)
+  (reason
+   "This branch checks pure selection restrictions against an expected witness type."))
+ (branch
+  (id "B.infer-with-expected.8396a62195")
+  (function infer-with-expected)
+  (pattern (eq? head 'Local))
+  (source-lines 551 558)
+  (source-sha1 "41527e4da1946be58b438aa3cf3de8fa0ab95b40")
+  (class semantic-clause)
+  (reason
+   "This branch checks Local at the operand's expected reference-computation type."))
+ (branch
+  (id "B.infer-with-expected.e9b32c019b")
+  (function infer-with-expected)
+  (pattern (eq? head 'Massify))
+  (source-lines 559 573)
+  (source-sha1 "0853637f867200c3ba49aa90f64b8617b60f25e1")
+  (class semantic-clause)
+  (reason "This branch checks Massify using the expected group member type."))
+ (branch
+  (id "B.infer-with-expected.72cabc6dd9")
+  (function infer-with-expected)
+  (pattern (eq? head 'JoiGroup))
+  (source-lines 574 592)
+  (source-sha1 "c7765e8bbeae136c6d5fb2bb9f47e538a5c806a6")
+  (class semantic-clause)
+  (reason "This branch checks JoiGroup using the expected group member type."))
+ (branch
+  (id "B.infer-with-expected.04bdc5c665")
+  (function infer-with-expected)
+  (pattern else)
+  (source-lines 593 596)
+  (source-sha1 "ddd890904a1397c869499e11539131cd835f9278")
+  (class auxiliary)
+  (reason
+   "This fallback delegates synthesis and then checks compatibility with the expected type.")))
