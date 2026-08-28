@@ -1565,9 +1565,13 @@ genuinely fought:
   nothing said whether a description bound in another place sits outside an
   in-situ quantifier or inside its nuclear scope. Adopted (#62, 2026-08-28):
   descriptions outside, quantifiers over the body in surface order — the
+  class of quantified sumti taken by lowering result (default witness-set
+  PA, `ro`, inner `no`, thresholds, the marked global reading), termsets
+  excepted (L5.3) — the
   reading xorlo already gives when the description is the sole term, since
   `lo` introduces one referent at its own site and is no quantifier. The
-  alternative, full surface interleaving (CLL 16's `lo` = `su'o lo`), would
+  alternative, full surface interleaving (original CLL 16.7's `lo` =
+  `su'o lo`), would
   make the same `lo mlatu` mean different things depending on what precedes
   it and contradict the gadri baseline; a speaker who wants the co-varying
   reading says `su'o mlatu` or restricts the quantifier. Cost: the pre-xorlo

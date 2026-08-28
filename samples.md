@@ -1221,7 +1221,9 @@ no baseline constructor for quoted core notation.
 A description bound in one place and a quantifier in another do not
 interleave: the description's `Bind` is formed at clause level in source
 order (spec §4.1), and the quantifier applies to the clause body (spec §11
-L5.30, pin P41). Two quantifiers scope in surface order.
+L5.30, pin P41). Two quantifiers scope in surface order, whether they lower
+to a selection `Bind` (`su'o`, a bare PA) or to a Content former (`ro`,
+inner `no`, a threshold, the marked global reading).
 
 ```lisp
 ; ro gerku cu tavla lo mlatu — the cats are one contextual plurality;
