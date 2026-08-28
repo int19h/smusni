@@ -12,11 +12,11 @@
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
 (check-equal? (lowering-manifest-rule-count manifest) 46)
-(check-equal? (length (lowering-manifest-candidates manifest)) 26)
+(check-equal? (length (lowering-manifest-candidates manifest)) 27)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
    (length (lowering-candidate-cases candidate)))
- 29)
+ 30)
 
 (define rules (fragment-rule-ids manifest))
 (check-equal? (length rules) 46)
@@ -191,6 +191,12 @@
         (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
     (Assert (Close (klama $alis))))
  '("L3.3"))
+(check-lowers
+ "samples.md" 45
+ '(Assert
+   (No (λ ($x :: Entity) (prenu $x))
+       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+ '("L3.10"))
 (check-lowers
  "samples.md" 27
  '(Bind ($basis :: DecompositionBasis (Group Entity) Entity)
@@ -578,7 +584,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              29)
+              30)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -593,8 +599,8 @@
                             'out-of-fragment))
                      reports)
               0)
-(check-equal? (length reports) 29)
-(check-equal? (length fence-reports) 26)
+(check-equal? (length reports) 30)
+(check-equal? (length fence-reports) 27)
 (define fence-17-report
   (findf (lambda (report)
            (and (string=? (fence-report-source report) "samples.md")

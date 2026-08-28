@@ -236,10 +236,15 @@ discovery-only and is never reported as a match or accepted as promotion
 evidence. The command writes no fixture and is not part of `tools/check-smusni`.
 
 The report prints every case, the first refusal where applicable, verified vs
-skeleton totals, formed coverage before/after the increment, promoted verified
-candidates, and the exhaustive disposition of the 17 starting rule IDs.
-Rule leads come from parse constructs/loci; focal citations are printed only as
-a cross-check. M4 increment 2 promotes only specimens with reviewed eight-field
-RR: currently samples #27 (L5.22 constitution-bearing `joi`). Samples #45 keeps
-surface `xo`; its separate prose answer `no` is not an RR reading and therefore
-cannot promote L3.10. The generic explicit inner-zero clause remains tested.
+skeleton totals, parse-error count and keys, formed coverage before/after the
+increment, promoted verified candidates, and the exhaustive disposition of the
+17 starting rule IDs. A parse error is never absence evidence: while any remain,
+every no-lead disposition is explicitly limited to parsed cases.
+
+Rule leads come from parse constructs and grammatical loci; focal citations are
+printed only as a cross-check. Direct classifier tests supply a minimal positive
+parse for every starting rule and exercise wrong-locus and quoted-material
+negatives. M4 increment 2 promotes only specimens with reviewed eight-field RR:
+samples #27 (L5.22 constitution-bearing `joi`) and #45 (L3.10 explicit inner
+zero). The latter consumes the parsed `no` quantifier itself; question-answer
+substitution is explanatory context, not an RR reading or fixture shortcut.
