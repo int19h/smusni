@@ -795,6 +795,90 @@
                    'sumti (hasheq 'ProSumti
                                   (synthetic-terminal 'Cmavo "ti" 14))))))
 
+;; Increment-2 structural lead classifier: one minimal positive per exhaustive
+;; rule id, with locus-sensitive connectives and no reliance on citations.
+(define (lead-cmavo word [start 20])
+  (synthetic-terminal 'Cmavo word start))
+(define (minimal-description gadri #:quantifier [quantifier #f]
+                             #:possessor? [possessor? #f])
+  (hasheq
+   'DescriptorWithGadriSumti
+   (hasheq
+    'description (lead-cmavo gadri)
+    'tail
+    (hasheq
+     'leading_tail_elements
+     (if possessor? (hasheq 'tail_sumti (synthetic-pro "mi" 21)) #hasheq())
+     'tail
+     (hasheq
+      (if quantifier 'QuantifierRelationDescriptionTail
+          'RelationDescriptionTail)
+      (if quantifier
+          (hasheq 'quantifier
+                  (hasheq 'PaRunQuantifier (lead-cmavo quantifier 22)))
+          #hasheq()))))))
+
+(define structural-lead-positives
+  (list
+   (cons "L1.7" (lead-cmavo "fi'a"))
+   (cons "L3.10" (minimal-description "lo" #:quantifier "no"))
+   (cons "L3.11" (minimal-description "le" #:possessor? #t))
+   (cons "L3.12" (minimal-description "lei"))
+   (cons "L3.13" (minimal-description "lai"))
+   (cons "L5.4" (lead-cmavo "da'a"))
+   (cons "L5.5" (lead-cmavo "bu'a"))
+   (cons "L5.6" (lead-cmavo "cei"))
+   (cons "L5.10" (lead-cmavo "ja'a"))
+   (cons "L5.13"
+         (hasheq 'IStatementConnection
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
+   (cons "L5.15"
+         (hasheq 'IStatementConnection (lead-cmavo "bo")))
+   (cons "L5.16"
+         (hasheq 'CoSelbri
+                 (hasheq 'JekConnective (lead-cmavo "je"))))
+   (cons "L5.17"
+         (hasheq 'CoSelbri
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
+   (cons "L5.19" (lead-cmavo "bi'o"))
+   (cons "L5.22" (hasheq 'JoiConnective (lead-cmavo "joi")))
+   (cons "L5.23"
+         (hasheq 'chain
+                 (list (hasheq 'JoiConnective (lead-cmavo "joi" 23))
+                       (hasheq 'JoiConnective (lead-cmavo "joi" 24)))))
+   (cons "L5.27" (lead-cmavo "ku'a"))))
+(define increment-2-rule-ids
+  '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
+    "L5.4" "L5.5" "L5.6" "L5.10" "L5.13" "L5.15" "L5.16"
+    "L5.17" "L5.19" "L5.22" "L5.23" "L5.27"))
+(check-equal? (sort (map car structural-lead-positives) string<?)
+              (sort increment-2-rule-ids string<?))
+(for ([entry (in-list structural-lead-positives)])
+  (check-not-false
+   (member (car entry) (structural-rule-leads (cdr entry)))
+   (format "classifier positive for ~a" (car entry))))
+
+;; Wrong loci and quoted material do not become structural leads.
+(define i-jek
+  (hasheq 'IStatementConnection
+          (hasheq 'JekConnective (lead-cmavo "je" 25))))
+(check-false (member "L5.16" (structural-rule-leads i-jek)))
+(define i-joi
+  (hasheq 'IStatementConnection
+          (hasheq 'JoiConnective (lead-cmavo "joi" 26))))
+(check-false (member "L5.17" (structural-rule-leads i-joi)))
+(check-false (member "L5.22" (structural-rule-leads i-joi)))
+(check-false (member "L5.15" (structural-rule-leads (lead-cmavo "bo" 27))))
+(define quoted-fiha
+  (hasheq 'QuotedSumti
+          (hasheq 'TextQuote (lead-cmavo "fi'a" 28))))
+(check-false (member "L1.7" (structural-rule-leads quoted-fiha)))
+(define se-joi
+  (hasheq 'sumti
+          (list (lead-cmavo "se" 29)
+                (hasheq 'JoiConnective (lead-cmavo "joi" 30)))))
+(check-not-false (member "L5.23" (structural-rule-leads se-joi)))
+
 ;; A handled bridi must account for every direct semantic term. Adding a
 ;; second term beside the formerly sole description is refused, not silently
 ;; converted to a tavla/blabi application with the description erased.

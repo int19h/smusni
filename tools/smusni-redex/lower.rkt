@@ -43,6 +43,7 @@
          parse-case-tokens
          parse-case-variants
          parse-case->sigma
+         structural-rule-leads
          normalize-core
          redex-alpha-equivalent?
          site-signatures
@@ -3553,7 +3554,13 @@
 
 (define (structural-rule-leads raw)
   (define leads (mutable-set))
-  (define words (terminal-texts raw 'Cmavo))
+  (define words
+    (for/list ([candidate
+                (in-list (semantic-node-candidates raw (seteq 'Cmavo)))]
+               #:unless (for/or ([key (in-list (third candidate))])
+                          (member key '(QuotedSumti TextQuote RawQuote
+                                                   ZoiQuote LohuQuote))))
+      (unstress (hash-ref (second candidate) 'phonemes ""))))
   (define (lead! rule) (set-add! leads rule))
   (when (member "fi'a" words) (lead! "L1.7"))
   (for ([descriptor
@@ -3766,6 +3773,11 @@
                   (structural-rule-leads raw)))))
          (set! records (cons record records)))]))
   (set! records (reverse records))
+  (define parse-error-keys
+    (for/list ([record (in-list records)]
+               #:when (eq? (probe-record-disposition record) 'parse-error))
+      (format "~a#~a.~a" (probe-record-source record)
+              (probe-record-ordinal record) (probe-record-index record))))
   (define verified-formed
     (for*/set ([record (in-list records)]
                #:when (and (eq? (probe-record-provenance record) 'verified)
@@ -3793,6 +3805,10 @@
             (count (lambda (record)
                      (eq? (probe-record-provenance record)
                           'unverified-skeleton)) records))
+    (printf "probe-all unparsed: count=~a keys=~a; these remain unresolved and are never absence evidence\n"
+            (length parse-error-keys)
+            (if (null? parse-error-keys) "none"
+                (string-join parse-error-keys ",")))
     (printf "formed before increment 2: 29/46; formed after current tree: ~a/46; promoted=~a\n"
             (set-count verified-formed)
             (if (null? promoted) "none" (string-join promoted ",")))
@@ -3817,7 +3833,12 @@
                          (if (null? citation-hits) "none"
                              (string-join citation-hits ",")))]
                 [(null? structural-hits)
-                 (format "no structural lead in the corpus; citations=~a"
+                 (format "~a; citations=~a"
+                         (if (null? parse-error-keys)
+                             "no structural lead in the corpus"
+                             (format
+                              "no structural lead among parsed cases; unresolved parse-error keys=~a"
+                              (string-join parse-error-keys ",")))
                          (if (null? citation-hits) "none"
                              (string-join citation-hits ",")))]
                 [else
