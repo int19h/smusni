@@ -145,6 +145,12 @@ given, else on the work queued for your model in the tracker — and say which.
   every pending message and its reply ancestors, and run the validator before
   announcing the mailbox clear. Compose with `new`, publish with `publish`,
   acknowledge with `ack`; never hand-write timestamps or move files.
+- A session explicitly placed in inbox-wait mode may finish its end-of-turn
+  status check by running `exchange.py wait --actor <id>` in the foreground.
+  The command returns one debounced batch or one empty interval. After the
+  first consecutive `WAIT_EMPTY`, re-arm it once; after the second, leave wait
+  mode and yield. Any `WAIT_BATCH` resets the empty count. Errors and human
+  interruption do not count, and leaving wait mode does not retire the session.
 - Correct a message with a new `supersedes` message; respond with `in_reply_to`.
   Acknowledge only after the disposition is durably captured in a reply, issue,
   or short explicit explanation; acknowledgement never means agreement or

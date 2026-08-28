@@ -28,6 +28,26 @@ model (`<slug>_<generation>[.<n>]`), generations, and full-pass reviews.
   an exported variable between commands, so spell the actor on every helper
   call: `SMUSNI_EXCHANGE_ACTOR=<id> python3 tools/review-exchange/exchange.py … --actor <id>`.
 
+## Parking a terminal session on its inbox
+
+When the human partner explicitly puts a session into inbox-wait mode, the
+session completes its end-of-turn status check and runs this as a foreground
+tool call:
+
+```sh
+python3 tools/review-exchange/exchange.py wait --actor <id>
+```
+
+It wakes after a five-minute quiet period following one or more new direct
+messages, or returns `WAIT_EMPTY` after five idle minutes. Use
+`--include-broadcasts` when broadcasts should also wake it; use
+`--idle-timeout` and `--debounce` to change the two durations. After one empty
+return, invoke `wait` once more. After two consecutive empty returns, leave
+wait mode and yield; a nonempty batch resets that count. Errors and
+interruptions do not count, and leaving wait mode does not retire the session.
+The complete timing, baseline, batching, and output contract is in
+[`PROTOCOL.md`](PROTOCOL.md#opt-in-inbox-wait-mode).
+
 ## Several sessions of one model
 
 `join` hands out `fable_1`, then `fable_1.1`, `fable_1.2`, … in the current
