@@ -33,6 +33,9 @@ client = "kimi"
 model = "kimi-code/k3"
 broadcast_recipient = true
 
+# Qwen has the smallest token quota: it is kept out of the regular code-review
+# rotation and reserved for full-read milestones (human partner, 2026-08-28).
+# The rotation is Fable, Codex, Kimi, and Gemini.
 [models.qwen]
 active = true
 display_name = "Qwen 3.8 Max"
