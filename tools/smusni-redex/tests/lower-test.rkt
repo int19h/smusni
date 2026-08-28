@@ -1,5 +1,6 @@
 #lang racket
 
+(require json)
 (require rackunit
          racket/list
          racket/set
@@ -881,9 +882,25 @@
 (check-false (member "L1.7" (structural-rule-leads quoted-fiha)))
 (define se-joi
   (hasheq 'sumti
-          (list (lead-cmavo "se" 29)
-                (hasheq 'JoiConnective (lead-cmavo "joi" 30)))))
+          (hasheq 'JoiConnective
+                  (list (lead-cmavo "se" 29)
+                        (lead-cmavo "joi" 30)))))
 (check-not-false (member "L5.23" (structural-rule-leads se-joi)))
+
+(define (real-leads text)
+  (define raw
+    (with-handlers ([exn:fail? (lambda (_) #hasheq())])
+      (call-with-input-string
+       (with-output-to-string
+         (lambda () (system (string-append "jbotci gentufa --format json \"" text "\""))))
+       read-json)))
+  (structural-rule-leads raw))
+
+(check-false (member "L3.10" (real-leads "lu lo no prenu cu jmaji li'u")))
+(check-false (member "L5.22" (real-leads "lu mi joi do li'u")))
+(check-false (member "L5.23" (real-leads "se klama mi .i mi joi do")))
+(check-false (member "L5.23" (real-leads "mi joi do .i ti joi ta")))
+(check-not-false (member "L5.23" (real-leads "mi joi do joi ti")))
 
 ;; A handled bridi must account for every direct semantic term. Adding a
 ;; second term beside the formerly sole description is refused, not silently
