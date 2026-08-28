@@ -82,6 +82,8 @@
     "mi melbi joi xamgu"
     "mi klama .i ba bo do stali"
     "mi klama .i je bo do stali"
+    "mi klama .i je ba bo do stali"
+    "mi klama .i bo do stali"
     "lo nu lo no gerku cu bajra cu fasnu"
     "mi melbi je xamgu"
     "mi djuno lo du'u do klama .i je ti stali"))
@@ -3733,14 +3735,21 @@
   (define (direct-i-tag-bo? tail)
     (define connective
       (and (hash? tail) (hash-ref tail 'connective (lambda () #f))))
-    (and (hash? connective)
-         (for/or ([(tag node) (in-hash connective)]
-                  #:when (member tag '(ITagBoStatementConnective
-                                       IStandardStatementConnective)))
-           (and (hash? node)
-                (or (hash-has-key? node 'bo)
-                    (let ([tag-bo (hash-ref node 'tag_bo (lambda () #f))])
-                      (and (list? tag-bo) (pair? tag-bo))))))))
+    (and
+     (hash? connective)
+     (for/or ([(tag node) (in-hash connective)])
+       (and
+        (hash? node)
+        (case tag
+          [(ITagBoStatementConnective)
+           (and (hash-has-key? node 'tense_modal)
+                (hash-has-key? node 'bo))]
+          [(IStandardStatementConnective)
+           (define tag-bo (hash-ref node 'tag_bo (lambda () #f)))
+           ;; Plain connective+bo has only the grouping `bo` element. A
+           ;; semantic TAG relation requires at least one preceding element.
+           (and (list? tag-bo) (>= (length tag-bo) 2))]
+          [else #f])))))
   (when (for/or ([candidate
                   (in-list
                    (all-candidates (seteq 'SimpleIConnectiveStatementTail)))]

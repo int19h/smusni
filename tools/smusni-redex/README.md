@@ -250,8 +250,9 @@ printed only as a cross-check. Every detector excludes quoted ancestry, and an
 L5.23 chain requires repeated `joi` nodes at one parent locus or `se` inside the
 same `JoiConnective`; unrelated statements cannot combine into a lead. JOI and
 JEK attribution uses the nearest recognized grammatical locus, `.i TAG bo`
-inspects only the direct I-tail connective, and L3.10 inspects only the matched
-description tail's direct quantifier. The lowering gate compares classifier
+inspects only the direct I-tail connective and requires a tag before grouping
+`bo`, and L3.10 inspects only the matched description tail's direct quantifier.
+The lowering gate compares classifier
 leads with derivation rules on every verified fixture parse and reports the
 consistency count. Direct classifier tests supply a minimal positive parse for
 every starting rule and exercise wrong-locus and quoted-material negatives. M4

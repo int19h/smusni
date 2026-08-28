@@ -851,7 +851,8 @@
              (hasheq
               'connective
               (hasheq 'ITagBoStatementConnective
-                      (hasheq 'bo (lead-cmavo "bo")))))))))
+                      (hasheq 'tense_modal (lead-cmavo "ba")
+                              'bo (lead-cmavo "bo")))))))))
    (cons "L5.16"
          (hasheq 'CoSelbri
                  (hasheq 'JekConnective (lead-cmavo "je"))))
@@ -913,7 +914,7 @@
 (check-true (string? (hash-ref structural-probe-fixture 'jbotci_version)))
 (define structural-probe-cases
   (hash-ref structural-probe-fixture 'cases))
-(check-equal? (length structural-probe-cases) 20)
+(check-equal? (length structural-probe-cases) 22)
 (define structural-probe-parses
   (for/hash ([case (in-list structural-probe-cases)]
              [expected-index (in-naturals 1)])
@@ -946,7 +947,9 @@
     ("mi klama .i joi do stali" ("L5.13"))
     ("mi melbi joi xamgu" ("L5.17"))
     ("mi klama .i ba bo do stali" ("L5.15"))
-    ("mi klama .i je bo do stali" ("L5.15"))
+    ("mi klama .i je bo do stali" ())
+    ("mi klama .i je ba bo do stali" ("L5.15"))
+    ("mi klama .i bo do stali" ())
     ("lo nu lo no gerku cu bajra cu fasnu" ("L3.10"))
     ("mi melbi je xamgu" ("L5.16"))
     ("mi djuno lo du'u do klama .i je ti stali" ())))
