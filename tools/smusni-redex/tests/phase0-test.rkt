@@ -7,12 +7,24 @@
          racket/runtime-path
          racket/set
          racket/string
+         redex/reduction-semantics
          "../inventory.rkt"
          "../port-phase0.rkt"
+         "../port-support.rkt"
          "../syntax.rkt"
          "../types.rkt")
 
 (define-runtime-path live-spec-path "../../../spec.md")
+
+(define-language Phase0StructuralToy
+  [n natural])
+(define-definition-metafunction Phase0StructuralToy
+  structural-toy : n -> n
+  (definition-case identity [(structural-toy n) n]))
+(define-metafunction Phase0StructuralToy
+  comment-only-toy : n -> n
+  ;; definition-case:comment-only
+  [(comment-only-toy n) n])
 
 ;; P0.1: the live extractor, not a recorded glyph count, supplies the gate's
 ;; denominator. The current counts are ratchets, while mutation checks prove
@@ -75,7 +87,7 @@
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-status entry) 'executable))
                      definitions)
-              75)
+              76)
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'none))
                      definitions)
@@ -89,6 +101,13 @@
                                '(a0 ported)))
                      definitions)
               0)
+(define implementation-index (definition-implementation-index))
+(check-true
+ (implementation-defined?
+  '(metafunction structural-toy (cases identity)) implementation-index))
+(check-false
+ (implementation-defined?
+  '(metafunction comment-only-toy (cases comment-only)) implementation-index))
 (define zipwith
   (findf (lambda (entry) (string=? (definition-entry-id entry) "D12.ZipWith"))
          definitions))
@@ -104,8 +123,12 @@
 ;; range. A synthetic branch and a shifted source range both fail the gate.
 (define live-branches (extract-infer-branches))
 (define branch-ledger (load-infer-branches))
+(define live-helpers (extract-infer-helpers))
+(define helper-ledger (load-infer-helpers))
 (check-equal? (length live-branches) 91)
 (check-equal? (length branch-ledger) 91)
+(check-equal? (length live-helpers) 34)
+(check-equal? (length helper-ledger) 34)
 (check-equal? (infer-branch-findings live-branches branch-ledger) '())
 (check-equal? (count (lambda (entry)
                        (eq? (branch-entry-class entry) 'semantic-clause))
@@ -120,6 +143,15 @@
                             'external-gap-or-diagnostic))
                      branch-ledger)
               5)
+(check-equal? (count (lambda (entry)
+                       (eq? (helper-entry-class entry) 'auxiliary))
+                     helper-ledger)
+              33)
+(check-equal? (count (lambda (entry)
+                       (eq? (helper-entry-class entry)
+                            'external-gap-or-diagnostic))
+                     helper-ledger)
+              1)
 (define synthetic-branch
   (branch-observation 'infer-application '(eq? head 'Tomorrow) 999 1000
                       "synthetic"))
@@ -148,6 +180,22 @@
  (findf (lambda (message) (string-contains? message "canonical stable id"))
         (infer-branch-findings
          live-branches (cons noncanonical-id-entry (rest branch-ledger)))))
+(define synthetic-helper
+  (helper-observation 'new-reachable-helper 999 1000 "synthetic"))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "unclassified reachable helper"))
+        (infer-branch-findings live-branches branch-ledger
+                               (cons synthetic-helper live-helpers)
+                               helper-ledger)))
+(define stale-helper
+  (struct-copy helper-entry (first helper-ledger)
+               [source-sha1 "stale-helper-digest"]))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "reachable helper"))
+        (infer-branch-findings live-branches branch-ledger live-helpers
+                               (cons stale-helper (rest helper-ledger)))))
 (check-equal? (diagnostic-taxonomy-findings) '())
 
 ;; The observer is inert by default and records only externally requested
@@ -181,6 +229,12 @@
 (check-true differential-ok?)
 (check-equal? differences '())
 (check-equal? stale-waivers '())
+(check-exn
+ #rx"inventory digest is stale; refresh deliberately"
+ (lambda ()
+   (validate-port-case-inventories!
+    (list (struct-copy port-case (first corpus)
+                       [inventory '("stale-core" "stale-fixtures")])))))
 
 ;; The identity run is not the only oracle test: inject a mismatch in every
 ;; compared field, multiple derivations, and an incorrectly scoped waiver.

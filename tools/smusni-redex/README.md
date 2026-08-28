@@ -307,7 +307,7 @@ extracted from `spec.md`; the denominator is the extracted head/section set,
 not a recorded glyph count. Normative status is separate from migration state:
 `none`, `legacy-hybrid`, `a0`, or `ported`. `GlobalExactly` and `Close` name
 their existing hybrid implementations without satisfying the target-port
-gate; 75 written definitions are normatively executable while the target has
+gate; 76 written definitions are normatively executable while the target has
 zero ported cases. A new head, removed head, stale branch, or an `a0`/`ported`
 entry without real named metafunction/relation cases fails. The report prints
 every blocked and non-mechanical entry, including `Most` under #66 and the
@@ -316,8 +316,10 @@ split equal/unequal `ZipWith` domains under #52/#41.
 `inventory/infer-core-branches.sexp` classifies the top-level dispatch of the
 legacy inference engine by function, syntax-derived stable id, source pattern,
 exact live source range, and source digest. A call-graph check requires every
-`infer-*` helper reachable from `infer-core` to be registered, and the digest
-makes changes to nested handler logic stale even when line counts do not move.
+top-level helper reachable from `infer-core` to be registered (91 inference
+handlers plus 34 non-`infer-` helpers), and the digest makes changes to nested
+handler logic stale even when line counts do not move. Metadata refresh refuses
+a changed branch/helper denominator; new handlers must be classified first.
 The adjacent diagnostic taxonomy permits term/constructor/location,
 inventory declarations, no-derivation, and explicitly non-authoritative
 instrumentation as evidence. It forbids a semantic fallback or a duplicate

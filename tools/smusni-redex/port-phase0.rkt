@@ -23,6 +23,8 @@
          (struct-out definition-domain)
          (struct-out branch-observation)
          (struct-out branch-entry)
+         (struct-out helper-observation)
+         (struct-out helper-entry)
          (struct-out diagnostic-taxonomy)
          (struct-out port-case)
          (struct-out port-record)
@@ -30,8 +32,12 @@
          extract-definition-observations
          load-definition-ledger
          definition-ledger-findings
+         definition-implementation-index
+         implementation-defined?
          extract-infer-branches
          load-infer-branches
+         extract-infer-helpers
+         load-infer-helpers
          refresh-infer-branch-metadata!
          infer-branch-findings
          load-diagnostic-taxonomy
@@ -39,6 +45,7 @@
          load-port-corpus
          collect-port-cases
          refresh-port-corpus!
+         validate-port-case-inventories!
          run-differential
          load-port-waivers
          run-benchmarks
@@ -271,21 +278,43 @@
              #:when (regexp-match? #px"[.]rkt$" (path->string path)))
     path))
 
-(define (implementation-defined? implementation source-text)
+(define (definition-implementation-index)
+  (define index (make-hash))
+  (define (walk node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (when parts
+        (when (and (>= (length parts) 3)
+                   (member (syntax-e (first parts))
+                           '(define-definition-metafunction
+                             define-definition-relation)))
+          (define kind
+            (if (eq? (syntax-e (first parts))
+                     'define-definition-metafunction)
+                'metafunction 'relation))
+          (define name-position (if (eq? kind 'metafunction) 2 1))
+          (define name (syntax-e (list-ref parts name-position)))
+          (define cases
+            (for*/list ([part (in-list parts)]
+                        [case-parts (in-value (syntax-list part))]
+                       #:when (and case-parts (= (length case-parts) 3)
+                                   (eq? (syntax-e (first case-parts))
+                                        'definition-case)))
+              (syntax-e (second case-parts))))
+          (hash-set! index (cons kind name) cases))
+        (for ([part (in-list parts)]) (walk part)))))
+  (for ([path (in-list (racket-sources))])
+    (walk (read-module-syntax path)))
+  index)
+
+(define (implementation-defined? implementation index)
   (match implementation
     [`(metafunction ,(? symbol? name) (cases ,(? symbol? cases) ...))
-     (and (regexp-match?
-           (pregexp (format "(?s:[(]define-metafunction.*?\n[[:space:]]*~a[[:space:]]*:)"
-                            (regexp-quote (symbol->string name))))
-           source-text)
-          (for/and ([case (in-list cases)])
-            (string-contains? source-text
-                              (format "definition-case:~a" case))))]
+     (define actual (hash-ref index (cons 'metafunction name) #f))
+     (and actual (set=? (list->set cases) (list->set actual)))]
     [`(relation ,(? symbol? name) (cases ,(? symbol? cases) ...))
-     (and (string-contains? source-text (format "(define ~a" name))
-          (for/and ([case (in-list cases)])
-            (string-contains? source-text
-                              (format "definition-case:~a" case))))]
+     (define actual (hash-ref index (cons 'relation name) #f))
+     (and actual (set=? (list->set cases) (list->set actual)))]
     [_ #f]))
 
 (define (definition-ledger-findings
@@ -350,10 +379,11 @@
       (unless (string-contains? source-text (symbol->string name))
         (note! "legacy-hybrid definition ~a names missing legacy implementation ~a"
                (definition-entry-id entry) name))))
+  (define implementation-index (definition-implementation-index))
   (for ([entry (in-list entries)]
         #:when (member (definition-entry-port-state entry) '(a0 ported)))
     (for ([implementation (in-list (definition-entry-implementations entry))])
-      (unless (implementation-defined? implementation source-text)
+      (unless (implementation-defined? implementation implementation-index)
         (note! "definition ~a names missing implementation ~e"
                (definition-entry-id entry) implementation))))
   (reverse findings))
@@ -365,6 +395,10 @@
   #:transparent)
 (struct branch-entry
   (id function pattern start-line end-line source-sha1 class reason)
+  #:transparent)
+(struct helper-observation (function start-line end-line source-sha1)
+  #:transparent)
+(struct helper-entry (id function start-line end-line source-sha1 class reason)
   #:transparent)
 
 (define dispatch-functions
@@ -459,6 +493,25 @@
   (walk module)
   found)
 
+(define (defined-top-level-functions module)
+  (define found (make-hash))
+  (define (walk node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (when parts
+        (define signature-datum
+          (and (>= (length parts) 2) (syntax->datum (second parts))))
+        (define function-definition?
+          (and (>= (length parts) 3)
+               (eq? (syntax-e (first parts)) 'define)
+               (pair? signature-datum)
+               (symbol? (car signature-datum))))
+        (if function-definition?
+            (hash-set! found (car signature-datum) node)
+            (for ([part (in-list parts)]) (walk part))))))
+  (walk module)
+  found)
+
 (define (syntax-symbols stx)
   (define found (mutable-set))
   (define (walk node)
@@ -488,10 +541,33 @@
                  (syntax-symbols definition)))
        (loop (append (rest todo) callees) (set-add seen function))])))
 
+(define (reachable-top-level-functions module)
+  (define definitions (defined-top-level-functions module))
+  (let loop ([todo '(infer-core)] [seen (set)])
+    (cond
+      [(null? todo) seen]
+      [(set-member? seen (first todo)) (loop (rest todo) seen)]
+      [else
+       (define function (first todo))
+       (define definition
+         (hash-ref definitions function
+                   (lambda ()
+                     (error 'reachable-top-level-functions
+                            "reachable function ~a has no definition" function))))
+       (define callees
+         (filter (lambda (symbol) (hash-has-key? definitions symbol))
+                 (syntax-symbols definition)))
+       (loop (append (rest todo) callees) (set-add seen function))])))
+
 (define (canonical-branch-id function pattern)
   (define digest
     (sha1 (open-input-string (format "~a|~s" function pattern))))
   (format "B.~a.~a" function (substring digest 0 10)))
+
+(define (canonical-helper-id function)
+  (define digest
+    (sha1 (open-input-string (symbol->string function))))
+  (format "H.~a.~a" function (substring digest 0 10)))
 
 (define (extract-infer-branches [path types-path])
   (define module (read-module-syntax path))
@@ -542,10 +618,28 @@
                             #:min-width 6 #:pad-string "0")
                         (branch-observation-pattern item)))))
 
+(define (extract-infer-helpers [path types-path]
+                               [branches (extract-infer-branches path)])
+  (define module (read-module-syntax path))
+  (define source-text (file->string path))
+  (define definitions (defined-top-level-functions module))
+  (define branch-functions
+    (for/set ([branch (in-list branches)])
+      (branch-observation-function branch)))
+  (sort
+   (for/list ([function (in-set (reachable-top-level-functions module))]
+              #:unless (set-member? branch-functions function))
+     (define definition (hash-ref definitions function))
+     (helper-observation function (syntax-line definition)
+                         (syntax-end-line definition source-text)
+                         (syntax-source-digest definition source-text)))
+   symbol<? #:key helper-observation-function))
+
 (define (load-infer-branches [path infer-branches-path])
   (match (call-with-input-file path read)
     [`(smusni-infer-core-branches 1 ,raw-entries ...)
-     (for/list ([raw (in-list raw-entries)])
+     (for/list ([raw (in-list raw-entries)]
+                #:when (and (pair? raw) (eq? (first raw) 'branch)))
        (match raw
          [`(branch (id ,(? string? id)) (function ,(? symbol? function))
                    (pattern ,pattern) (source-lines ,(? exact-positive-integer? start)
@@ -560,6 +654,25 @@
          [_ (error 'load-infer-branches "invalid branch entry: ~e" raw)]))]
     [_ (error 'load-infer-branches "unsupported infer-core branch inventory")]))
 
+(define (load-infer-helpers [path infer-branches-path])
+  (match (call-with-input-file path read)
+    [`(smusni-infer-core-branches 1 ,raw-entries ...)
+     (for/list ([raw (in-list raw-entries)]
+                #:when (and (pair? raw) (eq? (first raw) 'helper)))
+       (match raw
+         [`(helper (id ,(? string? id)) (function ,(? symbol? function))
+                   (source-lines ,(? exact-positive-integer? start)
+                                 ,(? exact-positive-integer? end))
+                   (source-sha1 ,(? string? source-sha1))
+                   (class ,(? symbol? class)) (reason ,(? string? reason)))
+          (unless (member class branch-classes)
+            (error 'load-infer-helpers "unknown helper class ~e" class))
+          (unless (sentence? reason)
+            (error 'load-infer-helpers "helper ~a needs one-sentence reason" id))
+          (helper-entry id function start end source-sha1 class reason)]
+         [_ (error 'load-infer-helpers "invalid helper entry: ~e" raw)]))]
+    [_ (error 'load-infer-helpers "unsupported infer-core helper inventory")]))
+
 (define (refresh-infer-branch-metadata! [path infer-branches-path])
   (define raw (call-with-input-file path read))
   (define observed
@@ -567,7 +680,26 @@
       (values (cons (branch-observation-function item)
                     (branch-observation-pattern item))
               item)))
+  (define helper-observed
+    (for/hash ([item (in-list (extract-infer-helpers))])
+      (values (helper-observation-function item) item)))
   (match-define `(smusni-infer-core-branches 1 ,raw-entries ...) raw)
+  (define recorded-branch-keys
+    (for/set ([entry (in-list raw-entries)]
+              #:when (and (pair? entry) (eq? (first entry) 'branch)))
+      (match entry
+        [`(branch (id ,_) (function ,function) (pattern ,pattern) . ,_)
+         (cons function pattern)])))
+  (define recorded-helper-names
+    (for/set ([entry (in-list raw-entries)]
+              #:when (and (pair? entry) (eq? (first entry) 'helper)))
+      (match entry
+        [`(helper (id ,_) (function ,function) . ,_) function])))
+  (unless (and (set=? recorded-branch-keys (list->set (hash-keys observed)))
+               (set=? recorded-helper-names
+                      (list->set (hash-keys helper-observed))))
+    (error 'refresh-infer-branch-metadata!
+           "branch/helper denominator changed; classify new or removed handlers before refreshing metadata"))
   (define refreshed
     (for/list ([entry (in-list raw-entries)])
       (match entry
@@ -579,6 +711,15 @@
                   (source-lines ,(branch-observation-start-line live)
                                 ,(branch-observation-end-line live))
                   (source-sha1 ,(branch-observation-source-sha1 live))
+                  (class ,class) (reason ,reason))]
+        [`(helper (id ,id) (function ,function)
+                  (source-lines ,_ ,_) (source-sha1 ,_)
+                  (class ,class) (reason ,reason))
+         (define live (hash-ref helper-observed function))
+         `(helper (id ,id) (function ,function)
+                  (source-lines ,(helper-observation-start-line live)
+                                ,(helper-observation-end-line live))
+                  (source-sha1 ,(helper-observation-source-sha1 live))
                   (class ,class) (reason ,reason))]
         [`(branch (id ,id) (function ,function) (pattern ,pattern)
                   (source-lines ,_ ,_) (class ,class) (reason ,reason))
@@ -603,7 +744,9 @@
             (branch-observation-pattern item))))
 
 (define (infer-branch-findings [observed (extract-infer-branches)]
-                               [entries (load-infer-branches)])
+                               [entries (load-infer-branches)]
+                               [helper-observed (extract-infer-helpers)]
+                               [helper-entries (load-infer-helpers)])
   (define findings '())
   (define (note! format-string . arguments)
     (set! findings (cons (apply format format-string arguments) findings)))
@@ -649,6 +792,36 @@
   (for ([(key entry) (in-hash entries-by-key)])
     (unless (hash-has-key? observed-by-key key)
       (note! "infer-core branch entry ~a is stale" (branch-entry-id entry))))
+  (define helper-observed-by-name
+    (for/hash ([item (in-list helper-observed)])
+      (values (helper-observation-function item) item)))
+  (define helper-entries-by-name (make-hash))
+  (for ([entry (in-list helper-entries)])
+    (when (hash-has-key? helper-entries-by-name (helper-entry-function entry))
+      (note! "duplicate reachable helper ~a" (helper-entry-function entry)))
+    (hash-set! helper-entries-by-name (helper-entry-function entry) entry)
+    (define expected-id (canonical-helper-id (helper-entry-function entry)))
+    (unless (string=? (helper-entry-id entry) expected-id)
+      (note! "reachable helper id ~a is not its canonical stable id ~a"
+             (helper-entry-id entry) expected-id)))
+  (for ([(function observation) (in-hash helper-observed-by-name)])
+    (define entry (hash-ref helper-entries-by-name function #f))
+    (cond
+      [(not entry)
+       (note! "unclassified reachable helper ~a at ~a-~a"
+              function (helper-observation-start-line observation)
+              (helper-observation-end-line observation))]
+      [(not (and (= (helper-entry-start-line entry)
+                    (helper-observation-start-line observation))
+                 (= (helper-entry-end-line entry)
+                    (helper-observation-end-line observation))))
+       (note! "reachable helper ~a source range is stale" function)]
+      [(not (string=? (helper-entry-source-sha1 entry)
+                      (helper-observation-source-sha1 observation)))
+       (note! "reachable helper ~a source digest is stale" function)]))
+  (for ([(function entry) (in-hash helper-entries-by-name)])
+    (unless (hash-has-key? helper-observed-by-name function)
+      (note! "reachable helper entry ~a is stale" (helper-entry-id entry))))
   (reverse findings))
 
 (struct diagnostic-taxonomy
@@ -837,8 +1010,19 @@
        (error 'load-port-corpus "spec.md changed; refresh the frozen corpus deliberately"))
      (unless (equal? test-sources (source-digests (test-files)))
        (error 'load-port-corpus "test sources changed; refresh the frozen corpus deliberately"))
+     (validate-port-case-inventories! cases)
      cases]
     [_ (error 'load-port-corpus "unsupported port corpus")]))
+
+(define (validate-port-case-inventories! cases [inv (load-inventory)])
+  (define expected
+    (list (inventory-core-digest inv) (inventory-fixture-digest inv)))
+  (for ([item (in-list cases)])
+    (unless (equal? (port-case-inventory item) expected)
+      (error 'load-port-corpus
+             "case ~a inventory digest is stale; refresh deliberately: recorded ~e live ~e"
+             (port-case-id item) (port-case-inventory item) expected)))
+  (void))
 
 (define (canonical-set values)
   (sort (remove-duplicates values) string<? #:key (lambda (value) (format "~s" value))))
@@ -1240,6 +1424,11 @@
     (printf "infer-core branches ~a: ~a\n" class
             (count (lambda (entry) (eq? (branch-entry-class entry) class))
                    branches)))
+  (define helpers (load-infer-helpers))
+  (for ([class (in-list branch-classes)])
+    (printf "reachable helpers ~a: ~a\n" class
+            (count (lambda (entry) (eq? (helper-entry-class entry) class))
+                   helpers)))
   (printf "diagnostic taxonomy: typing=~a no-lowering=~a allowed-evidence=~a forbidden-evidence=~a\n"
           (length (diagnostic-taxonomy-typing-causes taxonomy))
           (length (diagnostic-taxonomy-no-lowering-causes taxonomy))
