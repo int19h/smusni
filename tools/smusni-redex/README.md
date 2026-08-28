@@ -403,8 +403,11 @@ judgment returning a correlated `(typing τ effects obligations)` record.
 Expected-type forms (`Context`, `Vague`, selections, `Refer`, `Massify`) use the
 checking direction; direct binders, pure/effectful application, quantifiers,
 clause closure, reference and performance Bind, and definition forms use named
-clauses. `Let` accepts inert syntactic values only; computations and evaluated
-applications belong under `Bind`. The selection floor rejects
+clauses. `Let` accepts inert syntactic values only; computation expressions and
+evaluated applications belong under `Bind`, while a variable already denoting
+a computation can itself be aliased without running it. `ZipWith` likewise
+takes its function parameter as a syntactic value, so the literal empty case
+cannot inherit effects from an expression that computes `f`. The selection floor rejects
 `SelectExactly 0`; equality is limited to first-order/discrete-index types;
 reference-level `Refer` accepts `Fn` or `EFn` while its member-level lift stays
 pure. A malformed `CloseWith` has no derivation instead of escaping as a host
@@ -452,9 +455,9 @@ evidence, not exclusive profiler time.
 
 The formerly unavailable size-growth trigger now runs against the closed A0
 judgment. It times first derivations for distinct nested-`Let` terms at depths
-12, 24, and 48, using a median of three trials per depth after structurally
-matched warmups. The current run is a report-only trigger: about 22 ms, 100 ms,
-and 601 ms, or 4.6× and 6.0× for the two doublings, both above the pre-registered
+16, 32, and 64, using a median of three trials per depth after structurally
+matched warmups. The current run is a report-only trigger: about 35 ms, 191 ms,
+and 1,053 ms, or 5.4× and 5.5× for the two doublings, both above the pre-registered
 4× threshold. This is redesign evidence for Phase B, not a green performance
 claim.
 

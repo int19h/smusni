@@ -1021,7 +1021,7 @@
    ----------------------------------------------- "A0-T-List-Check"
    (a0-type (check (List τ)) Γ (List t_item ...) R_out)]
 
-  [(a0-type synth Γ t_f
+  [(a0-type synth Γ v_f
             (typing (Fn (τ_left τ_right) Content)
                     (effect_f ...) (obligation_f ...)))
    (a0-type (check (List τ_left)) Γ t_left R_left)
@@ -1033,9 +1033,9 @@
                           R_left R_right)
                          () ()))
    ----------------------------------------------- "A0-T-ZipWith-Pure"
-   (a0-type synth Γ (ZipWith t_f t_left t_right) R_out)]
+   (a0-type synth Γ (ZipWith v_f t_left t_right) R_out)]
 
-  [(a0-type synth Γ t_f
+  [(a0-type synth Γ v_f
             (typing (EFn (τ_left τ_right) Content)
                     (effect_f ...) (obligation_f ...)))
    (where R_out
@@ -1044,9 +1044,9 @@
                                   (effect_f ...) (obligation_f ...)))
                          () ()))
    ----------------------------------------------- "A0-T-ZipWith-Empty-Effectful"
-   (a0-type synth Γ (ZipWith t_f (List) (List)) R_out)]
+   (a0-type synth Γ (ZipWith v_f (List) (List)) R_out)]
 
-  [(a0-type synth Γ t_f
+  [(a0-type synth Γ v_f
             (typing (EFn (τ_left τ_right) Content)
                     (effect_f ...) (obligation_f ...)))
    (a0-type (check (List τ_left)) Γ t_left R_left)
@@ -1061,7 +1061,7 @@
                           R_left R_right)
                          (effectful-call) ()))
    ----------------------------------------------- "A0-T-ZipWith-Effectful"
-   (a0-type synth Γ (ZipWith t_f t_left t_right) R_out)]
+   (a0-type synth Γ (ZipWith v_f t_left t_right) R_out)]
 
   [(a0-type (check Content) Γ t_content R_content)
    (where R_out (merge-records ClauseContent (R_content) () ()))
@@ -1531,7 +1531,7 @@
        ,value
        ,body)))
 
-(define (run-a0-size-growth #:depths [depths '(12 24 48)]
+(define (run-a0-size-growth #:depths [depths '(16 32 64)]
                             #:factor [factor 4.0]
                             #:print? [print? #t])
   (unless (and (= (length depths) 3)

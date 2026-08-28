@@ -194,6 +194,13 @@
 (check-equal?
  (synth effectful-zip-env (term (ZipWith f (List) (List))))
  '(typing Content () ()))
+(check-true
+ (no-synthesis?
+  (term (($maker
+          (EFn (Entity)
+               (EFn ((Referents Entity) (Referents Entity)) Content)))
+         ($x Entity)))
+  (term (ZipWith ($maker $x) (List) (List)))))
 
 (define close-env
   (term ((tavla
