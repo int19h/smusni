@@ -26,6 +26,15 @@
 (define reference-Q '(λ (($w (Referents Entity))) ⊤))
 (define member-Q '(λ (($x Entity)) ⊤))
 
+(define (no-synthesis? environment term)
+  (and (null? (judgment-holds (a0-synth ,environment ,term R) R))
+       (null? (build-derivations (a0-synth ,environment ,term R)))))
+
+(define (no-checking? environment term type)
+  (and (null? (judgment-holds (a0-check ,environment ,term ,type R) R))
+       (null? (build-derivations
+               (a0-check ,environment ,term ,type R)))))
+
 ;; Every definition is a general metafunction over its declared parameters.
 (check-equal?
  (term (a0-expand-let $x Entity Speaker (P $x)))
@@ -150,6 +159,14 @@
  (synth (term (($v (Referents Entity))))
         (term (Let ($x (Referents Entity)) $v $x)))
  '(typing (Referents Entity) () ()))
+(check-true
+ (no-synthesis?
+  '()
+  (term (Let ($c (RefComp (Referents Entity))) (Context) ⊤))))
+(check-true
+ (no-synthesis?
+  (term (($f (EFn () Content))))
+  (term (Let ($c Content) ($f) ⊤))))
 (check-equal?
  (synth '() (term (Bind (($x (Referents Entity) (Context))) ⊤)))
  '(typing Content (context) ()))
@@ -171,6 +188,11 @@
   (term ((f (Fn ((Referents Entity) (Referents Entity)) Content)))))
 (check-equal?
  (synth zip-env (term (ZipWith f (List Speaker) (List Audience))))
+ '(typing Content () ()))
+(define effectful-zip-env
+  (term ((f (EFn ((Referents Entity) (Referents Entity)) Content)))))
+(check-equal?
+ (synth effectful-zip-env (term (ZipWith f (List) (List))))
  '(typing Content () ()))
 
 (define close-env
@@ -205,6 +227,19 @@
 (check-equal?
  (synth event-close-env full-explicit-event-close)
  '(typing Content () ()))
+(check-not-exn
+ (lambda ()
+   (judgment-holds
+    (a0-synth
+     ,close-env
+     (CloseWith (row tavla 3 holding-state (1 2 3)) ((4 Speaker)))
+     R)
+    R)))
+(check-true
+ (no-synthesis?
+  close-env
+  (term (CloseWith
+         (row tavla 3 holding-state (1 2 3)) ((4 Speaker))))))
 
 (define (check-preserved environment source expanded)
   (check-equal? (synth environment source) (synth environment expanded)))
@@ -233,6 +268,9 @@
 (check-preserved zip-env
                  (term (ZipWith f (List Speaker) (List Audience)))
                  (term (a0-expand-zipwith f (List Speaker) (List Audience))))
+(check-preserved effectful-zip-env
+                 (term (ZipWith f (List) (List)))
+                 (term (a0-expand-zipwith f (List) (List))))
 (check-preserved close-env
                  (term (CloseWith
                         (row tavla 3 holding-state (1 2 3))
@@ -308,9 +346,42 @@
    ()
    (λ (($x Entity)) (P $x (Site standard)))
    (sites
+    (site standard (context $x) (Referents Entity) pure (deps)))))
+ '(refusal member-dependent))
+(check-equal?
+ (term
+  (a0-hoist
+   (($topic (Referents Entity)))
+   (λ (($x Entity)) (P $x (Site standard)))
+   (sites
+    (site standard (context $topic) (Referents Entity) pure (deps)))))
+ '(refusal malformed-metadata))
+(check-equal?
+ (term
+  (a0-hoist
+   ()
+   (λ (($x Entity)) (P $x (Site standard)))
+   (sites
     (site standard (context $topic) (Referents Entity) pure
           (deps (outer $topic (Referents Entity)))))))
  '(refusal malformed-metadata))
+
+;; Normative formation boundaries that compatibility must not erase.
+(check-true
+ (no-checking?
+  '() (term (SelectExactly 0 (λ (($x Entity)) ⊤)))
+  (term (RefComp (Referents Entity)))))
+(check-true (no-synthesis? '() (term (= Speaker Audience))))
+(check-true
+ (no-synthesis?
+  (term (($f (Fn (Entity) Content))))
+  (term (= $f $f))))
+(check-equal?
+ (check-at
+  (term (($P (EFn ((Referents Entity)) Content))))
+  (term (Refer $P))
+  (term (RefComp (Referents Entity))))
+ '(typing (RefComp (Referents Entity)) (effectful-call refer) ()))
 
 (check-equal?
  (term

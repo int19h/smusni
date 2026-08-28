@@ -376,6 +376,10 @@
 ;; oracle plumbing with zero implicit differences and an empty waiver ledger.
 (define corpus (load-port-corpus))
 (check-equal? (length corpus) 337)
+(define a0-benchmark-cases (a0-specimen-benchmark-cases corpus))
+(check-true (pair? a0-benchmark-cases))
+(check-true (< (length a0-benchmark-cases)
+               (length (specimen-benchmark-cases corpus))))
 (check-true
  (for*/or ([item (in-list corpus)]
            [provenance (in-list (port-case-provenance item))])
@@ -394,9 +398,9 @@
   (run-a0-differential #:print? #f))
 (define current-a0-differential-cases (a0-differential-cases))
 (check-true a0-differential-ok?)
-(check-equal? (length a0-mechanism-cases) 10)
-(check-equal? (length current-a0-differential-cases) 41)
-(check-equal? (length (load-a0-waivers)) 9)
+(check-equal? (length a0-mechanism-cases) 11)
+(check-equal? (length current-a0-differential-cases) 42)
+(check-equal? (length (load-a0-waivers)) 10)
 (for ([item (in-list current-a0-differential-cases)])
   (define record (a0-port-record item))
   (when (eq? (port-record-status record) 'success)
@@ -416,6 +420,20 @@
          corpus)))
 (check-equal? a0-differences '())
 (check-equal? a0-stale-waivers '())
+
+;; Benchmark modes execute their named engines. New/side modes expose A0
+;; proof-rule hotspots; old-only is not silently reused as the new engine.
+(define benchmark-probe-case (first a0-mechanism-cases))
+(define new-benchmark-probe
+  (run-benchmark-mode 'new-only (list benchmark-probe-case) 1))
+(define side-benchmark-probe
+  (run-benchmark-mode 'side-by-side (list benchmark-probe-case) 1))
+(check-equal? (benchmark-mode-derivations new-benchmark-probe) 1)
+(check-equal? (benchmark-mode-derivations side-benchmark-probe) 2)
+(check-true (pair? (benchmark-mode-hotspots new-benchmark-probe)))
+(check-equal?
+ (datum->benchmark-mode (benchmark-mode->datum new-benchmark-probe))
+ new-benchmark-probe)
 (check-equal?
  (legacy-datum->a0
   '(Close (bajra :2 Audience Speaker :Eventuality $event)))

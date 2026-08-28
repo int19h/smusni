@@ -10,6 +10,11 @@
     (finding "#13:issuecomment-5458243084")
     (reason "The A0 equation executes its effectful function at each paired step; the legacy pass-through omits that application effect."))
   (waiver
+    (case "a0-zipwith-empty-effectful")
+    (fields status type failure-class source-rule derivations)
+    (finding "#13:issuecomment-5458243084")
+    (reason "A0 types the literal empty lists without executing the effectful function; the legacy pass-through crashes while unequal-length meaning remains blocked by issue 41."))
+  (waiver
     (case "27f27c1038df83b40e16a919fdaf24b405d04b04")
     (fields failure-class)
     (finding "#52:issuecomment-5458132092")

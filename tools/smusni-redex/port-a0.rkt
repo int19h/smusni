@@ -42,6 +42,7 @@
   [label natural]
   [fill-label label Eventuality]
   [event-mode holding-state direct-event]
+  [arrow Fn EFn]
   [effect context refer projective effectful-call performance]
   [obligation finite-set-cardinality-defined variable-not-otherwise-mentioned]
   [force Assertion Expressive]
@@ -57,6 +58,9 @@
   [R (typing τ (effect ...) (obligation ...))]
   [lookup-result τ not-found]
   [constant Speaker Audience TooManyK ⊤]
+  [v x n constant
+     (λ ((x τ) ...) t)
+     (List v ...)]
   [t x n constant
      (λ ((x τ) ...) t)
      (Let (x τ) t t)
@@ -336,6 +340,59 @@
 (define (environment-has? environment variable type)
   (member (list variable type) environment))
 
+(define (core-variable-symbol? value)
+  (and (symbol? value)
+       (string-prefix? (symbol->string value) "$")))
+
+(define (free-core-variables datum [bound (set)])
+  (cond
+    [(symbol? datum)
+     (if (and (core-variable-symbol? datum)
+              (not (set-member? bound datum)))
+         (set datum)
+         (set))]
+    [(not (list? datum)) (set)]
+    [(quoted-head? datum) (set)]
+    [else
+     (match datum
+       [`(Site ,_) (set)]
+       [`(SiteValue ,_) (set)]
+       [`(λ ,binders ,body)
+        (define variables
+          (for/list ([binder (in-list binders)]) (first binder)))
+        (free-core-variables body
+                             (set-union bound (list->set variables)))]
+       [`(Let (,variable ,_) ,value ,body)
+        (set-union
+         (free-core-variables value bound)
+         (free-core-variables body (set-add bound variable)))]
+       [`(Bind ,bindings ,body)
+        (let loop ([remaining bindings] [scope bound] [free (set)])
+          (if (null? remaining)
+              (set-union free (free-core-variables body scope))
+              (match-let ([(list variable _ computation) (first remaining)])
+                (loop (rest remaining)
+                      (set-add scope variable)
+                      (set-union
+                       free (free-core-variables computation scope))))))]
+       [_
+        (for/fold ([free (set)]) ([child (in-list datum)])
+          (set-union free (free-core-variables child bound)))])]))
+
+(define (pure-position-member-variables term-datum)
+  (match term-datum
+    [`(λ ,binders ,_)
+     (list->set (for/list ([binder (in-list binders)]) (first binder)))]
+    [_ (set)]))
+
+(define (environment-variable-type environment variable)
+  (for/first ([entry (in-list environment)]
+              #:when (equal? (first entry) variable))
+    (second entry)))
+
+(define (declares-outer? dependencies variable type)
+  (member `(outer ,variable ,type) dependencies))
+
 (define (site-plan environment term-datum sites-datum)
   (match sites-datum
     [`(sites ,records ...)
@@ -351,11 +408,19 @@
         (define ids (map first parsed))
         (define id-set (list->set ids))
         (define used-sites (remove-duplicates (executed-site-ids term-datum)))
+        (define member-variables
+          (pure-position-member-variables term-datum))
         (cond
           [(not (= (length ids) (set-count id-set))) 'malformed-metadata]
           [(not (set=? id-set (list->set used-sites))) 'malformed-metadata]
           [(for/or ([item (in-list parsed)])
              (member '(member) (fourth item)))
+           'member-dependent]
+          [(for/or ([item (in-list parsed)])
+             (not (set-empty?
+                   (set-intersect
+                    member-variables
+                    (free-core-variables (second item))))))
            'member-dependent]
           [(for/or ([item (in-list parsed)])
              (for/or ([dependency (in-list (fourth item))])
@@ -365,6 +430,14 @@
                   (not (environment-has? environment variable type))]
                  [`(member) #f]
                  [_ #t])))
+           'malformed-metadata]
+          [(for/or ([item (in-list parsed)])
+             (for/or ([variable
+                       (in-set (free-core-variables (second item)))])
+               (define type
+                 (environment-variable-type environment variable))
+               (or (not type)
+                   (not (declares-outer? (fourth item) variable type)))))
            'malformed-metadata]
           [(for/or ([item (in-list parsed)])
              (define declared-site-deps
@@ -543,6 +616,18 @@
               (a0-compatible? result expected-result))]
         [(_ _) #f])))
 
+(define (a0-equality-type? type)
+  (or (member type
+              '(Entity Eventuality Number Natural Cardinal ThresholdKind))
+      (match type
+        [`(Set ,_) #t]
+        [`(Group ,_) #t]
+        [`(List ,_) #t]
+        [_ #f])))
+
+(define (a0-value-datum? datum)
+  (redex-match? SmusniA0 v datum))
+
 (define (record-type datum)
   (match datum [`(typing ,type ,_ ,_) type]))
 (define (record-effects datum)
@@ -650,10 +735,17 @@
             (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body)
                     () (obligation ...)))]
 
-  [(a0-type (check τ) ((x_env τ_env) ...) t_value R_value)
+  [(side-condition ,(a0-value-datum? (term t_value)))
+   (a0-type synth ((x_env τ_env) ...) t_value
+            (typing τ_value () (obligation_value ...)))
+   (side-condition
+    ,(a0-compatible? (term τ_value) (term τ)))
    (a0-type synth ((x τ) (x_env τ_env) ...) t_body R_body)
    (where τ_body (record-type-of R_body))
-   (where R_out (merge-records τ_body (R_value R_body) () ()))
+   (where R_out
+          (merge-records
+           τ_body
+           ((typing τ_value () (obligation_value ...)) R_body) () ()))
    ----------------------------------------------- "A0-T-Let"
    (a0-type synth ((x_env τ_env) ...) (Let (x τ) t_value t_body) R_out)]
 
@@ -732,12 +824,14 @@
             (typing (RefComp τ) (context) (obligation ...)))]
 
   [(a0-type synth Γ t_property
-            (typing (Fn ((Referents τ)) Content) () (obligation ...)))
+            (typing (arrow ((Referents τ)) Content) () (obligation ...)))
+   (where (effect_extra ...)
+          ,(if (equal? (term arrow) 'EFn) '(effectful-call) '()))
    (where R_out
           (merge-records
            (RefComp (Referents τ))
-           ((typing (Fn ((Referents τ)) Content) () (obligation ...)))
-           (refer) ()))
+           ((typing (arrow ((Referents τ)) Content) () (obligation ...)))
+           (effect_extra ... refer) ()))
    ----------------------------------------------- "A0-T-Refer-Reference"
    (a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)]
 
@@ -751,7 +845,8 @@
    ----------------------------------------------- "A0-T-Refer-Member"
    (a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)]
 
-  [(a0-type (check Natural) Γ t_count R_count)
+  [(a0-type (check Natural) Γ n_1 R_count)
+   (side-condition ,(positive? (term n_1)))
    (a0-type synth Γ t_property
             (typing (Fn (τ) Content) () (obligation ...)))
    (where R_out
@@ -761,7 +856,7 @@
                          (refer) ()))
    ----------------------------------------------- "A0-T-SelectExactly"
    (a0-type (check (RefComp (Referents τ))) Γ
-            (SelectExactly t_count t_property) R_out)]
+            (SelectExactly n_1 t_property) R_out)]
 
   [(a0-type synth Γ t_property
             (typing (Fn (τ) Content) () (obligation ...)))
@@ -900,8 +995,10 @@
    (where τ_left (record-type-of R_left))
    (where τ_right (record-type-of R_right))
    (side-condition
-    ,(or (a0-compatible? (term τ_left) (term τ_right))
-         (a0-compatible? (term τ_right) (term τ_left))))
+    ,(and (a0-equality-type? (term τ_left))
+          (a0-equality-type? (term τ_right))
+          (or (a0-compatible? (term τ_left) (term τ_right))
+              (a0-compatible? (term τ_right) (term τ_left)))))
    (where R_out
           (merge-records Content (R_left R_right) () ()))
    ----------------------------------------------- "A0-T-Equality"
@@ -941,8 +1038,22 @@
   [(a0-type synth Γ t_f
             (typing (EFn (τ_left τ_right) Content)
                     (effect_f ...) (obligation_f ...)))
+   (where R_out
+          (merge-records Content
+                         ((typing (EFn (τ_left τ_right) Content)
+                                  (effect_f ...) (obligation_f ...)))
+                         () ()))
+   ----------------------------------------------- "A0-T-ZipWith-Empty-Effectful"
+   (a0-type synth Γ (ZipWith t_f (List) (List)) R_out)]
+
+  [(a0-type synth Γ t_f
+            (typing (EFn (τ_left τ_right) Content)
+                    (effect_f ...) (obligation_f ...)))
    (a0-type (check (List τ_left)) Γ t_left R_left)
    (a0-type (check (List τ_right)) Γ t_right R_right)
+   (side-condition
+    ,(not (and (equal? (term t_left) '(List))
+               (equal? (term t_right) '(List)))))
    (where R_out
           (merge-records Content
                          ((typing (EFn (τ_left τ_right) Content)
@@ -1010,10 +1121,20 @@
    ----------------------------------------------- "A0-T-CloseClause"
    (a0-type synth Γ (CloseClause t_clause) R_out)]
 
-  [(where t_expanded (a0-expand-close ρdecl fills))
+  [(side-condition
+    ,(not (equal?
+           'invalid
+           (close-input-kind (term n) (term (label ...)) (term fills)
+                             (term event-mode)))))
+   (where t_expanded
+          (a0-expand-close
+           (row x_predicate n event-mode (label ...)) fills))
    (a0-type synth Γ t_expanded R_out)
    ----------------------------------------------- "A0-T-CloseWith"
-   (a0-type synth Γ (CloseWith ρdecl fills) R_out)]
+   (a0-type synth Γ
+            (CloseWith
+             (row x_predicate n event-mode (label ...)) fills)
+            R_out)]
 
   [(a0-type synth Γ t_function
             (typing ClauseContent
@@ -1090,7 +1211,8 @@
     "A0-T-GlobalExactly" "A0-T-TooMany" "A0-T-AdmissibleThreshold"
     "A0-T-CanonicalAggregateAt" "A0-T-SetOf" "A0-T-Card"
     "A0-T-Equality" "A0-T-And" "A0-T-CoRef" "A0-T-List-Check"
-    "A0-T-ZipWith-Pure" "A0-T-ZipWith-Effectful"
+    "A0-T-ZipWith-Pure" "A0-T-ZipWith-Empty-Effectful"
+    "A0-T-ZipWith-Effectful"
     "A0-T-StateClause" "A0-T-DirectClause-Pure"
     "A0-T-DirectClause-Effectful" "A0-T-ActualClause-State"
     "A0-T-ActualClause-Event-Pure" "A0-T-ActualClause-Event-Effectful"
@@ -1144,6 +1266,7 @@
     ("A0-T-CoRef" "spec §4.5")
     ("A0-T-List-Check" "spec §4.9")
     ("A0-T-ZipWith-Pure" "spec §4.9; §12 ZipWith")
+    ("A0-T-ZipWith-Empty-Effectful" "spec §4.9; §12 ZipWith empty")
     ("A0-T-ZipWith-Effectful" "spec §4.9; §12 ZipWith")
     ("A0-T-StateClause" "spec §4.6")
     ("A0-T-DirectClause-Pure" "spec §4.6")
@@ -1227,6 +1350,8 @@
     (check () (List Speaker Audience) (List (Referents Entity)))
     (synth ((f (Fn ((Referents Entity) (Referents Entity)) Content)))
            (ZipWith f (List Speaker) (List Audience)))
+    (synth ((f (EFn ((Referents Entity) (Referents Entity)) Content)))
+           (ZipWith f (List) (List)))
     (synth ((f (EFn ((Referents Entity) (Referents Entity)) Content)))
            (ZipWith f (List Speaker) (List Audience)))
     (synth () (StateClause ⊤))
@@ -1402,8 +1527,8 @@
 (define (a0-growth-term depth salt)
   (for/fold ([body '⊤]) ([index (in-range depth)])
     (define value (+ salt index))
-    `(Let (,(string->symbol (format "$growth_~a_~a" salt index)) Content)
-       (= ,value ,value)
+    `(Let (,(string->symbol (format "$growth_~a_~a" salt index)) Natural)
+       ,value
        ,body)))
 
 (define (run-a0-size-growth #:depths [depths '(12 24 48)]

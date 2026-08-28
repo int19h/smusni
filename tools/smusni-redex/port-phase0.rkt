@@ -71,6 +71,7 @@
          run-benchmarks
          run-benchmark-mode
          specimen-benchmark-cases
+         a0-specimen-benchmark-cases
          benchmark-mode->datum
          datum->benchmark-mode
          load-port-baseline
@@ -1757,6 +1758,10 @@
               '(ZipWith $f (List Speaker) (List Audience))
               '(($f Fn ((Referents Entity) (Referents Entity)) Content))
               '(core fixture))
+   (port-case "a0-zipwith-empty-effectful" '((a0 ZipWith empty))
+              '(ZipWith $f (List) (List))
+              '(($f EFn ((Referents Entity) (Referents Entity)) Content))
+              '(core fixture))
    (port-case "a0-close" '((a0 Close))
               '(Close (tavla Speaker Audience)) '() '(core fixture))
    (port-case "a0-close-explicit-event" '((a0 Close explicit-event))
@@ -1871,45 +1876,59 @@
 (define (load-a0-waivers)
   (load-port-waivers a0-waivers-path))
 
+(define (a0-row-environment datum inv)
+  (cond
+    [(not (list? datum)) '()]
+    [else
+     (match datum
+       [`(CloseWith (row ,predicate ,arity ,event-mode ,_) ,fills)
+        (define parameters
+          (append (make-list arity '(Referents Entity))
+                  (if (eq? event-mode 'direct-event)
+                      '((Referents Eventuality)) '())))
+        (cons (list predicate `(Fn ,parameters Content))
+              (append-map (lambda (fill) (a0-row-environment fill inv))
+                          fills))]
+       [`(,(? symbol? predicate) ,arguments ...)
+        (define row (inventory-row inv predicate))
+        (append
+         (if (and row
+                  (eq? (row-decl-event-mode row) 'holding-state)
+                  (= (length arguments) (row-decl-total row)))
+             (list
+              (list predicate
+                    `(Fn ,(make-list (row-decl-total row)
+                                    '(Referents Entity))
+                         Content)))
+             '())
+         (append-map (lambda (argument)
+                       (a0-row-environment argument inv))
+                     arguments))]
+       [_ (append-map (lambda (child) (a0-row-environment child inv))
+                      datum)])]))
+
+(define (a0-case-input item)
+  (define inv (load-inventory))
+  (define term (legacy-datum->a0 (port-case-term item) inv))
+  (define explicit-environment
+    (for/list ([entry (in-list (port-case-env item))])
+      (match entry [(cons variable type) (list variable type)])))
+  (define environment
+    (remove-duplicates
+     (append explicit-environment (a0-row-environment term inv))))
+  (values term environment))
+
+(define (a0-case-derivations item)
+  (define-values (term environment) (a0-case-input item))
+  (build-derivations (a0-synth ,environment ,term R)))
+
 (define (a0-port-record item)
   (with-handlers ([exn:fail?
                    (lambda (exception)
                      (port-record 'rejection #f '() '() '()
                                   'a0-error (term-constructor (port-case-term item))
                                   (exn-message exception) 0))])
-    (define inv (load-inventory))
-    (define term (legacy-datum->a0 (port-case-term item) inv))
-    (define explicit-environment
-      (for/list ([entry (in-list (port-case-env item))])
-        (match entry [(cons variable type) (list variable type)])))
-    (define (row-environment datum)
-      (cond
-        [(not (list? datum)) '()]
-        [else
-         (match datum
-           [`(CloseWith (row ,predicate ,arity ,event-mode ,_) ,fills)
-            (define parameters
-              (append (make-list arity '(Referents Entity))
-                      (if (eq? event-mode 'direct-event)
-                          '((Referents Eventuality)) '())))
-            (cons (list predicate `(Fn ,parameters Content))
-                  (append-map row-environment fills))]
-           [`(,(? symbol? predicate) ,arguments ...)
-            (define row (inventory-row inv predicate))
-            (append
-             (if (and row
-                      (eq? (row-decl-event-mode row) 'holding-state)
-                      (= (length arguments) (row-decl-total row)))
-                 (list
-                  (list predicate
-                        `(Fn ,(make-list (row-decl-total row)
-                                        '(Referents Entity))
-                             Content)))
-                 '())
-             (append-map row-environment arguments))]
-           [_ (append-map row-environment datum)])]))
-    (define environment
-      (remove-duplicates (append explicit-environment (row-environment term))))
+    (define-values (term environment) (a0-case-input item))
     (define derivations
       (build-derivations (a0-synth ,environment ,term R)))
     (define results (judgment-holds (a0-synth ,environment ,term R) R))
@@ -1950,7 +1969,7 @@
 ;; --------------------------------------------------------------------------
 ;; P0.4: in-process benchmark and recorded, report-only triggers
 
-(struct benchmark-mode (name totals term-times peak-rss derivations)
+(struct benchmark-mode (name totals term-times peak-rss derivations hotspots)
   #:transparent)
 
 (define (percentile values fraction)
@@ -1988,23 +2007,58 @@
                     [provenance (list provenance)])))
    cases))
 
+(define (a0-specimen-benchmark-cases cases)
+  (filter a0-corpus-eligible? (specimen-benchmark-cases cases)))
+
+(define (proof-rule-names derivation)
+  (append (if (derivation-name derivation)
+              (list (derivation-name derivation)) '())
+          (append-map proof-rule-names (derivation-subs derivation))))
+
+(define (a0-case-rule-names item)
+  (remove-duplicates
+   (append-map proof-rule-names (a0-case-derivations item))))
+
 (define (run-benchmark-mode name cases repetitions)
   (define totals '())
   (define all-term-times '())
   (define derivations 0)
+  (define new-case-times (make-hash))
+  (define new-case-counts (make-hash))
   (define (run-once record?)
     (define started (current-inexact-monotonic-milliseconds))
     (define term-times '())
     (define run-derivations 0)
     (for ([item (in-list cases)])
       (define term-start (current-inexact-monotonic-milliseconds))
-      (define calls (if (eq? name 'side-by-side) 2 1))
-      (for ([_ (in-range calls)])
-        (define result (legacy-record item))
-        (set! run-derivations (+ run-derivations (port-record-derivations result))))
+      (define new-elapsed #f)
+      (define records
+        (case name
+          [(old-only) (list (legacy-record item))]
+          [(new-only)
+           (define new-start (current-inexact-monotonic-milliseconds))
+           (define new (a0-port-record item))
+           (set! new-elapsed
+                 (- (current-inexact-monotonic-milliseconds) new-start))
+           (list new)]
+          [(side-by-side)
+           (define old (legacy-record item))
+           (define new-start (current-inexact-monotonic-milliseconds))
+           (define new (a0-port-record item))
+           (set! new-elapsed
+                 (- (current-inexact-monotonic-milliseconds) new-start))
+           (list old new)]
+          [else (error 'run-benchmark-mode "unsupported mode: ~e" name)]))
+      (for ([result (in-list records)])
+        (set! run-derivations
+              (+ run-derivations (port-record-derivations result))))
       (set! term-times
             (cons (- (current-inexact-monotonic-milliseconds) term-start)
-                  term-times)))
+                  term-times))
+      (when (and record? new-elapsed)
+        (hash-update! new-case-times (port-case-id item)
+                      (lambda (total) (+ total new-elapsed)) 0.0)
+        (hash-update! new-case-counts (port-case-id item) add1 0)))
     (when record?
       (set! totals (cons (- (current-inexact-monotonic-milliseconds) started)
                          totals))
@@ -2012,15 +2066,38 @@
       (set! derivations (+ derivations run-derivations))))
   (run-once #f)
   (for ([_ (in-range repetitions)]) (run-once #t))
-  (benchmark-mode name (reverse totals) all-term-times (peak-rss-bytes)
-                  derivations))
+  (define measured-peak-rss (peak-rss-bytes))
+  (define hotspot-totals (make-hash))
+  (define hotspot-counts (make-hash))
+  (when (member name '(new-only side-by-side))
+    (for ([item (in-list cases)])
+      (define elapsed (hash-ref new-case-times (port-case-id item) 0.0))
+      (define count (hash-ref new-case-counts (port-case-id item) 0))
+      (for ([rule (in-list (a0-case-rule-names item))])
+        (hash-update! hotspot-totals rule
+                      (lambda (total) (+ total elapsed)) 0.0)
+        (hash-update! hotspot-counts rule
+                      (lambda (hits) (+ hits count)) 0))))
+  (define hotspots
+    (take
+     (sort
+      (for/list ([(rule elapsed) (in-hash hotspot-totals)])
+        (list rule elapsed (hash-ref hotspot-counts rule)))
+      (lambda (left right)
+        (or (> (second left) (second right))
+            (and (= (second left) (second right))
+                 (string<? (first left) (first right))))))
+     (min 5 (hash-count hotspot-totals))))
+  (benchmark-mode name (reverse totals) all-term-times measured-peak-rss
+                  derivations hotspots))
 
 (define (benchmark-mode->datum mode)
   `(benchmark-mode ,(benchmark-mode-name mode)
                    (totals ,@(benchmark-mode-totals mode))
                    (term-times ,@(benchmark-mode-term-times mode))
                    (peak-rss ,(benchmark-mode-peak-rss mode))
-                   (derivations ,(benchmark-mode-derivations mode))))
+                   (derivations ,(benchmark-mode-derivations mode))
+                   (hotspots ,@(benchmark-mode-hotspots mode))))
 
 (define (datum->benchmark-mode datum)
   (match datum
@@ -2028,8 +2105,12 @@
                      (totals ,(? real? totals) ...)
                      (term-times ,(? real? term-times) ...)
                      (peak-rss ,(? exact-nonnegative-integer? peak-rss))
-                     (derivations ,(? exact-nonnegative-integer? derivations)))
-     (benchmark-mode name totals term-times peak-rss derivations)]
+                     (derivations ,(? exact-nonnegative-integer? derivations))
+                     (hotspots (,(? string? rule)
+                                ,(? real? milliseconds)
+                                ,(? exact-nonnegative-integer? hits)) ...))
+     (benchmark-mode name totals term-times peak-rss derivations
+                     (map list rule milliseconds hits))]
     [_ (error 'datum->benchmark-mode "invalid benchmark mode: ~e" datum)]))
 
 (define (isolated-benchmark-mode name runs)
@@ -2047,13 +2128,16 @@
     (lambda () (when (file-exists? output) (delete-file output)))))
 
 (define (run-benchmarks #:runs [runs 5] #:print? [print? #t])
-  (define cases (specimen-benchmark-cases (load-port-corpus)))
+  (define all-specimens (specimen-benchmark-cases (load-port-corpus)))
+  (define cases (a0-specimen-benchmark-cases (load-port-corpus)))
   (define modes
     (for/list ([name '(old-only new-only side-by-side)])
       ;; Each mode receives a fresh process so VmHWM/peak RSS is comparable.
       ;; The worker loads and warms before starting its timed repetitions.
       (isolated-benchmark-mode name runs)))
   (when print?
+    (printf "port benchmark denominator: a0-eligible-specimen-terms=~a all-specimen-terms=~a\n"
+            (length cases) (length all-specimens))
     (for ([mode (in-list modes)])
       (printf "port benchmark ~a: terms=~a runs=~a median-total-ms=~a p95-term-ms=~a max-term-ms=~a peak-rss=~a derivations=~a\n"
               (benchmark-mode-name mode) (length cases) runs
@@ -2065,7 +2149,11 @@
                   #:precision '(= 3))
               (benchmark-mode-peak-rss mode)
               (benchmark-mode-derivations mode)))
-    (displayln "port benchmark clause hotspots: unavailable (Phase 0 identity engine has no ported clauses)"))
+    (let ([new-mode
+           (findf (lambda (mode) (eq? (benchmark-mode-name mode) 'new-only))
+                  modes)])
+      (printf "port benchmark A0 clause hotspots (inclusive attributed ms): ~s\n"
+              (benchmark-mode-hotspots new-mode))))
   modes)
 
 (define (git-head)
@@ -2085,7 +2173,7 @@
 
 (define (refresh-port-baseline! [path port-baseline-path]
                                 #:full-gate-ms [full-gate-ms 37000.0])
-  (define cases (specimen-benchmark-cases (load-port-corpus)))
+  (define cases (a0-specimen-benchmark-cases (load-port-corpus)))
   (define modes (run-benchmarks #:print? #t))
   (define datum
     `(smusni-port-baseline 1
@@ -2128,48 +2216,41 @@
                  (size-growth-factor ,size-growth-factor))
        (modes ,baseline-modes ...))
     baseline)
-  (define (mode-median name)
-    (match (findf (lambda (item) (and (list? item) (eq? (second item) name)))
-                  baseline-modes)
-      [`(mode ,_ (median-total-ms ,value) . ,_) value]))
   (define (current name)
     (findf (lambda (mode) (eq? (benchmark-mode-name mode) name)) current-modes))
-  (define old-baseline (mode-median 'old-only))
+  (define old (current 'old-only))
   (define new (current 'new-only))
   (define side (current 'side-by-side))
+  (define old-median (median (benchmark-mode-totals old)))
   (define new-median (median (benchmark-mode-totals new)))
   (define side-median (median (benchmark-mode-totals side)))
+  (define current-terms
+    (quotient (length (benchmark-mode-term-times new)) 5))
+  (define growth
+    (run-a0-size-growth #:factor size-growth-factor #:print? #f))
   (define reports
     (list
-     (list 'new-factor (> new-median (* new-factor old-baseline))
-           new-median (* new-factor old-baseline))
+     (list 'new-factor (> new-median (* new-factor old-median))
+           new-median (* new-factor old-median))
      (list 'new-wall (> new-median new-wall-ms) new-median new-wall-ms)
      (list 'term-max (> (apply max (benchmark-mode-term-times new)) term-max-ms)
            (apply max (benchmark-mode-term-times new)) term-max-ms)
      (list 'term-p95 (> (percentile (benchmark-mode-term-times new) 0.95)
                            term-p95-ms)
            (percentile (benchmark-mode-term-times new) 0.95) term-p95-ms)
-     (let ([rss-limit
-            (* rss-factor
-               (match (findf (lambda (item)
-                               (and (list? item)
-                                    (eq? (second item) 'old-only)))
-                             baseline-modes)
-                 [`(mode ,_ ,_ ,_ ,_ (peak-rss-bytes ,rss)) rss]))])
+     (let ([rss-limit (* rss-factor (benchmark-mode-peak-rss old))])
        (list 'rss (> (benchmark-mode-peak-rss new) rss-limit)
              (benchmark-mode-peak-rss new) rss-limit))
-     (list 'side-factor (> side-median (* side-factor old-baseline))
-           side-median (* side-factor old-baseline))))
-  (printf "port triggers (report-only until B): baseline-head=~a terms=~a full-gate-ms=~a full-gate-limit-ms=~a size-growth-limit=~ax\n"
-          head terms full-gate-ms (* full-gate-ms full-gate-factor)
+     (list 'side-factor (> side-median (* side-factor old-median))
+           side-median (* side-factor old-median))))
+  (printf "port triggers (report-only until B): baseline-head=~a baseline-terms=~a a0-eligible-terms=~a full-gate-ms=~a full-gate-limit-ms=~a size-growth-limit=~ax\n"
+          head terms current-terms full-gate-ms (* full-gate-ms full-gate-factor)
           size-growth-factor)
   (for ([report (in-list reports)])
     (match-define (list name triggered? actual limit) report)
     (printf "  ~a: ~a actual=~a limit=~a\n"
             name (if triggered? "TRIGGER" "ok") actual limit))
   (displayln "  full-gate: external measurement required; use --report-full-gate-ms")
-  (define growth
-    (run-a0-size-growth #:factor size-growth-factor #:print? #f))
   (printf "  size-growth: ~a depths=~s milliseconds=~s ratios=~s limit=~ax\n"
           (if (a0-size-growth-triggered? growth) "TRIGGER" "ok")
           (a0-size-growth-depths growth)
