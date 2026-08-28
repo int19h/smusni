@@ -343,7 +343,7 @@ For a collective relation, `mi'o` and explicit `jo'u` still give the same one
 argument:
 
 ```lisp
-; mi'o jmaji ≡ mi jo'u do jmaji — one neutral plural predication [P40]
+; mi'o jmaji — one neutral plural predication; ≡ mi jo'u do jmaji [P40]
 (Assert (Close (jmaji (Combine Speaker Audience))))
 ```
 
@@ -387,7 +387,7 @@ The sibling forms use named token-context projections whose §5.1 constraints
 make the “others” genuinely other and enforce the exclusions:
 
 ```lisp
-; mi'a / do'o / ma'a — their complete reference values [P40]
+; mi'a .i do'o .i ma'a — their complete reference values [P40]
 (Do
   (Mention (Combine Speaker MiAOthers))
   (Mention (Combine Audience DoOOthers))
