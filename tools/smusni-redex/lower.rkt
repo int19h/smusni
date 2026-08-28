@@ -28,6 +28,7 @@
          (struct-out normalization)
          (struct-out case-report)
          (struct-out fence-report)
+         (struct-out mutation-sweep-result)
          SmusniM3
          m3-lower
          display-normalize
@@ -48,6 +49,7 @@
          generated-redex-check
          no-lowering-fails?
          aggregate-fence-disposition
+         run-parse-mutation-sweeps
          run-lowering-gate
          lower)
 
@@ -72,6 +74,9 @@
   #:transparent)
 (struct fence-report (source ordinal disposition cases) #:transparent)
 (struct gentufa-terminal (kind text start stop) #:transparent)
+(struct mutation-sweep-result
+  (wrapper-attempts wrapper-allowlisted deletion-attempts failures)
+  #:transparent)
 
 ;; M3's executable semantics. The Racket driver converts a validated gentufa
 ;; fixture to the small source view below; all core construction happens in
@@ -1053,6 +1058,9 @@
 (define transparent-joi-path-keys
   (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
          'continuations 'connective 'JoikConnective))
+(define fahu-operand-path-keys
+  (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
+         'continuations 'sumti 'SimpleSumti 'SumtiBase))
 (define termset-descriptor-path-keys
   (seteq 'ConnectedTerm 'leading_term 'SumtiTerm 'base_sumti 'leading_sumti
          'continuations 'sumti 'SimpleSumti 'SumtiBase))
@@ -1074,6 +1082,11 @@
          'TanruUnitAtom 'conversions 'ScalarNegatedTanruUnit 'nahe
          'inner_unit 'inner_selbri 'NegatedSelbri 'na 'GohaWordTanruUnit
          'Plain 'PlainWord 'Gismu 'Cmavo 'phonemes 'span))
+(define transparent-terminal-path-keys (seteq 'Plain 'PlainWord))
+(define transparent-number-terminal-path-keys
+  (seteq 'PaRunQuantifier 'number 'first_number 'Plain 'PlainWord))
+(define description-tail-tags
+  (seteq 'RelationDescriptionTail 'QuantifierRelationDescriptionTail))
 
 (define (unrecognized-hash-keys value supported)
   (define found (mutable-set))
@@ -1087,6 +1100,52 @@
       [else (void)]))
   (walk value)
   (sort (set->list found) symbol<?))
+
+(define (unrecognized-direct-keys value supported)
+  (if (hash? value)
+      (sort (filter (lambda (key) (not (set-member? supported key)))
+                    (hash-keys value))
+            symbol<?)
+      '(not-a-hash)))
+
+(define (decode-terminal-leaf subtree kind rule
+                              [transparent transparent-terminal-path-keys])
+  (define direct
+    (direct-semantic-node subtree (seteq kind) rule transparent))
+  (cond
+    [(no-lowering? direct) direct]
+    [else
+     (define payload (second direct))
+     (define unknown
+       (unrecognized-direct-keys payload (seteq 'phonemes 'span)))
+     (define phonemes (and (hash? payload) (hash-ref payload 'phonemes #f)))
+     (define span (and (hash? payload) (hash-ref payload 'span #f)))
+     (if (and (null? unknown) (string? phonemes)
+              (match span [(list (? exact-nonnegative-integer?)
+                                 (? exact-nonnegative-integer?)) #t]
+                          [_ #f]))
+         (unstress phonemes)
+         (no-lowering rule 'rule-underspecified
+                      "terminal leaf has an unknown or malformed child"
+                      (hasheq 'kind kind 'unknown unknown
+                              'phonemes phonemes 'span span)))]))
+
+(define (decode-simple-selbri subtree rule)
+  (define decoded (selbri-view subtree))
+  (cond
+    [(no-lowering? decoded) decoded]
+    [else
+     (define residue
+       (filter values
+               (list (and (hash-ref decoded 'tanru #f) 'tanru)
+                     (and (hash-ref decoded 'conversion #f) 'conversion)
+                     (and (hash-ref decoded 'scalar #f) 'scalar)
+                     (and (hash-ref decoded 'negated #f) 'negated))))
+     (if (null? residue)
+         (hash-ref decoded 'relation)
+         (no-lowering rule 'rule-underspecified
+                      "descriptor relation child has unconsumed modifiers"
+                      residue))]))
 
 (define (semantic-node-candidates subtree semantic-tags)
   (define candidates '())
@@ -1203,11 +1262,15 @@
   (cond
     [(no-lowering? direct) direct]
     [(eq? tag 'LaheSumti)
-     (define op (first-terminal (hash-ref node 'lahe) 'Cmavo))
+     (define unknown
+       (unrecognized-direct-keys node (seteq 'lahe 'inner_sumti)))
+     (define op
+       (if (null? unknown)
+           (decode-terminal-leaf (hash-ref node 'lahe) 'Cmavo "L3.14")
+           (no-lowering "L3.14" 'rule-underspecified
+                        "LAhE node has an unknown direct child" unknown)))
      (define inner (sumti-view (hash-ref node 'inner_sumti)))
-     (cond [(not op)
-            (no-lowering "L3.14" 'rule-underspecified
-                         "LAhE parse has no operator" node)]
+     (cond [(no-lowering? op) op]
            [(no-lowering? inner) inner]
            [else `(lahe ,op ,inner)])]
     [(eq? tag 'DescriptorWithGadriSumti)
@@ -1216,69 +1279,111 @@
        [(or (has-tag? descriptor 'RestrictiveBridiRelativeClause)
             (has-tag? descriptor 'NonrestrictiveBridiRelativeClause)
             (has-tag? descriptor 'RelativeClause))
-        (no-lowering "L4" 'out-of-fragment
+       (no-lowering "L4" 'out-of-fragment
                      "relative-clause description is outside F₀-M3"
                      (terminal-texts descriptor))]
        [else
+        (define descriptor-unknown
+          (unrecognized-direct-keys descriptor (seteq 'description 'tail)))
         (define gadri
-          (first-terminal (hash-ref descriptor 'description) 'Cmavo))
-        (define tail (hash-ref descriptor 'tail))
-        (define leading (hash-ref tail 'leading_tail_elements (lambda () #hasheq())))
-        (define quantifier-node (first-tag tail 'PaRunQuantifier))
+          (if (null? descriptor-unknown)
+              (decode-terminal-leaf (hash-ref descriptor 'description)
+                                    'Cmavo "L3.1")
+              (no-lowering "L3.1" 'rule-underspecified
+                           "descriptor has an unknown direct child"
+                           descriptor-unknown)))
+        (define tail-container (hash-ref descriptor 'tail))
+        (define tail-container-unknown
+          (unrecognized-direct-keys tail-container
+                                    (seteq 'leading_tail_elements 'tail)))
+        (define leading
+          (hash-ref tail-container 'leading_tail_elements (lambda () #hasheq())))
+        (define direct-tail
+          (if (null? tail-container-unknown)
+              (direct-semantic-node (hash-ref tail-container 'tail)
+                                    description-tail-tags "L3.1" (seteq))
+              (no-lowering "L3.1" 'rule-underspecified
+                           "description tail has an unknown direct child"
+                           tail-container-unknown)))
+        (define tail-node (and (list? direct-tail) (second direct-tail)))
+        (define tail-unknown
+          (if tail-node
+              (unrecognized-direct-keys tail-node (seteq 'quantifier 'selbri))
+              '()))
+        (define quantifier-node
+          (and tail-node (hash-ref tail-node 'quantifier (lambda () #f))))
         (define quantifier-word
-          (and quantifier-node (first-terminal quantifier-node 'Cmavo)))
+          (and quantifier-node
+               (decode-terminal-leaf quantifier-node 'Cmavo "L3.9"
+                                     transparent-number-terminal-path-keys)))
         (define count
-          (and quantifier-word
+          (and (string? quantifier-word)
                (hash-ref number-values quantifier-word #f)))
-        (define relations
-          (remove-duplicates (terminal-texts tail 'Gismu)))
-        (define cmavo (terminal-texts descriptor 'Cmavo))
+        (define relation
+          (and tail-node (null? tail-unknown)
+               (decode-simple-selbri (hash-ref tail-node 'selbri) "L3.1")))
         (cond
+          [(no-lowering? gadri) gadri]
+          [(no-lowering? direct-tail) direct-tail]
+          [(pair? tail-unknown)
+           (no-lowering "L3.1" 'rule-underspecified
+                        "description relation tail has an unknown child"
+                        tail-unknown)]
+          [(no-lowering? quantifier-word) quantifier-word]
+          [(no-lowering? relation) relation]
           [(and (hash? leading) (positive? (hash-count leading)))
            (no-lowering "L3.11" 'rule-underspecified
                         "description has unimplemented leading semantic children"
                         (terminal-texts leading))]
-          [(not (and gadri (= (length relations) 1)))
-           (no-lowering "L3.1" 'rule-underspecified
-                        "descriptor must contain exactly one supported relation"
-                        relations)]
-          [(not (same-members? cmavo
-                               (filter values (list gadri quantifier-word))))
-           (no-lowering "L3.1" 'rule-underspecified
-                        "descriptor contains unconsumed cmavo"
-                        cmavo)]
-          [else `(description ,gadri ,(string->symbol (first relations)) ,count)])])]
+          [else `(description ,gadri ,relation ,count)])])]
     [(eq? tag 'DescriptorWithoutGadriSumti)
      (define quantified node)
+     (define unknown
+       (unrecognized-direct-keys quantified (seteq 'quantifier 'selbri)))
      (define quantifier-node (hash-ref quantified 'quantifier))
-     (define q-word (first-terminal quantifier-node 'Cmavo))
-     (define relations
-       (remove-duplicates
-        (terminal-texts (hash-ref quantified 'selbri) 'Gismu)))
-     (define cmavo (terminal-texts quantified 'Cmavo))
-     (define quantity (and q-word (hash-ref number-values q-word q-word)))
-     (if (and q-word (= (length relations) 1)
-              (equal? cmavo (list q-word)))
-         `(quantifier ,quantity ,(string->symbol (first relations)))
-         (no-lowering "L5.2" 'rule-underspecified
-                      "quantified sumti has unconsumed semantic children"
-                      (hasheq 'cmavo cmavo 'relations relations)))]
+     (define q-word
+       (if (null? unknown)
+           (decode-terminal-leaf quantifier-node 'Cmavo "L5.2"
+                                 transparent-number-terminal-path-keys)
+           (no-lowering "L5.2" 'rule-underspecified
+                        "quantified sumti has an unknown direct child" unknown)))
+     (define relation
+       (and (not (no-lowering? q-word))
+            (decode-simple-selbri (hash-ref quantified 'selbri) "L5.2")))
+     (define quantity
+       (and (string? q-word) (hash-ref number-values q-word q-word)))
+     (cond [(no-lowering? q-word) q-word]
+           [(no-lowering? relation) relation]
+           [else `(quantifier ,quantity ,relation)])]
     [(eq? tag 'NameSumti)
      (define named node)
-     (define names (terminal-texts named 'Cmevla))
-     (define cmavo (terminal-texts named 'Cmavo))
-     (if (and (= (length names) 1) (equal? cmavo '("la")))
-         `(name ,(first names))
-         (no-lowering "L3.3" 'rule-underspecified
-                      "name sumti has unconsumed semantic children"
-                      (hasheq 'cmavo cmavo 'names names)))]
+     (define unknown (unrecognized-direct-keys named (seteq 'la 'names)))
+     (define la-word
+       (if (null? unknown)
+           (decode-terminal-leaf (hash-ref named 'la) 'Cmavo "L3.3")
+           (no-lowering "L3.3" 'rule-underspecified
+                        "name sumti has an unknown direct child" unknown)))
+     (define name-nodes (hash-ref named 'names (lambda () '())))
+     (define decoded-names
+       (if (list? name-nodes)
+           (map (lambda (name-node)
+                  (decode-terminal-leaf name-node 'Cmevla "L3.3"))
+                name-nodes)
+           (list (no-lowering "L3.3" 'rule-underspecified
+                              "name list is malformed" name-nodes))))
+     (define failure (or (and (no-lowering? la-word) la-word)
+                         (findf no-lowering? decoded-names)))
+     (cond [failure failure]
+           [(and (equal? la-word "la") (= (length decoded-names) 1))
+            `(name ,(first decoded-names))]
+           [else (no-lowering "L3.3" 'rule-underspecified
+                              "name sumti requires la and one name"
+                              (hasheq 'la la-word 'names decoded-names))])]
     [(eq? tag 'ProSumti)
      (define pro node)
-     (define words (terminal-texts pro 'Cmavo))
-     (if (not (= (length words) 1))
-         (no-lowering "L1.4" 'rule-underspecified
-                      "pro-sumti has unconsumed semantic children" words)
-         (let ([word (first words)])
+     (define word (decode-terminal-leaf pro 'Cmavo "L1.4"))
+     (if (no-lowering? word) word
+         (let ([word word])
            (cond [(hash-ref reference-values word #f)
                   => (lambda (value) `(value ,value))]
                  [(equal? word "zi'o") '(deleted)]
@@ -1302,24 +1407,53 @@
            (unrecognized-hash-keys (second direct-joi)
                                    supported-special-connective-keys)
            '()))
-     (define cmavo (terminal-texts connected-term 'Cmavo))
-     (define values
-       (for/list ([word (in-list cmavo)]
-                  #:when (hash-has-key? reference-values word))
-         (hash-ref reference-values word)))
+     (define operand-candidates
+       (semantic-node-candidates connected-term sumti-semantic-tags))
+     (define unknown-operand-paths
+       (unrecognized-semantic-path-keys operand-candidates
+                                        fahu-operand-path-keys))
+     (define ordered-operands
+       (sort operand-candidates <
+             #:key (lambda (candidate)
+                     (define terminals (gentufa-terminals (second candidate)))
+                     (if (null? terminals) +inf.0
+                         (gentufa-terminal-start (first terminals))))))
+     (define decoded-operands
+       (for/list ([candidate (in-list ordered-operands)])
+         (sumti-view (hasheq (first candidate) (second candidate)))))
+     (define operand-values
+       (for/list ([operand (in-list decoded-operands)])
+         (match operand [`(value ,value) value] [_ #f])))
+     (define accounted-terminals
+       (append (if (list? direct-joi)
+                   (terminal-signatures (second direct-joi)) '())
+               (append-map (lambda (candidate)
+                             (terminal-signatures (second candidate)))
+                           ordered-operands)))
      (cond [(no-lowering? direct-joi) direct-joi]
            [(pair? unknown-joi-keys)
             (no-lowering "L5.21" 'rule-underspecified
                          "fa'u connective has an unknown inner wrapper"
                          unknown-joi-keys)]
-           [(and (= (count (lambda (word) (equal? word "fa'u")) cmavo) 1)
-                 (= (length values) 2)
-                 (= (length cmavo) 3))
-            `(zip-values ,values)]
+           [(pair? unknown-operand-paths)
+            (no-lowering "L5.21" 'rule-underspecified
+                         "fa'u operand is nested under an unknown wrapper"
+                         unknown-operand-paths)]
+           [(findf no-lowering? decoded-operands)
+            => values]
+           [(not (same-members? (terminal-signatures connected-term)
+                                accounted-terminals))
+            (no-lowering "L5.21" 'rule-underspecified
+                         "fa'u has unconsumed child terminals"
+                         (hasheq 'all (terminal-signatures connected-term)
+                                 'accounted accounted-terminals))]
+           [(and (= (length operand-values) 2)
+                 (not (member #f operand-values)))
+            `(zip-values ,operand-values)]
            [else
             (no-lowering "L5.21" 'rule-underspecified
-                         "fa'u connectee has unconsumed semantic children"
-                         cmavo)])]
+                         "fa'u requires exactly two decoded referential operands"
+                         decoded-operands)])]
     [else
      (define direct
        (direct-semantic-node connected-term term-semantic-tags "L1.4"))
@@ -1327,13 +1461,15 @@
        [(no-lowering? direct) direct]
        [(eq? (first direct) 'PlaceTaggedSumtiTerm)
         (define node (second direct))
-        (define fa (first-terminal (hash-ref node 'fa) 'Cmavo))
+        (define fa
+          (decode-terminal-leaf (hash-ref node 'fa) 'Cmavo "L1.4"))
         (define label (hash "fa" 1 "fe" 2 "fi" 3 "fo" 4 "fu" 5))
         (define sumti (sumti-view (hash-ref node 'sumti)))
         (define accounted
           (append (terminal-signatures (hash-ref node 'fa))
                   (terminal-signatures (hash-ref node 'sumti))))
-        (cond [(no-lowering? sumti) sumti]
+        (cond [(no-lowering? fa) fa]
+              [(no-lowering? sumti) sumti]
               [(not (and fa (hash-has-key? label fa)
                          (same-members? (terminal-signatures node)
                                         accounted)))
@@ -1466,11 +1602,18 @@
                                     "bridi tail has no simple selbri" #f))
             (let* ([term-nodes (collect-bridi-terms bridi tail)]
                    [cu-node (hash-ref bridi 'cu (lambda () #f))]
+                   [cu-word
+                    (and cu-node
+                         (decode-terminal-leaf cu-node 'Cmavo "L1.1"))]
                    [accounted-terminals
                     (append (terminal-signatures (hash-ref tail 'selbri))
                             (append-map terminal-signatures term-nodes)
                             (if cu-node (terminal-signatures cu-node) '()))])
               (cond
+                [(no-lowering? cu-word) cu-word]
+                [(and cu-word (not (equal? cu-word "cu")))
+                 (no-lowering "L1.1" 'rule-underspecified
+                              "bridi separator is not cu" cu-word)]
                 [(not (same-members? (terminal-signatures bridi)
                                      accounted-terminals))
                  (no-lowering "L1.1" 'rule-underspecified
@@ -1997,6 +2140,16 @@
             (let* ([left-view (bridi-view leading)]
                    [trailing (hash-ref tail 'trailing_statement)]
                    [connective (hash-ref tail 'connective)]
+                   [i-node (hash-ref tail 'i (lambda () #f))]
+                   [i-word
+                    (if i-node
+                        (decode-terminal-leaf i-node 'Cmavo "L5.12")
+                        (no-lowering "L5.12" 'rule-underspecified
+                                     "statement connection has no i separator"
+                                     #f))]
+                   [tail-unknown
+                    (unrecognized-direct-keys
+                     tail (seteq 'connective 'i 'trailing_statement))]
                    [direct-jek
                     (direct-semantic-node connective jek-tags "L5.12"
                                           transparent-jek-path-keys)]
@@ -2032,12 +2185,24 @@
                                [(equal? jek "ja") 'or]
                                [else #f])])
               (if (or (no-lowering? left-view) (no-lowering? right-view)
+                      (pair? tail-unknown)
+                      (no-lowering? i-word) (not (equal? i-word "i"))
                       (no-lowering? direct-jek) (pair? unknown-jek-keys)
                       tanru-connection? (not kind)
                       (not (= (length separators) 1))
                       (not (same-members? all-terminals accounted)))
                   (or (and (no-lowering? left-view) left-view)
                       (and (no-lowering? right-view) right-view)
+                      (and (no-lowering? i-word) i-word)
+                      (and (not (no-lowering? i-word))
+                           (not (equal? i-word "i"))
+                           (no-lowering "L5.12" 'rule-underspecified
+                                        "statement separator is not i" i-word))
+                      (and (pair? tail-unknown)
+                           (no-lowering
+                            "L5.12" 'rule-underspecified
+                            "statement tail has an unknown direct child"
+                            tail-unknown))
                       (and (no-lowering? direct-jek) direct-jek)
                       (and tanru-connection?
                            (no-lowering
@@ -2158,6 +2323,138 @@
      (no-lowering "M3" 'out-of-fragment
                   "gentufa parse has no supported statement root"
                   (sort (set->list (parse-case-variants parse-case)) symbol<?))]))
+
+(define mutation-empty-deletion-pass-through-keys
+  (seteq 'leading_tail_elements 'leading_terms 'terms 'conversions
+         'additional_units 'continuations))
+(define mutation-nonsemantic-deletion-pass-through-keys (seteq 'cu))
+
+(define (internal-json-key-occurrences value)
+  (define found '())
+  (define (walk node path)
+    (cond
+      [(hash? node)
+       (for ([(key child) (in-hash node)])
+         (when (or (hash? child) (list? child))
+           (set! found (cons (list path key child) found)))
+         (walk child (append path (list (list 'key key)))))]
+      [(list? node)
+       (for ([child (in-list node)] [index (in-naturals)])
+         (walk child (append path (list (list 'index index)))))]
+      [else (void)]))
+  (walk value '())
+  (sort found string<?
+        #:key (lambda (occurrence)
+                (format "~s" (list (first occurrence)
+                                    (second occurrence))))))
+
+(define (mutate-json-key-at value parent-path wanted mode)
+  (define (walk node path)
+    (cond
+      [(null? path)
+       (unless (hash? node)
+         (error 'mutate-json-key-at "target parent is not a hash"))
+       (for/hasheq ([(key child) (in-hash node)]
+                    #:unless (and (eq? mode 'delete) (eq? key wanted)))
+         (values (if (and (eq? mode 'rename) (eq? key wanted))
+                     'UnknownSweptWrapper key)
+                 child))]
+      [else
+       (match (first path)
+         [`(key ,key-step)
+          (unless (hash? node)
+            (error 'mutate-json-key-at "key path enters a non-hash"))
+          (for/hasheq ([(key child) (in-hash node)])
+            (values key (if (eq? key key-step)
+                            (walk child (rest path)) child)))]
+         [`(index ,index-step)
+          (unless (list? node)
+            (error 'mutate-json-key-at "index path enters a non-list"))
+          (for/list ([child (in-list node)] [index (in-naturals)])
+            (if (= index index-step) (walk child (rest path)) child))])]))
+  (walk value parent-path))
+
+(define (mutation-source-result parse-case fields inv raw)
+  (with-handlers
+      ([exn:fail?
+        (lambda (exception)
+          (no-lowering "M3" 'implementation
+                       "mutated parse was structurally refused"
+                       (exn-message exception)))])
+    (parse-case->sigma (hash-set parse-case 'parse raw) fields inv)))
+
+(define (run-parse-mutation-sweeps [manifest (load-lowering-manifest)]
+                                   [inv (load-inventory)])
+  (define wrapper-attempts 0)
+  (define wrapper-allowlisted 0)
+  (define deletion-attempts 0)
+  (define failures '())
+  (define (record! source ordinal index mode key baseline mutated expectation)
+    (set! failures
+          (cons (list (case-key source ordinal index) mode key expectation
+                      baseline mutated)
+                failures)))
+  (for ([candidate (in-list (lowering-manifest-candidates manifest))])
+    (define parse-cases (hash-ref (load-parse-fixture candidate) 'cases))
+    (define rr-cases (rr-fixture-cases (load-rr-fixture candidate inv)))
+    (for ([parse-case (in-list parse-cases)]
+          [rr (in-list rr-cases)])
+      (define raw (hash-ref parse-case 'parse))
+      (when (hash? raw)
+        (define fields (rr-case-fields rr))
+        (define baseline (mutation-source-result parse-case fields inv raw))
+        (for ([occurrence (in-list (internal-json-key-occurrences raw))])
+          (match-define (list parent-path key child) occurrence)
+          (define key-at-path (list key parent-path))
+          (define rename-allowlisted? #f)
+          (define deletion-allowlisted?
+            (or (set-member? mutation-nonsemantic-deletion-pass-through-keys key)
+                (and (set-member? mutation-empty-deletion-pass-through-keys key)
+                     (or (and (hash? child) (zero? (hash-count child)))
+                         (and (list? child) (null? child))))))
+          (define renamed
+            (mutation-source-result
+             parse-case fields inv
+             (mutate-json-key-at raw parent-path key 'rename)))
+          (set! wrapper-attempts (add1 wrapper-attempts))
+          (if rename-allowlisted?
+              (begin
+                (set! wrapper-allowlisted (add1 wrapper-allowlisted))
+                (unless (equal? renamed baseline)
+                  (record! (lowering-candidate-source candidate)
+                           (lowering-candidate-ordinal candidate)
+                           (hash-ref parse-case 'index) 'rename key-at-path
+                           baseline renamed
+                           'allowlisted-must-be-unchanged)))
+              (unless (and (no-lowering? renamed)
+                           (or (not (no-lowering? baseline))
+                               (not (equal? renamed baseline))))
+                (record! (lowering-candidate-source candidate)
+                         (lowering-candidate-ordinal candidate)
+                         (hash-ref parse-case 'index) 'rename key-at-path
+                         baseline renamed
+                         'unknown-wrapper-must-refuse)))
+          (define deleted
+            (mutation-source-result
+             parse-case fields inv
+             (mutate-json-key-at raw parent-path key 'delete)))
+          (set! deletion-attempts (add1 deletion-attempts))
+          (if deletion-allowlisted?
+              (unless (equal? deleted baseline)
+                (record! (lowering-candidate-source candidate)
+                         (lowering-candidate-ordinal candidate)
+                         (hash-ref parse-case 'index) 'delete key-at-path
+                         baseline deleted
+                         'allowlisted-empty-deletion-must-be-unchanged))
+              (unless (or (no-lowering? deleted)
+                          (not (equal? deleted baseline)))
+                (record! (lowering-candidate-source candidate)
+                         (lowering-candidate-ordinal candidate)
+                         (hash-ref parse-case 'index) 'delete key-at-path
+                         baseline deleted
+                         'subtree-deletion-must-refuse-or-change)))))))
+  (mutation-sweep-result wrapper-attempts wrapper-allowlisted
+                         deletion-attempts (reverse failures)))
 
 (define (rr->redex rr)
   (define fields (rr-fields-value rr))
@@ -2664,6 +2961,7 @@
   (define manifest (load-lowering-manifest))
   (validate-lowering-fixtures! manifest)
   (define inv (load-inventory))
+  (define mutation-sweep (run-parse-mutation-sweeps manifest inv))
   (define fences (candidate-fence-map))
   (define reports '())
   (define fence-reports '())
@@ -2725,6 +3023,7 @@
   (set! failures?
         (or failures?
             (pair? fixture-property-failures)
+            (pair? (mutation-sweep-result-failures mutation-sweep))
             (eq? generated-status 'counterexample)))
   (when print?
     (printf "F₀-M3: live L1, L3, L5 (+ L0.1) — ~a lowering judgments; fixtures are not exhaustive\n"
@@ -2748,6 +3047,22 @@
             (string-join unformed ","))
     (printf "structurally lowered from gentufa/RR: ~a/~a eligible cases\n"
             fixture-property-total structural-eligible-total)
+    (printf
+     "parse mutation sweeps: wrapper-renames=~a refused=~a allowlisted-unchanged=~a; subtree-deletions=~a refused-or-changed=~a; failures=~a\n"
+     (mutation-sweep-result-wrapper-attempts mutation-sweep)
+     (- (mutation-sweep-result-wrapper-attempts mutation-sweep)
+        (mutation-sweep-result-wrapper-allowlisted mutation-sweep)
+        (count (lambda (failure) (eq? (second failure) 'rename))
+               (mutation-sweep-result-failures mutation-sweep)))
+     (mutation-sweep-result-wrapper-allowlisted mutation-sweep)
+     (mutation-sweep-result-deletion-attempts mutation-sweep)
+     (- (mutation-sweep-result-deletion-attempts mutation-sweep)
+        (count (lambda (failure) (eq? (second failure) 'delete))
+               (mutation-sweep-result-failures mutation-sweep)))
+     (length (mutation-sweep-result-failures mutation-sweep)))
+    (when (pair? (mutation-sweep-result-failures mutation-sweep))
+      (printf "  mutation failures: ~e\n"
+              (mutation-sweep-result-failures mutation-sweep)))
     (printf "deterministic fixture derivations: ~a/~a outputs type-check~a\n"
             (- fixture-property-total (length fixture-property-failures))
             fixture-property-total

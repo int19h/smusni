@@ -178,16 +178,22 @@ place map, and conversion routes those labels to the base row before
 application; each `zi'o` remains a distinct `DropPlace` deletion.
 The same path certificate covers lexical selbri units, JOI/termset and
 sentence connectives, root statements, and fragments; special handlers do not
-bypass it through recursive descendant search.
+bypass it through recursive descendant search. Every accepted semantic node
+recursively invokes the same decoder for semantic children: descriptors and
+quantifiers decode their child selbri, connectives decode their operands, and
+only a leaf rule reads a terminal payload.
 
 RR force, readings, selected rows, and site kind/order/dependencies are
 validated exactly for the selected rule path. A nonempty RR field with no M3
 consumer is rejected rather than ignored. Candidate-visible semantic gaps are
 reported only after that exact validation, so malformed RR remains a failing
 `rr-missing` result rather than a non-failing unsupported-rule report. Mutation
-regressions require tree
-structure changes to block lowering, exercise unseen lexical and place
-combinations, and require every RR change to alter or reject output. The report
+regressions require tree structure changes to block lowering, exercise unseen
+lexical and place combinations, and require every RR change to alter or reject
+output. Deterministic sweeps rename and delete every internal key occurrence in
+all fixture parses; a rename must refuse, while deletion must refuse or change
+the source view except for explicitly listed syntactic no-ops. Attempt and
+failure counts are printed. The report
 prints the number of eligible cases for which the gentufa/RR translation
 actually formed a Redex source view.
 

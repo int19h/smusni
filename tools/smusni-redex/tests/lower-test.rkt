@@ -775,12 +775,18 @@
       (hash-update
        descriptor 'tail
        (lambda (tail)
+         (define relation-node
+           (hash-ref (hash-ref tail 'tail) 'RelationDescriptionTail))
          (hash-set
-          tail 'probe-quantifier
-          (hasheq 'PaRunQuantifier
-                  (hasheq 'number
-                          (hasheq 'first_number
-                                  (synthetic-terminal 'Cmavo word 15)))))))))))
+          tail 'tail
+          (hasheq
+           'QuantifierRelationDescriptionTail
+           (hash-set
+            relation-node 'quantifier
+            (hasheq 'PaRunQuantifier
+                    (hasheq 'number
+                            (hasheq 'first_number
+                                    (synthetic-terminal 'Cmavo word 15)))))))))))))
 
 ;; Inner PA is computed by sumti-view and therefore must either contribute a
 ;; selection or block the path. Ordinary descriptions and collections do not
@@ -928,6 +934,30 @@
    sample-1-rr))
 (check-true (no-lowering? unknown-selbri-wrapper-result))
 (check-equal? (no-lowering-cause unknown-selbri-wrapper-result)
+              'rule-underspecified)
+
+(define unknown-descriptor-child-result
+  (lower
+   (hash-set
+    description-row-parse 'parse
+    (update-first-json-tag
+     (hash-ref description-row-parse 'parse) 'DescriptorWithGadriSumti
+     (lambda (descriptor)
+       (rename-json-key descriptor 'WordTanruUnit
+                        'UnknownDescriptorLexicalWrapper))))
+   description-row-rr))
+(check-true (no-lowering? unknown-descriptor-child-result))
+(check-equal? (no-lowering-cause unknown-descriptor-child-result)
+              'rule-underspecified)
+
+(define unknown-fahu-operand-result
+  (lower
+   (hash-set zip-parse 'parse
+             (rename-json-key (hash-ref zip-parse 'parse)
+                              'SimpleSumti 'UnknownFahuOperandWrapper))
+   zip-rr))
+(check-true (no-lowering? unknown-fahu-operand-result))
+(check-equal? (no-lowering-cause unknown-fahu-operand-result)
               'rule-underspecified)
 
 (define-values (termset-parse termset-rr) (case-input "samples.md" 46))
