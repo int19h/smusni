@@ -132,6 +132,8 @@
     "lo mlatu cu tavla lo no gerku"
     "su'o gerku cu tavla lo mlatu"
     "lo mlatu cu tavla su'o gerku"
+    "su'o gerku cu tavla mi"
+    "mi tavla su'o gerku"
     "ro gerku cu tavla ci mlatu"
     "ci gerku cu tavla ro mlatu"))
 
@@ -838,7 +840,8 @@
 (define rr-field-names
   '(parse attach readings rows stores sites anaphora force))
 (define no-lowering-causes
-  '(rr-missing row-missing rule-underspecified implementation out-of-fragment))
+  '(rr-missing row-missing rule-underspecified implementation no-reading
+    out-of-fragment))
 
 (define (source-stem source)
   (path->string (path-replace-extension (file-name-from-path source) #"")))
@@ -2107,18 +2110,26 @@
                  (cons (hoist-site-key ready) bound))
            #f)])))
 
-(define (global-hoist-source fields quantity predicate relation inv)
+(define (global-hoist-source fields quantity predicate relation inv sentence?)
   (define checks
-    (list (require-readings fields '(global-exact) "L5.2")
+    (list (require-readings fields
+                            (append (if sentence? '(actual) '())
+                                    '(global-exact))
+                            "L5.2")
           (require-rows fields (list predicate relation) "L5.2")
           (require-empty-resolution-fields fields "L5.2")))
   (define basic-failure (apply first-failure checks))
+  (define force
+    (cond
+      [sentence? (force-from-rr fields)]
+      [(null? (rr-value fields 'force)) 'none]
+      [else
+       (no-lowering "L5.2" 'rr-missing
+                    "RR.force is nonempty on a content-level global reading"
+                    (rr-value fields 'force))]))
   (cond
     [basic-failure basic-failure]
-    [(pair? (rr-value fields 'force))
-     (no-lowering "L5.2" 'rr-missing
-                  "global reading has no force consumer"
-                  (rr-value fields 'force))]
+    [(no-lowering? force) force]
     [else
      (define expected (global-expected-sites predicate relation inv))
      (cond
@@ -2227,7 +2238,7 @@
                                      (hoist-site-deps site)))
                              sites))]
           [else
-           `(cardinal global none ,quantity ,predicate ,relation
+           `(cardinal global ,force ,quantity ,predicate ,relation
                       ((property restrictor ,predicate
                                  ,(row-decl-total (inventory-row inv predicate))
                                  ,(row-decl-event-mode
@@ -2487,8 +2498,8 @@
     [_ (error 'argument-wrapper "unsupported Bind argument: ~e" spec)]))
 
 (define (force-consuming-quantifier-spec? spec l530?)
-  (or (member (first spec) '(inner-no every threshold global-cardinal))
-      (and l530? (member (first spec) '(cardinal some)))))
+  (or (member (first spec) '(some inner-no every threshold global-cardinal))
+      (and l530? (eq? (first spec) 'cardinal))))
 
 (define (quantifier-wrapper spec variable body force l530?)
   (match spec
@@ -2502,7 +2513,7 @@
      (define source
        `(cardinal some none none ,predicate
                   (argument ,variable ,body) () ()))
-     (if (and l530? (not (eq? force 'none)))
+     (if (not (eq? force 'none))
          `(force ,force ,source) source)]
     [`(inner-no ,basis ,predicate)
      `(inner-no ,basis ,predicate ,force (argument ,variable ,body))]
@@ -2562,11 +2573,10 @@
               (eq? (first (second binding)) 'global-cardinal))
             bindings))
   (define global-cardinals (map second global-bindings))
-  (define global-plan
+  (define global-profile
     (cond
       [(null? global-bindings) `(global-plan () () ())]
       [(and (= (length global-bindings) 1)
-            (equal? (last quantifier-bindings) (first global-bindings))
             (not (hash-ref selbri 'tanru #f))
             (not (hash-ref selbri 'negated)))
        (match-define (list global-variable
@@ -2640,12 +2650,24 @@
                                  ,member-label (fills ,@fixed-fills)))])
                `(global-plan ,rr-sites ,properties ,site-data))))))]
       [else #f]))
+  (define global-plan
+    (and global-profile
+         (or (null? global-bindings)
+             (and (= (length global-bindings) 1)
+                  (equal? (last quantifier-bindings)
+                          (first global-bindings))))
+         global-profile))
+  (define outer-global-introduction?
+    (and global-profile
+         (= (length global-bindings) 1)
+         (not (equal? (last quantifier-bindings)
+                      (first global-bindings)))))
   (define global-in-place-sites
-    (and global-plan (second global-plan)))
+    (and global-profile (second global-profile)))
   (define global-properties
-    (and global-plan (third global-plan)))
+    (and global-profile (third global-profile)))
   (define global-site-data
-    (and global-plan (fourth global-plan)))
+    (and global-profile (fourth global-profile)))
   (define host-rows
     (if (hash-ref selbri 'tanru #f)
         (hash-ref selbri 'tanru)
@@ -2685,9 +2707,26 @@
         "global in-place site profile cannot be validated before its continuation form exists"
         (hasheq 'global global-cardinals 'terms terms))]
       [else
-       (validated-path fields boundary-rule expected-readings expected-rows
-                       all-expected-sites
-                       #:force? (eq? category 'sentence))]))
+       (define validation
+         (validated-path fields boundary-rule expected-readings expected-rows
+                         all-expected-sites
+                         #:force? (eq? category 'sentence)))
+       (cond
+         [(no-lowering? validation) validation]
+         [outer-global-introduction?
+          (no-lowering
+           "L5.2" 'no-reading
+           "a global nuclear scope that introduces a later quantified referent has no global reading"
+           (hasheq 'global (first global-cardinals)
+                   'later-quantifiers
+                   (map second
+                        (rest (member (first global-bindings)
+                                      quantifier-bindings)))))]
+         [else
+          (no-lowering
+           "L5.2" 'rr-missing
+           "global in-place continuation shape is not supported"
+           (hasheq 'global global-cardinals 'terms terms))])]))
   (cond
     [(and boundary-check (no-lowering? boundary-check)) boundary-check]
     [(pair? unsupported)
@@ -2934,7 +2973,8 @@
                    `(every ,predicate ,relation)))]
           [(number? quantity)
            (if (member 'global-exact (rr-value fields 'readings))
-               (global-hoist-source fields quantity predicate relation inv)
+               (global-hoist-source fields quantity predicate relation inv
+                                    sentence?)
                (let ([check
                       (validated-path fields "L5.2"
                                       (readings '(witness-set))

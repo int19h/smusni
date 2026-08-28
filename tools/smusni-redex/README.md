@@ -272,20 +272,29 @@ with the same L3/L5 Redex source used by the former sole-term path. It never
 selects a handler by place or specimen key. Inner PA reaches its selection
 through an L3.9 subderivation; it is not copied into the adapter.
 
-L5.30 applies the P41 partition after placement. Descriptions, names, and
+L5.30 is a named Redex pass-through over the driver-ordered source assembled
+by the structural adapter; the clause itself does not reorder computations.
+The driver applies the P41 partition after placement. Descriptions, names, and
 nonzero inner PA wrap at clause level in source order, outside every in-situ
 quantifier. Quantified sumti then nest in their own surface order, leftmost
 outermost: direct witness selections use the §12 `Exactly`/`Some` content forms,
 while `Every`, inner `No`, thresholds, and marked `GlobalExactly` take the
 placed body abstracted at their argument position. Termsets stay on L5.3.
-Force is introduced once at the first Content-forming quantifier; selection and
+Force is introduced once at the first Content-forming quantifier; this includes
+a sole `su'o`, whose completed `Some` is wrapped by sentence-level `Assert` or
+`Mention` while a Content consumer receives bare `Some`. The sole-term marked
+global path has the same category boundary: force-free `GlobalExactly` for
+Content, and force outside the completed term for a sentence. Selection and
 threshold effects remain in their defined positions rather than being copied
 by the adapter.
 
 Exact combined RR validation precedes composition. Marked global readings
 derive role-qualified omitted-site identities from both the restrictor and the
 routed nuclear row; their Context computations are hoisted outside the pure
-`GlobalExactly` operands. A profile that cannot be validated is a failing
-`rr-missing`, never a guessed lowering. The gate promotes samples #71 and #72
-as verified L5.30 cases and keeps the generated in-place fixture free of RR or
-expected-output data.
+`GlobalExactly` operands. When a surface-outer global quantifier would contain
+a later referent-introducing quantifier, §12 defines that global reading as
+absent: after the complete combined RR profile validates, the report uses the
+non-failing `no-reading` cause. Malformed or incomplete profiles remain failing
+`rr-missing` results; `no-reading` is never a validation bypass or a semantic
+gap. The gate promotes samples #71 and #72 as verified L5.30 cases and keeps
+the generated in-place fixture free of RR or expected-output data.

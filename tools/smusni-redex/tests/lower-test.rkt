@@ -643,6 +643,7 @@
  (aggregate-fence-disposition (list report-implementation report-unresolved))
  'in-fragment/no-lowering)
 (check-true (no-lowering-fails? 'rr-missing '(force) '()))
+(check-false (no-lowering-fails? 'no-reading '(defined absence) '()))
 (check-true (no-lowering-fails? 'implementation "bug" '()))
 (check-false (no-lowering-fails? 'rule-underspecified "gap" '()))
 (check-false (no-lowering-fails? 'row-missing '(skicu) '(gerku)))
@@ -718,6 +719,34 @@
 (check-true (no-lowering? cardinal-content-with-force))
 (check-equal? (no-lowering-cause cardinal-content-with-force) 'rr-missing)
 
+;; The sole-term marked-global path is category-polymorphic too: Content has
+;; no force, while a sentence consumes Assert or Mention outside the completed
+;; GlobalExactly term after the same site validation.
+(define global-sentence-parse
+  (hash-set spec-10-parse 'category "sentence"))
+(for ([force '(assert mention)] [head '(Assert Mention)])
+  (define result
+    (lower global-sentence-parse
+           (rr-with spec-10-rr
+                    (cons 'readings '(actual global-exact))
+                    (cons 'force (list force)))))
+  (check-true (lowered? result)
+              (format "sole global sentence accepts ~a" force))
+  (when (lowered? result)
+    (define datum (plain (lowered-term result)))
+    (check-not-false (member 'GlobalExactly (flatten datum)))
+    (check-not-false (member head (flatten datum)))
+    (check-equal? (count (lambda (item) (member item '(Assert Mention)))
+                         (flatten datum))
+                  1)))
+(define malformed-global-sentence-force
+  (lower global-sentence-parse
+         (rr-with spec-10-rr
+                  (cons 'readings '(actual global-exact))
+                  (cons 'force '(assert extra)))))
+(check-true (no-lowering? malformed-global-sentence-force))
+(check-equal? (no-lowering-cause malformed-global-sentence-force) 'rr-missing)
+
 (define capable-result
   (lower sample-1-parse
          (rr-with sample-1-rr (cons 'readings '(capable)))))
@@ -752,6 +781,7 @@
        (in-list
         (list (rr-with spec-10-rr (cons 'sites '()))
               (rr-with spec-10-rr (cons 'attach '(unconsumed)))
+              (rr-with spec-10-rr (cons 'force '(assert)))
               (rr-with spec-10-rr
                        (cons 'readings '(global-exact extra)))))] )
   (define result (lower spec-10-parse mutation))
@@ -981,7 +1011,7 @@
               "smusni-gentufa-in-place-probe-fixture-1")
 (check-true (string? (hash-ref in-place-probe-fixture 'jbotci_version)))
 (define in-place-probe-cases (hash-ref in-place-probe-fixture 'cases))
-(check-equal? (length in-place-probe-cases) 43)
+(check-equal? (length in-place-probe-cases) 45)
 (define in-place-probes
   (for/hash ([case (in-list in-place-probe-cases)]
              [expected-index (in-naturals 1)])
@@ -1278,6 +1308,46 @@
            (λ ($dogs :: Referents Entity)
              (Close (tavla $cats $dogs))))))
  '("L5.30" "L5.2" "L3.1"))
+
+;; A sole `su'o` is itself a Content former. Sentence force therefore wraps
+;; the completed `Some`; it must never enter the nuclear property. Check both
+;; argument positions and all three consumer modes on live gentufa trees.
+(define (check-lone-some surface rows expected-nuclear)
+  (define parse-case (hash-ref in-place-probes surface))
+  (define assert-rr (in-place-rr surface '(actual witness-set) rows))
+  (for ([force '(assert mention)] [head '(Assert Mention)])
+    (define result
+      (lower parse-case
+             (rr-with assert-rr (cons 'force (list force)))))
+    (check-true (lowered? result) (format "~a accepts ~a" surface force))
+    (when (lowered? result)
+      (check-true
+       (redex-alpha-equivalent?
+        (plain (lowered-term result))
+        `(,head
+          (Some (λ ($dog :: Entity) (gerku $dog))
+                (λ ($dogs :: Referents Entity) ,expected-nuclear))))
+       (format "~a keeps ~a outside Some" surface force))))
+  (define content-result
+    (lower (hash-set parse-case 'category "content")
+           (rr-with assert-rr
+                    (cons 'readings '(witness-set))
+                    (cons 'force '()))))
+  (check-true (lowered? content-result)
+              (format "~a has a force-free Content reading" surface))
+  (when (lowered? content-result)
+    (check-true
+     (redex-alpha-equivalent?
+      (plain (lowered-term content-result))
+      `(Some (λ ($dog :: Entity) (gerku $dog))
+             (λ ($dogs :: Referents Entity) ,expected-nuclear)))
+     (format "~a Content is bare Some" surface))))
+
+(check-lone-some "su'o gerku cu tavla mi" '(gerku tavla)
+                 '(Close (tavla $dogs Speaker)))
+(check-lone-some "mi tavla su'o gerku" '(gerku tavla)
+                 '(Close (tavla Speaker $dogs)))
+
 (check-in-place-lowers
  "ci gerku cu tavla lo mlatu" '(actual witness-set)
  '(gerku mlatu tavla)
@@ -1475,15 +1545,17 @@
          (λ ($cat :: Entity) (Close (tavla $dog $cat $place3))))))))
  '("L5.30" "L5.1" "L5.2" "L0.1")
  '((omit nuclear-tavla-3 (deps ()))))
+(define outer-global-mixed-rr
+  (in-place-rr "ci gerku cu tavla ro mlatu"
+               '(actual global-exact importing) '(gerku mlatu tavla)
+               '((omit nuclear-tavla-3 (deps ())))))
 (define outer-global-mixed-result
   (lower
    (hash-ref in-place-probes "ci gerku cu tavla ro mlatu")
-   (in-place-rr "ci gerku cu tavla ro mlatu"
-                '(actual global-exact importing) '(gerku mlatu tavla)
-                '((omit nuclear-tavla-3 (deps ()))))))
+   outer-global-mixed-rr))
 (check-true (no-lowering? outer-global-mixed-result))
 (check-equal? (no-lowering-rule outer-global-mixed-result) "L5.2")
-(check-equal? (no-lowering-cause outer-global-mixed-result) 'rr-missing)
+(check-equal? (no-lowering-cause outer-global-mixed-result) 'no-reading)
 
 (define multi-place-global-sites
   '((omit restrictor-klama-2 (deps ()))
@@ -1528,6 +1600,19 @@
     (when (no-lowering? result)
       (check-equal? (no-lowering-cause result) 'rr-missing
                     (format "~a malformed RR is failing" surface)))))
+
+;; `no-reading` is available only after the exact combined RR profile passes.
+;; Every malformed variant remains a failing rr-missing result.
+(check-boundary-rr-mutations
+ "ci gerku cu tavla ro mlatu" outer-global-mixed-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings '(actual global-exact)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '()))
+  (lambda (fields) (hash-set fields 'sites
+                             '((omit nuclear-tavla-2 (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(mention extra)))))
 
 (define mixed-scope-rr
   (in-place-rr "ro gerku cu tavla lo mlatu"
