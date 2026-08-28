@@ -353,14 +353,16 @@ waivers for one case cannot hide an unused entry. Every replay case's recorded
 inventory digests must match the live inventory or the corpus requires a
 deliberate refresh.
 
-The benchmark replays all 96 specimen-term occurrences for five warm runs in
-old-only, new-only, and side-by-side modes. Timing starts after load/warmup,
-while each mode runs in a fresh child process so peak RSS is not inherited from
-an earlier mode. Its tracked baseline
+The tracked Phase 0 baseline replays all 96 specimen-term occurrences and
 records the exact pre-port head, corpus digest, full-gate measurement, and the
-pre-registered #52 triggers. Trigger evaluation is report-only until Phase B;
-Phase 0 has no ported clauses, so clause-hotspot reporting is explicitly
-unavailable rather than fabricated.
+pre-registered #52 triggers. Once A0 exists, current old/new/side-by-side modes
+instead use the same explicitly reported A0-eligible specimen denominator;
+old calls `legacy-record`, new calls `a0-port-record`, and side calls both.
+Timing starts after load/warmup, and each mode runs in a fresh child process so
+peak RSS is not inherited from an earlier mode. Factor/RSS triggers compare the
+current old and A0 modes on that common denominator; the historical baseline
+continues to anchor the full-gate trigger. Trigger evaluation is report-only
+until Phase B.
 
 Regenerate the two mechanical artifacts deliberately after reviewing their
 source changes:
@@ -370,3 +372,97 @@ racket tools/smusni-redex/port-phase0.rkt --refresh-branches
 racket tools/smusni-redex/port-phase0.rkt --refresh-corpus
 racket tools/smusni-redex/port-phase0.rkt --refresh-baseline --full-gate-ms N
 ```
+
+## Redex port A0 vertical slice (#52)
+
+`port-a0.rkt` is the typed feasibility slice, not a replacement for the full
+checker. `SmusniA0` has a closed type/term grammar for direct `Let`/`Bind`,
+`Exactly` (including zero), `GlobalExactly`, `TooMany`, `Massify`, equal-length
+`ZipWith`, explicit-row `Close`, and L0.1. It contains no `[τ any]`; generic
+application remains an object-language form whose admissibility is decided by
+the typing judgment.
+
+Seven definition ledger entries are `port-state a0`. Each structural
+`definition-case` is the general equation over its parameters, not an output
+table: Let beta; Exactly zero/positive; one GlobalExactly comprehension;
+TooMany's ordered purpose/threshold bindings; Massify's canonical selection;
+ZipWith's empty/paired recursion; and all three §4.6 Close equations—holding,
+implicit direct event, and explicit/shared event—over an explicit
+`(row predicate arity event-mode labels)` supplied by the adapter. Explicit
+event fills are labeled separately from ordinary places; omitted ordinary
+places are bound outside the event abstraction, and the shared-event equation
+uses `CoRef` plus `DirectClause` rather than manufacturing a second event. Unequal
+ZipWith remains `blocked:#41`, and Most remains `blocked:#66`. The typing rule
+still accepts two `List` operands of unequal length because length equality is
+not a type property; only the executable expansion has no unequal equation.
+Every A0 entry pins the full normative source ranges and their digest; edits anywhere in a
+multi-line definition invalidate the ledger.
+
+The two public modes, `a0-synth` and `a0-check`, wrap one recursive Redex
+judgment returning a correlated `(typing τ effects obligations)` record.
+Expected-type forms (`Context`, `Vague`, selections, `Refer`, `Massify`) use the
+checking direction; direct binders, pure/effectful application, quantifiers,
+clause closure, reference and performance Bind, and definition forms use named
+clauses. `Let` accepts inert syntactic values only; computation expressions and
+evaluated applications belong under `Bind`, while a variable already denoting
+a computation can itself be aliased without running it. `ZipWith` likewise
+takes its function parameter as a syntactic value, so the literal empty case
+cannot inherit effects from an expression that computes `f`. The selection floor rejects
+`SelectExactly 0`; equality is limited to first-order/discrete-index types;
+reference-level `Refer` accepts `Fn` or `EFn` while its member-level lift stays
+pure. A malformed `CloseWith` has no derivation instead of escaping as a host
+exception. The A0 old/new oracle uses a structural bank-membership classifier
+that is independent of whether the new judgment derives a result. It selects
+all 31 eligible terms from the retained 337-case fence/test/mutation corpus,
+then adds 11 general mechanism probes. The 42 cases have zero unwaived
+differences. Ten narrow, tracked waivers remain visible: two legacy `ZipWith`
+pass-throughs omit the effect of applying an effectful function, and seven
+negative pure-position mutations differ only because A0 deliberately reports
+`no-derivation` while the Phase B explainer does not yet reproduce the legacy
+failure class. The tenth records the legacy checker's crash on literal empty
+lists against A0's record-preserving empty equation. The Phase 0 identity corpus
+itself still has zero waivers.
+
+L0.1 consumes `(sites (site id role type pure (deps ...)) ...)` with namespaced
+`(site id)`, `(outer variable type)`, and `(member)` dependencies. It detects
+introductions from the scoped input term (the full selection family and
+`Refer`, including nesting under Let/lambda/Bind), skips quotation/syntax,
+captures a well-typed outer variable, orders site dependencies canonically,
+audits every free `$` variable in a site role against the member binders, Γ,
+and declared dependency namespace, and distinguishes `member-dependent`,
+`introduction`, and `malformed-metadata`. The six bank profiles include independent commutation,
+one site edge, outer capture, member refusal, direct introduction, and nested
+introduction; positive quotation controls are separate. Material outside the
+supplied pure-position term is unavailable to the metafunction by construction;
+the caller-scope control documents that interface boundary.
+
+A0 derivation coverage has 55/55 required names and an empty dead-clause
+report. An adjacent 55-entry table maps every rule name to its live spec
+section(s), and every coverage probe plus every differential success must have
+exactly one proof derivation rather than merely one deduplicated result. Native
+metafunction coverage exercises all 15 definition/L0.1 cases.
+The measured raw generator (seed 520, size 8, 500 attempts) produced 34
+well-typed terms: 93.2% discard, roughly 79 cases/minute in the latest standalone
+run, one compound constructor, seven rule names, and binder depth one. It is therefore reported
+`fixture/enumeration-only`; A0 does not claim useful whole-language random
+properties.
+
+The current ordinary benchmark denominator is four A0-eligible specimen terms
+out of the historical 96. Five warm runs measure the legacy engine, A0 engine,
+and true side-by-side execution separately. The report also gives the top five
+A0 proof rules by inclusive attributed term time; this is clause-level hotspot
+evidence, not exclusive profiler time.
+
+The formerly unavailable size-growth trigger now runs against the closed A0
+judgment. It times first derivations for distinct nested-`Let` terms at depths
+16, 32, and 64, using a median of three trials per depth after structurally
+matched warmups. The current run is a report-only trigger: about 35 ms, 191 ms,
+and 1,053 ms, or 5.4× and 5.5× for the two doublings, both above the pre-registered
+4× threshold. This is redesign evidence for Phase B, not a green performance
+claim.
+
+Hand-authored data on the A0 path is limited and tracked: the eleven mechanism
+probes, six L0.1 profile environments, definition-source ranges, and the ten
+field-scoped differential waivers. The remaining differential population is
+computed from the frozen corpus; row declarations and lexical function types
+are derived from the live checker inventory rather than keyed by fixture text.

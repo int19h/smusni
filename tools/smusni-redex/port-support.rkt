@@ -1,6 +1,6 @@
 #lang racket
 
-(require (for-syntax racket/base)
+(require (for-syntax racket/base racket/list)
          redex/reduction-semantics)
 
 (provide define-definition-metafunction
@@ -10,12 +10,16 @@
 ;; actual Redex clause/rule it names. Raw comments or a detached registry cannot
 ;; satisfy the source gate.
 (define-syntax (define-definition-metafunction stx)
-  (syntax-case stx (: -> definition-case)
-    [(_ language name : domain -> range
-        (definition-case _case-id clause) ...)
-     #'(define-metafunction language
-         name : domain -> range
-         clause ...)]))
+  (define parts (rest (syntax->list stx)))
+  (define (case-form? part)
+    (define items (syntax->list part))
+    (and items (= (length items) 3)
+         (eq? (syntax-e (first items)) 'definition-case)))
+  (define prefix (filter (lambda (part) (not (case-form? part))) parts))
+  (define clauses
+    (for/list ([part (in-list parts)] #:when (case-form? part))
+      (third (syntax->list part))))
+  #`(define-metafunction #,@prefix #,@clauses))
 
 (define-syntax (define-definition-relation stx)
   (syntax-case stx (definition-case)

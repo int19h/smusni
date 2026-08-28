@@ -20,7 +20,7 @@
 
 (define result
   (run-benchmark-mode mode
-                      (specimen-benchmark-cases (load-port-corpus))
+                      (a0-specimen-benchmark-cases (load-port-corpus))
                       runs))
 (call-with-output-file output
   (lambda (out)

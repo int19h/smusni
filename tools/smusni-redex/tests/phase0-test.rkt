@@ -97,16 +97,15 @@
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'none))
                      definitions)
-              83)
+              78)
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'legacy-hybrid))
                      definitions)
-              2)
-(check-equal? (count (lambda (entry)
-                       (member (definition-entry-port-state entry)
-                               '(a0 ported)))
-                     definitions)
               0)
+(check-equal? (count (lambda (entry)
+                       (eq? (definition-entry-port-state entry) 'a0))
+                     definitions)
+              7)
 (define implementation-index (definition-implementation-index))
 (define test-inclusive-index
   (definition-implementation-index #:include-tests? #t))
@@ -191,6 +190,8 @@
          definitions))
 (define wrong-legacy-binding
   (struct-copy definition-entry global-entry
+               [port-state 'legacy-hybrid]
+               [implementations '()]
                [legacy-implementations
                 '((binding "tools/smusni-redex/tests/phase0-test.rkt"
                            expand-global-exactly-datum))]))
@@ -208,7 +209,20 @@
               '(#f "#41"))
 (check-equal? (map definition-domain-port-state
                    (definition-entry-domains zipwith))
-              '(none none))
+              '(a0 none))
+(define a0-exactly
+  (findf (lambda (entry)
+           (string=? (definition-entry-id entry) "D12.Exactly"))
+         definitions))
+(define stale-spec-definition
+  (struct-copy definition-entry a0-exactly
+               [spec-source-sha1 "stale-spec-source"]))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "stale or missing spec source digest"))
+        (definition-ledger-findings
+         observations
+         (cons stale-spec-definition (remove a0-exactly definitions)))))
 
 ;; P0.2: every live dispatch branch has one tracked class and exact source
 ;; range. A synthetic branch and a shifted source range both fail the gate.
@@ -218,12 +232,16 @@
 (define helper-ledger (load-infer-helpers))
 (define live-decisions (extract-infer-decisions))
 (define decision-ledger (load-infer-decisions))
+(define live-value-helpers (extract-infer-value-helpers))
+(define value-helper-ledger (load-infer-value-helpers))
 (check-equal? (length live-branches) 91)
 (check-equal? (length branch-ledger) 91)
 (check-equal? (length live-helpers) 34)
 (check-equal? (length helper-ledger) 34)
 (check-equal? (length live-decisions) 23)
 (check-equal? (length decision-ledger) 23)
+(check-equal? (length live-value-helpers) 6)
+(check-equal? (length value-helper-ledger) 6)
 (check-equal? (infer-branch-findings live-branches branch-ledger) '())
 (check-equal? (count (lambda (entry)
                        (eq? (branch-entry-class entry) 'semantic-clause))
@@ -268,6 +286,14 @@
                        (eq? (decision-entry-function entry) 'infer-bind))
                      decision-ledger)
               13)
+(check-equal? (count (lambda (entry)
+                       (eq? (value-helper-entry-class entry) 'semantic-clause))
+                     value-helper-ledger)
+              4)
+(check-equal? (count (lambda (entry)
+                       (eq? (value-helper-entry-class entry) 'auxiliary))
+                     value-helper-ledger)
+              2)
 (define synthetic-branch
   (branch-observation 'infer-application '(eq? head 'Tomorrow) 999 1000
                       "synthetic"))
@@ -350,6 +376,10 @@
 ;; oracle plumbing with zero implicit differences and an empty waiver ledger.
 (define corpus (load-port-corpus))
 (check-equal? (length corpus) 337)
+(define a0-benchmark-cases (a0-specimen-benchmark-cases corpus))
+(check-true (pair? a0-benchmark-cases))
+(check-true (< (length a0-benchmark-cases)
+               (length (specimen-benchmark-cases corpus))))
 (check-true
  (for*/or ([item (in-list corpus)]
            [provenance (in-list (port-case-provenance item))])
@@ -364,6 +394,52 @@
 (check-true differential-ok?)
 (check-equal? differences '())
 (check-equal? stale-waivers '())
+(define-values (a0-differential-ok? a0-differences a0-stale-waivers)
+  (run-a0-differential #:print? #f))
+(define current-a0-differential-cases (a0-differential-cases))
+(check-true a0-differential-ok?)
+(check-equal? (length a0-mechanism-cases) 11)
+(check-equal? (length current-a0-differential-cases) 42)
+(check-equal? (length (load-a0-waivers)) 10)
+(for ([item (in-list current-a0-differential-cases)])
+  (define record (a0-port-record item))
+  (when (eq? (port-record-status record) 'success)
+    (check-equal? (port-record-derivations record) 1
+                  (format "one A0 derivation for ~a" (port-case-id item)))))
+(check-true
+ (a0-corpus-eligible?
+  (findf (lambda (item)
+           (string=? (port-case-id item)
+                     "27f27c1038df83b40e16a919fdaf24b405d04b04"))
+         corpus)))
+(check-false
+ (a0-corpus-eligible?
+  (findf (lambda (item)
+           (string=? (port-case-id item)
+                     "519c65d3104d364d4363ff8b27eecdec8abe7b27"))
+         corpus)))
+(check-equal? a0-differences '())
+(check-equal? a0-stale-waivers '())
+
+;; Benchmark modes execute their named engines. New/side modes expose A0
+;; proof-rule hotspots; old-only is not silently reused as the new engine.
+(define benchmark-probe-case (first a0-mechanism-cases))
+(define new-benchmark-probe
+  (run-benchmark-mode 'new-only (list benchmark-probe-case) 1))
+(define side-benchmark-probe
+  (run-benchmark-mode 'side-by-side (list benchmark-probe-case) 1))
+(check-equal? (benchmark-mode-derivations new-benchmark-probe) 1)
+(check-equal? (benchmark-mode-derivations side-benchmark-probe) 2)
+(check-true (pair? (benchmark-mode-hotspots new-benchmark-probe)))
+(check-equal?
+ (datum->benchmark-mode (benchmark-mode->datum new-benchmark-probe))
+ new-benchmark-probe)
+(check-equal?
+ (legacy-datum->a0
+  '(Close (bajra :2 Audience Speaker :Eventuality $event)))
+ '(CloseWith
+   (row bajra 4 direct-event (1 2 3 4))
+   ((2 Audience) (1 Speaker) (Eventuality $event))))
 (check-exn
  #rx"inventory digest is stale; refresh deliberately"
  (lambda ()
@@ -453,8 +529,8 @@
      (head ,head) (corpus-sha1 ,_) (terms 96) (runs 5)
      (full-gate-ms ,(? real? full-gate))
      (triggers ,triggers ...) (modes ,modes ...))
-   (check-equal? head "ad46048d7ac9b496c7a404a00258ac210988681a")
-   (check-equal? full-gate 36900)
+   (check-equal? head "e936816c9feedb9b750b6f4db9c2dd5737e7302b")
+   (check-equal? full-gate 71990)
    (check-equal? (map second triggers)
                  '(5.0 2000.0 250.0 500.0 2.0 3.0 1.5 4.0))
    (check-equal? (map second modes) '(old-only new-only side-by-side))]

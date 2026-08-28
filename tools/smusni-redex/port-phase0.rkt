@@ -13,8 +13,10 @@
          racket/set
          racket/string
          racket/system
+         redex/reduction-semantics
          "extract.rkt"
          "inventory.rkt"
+         "port-a0.rkt"
          "syntax.rkt"
          "types.rkt")
 
@@ -28,11 +30,15 @@
          (struct-out helper-entry)
          (struct-out decision-observation)
          (struct-out decision-entry)
+         (struct-out value-helper-observation)
+         (struct-out value-helper-entry)
          (struct-out diagnostic-taxonomy)
          (struct-out port-case)
          (struct-out port-record)
          (struct-out benchmark-mode)
          extract-definition-observations
+         definition-observation-source-digest
+         definition-ranges-source-digest
          load-definition-ledger
          definition-ledger-findings
          definition-implementation-index
@@ -43,6 +49,8 @@
          load-infer-helpers
          extract-infer-decisions
          load-infer-decisions
+         extract-infer-value-helpers
+         load-infer-value-helpers
          refresh-infer-branch-metadata!
          infer-branch-findings
          load-diagnostic-taxonomy
@@ -52,10 +60,18 @@
          refresh-port-corpus!
          validate-port-case-inventories!
          run-differential
+         run-a0-differential
+         legacy-datum->a0
+         a0-port-record
+         a0-corpus-eligible?
+         a0-mechanism-cases
+         a0-differential-cases
+         load-a0-waivers
          load-port-waivers
          run-benchmarks
          run-benchmark-mode
          specimen-benchmark-cases
+         a0-specimen-benchmark-cases
          benchmark-mode->datum
          datum->benchmark-mode
          load-port-baseline
@@ -77,6 +93,7 @@
 (define diagnostics-path (build-path inventory-dir "diagnostics.sexp"))
 (define port-corpus-path (build-path inventory-dir "port-corpus.sexp"))
 (define port-waivers-path (build-path inventory-dir "port-waivers.sexp"))
+(define a0-waivers-path (build-path inventory-dir "a0-waivers.sexp"))
 (define port-baseline-path (build-path inventory-dir "port-baseline.sexp"))
 (define production-modules-path
   (build-path inventory-dir "port-production-modules.sexp"))
@@ -103,7 +120,8 @@
 
 (struct definition-observation (head section lines lhs) #:transparent)
 (struct definition-entry
-  (id head section status issue port-state dependencies implementations
+  (id head section spec-source-sha1 spec-source-ranges
+      status issue port-state dependencies implementations
       legacy-implementations domains reason)
   #:transparent)
 (struct definition-domain (name status issue port-state reason) #:transparent)
@@ -234,7 +252,10 @@
      (for/list ([raw (in-list raw-entries)])
        (match raw
          [`(definition (id ,(? string? id)) (head ,(? symbol? head))
-                       (section ,(? string? section)) (status ,raw-status)
+                       (section ,(? string? section))
+                       (spec-source-sha1 ,spec-source-sha1)
+                       (spec-source-ranges ,raw-ranges ...)
+                       (status ,raw-status)
                        (port-state ,(? symbol? port-state))
                        (dependencies ,(? symbol? dependencies) ...)
                        (legacy-implementations ,legacy ...)
@@ -267,7 +288,20 @@
                                     domain-port-state domain-reason)]
                 [_ (error 'load-definition-ledger
                           "invalid definition domain in ~a: ~e" id raw-domain)])))
-          (definition-entry id head section status issue port-state dependencies
+          (unless (or (eq? spec-source-sha1 'none)
+                      (string? spec-source-sha1))
+            (error 'load-definition-ledger
+                   "definition ~a has invalid spec-source-sha1" id))
+          (define spec-source-ranges
+            (for/list ([range (in-list raw-ranges)])
+              (match range
+                [`(,(? exact-positive-integer? start)
+                   ,(? exact-positive-integer? end))
+                 #:when (<= start end) (list start end)]
+                [_ (error 'load-definition-ledger
+                          "definition ~a has invalid source range ~e" id range)])))
+          (definition-entry id head section spec-source-sha1 spec-source-ranges
+                            status issue port-state dependencies
                             implementations legacy domains reason)]
          [_ (error 'load-definition-ledger "invalid definition entry: ~e" raw)]))]
     [_ (error 'load-definition-ledger "unsupported definitions ledger")]))
@@ -279,6 +313,19 @@
         (if (definition-entry? item)
             (definition-entry-section item)
             (definition-observation-section item))))
+
+(define (definition-observation-source-digest observation [path spec-path])
+  (define lines (file->lines path))
+  (datum-digest
+   (for/list ([line-number (in-list (definition-observation-lines observation))])
+     (list line-number (list-ref lines (sub1 line-number))))))
+
+(define (definition-ranges-source-digest ranges [path spec-path])
+  (define lines (file->lines path))
+  (datum-digest
+   (for*/list ([range (in-list ranges)]
+               [line-number (in-range (first range) (add1 (second range)))])
+     (list line-number (list-ref lines (sub1 line-number))))))
 
 (define (racket-sources)
   (for/list ([path (in-directory tool-dir)]
@@ -463,6 +510,22 @@
                 (definition-entry-id entry)))
        (when (null? (definition-entry-implementations entry))
          (note! "ported definition ~a names no implementing cases"
+                (definition-entry-id entry)))
+       (define observation (hash-ref observed-by-key key #f))
+       (define ranges (definition-entry-spec-source-ranges entry))
+       (define occurrence-lines
+         (and observation (definition-observation-lines observation)))
+       (define ranges-cover-occurrences?
+         (and occurrence-lines (pair? ranges)
+              (for/and ([line (in-list occurrence-lines)])
+                (for/or ([range (in-list ranges)])
+                  (<= (first range) line (second range))))))
+       (when (not (and ranges-cover-occurrences?
+                       (string? (definition-entry-spec-source-sha1 entry))
+                       (string=?
+                        (definition-entry-spec-source-sha1 entry)
+                        (definition-ranges-source-digest ranges))))
+         (note! "ported definition ~a has a stale or missing spec source digest"
                 (definition-entry-id entry)))]))
   (for ([entry (in-list entries)])
     (define names (map definition-domain-name (definition-entry-domains entry)))
@@ -506,6 +569,10 @@
   #:transparent)
 (struct decision-entry
   (id function kind pattern ordinal start-line end-line source-sha1 class reason)
+  #:transparent)
+(struct value-helper-observation (name start-line end-line source-sha1)
+  #:transparent)
+(struct value-helper-entry (id name start-line end-line source-sha1 class reason)
   #:transparent)
 
 (define dispatch-functions
@@ -619,6 +686,25 @@
   (walk module)
   found)
 
+(define (defined-top-level-values module)
+  (define found (make-hash))
+  (define (walk node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (when parts
+        (define any-definition?
+          (and (>= (length parts) 3)
+               (eq? (syntax-e (first parts)) 'define)))
+        (define value-definition?
+          (and any-definition?
+               (symbol? (syntax-e (second parts)))))
+        (if any-definition?
+            (when value-definition?
+              (hash-set! found (syntax-e (second parts)) node))
+            (for ([part (in-list parts)]) (walk part))))))
+  (walk module)
+  found)
+
 (define (syntax-symbols stx)
   (define found (mutable-set))
   (define (walk node)
@@ -666,6 +752,28 @@
                  (syntax-symbols definition)))
        (loop (append (rest todo) callees) (set-add seen function))])))
 
+(define (reachable-top-level-values module)
+  (define functions (defined-top-level-functions module))
+  (define values (defined-top-level-values module))
+  (define all-names
+    (set-union (list->set (hash-keys functions))
+               (list->set (hash-keys values))))
+  (let loop ([todo '(infer-core)] [seen (set)])
+    (cond
+      [(null? todo)
+       (set-intersect seen (list->set (hash-keys values)))]
+      [(set-member? seen (first todo)) (loop (rest todo) seen)]
+      [else
+       (define name (first todo))
+       (define definition
+         (or (hash-ref functions name #f) (hash-ref values name #f)
+             (error 'reachable-top-level-values
+                    "reachable binding ~a has no definition" name)))
+       (define references
+         (filter (lambda (symbol) (set-member? all-names symbol))
+                 (syntax-symbols definition)))
+       (loop (append (rest todo) references) (set-add seen name))])))
+
 (define (canonical-branch-id function pattern)
   (define digest
     (sha1 (open-input-string (format "~a|~s" function pattern))))
@@ -681,6 +789,10 @@
     (sha1 (open-input-string
            (format "~a|~a|~s|~a" function kind pattern ordinal))))
   (format "D.~a.~a" function (substring digest 0 10)))
+
+(define (canonical-value-helper-id name)
+  (define digest (sha1 (open-input-string (symbol->string name))))
+  (format "V.~a.~a" name (substring digest 0 10)))
 
 (define (extract-infer-branches [path types-path])
   (define module (read-module-syntax path))
@@ -799,6 +911,18 @@
                         (decision-observation-kind item)
                         (decision-observation-pattern item)))))
 
+(define (extract-infer-value-helpers [path types-path])
+  (define module (read-module-syntax path))
+  (define source-text (file->string path))
+  (define values (defined-top-level-values module))
+  (sort
+   (for/list ([name (in-set (reachable-top-level-values module))])
+     (define definition (hash-ref values name))
+     (value-helper-observation
+      name (syntax-line definition) (syntax-end-line definition source-text)
+      (syntax-source-digest definition source-text)))
+   symbol<? #:key value-helper-observation-name))
+
 (define (load-infer-branches [path infer-branches-path])
   (match (call-with-input-file path read)
     [`(smusni-infer-core-branches 1 ,raw-entries ...)
@@ -860,6 +984,26 @@
          [_ (error 'load-infer-decisions "invalid decision entry: ~e" raw)]))]
     [_ (error 'load-infer-decisions "unsupported infer decision inventory")]))
 
+(define (load-infer-value-helpers [path infer-branches-path])
+  (match (call-with-input-file path read)
+    [`(smusni-infer-core-branches 1 ,raw-entries ...)
+     (for/list ([raw (in-list raw-entries)]
+                #:when (and (pair? raw) (eq? (first raw) 'value-helper)))
+       (match raw
+         [`(value-helper (id ,(? string? id)) (name ,(? symbol? name))
+                        (source-lines ,(? exact-positive-integer? start)
+                                      ,(? exact-positive-integer? end))
+                        (source-sha1 ,(? string? source-sha1))
+                        (class ,(? symbol? class)) (reason ,(? string? reason)))
+          (unless (member class branch-classes)
+            (error 'load-infer-value-helpers "unknown value class ~e" class))
+          (unless (sentence? reason)
+            (error 'load-infer-value-helpers
+                   "value helper ~a needs one-sentence reason" id))
+          (value-helper-entry id name start end source-sha1 class reason)]
+         [_ (error 'load-infer-value-helpers "invalid value helper: ~e" raw)]))]
+    [_ (error 'load-infer-value-helpers "unsupported value helper inventory")]))
+
 (define (refresh-infer-branch-metadata! [path infer-branches-path])
   (define raw (call-with-input-file path read))
   (define observed
@@ -877,6 +1021,9 @@
                     (decision-observation-pattern item)
                     (decision-observation-ordinal item))
               item)))
+  (define value-observed
+    (for/hash ([item (in-list (extract-infer-value-helpers))])
+      (values (value-helper-observation-name item) item)))
   (match-define `(smusni-infer-core-branches 1 ,raw-entries ...) raw)
   (define recorded-branch-keys
     (for/set ([entry (in-list raw-entries)]
@@ -896,11 +1043,18 @@
         [`(decision (id ,_) (function ,function) (kind ,kind)
                     (pattern ,pattern) (ordinal ,ordinal) . ,_)
          (list function kind pattern ordinal)])))
+  (define recorded-value-names
+    (for/set ([entry (in-list raw-entries)]
+              #:when (and (pair? entry) (eq? (first entry) 'value-helper)))
+      (match entry
+        [`(value-helper (id ,_) (name ,name) . ,_) name])))
   (unless (and (set=? recorded-branch-keys (list->set (hash-keys observed)))
                (set=? recorded-helper-names
                       (list->set (hash-keys helper-observed)))
                (set=? recorded-decision-keys
-                      (list->set (hash-keys decision-observed))))
+                      (list->set (hash-keys decision-observed)))
+               (set=? recorded-value-names
+                      (list->set (hash-keys value-observed))))
     (error 'refresh-infer-branch-metadata!
            "branch/helper denominator changed; classify new or removed handlers before refreshing metadata"))
   (define refreshed
@@ -936,6 +1090,15 @@
                                   ,(decision-observation-end-line live))
                     (source-sha1 ,(decision-observation-source-sha1 live))
                     (class ,class) (reason ,reason))]
+        [`(value-helper (id ,id) (name ,name)
+                       (source-lines ,_ ,_) (source-sha1 ,_)
+                       (class ,class) (reason ,reason))
+         (define live (hash-ref value-observed name))
+         `(value-helper (id ,id) (name ,name)
+                        (source-lines ,(value-helper-observation-start-line live)
+                                      ,(value-helper-observation-end-line live))
+                        (source-sha1 ,(value-helper-observation-source-sha1 live))
+                        (class ,class) (reason ,reason))]
         [`(branch (id ,id) (function ,function) (pattern ,pattern)
                   (source-lines ,_ ,_) (class ,class) (reason ,reason))
          (define live (hash-ref observed (cons function pattern)))
@@ -963,7 +1126,9 @@
                                [helper-observed (extract-infer-helpers)]
                                [helper-entries (load-infer-helpers)]
                                [decision-observed (extract-infer-decisions)]
-                               [decision-entries (load-infer-decisions)])
+                               [decision-entries (load-infer-decisions)]
+                               [value-observed (extract-infer-value-helpers)]
+                               [value-entries (load-infer-value-helpers)])
   (define findings '())
   (define (note! format-string . arguments)
     (set! findings (cons (apply format format-string arguments) findings)))
@@ -1085,6 +1250,32 @@
   (for ([(key entry) (in-hash decision-entries-by-key)])
     (unless (hash-has-key? decision-observed-by-key key)
       (note! "internal decision entry ~a is stale" (decision-entry-id entry))))
+  (define value-observed-by-name
+    (for/hash ([item (in-list value-observed)])
+      (values (value-helper-observation-name item) item)))
+  (define value-entries-by-name (make-hash))
+  (for ([entry (in-list value-entries)])
+    (hash-set! value-entries-by-name (value-helper-entry-name entry) entry)
+    (define expected-id (canonical-value-helper-id (value-helper-entry-name entry)))
+    (unless (string=? (value-helper-entry-id entry) expected-id)
+      (note! "value helper id ~a is not its canonical stable id ~a"
+             (value-helper-entry-id entry) expected-id)))
+  (for ([(name observation) (in-hash value-observed-by-name)])
+    (define entry (hash-ref value-entries-by-name name #f))
+    (cond
+      [(not entry) (note! "unclassified reachable value helper ~a" name)]
+      [(not (and (= (value-helper-entry-start-line entry)
+                    (value-helper-observation-start-line observation))
+                 (= (value-helper-entry-end-line entry)
+                    (value-helper-observation-end-line observation))))
+       (note! "value helper ~a source range is stale" name)]
+      [(not (string=? (value-helper-entry-source-sha1 entry)
+                      (value-helper-observation-source-sha1 observation)))
+       (note! "value helper ~a source digest is stale" name)]))
+  (for ([(name entry) (in-hash value-entries-by-name)])
+    (unless (hash-has-key? value-observed-by-name name)
+      (note! "reachable value helper entry ~a is stale"
+             (value-helper-entry-id entry))))
   (reverse findings))
 
 (struct diagnostic-taxonomy
@@ -1154,6 +1345,24 @@
   (for/list ([path (in-list paths)])
     (list (path->string (find-relative-path repo-root (simplify-path path)))
           (file-digest path))))
+
+(define (live-fence-source-digests)
+  (for/list ([item (in-list
+                    (classify-fences (read-all-fences) (load-manifest)))])
+    (list (fence-source item) (fence-ordinal item) (fence-digest item))))
+
+(define (live-definition-source-digests)
+  (define observations
+    (for/hash ([item (in-list (extract-definition-observations))])
+      (values (definition-key item) item)))
+  (for/list ([entry (in-list (load-definition-ledger))])
+    (define observation (hash-ref observations (definition-key entry)))
+    (list (definition-entry-head entry)
+          (definition-entry-section entry)
+          (if (pair? (definition-entry-spec-source-ranges entry))
+              (definition-ranges-source-digest
+               (definition-entry-spec-source-ranges entry))
+              (definition-observation-source-digest observation)))))
 
 (define (plain->core value [source 'phase0])
   (cond
@@ -1242,7 +1451,8 @@
     `(smusni-port-corpus 1
        (count ,(length cases))
        (cases-sha1 ,(corpus-cases-digest cases))
-       (spec-sha1 ,(file-digest spec-path))
+       (fence-sources ,@(live-fence-source-digests))
+       (definition-sources ,@(live-definition-source-digests))
        (test-sources ,@(source-digests (test-files)))
        (cases ,@(map port-case->datum cases))))
   (call-with-output-file path
@@ -1255,7 +1465,8 @@
     [`(smusni-port-corpus 1
        (count ,(? exact-nonnegative-integer? count))
        (cases-sha1 ,(? string? digest))
-       (spec-sha1 ,(? string? spec-digest))
+       (fence-sources ,fence-sources ...)
+       (definition-sources ,definition-sources ...)
        (test-sources ,test-sources ...)
        (cases ,raw-cases ...))
      (define cases
@@ -1269,8 +1480,12 @@
        (error 'load-port-corpus "recorded count ~a, actual ~a" count (length cases)))
      (unless (string=? digest (corpus-cases-digest cases))
        (error 'load-port-corpus "frozen case digest is stale"))
-     (unless (string=? spec-digest (file-digest spec-path))
-       (error 'load-port-corpus "spec.md changed; refresh the frozen corpus deliberately"))
+     (unless (equal? fence-sources (live-fence-source-digests))
+       (error 'load-port-corpus
+              "fence sources changed; refresh the frozen corpus deliberately"))
+     (unless (equal? definition-sources (live-definition-source-digests))
+       (error 'load-port-corpus
+              "definition sources changed; refresh the frozen corpus deliberately"))
      (unless (equal? test-sources (source-digests (test-files)))
        (error 'load-port-corpus "test sources changed; refresh the frozen corpus deliberately"))
      (validate-port-case-inventories! cases)
@@ -1410,10 +1625,351 @@
   (values (and (null? differences) (null? stale-waivers))
           (reverse differences) stale-waivers))
 
+(define (legacy-binder-pairs binder)
+  (define groups
+    (if (and (pair? binder) (list? (first binder))) binder (list binder)))
+  (append-map
+   (lambda (group)
+     (define separator (index-of group '::))
+     (unless separator (error 'legacy-datum->a0 "malformed binder: ~e" group))
+     (define variables (take group separator))
+     (define type-items (drop group (add1 separator)))
+     (define type (if (= (length type-items) 1) (first type-items) type-items))
+     (for/list ([variable (in-list variables)]) (list variable type)))
+   groups))
+
+(define (legacy-close-label value)
+  (and (symbol? value)
+       (let ([text (symbol->string value)])
+         (cond
+           [(string=? text ":Eventuality") 'Eventuality]
+           [(regexp-match? #rx"^:[1-9][0-9]*$" text)
+            (string->number (substring text 1))]
+           [else #f]))))
+
+(define (legacy-close-arguments->fills arguments total inv)
+  (let loop ([remaining arguments] [used (set)] [fills '()])
+    (cond
+      [(null? remaining) (reverse fills)]
+      [else
+       (define explicit-label (legacy-close-label (first remaining)))
+       (cond
+         [explicit-label
+          (unless (pair? (rest remaining))
+            (error 'legacy-datum->a0
+                   "Close label ~e has no value" (first remaining)))
+          (when (set-member? used explicit-label)
+            (error 'legacy-datum->a0
+                   "Close label ~e is filled twice" explicit-label))
+          (when (and (exact-integer? explicit-label)
+                     (> explicit-label total))
+            (error 'legacy-datum->a0
+                   "Close label ~e exceeds row arity ~e"
+                   explicit-label total))
+          (loop (cddr remaining)
+                (set-add used explicit-label)
+                (cons (list explicit-label
+                            (legacy-datum->a0 (second remaining) inv))
+                      fills))]
+         [(and (symbol? (first remaining))
+               (string-prefix? (symbol->string (first remaining)) ":"))
+          (error 'legacy-datum->a0
+                 "unsupported Close label ~e" (first remaining))]
+         [else
+          (define available
+            (for/first ([label (in-range 1 (add1 total))]
+                        #:unless (set-member? used label))
+              label))
+          (unless available
+            (error 'legacy-datum->a0
+                   "Close has more positional fills than row arity ~e" total))
+          (loop (rest remaining)
+                (set-add used available)
+                (cons (list available
+                            (legacy-datum->a0 (first remaining) inv))
+                      fills))])])))
+
+(define (legacy-datum->a0 datum [inv (load-inventory)])
+  (cond
+    [(not (list? datum)) datum]
+    [else
+     (match datum
+       [`(λ ,binder ,body)
+        `(λ ,(legacy-binder-pairs binder) ,(legacy-datum->a0 body inv))]
+       [`(Let ,binder ,value ,body)
+        (define pairs (legacy-binder-pairs binder))
+        (unless (= (length pairs) 1) (error 'legacy-datum->a0 "Let binder"))
+        (match-define (list variable type) (first pairs))
+        `(Let (,variable ,type)
+           ,(legacy-datum->a0 value inv) ,(legacy-datum->a0 body inv))]
+       [`(Bind . ,pieces)
+        (define body (last pieces))
+        (define alternating (drop-right pieces 1))
+        (define bindings
+          (for/list ([index (in-range 0 (length alternating) 2)])
+            (define pairs (legacy-binder-pairs (list-ref alternating index)))
+            (unless (= (length pairs) 1) (error 'legacy-datum->a0 "Bind binder"))
+            (match-define (list variable type) (first pairs))
+            (list variable type
+                  (legacy-datum->a0 (list-ref alternating (add1 index)) inv))))
+        `(Bind ,bindings ,(legacy-datum->a0 body inv))]
+       [`(Close (,predicate ,arguments ...))
+        #:when (and (symbol? predicate) (inventory-row inv predicate))
+        (define row (inventory-row inv predicate))
+       `(CloseWith
+          (row ,predicate ,(row-decl-total row) ,(row-decl-event-mode row)
+               ,(range 1 (add1 (row-decl-total row))))
+          ,(legacy-close-arguments->fills
+            arguments (row-decl-total row) inv))]
+       [_ (map (lambda (child) (legacy-datum->a0 child inv)) datum)])]))
+
+(define a0-mechanism-cases
+  (list
+   (port-case "a0-let" '((a0 Let))
+              '(Let ($x :: Entity) $v $x) '(($v . Entity)) '(core fixture))
+   (port-case "a0-bind" '((a0 Bind))
+              '(Bind ($x :: Referents Entity) (Context) $x)
+              '() '(core fixture))
+   (port-case "a0-exactly-zero" '((a0 Exactly-zero))
+              '(Exactly 0 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "a0-exactly" '((a0 Exactly))
+              '(Exactly 3 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "a0-global" '((a0 GlobalExactly))
+              '(GlobalExactly 3 $P $Q)
+              '(($P Fn (Entity) Content) ($Q Fn (Entity) Content))
+              '(core fixture))
+   (port-case "a0-too-many-expanded" '((a0 TooMany))
+              '(Bind ($purpose :: Referents Entity) (Context)
+                     ($threshold :: Natural)
+                     (Vague (AdmissibleThreshold TooManyK $P $purpose))
+                 (MoreThan $threshold $P $Q))
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "a0-massify" '((a0 Massify))
+              '(Bind ($g :: Referents (Group Entity))
+                     (Massify $basis $cover) $g)
+              '(($basis DecompositionBasis (Group Entity) Entity)
+                ($cover Referents Entity)) '(core fixture))
+   (port-case "a0-zipwith" '((a0 ZipWith))
+              '(ZipWith $f (List Speaker) (List Audience))
+              '(($f Fn ((Referents Entity) (Referents Entity)) Content))
+              '(core fixture))
+   (port-case "a0-zipwith-empty-effectful" '((a0 ZipWith empty))
+              '(ZipWith $f (List) (List))
+              '(($f EFn ((Referents Entity) (Referents Entity)) Content))
+              '(core fixture))
+   (port-case "a0-close" '((a0 Close))
+              '(Close (tavla Speaker Audience)) '() '(core fixture))
+   (port-case "a0-close-explicit-event" '((a0 Close explicit-event))
+              '(Close (bajra Speaker :Eventuality $event))
+              '(($event Referents Eventuality)) '(core fixture))))
+
+(define a0-typed-form-heads
+  '(λ Let Bind Context Vague Refer
+    SelectExactly SelectAtLeast SelectSome SelectAllBut
+    Exactly No GlobalExactly TooMany MoreThan Massify Perform
+    CanonicalAggregateAt AdmissibleThreshold SetOf Card = ∧ List ZipWith
+    CoRef CloseClause ActualClause DirectClause StateClause CloseWith))
+
+(define (a0-environment-names environment)
+  (for/set ([entry (in-list environment)]) (first entry)))
+
+(define (a0-type-datum? datum)
+  (redex-match? SmusniA0 τ datum))
+
+;; This is a structural bank-membership classifier, separate from a0-type.
+;; It must not define eligibility by whether the new engine happens to derive
+;; a result: doing that would silently omit precisely the missing clauses the
+;; differential is meant to expose.
+(define (a0-bank-datum? datum bound environment inv)
+  (cond
+    [(exact-nonnegative-integer? datum) #t]
+    [(symbol? datum)
+     (or (member datum '(Speaker Audience TooManyK ⊤))
+         (set-member? bound datum)
+         (set-member? environment datum))]
+    [(not (list? datum)) #f]
+    [else
+     (match datum
+       [`(λ ,binders ,body)
+        (and (list? binders)
+             (for/and ([binder (in-list binders)])
+               (match binder
+                 [`(,(? symbol?) ,type) (a0-type-datum? type)]
+                 [_ #f]))
+             (a0-bank-datum?
+              body
+              (for/fold ([scope bound]) ([binder (in-list binders)])
+                (set-add scope (first binder)))
+              environment inv))]
+       [`(Let (,(? symbol? variable) ,type) ,value ,body)
+        (and (a0-type-datum? type)
+             (a0-bank-datum? value bound environment inv)
+             (a0-bank-datum? body (set-add bound variable)
+                             environment inv))]
+       [`(Bind ,bindings ,body)
+        (and (list? bindings)
+             (let loop ([remaining bindings] [scope bound])
+               (cond
+                 [(null? remaining)
+                  (a0-bank-datum? body scope environment inv)]
+                 [else
+                  (match (first remaining)
+                    [`(,(? symbol? variable) ,type ,computation)
+                     (and (a0-type-datum? type)
+                          (a0-bank-datum? computation scope environment inv)
+                          (loop (rest remaining) (set-add scope variable)))]
+                    [_ #f])])))]
+       [`(CloseWith (row ,(? symbol?) ,(? exact-nonnegative-integer?)
+                         ,(? symbol?) ,labels)
+                    ,fills)
+        (and (list? labels)
+             (list? fills)
+             (for/and ([fill (in-list fills)])
+               (match fill
+                 [`(,_ ,value)
+                  (a0-bank-datum? value bound environment inv)]
+                 [_ #f])))]
+       [`(,(? symbol? head) ,arguments ...)
+        (cond
+          [(member head a0-typed-form-heads)
+           (andmap (lambda (argument)
+                     (a0-bank-datum? argument bound environment inv))
+                   arguments)]
+          [(or (set-member? bound head) (set-member? environment head))
+           (andmap (lambda (argument)
+                     (a0-bank-datum? argument bound environment inv))
+                   arguments)]
+          [else
+           (define row (inventory-row inv head))
+           (and row
+                (eq? (row-decl-event-mode row) 'holding-state)
+                (= (length arguments) (row-decl-total row))
+                (andmap (lambda (argument)
+                          (a0-bank-datum? argument bound environment inv))
+                        arguments))])]
+       [`(,operator ,arguments ...)
+        (and (a0-bank-datum? operator bound environment inv)
+             (andmap (lambda (argument)
+                       (a0-bank-datum? argument bound environment inv))
+                     arguments))]
+       [_ #f])]))
+
+(define (a0-corpus-eligible? item [inv (load-inventory)])
+  (with-handlers ([exn:fail? (lambda (_) #f)])
+    (define converted (legacy-datum->a0 (port-case-term item) inv))
+    (and (redex-match? SmusniA0 t converted)
+         (a0-bank-datum? converted (set)
+                         (a0-environment-names (port-case-env item)) inv))))
+
+(define (a0-differential-cases)
+  (define inv (load-inventory))
+  (append
+   (filter (lambda (item) (a0-corpus-eligible? item inv))
+           (load-port-corpus))
+   a0-mechanism-cases))
+
+(define (load-a0-waivers)
+  (load-port-waivers a0-waivers-path))
+
+(define (a0-row-environment datum inv)
+  (cond
+    [(not (list? datum)) '()]
+    [else
+     (match datum
+       [`(CloseWith (row ,predicate ,arity ,event-mode ,_) ,fills)
+        (define parameters
+          (append (make-list arity '(Referents Entity))
+                  (if (eq? event-mode 'direct-event)
+                      '((Referents Eventuality)) '())))
+        (cons (list predicate `(Fn ,parameters Content))
+              (append-map (lambda (fill) (a0-row-environment fill inv))
+                          fills))]
+       [`(,(? symbol? predicate) ,arguments ...)
+        (define row (inventory-row inv predicate))
+        (append
+         (if (and row
+                  (eq? (row-decl-event-mode row) 'holding-state)
+                  (= (length arguments) (row-decl-total row)))
+             (list
+              (list predicate
+                    `(Fn ,(make-list (row-decl-total row)
+                                    '(Referents Entity))
+                         Content)))
+             '())
+         (append-map (lambda (argument)
+                       (a0-row-environment argument inv))
+                     arguments))]
+       [_ (append-map (lambda (child) (a0-row-environment child inv))
+                      datum)])]))
+
+(define (a0-case-input item)
+  (define inv (load-inventory))
+  (define term (legacy-datum->a0 (port-case-term item) inv))
+  (define explicit-environment
+    (for/list ([entry (in-list (port-case-env item))])
+      (match entry [(cons variable type) (list variable type)])))
+  (define environment
+    (remove-duplicates
+     (append explicit-environment (a0-row-environment term inv))))
+  (values term environment))
+
+(define (a0-case-derivations item)
+  (define-values (term environment) (a0-case-input item))
+  (build-derivations (a0-synth ,environment ,term R)))
+
+(define (a0-port-record item)
+  (with-handlers ([exn:fail?
+                   (lambda (exception)
+                     (port-record 'rejection #f '() '() '()
+                                  'a0-error (term-constructor (port-case-term item))
+                                  (exn-message exception) 0))])
+    (define-values (term environment) (a0-case-input item))
+    (define derivations
+      (build-derivations (a0-synth ,environment ,term R)))
+    (define results (judgment-holds (a0-synth ,environment ,term R) R))
+    (cond
+      [(and (= (length derivations) 1) (= (length results) 1))
+       (match (first results)
+          [`(typing ,type ,effects ,obligations)
+           (port-record 'success type (canonical-set effects)
+                        (canonical-set obligations) '() #f #f #f
+                        (length derivations))])]
+      [(pair? derivations)
+       (port-record 'rejection #f '() '() '() 'multiple-derivations
+                    (term-constructor (port-case-term item))
+                    (format "A0 derivations: ~a" (length derivations))
+                    (length derivations))]
+      [else
+       (port-record 'rejection #f '() '() '() 'no-derivation
+                     (term-constructor (port-case-term item))
+                     (format "A0 derivations: ~a" (length results))
+                     0)])))
+
+(define (run-a0-differential #:print? [print? #t])
+  (define cases (a0-differential-cases))
+  (define waivers (load-a0-waivers))
+  (define-values (ok? differences stale)
+    (run-differential cases waivers
+                      #:old-engine legacy-record #:new-engine a0-port-record
+                      #:print? #f))
+  (when print?
+    (printf "A0 differential: cases=~a frozen=~a mechanism=~a differences=~a waivers=~a stale-waivers=~a\n"
+            (length cases)
+            (- (length cases) (length a0-mechanism-cases))
+            (length a0-mechanism-cases)
+            (length differences) (- (length waivers) (length stale))
+            (length stale)))
+  (values ok? differences stale))
+
 ;; --------------------------------------------------------------------------
 ;; P0.4: in-process benchmark and recorded, report-only triggers
 
-(struct benchmark-mode (name totals term-times peak-rss derivations)
+(struct benchmark-mode (name totals term-times peak-rss derivations hotspots)
   #:transparent)
 
 (define (percentile values fraction)
@@ -1451,23 +2007,58 @@
                     [provenance (list provenance)])))
    cases))
 
+(define (a0-specimen-benchmark-cases cases)
+  (filter a0-corpus-eligible? (specimen-benchmark-cases cases)))
+
+(define (proof-rule-names derivation)
+  (append (if (derivation-name derivation)
+              (list (derivation-name derivation)) '())
+          (append-map proof-rule-names (derivation-subs derivation))))
+
+(define (a0-case-rule-names item)
+  (remove-duplicates
+   (append-map proof-rule-names (a0-case-derivations item))))
+
 (define (run-benchmark-mode name cases repetitions)
   (define totals '())
   (define all-term-times '())
   (define derivations 0)
+  (define new-case-times (make-hash))
+  (define new-case-counts (make-hash))
   (define (run-once record?)
     (define started (current-inexact-monotonic-milliseconds))
     (define term-times '())
     (define run-derivations 0)
     (for ([item (in-list cases)])
       (define term-start (current-inexact-monotonic-milliseconds))
-      (define calls (if (eq? name 'side-by-side) 2 1))
-      (for ([_ (in-range calls)])
-        (define result (legacy-record item))
-        (set! run-derivations (+ run-derivations (port-record-derivations result))))
+      (define new-elapsed #f)
+      (define records
+        (case name
+          [(old-only) (list (legacy-record item))]
+          [(new-only)
+           (define new-start (current-inexact-monotonic-milliseconds))
+           (define new (a0-port-record item))
+           (set! new-elapsed
+                 (- (current-inexact-monotonic-milliseconds) new-start))
+           (list new)]
+          [(side-by-side)
+           (define old (legacy-record item))
+           (define new-start (current-inexact-monotonic-milliseconds))
+           (define new (a0-port-record item))
+           (set! new-elapsed
+                 (- (current-inexact-monotonic-milliseconds) new-start))
+           (list old new)]
+          [else (error 'run-benchmark-mode "unsupported mode: ~e" name)]))
+      (for ([result (in-list records)])
+        (set! run-derivations
+              (+ run-derivations (port-record-derivations result))))
       (set! term-times
             (cons (- (current-inexact-monotonic-milliseconds) term-start)
-                  term-times)))
+                  term-times))
+      (when (and record? new-elapsed)
+        (hash-update! new-case-times (port-case-id item)
+                      (lambda (total) (+ total new-elapsed)) 0.0)
+        (hash-update! new-case-counts (port-case-id item) add1 0)))
     (when record?
       (set! totals (cons (- (current-inexact-monotonic-milliseconds) started)
                          totals))
@@ -1475,15 +2066,38 @@
       (set! derivations (+ derivations run-derivations))))
   (run-once #f)
   (for ([_ (in-range repetitions)]) (run-once #t))
-  (benchmark-mode name (reverse totals) all-term-times (peak-rss-bytes)
-                  derivations))
+  (define measured-peak-rss (peak-rss-bytes))
+  (define hotspot-totals (make-hash))
+  (define hotspot-counts (make-hash))
+  (when (member name '(new-only side-by-side))
+    (for ([item (in-list cases)])
+      (define elapsed (hash-ref new-case-times (port-case-id item) 0.0))
+      (define count (hash-ref new-case-counts (port-case-id item) 0))
+      (for ([rule (in-list (a0-case-rule-names item))])
+        (hash-update! hotspot-totals rule
+                      (lambda (total) (+ total elapsed)) 0.0)
+        (hash-update! hotspot-counts rule
+                      (lambda (hits) (+ hits count)) 0))))
+  (define hotspots
+    (take
+     (sort
+      (for/list ([(rule elapsed) (in-hash hotspot-totals)])
+        (list rule elapsed (hash-ref hotspot-counts rule)))
+      (lambda (left right)
+        (or (> (second left) (second right))
+            (and (= (second left) (second right))
+                 (string<? (first left) (first right))))))
+     (min 5 (hash-count hotspot-totals))))
+  (benchmark-mode name (reverse totals) all-term-times measured-peak-rss
+                  derivations hotspots))
 
 (define (benchmark-mode->datum mode)
   `(benchmark-mode ,(benchmark-mode-name mode)
                    (totals ,@(benchmark-mode-totals mode))
                    (term-times ,@(benchmark-mode-term-times mode))
                    (peak-rss ,(benchmark-mode-peak-rss mode))
-                   (derivations ,(benchmark-mode-derivations mode))))
+                   (derivations ,(benchmark-mode-derivations mode))
+                   (hotspots ,@(benchmark-mode-hotspots mode))))
 
 (define (datum->benchmark-mode datum)
   (match datum
@@ -1491,8 +2105,12 @@
                      (totals ,(? real? totals) ...)
                      (term-times ,(? real? term-times) ...)
                      (peak-rss ,(? exact-nonnegative-integer? peak-rss))
-                     (derivations ,(? exact-nonnegative-integer? derivations)))
-     (benchmark-mode name totals term-times peak-rss derivations)]
+                     (derivations ,(? exact-nonnegative-integer? derivations))
+                     (hotspots (,(? string? rule)
+                                ,(? real? milliseconds)
+                                ,(? exact-nonnegative-integer? hits)) ...))
+     (benchmark-mode name totals term-times peak-rss derivations
+                     (map list rule milliseconds hits))]
     [_ (error 'datum->benchmark-mode "invalid benchmark mode: ~e" datum)]))
 
 (define (isolated-benchmark-mode name runs)
@@ -1510,13 +2128,16 @@
     (lambda () (when (file-exists? output) (delete-file output)))))
 
 (define (run-benchmarks #:runs [runs 5] #:print? [print? #t])
-  (define cases (specimen-benchmark-cases (load-port-corpus)))
+  (define all-specimens (specimen-benchmark-cases (load-port-corpus)))
+  (define cases (a0-specimen-benchmark-cases (load-port-corpus)))
   (define modes
     (for/list ([name '(old-only new-only side-by-side)])
       ;; Each mode receives a fresh process so VmHWM/peak RSS is comparable.
       ;; The worker loads and warms before starting its timed repetitions.
       (isolated-benchmark-mode name runs)))
   (when print?
+    (printf "port benchmark denominator: a0-eligible-specimen-terms=~a all-specimen-terms=~a\n"
+            (length cases) (length all-specimens))
     (for ([mode (in-list modes)])
       (printf "port benchmark ~a: terms=~a runs=~a median-total-ms=~a p95-term-ms=~a max-term-ms=~a peak-rss=~a derivations=~a\n"
               (benchmark-mode-name mode) (length cases) runs
@@ -1528,7 +2149,11 @@
                   #:precision '(= 3))
               (benchmark-mode-peak-rss mode)
               (benchmark-mode-derivations mode)))
-    (displayln "port benchmark clause hotspots: unavailable (Phase 0 identity engine has no ported clauses)"))
+    (let ([new-mode
+           (findf (lambda (mode) (eq? (benchmark-mode-name mode) 'new-only))
+                  modes)])
+      (printf "port benchmark A0 clause hotspots (inclusive attributed ms): ~s\n"
+              (benchmark-mode-hotspots new-mode))))
   modes)
 
 (define (git-head)
@@ -1548,7 +2173,7 @@
 
 (define (refresh-port-baseline! [path port-baseline-path]
                                 #:full-gate-ms [full-gate-ms 37000.0])
-  (define cases (specimen-benchmark-cases (load-port-corpus)))
+  (define cases (a0-specimen-benchmark-cases (load-port-corpus)))
   (define modes (run-benchmarks #:print? #t))
   (define datum
     `(smusni-port-baseline 1
@@ -1591,47 +2216,49 @@
                  (size-growth-factor ,size-growth-factor))
        (modes ,baseline-modes ...))
     baseline)
-  (define (mode-median name)
-    (match (findf (lambda (item) (and (list? item) (eq? (second item) name)))
-                  baseline-modes)
-      [`(mode ,_ (median-total-ms ,value) . ,_) value]))
   (define (current name)
     (findf (lambda (mode) (eq? (benchmark-mode-name mode) name)) current-modes))
-  (define old-baseline (mode-median 'old-only))
+  (define old (current 'old-only))
   (define new (current 'new-only))
   (define side (current 'side-by-side))
+  (define old-median (median (benchmark-mode-totals old)))
   (define new-median (median (benchmark-mode-totals new)))
   (define side-median (median (benchmark-mode-totals side)))
+  (define current-terms
+    (quotient (length (benchmark-mode-term-times new)) 5))
+  (define growth
+    (run-a0-size-growth #:factor size-growth-factor #:print? #f))
   (define reports
     (list
-     (list 'new-factor (> new-median (* new-factor old-baseline))
-           new-median (* new-factor old-baseline))
+     (list 'new-factor (> new-median (* new-factor old-median))
+           new-median (* new-factor old-median))
      (list 'new-wall (> new-median new-wall-ms) new-median new-wall-ms)
      (list 'term-max (> (apply max (benchmark-mode-term-times new)) term-max-ms)
            (apply max (benchmark-mode-term-times new)) term-max-ms)
      (list 'term-p95 (> (percentile (benchmark-mode-term-times new) 0.95)
                            term-p95-ms)
            (percentile (benchmark-mode-term-times new) 0.95) term-p95-ms)
-     (let ([rss-limit
-            (* rss-factor
-               (match (findf (lambda (item)
-                               (and (list? item)
-                                    (eq? (second item) 'old-only)))
-                             baseline-modes)
-                 [`(mode ,_ ,_ ,_ ,_ (peak-rss-bytes ,rss)) rss]))])
+     (let ([rss-limit (* rss-factor (benchmark-mode-peak-rss old))])
        (list 'rss (> (benchmark-mode-peak-rss new) rss-limit)
              (benchmark-mode-peak-rss new) rss-limit))
-     (list 'side-factor (> side-median (* side-factor old-baseline))
-           side-median (* side-factor old-baseline))))
-  (printf "port triggers (report-only until B): baseline-head=~a terms=~a full-gate-ms=~a full-gate-limit-ms=~a size-growth-limit=~ax\n"
-          head terms full-gate-ms (* full-gate-ms full-gate-factor)
+     (list 'side-factor (> side-median (* side-factor old-median))
+           side-median (* side-factor old-median))))
+  (printf "port triggers (report-only until B): baseline-head=~a baseline-terms=~a a0-eligible-terms=~a full-gate-ms=~a full-gate-limit-ms=~a size-growth-limit=~ax\n"
+          head terms current-terms full-gate-ms (* full-gate-ms full-gate-factor)
           size-growth-factor)
   (for ([report (in-list reports)])
     (match-define (list name triggered? actual limit) report)
     (printf "  ~a: ~a actual=~a limit=~a\n"
             name (if triggered? "TRIGGER" "ok") actual limit))
   (displayln "  full-gate: external measurement required; use --report-full-gate-ms")
-  (displayln "  size-growth: unavailable until A0 supplies the closed grammar and ported judgment"))
+  (printf "  size-growth: ~a depths=~s milliseconds=~s ratios=~s limit=~ax\n"
+          (if (a0-size-growth-triggered? growth) "TRIGGER" "ok")
+          (a0-size-growth-depths growth)
+          (map (lambda (value) (~r value #:precision '(= 3)))
+               (a0-size-growth-milliseconds growth))
+          (map (lambda (value) (~r value #:precision '(= 3)))
+               (a0-size-growth-ratios growth))
+          size-growth-factor))
 
 (define (report-full-gate-trigger observed-ms
                                   [baseline (load-port-baseline)])
@@ -1695,6 +2322,11 @@
     (printf "internal decisions ~a: ~a\n" class
             (count (lambda (entry) (eq? (decision-entry-class entry) class))
                    decisions)))
+  (define values (load-infer-value-helpers))
+  (for ([class (in-list branch-classes)])
+    (printf "reachable values ~a: ~a\n" class
+            (count (lambda (entry) (eq? (value-helper-entry-class entry) class))
+                   values)))
   (printf "diagnostic taxonomy: typing=~a no-lowering=~a allowed-evidence=~a forbidden-evidence=~a\n"
           (length (diagnostic-taxonomy-typing-causes taxonomy))
           (length (diagnostic-taxonomy-no-lowering-causes taxonomy))
@@ -1722,6 +2354,10 @@
     (define-values (ok? _differences _stale)
       (run-differential cases (load-port-waivers) #:print? print?))
     (set! differential-ok? ok?))
+  (define a0-differential-ok? #f)
+  (define-values (a0-ok? _a0-differences _a0-stale)
+    (run-a0-differential #:print? print?))
+  (set! a0-differential-ok? a0-ok?)
   (when print?
     (print-classification-summary definitions branches taxonomy))
   (when (and benchmark? (pair? cases))
@@ -1731,7 +2367,7 @@
   (when print?
     (for ([finding (in-list findings)])
       (printf "PHASE0-ERROR ~a\n" finding)))
-  (and (null? findings) differential-ok?))
+  (and (null? findings) differential-ok? a0-differential-ok?))
 
 (module+ main
   (define action 'check)
