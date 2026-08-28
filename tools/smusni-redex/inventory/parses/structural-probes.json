@@ -1,0 +1,1671 @@
+{
+  "cases": [
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lu lo no prenu cu jmaji li'u"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "QuotedSumti": {
+                                                  "TextQuote": {
+                                                    "lihu": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "li'u",
+                                                            "span": [
+                                                              24,
+                                                              28
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "lu": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "lu",
+                                                            "span": [
+                                                              0,
+                                                              2
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "text": {
+                                                      "RegularText": {
+                                                        "paragraphs": {
+                                                          "TextParagraphWithAdditionalNiho": {
+                                                            "first": {
+                                                              "SimpleParagraph": {
+                                                                "initial": {
+                                                                  "StatementOrFragmentStatement": {
+                                                                    "StatementBase": {
+                                                                      "BridiStatement": {
+                                                                        "bridi": {
+                                                                          "BridiWithLeadingTerms": {
+                                                                            "bridi_tail": {
+                                                                              "BridiTailWithPossibleTailTerms": {
+                                                                                "first": {
+                                                                                  "first": {
+                                                                                    "first": {
+                                                                                      "SelbriSimpleBridiTail": {
+                                                                                        "selbri": {
+                                                                                          "UntaggedSelbri": {
+                                                                                            "CoSelbri": {
+                                                                                              "leading_selbri": {
+                                                                                                "leading_selbri": {
+                                                                                                  "first_unit": {
+                                                                                                    "first": {
+                                                                                                      "LinkedTanruUnit": {
+                                                                                                        "base": {
+                                                                                                          "base": {
+                                                                                                            "WordTanruUnit": {
+                                                                                                              "Plain": {
+                                                                                                                "PlainWord": {
+                                                                                                                  "Gismu": {
+                                                                                                                    "phonemes": "jmáji",
+                                                                                                                    "span": [
+                                                                                                                      18,
+                                                                                                                      23
+                                                                                                                    ]
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "cu": {
+                                                                              "Plain": {
+                                                                                "PlainWord": {
+                                                                                  "Cmavo": {
+                                                                                    "phonemes": "cu",
+                                                                                    "span": [
+                                                                                      15,
+                                                                                      17
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "leading_terms": [
+                                                                              {
+                                                                                "ConnectedTerm": {
+                                                                                  "leading_term": {
+                                                                                    "SumtiTerm": {
+                                                                                      "base_sumti": {
+                                                                                        "leading_sumti": {
+                                                                                          "leading_sumti": {
+                                                                                            "leading_sumti": {
+                                                                                              "SimpleSumti": {
+                                                                                                "base_sumti": {
+                                                                                                  "SumtiBase": {
+                                                                                                    "DescriptorWithGadriSumti": {
+                                                                                                      "description": {
+                                                                                                        "Plain": {
+                                                                                                          "PlainWord": {
+                                                                                                            "Cmavo": {
+                                                                                                              "phonemes": "lo",
+                                                                                                              "span": [
+                                                                                                                3,
+                                                                                                                5
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      },
+                                                                                                      "tail": {
+                                                                                                        "leading_tail_elements": {},
+                                                                                                        "tail": {
+                                                                                                          "QuantifierRelationDescriptionTail": {
+                                                                                                            "quantifier": {
+                                                                                                              "PaRunQuantifier": {
+                                                                                                                "number": {
+                                                                                                                  "first_number": {
+                                                                                                                    "Plain": {
+                                                                                                                      "PlainWord": {
+                                                                                                                        "Cmavo": {
+                                                                                                                          "phonemes": "no",
+                                                                                                                          "span": [
+                                                                                                                            6,
+                                                                                                                            8
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            },
+                                                                                                            "selbri": {
+                                                                                                              "UntaggedSelbri": {
+                                                                                                                "CoSelbri": {
+                                                                                                                  "leading_selbri": {
+                                                                                                                    "leading_selbri": {
+                                                                                                                      "first_unit": {
+                                                                                                                        "first": {
+                                                                                                                          "LinkedTanruUnit": {
+                                                                                                                            "base": {
+                                                                                                                              "base": {
+                                                                                                                                "WordTanruUnit": {
+                                                                                                                                  "Plain": {
+                                                                                                                                    "PlainWord": {
+                                                                                                                                      "Gismu": {
+                                                                                                                                        "phonemes": "prénu",
+                                                                                                                                        "span": [
+                                                                                                                                          9,
+                                                                                                                                          14
+                                                                                                                                        ]
+                                                                                                                                      }
+                                                                                                                                    }
+                                                                                                                                  }
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lu lo no prenu cu jmaji li'u"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lu mi joi do li'u"
+      ],
+      "index": 2,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "QuotedSumti": {
+                                                  "TextQuote": {
+                                                    "lihu": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "li'u",
+                                                            "span": [
+                                                              13,
+                                                              17
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "lu": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "lu",
+                                                            "span": [
+                                                              0,
+                                                              2
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "text": {
+                                                      "RegularText": {
+                                                        "paragraphs": {
+                                                          "TextParagraphWithAdditionalNiho": {
+                                                            "first": {
+                                                              "SimpleParagraph": {
+                                                                "initial": {
+                                                                  "FragmentStatement": {
+                                                                    "TermsFragment": {
+                                                                      "terms": [
+                                                                        {
+                                                                          "ConnectedTerm": {
+                                                                            "leading_term": {
+                                                                              "SumtiTerm": {
+                                                                                "base_sumti": {
+                                                                                  "leading_sumti": {
+                                                                                    "continuations": [
+                                                                                      {
+                                                                                        "connective": {
+                                                                                          "JoikConnective": {
+                                                                                            "JoiConnective": {
+                                                                                              "joi": {
+                                                                                                "Plain": {
+                                                                                                  "PlainWord": {
+                                                                                                    "Cmavo": {
+                                                                                                      "phonemes": "joĭ",
+                                                                                                      "span": [
+                                                                                                        6,
+                                                                                                        9
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        },
+                                                                                        "sumti": {
+                                                                                          "leading_sumti": {
+                                                                                            "SimpleSumti": {
+                                                                                              "base_sumti": {
+                                                                                                "SumtiBase": {
+                                                                                                  "ProSumti": {
+                                                                                                    "Plain": {
+                                                                                                      "PlainWord": {
+                                                                                                        "Cmavo": {
+                                                                                                          "phonemes": "do",
+                                                                                                          "span": [
+                                                                                                            10,
+                                                                                                            12
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    ],
+                                                                                    "leading_sumti": {
+                                                                                      "leading_sumti": {
+                                                                                        "SimpleSumti": {
+                                                                                          "base_sumti": {
+                                                                                            "SumtiBase": {
+                                                                                              "ProSumti": {
+                                                                                                "Plain": {
+                                                                                                  "PlainWord": {
+                                                                                                    "Cmavo": {
+                                                                                                      "phonemes": "mi",
+                                                                                                      "span": [
+                                                                                                        3,
+                                                                                                        5
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lu mi joi do li'u"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "se klama mi .i mi joi do"
+      ],
+      "index": 3,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "following": [
+                    {
+                      "i": {
+                        "Plain": {
+                          "PlainWord": {
+                            "Cmavo": {
+                              "phonemes": "i",
+                              "span": [
+                                13,
+                                14
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "statement": {
+                        "FragmentStatement": {
+                          "TermsFragment": {
+                            "terms": [
+                              {
+                                "ConnectedTerm": {
+                                  "leading_term": {
+                                    "SumtiTerm": {
+                                      "base_sumti": {
+                                        "leading_sumti": {
+                                          "continuations": [
+                                            {
+                                              "connective": {
+                                                "JoikConnective": {
+                                                  "JoiConnective": {
+                                                    "joi": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "joĭ",
+                                                            "span": [
+                                                              18,
+                                                              21
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "sumti": {
+                                                "leading_sumti": {
+                                                  "SimpleSumti": {
+                                                    "base_sumti": {
+                                                      "SumtiBase": {
+                                                        "ProSumti": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "do",
+                                                                "span": [
+                                                                  22,
+                                                                  24
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ],
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "mi",
+                                                            "span": [
+                                                              15,
+                                                              17
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "RelationOnlyBridi": {
+                              "BridiTailWithPossibleTailTerms": {
+                                "first": {
+                                  "first": {
+                                    "first": {
+                                      "SelbriSimpleBridiTail": {
+                                        "selbri": {
+                                          "UntaggedSelbri": {
+                                            "CoSelbri": {
+                                              "leading_selbri": {
+                                                "leading_selbri": {
+                                                  "first_unit": {
+                                                    "first": {
+                                                      "LinkedTanruUnit": {
+                                                        "base": {
+                                                          "base": {
+                                                            "WordTanruUnit": {
+                                                              "Plain": {
+                                                                "PlainWord": {
+                                                                  "Gismu": {
+                                                                    "phonemes": "kláma",
+                                                                    "span": [
+                                                                      3,
+                                                                      8
+                                                                    ]
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "conversions": [
+                                                            {
+                                                              "Plain": {
+                                                                "PlainWord": {
+                                                                  "Cmavo": {
+                                                                    "phonemes": "se",
+                                                                    "span": [
+                                                                      0,
+                                                                      2
+                                                                    ]
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "terms": [
+                                          {
+                                            "ConnectedTerm": {
+                                              "leading_term": {
+                                                "SumtiTerm": {
+                                                  "base_sumti": {
+                                                    "leading_sumti": {
+                                                      "leading_sumti": {
+                                                        "leading_sumti": {
+                                                          "SimpleSumti": {
+                                                            "base_sumti": {
+                                                              "SumtiBase": {
+                                                                "ProSumti": {
+                                                                  "Plain": {
+                                                                    "PlainWord": {
+                                                                      "Cmavo": {
+                                                                        "phonemes": "mi",
+                                                                        "span": [
+                                                                          9,
+                                                                          11
+                                                                        ]
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "se klama mi .i mi joi do"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi joi do .i ti joi ta"
+      ],
+      "index": 4,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "following": [
+                    {
+                      "i": {
+                        "Plain": {
+                          "PlainWord": {
+                            "Cmavo": {
+                              "phonemes": "i",
+                              "span": [
+                                11,
+                                12
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "statement": {
+                        "FragmentStatement": {
+                          "TermsFragment": {
+                            "terms": [
+                              {
+                                "ConnectedTerm": {
+                                  "leading_term": {
+                                    "SumtiTerm": {
+                                      "base_sumti": {
+                                        "leading_sumti": {
+                                          "continuations": [
+                                            {
+                                              "connective": {
+                                                "JoikConnective": {
+                                                  "JoiConnective": {
+                                                    "joi": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "joĭ",
+                                                            "span": [
+                                                              16,
+                                                              19
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "sumti": {
+                                                "leading_sumti": {
+                                                  "SimpleSumti": {
+                                                    "base_sumti": {
+                                                      "SumtiBase": {
+                                                        "ProSumti": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "ta",
+                                                                "span": [
+                                                                  20,
+                                                                  22
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ],
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "ti",
+                                                            "span": [
+                                                              13,
+                                                              15
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "continuations": [
+                                        {
+                                          "connective": {
+                                            "JoikConnective": {
+                                              "JoiConnective": {
+                                                "joi": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "joĭ",
+                                                        "span": [
+                                                          3,
+                                                          6
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "do",
+                                                            "span": [
+                                                              7,
+                                                              9
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "ProSumti": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "mi",
+                                                        "span": [
+                                                          0,
+                                                          2
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "mi joi do .i ti joi ta"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi tavla fe do joi ti fi ta joi tu"
+      ],
+      "index": 5,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "távla",
+                                                                      "span": [
+                                                                        3,
+                                                                        8
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "terms": [
+                                            {
+                                              "ConnectedTerm": {
+                                                "leading_term": {
+                                                  "PlaceTaggedSumtiTerm": {
+                                                    "fa": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "fe",
+                                                            "span": [
+                                                              9,
+                                                              11
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "sumti": {
+                                                      "Sumti": {
+                                                        "base_sumti": {
+                                                          "leading_sumti": {
+                                                            "continuations": [
+                                                              {
+                                                                "connective": {
+                                                                  "JoikConnective": {
+                                                                    "JoiConnective": {
+                                                                      "joi": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Cmavo": {
+                                                                              "phonemes": "joĭ",
+                                                                              "span": [
+                                                                                15,
+                                                                                18
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "sumti": {
+                                                                  "leading_sumti": {
+                                                                    "SimpleSumti": {
+                                                                      "base_sumti": {
+                                                                        "SumtiBase": {
+                                                                          "ProSumti": {
+                                                                            "Plain": {
+                                                                              "PlainWord": {
+                                                                                "Cmavo": {
+                                                                                  "phonemes": "ti",
+                                                                                  "span": [
+                                                                                    19,
+                                                                                    21
+                                                                                  ]
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ],
+                                                            "leading_sumti": {
+                                                              "leading_sumti": {
+                                                                "SimpleSumti": {
+                                                                  "base_sumti": {
+                                                                    "SumtiBase": {
+                                                                      "ProSumti": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Cmavo": {
+                                                                              "phonemes": "do",
+                                                                              "span": [
+                                                                                12,
+                                                                                14
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "ConnectedTerm": {
+                                                "leading_term": {
+                                                  "PlaceTaggedSumtiTerm": {
+                                                    "fa": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "fi",
+                                                            "span": [
+                                                              22,
+                                                              24
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "sumti": {
+                                                      "Sumti": {
+                                                        "base_sumti": {
+                                                          "leading_sumti": {
+                                                            "continuations": [
+                                                              {
+                                                                "connective": {
+                                                                  "JoikConnective": {
+                                                                    "JoiConnective": {
+                                                                      "joi": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Cmavo": {
+                                                                              "phonemes": "joĭ",
+                                                                              "span": [
+                                                                                28,
+                                                                                31
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "sumti": {
+                                                                  "leading_sumti": {
+                                                                    "SimpleSumti": {
+                                                                      "base_sumti": {
+                                                                        "SumtiBase": {
+                                                                          "ProSumti": {
+                                                                            "Plain": {
+                                                                              "PlainWord": {
+                                                                                "Cmavo": {
+                                                                                  "phonemes": "tu",
+                                                                                  "span": [
+                                                                                    32,
+                                                                                    34
+                                                                                  ]
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ],
+                                                            "leading_sumti": {
+                                                              "leading_sumti": {
+                                                                "SimpleSumti": {
+                                                                  "base_sumti": {
+                                                                    "SumtiBase": {
+                                                                      "ProSumti": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Cmavo": {
+                                                                              "phonemes": "ta",
+                                                                              "span": [
+                                                                                25,
+                                                                                27
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "ProSumti": {
+                                                        "Plain": {
+                                                          "PlainWord": {
+                                                            "Cmavo": {
+                                                              "phonemes": "mi",
+                                                              "span": [
+                                                                0,
+                                                                2
+                                                              ]
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "mi tavla fe do joi ti fi ta joi tu"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi joi do joi ti"
+      ],
+      "index": 6,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "continuations": [
+                                        {
+                                          "connective": {
+                                            "JoikConnective": {
+                                              "JoiConnective": {
+                                                "joi": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "joĭ",
+                                                        "span": [
+                                                          3,
+                                                          6
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "do",
+                                                            "span": [
+                                                              7,
+                                                              9
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "connective": {
+                                            "JoikConnective": {
+                                              "JoiConnective": {
+                                                "joi": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "joĭ",
+                                                        "span": [
+                                                          10,
+                                                          13
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "ti",
+                                                            "span": [
+                                                              14,
+                                                              16
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "ProSumti": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "mi",
+                                                        "span": [
+                                                          0,
+                                                          2
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "mi joi do joi ti"
+    },
+    {
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lo nu ta du lo mi zdani"
+      ],
+      "index": 7,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "DescriptorWithGadriSumti": {
+                                                  "description": {
+                                                    "Plain": {
+                                                      "PlainWord": {
+                                                        "Cmavo": {
+                                                          "phonemes": "lo",
+                                                          "span": [
+                                                            0,
+                                                            2
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "tail": {
+                                                    "leading_tail_elements": {},
+                                                    "tail": {
+                                                      "RelationDescriptionTail": {
+                                                        "selbri": {
+                                                          "UntaggedSelbri": {
+                                                            "CoSelbri": {
+                                                              "leading_selbri": {
+                                                                "leading_selbri": {
+                                                                  "first_unit": {
+                                                                    "first": {
+                                                                      "LinkedTanruUnit": {
+                                                                        "base": {
+                                                                          "base": {
+                                                                            "AbstractionTanruUnit": {
+                                                                              "nu": {
+                                                                                "Plain": {
+                                                                                  "PlainWord": {
+                                                                                    "Cmavo": {
+                                                                                      "phonemes": "nu",
+                                                                                      "span": [
+                                                                                        3,
+                                                                                        5
+                                                                                      ]
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              "subbridi": {
+                                                                                "BridiSubbridi": {
+                                                                                  "BridiWithLeadingTerms": {
+                                                                                    "bridi_tail": {
+                                                                                      "BridiTailWithPossibleTailTerms": {
+                                                                                        "first": {
+                                                                                          "first": {
+                                                                                            "first": {
+                                                                                              "SelbriSimpleBridiTail": {
+                                                                                                "selbri": {
+                                                                                                  "UntaggedSelbri": {
+                                                                                                    "CoSelbri": {
+                                                                                                      "leading_selbri": {
+                                                                                                        "leading_selbri": {
+                                                                                                          "first_unit": {
+                                                                                                            "first": {
+                                                                                                              "LinkedTanruUnit": {
+                                                                                                                "base": {
+                                                                                                                  "base": {
+                                                                                                                    "GohaWordTanruUnit": {
+                                                                                                                      "Plain": {
+                                                                                                                        "PlainWord": {
+                                                                                                                          "Cmavo": {
+                                                                                                                            "phonemes": "du",
+                                                                                                                            "span": [
+                                                                                                                              9,
+                                                                                                                              11
+                                                                                                                            ]
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                },
+                                                                                                "terms": [
+                                                                                                  {
+                                                                                                    "ConnectedTerm": {
+                                                                                                      "leading_term": {
+                                                                                                        "SumtiTerm": {
+                                                                                                          "base_sumti": {
+                                                                                                            "leading_sumti": {
+                                                                                                              "leading_sumti": {
+                                                                                                                "leading_sumti": {
+                                                                                                                  "SimpleSumti": {
+                                                                                                                    "base_sumti": {
+                                                                                                                      "SumtiBase": {
+                                                                                                                        "DescriptorWithGadriSumti": {
+                                                                                                                          "description": {
+                                                                                                                            "Plain": {
+                                                                                                                              "PlainWord": {
+                                                                                                                                "Cmavo": {
+                                                                                                                                  "phonemes": "lo",
+                                                                                                                                  "span": [
+                                                                                                                                    12,
+                                                                                                                                    14
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            }
+                                                                                                                          },
+                                                                                                                          "tail": {
+                                                                                                                            "leading_tail_elements": {
+                                                                                                                              "tail_sumti": {
+                                                                                                                                "ProSumti": {
+                                                                                                                                  "Plain": {
+                                                                                                                                    "PlainWord": {
+                                                                                                                                      "Cmavo": {
+                                                                                                                                        "phonemes": "mi",
+                                                                                                                                        "span": [
+                                                                                                                                          15,
+                                                                                                                                          17
+                                                                                                                                        ]
+                                                                                                                                      }
+                                                                                                                                    }
+                                                                                                                                  }
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            },
+                                                                                                                            "tail": {
+                                                                                                                              "RelationDescriptionTail": {
+                                                                                                                                "selbri": {
+                                                                                                                                  "UntaggedSelbri": {
+                                                                                                                                    "CoSelbri": {
+                                                                                                                                      "leading_selbri": {
+                                                                                                                                        "leading_selbri": {
+                                                                                                                                          "first_unit": {
+                                                                                                                                            "first": {
+                                                                                                                                              "LinkedTanruUnit": {
+                                                                                                                                                "base": {
+                                                                                                                                                  "base": {
+                                                                                                                                                    "WordTanruUnit": {
+                                                                                                                                                      "Plain": {
+                                                                                                                                                        "PlainWord": {
+                                                                                                                                                          "Gismu": {
+                                                                                                                                                            "phonemes": "zdáni",
+                                                                                                                                                            "span": [
+                                                                                                                                                              18,
+                                                                                                                                                              23
+                                                                                                                                                            ]
+                                                                                                                                                          }
+                                                                                                                                                        }
+                                                                                                                                                      }
+                                                                                                                                                    }
+                                                                                                                                                  }
+                                                                                                                                                }
+                                                                                                                                              }
+                                                                                                                                            }
+                                                                                                                                          }
+                                                                                                                                        }
+                                                                                                                                      }
+                                                                                                                                    }
+                                                                                                                                  }
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                ]
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    },
+                                                                                    "leading_terms": [
+                                                                                      {
+                                                                                        "ConnectedTerm": {
+                                                                                          "leading_term": {
+                                                                                            "SumtiTerm": {
+                                                                                              "base_sumti": {
+                                                                                                "leading_sumti": {
+                                                                                                  "leading_sumti": {
+                                                                                                    "leading_sumti": {
+                                                                                                      "SimpleSumti": {
+                                                                                                        "base_sumti": {
+                                                                                                          "SumtiBase": {
+                                                                                                            "ProSumti": {
+                                                                                                              "Plain": {
+                                                                                                                "PlainWord": {
+                                                                                                                  "Cmavo": {
+                                                                                                                    "phonemes": "ta",
+                                                                                                                    "span": [
+                                                                                                                      6,
+                                                                                                                      8
+                                                                                                                    ]
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "surface": "lo nu ta du lo mi zdani"
+    }
+  ],
+  "jbotci_version": "jbotci 0.1.0",
+  "schema": "smusni-gentufa-structural-probe-fixture-1"
+}

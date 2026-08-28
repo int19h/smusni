@@ -3,6 +3,7 @@
 (require json
          rackunit
          racket/list
+         racket/runtime-path
          racket/set
          redex/reduction-semantics
          "../elaborate.rkt"
@@ -889,22 +890,30 @@
                         (lead-cmavo "joi" 30)))))
 (check-not-false (member "L5.23" (structural-rule-leads se-joi)))
 
-(define real-jbotci
-  (or (find-executable-path "jbotci")
-      (error 'lower-test "jbotci is required for real-parse regressions")))
-(define (real-parse text)
-  (define out (open-output-string))
-  (define err (open-output-string))
-  (define ok?
-    (parameterize ([current-output-port out]
-                   [current-error-port err])
-      (system* real-jbotci "gentufa" "--format" "json" text)))
-  (unless ok?
-    (error 'lower-test "gentufa failed for ~s: ~a" text
-           (get-output-string err)))
-  (call-with-input-string (get-output-string out) read-json))
+(define-runtime-path structural-probe-path
+  "../inventory/parses/structural-probes.json")
+(define structural-probe-fixture
+  (call-with-input-file structural-probe-path read-json))
+(check-equal? (hash-ref structural-probe-fixture 'schema)
+              "smusni-gentufa-structural-probe-fixture-1")
+(check-true (string? (hash-ref structural-probe-fixture 'jbotci_version)))
+(define structural-probe-cases
+  (hash-ref structural-probe-fixture 'cases))
+(check-equal? (length structural-probe-cases) 7)
+(define structural-probe-parses
+  (for/hash ([case (in-list structural-probe-cases)]
+             [expected-index (in-naturals 1)])
+    (define surface (hash-ref case 'surface))
+    (check-equal? (hash-ref case 'index) expected-index)
+    (check-equal? (hash-ref case 'command)
+                  (list "jbotci" "gentufa" "--format" "json" surface))
+    (values surface (hash-ref case 'parse))))
+(check-equal? (hash-count structural-probe-parses)
+              (length structural-probe-cases))
 (define (real-leads text)
-  (structural-rule-leads (real-parse text)))
+  (structural-rule-leads
+   (hash-ref structural-probe-parses text
+             (lambda () (error 'lower-test "missing structural probe: ~s" text)))))
 
 (check-false (member "L3.10" (real-leads "lu lo no prenu cu jmaji li'u")))
 (check-false (member "L5.22" (real-leads "lu mi joi do li'u")))

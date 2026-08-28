@@ -60,7 +60,18 @@
 (define-runtime-path tool-dir ".")
 (define manifest-path (build-path tool-dir "inventory" "lowering.sexp"))
 (define parse-dir (build-path tool-dir "inventory" "parses"))
+(define structural-probe-path
+  (build-path parse-dir "structural-probes.json"))
 (define rr-dir (build-path tool-dir "inventory" "rr"))
+
+(define structural-probe-surfaces
+  '("lu lo no prenu cu jmaji li'u"
+    "lu mi joi do li'u"
+    "se klama mi .i mi joi do"
+    "mi joi do .i ti joi ta"
+    "mi tavla fe do joi ti fi ta joi tu"
+    "mi joi do joi ti"
+    "lo nu ta du lo mi zdani"))
 
 (struct lowering-case (index surface category promised-rows unresolved)
   #:transparent)
@@ -988,6 +999,18 @@
       'parse (if surface (gentufa-parse executable surface) #f)
       'unresolved (or (lowering-case-unresolved case) #f)))))
 
+(define (structural-probe-fixture-jsexpr executable version)
+  (hasheq
+   'schema "smusni-gentufa-structural-probe-fixture-1"
+   'jbotci_version version
+   'cases
+   (for/list ([surface (in-list structural-probe-surfaces)]
+              [index (in-naturals 1)])
+     (hasheq 'index index
+             'surface surface
+             'command (list "jbotci" "gentufa" "--format" "json" surface)
+             'parse (gentufa-parse executable surface)))))
+
 (define (refresh-parses! [manifest (load-lowering-manifest)])
   (make-directory* parse-dir)
   (define executable (jbotci-path))
@@ -998,10 +1021,18 @@
     (call-with-output-file (candidate-parse-path candidate)
       #:exists 'truncate/replace
       (lambda (out) (display content out))))
-  (printf "lowering parses refreshed: ~a fences, ~a cases; ~a\n"
+  (call-with-output-file structural-probe-path
+    #:exists 'truncate/replace
+    (lambda (out)
+      (display
+       (pretty-json-string
+        (structural-probe-fixture-jsexpr executable version))
+       out)))
+  (printf "lowering parses refreshed: ~a fences, ~a cases; structural probes=~a; ~a\n"
           (length (lowering-manifest-candidates manifest))
           (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
             (length (lowering-candidate-cases candidate)))
+          (length structural-probe-surfaces)
           version))
 
 (define (validate-lowering-fixtures! [manifest (load-lowering-manifest)])

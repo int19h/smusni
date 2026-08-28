@@ -146,7 +146,9 @@ M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
 (46 lowering judgments; fixtures are explicitly not exhaustive).
 `inventory/lowering.sexp` identifies candidate fence keys, while one tracked
 `gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
-preserve ordered cases. Refresh parser fixtures deliberately with:
+preserve ordered cases. The same refresh maintains an offline gentufa fixture
+for structural-classifier regressions, so the ordinary check remains independent
+of a local jbotci installation. Refresh parser fixtures deliberately with:
 
 ```sh
 racket tools/smusni-redex/lower.rkt --refresh-parses
