@@ -139,3 +139,75 @@ coverage must raise the floor, so ledgering a rule instead of writing its
 specimen is a failing move and any lowered floor is a visible diff. Citing a
 rule is a claim about the specimen; it is not checked semantically until #9
 M3.
+
+## Executable lowering (#9 M3)
+
+M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
+(46 lowering judgments; fixtures are explicitly not exhaustive).
+`inventory/lowering.sexp` identifies candidate fence keys, while one tracked
+`gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
+preserve ordered cases. Refresh parser fixtures deliberately with:
+
+```sh
+racket tools/smusni-redex/lower.rkt --refresh-parses
+```
+
+The ordinary check never invokes jbotci. It attempts each candidate case as a
+whole term, type-checks every produced core term, symmetrically normalizes only
+the documented Close, omitted-place, force-boundary, and L0.1 display
+conventions, and compares modulo α-renaming. Reports distinguish matched,
+mismatch, unresolved, out-of-fragment, and in-fragment `no-lowering` results.
+Missing RR fields and implementation failures fail the gate; missing rows are
+report-only unless the manifest promises them; under-specified rules remain
+visible #9 findings. Per-case dispositions are authoritative, and a documented
+precedence produces the stable fence summary. Formed-rule coverage is printed
+separately from M1's focal-citation ratchet.
+
+The parse-to-source adapter recursively inspects tagged gentufa constructs
+(`BridiStatement`, bridi/selbri/term nodes, descriptors, quantifiers,
+connections, termsets, and LAhE) and treats terminal lexemes as data. It never
+dispatches on a whole surface-token sentence. Each handled construct accounts
+for all of its direct semantic terminals and terms; an unsupported child makes
+the case `no-lowering` instead of disappearing. Familiar descendants are
+accepted only through recognized transparent gentufa wrapper paths, so an
+unknown parent construct cannot disappear while its terminals survive. Before
+building σ, the adapter compares every active parsed modifier with the set the
+selected view consumes; leftover counts, tanru, conversion, scalar/negation,
+labels, or deletions refuse the case. Ordinary fills first form a labelled
+place map, and conversion routes those labels to the base row before
+application; each `zi'o` remains a distinct `DropPlace` deletion.
+The same path certificate covers lexical selbri units, JOI/termset and
+sentence connectives, root statements, and fragments; special handlers do not
+bypass it through recursive descendant search. Every accepted semantic node
+recursively invokes the same decoder for semantic children: descriptors and
+quantifiers decode their child selbri, connectives decode their operands, and
+only a leaf rule reads a terminal payload.
+
+RR force, readings, selected rows, and site kind/order/dependencies are
+validated exactly for the selected rule path. A nonempty RR field with no M3
+consumer is rejected rather than ignored. Candidate-visible semantic gaps are
+reported only after that exact validation, so malformed RR remains a failing
+`rr-missing` result rather than a non-failing unsupported-rule report. Mutation
+regressions require tree structure changes to block lowering, exercise unseen
+lexical and place combinations, and require every RR change to alter or reject
+output. Deterministic sweeps rename and delete every internal key occurrence in
+all fixture parses; a rename must refuse, while deletion must refuse or change
+the source view except for explicitly listed syntactic no-ops. Attempt and
+failure counts are printed. The report
+prints the number of eligible cases for which the gentufa/RR translation
+actually formed a Redex source view.
+
+The executable rules are the `(I I O)` Redex judgment `m3-lower`; its named
+clauses are live §11 ids, and formed attribution is read from
+`build-derivations`, never a manual counter. The display normalizer is a Redex
+metafunction applied to both sides, and `SmusniCore` declares canonical
+binding forms for λ, `Let`, and sequential `Bind` so comparison uses Redex
+`alpha-equivalent?`. Matching additionally requires a binding-sensitive
+retrieval-site certificate: site traversal order, `Context`/`Vague` kind, and
+the enclosing binders on which each computation depends must be in bijection.
+The manifest driver deterministically enumerates and type-checks every fixture
+derivation; it is not labelled `redex-check`.
+`redex-check` is reserved for the bounded `#:satisfying` generator. This Redex
+version rejects generation for the judgment's ellipsis patterns, so the report
+records seed/attempts/size as unavailable and labels coverage fixture-only
+rather than describing it as randomized testing.

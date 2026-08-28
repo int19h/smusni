@@ -1,0 +1,513 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi klama .ije do stali"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "IStatementConnection": {
+                        "continuations": [
+                          {
+                            "SimpleIConnectiveStatementTail": {
+                              "connective": {
+                                "IStandardStatementConnective": {
+                                  "connective": {
+                                    "JekConnective": {
+                                      "ja": {
+                                        "Plain": {
+                                          "PlainWord": {
+                                            "Cmavo": {
+                                              "phonemes": "je",
+                                              "span": [
+                                                11,
+                                                13
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "i": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "i",
+                                      "span": [
+                                        10,
+                                        11
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "trailing_statement": {
+                                "BridiStatement": {
+                                  "bridi": {
+                                    "BridiWithLeadingTerms": {
+                                      "bridi_tail": {
+                                        "BridiTailWithPossibleTailTerms": {
+                                          "first": {
+                                            "first": {
+                                              "first": {
+                                                "SelbriSimpleBridiTail": {
+                                                  "selbri": {
+                                                    "UntaggedSelbri": {
+                                                      "CoSelbri": {
+                                                        "leading_selbri": {
+                                                          "leading_selbri": {
+                                                            "first_unit": {
+                                                              "first": {
+                                                                "LinkedTanruUnit": {
+                                                                  "base": {
+                                                                    "base": {
+                                                                      "WordTanruUnit": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Gismu": {
+                                                                              "phonemes": "stáli",
+                                                                              "span": [
+                                                                                17,
+                                                                                22
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "leading_terms": [
+                                        {
+                                          "ConnectedTerm": {
+                                            "leading_term": {
+                                              "SumtiTerm": {
+                                                "base_sumti": {
+                                                  "leading_sumti": {
+                                                    "leading_sumti": {
+                                                      "leading_sumti": {
+                                                        "SimpleSumti": {
+                                                          "base_sumti": {
+                                                            "SumtiBase": {
+                                                              "ProSumti": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "do",
+                                                                      "span": [
+                                                                        14,
+                                                                        16
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "leading_statement": {
+                          "BridiStatement": {
+                            "bridi": {
+                              "BridiWithLeadingTerms": {
+                                "bridi_tail": {
+                                  "BridiTailWithPossibleTailTerms": {
+                                    "first": {
+                                      "first": {
+                                        "first": {
+                                          "SelbriSimpleBridiTail": {
+                                            "selbri": {
+                                              "UntaggedSelbri": {
+                                                "CoSelbri": {
+                                                  "leading_selbri": {
+                                                    "leading_selbri": {
+                                                      "first_unit": {
+                                                        "first": {
+                                                          "LinkedTanruUnit": {
+                                                            "base": {
+                                                              "base": {
+                                                                "WordTanruUnit": {
+                                                                  "Plain": {
+                                                                    "PlainWord": {
+                                                                      "Gismu": {
+                                                                        "phonemes": "kláma",
+                                                                        "span": [
+                                                                          3,
+                                                                          8
+                                                                        ]
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "leading_terms": [
+                                  {
+                                    "ConnectedTerm": {
+                                      "leading_term": {
+                                        "SumtiTerm": {
+                                          "base_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "leading_sumti": {
+                                                  "SimpleSumti": {
+                                                    "base_sumti": {
+                                                      "SumtiBase": {
+                                                        "ProSumti": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "mi",
+                                                                "span": [
+                                                                  0,
+                                                                  2
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "mi klama .ije do stali — joint State; one assertion",
+      "surface": "mi klama .ije do stali",
+      "unresolved": false
+    },
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi klama .ija do stali"
+      ],
+      "index": 2,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "IStatementConnection": {
+                        "continuations": [
+                          {
+                            "SimpleIConnectiveStatementTail": {
+                              "connective": {
+                                "IStandardStatementConnective": {
+                                  "connective": {
+                                    "JekConnective": {
+                                      "ja": {
+                                        "Plain": {
+                                          "PlainWord": {
+                                            "Cmavo": {
+                                              "phonemes": "ja",
+                                              "span": [
+                                                11,
+                                                13
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "i": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "i",
+                                      "span": [
+                                        10,
+                                        11
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "trailing_statement": {
+                                "BridiStatement": {
+                                  "bridi": {
+                                    "BridiWithLeadingTerms": {
+                                      "bridi_tail": {
+                                        "BridiTailWithPossibleTailTerms": {
+                                          "first": {
+                                            "first": {
+                                              "first": {
+                                                "SelbriSimpleBridiTail": {
+                                                  "selbri": {
+                                                    "UntaggedSelbri": {
+                                                      "CoSelbri": {
+                                                        "leading_selbri": {
+                                                          "leading_selbri": {
+                                                            "first_unit": {
+                                                              "first": {
+                                                                "LinkedTanruUnit": {
+                                                                  "base": {
+                                                                    "base": {
+                                                                      "WordTanruUnit": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Gismu": {
+                                                                              "phonemes": "stáli",
+                                                                              "span": [
+                                                                                17,
+                                                                                22
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "leading_terms": [
+                                        {
+                                          "ConnectedTerm": {
+                                            "leading_term": {
+                                              "SumtiTerm": {
+                                                "base_sumti": {
+                                                  "leading_sumti": {
+                                                    "leading_sumti": {
+                                                      "leading_sumti": {
+                                                        "SimpleSumti": {
+                                                          "base_sumti": {
+                                                            "SumtiBase": {
+                                                              "ProSumti": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "do",
+                                                                      "span": [
+                                                                        14,
+                                                                        16
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "leading_statement": {
+                          "BridiStatement": {
+                            "bridi": {
+                              "BridiWithLeadingTerms": {
+                                "bridi_tail": {
+                                  "BridiTailWithPossibleTailTerms": {
+                                    "first": {
+                                      "first": {
+                                        "first": {
+                                          "SelbriSimpleBridiTail": {
+                                            "selbri": {
+                                              "UntaggedSelbri": {
+                                                "CoSelbri": {
+                                                  "leading_selbri": {
+                                                    "leading_selbri": {
+                                                      "first_unit": {
+                                                        "first": {
+                                                          "LinkedTanruUnit": {
+                                                            "base": {
+                                                              "base": {
+                                                                "WordTanruUnit": {
+                                                                  "Plain": {
+                                                                    "PlainWord": {
+                                                                      "Gismu": {
+                                                                        "phonemes": "kláma",
+                                                                        "span": [
+                                                                          3,
+                                                                          8
+                                                                        ]
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "leading_terms": [
+                                  {
+                                    "ConnectedTerm": {
+                                      "leading_term": {
+                                        "SumtiTerm": {
+                                          "base_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "leading_sumti": {
+                                                  "SimpleSumti": {
+                                                    "base_sumti": {
+                                                      "SumtiBase": {
+                                                        "ProSumti": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "mi",
+                                                                "span": [
+                                                                  0,
+                                                                  2
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "mi klama .ija do stali — branch-relative event; one assertion",
+      "surface": "mi klama .ija do stali",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "14a885a17c62156d54c7ed3a78b6b3908ef59371",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 17,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

@@ -1,0 +1,146 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "la .alis. klama"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "kláma",
+                                                                      "span": [
+                                                                        10,
+                                                                        15
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "NameSumti": {
+                                                        "la": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "la",
+                                                                "span": [
+                                                                  0,
+                                                                  2
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "names": [
+                                                          {
+                                                            "Plain": {
+                                                              "PlainWord": {
+                                                                "Cmevla": {
+                                                                  "phonemes": "alis",
+                                                                  "span": [
+                                                                    4,
+                                                                    8
+                                                                  ]
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "la .alis. klama",
+      "surface": "la .alis. klama",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "51894d5541b6381e478bca7b33a039b6f96feab4",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 23,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

@@ -1,0 +1,268 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "ci gerku ce'e re prenu cu nelci"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "nélci",
+                                                                      "span": [
+                                                                        26,
+                                                                        31
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "cu": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "cu",
+                                      "span": [
+                                        23,
+                                        25
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "continuations": [
+                                              {
+                                                "connective": {
+                                                  "CeheConnective": {
+                                                    "cehe": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "ce'e",
+                                                            "span": [
+                                                              9,
+                                                              13
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "sumti": {
+                                                  "leading_sumti": {
+                                                    "SimpleSumti": {
+                                                      "base_sumti": {
+                                                        "SumtiBase": {
+                                                          "DescriptorWithoutGadriSumti": {
+                                                            "quantifier": {
+                                                              "PaRunQuantifier": {
+                                                                "number": {
+                                                                  "first_number": {
+                                                                    "Plain": {
+                                                                      "PlainWord": {
+                                                                        "Cmavo": {
+                                                                          "phonemes": "re",
+                                                                          "span": [
+                                                                            14,
+                                                                            16
+                                                                          ]
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "selbri": {
+                                                              "UntaggedSelbri": {
+                                                                "CoSelbri": {
+                                                                  "leading_selbri": {
+                                                                    "leading_selbri": {
+                                                                      "first_unit": {
+                                                                        "first": {
+                                                                          "LinkedTanruUnit": {
+                                                                            "base": {
+                                                                              "base": {
+                                                                                "WordTanruUnit": {
+                                                                                  "Plain": {
+                                                                                    "PlainWord": {
+                                                                                      "Gismu": {
+                                                                                        "phonemes": "prénu",
+                                                                                        "span": [
+                                                                                          17,
+                                                                                          22
+                                                                                        ]
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ],
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "DescriptorWithoutGadriSumti": {
+                                                        "quantifier": {
+                                                          "PaRunQuantifier": {
+                                                            "number": {
+                                                              "first_number": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "ci",
+                                                                      "span": [
+                                                                        0,
+                                                                        2
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "selbri": {
+                                                          "UntaggedSelbri": {
+                                                            "CoSelbri": {
+                                                              "leading_selbri": {
+                                                                "leading_selbri": {
+                                                                  "first_unit": {
+                                                                    "first": {
+                                                                      "LinkedTanruUnit": {
+                                                                        "base": {
+                                                                          "base": {
+                                                                            "WordTanruUnit": {
+                                                                              "Plain": {
+                                                                                "PlainWord": {
+                                                                                  "Gismu": {
+                                                                                    "phonemes": "gérku",
+                                                                                    "span": [
+                                                                                      3,
+                                                                                      8
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "ci gerku ce'e re prenu cu nelci    [pin P17]",
+      "surface": "ci gerku ce'e re prenu cu nelci",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "16d5445b9f0efb113e3a9f4a03224a1f770d4959",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 46,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

@@ -1,0 +1,184 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "lo'e mlatu cu cinri"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "cínri",
+                                                                      "span": [
+                                                                        14,
+                                                                        19
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "cu": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "cu",
+                                      "span": [
+                                        11,
+                                        13
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "DescriptorWithGadriSumti": {
+                                                        "description": {
+                                                          "Plain": {
+                                                            "PlainWord": {
+                                                              "Cmavo": {
+                                                                "phonemes": "lo'e",
+                                                                "span": [
+                                                                  0,
+                                                                  4
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "tail": {
+                                                          "leading_tail_elements": {},
+                                                          "tail": {
+                                                            "RelationDescriptionTail": {
+                                                              "selbri": {
+                                                                "UntaggedSelbri": {
+                                                                  "CoSelbri": {
+                                                                    "leading_selbri": {
+                                                                      "leading_selbri": {
+                                                                        "first_unit": {
+                                                                          "first": {
+                                                                            "LinkedTanruUnit": {
+                                                                              "base": {
+                                                                                "base": {
+                                                                                  "WordTanruUnit": {
+                                                                                    "Plain": {
+                                                                                      "PlainWord": {
+                                                                                        "Gismu": {
+                                                                                          "phonemes": "mlátu",
+                                                                                          "span": [
+                                                                                            5,
+                                                                                            10
+                                                                                          ]
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "lo'e mlatu cu cinri            [pin P11]",
+      "surface": "lo'e mlatu cu cinri",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "dcea1ed0a217abde9363445f09a21d766080cca6",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 36,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}
