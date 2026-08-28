@@ -239,12 +239,17 @@ The report prints every case, the first refusal where applicable, verified vs
 skeleton totals, parse-error count and keys, formed coverage before/after the
 increment, promoted verified candidates, and the exhaustive disposition of the
 17 starting rule IDs. A parse error is never absence evidence: while any remain,
-every no-lead disposition is explicitly limited to parsed cases.
+every no-lead disposition is explicitly limited to parsed cases. Only the live
+gentufa call is inside the parse-error boundary; skeleton construction,
+lowering, classification, and normalized comparison failures abort the probe.
 
 Rule leads come from parse constructs and grammatical loci; focal citations are
-printed only as a cross-check. Direct classifier tests supply a minimal positive
-parse for every starting rule and exercise wrong-locus and quoted-material
-negatives. M4 increment 2 promotes only specimens with reviewed eight-field RR:
+printed only as a cross-check. Every detector excludes quoted ancestry, and an
+L5.23 chain requires repeated `joi` nodes at one parent locus or `se` inside the
+same `JoiConnective`; unrelated statements cannot combine into a lead. Direct
+classifier tests supply a minimal positive parse for every starting rule and
+exercise wrong-locus and quoted-material negatives. M4 increment 2 promotes
+only specimens with reviewed eight-field RR:
 samples #27 (L5.22 constitution-bearing `joi`) and #45 (L3.10 explicit inner
 zero). The latter consumes the parsed `no` quantifier itself; question-answer
 substitution is explanatory context, not an RR reading or fixture shortcut.

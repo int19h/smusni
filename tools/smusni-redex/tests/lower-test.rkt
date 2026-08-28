@@ -1,7 +1,7 @@
 #lang racket
 
-(require json)
-(require rackunit
+(require json
+         rackunit
          racket/list
          racket/set
          redex/reduction-semantics
@@ -876,10 +876,12 @@
 (check-false (member "L5.17" (structural-rule-leads i-joi)))
 (check-false (member "L5.22" (structural-rule-leads i-joi)))
 (check-false (member "L5.15" (structural-rule-leads (lead-cmavo "bo" 27))))
-(define quoted-fiha
-  (hasheq 'QuotedSumti
-          (hasheq 'TextQuote (lead-cmavo "fi'a" 28))))
-(check-false (member "L1.7" (structural-rule-leads quoted-fiha)))
+(for ([entry (in-list structural-lead-positives)])
+  (define quoted
+    (hasheq 'QuotedSumti (hasheq 'TextQuote (cdr entry))))
+  (check-false
+   (member (car entry) (structural-rule-leads quoted))
+   (format "quoted classifier negative for ~a" (car entry))))
 (define se-joi
   (hasheq 'sumti
           (hasheq 'JoiConnective
@@ -887,20 +889,49 @@
                         (lead-cmavo "joi" 30)))))
 (check-not-false (member "L5.23" (structural-rule-leads se-joi)))
 
+(define real-jbotci
+  (or (find-executable-path "jbotci")
+      (error 'lower-test "jbotci is required for real-parse regressions")))
+(define (real-parse text)
+  (define out (open-output-string))
+  (define err (open-output-string))
+  (define ok?
+    (parameterize ([current-output-port out]
+                   [current-error-port err])
+      (system* real-jbotci "gentufa" "--format" "json" text)))
+  (unless ok?
+    (error 'lower-test "gentufa failed for ~s: ~a" text
+           (get-output-string err)))
+  (call-with-input-string (get-output-string out) read-json))
 (define (real-leads text)
-  (define raw
-    (with-handlers ([exn:fail? (lambda (_) #hasheq())])
-      (call-with-input-string
-       (with-output-to-string
-         (lambda () (system (string-append "jbotci gentufa --format json \"" text "\""))))
-       read-json)))
-  (structural-rule-leads raw))
+  (structural-rule-leads (real-parse text)))
 
 (check-false (member "L3.10" (real-leads "lu lo no prenu cu jmaji li'u")))
 (check-false (member "L5.22" (real-leads "lu mi joi do li'u")))
 (check-false (member "L5.23" (real-leads "se klama mi .i mi joi do")))
 (check-false (member "L5.23" (real-leads "mi joi do .i ti joi ta")))
+(check-false
+ (member "L5.23"
+         (real-leads "mi tavla fe do joi ti fi ta joi tu")))
 (check-not-false (member "L5.23" (real-leads "mi joi do joi ti")))
+(check-not-false (member "L3.11" (real-leads "lo nu ta du lo mi zdani")))
+
+;; The probe's exception boundary classifies only parser failures. A defect in
+;; any post-parse stage must escape and fail the probe instead of weakening an
+;; absence claim through a false parse-error record.
+(check-equal?
+ (call-with-probe-parse
+  (lambda () (error 'parser "synthetic parse failure"))
+  (lambda (_) 'parse-error)
+  (lambda (_) 'parsed))
+ 'parse-error)
+(check-exn
+ #rx"synthetic post-parse failure"
+ (lambda ()
+   (call-with-probe-parse
+    (lambda () #hasheq())
+    (lambda (_) 'parse-error)
+    (lambda (_) (error 'skeleton "synthetic post-parse failure")))))
 
 ;; A handled bridi must account for every direct semantic term. Adding a
 ;; second term beside the formerly sole description is refused, not silently

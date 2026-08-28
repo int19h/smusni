@@ -44,6 +44,7 @@
          parse-case-variants
          parse-case->sigma
          structural-rule-leads
+         call-with-probe-parse
          normalize-core
          redex-alpha-equivalent?
          site-signatures
@@ -3557,15 +3558,34 @@
   (define (quoted-path? path)
     (for/or ([key (in-list path)])
       (member key '(QuotedSumti TextQuote RawQuote ZoiQuote LohuQuote))))
+  ;; Unlike semantic-node-candidates, the discovery walk continues below a
+  ;; match. That preserves nested unquoted leads (for example a possessor
+  ;; description inside an abstraction) while retaining ancestry for quotes
+  ;; and grammatical-locus checks.
+  (define (all-candidates wanted)
+    (define found '())
+    (define (walk node path list-locus)
+      (cond
+        [(hash? node)
+         (for ([(key child) (in-hash node)])
+           (define next-path (append path (list key)))
+           (when (set-member? wanted key)
+             (set! found (cons (list key child path list-locus) found)))
+           (walk child next-path list-locus))]
+        [(list? node)
+         (for ([child (in-list node)]) (walk child path node))]
+        [else (void)]))
+    (walk raw '() #f)
+    (reverse found))
   (define words
     (for/list ([candidate
-                (in-list (semantic-node-candidates raw (seteq 'Cmavo)))]
+                (in-list (all-candidates (seteq 'Cmavo)))]
                #:unless (quoted-path? (third candidate)))
       (unstress (hash-ref (second candidate) 'phonemes ""))))
   (define (lead! rule) (set-add! leads rule))
   (when (member "fi'a" words) (lead! "L1.7"))
   (for ([candidate
-         (in-list (semantic-node-candidates raw (seteq 'DescriptorWithGadriSumti)))]
+         (in-list (all-candidates (seteq 'DescriptorWithGadriSumti)))]
         #:unless (quoted-path? (third candidate)))
     (define descriptor (second candidate))
     (define gadri (first-terminal (hash-ref descriptor 'description) 'Cmavo))
@@ -3593,27 +3613,35 @@
     (filter (lambda (candidate)
               (and (not (quoted-path? (third candidate)))
                    (member "joi" (terminal-texts (second candidate) 'Cmavo))))
-            (semantic-node-candidates raw (seteq 'JoiConnective))))
+            (all-candidates (seteq 'JoiConnective))))
   (for ([candidate (in-list joi-candidates)])
     (define path (third candidate))
     (cond [(member 'IStatementConnection path) (lead! "L5.13")]
           [(member 'CoSelbri path) (lead! "L5.17")]
           [else (lead! "L5.22")]))
-  (define chain-paths (map (lambda (c) (drop-right (third c) (min 2 (length (third c))))) joi-candidates))
+  ;; Repeated continuations in one chain share their nearest list container.
+  ;; Separate statements and separate sumti arguments have distinct lists even
+  ;; when their grammar-key paths happen to be identical.
   (define has-multiple-joi?
-    (> (length chain-paths) (set-count (list->set chain-paths))))
+    (for/or ([candidate (in-list joi-candidates)]
+             [index (in-naturals)])
+      (define locus (fourth candidate))
+      (and locus
+           (for/or ([other (in-list (drop joi-candidates (add1 index)))])
+             (eq? locus (fourth other))))))
   (define has-se-joi?
     (for/or ([candidate (in-list joi-candidates)])
       (member "se" (terminal-texts (second candidate) 'Cmavo))))
   (when (or has-multiple-joi? has-se-joi?)
     (lead! "L5.23"))
   (for ([candidate
-         (in-list (semantic-node-candidates raw (seteq 'JekConnective)))]
+         (in-list (all-candidates (seteq 'JekConnective)))]
         #:unless (quoted-path? (third candidate)))
     (when (member 'CoSelbri (third candidate)) (lead! "L5.16")))
-  (when (and (for/or ([cand (in-list (semantic-node-candidates raw (seteq 'IStatementConnection)))])
-               (not (quoted-path? (third cand))))
-             (member "bo" words))
+  (when (for/or ([candidate
+                  (in-list (all-candidates (seteq 'IStatementConnection)))]
+                 #:unless (quoted-path? (third candidate)))
+          (member "bo" (terminal-texts (second candidate) 'Cmavo)))
     (lead! "L5.15"))
   (when (for/or ([word (in-list words)])
           (member word '("bi'o" "bi'i" "mi'i")))
@@ -3675,6 +3703,19 @@
                                 (normalization-datum expected))
        (equal? (site-signatures (normalization-datum produced))
                (site-signatures (normalization-datum expected)))))
+
+;; Only parser failures become parse-error records. Both callbacks run after
+;; the handler has gone out of scope, so skeleton, lowering, classifier, and
+;; comparison defects remain ordinary failing exceptions.
+(struct probe-parse-success (raw) #:transparent)
+(struct probe-parse-failure (exception) #:transparent)
+(define (call-with-probe-parse parse-thunk on-parse-error on-success)
+  (define outcome
+    (with-handlers ([exn:fail? probe-parse-failure])
+      (probe-parse-success (parse-thunk))))
+  (match outcome
+    [(probe-parse-failure exception) (on-parse-error exception)]
+    [(probe-parse-success raw) (on-success raw)]))
 
 (define (print-probe-record record)
   (printf "  ~a#~a.~a [~a] ~a surface=~s"
@@ -3754,35 +3795,34 @@
          (define surface (surface-from-source-comment comment))
          (define category (probe-category target))
          (define record
-           (with-handlers
-               ([exn:fail?
-                 (lambda (exception)
-                   (probe-record (fence-source item) (fence-ordinal item)
-                                 index 'unverified-skeleton surface category
-                                 'parse-error #f (exn-message exception) '()
-                                 '()))])
-             (define raw (gentufa-parse executable surface))
-             (define fields (probe-skeleton-fields raw category version inv))
-             (define parse-case
-               (hash 'index index 'surface surface 'source_comment comment
-                     'category (symbol->string category)
-                     'parse raw))
-             (define result (lower parse-case fields))
-             (if (lowered? result)
-                 (probe-record
-                  (fence-source item) (fence-ordinal item) index
-                  'unverified-skeleton surface category
-                  'unverified-skeleton/structurally-lowered #f
-                  `(diagnostic-target-match
-                    ,(probe-normalized-match? result target fields inv)
-                    never-promotion-evidence)
-                  (lowered-rules result) (structural-rule-leads raw))
-                 (probe-record
-                  (fence-source item) (fence-ordinal item) index
-                  'unverified-skeleton surface category
-                  'unverified-skeleton/refused
-                  (no-lowering-rule result) (no-lowering-detail result) '()
-                  (structural-rule-leads raw)))))
+           (call-with-probe-parse
+            (lambda () (gentufa-parse executable surface))
+            (lambda (exception)
+              (probe-record (fence-source item) (fence-ordinal item)
+                            index 'unverified-skeleton surface category
+                            'parse-error #f (exn-message exception) '() '()))
+            (lambda (raw)
+              (define fields (probe-skeleton-fields raw category version inv))
+              (define parse-case
+                (hash 'index index 'surface surface 'source_comment comment
+                      'category (symbol->string category)
+                      'parse raw))
+              (define result (lower parse-case fields))
+              (if (lowered? result)
+                  (probe-record
+                   (fence-source item) (fence-ordinal item) index
+                   'unverified-skeleton surface category
+                   'unverified-skeleton/structurally-lowered #f
+                   `(diagnostic-target-match
+                     ,(probe-normalized-match? result target fields inv)
+                     never-promotion-evidence)
+                   (lowered-rules result) (structural-rule-leads raw))
+                  (probe-record
+                   (fence-source item) (fence-ordinal item) index
+                   'unverified-skeleton surface category
+                   'unverified-skeleton/refused
+                   (no-lowering-rule result) (no-lowering-detail result) '()
+                   (structural-rule-leads raw))))))
          (set! records (cons record records)))]))
   (set! records (reverse records))
   (define parse-error-keys
