@@ -225,3 +225,18 @@ derivation; it is not labelled `redex-check`.
 version rejects generation for the judgment's ellipsis patterns, so the report
 records seed/attempts/size as unavailable and labels coverage fixture-only
 rather than describing it as randomized testing.
+
+### Non-gating corpus probe (#56 M4 increment 2)
+
+Run `racket tools/smusni-redex/lower.rkt --probe-all` to inspect every surface
+specimen with the installed jbotci version. Existing tracked parse/RR fixtures
+are labelled `verified`. Every other case is parsed live and receives a
+generated eight-field skeleton labelled `unverified-skeleton`; such a result is
+discovery-only and is never reported as a match or accepted as promotion
+evidence. The command writes no fixture and is not part of `tools/check-smusni`.
+
+The report prints every case, the first refusal where applicable, verified vs
+skeleton totals, formed coverage before/after the increment, promoted verified
+candidates, and the exhaustive disposition of the 17 starting rule IDs. M4
+increment 2 promotes only specimens with reviewed eight-field RR: currently
+samples #45 (L3.10 inner zero) and #27 (L5.22 constitution-bearing `joi`).

@@ -12,11 +12,11 @@
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
 (check-equal? (lowering-manifest-rule-count manifest) 46)
-(check-equal? (length (lowering-manifest-candidates manifest)) 25)
+(check-equal? (length (lowering-manifest-candidates manifest)) 27)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
    (length (lowering-candidate-cases candidate)))
- 28)
+ 30)
 
 (define rules (fragment-rule-ids manifest))
 (check-equal? (length rules) 46)
@@ -32,7 +32,7 @@
   (map symbol->string (judgment-form->rule-names m3-lower)))
 (check-equal? (length redex-rule-names)
               (set-count (list->set redex-rule-names)))
-(check-equal? (length redex-rule-names) 29)
+(check-equal? (length redex-rule-names) 31)
 (for ([name (in-list redex-rule-names)])
   (check-not-false (member name rules)))
 
@@ -192,6 +192,14 @@
     (Assert (Close (klama $alis))))
  '("L3.3"))
 (check-lowers
+ "samples.md" 27
+ '(Bind ($basis :: DecompositionBasis (Group Entity) Entity)
+        (Context (GroupBasisConstraint joi Entity) deps…)
+    (Bind ($group :: Referents (Group Entity))
+          (JoiGroup $basis Speaker Audience)
+      (Mention $group)))
+ '("L5.22"))
+(check-lowers
  "samples.md" 30
  '(Bind ($base :: Referents Entity)
         (Local (Refer (λ ($x :: Entity) (gerku $x))))
@@ -250,6 +258,12 @@
    (Every (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity) (Close (blabi $x)))))
  '("L5.1"))
+(check-lowers
+ "samples.md" 45
+ '(Assert
+   (No (λ ($x :: Entity) (prenu $x))
+       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+ '("L3.10" "L0.1" "L5.7"))
 (check-lowers
  "samples.md" 46
  '(Bind ($dogs :: Referents Entity)
@@ -570,7 +584,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              28)
+              30)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -585,8 +599,8 @@
                             'out-of-fragment))
                      reports)
               0)
-(check-equal? (length reports) 28)
-(check-equal? (length fence-reports) 25)
+(check-equal? (length reports) 30)
+(check-equal? (length fence-reports) 27)
 (define fence-17-report
   (findf (lambda (report)
            (and (string=? (fence-report-source report) "samples.md")

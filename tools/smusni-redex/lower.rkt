@@ -29,6 +29,7 @@
          (struct-out case-report)
          (struct-out fence-report)
          (struct-out mutation-sweep-result)
+         (struct-out probe-record)
          SmusniM3
          m3-lower
          display-normalize
@@ -50,6 +51,7 @@
          no-lowering-fails?
          aggregate-fence-disposition
          run-parse-mutation-sweeps
+         run-probe-all
          run-lowering-gate
          lower)
 
@@ -78,6 +80,10 @@
   (wrapper-attempts wrapper-allowlisted deletion-attempts failures)
   #:transparent)
 (struct hoist-site (key operand relation label type deps declaration-index)
+  #:transparent)
+(struct probe-record
+  (source ordinal index provenance surface category disposition rule detail
+          rules)
   #:transparent)
 
 (define (site-variable-suggestion key)
@@ -303,6 +309,19 @@
             (term (x_R e_left ... e_right ... x_left)) '$right))])
 
 (define-metafunction SmusniM3
+  joi-group-out : (e ...) -> e
+  [(joi-group-out (e_operand ...))
+   (Bind (x_basis :: DecompositionBasis (Group Entity) Entity)
+         (Context (GroupBasisConstraint joi Entity) deps…)
+     (Bind (x_group :: Referents (Group Entity))
+           (JoiGroup x_basis e_operand ...)
+       (Mention x_group)))
+   (where x_basis
+          ,(variable-not-in (term (e_operand ...)) '$basis))
+   (where x_group
+          ,(variable-not-in (term (e_operand ... x_basis)) '$group))])
+
+(define-metafunction SmusniM3
   nuclear-out : e e e -> e
   [(nuclear-out e_var Entity e_body)
    (λ (e_var :: Entity) e_body)]
@@ -508,6 +527,18 @@
    (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P))
              (SelectExactly e_n e_P))]
 
+  [(where x_witness
+          ,(variable-not-in
+            (term (e_RR e_parse e_force x_P x_Q)) '$w))
+   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
+   (m3-lower e_RR
+             (gentufa e_parse
+                      (nuclear x_witness (Referents Entity) x_Q)) e_Q)
+   (where e_out (force-out e_force (No e_P e_Q)))
+   --------------------------------------------- "L3.10"
+   (m3-lower e_RR
+             (gentufa e_parse (inner-no e_force x_P x_Q)) e_out)]
+
   [(where x_people
           ,(variable-not-in (term (e_RR e_parse e_n x_P)) '$people))
    (where x_basis
@@ -597,6 +628,11 @@
    --------------------------------------------- "L5.21"
    (m3-lower e_RR
              (gentufa e_parse (zip x_R (e_left ...) (e_right ...))) e_out)]
+
+  [(where e_out (joi-group-out (e_operand ...)))
+   --------------------------------------------- "L5.22"
+   (m3-lower e_RR
+             (gentufa e_parse (joi-group (e_operand ...))) e_out)]
 
   [(where x_witness
           ,(variable-not-in (term (e_RR e_parse e_kind x_P x_Q)) '$w))
@@ -747,18 +783,7 @@
              (car key) (cdr key) (length forms)
              (length (lowering-candidate-cases candidate))))))
 
-(define (candidate-source-comments candidate)
-  (define item
-    (for/first ([fence (in-list
-                        (classify-fences (read-all-fences) (load-manifest)))]
-                #:when (and
-                        (string=? (fence-source fence)
-                                  (lowering-candidate-source candidate))
-                        (= (fence-ordinal fence)
-                           (lowering-candidate-ordinal candidate))))
-      fence))
-  (unless item
-    (error 'candidate-source-comments "candidate fence is absent"))
+(define (fence-source-comments item)
   (define lines (string-split (fence-content item) "\n" #:trim? #f))
   (define forms (read-core-forms (fence-content item)))
   (for/list ([form (in-list forms)])
@@ -780,6 +805,20 @@
     ;; §2 defines the first line of the contiguous comment header as the
     ;; Lojban source. Later lines explain the reading and must not replace it.
     (first comments)))
+
+(define (candidate-source-comments candidate)
+  (define item
+    (for/first ([fence (in-list
+                        (classify-fences (read-all-fences) (load-manifest)))]
+                #:when (and
+                        (string=? (fence-source fence)
+                                  (lowering-candidate-source candidate))
+                        (= (fence-ordinal fence)
+                           (lowering-candidate-ordinal candidate))))
+      fence))
+  (unless item
+    (error 'candidate-source-comments "candidate fence is absent"))
+  (fence-source-comments item))
 
 (define (read-json-file path)
   (call-with-input-file path read-json))
@@ -1062,7 +1101,8 @@
 
 (define (unstress text)
   (list->string
-   (filter (lambda (character) (not (char=? character #\u0301)))
+   (filter (lambda (character)
+             (not (eq? (char-general-category character) 'mn)))
            (string->list (string-normalize-nfd text)))))
 
 (define (gentufa-terminals value)
@@ -1420,7 +1460,9 @@
                                      transparent-number-terminal-path-keys)))
         (define count
           (and (string? quantifier-word)
-               (hash-ref number-values quantifier-word #f)))
+               (if (hash-has-key? number-values quantifier-word)
+                   (hash-ref number-values quantifier-word)
+                   `(unresolved-count ,(string->symbol quantifier-word)))))
         (define relation
           (and tail-node (null? tail-unknown)
                (decode-simple-selbri (hash-ref tail-node 'selbri) "L3.1")))
@@ -1498,64 +1540,81 @@
                                     (hasheq 'parse subtree 'surface "")))
                         symbol<?))]))
 
-(define (term-view connected-term)
-  (cond
-    [(member "fa'u" (terminal-texts connected-term 'Cmavo))
-     (define direct-joi
-       (direct-semantic-node connected-term joi-semantic-tags "L5.21"
+(define (decode-joi-operands connected-term word rule)
+  (define direct-joi
+       (direct-semantic-node connected-term joi-semantic-tags rule
                              transparent-joi-path-keys))
-     (define unknown-joi-keys
+  (define unknown-joi-keys
        (if (list? direct-joi)
            (unrecognized-hash-keys (second direct-joi)
                                    supported-special-connective-keys)
            '()))
-     (define operand-candidates
+  (define decoded-word
+    (if (list? direct-joi)
+        (decode-terminal-leaf (second direct-joi) 'Cmavo rule
+                              (seteq 'joi 'Plain 'PlainWord))
+        direct-joi))
+  (define operand-candidates
        (semantic-node-candidates connected-term sumti-semantic-tags))
-     (define unknown-operand-paths
+  (define unknown-operand-paths
        (unrecognized-semantic-path-keys operand-candidates
                                         fahu-operand-path-keys))
-     (define ordered-operands
+  (define ordered-operands
        (sort operand-candidates <
              #:key (lambda (candidate)
                      (define terminals (gentufa-terminals (second candidate)))
                      (if (null? terminals) +inf.0
                          (gentufa-terminal-start (first terminals))))))
-     (define decoded-operands
+  (define decoded-operands
        (for/list ([candidate (in-list ordered-operands)])
          (sumti-view (hasheq (first candidate) (second candidate)))))
-     (define operand-values
+  (define operand-values
        (for/list ([operand (in-list decoded-operands)])
          (match operand [`(value ,value) value] [_ #f])))
-     (define accounted-terminals
+  (define accounted-terminals
        (append (if (list? direct-joi)
                    (terminal-signatures (second direct-joi)) '())
                (append-map (lambda (candidate)
                              (terminal-signatures (second candidate)))
                            ordered-operands)))
-     (cond [(no-lowering? direct-joi) direct-joi]
+  (cond [(no-lowering? direct-joi) direct-joi]
+           [(no-lowering? decoded-word) decoded-word]
+           [(not (equal? decoded-word word))
+            (no-lowering rule 'rule-underspecified
+                         "JOI connective word does not match its handler"
+                         (list word decoded-word))]
            [(pair? unknown-joi-keys)
-            (no-lowering "L5.21" 'rule-underspecified
-                         "fa'u connective has an unknown inner wrapper"
+            (no-lowering rule 'rule-underspecified
+                         "JOI connective has an unknown inner wrapper"
                          unknown-joi-keys)]
            [(pair? unknown-operand-paths)
-            (no-lowering "L5.21" 'rule-underspecified
-                         "fa'u operand is nested under an unknown wrapper"
+            (no-lowering rule 'rule-underspecified
+                         "JOI operand is nested under an unknown wrapper"
                          unknown-operand-paths)]
            [(findf no-lowering? decoded-operands)
             => values]
            [(not (same-members? (terminal-signatures connected-term)
                                 accounted-terminals))
-            (no-lowering "L5.21" 'rule-underspecified
-                         "fa'u has unconsumed child terminals"
+            (no-lowering rule 'rule-underspecified
+                         "JOI has unconsumed child terminals"
                          (hasheq 'all (terminal-signatures connected-term)
                                  'accounted accounted-terminals))]
            [(and (= (length operand-values) 2)
                  (not (member #f operand-values)))
-            `(zip-values ,operand-values)]
+            operand-values]
            [else
-            (no-lowering "L5.21" 'rule-underspecified
-                         "fa'u requires exactly two decoded referential operands"
-                         decoded-operands)])]
+            (no-lowering rule 'rule-underspecified
+                         "JOI requires exactly two decoded referential operands"
+                         decoded-operands)]))
+
+(define (term-view connected-term)
+  (cond
+    [(member "fa'u" (terminal-texts connected-term 'Cmavo))
+     (define operands (decode-joi-operands connected-term "fa'u" "L5.21"))
+     (if (no-lowering? operands) operands `(zip-values ,operands))]
+    [(member "joi" (terminal-texts connected-term 'Cmavo))
+     (define operands (decode-joi-operands connected-term "joi" "L5.22"))
+     (if (no-lowering? operands) operands `(joi-values ,operands))]
     [else
      (define direct
        (direct-semantic-node connected-term term-semantic-tags "L1.4"))
@@ -2194,13 +2253,28 @@
           (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
      (match (first terms)
        [`(description ,gadri ,predicate ,count)
-        (if count
-            (no-lowering (if (zero? count) "L3.10" "L3.9")
-                         'rule-underspecified
-                         "inner description quantity is not implemented on this path"
-                         (hasheq 'gadri gadri 'count count
-                                 'predicate predicate))
-            (case (string->symbol gadri)
+        (cond
+          [(and (equal? gadri "lo") (not negated?)
+                (or (equal? count '(unresolved-count xo))
+                    (and (number? count) (zero? count))))
+           (define expected-readings
+             (readings (if (equal? count '(unresolved-count xo))
+                           '(inner-no) '())))
+           (define check
+             (validated-path fields "L3.10" expected-readings
+                             (list predicate relation) '()
+                             #:force? sentence?))
+           (if (no-lowering? check) check
+               `(inner-no ,(force-or-none) ,predicate ,relation))]
+          [count
+           (no-lowering (if (and (number? count) (zero? count))
+                            "L3.10" "L3.9")
+                        'rule-underspecified
+                        "inner description quantity is not implemented on this path"
+                        (hasheq 'gadri gadri 'count count
+                                'predicate predicate))]
+          [else
+           (case (string->symbol gadri)
           [(lo)
            (define check
              (validated-path fields "L3.1" (readings '())
@@ -2232,7 +2306,7 @@
                    `(force ,check (generic ,predicate ,relation))
                    `(generic ,predicate ,relation)))]
               [else (no-lowering "L3.1" 'rule-underspecified
-                                 "unsupported parsed gadri" gadri)]))])]
+                                 "unsupported parsed gadri" gadri)])])])]
     [(and (= (length terms) 1)
           (match (first terms) [`(name ,_) #t] [_ #f]))
      (match-define `(name ,name) (first terms))
@@ -2563,6 +2637,17 @@
                    `(luho ,count ,predicate)
                    (no-lowering "L3.14" 'rr-missing
                                 "lu'o utterance requires mention force" check)))]
+          [(match view [`(joi-values ,(? list? operands)) #t] [_ #f])
+           (match-define `(joi-values ,operands) view)
+           (define check
+             (validated-path fields "L5.22" '(joi-group) '()
+                             '((group-basis joi (deps ()))) #:force? #t))
+           (if (no-lowering? check) check
+               (if (eq? check 'mention)
+                   `(joi-group ,operands)
+                   (no-lowering "L5.22" 'rr-missing
+                                "joi group fragment requires mention force"
+                                check)))]
           [else (no-lowering "M3" 'out-of-fragment
                              "unsupported parsed terms fragment" view)]))))
 
@@ -3454,6 +3539,210 @@
                generated-detail)]))
   (values (not failures?) reports fence-reports))
 
+(define increment-2-unformed-rules
+  '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
+    "L5.4" "L5.5" "L5.6" "L5.10" "L5.13" "L5.15" "L5.16"
+    "L5.17" "L5.19" "L5.22" "L5.23" "L5.27"))
+
+(define (surface-from-source-comment comment)
+  (define before-dash (first (regexp-split #px"[ ]+—[ ]+" comment)))
+  (string-trim
+   (regexp-replace #px"[ ]+\\[[^]]*\\][ ]*$" before-dash "")))
+
+(define (probe-category target)
+  (with-handlers ([exn:fail? (lambda (_) 'content)])
+    (match (typing-type (infer-core target))
+      [`(Act ,_) 'sentence]
+      ['Content 'content]
+      [`(PredTerm ,_ ...) 'predication]
+      [`(Fn ,_ ...) 'selbri]
+      [`(EFn ,_ ...) 'selbri]
+      [_ 'content])))
+
+(define (probe-skeleton-fields raw category version inv)
+  (define cmavo (terminal-texts raw 'Cmavo))
+  (define rows
+    (remove-duplicates
+     (for/list ([word (in-list (terminal-texts raw 'Gismu))]
+                #:do [(define name (string->symbol word))]
+                #:when (inventory-row inv name))
+       name)))
+  (define readings
+    (remove-duplicates
+     (append (if (eq? category 'sentence) '(actual) '())
+             (if (member "le" cmavo) '(le) '())
+             (if (member "lo'e" cmavo) '(typical) '())
+             (if (member "la" cmavo) '(name) '())
+             (if (member "ro" cmavo) '(importing) '())
+             (if (for/or ([word (in-list cmavo)])
+                   (hash-has-key? number-values word))
+                 '(witness-set) '())
+             (if (member "so'i" cmavo) '(many) '())
+             (if (member "du'e" cmavo) '(too-many) '())
+             (if (member "na'e" cmavo) '(other-than) '())
+             (if (member "co'e" cmavo) '(ellipsis) '()))))
+  (hash 'parse `(live-probe ,version)
+        'attach '()
+        'readings readings
+        'rows rows
+        'stores '()
+        'sites '()
+        'anaphora '()
+        'force (case category
+                 [(sentence) '(assert)]
+                 [(utterance) '(mention)]
+                 [else '()])))
+
+(define (probe-normalized-match? result target fields inv)
+  (define produced (normalize-core (lowered-term result) fields inv))
+  (define expected (normalize-core target fields inv))
+  (and (redex-alpha-equivalent? (normalization-datum produced)
+                                (normalization-datum expected))
+       (equal? (site-signatures (normalization-datum produced))
+               (site-signatures (normalization-datum expected)))))
+
+(define (print-probe-record record)
+  (printf "  ~a#~a.~a [~a] ~a surface=~s"
+          (probe-record-source record) (probe-record-ordinal record)
+          (probe-record-index record) (probe-record-provenance record)
+          (probe-record-disposition record) (probe-record-surface record))
+  (when (probe-record-rule record)
+    (printf " rule=~a" (probe-record-rule record)))
+  (when (pair? (probe-record-rules record))
+    (printf " rules=~a" (string-join (probe-record-rules record) ",")))
+  (when (probe-record-detail record)
+    (define rendered (format "~e" (probe-record-detail record)))
+    (printf " detail=~a"
+            (if (> (string-length rendered) 240)
+                (string-append (substring rendered 0 237) "...")
+                rendered)))
+  (newline))
+
+(define (run-probe-all #:print? [print? #t])
+  (define manifest (load-lowering-manifest))
+  (define inv (load-inventory))
+  (define executable (jbotci-path))
+  (define version (jbotci-version executable))
+  (define candidates
+    (for/hash ([candidate (in-list (lowering-manifest-candidates manifest))])
+      (values (cons (lowering-candidate-source candidate)
+                    (lowering-candidate-ordinal candidate))
+              candidate)))
+  (define fences
+    (filter (lambda (item)
+              (and (eq? (fence-kind item) 'specimen)
+                   (string=? (fence-origin item) "surface")))
+            (classify-fences (read-all-fences) (load-manifest))))
+  (define records '())
+  (for ([item (in-list fences)])
+    (define key (cons (fence-source item) (fence-ordinal item)))
+    (define forms (read-core-forms (fence-content item)))
+    (define comments (fence-source-comments item))
+    (define candidate (hash-ref candidates key #f))
+    (cond
+      [candidate
+       (define parse-cases (hash-ref (load-parse-fixture candidate) 'cases))
+       (define rr-cases (rr-fixture-cases (load-rr-fixture candidate inv)))
+       (for ([candidate-case (in-list (lowering-candidate-cases candidate))]
+             [parse-case (in-list parse-cases)]
+             [rr (in-list rr-cases)]
+             [target (in-list forms)])
+         (define report
+           (run-candidate-case candidate candidate-case parse-case rr target inv))
+         (set! records
+               (cons
+                (probe-record
+                 (fence-source item) (fence-ordinal item)
+                 (lowering-case-index candidate-case) 'verified
+                 (or (lowering-case-surface candidate-case) "<missing>")
+                 (lowering-case-category candidate-case)
+                 (case-report-disposition report)
+                 (case-report-cause report) (case-report-message report)
+                 (case-report-rules report))
+                records)))]
+      [else
+       (for ([target (in-list forms)] [comment (in-list comments)]
+             [index (in-naturals 1)])
+         (define surface (surface-from-source-comment comment))
+         (define category (probe-category target))
+         (define record
+           (with-handlers
+               ([exn:fail?
+                 (lambda (exception)
+                   (probe-record (fence-source item) (fence-ordinal item)
+                                 index 'unverified-skeleton surface category
+                                 'parse-error #f (exn-message exception) '()))])
+             (define raw (gentufa-parse executable surface))
+             (define fields (probe-skeleton-fields raw category version inv))
+             (define parse-case
+               (hash 'index index 'surface surface 'source_comment comment
+                     'category (symbol->string category)
+                     'parse raw))
+             (define result (lower parse-case fields))
+             (if (lowered? result)
+                 (probe-record
+                  (fence-source item) (fence-ordinal item) index
+                  'unverified-skeleton surface category
+                  'unverified-skeleton/structurally-lowered #f
+                  `(diagnostic-target-match
+                    ,(probe-normalized-match? result target fields inv)
+                    never-promotion-evidence)
+                  (lowered-rules result))
+                 (probe-record
+                  (fence-source item) (fence-ordinal item) index
+                  'unverified-skeleton surface category
+                  'unverified-skeleton/refused
+                  (no-lowering-rule result) (no-lowering-detail result) '()))))
+         (set! records (cons record records)))]))
+  (set! records (reverse records))
+  (define verified-formed
+    (for*/set ([record (in-list records)]
+               #:when (and (eq? (probe-record-provenance record) 'verified)
+                           (eq? (probe-record-disposition record)
+                                'in-fragment/matched))
+               [rule (in-list (probe-record-rules record))]
+               #:when (member rule (fragment-rule-ids manifest)))
+      rule))
+  (define promoted
+    (remove-duplicates
+     (for/list ([record (in-list records)]
+                #:when (and (eq? (probe-record-provenance record) 'verified)
+                            (for/or ([rule (in-list (probe-record-rules record))])
+                              (member rule increment-2-unformed-rules))))
+       (format "~a#~a" (probe-record-source record)
+               (probe-record-ordinal record)))))
+  (when print?
+    (printf "probe-all: NON-GATING discovery; jbotci=~a; skeleton RR is UNVERIFIED and never match/promotion evidence\n"
+            version)
+    (for ([record (in-list records)]) (print-probe-record record))
+    (printf "probe-all summary: surface specimens=~a verified-cases=~a skeleton-cases=~a\n"
+            (length records)
+            (count (lambda (record)
+                     (eq? (probe-record-provenance record) 'verified)) records)
+            (count (lambda (record)
+                     (eq? (probe-record-provenance record)
+                          'unverified-skeleton)) records))
+    (printf "formed before increment 2: 29/46; formed after current tree: ~a/46; promoted=~a\n"
+            (set-count verified-formed)
+            (if (null? promoted) "none" (string-join promoted ",")))
+    (for ([rule (in-list increment-2-unformed-rules)])
+      (define hits
+        (for/list ([item (in-list fences)]
+                   #:when (member rule (fence-rules item)))
+          (format "~a#~a" (fence-source item) (fence-ordinal item))))
+      (printf "increment-2 rule ~a: ~a\n" rule
+              (cond
+                [(set-member? verified-formed rule)
+                 (format "formed; verified candidates=~a"
+                         (if (null? hits) "<derived subrule>"
+                             (string-join hits ",")))]
+                [(null? hits) "no specimen in the corpus"]
+                [else
+                 (format "surface specimens=~a; not formed"
+                         (string-join hits ","))])))
+    )
+  (values records (set-count verified-formed) promoted))
+
 (module+ main
   (define action 'check)
   (command-line
@@ -3462,11 +3751,16 @@
    [("--refresh-parses") "regenerate tracked gentufa parse fixtures"
     (set! action 'refresh)]
    [("--check") "validate tracked lowering fixtures (default)"
-    (set! action 'check)])
+    (set! action 'check)]
+   [("--probe-all") "non-gating live probe over every surface specimen"
+    (set! action 'probe-all)])
   (define manifest (load-lowering-manifest))
   (case action
     [(refresh) (refresh-parses! manifest)]
     [(check)
      (define-values (ok? _case-reports _fence-reports)
        (run-lowering-gate))
-     (unless ok? (exit 1))]))
+     (unless ok? (exit 1))]
+    [(probe-all)
+     (define-values (_records _formed _promoted) (run-probe-all))
+     (void)]))
