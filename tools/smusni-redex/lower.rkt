@@ -1794,22 +1794,15 @@
       [else
        (for ([label (in-range 2 (add1 (row-decl-total row)))])
          (define key
-           (string->symbol (format "~a-~a" row-name label)))
-         (if (hash-has-key? expected key)
-             (set! failure
-                   (no-lowering
-                    "L0.1" 'rr-missing
-                    "operand rows make omit-site identities ambiguous"
-                    key))
-             (hash-set! expected key
-                        (list role row-name label
-                              (row-slot-type row-name label inv)))))]))
+           (string->symbol (format "~a-~a-~a" role row-name label)))
+         (hash-set! expected key
+                    (list role row-name label
+                          (row-slot-type row-name label inv))))]))
   (or failure expected))
 
-(define (member-dependency? dependency)
+(define (bare-variable-dependency? dependency)
   (and (symbol? dependency)
-       (or (string-prefix? (symbol->string dependency) "$")
-           (member dependency '(member restrictor-member nuclear-member)))))
+       (string-prefix? (symbol->string dependency) "$")))
 
 (define (stable-site-toposort sites)
   (let loop ([remaining sites] [ordered '()] [bound '()])
@@ -1851,6 +1844,30 @@
         (for ([entry (in-list actual)] [index (in-naturals)])
           (match entry
             [`(omit ,(? symbol? key) (deps ,(? list? deps)))
+             (define member-dependencies
+               (filter (lambda (dependency)
+                         (match dependency
+                           [`(member ,role)
+                            (member role '(restrictor nuclear))]
+                           [_ #f]))
+                       deps))
+             (define outer-dependencies
+               (filter (lambda (dependency)
+                         (match dependency
+                           [`(outer ,(? bare-variable-dependency?)) #t]
+                           [_ #f]))
+                       deps))
+             (define malformed-dependencies
+               (filter (lambda (dependency)
+                         (not (or (symbol? dependency)
+                                  (member dependency member-dependencies)
+                                  (member dependency outer-dependencies))))
+                       deps))
+             (define site-deps
+               (filter (lambda (dependency)
+                         (and (symbol? dependency)
+                              (not (bare-variable-dependency? dependency))))
+                       deps))
              (cond
                [(set-member? seen key)
                 (set! failure
@@ -1860,17 +1877,30 @@
                 (set! failure
                       (no-lowering "L0.1" 'rr-missing
                                    "unknown hoist-site identity" key))]
-               [(ormap member-dependency? deps)
+               [(pair? member-dependencies)
                 (set! failure
                       (no-lowering "L0.1" 'rr-missing
                                    "hoist site depends on a comprehension member"
-                                   (list key deps)))]
+                                   (list key member-dependencies)))]
+               [(pair? outer-dependencies)
+                (set! failure
+                      (no-lowering
+                       "L0.1" 'rule-underspecified
+                       "outer-binder dependency needs environment threading"
+                       (list key outer-dependencies)))]
+               [(or (ormap bare-variable-dependency? deps)
+                    (pair? malformed-dependencies))
+                (set! failure
+                      (no-lowering
+                       "L0.1" 'rr-missing
+                       "dependency identity needs a site, (member role), or (outer $var) namespace"
+                       (list key deps)))]
                [else
                 (set-add! seen key)
                 (match-define (list operand row label type)
                   (hash-ref expected key))
                 (set! parsed
-                      (cons (hoist-site key operand row label type deps index)
+                      (cons (hoist-site key operand row label type site-deps index)
                             parsed))])]
             [_
              (set! failure

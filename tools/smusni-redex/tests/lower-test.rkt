@@ -1105,10 +1105,10 @@
    spec-10-rr
    (cons 'rows '(prenu klama))
    (cons 'sites
-         '((omit klama-2 (deps ()))
-           (omit klama-3 (deps ()))
-           (omit klama-4 (deps ()))
-           (omit klama-5 (deps ()))))))
+         '((omit nuclear-klama-2 (deps ()))
+           (omit nuclear-klama-3 (deps ()))
+           (omit nuclear-klama-4 (deps ()))
+           (omit nuclear-klama-5 (deps ()))))))
 (define unseen-global-result (lower unseen-global-parse unseen-global-rr))
 (check-true (lowered? unseen-global-result))
 (when (lowered? unseen-global-result)
@@ -1126,13 +1126,13 @@
    spec-10-rr
    (cons 'rows '(klama bajra))
    (cons 'sites
-         '((omit klama-2 (deps ()))
-           (omit klama-3 (deps ()))
-           (omit klama-4 (deps ()))
-           (omit klama-5 (deps ()))
-           (omit bajra-2 (deps ()))
-           (omit bajra-3 (deps ()))
-           (omit bajra-4 (deps ()))))))
+         '((omit restrictor-klama-2 (deps ()))
+           (omit restrictor-klama-3 (deps ()))
+           (omit restrictor-klama-4 (deps ()))
+           (omit restrictor-klama-5 (deps ()))
+           (omit nuclear-bajra-2 (deps ()))
+           (omit nuclear-bajra-3 (deps ()))
+           (omit nuclear-bajra-4 (deps ()))))))
 (define multi-restrictor-result
   (lower multi-restrictor-parse multi-restrictor-rr))
 (check-true (lowered? multi-restrictor-result))
@@ -1142,15 +1142,42 @@
           (flatten (plain (lowered-term multi-restrictor-result))))
    7))
 
+;; Role qualification keeps two occurrences of the same row distinct.
+(define same-row-global-parse
+  (replace-parse-strings
+   spec-10-parse
+   (list (cons "gérku" "kláma") (cons "bájra" "kláma"))))
+(define same-row-global-rr
+  (rr-with
+   spec-10-rr
+   (cons 'rows '(klama))
+   (cons 'sites
+         '((omit restrictor-klama-2 (deps ()))
+           (omit restrictor-klama-3 (deps ()))
+           (omit restrictor-klama-4 (deps ()))
+           (omit restrictor-klama-5 (deps ()))
+           (omit nuclear-klama-2 (deps ()))
+           (omit nuclear-klama-3 (deps ()))
+           (omit nuclear-klama-4 (deps ()))
+           (omit nuclear-klama-5 (deps ()))))))
+(define same-row-global-result
+  (lower same-row-global-parse same-row-global-rr))
+(check-true (lowered? same-row-global-result))
+(when (lowered? same-row-global-result)
+  (check-equal?
+   (count (lambda (item) (eq? item 'Context))
+          (flatten (plain (lowered-term same-row-global-result))))
+   8))
+
 ;; Dependency order is topological, with declaration order breaking ties, and
 ;; the dependent Context computation names the already-bound value.
 (define dependent-global-rr
   (rr-with
    spec-10-rr
    (cons 'sites
-         '((omit bajra-3 (deps (bajra-2)))
-           (omit bajra-2 (deps ()))
-           (omit bajra-4 (deps ()))))))
+         '((omit nuclear-bajra-3 (deps (nuclear-bajra-2)))
+           (omit nuclear-bajra-2 (deps ()))
+           (omit nuclear-bajra-4 (deps ()))))))
 (define dependent-global-result (lower spec-10-parse dependent-global-rr))
 (check-true (lowered? dependent-global-result))
 (when (lowered? dependent-global-result)
@@ -1159,34 +1186,62 @@
             (,second-var :: Referents Entity) (Context ,dependency)
             (,_third-var :: Referents Entity) (Context)
         ,_body)
-     (check-equal? first-var '$bajra_2)
-     (check-equal? second-var '$bajra_3)
+     (check-equal? first-var '$nuclear_bajra_2)
+     (check-equal? second-var '$nuclear_bajra_3)
      (check-equal? dependency first-var)]
     [other (fail-check (format "unexpected dependent hoist: ~e" other))]))
 
 (define invalid-global-site-lists
   (list
-   '((omit bajra-2 (deps ($x)))
-     (omit bajra-3 (deps ()))
-     (omit bajra-4 (deps ())))
-   '((omit bajra-2 (deps (missing-site)))
-     (omit bajra-3 (deps ()))
-     (omit bajra-4 (deps ())))
-   '((omit bajra-2 (deps (bajra-3)))
-     (omit bajra-3 (deps (bajra-2)))
-     (omit bajra-4 (deps ())))
-   '((omit bajra-2 (deps ()))
-     (omit bajra-2 (deps ()))
-     (omit bajra-4 (deps ())))
-   '((omit bajra-2 (deps ()))
-     (omit bajra-3 (deps ()))
-     (omit bajra-4 (deps ()))
+   '((omit nuclear-bajra-2 (deps ((member nuclear))))
+     (omit nuclear-bajra-3 (deps ()))
+     (omit nuclear-bajra-4 (deps ())))
+   '((omit nuclear-bajra-2 (deps (missing-site)))
+     (omit nuclear-bajra-3 (deps ()))
+     (omit nuclear-bajra-4 (deps ())))
+   '((omit nuclear-bajra-2 (deps (nuclear-bajra-3)))
+     (omit nuclear-bajra-3 (deps (nuclear-bajra-2)))
+     (omit nuclear-bajra-4 (deps ())))
+   '((omit nuclear-bajra-2 (deps ()))
+     (omit nuclear-bajra-2 (deps ()))
+     (omit nuclear-bajra-4 (deps ())))
+   '((omit nuclear-bajra-2 (deps ()))
+     (omit nuclear-bajra-3 (deps ()))
+     (omit nuclear-bajra-4 (deps ()))
      (omit unknown-9 (deps ())))))
 (for ([sites (in-list invalid-global-site-lists)])
   (define result
     (lower spec-10-parse (rr-with spec-10-rr (cons 'sites sites))))
   (check-true (no-lowering? result))
   (check-equal? (no-lowering-cause result) 'rr-missing))
+
+;; Outer binders are a separate namespace from comprehension members. The
+;; reading is semantically licensed but environment threading is deferred, so
+;; it reports an honest rule gap rather than member-dependent ill-formation.
+(define outer-dependent-global
+  (lower
+   spec-10-parse
+   (rr-with
+    spec-10-rr
+    (cons 'sites
+          '((omit nuclear-bajra-2 (deps ((outer $topic))))
+            (omit nuclear-bajra-3 (deps ()))
+            (omit nuclear-bajra-4 (deps ())))))))
+(check-true (no-lowering? outer-dependent-global))
+(check-equal? (no-lowering-cause outer-dependent-global)
+              'rule-underspecified)
+(define ambiguous-bare-variable-dependency
+  (lower
+   spec-10-parse
+   (rr-with
+    spec-10-rr
+    (cons 'sites
+          '((omit nuclear-bajra-2 (deps ($topic)))
+            (omit nuclear-bajra-3 (deps ()))
+            (omit nuclear-bajra-4 (deps ())))))))
+(check-true (no-lowering? ambiguous-bare-variable-dependency))
+(check-equal? (no-lowering-cause ambiguous-bare-variable-dependency)
+              'rr-missing)
 
 (define-values (termset-parse termset-rr) (case-input "samples.md" 46))
 (define unknown-termset-wrapper-result

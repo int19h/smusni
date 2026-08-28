@@ -5,7 +5,8 @@
     (attach ()) (readings (global-exact)) ; L5.2
     (rows (gerku bajra))              ; L1.1, L5.2
     (stores ())
-    (sites ((omit bajra-2 (deps ())) (omit bajra-3 (deps ()))
-            (omit bajra-4 (deps ())))) ; L0.1
+    (sites ((omit nuclear-bajra-2 (deps ()))
+            (omit nuclear-bajra-3 (deps ()))
+            (omit nuclear-bajra-4 (deps ())))) ; L0.1
     (anaphora ()) (force ()))))
 )

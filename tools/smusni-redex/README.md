@@ -199,10 +199,13 @@ actually formed a Redex source view.
 
 M4's marked-global branch reads `global-exact` only from `RR.readings`. It
 derives the omitted sites of both restrictor and nuclear rows from their
-selected fixture rows, requires an exact `RR.sites` set, rejects duplicate or
-unknown sites/dependencies, member-variable dependencies, and dependency
-cycles, then topologically orders the declarations with source order as the
-tie-break. L0.1 constructs fresh sequential `Bind`s and pure properties; L5.2
+selected fixture rows, using role-qualified identities so equal operand rows
+remain distinct. It requires an exact `RR.sites` set, rejects duplicate or
+unknown sites/dependencies, explicit member dependencies, ambiguous bare
+variables, and dependency cycles, then topologically orders the declarations
+with source order as the tie-break. Explicit `(outer $var)` dependencies are
+recognized separately and report an honest unsupported environment-threading
+gap. L0.1 constructs fresh sequential `Bind`s and pure properties; L5.2
 constructs the `GlobalExactly` head. The symmetric normalizer expands that
 explicit §12 head one way and records the definition name. `Most` expansion is
 deferred: its normative `>` primitive is not yet present in the checker
