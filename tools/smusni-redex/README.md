@@ -390,7 +390,10 @@ implicit direct event, and explicit/shared event—over an explicit
 event fills are labeled separately from ordinary places; omitted ordinary
 places are bound outside the event abstraction, and the shared-event equation
 uses `CoRef` plus `DirectClause` rather than manufacturing a second event. Unequal
-ZipWith remains `blocked:#41`, and Most remains `blocked:#66`. Every A0 entry
+ZipWith remains `blocked:#41`, and Most remains `blocked:#66`. The typing rule
+still accepts two `List` operands of unequal length because length equality is
+not a type property; only the executable expansion has no unequal equation.
+Every A0 entry
 pins the full normative source ranges and their digest; edits anywhere in a
 multi-line definition invalidate the ledger.
 
@@ -420,7 +423,10 @@ one site edge, outer capture, member refusal, direct introduction, and nested
 introduction; positive quotation/out-of-scope controls are separate.
 
 A0 derivation coverage has 54/54 required names and an empty dead-clause
-report. Native metafunction coverage exercises all 15 definition/L0.1 cases.
+report. An adjacent 54-entry table maps every rule name to its live spec
+section(s), and every coverage probe plus every differential success must have
+exactly one proof derivation rather than merely one deduplicated result. Native
+metafunction coverage exercises all 15 definition/L0.1 cases.
 The measured raw generator (seed 520, size 8, 500 attempts) produced 34
 well-typed terms: 93.2% discard, roughly 72–84 cases/minute in the recorded
 standalone/full runs, one compound

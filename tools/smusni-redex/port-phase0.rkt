@@ -1910,16 +1910,26 @@
            [_ (append-map row-environment datum)])]))
     (define environment
       (remove-duplicates (append explicit-environment (row-environment term))))
+    (define derivations
+      (build-derivations (a0-synth ,environment ,term R)))
     (define results (judgment-holds (a0-synth ,environment ,term R) R))
-    (if (= (length results) 1)
-        (match (first results)
+    (cond
+      [(and (= (length derivations) 1) (= (length results) 1))
+       (match (first results)
           [`(typing ,type ,effects ,obligations)
            (port-record 'success type (canonical-set effects)
-                        (canonical-set obligations) '() #f #f #f 1)])
-        (port-record 'rejection #f '() '() '() 'no-derivation
+                        (canonical-set obligations) '() #f #f #f
+                        (length derivations))])]
+      [(pair? derivations)
+       (port-record 'rejection #f '() '() '() 'multiple-derivations
+                    (term-constructor (port-case-term item))
+                    (format "A0 derivations: ~a" (length derivations))
+                    (length derivations))]
+      [else
+       (port-record 'rejection #f '() '() '() 'no-derivation
                      (term-constructor (port-case-term item))
                      (format "A0 derivations: ~a" (length results))
-                     (length results)))))
+                     0)])))
 
 (define (run-a0-differential #:print? [print? #t])
   (define cases (a0-differential-cases))

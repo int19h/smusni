@@ -25,6 +25,7 @@
          a0-synth
          a0-check
          a0-required-rules
+         a0-rule-anchors
          a0-coverage-report
          run-a0-generation-measurement
          run-a0-size-growth
@@ -730,30 +731,45 @@
    (a0-type (check (RefComp τ)) Γ (Vague t_property)
             (typing (RefComp τ) (context) (obligation ...)))]
 
-  [(a0-type (check (Fn ((Referents τ)) Content)) Γ t_property R_property)
+  [(a0-type synth Γ t_property
+            (typing (Fn ((Referents τ)) Content) () (obligation ...)))
    (where R_out
-          (merge-records (RefComp (Referents τ)) (R_property) (refer) ()))
+          (merge-records
+           (RefComp (Referents τ))
+           ((typing (Fn ((Referents τ)) Content) () (obligation ...)))
+           (refer) ()))
    ----------------------------------------------- "A0-T-Refer-Reference"
    (a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)]
 
-  [(a0-type (check (Fn (τ) Content)) Γ t_property R_property)
+  [(a0-type synth Γ t_property
+            (typing (Fn (τ) Content) () (obligation ...)))
    (where R_out
-          (merge-records (RefComp (Referents τ)) (R_property) (refer) ()))
+          (merge-records
+           (RefComp (Referents τ))
+           ((typing (Fn (τ) Content) () (obligation ...)))
+           (refer) ()))
    ----------------------------------------------- "A0-T-Refer-Member"
    (a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)]
 
   [(a0-type (check Natural) Γ t_count R_count)
-   (a0-type (check (Fn (τ) Content)) Γ t_property R_property)
+   (a0-type synth Γ t_property
+            (typing (Fn (τ) Content) () (obligation ...)))
    (where R_out
           (merge-records (RefComp (Referents τ))
-                         (R_count R_property) (refer) ()))
+                         (R_count
+                          (typing (Fn (τ) Content) () (obligation ...)))
+                         (refer) ()))
    ----------------------------------------------- "A0-T-SelectExactly"
    (a0-type (check (RefComp (Referents τ))) Γ
             (SelectExactly t_count t_property) R_out)]
 
-  [(a0-type (check (Fn (τ) Content)) Γ t_property R_property)
+  [(a0-type synth Γ t_property
+            (typing (Fn (τ) Content) () (obligation ...)))
    (where R_out
-          (merge-records (RefComp (Referents τ)) (R_property) (refer) ()))
+          (merge-records
+           (RefComp (Referents τ))
+           ((typing (Fn (τ) Content) () (obligation ...)))
+           (refer) ()))
    ----------------------------------------------- "A0-T-SelectSome"
    (a0-type (check (RefComp (Referents τ))) Γ
             (SelectSome t_property) R_out)]
@@ -965,8 +981,13 @@
    ----------------------------------------------- "A0-T-DirectClause-Effectful"
    (a0-type synth Γ (DirectClause t_property) R_out)]
 
-  [(a0-type (check ClauseContent) Γ t_clause R_clause)
-   (where R_out (merge-records ClauseContent (R_clause) () ()))
+  [(a0-type synth Γ t_clause
+            (typing ClauseContent (effect_clause ...) (obligation ...)))
+   (where R_out
+          (merge-records
+           ClauseContent
+           ((typing ClauseContent (effect_clause ...) (obligation ...)))
+           () ()))
    ----------------------------------------------- "A0-T-ActualClause-State"
    (a0-type synth Γ (ActualClause t_clause) R_out)]
 
@@ -1077,6 +1098,65 @@
     "A0-T-Apply-ClauseContent"
     "A0-T-Apply-Pure" "A0-T-Apply-Effectful"))
 
+;; Adjacent provenance table required by the A0 brief. These are normative
+;; formation/typing anchors, not claims that the derived Redex rule is itself
+;; semantic authority.
+(define a0-rule-anchors
+  '(("A0-Synth" "spec §1.6, §3")
+    ("A0-Check" "spec §1.6, §3")
+    ("A0-T-Check-Synth" "spec §1.6, §3")
+    ("A0-T-Natural" "spec §3.1")
+    ("A0-T-Speaker" "spec §5.1")
+    ("A0-T-Audience" "spec §5.1")
+    ("A0-T-ThresholdKind" "spec §6.4")
+    ("A0-T-Top" "spec §4.5")
+    ("A0-T-Variable" "spec §4.4")
+    ("A0-T-Lambda-Pure" "spec §3.3, §4.4")
+    ("A0-T-Lambda-Effectful" "spec §3.3, §4.4")
+    ("A0-T-Lambda-Multi-Pure" "spec §3.3, §4.4")
+    ("A0-T-Lambda-Multi-Effectful" "spec §3.3, §4.4")
+    ("A0-T-Let" "spec §4.4; §12 Let")
+    ("A0-T-Bind-Nest" "spec §4.4, §5.2")
+    ("A0-T-Bind-Reference" "spec §5.2")
+    ("A0-T-Bind-Performance-Act" "spec §5.2, §7.1")
+    ("A0-T-Bind-Performance-Comp" "spec §5.2, §7.1")
+    ("A0-T-Bind-Performance-Discourse" "spec §5.2, §7.1")
+    ("A0-T-Context" "spec §5.1")
+    ("A0-T-Vague" "spec §6.4–§6.5")
+    ("A0-T-Refer-Reference" "spec §5.3")
+    ("A0-T-Refer-Member" "spec §5.3")
+    ("A0-T-SelectExactly" "spec §5.6")
+    ("A0-T-SelectSome" "spec §5.6")
+    ("A0-T-Massify" "spec §4.8; §12 Massify")
+    ("A0-T-Perform" "spec §7.1")
+    ("A0-T-Exactly-Zero" "spec §4.10; §12 Exactly")
+    ("A0-T-Exactly-Positive" "spec §4.10; §12 Exactly")
+    ("A0-T-No" "spec §4.10; §12 No")
+    ("A0-T-MoreThan" "spec §4.10; §12 MoreThan")
+    ("A0-T-GlobalExactly" "spec §4.10; §12 GlobalExactly")
+    ("A0-T-TooMany" "spec §6.4; §12 TooMany")
+    ("A0-T-AdmissibleThreshold" "spec §6.4")
+    ("A0-T-CanonicalAggregateAt" "spec §4.8")
+    ("A0-T-SetOf" "spec §4.9")
+    ("A0-T-Card" "spec §4.9")
+    ("A0-T-Equality" "spec §4.9")
+    ("A0-T-And" "spec §4.5")
+    ("A0-T-CoRef" "spec §4.5")
+    ("A0-T-List-Check" "spec §4.9")
+    ("A0-T-ZipWith-Pure" "spec §4.9; §12 ZipWith")
+    ("A0-T-ZipWith-Effectful" "spec §4.9; §12 ZipWith")
+    ("A0-T-StateClause" "spec §4.6")
+    ("A0-T-DirectClause-Pure" "spec §4.6")
+    ("A0-T-DirectClause-Effectful" "spec §4.6")
+    ("A0-T-ActualClause-State" "spec §4.6")
+    ("A0-T-ActualClause-Event-Pure" "spec §4.6")
+    ("A0-T-ActualClause-Event-Effectful" "spec §4.6")
+    ("A0-T-CloseClause" "spec §4.6")
+    ("A0-T-CloseWith" "spec §4.6")
+    ("A0-T-Apply-ClauseContent" "spec §3.4, §4.6")
+    ("A0-T-Apply-Pure" "spec §3.3, §4.4")
+    ("A0-T-Apply-Effectful" "spec §3.3, §4.4")))
+
 (define a0-coverage-probes
   `((synth () 3)
     (synth () Speaker)
@@ -1178,11 +1258,17 @@
           (append-map derivation-rule-names (derivation-subs derivation))))
 
 (define (probe-derivations probe)
-  (match probe
-    [`(synth ,environment ,term-datum)
-     (build-derivations (a0-synth ,environment ,term-datum R))]
-    [`(check ,environment ,term-datum ,type)
-     (build-derivations (a0-check ,environment ,term-datum ,type R))]))
+  (define derivations
+    (match probe
+      [`(synth ,environment ,term-datum)
+       (build-derivations (a0-synth ,environment ,term-datum R))]
+      [`(check ,environment ,term-datum ,type)
+       (build-derivations (a0-check ,environment ,term-datum ,type R))]))
+  (unless (= (length derivations) 1)
+    (error 'a0-coverage-report
+           "coverage probe has ~a derivations: ~e"
+           (length derivations) probe))
+  derivations)
 
 (define (exercise-definition-coverage)
   (define coverages
@@ -1221,6 +1307,13 @@
   (append-map covered-cases coverages))
 
 (define (a0-coverage-report #:print? [print? #t])
+  (define anchor-names (map first a0-rule-anchors))
+  (unless (and (= (length anchor-names)
+                  (length (remove-duplicates anchor-names)))
+               (equal? (sort anchor-names string<?)
+                       (sort a0-required-rules string<?)))
+    (error 'a0-coverage-report
+           "rule-anchor table does not exactly cover the required rules"))
   (define derivations (append-map probe-derivations a0-coverage-probes))
   (define witnessed
     (remove-duplicates (append-map derivation-rule-names derivations)))
@@ -1230,6 +1323,8 @@
   (when print?
     (printf "A0 derivation-rule coverage: witnessed=~a required=~a uncovered=~s\n"
             (length witnessed) (length a0-required-rules) uncovered)
+    (printf "A0 rule anchors: recorded=~a required=~a\n"
+            (length a0-rule-anchors) (length a0-required-rules))
     (printf "A0 dead-clause report: ~s\n" uncovered)
     (printf "A0 native metafunction cases: ~s\n" native))
   (values witnessed uncovered native))

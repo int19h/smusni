@@ -5,11 +5,19 @@
          "../port-a0.rkt")
 
 (define (synth environment term)
+  (define derivations
+    (build-derivations (a0-synth ,environment ,term R)))
+  (check-equal? (length derivations) 1
+                (format "unique synthesis derivation for ~s" term))
   (define results (judgment-holds (a0-synth ,environment ,term R) R))
   (check-equal? (length results) 1 (format "unique synthesis for ~s" term))
   (and (= (length results) 1) (first results)))
 
 (define (check-at environment term type)
+  (define derivations
+    (build-derivations (a0-check ,environment ,term ,type R)))
+  (check-equal? (length derivations) 1
+                (format "unique checking derivation for ~s" term))
   (define results (judgment-holds (a0-check ,environment ,term ,type R) R))
   (check-equal? (length results) 1 (format "unique check for ~s" term))
   (and (= (length results) 1) (first results)))
@@ -130,6 +138,13 @@
                        (finite-set-cardinality-defined)))
 (check-equal? (synth gq-env (term (TooMany P Q)))
               '(typing Content (context effectful-call refer) ()))
+
+(check-equal?
+ (length
+  (build-derivations
+   (a0-synth ()
+             (ActualClause (λ (($e (Referents Eventuality))) ⊤)) R)))
+ 1)
 
 (check-equal?
  (synth (term (($v (Referents Entity))))
@@ -339,6 +354,8 @@
 (define-values (witnessed-rules uncovered-rules native-cases)
   (a0-coverage-report #:print? #f))
 (check-equal? (length witnessed-rules) (length a0-required-rules))
+(check-equal? (sort (map first a0-rule-anchors) string<?)
+              (sort a0-required-rules string<?))
 (check-equal? uncovered-rules '())
 (check-true (andmap (lambda (entry) (positive? (cdr entry))) native-cases))
 

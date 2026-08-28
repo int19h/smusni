@@ -397,6 +397,11 @@
 (check-equal? (length a0-mechanism-cases) 10)
 (check-equal? (length current-a0-differential-cases) 41)
 (check-equal? (length (load-a0-waivers)) 9)
+(for ([item (in-list current-a0-differential-cases)])
+  (define record (a0-port-record item))
+  (when (eq? (port-record-status record) 'success)
+    (check-equal? (port-record-derivations record) 1
+                  (format "one A0 derivation for ~a" (port-case-id item)))))
 (check-true
  (a0-corpus-eligible?
   (findf (lambda (item)

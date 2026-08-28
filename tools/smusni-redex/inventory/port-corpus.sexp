@@ -184,7 +184,7 @@
   (DuhuRel "9.2" "a53bb5377034628c999b01b3da7cb5c33d39d976"))
  (test-sources
   ("tools/smusni-redex/tests/a0-test.rkt"
-   "ed868463e7e72f848a9bfdf1497e92b186737e57")
+   "f276b5f1f595338bcba635ec2c13e9db56aaf34d")
   ("tools/smusni-redex/tests/elaborate-test.rkt"
    "eba3b38d9c963350f1341b4561e8a8bf32767683")
   ("tools/smusni-redex/tests/extract-syntax-test.rkt"
