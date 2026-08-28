@@ -841,7 +841,17 @@
          (hasheq 'IStatementConnection
                  (hasheq 'JoiConnective (lead-cmavo "joi"))))
    (cons "L5.15"
-         (hasheq 'IStatementConnection (lead-cmavo "bo")))
+         (hasheq
+          'IStatementConnection
+          (hasheq
+           'continuations
+           (list
+            (hasheq
+             'SimpleIConnectiveStatementTail
+             (hasheq
+              'connective
+              (hasheq 'ITagBoStatementConnective
+                      (hasheq 'bo (lead-cmavo "bo")))))))))
    (cons "L5.16"
          (hasheq 'CoSelbri
                  (hasheq 'JekConnective (lead-cmavo "je"))))
@@ -849,11 +859,15 @@
          (hasheq 'CoSelbri
                  (hasheq 'JoiConnective (lead-cmavo "joi"))))
    (cons "L5.19" (lead-cmavo "bi'o"))
-   (cons "L5.22" (hasheq 'JoiConnective (lead-cmavo "joi")))
+   (cons "L5.22"
+         (hasheq 'ConnectedTerm
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
    (cons "L5.23"
-         (hasheq 'chain
-                 (list (hasheq 'JoiConnective (lead-cmavo "joi" 23))
-                       (hasheq 'JoiConnective (lead-cmavo "joi" 24)))))
+         (hasheq
+          'ConnectedTerm
+          (hasheq 'chain
+                  (list (hasheq 'JoiConnective (lead-cmavo "joi" 23))
+                        (hasheq 'JoiConnective (lead-cmavo "joi" 24))))))
    (cons "L5.27" (lead-cmavo "ku'a"))))
 (define increment-2-rule-ids
   '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
@@ -884,7 +898,7 @@
    (member (car entry) (structural-rule-leads quoted))
    (format "quoted classifier negative for ~a" (car entry))))
 (define se-joi
-  (hasheq 'sumti
+  (hasheq 'ConnectedTerm
           (hasheq 'JoiConnective
                   (list (lead-cmavo "se" 29)
                         (lead-cmavo "joi" 30)))))
@@ -899,7 +913,7 @@
 (check-true (string? (hash-ref structural-probe-fixture 'jbotci_version)))
 (define structural-probe-cases
   (hash-ref structural-probe-fixture 'cases))
-(check-equal? (length structural-probe-cases) 7)
+(check-equal? (length structural-probe-cases) 20)
 (define structural-probe-parses
   (for/hash ([case (in-list structural-probe-cases)]
              [expected-index (in-naturals 1)])
@@ -915,15 +929,29 @@
    (hash-ref structural-probe-parses text
              (lambda () (error 'lower-test "missing structural probe: ~s" text)))))
 
-(check-false (member "L3.10" (real-leads "lu lo no prenu cu jmaji li'u")))
-(check-false (member "L5.22" (real-leads "lu mi joi do li'u")))
-(check-false (member "L5.23" (real-leads "se klama mi .i mi joi do")))
-(check-false (member "L5.23" (real-leads "mi joi do .i ti joi ta")))
-(check-false
- (member "L5.23"
-         (real-leads "mi tavla fe do joi ti fi ta joi tu")))
-(check-not-false (member "L5.23" (real-leads "mi joi do joi ti")))
-(check-not-false (member "L3.11" (real-leads "lo nu ta du lo mi zdani")))
+(define structural-probe-expectations
+  '(("lu lo no prenu cu jmaji li'u" ())
+    ("lu mi joi do li'u" ())
+    ("se klama mi .i mi joi do" ("L5.22"))
+    ("mi joi do .i ti joi ta" ("L5.22"))
+    ("mi tavla fe do joi ti fi ta joi tu" ("L5.22"))
+    ("mi joi do joi ti" ("L5.22" "L5.23"))
+    ("lo nu ta du lo mi zdani" ("L3.11"))
+    ("mi joi do cu klama .i je ti klama" ("L5.22"))
+    ("mi klama .i je ti joi ta cu klama" ("L5.22"))
+    ("mi tavla be do joi ti" ("L5.22"))
+    ("mi melbi joi xamgu .i je do klama" ("L5.17"))
+    ("mi melbi bo xamgu .i je do klama" ())
+    ("lo prenu poi no gerku cu batci ke'a cu klama" ())
+    ("mi klama .i joi do stali" ("L5.13"))
+    ("mi melbi joi xamgu" ("L5.17"))
+    ("mi klama .i ba bo do stali" ("L5.15"))
+    ("mi klama .i je bo do stali" ("L5.15"))
+    ("lo nu lo no gerku cu bajra cu fasnu" ("L3.10"))
+    ("mi melbi je xamgu" ("L5.16"))
+    ("mi djuno lo du'u do klama .i je ti stali" ())))
+(for ([entry (in-list structural-probe-expectations)])
+  (check-equal? (real-leads (first entry)) (second entry) (first entry)))
 
 ;; The probe's exception boundary classifies only parser failures. A defect in
 ;; any post-parse stage must escape and fail the probe instead of weakening an

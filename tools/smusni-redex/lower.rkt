@@ -71,7 +71,20 @@
     "mi joi do .i ti joi ta"
     "mi tavla fe do joi ti fi ta joi tu"
     "mi joi do joi ti"
-    "lo nu ta du lo mi zdani"))
+    "lo nu ta du lo mi zdani"
+    "mi joi do cu klama .i je ti klama"
+    "mi klama .i je ti joi ta cu klama"
+    "mi tavla be do joi ti"
+    "mi melbi joi xamgu .i je do klama"
+    "mi melbi bo xamgu .i je do klama"
+    "lo prenu poi no gerku cu batci ke'a cu klama"
+    "mi klama .i joi do stali"
+    "mi melbi joi xamgu"
+    "mi klama .i ba bo do stali"
+    "mi klama .i je bo do stali"
+    "lo nu lo no gerku cu bajra cu fasnu"
+    "mi melbi je xamgu"
+    "mi djuno lo du'u do klama .i je ti stali"))
 
 (struct lowering-case (index surface category promised-rows unresolved)
   #:transparent)
@@ -3454,6 +3467,8 @@
   (define structural-eligible-total 0)
   (define global-branch-total 0)
   (define fixture-property-failures '())
+  (define classifier-consistency-total 0)
+  (define classifier-consistency-failures '())
   (for ([candidate (in-list (lowering-manifest-candidates manifest))])
     (define key (cons (lowering-candidate-source candidate)
                       (lowering-candidate-ordinal candidate)))
@@ -3468,6 +3483,23 @@
                  [target (in-list targets)])
         (define report
           (run-candidate-case candidate candidate-case parse-case rr-case target inv))
+        (set! classifier-consistency-total
+              (add1 classifier-consistency-total))
+        (define classified-rules
+          (structural-rule-leads (hash-ref parse-case 'parse)))
+        (define derived-classifier-rules
+          (filter (lambda (rule) (member rule (case-report-rules report)))
+                  increment-2-unformed-rules))
+        (unless (equal? classified-rules derived-classifier-rules)
+          (set! classifier-consistency-failures
+                (cons
+                 (list
+                  (case-key (lowering-candidate-source candidate)
+                            (lowering-candidate-ordinal candidate)
+                            (lowering-case-index candidate-case))
+                  (cons 'classified classified-rules)
+                  (cons 'derived derived-classifier-rules))
+                 classifier-consistency-failures)))
         (unless (lowering-case-unresolved candidate-case)
           (set! structural-eligible-total (add1 structural-eligible-total))
           (define sigma (parse-case->sigma parse-case (rr-case-fields rr-case) inv))
@@ -3513,6 +3545,7 @@
   (set! failures?
         (or failures?
             (pair? fixture-property-failures)
+            (pair? classifier-consistency-failures)
             (pair? (mutation-sweep-result-failures mutation-sweep))
             (eq? generated-status 'counterexample)))
   (when print?
@@ -3539,6 +3572,15 @@
             fixture-property-total structural-eligible-total)
     (printf "GlobalExactly branch: ~a candidate case~a lowered\n"
             global-branch-total (if (= global-branch-total 1) "" "s"))
+    (printf
+     "structural classifier/decoder consistency: ~a/~a verified fixture parses; failures=~a\n"
+     (- classifier-consistency-total
+        (length classifier-consistency-failures))
+     classifier-consistency-total
+     (length classifier-consistency-failures))
+    (when (pair? classifier-consistency-failures)
+      (printf "  classifier consistency failures: ~e\n"
+              (reverse classifier-consistency-failures)))
     (printf
      "parse mutation sweeps: wrapper-renames=~a refused=~a allowlisted-unchanged=~a; subtree-deletions=~a refused-or-changed=~a; failures=~a\n"
      (mutation-sweep-result-wrapper-attempts mutation-sweep)
@@ -3584,6 +3626,18 @@
   (string-trim
    (regexp-replace #px"[ ]+\\[[^]]*\\][ ]*$" before-dash "")))
 
+;; Structural connective attribution follows the same semantic nesting used
+;; by the decoders: the nearest recognized locus wins. `leading_sumti` covers
+;; linked sumti, whose JOI remains term-level even beneath an outer CoSelbri.
+(define connective-locus-rules
+  (hasheq 'IStatementConnection "L5.13"
+          'CoSelbri "L5.17"
+          'ConnectedTerm "L5.22"
+          'leading_sumti "L5.22"))
+(define (nearest-connective-locus path)
+  (findf (lambda (key) (hash-has-key? connective-locus-rules key))
+         (reverse path)))
+
 (define (structural-rule-leads raw)
   (define leads (mutable-set))
   (define (quoted-path? path)
@@ -3628,7 +3682,15 @@
       (lead! "L3.11"))
     (when (member gadri '("lei" "le'i")) (lead! "L3.12"))
     (when (member gadri '("lai" "la'i")) (lead! "L3.13"))
-    (define quantifier (first-tag tail 'PaRunQuantifier))
+    (define relation-tail
+      (and (hash? tail) (hash-ref tail 'tail (lambda () #f))))
+    (define quantified-tail
+      (and (hash? relation-tail)
+           (hash-ref relation-tail 'QuantifierRelationDescriptionTail
+                     (lambda () #f))))
+    (define quantifier
+      (and (hash? quantified-tail)
+           (hash-ref quantified-tail 'quantifier (lambda () #f))))
     (when (and quantifier
                (equal? (first-terminal quantifier 'Cmavo) "no"))
       (lead! "L3.10")))
@@ -3646,10 +3708,8 @@
                    (member "joi" (terminal-texts (second candidate) 'Cmavo))))
             (all-candidates (seteq 'JoiConnective))))
   (for ([candidate (in-list joi-candidates)])
-    (define path (third candidate))
-    (cond [(member 'IStatementConnection path) (lead! "L5.13")]
-          [(member 'CoSelbri path) (lead! "L5.17")]
-          [else (lead! "L5.22")]))
+    (define locus (nearest-connective-locus (third candidate)))
+    (when locus (lead! (hash-ref connective-locus-rules locus))))
   ;; Repeated continuations in one chain share their nearest list container.
   ;; Separate statements and separate sumti arguments have distinct lists even
   ;; when their grammar-key paths happen to be identical.
@@ -3668,11 +3728,26 @@
   (for ([candidate
          (in-list (all-candidates (seteq 'JekConnective)))]
         #:unless (quoted-path? (third candidate)))
-    (when (member 'CoSelbri (third candidate)) (lead! "L5.16")))
+    (when (eq? (nearest-connective-locus (third candidate)) 'CoSelbri)
+      (lead! "L5.16")))
+  (define (direct-i-tag-bo? tail)
+    (define connective
+      (and (hash? tail) (hash-ref tail 'connective (lambda () #f))))
+    (and (hash? connective)
+         (for/or ([(tag node) (in-hash connective)]
+                  #:when (member tag '(ITagBoStatementConnective
+                                       IStandardStatementConnective)))
+           (and (hash? node)
+                (or (hash-has-key? node 'bo)
+                    (let ([tag-bo (hash-ref node 'tag_bo (lambda () #f))])
+                      (and (list? tag-bo) (pair? tag-bo))))))))
   (when (for/or ([candidate
-                  (in-list (all-candidates (seteq 'IStatementConnection)))]
+                  (in-list
+                   (all-candidates (seteq 'SimpleIConnectiveStatementTail)))]
                  #:unless (quoted-path? (third candidate)))
-          (member "bo" (terminal-texts (second candidate) 'Cmavo)))
+          (and (eq? (nearest-connective-locus (third candidate))
+                    'IStatementConnection)
+               (direct-i-tag-bo? (second candidate))))
     (lead! "L5.15"))
   (when (for/or ([word (in-list words)])
           (member word '("bi'o" "bi'i" "mi'i")))
