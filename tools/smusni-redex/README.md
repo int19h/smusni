@@ -370,3 +370,74 @@ racket tools/smusni-redex/port-phase0.rkt --refresh-branches
 racket tools/smusni-redex/port-phase0.rkt --refresh-corpus
 racket tools/smusni-redex/port-phase0.rkt --refresh-baseline --full-gate-ms N
 ```
+
+## Redex port A0 vertical slice (#52)
+
+`port-a0.rkt` is the typed feasibility slice, not a replacement for the full
+checker. `SmusniA0` has a closed type/term grammar for direct `Let`/`Bind`,
+`Exactly` (including zero), `GlobalExactly`, `TooMany`, `Massify`, equal-length
+`ZipWith`, explicit-row `Close`, and L0.1. It contains no `[τ any]`; generic
+application remains an object-language form whose admissibility is decided by
+the typing judgment.
+
+Seven definition ledger entries are `port-state a0`. Each structural
+`definition-case` is the general equation over its parameters, not an output
+table: Let beta; Exactly zero/positive; one GlobalExactly comprehension;
+TooMany's ordered purpose/threshold bindings; Massify's canonical selection;
+ZipWith's empty/paired recursion; and all three §4.6 Close equations—holding,
+implicit direct event, and explicit/shared event—over an explicit
+`(row predicate arity event-mode labels)` supplied by the adapter. Explicit
+event fills are labeled separately from ordinary places; omitted ordinary
+places are bound outside the event abstraction, and the shared-event equation
+uses `CoRef` plus `DirectClause` rather than manufacturing a second event. Unequal
+ZipWith remains `blocked:#41`, and Most remains `blocked:#66`. Every A0 entry
+pins the full normative source ranges and their digest; edits anywhere in a
+multi-line definition invalidate the ledger.
+
+The two public modes, `a0-synth` and `a0-check`, wrap one recursive Redex
+judgment returning a correlated `(typing τ effects obligations)` record.
+Expected-type forms (`Context`, `Vague`, selections, `Refer`, `Massify`) use the
+checking direction; direct binders, pure/effectful application, quantifiers,
+clause closure, reference and performance Bind, and definition forms use named
+clauses. The A0 old/new oracle uses a structural bank-membership classifier
+that is independent of whether the new judgment derives a result. It selects
+all 31 eligible terms from the retained 337-case fence/test/mutation corpus,
+then adds 10 general mechanism probes. The 41 cases have zero unwaived
+differences. Nine narrow, tracked waivers remain visible: two legacy `ZipWith`
+pass-throughs omit the effect of applying an effectful function, and seven
+negative pure-position mutations differ only because A0 deliberately reports
+`no-derivation` while the Phase B explainer does not yet reproduce the legacy
+failure class. The Phase 0 identity corpus itself still has zero waivers.
+
+L0.1 consumes `(sites (site id role type pure (deps ...)) ...)` with namespaced
+`(site id)`, `(outer variable type)`, and `(member)` dependencies. It detects
+introductions from the scoped input term (the full selection family and
+`Refer`, including nesting under Let/lambda/Bind), skips quotation/syntax,
+captures a well-typed outer variable, orders site dependencies canonically,
+and distinguishes `member-dependent`, `introduction`, and
+`malformed-metadata`. The six bank profiles include independent commutation,
+one site edge, outer capture, member refusal, direct introduction, and nested
+introduction; positive quotation/out-of-scope controls are separate.
+
+A0 derivation coverage has 54/54 required names and an empty dead-clause
+report. Native metafunction coverage exercises all 15 definition/L0.1 cases.
+The measured raw generator (seed 520, size 8, 500 attempts) produced 34
+well-typed terms: 93.2% discard, roughly 72–84 cases/minute in the recorded
+standalone/full runs, one compound
+constructor, seven rule names, and binder depth one. It is therefore reported
+`fixture/enumeration-only`; A0 does not claim useful whole-language random
+properties.
+
+The formerly unavailable size-growth trigger now runs against the closed A0
+judgment. It times first derivations for distinct nested-`Let` terms at depths
+12, 24, and 48, using a median of three trials per depth after structurally
+matched warmups. The current run is a report-only trigger: about 33 ms, 156 ms,
+and 889 ms, or 4.8× and 5.7× for the two doublings, both above the pre-registered
+4× threshold. This is redesign evidence for Phase B, not a green performance
+claim.
+
+Hand-authored data on the A0 path is limited and tracked: the ten mechanism
+probes, six L0.1 profile environments, definition-source ranges, and the nine
+field-scoped differential waivers. The remaining differential population is
+computed from the frozen corpus; row declarations and lexical function types
+are derived from the live checker inventory rather than keyed by fixture text.
