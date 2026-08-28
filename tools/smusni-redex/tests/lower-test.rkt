@@ -960,6 +960,55 @@
 (check-equal? (no-lowering-cause unknown-fahu-operand-result)
               'rule-underspecified)
 
+;; Fresh child values flow through the recursive decoder; the wrapper sweeps
+;; establish refusal, while these probes establish non-fixture value transport.
+(define descriptor-value-flow-result
+  (lower
+   (hash-set description-row-parse 'parse
+             (rename-json-text (hash-ref description-row-parse 'parse)
+                               "mlátu" "gérku"))
+   (rr-with description-row-rr (cons 'rows '(gerku blabi)))))
+(check-true (lowered? descriptor-value-flow-result))
+(when (lowered? descriptor-value-flow-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term descriptor-value-flow-result))
+    '(Bind ($referent :: Referents Entity)
+           (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+       (Assert (Close (blabi $referent)))))))
+
+(define (rename-terminal-at-start value start replacement)
+  (cond
+    [(hash? value)
+     (define terminal?
+       (and (hash-has-key? value 'phonemes)
+            (equal? (hash-ref value 'span #f)
+                    (list start (+ start 2)))))
+     (for/hasheq ([(key child) (in-hash value)])
+       (values key
+               (cond [(and terminal? (eq? key 'phonemes)) replacement]
+                     [else (rename-terminal-at-start child start replacement)])))]
+    [(list? value)
+     (map (lambda (child)
+            (rename-terminal-at-start child start replacement)) value)]
+    [else value]))
+
+(define fahu-value-flow-result
+  (lower
+   (hash-set zip-parse 'parse
+             (rename-terminal-at-start (hash-ref zip-parse 'parse) 0 "ti"))
+   zip-rr))
+(check-true (lowered? fahu-value-flow-result))
+(when (lowered? fahu-value-flow-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term fahu-value-flow-result))
+    '(ZipWith
+      (λ ($speaker $listener :: Referents Entity)
+        (Close (tavla $speaker $listener)))
+      (List This Audience)
+      (List Audience Speaker)))))
+
 (define-values (termset-parse termset-rr) (case-input "samples.md" 46))
 (define unknown-termset-wrapper-result
   (lower
