@@ -206,9 +206,11 @@ or durable issue update was silently skipped.
   positions; a genuine semantic fork is adjudicated by the human partner.
 - When a docket goes to several reviewers, name them and name **one** durable
   recorder who promotes the outcome to GitHub; others do not race to edit the
-  same issue. The regular code-review rotation is Fable, Codex, Kimi, and
-  Gemini; Qwen is reserved for full-read milestones because of its token
-  quota (human partner, 2026-08-28) and is not named on ordinary PR reviews.
+  same issue. The review rotation is Fable, Codex, and Kimi (human partner,
+  2026-08-28): Qwen is reserved for full-read milestones because of its token
+  quota, and Gemini is excluded from reviews — its verdicts do not count
+  toward consensus — while remaining available for delegated mechanical work
+  under a brief reviewed by the rotation.
 - Read what is pending for you, its reply ancestors, and what you are
   explicitly pointed at — not the whole historical spool.
 - The spool is coordination, not authority. Actionable work goes to a GitHub

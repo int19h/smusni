@@ -35,7 +35,7 @@ broadcast_recipient = true
 
 # Qwen has the smallest token quota: it is kept out of the regular code-review
 # rotation and reserved for full-read milestones (human partner, 2026-08-28).
-# The rotation is Fable, Codex, Kimi, and Gemini.
+# The review rotation is Fable, Codex, and Kimi.
 [models.qwen]
 active = true
 display_name = "Qwen 3.8 Max"
@@ -52,6 +52,9 @@ broadcast_recipient = true
 
 # Gemini runs inside Google Antigravity; the workspace rule
 # `.agents/rules/smusni-charter.md` loads the charter and binds the actor.
+# Gemini is excluded from reviews (human partner, 2026-08-28): its verdicts do
+# not count toward consensus and it is not named on review requests. It may
+# take delegated mechanical work under a brief, reviewed by the rotation.
 [models.gemini]
 active = true
 display_name = "Gemini"
