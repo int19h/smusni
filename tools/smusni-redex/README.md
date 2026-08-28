@@ -197,6 +197,17 @@ failure counts are printed. The report
 prints the number of eligible cases for which the gentufa/RR translation
 actually formed a Redex source view.
 
+M4's marked-global branch reads `global-exact` only from `RR.readings`. It
+derives the omitted sites of both restrictor and nuclear rows from their
+selected fixture rows, requires an exact `RR.sites` set, rejects duplicate or
+unknown sites/dependencies, member-variable dependencies, and dependency
+cycles, then topologically orders the declarations with source order as the
+tie-break. L0.1 constructs fresh sequential `Bind`s and pure properties; L5.2
+constructs the `GlobalExactly` head. The symmetric normalizer expands that
+explicit §12 head one way and records the definition name. `Most` expansion is
+deferred: its normative `>` primitive is not yet present in the checker
+inventory/type judgment, so expanding it would not be type-preserving.
+
 The executable rules are the `(I I O)` Redex judgment `m3-lower`; its named
 clauses are live §11 ids, and formed attribution is read from
 `build-derivations`, never a manual counter. The display normalizer is a Redex

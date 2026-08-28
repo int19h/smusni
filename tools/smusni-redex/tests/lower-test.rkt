@@ -6,7 +6,8 @@
          redex/reduction-semantics
          "../elaborate.rkt"
          "../lower.rkt"
-         "../syntax.rkt")
+         "../syntax.rkt"
+         "../types.rkt")
 
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
@@ -313,8 +314,12 @@
 
 (define-values (spec-10-parse spec-10-rr) (case-input "spec.md" 10))
 (define spec-10-result (lower spec-10-parse spec-10-rr))
-(check-true (no-lowering? spec-10-result))
-(check-equal? (no-lowering-cause spec-10-result) 'rule-underspecified)
+(check-true (lowered? spec-10-result))
+(when (lowered? spec-10-result)
+  (check-not-false (member 'GlobalExactly
+                           (flatten (plain (lowered-term spec-10-result)))))
+  (check-not-false (member "L5.2" (lowered-rules spec-10-result)))
+  (check-not-false (member "L0.1" (lowered-rules spec-10-result))))
 
 ;; Symmetric normalizer: α-renaming, Close/P15, force shorthand, and L0.1.
 (check-true
@@ -354,7 +359,7 @@
 ;; source view; alpha-equivalence is not being used to hide capture afterward.
 (define capture-safe-pure
   (judgment-holds
-   (m3-lower rr (gentufa parse (pure lexical $x)) e_output)
+   (m3-lower rr (gentufa parse (l0 (pure lexical $x))) e_output)
    e_output))
 (check-equal? (length capture-safe-pure) 1)
 (match (first capture-safe-pure)
@@ -484,6 +489,78 @@
  (member "bare lexical property (L0.1)"
          (normalization-expansions reference-refer-normal)))
 
+;; Explicit §12 definitions normalize one way, before pure-position display
+;; rewrites, and are idempotent/type- and site-preserving.
+(define global-defined
+  '(GlobalExactly
+    2
+    (λ ($p :: Entity) (prenu $p))
+    (λ ($q :: Entity) (blabi $q))))
+(define global-defined-normal
+  (normalize-core (datum->core global-defined)
+                  (hash 'rows '(prenu blabi))))
+(define global-expanded (normalization-datum global-defined-normal))
+(check-not-false
+ (member "§12 definition of `GlobalExactly`"
+         (normalization-expansions global-defined-normal)))
+(check-true
+ (redex-alpha-equivalent?
+  global-expanded
+  '(= (Card
+       (SetOf
+        (λ ($member :: Entity)
+          (∧ (prenu $member) (blabi $member)))))
+      2)))
+(define global-idempotent
+  (normalize-core (datum->core global-expanded)
+                  (hash 'rows '(prenu blabi))))
+(check-equal? (normalization-datum global-idempotent) global-expanded)
+(check-false
+ (member "§12 definition of `GlobalExactly`"
+         (normalization-expansions global-idempotent)))
+(define global-original-typing (infer-core (datum->core global-defined)))
+(define global-expanded-typing (infer-core (datum->core global-expanded)))
+(check-equal? (typing-type global-original-typing)
+              (typing-type global-expanded-typing))
+(check-equal? (typing-gaps global-expanded-typing) '())
+(check-equal? (site-signatures global-defined)
+              (site-signatures global-expanded))
+
+(define most-defined
+  '(Most
+    (λ ($p :: Entity) (prenu $p))
+    (λ ($q :: Entity) (blabi $q))))
+(define most-defined-normal
+  (normalize-core (datum->core most-defined)
+                  (hash 'rows '(prenu blabi))))
+;; Most is deliberately deferred: its normative expansion uses primitive `>`,
+;; which is not yet in the checker inventory/type judgment. Expanding it here
+;; would violate the required type-preservation property.
+(check-not-false (member 'Most (flatten (normalization-datum most-defined-normal))))
+(check-false
+ (member "§12 definition of `Most`"
+         (normalization-expansions most-defined-normal)))
+(check-equal?
+ (typing-type
+  (infer-core (datum->core (normalization-datum most-defined-normal))))
+ 'Content)
+(check-equal? (site-signatures most-defined)
+              (site-signatures (normalization-datum most-defined-normal)))
+
+(define impure-most
+  '(Most
+    (λ ($p :: Entity) (prenu $p))
+    (λ ($q :: Entity)
+      (Bind ($context :: Referents Entity) (Context)
+        (blabi $q)))))
+(define impure-most-normal
+  (normalize-core (datum->core impure-most)
+                  (hash 'rows '(prenu blabi))))
+(check-not-false (member 'Most (flatten (normalization-datum impure-most-normal))))
+(check-false
+ (member "§12 definition of `Most`"
+         (normalization-expansions impure-most-normal)))
+
 ;; Full candidate run: structurally formed cases match; the honest unformed
 ;; and missing-surface dispositions remain visible/non-failing.
 (define-values (gate-ok? reports fence-reports)
@@ -493,7 +570,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              27)
+              28)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -502,7 +579,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/no-lowering))
                      reports)
-              1)
+              0)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report)
                             'out-of-fragment))
@@ -1008,6 +1085,108 @@
         (Close (tavla $speaker $listener)))
       (List This Audience)
       (List Audience Speaker)))))
+
+;; M4 increment 1: unseen rows/arity and the complete L0.1 dependency graph.
+(define (replace-parse-strings parse-case replacements)
+  (hash-set
+   parse-case 'parse
+   (for/fold ([raw (hash-ref parse-case 'parse)])
+             ([replacement (in-list replacements)])
+     (rename-json-text raw (car replacement) (cdr replacement)))))
+
+(define unseen-global-parse
+  (replace-parse-strings
+   spec-10-parse
+   (list (cons "ci" "re")
+         (cons "gérku" "prénu")
+         (cons "bájra" "kláma"))))
+(define unseen-global-rr
+  (rr-with
+   spec-10-rr
+   (cons 'rows '(prenu klama))
+   (cons 'sites
+         '((omit klama-2 (deps ()))
+           (omit klama-3 (deps ()))
+           (omit klama-4 (deps ()))
+           (omit klama-5 (deps ()))))))
+(define unseen-global-result (lower unseen-global-parse unseen-global-rr))
+(check-true (lowered? unseen-global-result))
+(when (lowered? unseen-global-result)
+  (define datum (plain (lowered-term unseen-global-result)))
+  (check-equal? (count (lambda (item) (eq? item 'Context)) (flatten datum)) 4)
+  (check-not-false (member 2 (flatten datum)))
+  (check-not-false (member 'GlobalExactly (flatten datum))))
+
+;; A multi-place restrictor and nuclear predicate both contribute hoisted
+;; sites; neither operand receives privileged treatment.
+(define multi-restrictor-parse
+  (replace-parse-strings spec-10-parse (list (cons "gérku" "kláma"))))
+(define multi-restrictor-rr
+  (rr-with
+   spec-10-rr
+   (cons 'rows '(klama bajra))
+   (cons 'sites
+         '((omit klama-2 (deps ()))
+           (omit klama-3 (deps ()))
+           (omit klama-4 (deps ()))
+           (omit klama-5 (deps ()))
+           (omit bajra-2 (deps ()))
+           (omit bajra-3 (deps ()))
+           (omit bajra-4 (deps ()))))))
+(define multi-restrictor-result
+  (lower multi-restrictor-parse multi-restrictor-rr))
+(check-true (lowered? multi-restrictor-result))
+(when (lowered? multi-restrictor-result)
+  (check-equal?
+   (count (lambda (item) (eq? item 'Context))
+          (flatten (plain (lowered-term multi-restrictor-result))))
+   7))
+
+;; Dependency order is topological, with declaration order breaking ties, and
+;; the dependent Context computation names the already-bound value.
+(define dependent-global-rr
+  (rr-with
+   spec-10-rr
+   (cons 'sites
+         '((omit bajra-3 (deps (bajra-2)))
+           (omit bajra-2 (deps ()))
+           (omit bajra-4 (deps ()))))))
+(define dependent-global-result (lower spec-10-parse dependent-global-rr))
+(check-true (lowered? dependent-global-result))
+(when (lowered? dependent-global-result)
+  (match (plain (lowered-term dependent-global-result))
+    [`(Bind (,first-var :: Referents Entity) (Context)
+            (,second-var :: Referents Entity) (Context ,dependency)
+            (,_third-var :: Referents Entity) (Context)
+        ,_body)
+     (check-equal? first-var '$bajra_2)
+     (check-equal? second-var '$bajra_3)
+     (check-equal? dependency first-var)]
+    [other (fail-check (format "unexpected dependent hoist: ~e" other))]))
+
+(define invalid-global-site-lists
+  (list
+   '((omit bajra-2 (deps ($x)))
+     (omit bajra-3 (deps ()))
+     (omit bajra-4 (deps ())))
+   '((omit bajra-2 (deps (missing-site)))
+     (omit bajra-3 (deps ()))
+     (omit bajra-4 (deps ())))
+   '((omit bajra-2 (deps (bajra-3)))
+     (omit bajra-3 (deps (bajra-2)))
+     (omit bajra-4 (deps ())))
+   '((omit bajra-2 (deps ()))
+     (omit bajra-2 (deps ()))
+     (omit bajra-4 (deps ())))
+   '((omit bajra-2 (deps ()))
+     (omit bajra-3 (deps ()))
+     (omit bajra-4 (deps ()))
+     (omit unknown-9 (deps ())))))
+(for ([sites (in-list invalid-global-site-lists)])
+  (define result
+    (lower spec-10-parse (rr-with spec-10-rr (cons 'sites sites))))
+  (check-true (no-lowering? result))
+  (check-equal? (no-lowering-cause result) 'rr-missing))
 
 (define-values (termset-parse termset-rr) (case-input "samples.md" 46))
 (define unknown-termset-wrapper-result

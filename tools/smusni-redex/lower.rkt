@@ -77,6 +77,78 @@
 (struct mutation-sweep-result
   (wrapper-attempts wrapper-allowlisted deletion-attempts failures)
   #:transparent)
+(struct hoist-site (key operand relation label type deps declaration-index)
+  #:transparent)
+
+(define (site-variable-suggestion key)
+  (string->symbol
+   (string-append
+    "$"
+    (regexp-replace* #px"[^A-Za-z0-9_]" (symbol->string key) "_"))))
+
+(define (build-global-hoist-datum properties site-data)
+  (define avoid `(,properties ,site-data))
+  (define site-variables (make-hash))
+  (define allocated '())
+  (for ([site (in-list site-data)])
+    (match-define `(site ,key ,_operand ,_relation ,_label ,_type
+                         (deps ,_ ...)) site)
+    (define variable
+      (variable-not-in (append avoid allocated)
+                       (site-variable-suggestion key)))
+    (hash-set! site-variables key variable)
+    (set! allocated (cons variable allocated)))
+  (define restrictor-member
+    (variable-not-in (append avoid allocated) '$restrictor_member))
+  (define nuclear-member
+    (variable-not-in (append avoid allocated (list restrictor-member))
+                     '$nuclear_member))
+  (define bindings
+    (for/list ([site (in-list site-data)])
+      (match-define `(site ,key ,_operand ,_relation ,_label ,type
+                           (deps ,dependencies ...)) site)
+      (define dependency-variables
+        (map (lambda (dependency) (hash-ref site-variables dependency))
+             dependencies))
+      `(,(hash-ref site-variables key) ,type
+        (Context ,@dependency-variables))))
+  (define (property-datum role member)
+    (match-define `(property ,_ ,relation ,total ,event-mode)
+      (findf (lambda (property) (eq? (second property) role)) properties))
+    (define fills (make-hash (list (cons 1 member))))
+    (for ([site (in-list site-data)])
+      (match site
+        [`(site ,key ,(== role) ,_relation ,label ,_type (deps ,_ ...))
+         (hash-set! fills label (hash-ref site-variables key))]
+        [_ (void)]))
+    (unless (equal? (sort (hash-keys fills) <)
+                    (range 1 (add1 total)))
+      (error 'build-global-hoist-datum
+             "property ~a does not have every row place filled" role))
+    (define application
+      `(,relation
+        ,@(for/list ([label (in-range 1 (add1 total))])
+            (hash-ref fills label))))
+    `(λ (,member :: Entity)
+       ,(if (eq? event-mode 'direct-event) `(Close ,application) application)))
+  `(hoisted ,bindings
+            ,(property-datum 'restrictor restrictor-member)
+            ,(property-datum 'nuclear nuclear-member)))
+
+(define (compose-global-exactly quantity hoisted)
+  (match hoisted
+    [`(hoisted ,bindings ,restrictor ,nuclear)
+     (define body `(GlobalExactly ,quantity ,restrictor ,nuclear))
+     (if (null? bindings)
+         body
+         `(Bind
+           ,@(append-map
+              (lambda (binding)
+                (match-define `(,variable ,type ,computation) binding)
+                (list `(,variable :: ,@type) computation))
+              bindings)
+           ,body))]
+    [_ (error 'compose-global-exactly "invalid hoisted datum: ~e" hoisted)]))
 
 ;; M3's executable semantics. The Racket driver converts a validated gentufa
 ;; fixture to the small source view below; all core construction happens in
@@ -100,6 +172,12 @@
       x_ref (λ (x_unit :: Referents Entity) (x_P x_unit))))
    (where x_ref ,(variable-not-in (term x_P) '$x))
    (where x_unit ,(variable-not-in (term (x_P x_ref)) '$y))])
+
+(define-metafunction SmusniM3
+  l0-out : e -> e
+  [(l0-out (pure e_kind x_P)) (pure-out e_kind x_P)]
+  [(l0-out (global-hoist e_properties e_sites))
+   ,(build-global-hoist-datum (term e_properties) (term e_sites))])
 
 (define-metafunction SmusniM3
   apply* : e (e ...) -> e
@@ -242,7 +320,7 @@
 
 (define-metafunction SmusniM3
   le-cont-source : e x -> e
-  [(le-cont-source (pure described x_P) x_ref) (pure described x_P)]
+  [(le-cont-source (pure described x_P) x_ref) (l0 (pure described x_P))]
   [(le-cont-source (description x_Q e_polarity e_force) x_ref)
    (description-source e_force x_Q e_polarity x_ref)])
 
@@ -253,6 +331,23 @@
   [(cardinal-cont-source e_force x_Q x_ref)
    (force e_force (close shorthand (pred x_Q x_ref)))
    (side-condition (member (term e_force) '(assert mention)))])
+
+(define-metafunction SmusniM3
+  cardinal-sources : e e e x x e e x -> (e ...)
+  [(cardinal-sources witness e_force e_n x_P x_Q () () x_witness)
+   ((l0 (pure lexical x_P))
+    (cardinal-cont-source e_force x_Q x_witness))]
+  [(cardinal-sources global none e_n x_P x_Q e_properties e_sites x_unused)
+   ((l0 (global-hoist e_properties e_sites)))])
+
+(define-metafunction SmusniM3
+  cardinal-compose : e e x (e ...) -> e
+  [(cardinal-compose witness e_n x_witness (e_P e_Q_body))
+   (Bind (x_witness :: Referents Entity)
+         (SelectExactly e_n e_P)
+     e_Q_body)]
+  [(cardinal-compose global e_n x_unused (e_hoisted))
+   ,(compose-global-exactly (term e_n) (term e_hoisted))])
 
 (define-metafunction SmusniM3
   le-out : x e x e -> e
@@ -289,6 +384,11 @@
           ,(variable-not-in (term (e_P e_Q x_purpose)) '$n))])
 
 (define-metafunction SmusniM3
+  global-exactly-definition : e -> e
+  [(global-exactly-definition e_term)
+   ,(expand-global-exactly-datum (term e_term))])
+
+(define-metafunction SmusniM3
   display-normalize : e e -> e
   [(display-normalize e_rows e_term)
    ,(let-values ([(normalized expansions)
@@ -300,9 +400,9 @@
   #:mode (m3-lower I I O)
   #:contract (m3-lower e e e)
 
-  [(where e_out (pure-out e_kind x_P))
+  [(where e_out (l0-out e_source))
    --------------------------------------------- "L0.1"
-   (m3-lower e_RR (gentufa e_parse (pure e_kind x_P)) e_out)]
+   (m3-lower e_RR (gentufa e_parse (l0 e_source)) e_out)]
 
   [(where e_out (app* x_R (e_arg ...)))
    --------------------------------------------- "L1.1"
@@ -377,7 +477,7 @@
                e_body))]
 
   [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$x))
-   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
    (m3-lower e_RR
              (gentufa e_parse (close shorthand (pred x_Q x_unit))) e_Q_body)
    --------------------------------------------- "L3.4"
@@ -432,7 +532,7 @@
    (m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_property)]
 
   [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$x))
-   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
    (m3-lower e_RR
              (gentufa e_parse (close shorthand (pred x_Q x_unit))) e_Q_body)
    --------------------------------------------- "L5.1"
@@ -441,18 +541,20 @@
 
   [(where x_witness
           ,(variable-not-in
-            (term (e_RR e_parse e_force e_n x_P x_Q)) '$w))
-   (where e_continuation
-          (cardinal-cont-source e_force x_Q x_witness))
-   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
-   (m3-lower e_RR
-             (gentufa e_parse e_continuation)
-             e_Q_body)
+            (term (e_RR e_parse e_mode e_force e_n x_P x_Q
+                        e_properties e_sites)) '$w))
+   (where (e_subsource ...)
+          (cardinal-sources e_mode e_force e_n x_P x_Q
+                            e_properties e_sites x_witness))
+   (m3-lower e_RR (gentufa e_parse e_subsource) e_part) ...
+   (where e_out
+          (cardinal-compose e_mode e_n x_witness (e_part ...)))
    --------------------------------------------- "L5.2"
-   (m3-lower e_RR (gentufa e_parse (cardinal e_force e_n x_P x_Q))
-             (Bind (x_witness :: Referents Entity)
-                   (SelectExactly e_n e_P)
-               e_Q_body))]
+   (m3-lower e_RR
+             (gentufa e_parse
+                      (cardinal e_mode e_force e_n x_P x_Q
+                                e_properties e_sites))
+             e_out)]
 
   [(where e_out (termset-out e_force e_n1 x_P1 e_n2 x_P2 x_Q))
    --------------------------------------------- "L5.3"
@@ -498,7 +600,7 @@
 
   [(where x_witness
           ,(variable-not-in (term (e_RR e_parse e_kind x_P x_Q)) '$w))
-   (m3-lower e_RR (gentufa e_parse (pure lexical x_P)) e_P)
+   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
    (m3-lower e_RR (gentufa e_parse
                             (nuclear x_witness (Referents Entity) x_Q)) e_Q)
    (where e_out (threshold-out e_force e_kind e_P e_Q))
@@ -1669,6 +1771,162 @@
                       "RR.force is nonempty on a path with no force consumer"
                       (rr-value fields 'force))]))
 
+(define (row-slot-type relation label inv)
+  (define row (inventory-row inv relation))
+  (and row (exact-positive-integer? label)
+       (<= label (row-decl-total row))
+       ;; The bounded fixture-row contract currently types every ordinary
+       ;; lexical place as a referential Entity slot. The label and arity are
+       ;; still resolved from the selected row, never from a predicate table.
+       '(Referents Entity)))
+
+(define (global-expected-sites predicate relation inv)
+  (define expected (make-hash))
+  (define failure #f)
+  (for ([operand (in-list `((restrictor ,predicate) (nuclear ,relation)))])
+    (match-define (list role row-name) operand)
+    (define row (inventory-row inv row-name))
+    (cond
+      [(not row)
+       (set! failure
+             (no-lowering "L0.1" 'row-missing
+                          "global-reading operand row is absent" row-name))]
+      [else
+       (for ([label (in-range 2 (add1 (row-decl-total row)))])
+         (define key
+           (string->symbol (format "~a-~a" row-name label)))
+         (if (hash-has-key? expected key)
+             (set! failure
+                   (no-lowering
+                    "L0.1" 'rr-missing
+                    "operand rows make omit-site identities ambiguous"
+                    key))
+             (hash-set! expected key
+                        (list role row-name label
+                              (row-slot-type row-name label inv)))))]))
+  (or failure expected))
+
+(define (member-dependency? dependency)
+  (and (symbol? dependency)
+       (or (string-prefix? (symbol->string dependency) "$")
+           (member dependency '(member restrictor-member nuclear-member)))))
+
+(define (stable-site-toposort sites)
+  (let loop ([remaining sites] [ordered '()] [bound '()])
+    (cond
+      [(null? remaining) (reverse ordered)]
+      [else
+       (define ready
+         (findf (lambda (site)
+                  (andmap (lambda (dependency) (member dependency bound))
+                          (hoist-site-deps site)))
+                remaining))
+       (if ready
+           (loop (remove ready remaining)
+                 (cons ready ordered)
+                 (cons (hoist-site-key ready) bound))
+           #f)])))
+
+(define (global-hoist-source fields quantity predicate relation inv)
+  (define checks
+    (list (require-readings fields '(global-exact) "L5.2")
+          (require-rows fields (list predicate relation) "L5.2")
+          (require-empty-resolution-fields fields "L5.2")))
+  (define basic-failure (apply first-failure checks))
+  (cond
+    [basic-failure basic-failure]
+    [(pair? (rr-value fields 'force))
+     (no-lowering "L5.2" 'rr-missing
+                  "global reading has no force consumer"
+                  (rr-value fields 'force))]
+    [else
+     (define expected (global-expected-sites predicate relation inv))
+     (cond
+       [(no-lowering? expected) expected]
+       [else
+        (define actual (rr-value fields 'sites))
+        (define seen (mutable-set))
+        (define parsed '())
+        (define failure #f)
+        (for ([entry (in-list actual)] [index (in-naturals)])
+          (match entry
+            [`(omit ,(? symbol? key) (deps ,(? list? deps)))
+             (cond
+               [(set-member? seen key)
+                (set! failure
+                      (no-lowering "L0.1" 'rr-missing
+                                   "duplicate hoist-site identity" key))]
+               [(not (hash-has-key? expected key))
+                (set! failure
+                      (no-lowering "L0.1" 'rr-missing
+                                   "unknown hoist-site identity" key))]
+               [(ormap member-dependency? deps)
+                (set! failure
+                      (no-lowering "L0.1" 'rr-missing
+                                   "hoist site depends on a comprehension member"
+                                   (list key deps)))]
+               [else
+                (set-add! seen key)
+                (match-define (list operand row label type)
+                  (hash-ref expected key))
+                (set! parsed
+                      (cons (hoist-site key operand row label type deps index)
+                            parsed))])]
+            [_
+             (set! failure
+                   (no-lowering "L0.1" 'rr-missing
+                                "unsupported global-reading site record"
+                                entry))]))
+        (define sites (reverse parsed))
+        (define declared-keys (map hoist-site-key sites))
+        (define missing
+          (filter (lambda (key) (not (member key declared-keys)))
+                  (hash-keys expected)))
+        (define unknown-dependencies
+          (remove-duplicates
+           (for*/list ([site (in-list sites)]
+                       [dependency (in-list (hoist-site-deps site))]
+                       #:unless (member dependency declared-keys))
+             dependency)))
+        (define ordered (and (not failure)
+                             (null? missing)
+                             (null? unknown-dependencies)
+                             (stable-site-toposort sites)))
+        (cond
+          [failure failure]
+          [(pair? missing)
+           (no-lowering "L0.1" 'rr-missing
+                        "RR.sites omits required pure-position sites"
+                        missing)]
+          [(pair? unknown-dependencies)
+           (no-lowering "L0.1" 'rr-missing
+                        "hoist site has an unknown dependency"
+                        unknown-dependencies)]
+          [(not ordered)
+           (no-lowering "L0.1" 'rr-missing
+                        "hoist-site dependency graph contains a cycle"
+                        (map (lambda (site)
+                               (list (hoist-site-key site)
+                                     (hoist-site-deps site)))
+                             sites))]
+          [else
+           `(cardinal global none ,quantity ,predicate ,relation
+                      ((property restrictor ,predicate
+                                 ,(row-decl-total (inventory-row inv predicate))
+                                 ,(row-decl-event-mode
+                                   (inventory-row inv predicate)))
+                       (property nuclear ,relation
+                                 ,(row-decl-total (inventory-row inv relation))
+                                 ,(row-decl-event-mode
+                                   (inventory-row inv relation))))
+                      ,(for/list ([site (in-list ordered)])
+                         `(site ,(hoist-site-key site)
+                                ,(hoist-site-operand site)
+                                ,(hoist-site-relation site)
+                                ,(hoist-site-label site)
+                                ,(hoist-site-type site)
+                                (deps ,@(hoist-site-deps site)))))] )])]))
+
 (define (ordinary-fills terms)
   (define next 1)
   (define fills (make-hash))
@@ -1978,39 +2236,15 @@
                    `(every ,predicate ,relation)))]
           [(number? quantity)
            (if (member 'global-exact (rr-value fields 'readings))
-               (let* ([row (inventory-row inv relation)]
-                      [expected-sites
-                       (and row
-                            (for/list ([label
-                                        (in-range 2
-                                                  (add1 (row-decl-total row)))])
-                              `(omit
-                                ,(string->symbol
-                                  (format "~a-~a" relation label))
-                                (deps ()))))]
-                      [check
-                       (if expected-sites
-                           (validated-path fields "L5.2" '(global-exact)
-                                           (list predicate relation)
-                                           expected-sites)
-                           (no-lowering "L5.2" 'row-missing
-                                        "global reading row is absent"
-                                        relation))])
-                 (if (no-lowering? check) check
-                     (no-lowering
-                      "L5.2" 'rule-underspecified
-                      "GlobalExactly plus L0.1 hoisting is not in the M3 fragment"
-                      (hasheq 'quantity quantity 'predicate predicate
-                              'relation relation
-                              'sites expected-sites))))
+               (global-hoist-source fields quantity predicate relation inv)
                (let ([check
                       (validated-path fields "L5.2"
                                       (readings '(witness-set))
                                       (list predicate relation) '()
                                       #:force? sentence?)])
                  (if (no-lowering? check) check
-                     `(cardinal ,(force-or-none) ,quantity
-                                ,predicate ,relation))))]
+                     `(cardinal witness ,(force-or-none) ,quantity
+                                ,predicate ,relation () ())))) ]
           [(equal? quantity "so'i")
            (define expected-sites `((threshold many (deps ()))))
            (define check
@@ -2657,6 +2891,94 @@
                                           (length missing)
                                           (if (= (length missing) 1) "" "s"))))))])]))
 
+(define (plain-binder-parts binder)
+  (define flat
+    (if (and (= (length binder) 1) (list? (first binder)))
+        (first binder)
+        binder))
+  (define separator (index-of flat '::))
+  (and separator
+       (list (filter symbol? (take flat separator))
+             (drop flat (add1 separator)))))
+
+(define (substitute-free-symbol datum old replacement)
+  (define (walk value)
+    (cond
+      [(symbol? value) (if (eq? value old) replacement value)]
+      [(not (list? value)) value]
+      [else
+       (match value
+         [`(λ ,binder ,body)
+          (define parts (and (list? binder) (plain-binder-parts binder)))
+          `(λ ,binder
+             ,(if (and parts (member old (first parts))) body (walk body)))]
+         [`(Let ,binder ,rhs ,body)
+          (define parts (and (list? binder) (plain-binder-parts binder)))
+          `(Let ,binder ,(walk rhs)
+             ,(if (and parts (member old (first parts))) body (walk body)))]
+         [`(Bind . ,pieces)
+          (define body (last pieces))
+          (define alternating (drop-right pieces 1))
+          (define shadowed? #f)
+          (define rewritten
+            (append*
+             (for/list ([index (in-range 0 (length alternating) 2)])
+               (define binder (list-ref alternating index))
+               (define rhs (list-ref alternating (add1 index)))
+               (define parts
+                 (and (list? binder) (plain-binder-parts binder)))
+               (define result (list binder (if shadowed? rhs (walk rhs))))
+               (when (and parts (member old (first parts)))
+                 (set! shadowed? #t))
+               result)))
+          `(Bind ,@rewritten ,(if shadowed? body (walk body)))]
+         [_ (map walk value)])]))
+  (walk datum))
+
+(define (property-components datum)
+  (match datum
+    [`(λ ,(? list? binder) ,body)
+     (define parts (plain-binder-parts binder))
+     (and parts (= (length (first parts)) 1)
+          (list (first (first parts)) (second parts) body))]
+    [_ #f]))
+
+(define effectful-definition-heads
+  '(Context Vague Refer SelectExactly SelectAtLeast SelectSome SelectAllBut
+            MaxRefer Bind Let Perform))
+
+(define (syntactically-pure-definition-operand? datum)
+  (define components (property-components datum))
+  (and components
+       (let pure? ([value (third components)])
+         (cond
+           [(not (list? value)) #t]
+           [(member (datum-head value) effectful-definition-heads) #f]
+           [else (andmap pure? value)]))))
+
+(define (instantiate-property components member)
+  (substitute-free-symbol (third components) (first components) member))
+
+(define (expand-global-exactly-datum datum)
+  (match datum
+    [`(GlobalExactly ,count ,restrictor ,nuclear)
+     (define p (property-components restrictor))
+     (define q (property-components nuclear))
+     (if (and p q (equal? (second p) (second q))
+              (syntactically-pure-definition-operand? restrictor)
+              (syntactically-pure-definition-operand? nuclear))
+         (let* ([member
+                 (variable-not-in datum '$global_member)]
+                [binder `(,member :: ,@(second p))])
+           `(= (Card
+                (SetOf
+                 (λ ,binder
+                   (∧ ,(instantiate-property p member)
+                      ,(instantiate-property q member)))))
+               ,count))
+         datum)]
+    [_ datum]))
+
 (define pure-position-heads
   '(SetOf SelectExactly SelectAtLeast SelectSome SelectAllBut
           Every No Exactly AtLeast Some AtMost MoreThan FewerThan
@@ -2688,9 +3010,22 @@
     (cond
       [(not (list? value)) value]
       [else
-       (define walked (for/list ([item (in-list value)] [index (in-naturals)])
-                        (walk item (datum-head value) index)))
-       (match walked
+       ;; Expand explicit §12 heads before descending into their operands.
+       ;; Otherwise the generic pure-position display pass can rewrite an
+       ;; operand in a way the already-expanded specimen never exposes.
+       (define definition-expanded
+         (case (datum-head value)
+           [(GlobalExactly) (term (global-exactly-definition ,value))]
+           [else value]))
+       (if (not (equal? definition-expanded value))
+           (begin
+             (note! (case (datum-head value)
+                      [(GlobalExactly) "§12 definition of `GlobalExactly`"]))
+             (walk definition-expanded parent operand-index))
+           (let ([walked
+                  (for/list ([item (in-list value)] [index (in-naturals)])
+                    (walk item (datum-head value) index))])
+             (match walked
          [`(Close ,operand)
           (define-values (expanded fired) (expand-close-datum operand inv rr-rows))
           (for ([entry (in-list fired)]) (note! entry))
@@ -2715,7 +3050,7 @@
                    (expand-close-datum body inv rr-rows))
                  (for ([entry (in-list fired)]) (note! entry))
                  `(λ ,binder ,expanded)])
-              walked)])]))
+              walked)])))]))
   (values (walk datum) (reverse expansions)))
 
 (define (redex-alpha-equivalent? left right)
@@ -2967,6 +3302,7 @@
   (define fence-reports '())
   (define fixture-property-total 0)
   (define structural-eligible-total 0)
+  (define global-branch-total 0)
   (define fixture-property-failures '())
   (for ([candidate (in-list (lowering-manifest-candidates manifest))])
     (define key (cons (lowering-candidate-source candidate)
@@ -2986,6 +3322,10 @@
           (set! structural-eligible-total (add1 structural-eligible-total))
           (define sigma (parse-case->sigma parse-case (rr-case-fields rr-case) inv))
           (unless (no-lowering? sigma)
+            (when (match sigma
+                    [`(cardinal global . ,_) #t]
+                    [_ #f])
+              (set! global-branch-total (add1 global-branch-total)))
             (set! fixture-property-total (add1 fixture-property-total))
             (unless (fixture-derivation-check rr-case sigma)
               (set! fixture-property-failures
@@ -3047,6 +3387,8 @@
             (string-join unformed ","))
     (printf "structurally lowered from gentufa/RR: ~a/~a eligible cases\n"
             fixture-property-total structural-eligible-total)
+    (printf "GlobalExactly branch: ~a candidate case~a lowered\n"
+            global-branch-total (if (= global-branch-total 1) "" "s"))
     (printf
      "parse mutation sweeps: wrapper-renames=~a refused=~a allowlisted-unchanged=~a; subtree-deletions=~a refused-or-changed=~a; failures=~a\n"
      (mutation-sweep-result-wrapper-attempts mutation-sweep)
