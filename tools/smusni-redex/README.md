@@ -279,4 +279,8 @@ compose at any single place, but combining one with another computed in-situ
 argument remains an explicit `rule-underspecified` refusal: §4.1 orders Bind
 computations and does not independently settle generalized-quantifier scope.
 The marked global-exact reading likewise has no exported witness binder for an
-argument place and is not treated as witness-set selection.
+argument place and is not treated as witness-set selection. Exact combined RR
+validation precedes both boundary dispositions. The global boundary derives
+role-qualified omitted-site identities from the restrictor and routed nuclear
+row when that profile is mechanically available; an unvalidated profile is a
+failing `rr-missing`, never a non-failing semantic gap.

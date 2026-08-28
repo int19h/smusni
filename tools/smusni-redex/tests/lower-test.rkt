@@ -964,7 +964,7 @@
               "smusni-gentufa-in-place-probe-fixture-1")
 (check-true (string? (hash-ref in-place-probe-fixture 'jbotci_version)))
 (define in-place-probe-cases (hash-ref in-place-probe-fixture 'cases))
-(check-equal? (length in-place-probe-cases) 23)
+(check-equal? (length in-place-probe-cases) 28)
 (define in-place-probes
   (for/hash ([case (in-list in-place-probe-cases)]
              [expected-index (in-naturals 1)])
@@ -1118,6 +1118,63 @@
             (Refer (λ ($c :: Referents Entity) (mlatu $c)))
         (Assert (Close (klama $people $dogs $cats))))))
  '("L3.1"))
+(check-in-place-lowers
+ "lo gerku na tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($cat :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (mlatu $y)))
+      (Assert
+       (CloseClause (ClauseNot (DirectClause (tavla $dog $cat)))))))
+ '("L3.1" "L5.9"))
+(check-in-place-lowers
+ "lo gerku cu tavla lo gerku" '(actual) '(gerku tavla)
+ '(Bind ($first :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($second :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (gerku $y)))
+      (Assert (Close (tavla $first $second)))))
+ '("L3.1"))
+(check-in-place-lowers
+ "lo gerku cu se tavla lo mlatu" '(actual) '(gerku mlatu tavla)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Bind ($cat :: Referents Entity)
+          (Refer (λ ($y :: Referents Entity) (mlatu $y)))
+      (Assert (Close (tavla $cat $dog)))))
+ '("L3.1" "L1.4"))
+(check-in-place-lowers
+ "lo gerku cu sutra klama" '(actual) '(gerku sutra klama)
+ '(Bind ($dog :: Referents Entity)
+        (Refer (λ ($x :: Referents Entity) (gerku $x)))
+    (Assert (Close ((Tanru sutra klama) $dog))))
+ '("L3.1" "L1.10")
+ '((tanru-link sutra-klama (deps ()))))
+
+;; The same composition can feed a Content consumer without inventing force.
+(define content-in-place-case
+  (hash-set (hash-ref in-place-probes "mi tavla lo gerku")
+            'category "content"))
+(define content-in-place-rr
+  (struct-copy
+   rr-case (in-place-rr "mi tavla lo gerku" '(actual) '(gerku tavla))
+   [fields
+    (hash-set
+     (hash-set
+      (rr-case-fields
+       (in-place-rr "mi tavla lo gerku" '(actual) '(gerku tavla)))
+      'readings '())
+     'force '())]))
+(define content-in-place-result
+  (lower content-in-place-case content-in-place-rr))
+(check-true (lowered? content-in-place-result))
+(when (lowered? content-in-place-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term content-in-place-result))
+    '(Bind ($dog :: Referents Entity)
+           (Refer (λ ($x :: Referents Entity) (gerku $x)))
+       (Close (tavla Speaker $dog))))))
 
 ;; The general path consumes the same complete RR input as the sole-term path.
 (define in-place-base-surface "mi tavla lo gerku")
@@ -1211,11 +1268,66 @@
 (define global-in-place-result
   (lower (hash-ref in-place-probes "mi tavla ci gerku")
          (in-place-rr "mi tavla ci gerku"
-                      '(actual global-exact) '(gerku tavla))))
+                      '(actual global-exact) '(gerku tavla)
+                      '((omit nuclear-tavla-3 (deps ()))))))
 (check-true (no-lowering? global-in-place-result))
 (check-equal? (no-lowering-rule global-in-place-result) "L5.2")
 (check-equal? (no-lowering-cause global-in-place-result)
               'rule-underspecified)
+
+(define (check-boundary-rr-mutations surface valid-rr mutations)
+  (define parse-case (hash-ref in-place-probes surface))
+  (for ([mutation (in-list mutations)])
+    (define result
+      (lower parse-case
+             (struct-copy
+              rr-case valid-rr
+              [fields (mutation (rr-case-fields valid-rr))])))
+    (check-true (no-lowering? result)
+                (format "~a malformed RR refuses" surface))
+    (when (no-lowering? result)
+      (check-equal? (no-lowering-cause result) 'rr-missing
+                    (format "~a malformed RR is failing" surface)))))
+
+(define mixed-scope-rr
+  (in-place-rr "ro gerku cu tavla lo mlatu"
+               '(actual importing) '(gerku mlatu tavla)))
+(check-boundary-rr-mutations
+ "ro gerku cu tavla lo mlatu" mixed-scope-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings '(actual importing le)))
+  (lambda (fields) (hash-set fields 'readings '(actual)))
+  (lambda (fields) (hash-set fields 'rows '(gerku mlatu tavla extra-row)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '((unexpected (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(assert unexpected)))))
+
+(define global-in-place-rr
+  (in-place-rr "mi tavla ci gerku"
+               '(actual global-exact) '(gerku tavla)
+               '((omit nuclear-tavla-3 (deps ())))))
+(check-boundary-rr-mutations
+ "mi tavla ci gerku" global-in-place-rr
+ (list
+  (lambda (fields) (hash-set fields 'readings
+                             '(actual global-exact witness-set)))
+  (lambda (fields) (hash-set fields 'readings '(actual)))
+  (lambda (fields) (hash-set fields 'rows '(gerku tavla extra-row)))
+  (lambda (fields) (hash-set fields 'rows '(tavla)))
+  (lambda (fields) (hash-set fields 'attach '(unexpected)))
+  (lambda (fields) (hash-set fields 'sites '()))
+  (lambda (fields) (hash-set fields 'sites '((unexpected (deps ())))))
+  (lambda (fields) (hash-set fields 'force '(assert unexpected)))))
+
+(define unvalidated-global-profile-result
+  (lower (hash-ref in-place-probes "ci gerku cu klama mi")
+         (in-place-rr "ci gerku cu klama mi"
+                      '(actual global-exact) '(gerku klama))))
+(check-true (no-lowering? unvalidated-global-profile-result))
+(check-equal? (no-lowering-rule unvalidated-global-profile-result) "L5.2")
+(check-equal? (no-lowering-cause unvalidated-global-profile-result)
+              'rr-missing)
 
 ;; Surface order, not routed place order, controls computation order.
 (define routed-order-result

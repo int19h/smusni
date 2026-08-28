@@ -113,7 +113,12 @@
     "mi tavla le no gerku"
     "la .alis. cu tavla mi"
     "lo no gerku cu tavla lo mlatu"
-    "lo prenu cu klama lo gerku lo mlatu"))
+    "lo prenu cu klama lo gerku lo mlatu"
+    "lo gerku na tavla lo mlatu"
+    "lo gerku cu tavla lo gerku"
+    "lo gerku cu se tavla lo mlatu"
+    "ci gerku cu klama mi"
+    "lo gerku cu sutra klama"))
 
 (struct lowering-case (index surface category promised-rows unresolved)
   #:transparent)
@@ -2438,17 +2443,115 @@
     (filter (lambda (binding)
               (non-bind-argument-spec? (second binding)))
             bindings))
+  (define global-cardinals
+    (for/list ([term (in-list unsupported)]
+               #:when (and (member 'global-exact
+                                   (rr-value fields 'readings))
+                           (match (argument-payload term)
+                             [`(quantifier ,(? number?) ,_) #t]
+                             [_ #f])))
+      (match (argument-payload term)
+        [`(quantifier ,quantity ,predicate)
+         `(global-cardinal ,quantity ,predicate)])))
+  (define global-in-place-sites
+    (cond
+      [(null? global-cardinals) '()]
+      [(and (= (length global-cardinals) 1) (null? bindings))
+       (define predicate (third (first global-cardinals)))
+       (define host-row (inventory-row inv relation))
+       (define restrictor-row (inventory-row inv predicate))
+       (define validation-terms
+         (for/list ([term (in-list terms)])
+           (if (and (member 'global-exact (rr-value fields 'readings))
+                    (match (argument-payload term)
+                      [`(quantifier ,(? number?) ,_) #t]
+                      [_ #f]))
+               (replace-argument-payload term '(value $global-witness))
+               term)))
+       (and
+        host-row restrictor-row
+        (let-values ([(surface-fills surface-deleted surface-unsupported _)
+                      (ordinary-fills validation-terms)])
+          (let-values ([(fills deleted)
+                        (route-place-map
+                         surface-fills surface-deleted
+                         (hash-ref selbri 'conversion #f))])
+            (define bad-labels
+              (filter (lambda (label)
+                        (or (< label 1) (> label (row-decl-total host-row))))
+                      (append (hash-keys fills) deleted)))
+            (and
+             (null? surface-unsupported) (null? bad-labels)
+             (append
+              (for/list ([label (in-range 2
+                                         (add1 (row-decl-total restrictor-row)))])
+                `(omit
+                  ,(string->symbol
+                    (format "restrictor-~a-~a" predicate label))
+                  (deps ())))
+              (for/list ([label (in-range 1 (add1 (row-decl-total host-row)))]
+                         #:unless (or (hash-has-key? fills label)
+                                     (member label deleted)))
+                `(omit
+                  ,(string->symbol
+                    (format "nuclear-~a-~a" relation label))
+                  (deps ()))))))))]
+      [else #f]))
+  (define host-rows
+    (if (hash-ref selbri 'tanru #f)
+        (hash-ref selbri 'tanru)
+        (list relation)))
+  (define expected-rows
+    (append host-rows
+            (append-map argument-spec-rows (map second bindings))
+            (for/list ([spec (in-list global-cardinals)]) (third spec))))
+  (define expected-readings
+    (remove-duplicates
+     (append (if (eq? category 'sentence) '(actual) '())
+             (append-map argument-spec-readings (map second bindings))
+             (if (pair? global-cardinals) '(global-exact) '()))))
+  (define expected-sites
+    (append
+     (if (hash-ref selbri 'tanru #f)
+         `((tanru-link
+            ,(string->symbol
+              (format "~a-~a" (first (hash-ref selbri 'tanru))
+                      (second (hash-ref selbri 'tanru))))
+            (deps ())))
+         '())
+     (append-map argument-spec-sites (map second bindings))))
+  (define all-expected-sites
+    (and global-in-place-sites
+         (append expected-sites global-in-place-sites)))
+  (define boundary?
+    (or (pair? global-cardinals)
+        (and (pair? non-bindings) (> (length bindings) 1))))
+  (define boundary-rule
+    (cond
+      [(pair? global-cardinals) "L5.2"]
+      [(pair? non-bindings)
+       (case (first (second (first non-bindings)))
+         [(inner-no) "L3.10"] [(every) "L5.1"]
+         [(threshold) "L5.28"] [else "L1.4"])]
+      [else "L1.1"]))
+  (define boundary-check
+    (cond
+      [(not boundary?) #f]
+      [(not global-in-place-sites)
+       (no-lowering
+        "L5.2" 'rr-missing
+        "global in-place site profile cannot be validated before its continuation form exists"
+        (hasheq 'global global-cardinals 'terms terms))]
+      [else
+       (validated-path fields boundary-rule expected-readings expected-rows
+                       all-expected-sites
+                       #:force? (eq? category 'sentence))]))
   (cond
+    [(and boundary-check (no-lowering? boundary-check)) boundary-check]
     [(pair? unsupported)
-     (define global-cardinal?
-       (and (member 'global-exact (rr-value fields 'readings))
-            (for/or ([term (in-list unsupported)])
-              (match (argument-payload term)
-                [`(quantifier ,(? number?) ,_) #t]
-                [_ #f]))))
      (no-lowering
-      (if global-cardinal? "L5.2" "L1.4") 'rule-underspecified
-      (if global-cardinal?
+      (if (pair? global-cardinals) "L5.2" "L1.4") 'rule-underspecified
+      (if (pair? global-cardinals)
           "marked global quantification yields Content and exports no witness value for an argument place"
           "argument term has no general in-place binder composition")
       unsupported)]
@@ -2465,26 +2568,6 @@
                   "in-place argument computations require a clause consumer"
                   category)]
     [else
-     (define host-rows
-       (if (hash-ref selbri 'tanru #f)
-           (hash-ref selbri 'tanru)
-           (list relation)))
-     (define expected-rows
-       (append host-rows (append-map argument-spec-rows (map second bindings))))
-     (define expected-readings
-       (remove-duplicates
-        (append (if (eq? category 'sentence) '(actual) '())
-                (append-map argument-spec-readings (map second bindings)))))
-     (define expected-sites
-       (append
-        (if (hash-ref selbri 'tanru #f)
-            `((tanru-link
-               ,(string->symbol
-                 (format "~a-~a" (first (hash-ref selbri 'tanru))
-                         (second (hash-ref selbri 'tanru))))
-               (deps ())))
-            '())
-        (append-map argument-spec-sites (map second bindings))))
      (define check
        (validated-path fields "L1.1" expected-readings expected-rows
                        expected-sites #:force? (eq? category 'sentence)))
@@ -2549,6 +2632,7 @@
                       (match term [`(zip-values ,(? list?)) #t] [_ #f]))
                     terms))
        'zip]
+      [(in-place-argument-composition? terms fields) 'ordinary]
       [(and (= (length terms) 1)
             (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
        'description]
