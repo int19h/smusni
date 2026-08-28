@@ -145,7 +145,7 @@
         (rules "L5.1"))
  (fence "samples.md" 45 specimen "7549d4565ac0ab1e545914425fc678ca69065913"
         (origin "surface")
-        (rules "L10.2" "L3.10"))
+        (rules "L3.10"))
  (fence "samples.md" 46 specimen "16d5445b9f0efb113e3a9f4a03224a1f770d4959"
         (origin "surface")
         (rules "L5.3"))
