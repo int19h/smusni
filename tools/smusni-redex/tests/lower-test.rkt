@@ -13,7 +13,7 @@
 
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
-(check-equal? (lowering-manifest-rule-count manifest) 46)
+(check-equal? (lowering-manifest-rule-count manifest) 47)
 (check-equal? (length (lowering-manifest-candidates manifest)) 27)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
@@ -21,7 +21,7 @@
  30)
 
 (define rules (fragment-rule-ids manifest))
-(check-equal? (length rules) 46)
+(check-equal? (length rules) 47)
 (check-not-false (member "L0.1" rules))
 (check-not-false (member "L1.10" rules))
 (check-not-false (member "L3.15" rules))

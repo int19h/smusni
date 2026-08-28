@@ -3976,8 +3976,10 @@
             (length parse-error-keys)
             (if (null? parse-error-keys) "none"
                 (string-join parse-error-keys ",")))
-    (printf "formed before increment 2: 29/46; formed after current tree: ~a/46; promoted=~a\n"
+    (printf "formed before increment 2: 29/~a; formed after current tree: ~a/~a; promoted=~a\n"
+            (length (fragment-rule-ids manifest))
             (set-count verified-formed)
+            (length (fragment-rule-ids manifest))
             (if (null? promoted) "none" (string-join promoted ",")))
     (for ([rule (in-list increment-2-unformed-rules)])
       (define structural-hits
