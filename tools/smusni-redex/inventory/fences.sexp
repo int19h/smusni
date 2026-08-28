@@ -79,7 +79,7 @@
         (rules "L7.1"))
  (fence "samples.md" 25 specimen "92558dc42df172e09b26b2713a8fae8f1283c68e"
         (origin "surface")
-        (rules "L7.1" "L7.4"))
+        (rules "L7.1"))
  (fence "samples.md" 26 specimen "d4aa723c38d70a1b4f5f272b4f3c680ecf95ce33"
         (origin "surface")
         (rules "L7.4" "L5.8"))
@@ -91,7 +91,7 @@
         (rules "L7.1" "L1.6"))
  (fence "samples.md" 29 specimen "db966ef3fd616d400ccb12d4dae6f82c5beeff05"
         (origin "surface")
-        (rules "L7.1"))
+        (rules "L7.1" "L11.7"))
  (fence "samples.md" 30 specimen "bb927fff8f0424bed33e08d63acaa232f3cca35c"
         (origin "surface")
         (rules "L3.5" "L3.6"))
