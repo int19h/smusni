@@ -21,6 +21,7 @@
 (provide (struct-out definition-observation)
          (struct-out definition-entry)
          (struct-out definition-domain)
+         (struct-out case-registration)
          (struct-out branch-observation)
          (struct-out branch-entry)
          (struct-out helper-observation)
@@ -77,6 +78,8 @@
 (define port-corpus-path (build-path inventory-dir "port-corpus.sexp"))
 (define port-waivers-path (build-path inventory-dir "port-waivers.sexp"))
 (define port-baseline-path (build-path inventory-dir "port-baseline.sexp"))
+(define production-modules-path
+  (build-path inventory-dir "port-production-modules.sexp"))
 
 (define definition-statuses
   '(executable primitive-or-partial-operator mapping-schema
@@ -282,15 +285,44 @@
              #:when (regexp-match? #px"[.]rkt$" (path->string path)))
     path))
 
+(define (load-production-modules [path production-modules-path])
+  (match (call-with-input-file path read)
+    [`(smusni-port-production-modules 1 ,(? string? modules) ...)
+     (unless (= (length modules) (set-count (list->set modules)))
+       (error 'load-production-modules "duplicate production module"))
+     (for ([module-path (in-list modules)])
+       (unless (and (string-prefix? module-path "tools/smusni-redex/")
+                    (not (string-contains? module-path "/tests/"))
+                    (not (regexp-match? #px"-test[.]rkt$" module-path))
+                    (file-exists? (build-path repo-root module-path)))
+         (error 'load-production-modules
+                "non-production or missing module in allowlist: ~a" module-path)))
+     modules]
+    [_ (error 'load-production-modules "unsupported production module list")]))
+
+(define production-modules (delay (load-production-modules)))
+
+(define (production-module-path? module-path)
+  (and (member module-path (force production-modules)) #t))
+
+(struct case-registration (cases duplicate-binding?) #:transparent)
+
 (define (source-relative-string path)
   (path->string (find-relative-path repo-root (simplify-path path))))
 
 (define (definition-implementation-index)
   (define index (make-hash))
-  (define (walk node module-path)
+  (define (record! key cases)
+    (define prior (hash-ref index key #f))
+    (hash-set! index key
+               (case-registration
+                (if prior (append (case-registration-cases prior) cases) cases)
+                (and prior #t))))
+  (define (walk node module-path root?)
     (when (syntax? node)
       (define parts (syntax-list node))
       (when parts
+        (define head (and (pair? parts) (syntax-e (first parts))))
         (when (and (>= (length parts) 3)
                    (member (syntax-e (first parts))
                            '(define-definition-metafunction
@@ -308,17 +340,20 @@
                                    (eq? (syntax-e (first case-parts))
                                         'definition-case)))
               (syntax-e (second case-parts))))
-          (hash-set! index (list module-path kind name) cases))
-        (for ([part (in-list parts)]) (walk part module-path)))))
-  (for ([path (in-list (racket-sources))])
-    (walk (read-module-syntax path) (source-relative-string path)))
+          (record! (list module-path kind name) cases))
+        (unless (and (not root?) (member head '(module module* module+)))
+          (for ([part (in-list parts)]) (walk part module-path #f))))))
+  (for* ([path (in-list (racket-sources))]
+         [module-path (in-value (source-relative-string path))]
+        #:when (production-module-path? module-path))
+    (walk (read-module-syntax path) module-path #t))
   index)
 
 (define (module-binding-index)
   (define index (make-hash))
   (define (record! module-path name)
     (hash-update! index module-path (lambda (names) (set-add names name)) (set)))
-  (define (walk node module-path)
+  (define (walk node module-path root?)
     (when (syntax? node)
       (define parts (syntax-list node))
       (when parts
@@ -337,23 +372,41 @@
           [(member head '(define-definition-relation))
            (when (>= (length parts) 2)
              (record! module-path (syntax-e (second parts))))])
-        (unless (eq? head 'define)
-          (for ([part (in-list parts)]) (walk part module-path))))))
-  (for ([path (in-list (racket-sources))])
-    (define module-path (source-relative-string path))
-    (walk (read-module-syntax path) module-path))
+        (unless (or (eq? head 'define)
+                    (and (not root?) (member head '(module module* module+))))
+          (for ([part (in-list parts)]) (walk part module-path #f))))))
+  (for* ([path (in-list (racket-sources))]
+         [module-path (in-value (source-relative-string path))]
+        #:when (production-module-path? module-path))
+    (walk (read-module-syntax path) module-path #t))
   index)
 
 (define (implementation-defined? implementation index)
   (match implementation
     [`(metafunction ,(? string? module-path) ,(? symbol? name)
                     (cases ,(? symbol? cases) ...))
-     (define actual (hash-ref index (list module-path 'metafunction name) #f))
-     (and actual (set=? (list->set cases) (list->set actual)))]
+     (define registration
+       (and (production-module-path? module-path)
+            (hash-ref index (list module-path 'metafunction name) #f)))
+     (and registration
+          (not (case-registration-duplicate-binding? registration))
+          (= (length cases) (set-count (list->set cases)))
+          (= (length (case-registration-cases registration))
+             (set-count (list->set (case-registration-cases registration))))
+          (set=? (list->set cases)
+                 (list->set (case-registration-cases registration))))]
     [`(relation ,(? string? module-path) ,(? symbol? name)
                 (cases ,(? symbol? cases) ...))
-     (define actual (hash-ref index (list module-path 'relation name) #f))
-     (and actual (set=? (list->set cases) (list->set actual)))]
+     (define registration
+       (and (production-module-path? module-path)
+            (hash-ref index (list module-path 'relation name) #f)))
+     (and registration
+          (not (case-registration-duplicate-binding? registration))
+          (= (length cases) (set-count (list->set cases)))
+          (= (length (case-registration-cases registration))
+             (set-count (list->set (case-registration-cases registration))))
+          (set=? (list->set cases)
+                 (list->set (case-registration-cases registration))))]
     [_ #f]))
 
 (define (definition-ledger-findings

@@ -311,9 +311,11 @@ gate; 76 written definitions are normatively executable while the target has
 zero ported cases. A new head, removed head, stale branch, or an `a0`/`ported`
 entry without real named metafunction/relation cases fails. Target cases are
 structurally wrapped around their actual Redex clauses and keyed by production
-module plus binding; comments, test-only definitions, and same-name bindings
-in another module cannot satisfy the gate. Legacy-hybrid bindings are likewise
-resolved structurally in their named module. The report prints
+module plus binding. Target modules must first enter the tracked production
+module allowlist; comments, test-only definitions, and same-name bindings
+in another module cannot satisfy the gate. Nested test submodules and duplicate
+case ids/binding registrations are rejected. Legacy-hybrid bindings are
+likewise resolved structurally in their named production module. The report prints
 every blocked and non-mechanical entry, including `Most` under #66 and the
 split equal/unequal `ZipWith` domains under #52/#41.
 
@@ -326,6 +328,10 @@ handlers plus 34 non-`infer-` helpers). Twenty-three internal `cond`/`match`/
 including all 13 `infer-bind` arms. Digests make changes to nested handler logic
 stale even when line counts do not move. Metadata refresh refuses a changed
 branch/helper/decision denominator; new handlers must be classified first.
+The partition is substantive rather than blanket: 21 helpers and 16 internal
+decisions are semantic mechanisms that determine types/effects/obligations,
+12 helpers and 6 decisions are syntactic/control auxiliaries, and one of each
+is an external diagnostic path, with a mechanism-specific reason per entry.
 The adjacent diagnostic taxonomy permits term/constructor/location,
 inventory declarations, no-derivation, and explicitly non-authoritative
 instrumentation as evidence. It forbids a semantic fallback or a duplicate

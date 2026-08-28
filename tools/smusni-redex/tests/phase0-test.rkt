@@ -106,7 +106,7 @@
                      definitions)
               0)
 (define implementation-index (definition-implementation-index))
-(check-true
+(check-false
  (implementation-defined?
   '(metafunction "tools/smusni-redex/tests/phase0-test.rkt"
                  structural-toy (cases identity)) implementation-index))
@@ -118,10 +118,55 @@
  (implementation-defined?
   '(metafunction "tools/smusni-redex/port-phase0.rkt"
                  structural-toy (cases identity)) implementation-index))
-(check-true
+(check-false
  (implementation-defined?
   '(relation "tools/smusni-redex/tests/phase0-test.rkt"
              structural-toy-relation (cases zero-step)) implementation-index))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/port-support.rkt"
+                 nested-test-only (cases nested)) implementation-index))
+(define synthetic-production-index
+  (hash (list "tools/smusni-redex/lower.rkt"
+              'metafunction 'future-metafunction)
+        (case-registration '(base step) #f)))
+(check-true
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/lower.rkt"
+                 future-metafunction (cases base step))
+  synthetic-production-index))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/lower.rkt"
+                 future-metafunction (cases base base))
+  synthetic-production-index))
+(define duplicate-case-index
+  (hash (list "tools/smusni-redex/lower.rkt"
+              'metafunction 'future-metafunction)
+        (case-registration '(same same) #f)))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/lower.rkt"
+                 future-metafunction (cases same)) duplicate-case-index))
+(define duplicate-binding-index
+  (hash (list "tools/smusni-redex/lower.rkt"
+              'metafunction 'future-metafunction)
+        (case-registration '(base step) #t)))
+(check-false
+ (implementation-defined?
+  '(metafunction "tools/smusni-redex/lower.rkt"
+                 future-metafunction (cases base step))
+  duplicate-binding-index))
+(define test-only-ported-entry
+  (struct-copy definition-entry first-definition
+               [status 'executable] [port-state 'ported]
+               [implementations
+                '((metafunction "tools/smusni-redex/tests/phase0-test.rkt"
+                                structural-toy (cases identity)))]))
+(check-not-false
+ (findf (lambda (message) (string-contains? message "missing implementation"))
+        (definition-ledger-findings
+         observations (cons test-only-ported-entry (rest definitions)))))
 (define global-entry
   (findf (lambda (entry)
            (string=? (definition-entry-id entry) "D12.GlobalExactly"))
@@ -178,7 +223,11 @@
 (check-equal? (count (lambda (entry)
                        (eq? (helper-entry-class entry) 'auxiliary))
                      helper-ledger)
-              33)
+              12)
+(check-equal? (count (lambda (entry)
+                       (eq? (helper-entry-class entry) 'semantic-clause))
+                     helper-ledger)
+              21)
 (check-equal? (count (lambda (entry)
                        (eq? (helper-entry-class entry)
                             'external-gap-or-diagnostic))
@@ -187,7 +236,11 @@
 (check-equal? (count (lambda (entry)
                        (eq? (decision-entry-class entry) 'auxiliary))
                      decision-ledger)
-              22)
+              6)
+(check-equal? (count (lambda (entry)
+                       (eq? (decision-entry-class entry) 'semantic-clause))
+                     decision-ledger)
+              16)
 (check-equal? (count (lambda (entry)
                        (eq? (decision-entry-class entry)
                             'external-gap-or-diagnostic))

@@ -23,3 +23,9 @@
         (definition-case _case-id rule) ...)
      #'(define name
          (reduction-relation language #:domain domain rule ...))]))
+
+(module+ test
+  (define-language NestedStructuralToy [n natural])
+  (define-definition-metafunction NestedStructuralToy
+    nested-test-only : n -> n
+    (definition-case nested [(nested-test-only n) n])))
