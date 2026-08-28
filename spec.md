@@ -3120,15 +3120,17 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
 - **L5.29** Gradable predication (`ta barda`) → `Grade` over a
   `Context`-recovered scale and a `Vague` cutoff region (§6.4).
 - **L5.30** In-situ scope (P41), by lowering category. (i) **Descriptions
-  and names** — `lo`/`le`/`la` with any inner PA (L3.1–L3.3, L3.9) — are
+  and names** — `lo`/`le`/`la` with any nonzero inner PA (L3.1–L3.3, L3.9) — are
   formed at clause level, outside every in-situ quantifier, in source order
   among themselves (§4.1). (ii) **Quantified sumti** — bare PA under the
   default witness-set reading (L5.2, P17), `ro` (L5.1), inner `no` (L3.10),
   the thresholds (L5.28), and the marked global reading (L5.2, §4.10) —
   scope in surface order, the leftmost outermost, over the clause body
-  (original CLL 16.7's grouping; P26 for prenexes): a witness-set selection
-  places its `Bind` at that point of the body, and a Content former
-  (`Every`, `No`, `AtLeast`/`MoreThan`, `GlobalExactly`) takes the body
+  (original CLL 16.7's grouping; P26 for prenexes): a witness-set form
+  (`Exactly`/`AtLeast`/`MoreThan`/`Some`, §12) places its selection `Bind`
+  at that point of the body with the body abstracted at the place as its
+  reference-level nuclear scope, and a place-absorbing former (`Every`,
+  `No`, `GlobalExactly`; `AtMost`/`FewerThan` as negations) takes the body
   abstracted at the quantified place as its nuclear scope, with L0.1
   hoisting where the former is a pure position. (iii) Ungrouped quantifiers
   only: a termset's co-selected quantifiers keep L5.3's joint scope.
@@ -4443,7 +4445,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   group's own properties rather than neutral plural predication or #24's
   cardinality interface.
 - **P41** In-situ scope. Descriptions and names (`lo`/`le`/`la`, with any
-  inner PA) bind at clause level in source order (§4.1), outside every
+  nonzero inner PA) bind at clause level in source order (§4.1), outside every
   in-situ quantifier; quantified sumti — default witness-set PA, `ro`,
   inner `no`, thresholds, the marked global reading — scope in surface
   order over the clause body, the leftmost outermost (original CLL 16.7;
