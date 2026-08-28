@@ -146,9 +146,10 @@ M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
 (47 lowering judgments after L5.30; fixtures are explicitly not exhaustive).
 `inventory/lowering.sexp` identifies candidate fence keys, while one tracked
 `gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
-preserve ordered cases. The same refresh maintains an offline gentufa fixture
-for structural-classifier regressions, so the ordinary check remains independent
-of a local jbotci installation. Refresh parser fixtures deliberately with:
+preserve ordered cases. The same refresh maintains offline gentufa fixtures for
+structural-classifier and in-place-argument regressions, so the ordinary check
+remains independent of a local jbotci installation. Refresh parser fixtures
+deliberately with:
 
 ```sh
 racket tools/smusni-redex/lower.rkt --refresh-parses
@@ -247,8 +248,8 @@ lowering, classification, and normalized comparison failures abort the probe.
 
 Rule leads come from parse constructs and grammatical loci; focal citations are
 printed only as a cross-check. Every detector excludes quoted ancestry, and an
-L5.23 chain requires repeated `joi` nodes at one parent locus or `se` inside the
-same `JoiConnective`; unrelated statements cannot combine into a lead. JOI and
+L5.23 chain requires repeated `joi` nodes in one list container or `se` inside
+the same `JoiConnective`; unrelated statements cannot combine into a lead. JOI and
 JEK attribution uses the nearest recognized grammatical locus, `.i TAG bo`
 inspects only the direct I-tail connective and requires a tag before grouping
 `bo`, and L3.10 inspects only the matched description tail's direct quantifier.
@@ -260,3 +261,22 @@ increment 2 promotes only specimens with reviewed eight-field RR:
 samples #27 (L5.22 constitution-bearing `joi`) and #45 (L3.10 explicit inner
 zero). The latter consumes the parsed `no` quantifier itself; question-answer
 substitution is explanatory context, not an RR reading or fixture shortcut.
+
+### Place-agnostic argument composition (#56 M4 increment 3)
+
+Descriptions, names, witness-set PA, universal PA, thresholds, and inner PA are
+decoded independently of place. The adapter allocates a fresh placeholder for
+each computation in parser/source order, sends those placeholders through the
+ordinary positional/FA/conversion place map, and then wraps the placed clause
+with the same L3/L5 Redex source used by the former sole-term path. It never
+selects a handler by place or specimen key. Inner PA reaches its selection
+through an L3.9 subderivation; it is not copied into the adapter.
+
+Several Bind-forming arguments wrap in source order, as required by spec §4.1,
+before their routed fills form. Routed place order therefore cannot reorder
+effects. A generalized quantifier such as `ro`, inner `no`, or a threshold can
+compose at any single place, but combining one with another computed in-situ
+argument remains an explicit `rule-underspecified` refusal: §4.1 orders Bind
+computations and does not independently settle generalized-quantifier scope.
+The marked global-exact reading likewise has no exported witness binder for an
+argument place and is not treated as witness-set selection.

@@ -62,6 +62,8 @@
 (define parse-dir (build-path tool-dir "inventory" "parses"))
 (define structural-probe-path
   (build-path parse-dir "structural-probes.json"))
+(define in-place-probe-path
+  (build-path parse-dir "in-place-probes.json"))
 (define rr-dir (build-path tool-dir "inventory" "rr"))
 
 (define structural-probe-surfaces
@@ -87,6 +89,31 @@
     "lo nu lo no gerku cu bajra cu fasnu"
     "mi melbi je xamgu"
     "mi djuno lo du'u do klama .i je ti stali"))
+
+(define in-place-probe-surfaces
+  '("lo gerku cu tavla mi"
+    "mi tavla lo gerku"
+    "lo gerku cu tavla lo mlatu"
+    "mi tavla le mlatu"
+    "mi tavla la .alis."
+    "ci gerku cu tavla mi"
+    "mi tavla ci gerku"
+    "le ci prenu cu tavla mi"
+    "mi tavla lo ci gerku"
+    "lo no gerku cu tavla mi"
+    "mi tavla lo no gerku"
+    "fi lo mlatu fa lo gerku cu klama"
+    "lo gerku cu se tavla mi"
+    "mi tavla ro gerku"
+    "ro gerku cu tavla lo mlatu"
+    "mi tavla so'i gerku"
+    "lo gerku cu tavla la .alis."
+    "ci gerku cu tavla re mlatu"
+    "mi tavla du'e gerku"
+    "mi tavla le no gerku"
+    "la .alis. cu tavla mi"
+    "lo no gerku cu tavla lo mlatu"
+    "lo prenu cu klama lo gerku lo mlatu"))
 
 (struct lowering-case (index surface category promised-rows unresolved)
   #:transparent)
@@ -357,33 +384,66 @@
    (λ (e_var :: Referents Entity) e_body)])
 
 (define-metafunction SmusniM3
-  description-source : e x e x -> e
-  [(description-source e_force x_Q positive x_ref)
-   (force e_force (close shorthand (pred x_Q x_ref)))]
-  [(description-source e_force x_Q positive-omit x_ref)
-   (force e_force (close shorthand (omit (pred x_Q x_ref))))]
-  [(description-source e_force x_Q negative x_ref)
-   (force e_force (close clause (na (pred x_Q x_ref))))])
+  argument-cont-source : e x -> e
+  [(argument-cont-source (argument x_placeholder e_source) x_ref)
+   ,(substitute-free-symbol (term e_source)
+                            (term x_placeholder) (term x_ref))])
 
 (define-metafunction SmusniM3
-  le-cont-source : e x -> e
-  [(le-cont-source (pure described x_P) x_ref) (l0 (pure described x_P))]
-  [(le-cont-source (description x_Q e_polarity e_force) x_ref)
-   (description-source e_force x_Q e_polarity x_ref)])
+  argument-property-source : e x -> e
+  [(argument-property-source lexical x_P) (l0 (pure lexical x_P))]
+  [(argument-property-source described x_P) (le-unit x_P)])
 
 (define-metafunction SmusniM3
-  cardinal-cont-source : e x x -> e
+  lo-cont-sources : e x x -> (e ...)
+  [(lo-cont-sources (argument x_placeholder e_source) x_ref x_P)
+   ((argument-cont-source (argument x_placeholder e_source) x_ref))]
+  [(lo-cont-sources (select e_n (argument x_placeholder e_source)) x_ref x_P)
+   ((inner-pa lexical e_n x_P)
+    (argument-cont-source (argument x_placeholder e_source) x_ref))])
+
+(define-metafunction SmusniM3
+  lo-argument-out : x x e (e ...) -> e
+  [(lo-argument-out x_ref x_P (argument x_placeholder e_source) (e_body))
+   (Bind (x_ref :: Referents Entity)
+         (Refer (λ (x_unit :: Referents Entity) (x_P x_unit)))
+     e_body)
+   (where x_unit
+          ,(variable-not-in
+            (term (x_ref x_P x_placeholder e_source e_body)) '$unit))]
+  [(lo-argument-out x_ref x_P
+                    (select e_n (argument x_placeholder e_source))
+                    (e_selection e_body))
+   (Bind (x_ref :: Referents Entity) e_selection e_body)])
+
+(define-metafunction SmusniM3
+  le-cont-sources : e x x -> (e ...)
+  [(le-cont-sources (pure described x_P) x_ref x_P)
+   ((l0 (pure described x_P)))]
+  [(le-cont-sources (argument x_placeholder e_source) x_ref x_P)
+   ((argument-cont-source (argument x_placeholder e_source) x_ref))]
+  [(le-cont-sources (select e_n (argument x_placeholder e_source)) x_ref x_P)
+   ((inner-pa described e_n x_P)
+    (argument-cont-source (argument x_placeholder e_source) x_ref))])
+
+(define-metafunction SmusniM3
+  cardinal-cont-source : e e x -> e
+  [(cardinal-cont-source none (argument x_placeholder e_source) x_ref)
+   (argument-cont-source (argument x_placeholder e_source) x_ref)]
   [(cardinal-cont-source none x_Q x_ref)
    (close shorthand (pred x_Q x_ref))]
+  [(cardinal-cont-source e_force (argument x_placeholder e_source) x_ref)
+   (argument-cont-source (argument x_placeholder e_source) x_ref)
+   (side-condition (member (term e_force) '(assert mention)))]
   [(cardinal-cont-source e_force x_Q x_ref)
    (force e_force (close shorthand (pred x_Q x_ref)))
    (side-condition (member (term e_force) '(assert mention)))])
 
 (define-metafunction SmusniM3
-  cardinal-sources : e e e x x e e x -> (e ...)
-  [(cardinal-sources witness e_force e_n x_P x_Q () () x_witness)
+  cardinal-sources : e e e x e e e x -> (e ...)
+  [(cardinal-sources witness e_force e_n x_P e_Q () () x_witness)
    ((l0 (pure lexical x_P))
-    (cardinal-cont-source e_force x_Q x_witness))]
+    (cardinal-cont-source e_force e_Q x_witness))]
   [(cardinal-sources global none e_n x_P x_Q e_properties e_sites x_unused)
    ((l0 (global-hoist e_properties e_sites)))])
 
@@ -397,9 +457,9 @@
    ,(compose-global-exactly (term e_n) (term e_hoisted))])
 
 (define-metafunction SmusniM3
-  le-out : x e x e -> e
-  [(le-out x_P (pure described x_P) x_ref e_property) e_property]
-  [(le-out x_P e_continuation x_ref e_body)
+  le-out : x e x (e ...) -> e
+  [(le-out x_P (pure described x_P) x_ref (e_property)) e_property]
+  [(le-out x_P (argument x_placeholder e_source) x_ref (e_body))
    (Bind (x_ref :: Referents Entity)
          (Refer
           (λ (x_described :: Referents Entity)
@@ -409,26 +469,45 @@
      e_body)
    (where x_described
           ,(variable-not-in
-            (term (x_P e_continuation x_ref e_body)) '$described))
+            (term (x_P x_placeholder e_source x_ref e_body)) '$described))
    (where x_unit
           ,(variable-not-in
-            (term (x_P e_continuation x_ref e_body x_described)) '$unit))])
+            (term (x_P x_placeholder e_source x_ref e_body x_described))
+            '$unit))]
+  [(le-out x_P (select e_n (argument x_placeholder e_source)) x_ref
+           (e_selection e_body))
+   (Bind (x_ref :: Referents Entity) e_selection e_body)])
 
 (define-metafunction SmusniM3
-  threshold-out : e e e e -> e
-  [(threshold-out e_force many e_P e_Q)
+  every-cont-source : e x -> e
+  [(every-cont-source (argument x_placeholder e_source) x_ref)
+   (argument-cont-source (argument x_placeholder e_source) x_ref)]
+  [(every-cont-source x_Q x_ref) (close shorthand (pred x_Q x_ref))])
+
+(define-metafunction SmusniM3
+  nuclear-cont-source : e x -> e
+  [(nuclear-cont-source (argument x_placeholder e_source) x_ref)
+   (argument-cont-source (argument x_placeholder e_source) x_ref)]
+  [(nuclear-cont-source x_Q x_ref) (close shorthand (pred x_Q x_ref))])
+
+(define-metafunction SmusniM3
+  threshold-argument-out : e e e e -> e
+  [(threshold-argument-out e_force many e_P e_Q)
    (Bind (x_threshold :: Natural)
          (Vague (AdmissibleThreshold ManyK e_P))
      (force-out e_force (AtLeast x_threshold e_P e_Q)))
-   (where x_threshold ,(variable-not-in (term (e_P e_Q)) '$n))]
-  [(threshold-out e_force too-many e_P e_Q)
+   (where x_threshold
+          ,(variable-not-in (term (e_force e_P e_Q)) '$n))]
+  [(threshold-argument-out e_force too-many e_P e_Q)
    (Bind (x_purpose :: Referents Entity) (Context)
          (x_threshold :: Natural)
          (Vague (AdmissibleThreshold TooManyK e_P x_purpose))
      (force-out e_force (MoreThan x_threshold e_P e_Q)))
-   (where x_purpose ,(variable-not-in (term (e_P e_Q)) '$purpose))
+   (where x_purpose
+          ,(variable-not-in (term (e_force e_P e_Q)) '$purpose))
    (where x_threshold
-          ,(variable-not-in (term (e_P e_Q x_purpose)) '$n))])
+          ,(variable-not-in
+            (term (e_force e_P e_Q x_purpose)) '$n))])
 
 (define-metafunction SmusniM3
   global-exactly-definition : e -> e
@@ -489,35 +568,40 @@
    --------------------------------------------- "L1.10"
    (m3-lower e_RR (gentufa e_parse (tanru x_M x_H e_arg ...)) e_out)]
 
-  [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$r))
-   (where x_unit
-          ,(variable-not-in (term (e_RR e_parse x_P x_Q x_ref)) '$unit))
-   (where e_continuation
-          (description-source e_force x_Q e_polarity x_ref))
-   (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
+  [(where x_ref
+          ,(variable-not-in (term (e_RR e_parse x_P e_continuation)) '$r))
+   (where (e_source ...)
+          (lo-cont-sources e_continuation x_ref x_P))
+   (m3-lower e_RR (gentufa e_parse e_source) e_part) ...
+   (where e_out
+          (lo-argument-out x_ref x_P e_continuation (e_part ...)))
    --------------------------------------------- "L3.1"
-   (m3-lower e_RR (gentufa e_parse (lo x_P x_Q e_polarity e_force))
-             (Bind (x_ref :: Referents Entity)
-                   (Refer (λ (x_unit :: Referents Entity) (x_P x_unit)))
-               e_body))]
+   (m3-lower e_RR (gentufa e_parse (lo x_P e_continuation)) e_out)]
 
   [(where x_ref ,(variable-not-in (term (e_RR e_parse x_P e_continuation))
                                   '$r))
-   (where e_source (le-cont-source e_continuation x_ref))
-   (m3-lower e_RR (gentufa e_parse e_source) e_body)
-   (where e_out (le-out x_P e_continuation x_ref e_body))
+   (where (e_source ...)
+          (le-cont-sources e_continuation x_ref x_P))
+   (m3-lower e_RR (gentufa e_parse e_source) e_part) ...
+   (where e_out (le-out x_P e_continuation x_ref (e_part ...)))
    --------------------------------------------- "L3.2"
    (m3-lower e_RR (gentufa e_parse (le x_P e_continuation))
              e_out)]
 
-  [(where x_ref ,(variable-not-in (term (e_RR e_parse e_name x_Q)) '$r))
+  [(where x_ref
+          ,(variable-not-in
+            (term (e_RR e_parse e_name x_placeholder e_source)) '$r))
    (where x_named
-          ,(variable-not-in (term (e_RR e_parse e_name x_Q x_ref)) '$named))
+          ,(variable-not-in
+            (term (e_RR e_parse e_name x_placeholder e_source x_ref))
+            '$named))
    (where e_continuation
-          (description-source e_force x_Q positive-omit x_ref))
+          (argument-cont-source (argument x_placeholder e_source) x_ref))
    (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    --------------------------------------------- "L3.3"
-   (m3-lower e_RR (gentufa e_parse (la e_name x_Q e_force))
+   (m3-lower e_RR
+             (gentufa e_parse
+                      (la e_name (argument x_placeholder e_source)))
              (Bind (x_ref :: Referents Entity)
                    (Refer (λ (x_named :: Referents Entity)
                             (Named e_name x_named)))
@@ -550,22 +634,30 @@
                               (Close (selcmi x_set x_base))))
                  (Mention x_sets))))]
 
-  [(m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_P)
+  [(where e_property-source (argument-property-source e_kind x_P))
+   (m3-lower e_RR (gentufa e_parse e_property-source) e_P)
    --------------------------------------------- "L3.9"
-   (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P))
+   (m3-lower e_RR (gentufa e_parse (inner-pa e_kind e_n x_P))
              (SelectExactly e_n e_P))]
 
   [(where x_witness
           ,(variable-not-in
-            (term (e_RR e_parse e_force x_P x_Q)) '$w))
-   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
+            (term (e_RR e_parse e_kind x_P e_force
+                        x_placeholder e_source)) '$w))
+   (where e_property-source (argument-property-source e_kind x_P))
+   (m3-lower e_RR (gentufa e_parse e_property-source) e_P)
    (m3-lower e_RR
              (gentufa e_parse
-                      (nuclear x_witness (Referents Entity) x_Q)) e_Q)
+                      (nuclear x_witness (Referents Entity)
+                               (argument x_placeholder e_source)))
+             e_Q)
    (where e_out (force-out e_force (No e_P e_Q)))
    --------------------------------------------- "L3.10"
    (m3-lower e_RR
-             (gentufa e_parse (inner-no e_force x_P x_Q)) e_out)]
+             (gentufa e_parse
+                      (inner-no e_kind x_P e_force
+                                (argument x_placeholder e_source)))
+             e_out)]
 
   [(where x_people
           ,(variable-not-in (term (e_RR e_parse e_n x_P)) '$people))
@@ -575,7 +667,8 @@
    (where x_aggregate
           ,(variable-not-in
             (term (e_RR e_parse e_n x_P x_people x_basis)) '$aggregate))
-   (m3-lower e_RR (gentufa e_parse (inner-pa e_n x_P)) e_selection)
+   (m3-lower e_RR
+             (gentufa e_parse (inner-pa described e_n x_P)) e_selection)
    --------------------------------------------- "L3.14"
    (m3-lower e_RR (gentufa e_parse (luho e_n x_P))
              (Bind (x_people :: Referents Entity) (Local e_selection)
@@ -590,20 +683,20 @@
    --------------------------------------------- "L3.15"
    (m3-lower e_RR (gentufa e_parse (le-unit x_P)) e_property)]
 
-  [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P x_Q)) '$x))
+  [(where x_unit ,(variable-not-in (term (e_RR e_parse x_P e_Q)) '$x))
    (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
-   (m3-lower e_RR
-             (gentufa e_parse (close shorthand (pred x_Q x_unit))) e_Q_body)
+   (where e_continuation (every-cont-source e_Q x_unit))
+   (m3-lower e_RR (gentufa e_parse e_continuation) e_Q_body)
    --------------------------------------------- "L5.1"
-   (m3-lower e_RR (gentufa e_parse (every x_P x_Q))
+   (m3-lower e_RR (gentufa e_parse (every x_P e_Q))
              (Every e_P (λ (x_unit :: Entity) e_Q_body)))]
 
   [(where x_witness
           ,(variable-not-in
-            (term (e_RR e_parse e_mode e_force e_n x_P x_Q
+            (term (e_RR e_parse e_mode e_force e_n x_P e_Q
                         e_properties e_sites)) '$w))
    (where (e_subsource ...)
-          (cardinal-sources e_mode e_force e_n x_P x_Q
+          (cardinal-sources e_mode e_force e_n x_P e_Q
                             e_properties e_sites x_witness))
    (m3-lower e_RR (gentufa e_parse e_subsource) e_part) ...
    (where e_out
@@ -611,7 +704,7 @@
    --------------------------------------------- "L5.2"
    (m3-lower e_RR
              (gentufa e_parse
-                      (cardinal e_mode e_force e_n x_P x_Q
+                      (cardinal e_mode e_force e_n x_P e_Q
                                 e_properties e_sites))
              e_out)]
 
@@ -621,10 +714,11 @@
              (gentufa e_parse
                       (termset e_force e_n1 x_P1 e_n2 x_P2 x_Q)) e_out)]
 
-  [(m3-lower e_RR (gentufa e_parse (close shorthand (pred x_Q e_var))) e_body)
+  [(where e_continuation (nuclear-cont-source e_Q e_var))
+   (m3-lower e_RR (gentufa e_parse e_continuation) e_body)
    (where e_out (nuclear-out e_var e_type e_body))
    --------------------------------------------- "L5.7"
-  (m3-lower e_RR (gentufa e_parse (nuclear e_var e_type x_Q))
+  (m3-lower e_RR (gentufa e_parse (nuclear e_var e_type e_Q))
              e_out)]
 
   [(m3-lower e_RR (gentufa e_parse e_left) e_left_clause)
@@ -663,14 +757,21 @@
              (gentufa e_parse (joi-group (e_operand ...))) e_out)]
 
   [(where x_witness
-          ,(variable-not-in (term (e_RR e_parse e_kind x_P x_Q)) '$w))
+          ,(variable-not-in
+            (term (e_RR e_parse e_kind x_P x_placeholder e_source)) '$w))
    (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
-   (m3-lower e_RR (gentufa e_parse
-                            (nuclear x_witness (Referents Entity) x_Q)) e_Q)
-   (where e_out (threshold-out e_force e_kind e_P e_Q))
+   (m3-lower e_RR
+             (gentufa e_parse
+                      (nuclear x_witness (Referents Entity)
+                               (argument x_placeholder e_source)))
+             e_Q)
+   (where e_out (threshold-argument-out e_force e_kind e_P e_Q))
    --------------------------------------------- "L5.28"
    (m3-lower e_RR
-             (gentufa e_parse (threshold e_force e_kind x_P x_Q)) e_out)]
+             (gentufa e_parse
+                      (threshold e_force e_kind x_P
+                                 (argument x_placeholder e_source)))
+             e_out)]
 
   [(where e_out (grade-out e_force x_R e_arg))
    --------------------------------------------- "L5.29"
@@ -1026,6 +1127,20 @@
              'command (list "jbotci" "gentufa" "--format" "json" surface)
              'parse (gentufa-parse executable surface)))))
 
+(define (in-place-probe-fixture-jsexpr executable version)
+  (hasheq
+   'schema "smusni-gentufa-in-place-probe-fixture-1"
+   'jbotci_version version
+   'cases
+   (for/list ([surface (in-list in-place-probe-surfaces)]
+              [index (in-naturals 1)])
+     (hasheq 'index index
+             'surface surface
+             'source_comment surface
+             'category "sentence"
+             'command (list "jbotci" "gentufa" "--format" "json" surface)
+             'parse (gentufa-parse executable surface)))))
+
 (define (refresh-parses! [manifest (load-lowering-manifest)])
   (make-directory* parse-dir)
   (define executable (jbotci-path))
@@ -1043,11 +1158,19 @@
        (pretty-json-string
         (structural-probe-fixture-jsexpr executable version))
        out)))
-  (printf "lowering parses refreshed: ~a fences, ~a cases; structural probes=~a; ~a\n"
+  (call-with-output-file in-place-probe-path
+    #:exists 'truncate/replace
+    (lambda (out)
+      (display
+       (pretty-json-string
+        (in-place-probe-fixture-jsexpr executable version))
+       out)))
+  (printf "lowering parses refreshed: ~a fences, ~a cases; structural probes=~a; in-place probes=~a; ~a\n"
           (length (lowering-manifest-candidates manifest))
           (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
             (length (lowering-candidate-cases candidate)))
           (length structural-probe-surfaces)
+          (length in-place-probe-surfaces)
           version))
 
 (define (validate-lowering-fixtures! [manifest (load-lowering-manifest)])
@@ -2197,6 +2320,216 @@
                                       'deleted deleted))]
                 [else (if (< provided total) `(omit ,base) base)]))))))))
 
+(define (argument-payload term)
+  (match term [`(label ,_ ,payload) payload] [_ term]))
+
+(define (argument-like-term? term)
+  (match (argument-payload term)
+    [`(description ,_ ,_ ,_) #t]
+    [`(name ,_) #t]
+    [`(quantifier ,_ ,_) #t]
+    [_ #f]))
+
+(define (argument-spec term fields)
+  (match (argument-payload term)
+    [`(description ,(? (lambda (gadri) (member gadri '("lo" "le"))) gadri)
+                   ,predicate ,count)
+     (define basis (if (equal? gadri "le") 'described 'lexical))
+     (cond
+       [(not count) `(,(if (equal? gadri "le") 'le 'lo) ,predicate)]
+       [(and (number? count) (zero? count))
+        `(inner-no ,basis ,predicate)]
+       [(and (exact-positive-integer? count))
+        `(inner-pa ,basis ,count ,predicate)]
+       [else #f])]
+    [`(name ,name) `(name ,name)]
+    [`(quantifier ,(? number? quantity) ,predicate)
+     (and (not (member 'global-exact (rr-value fields 'readings)))
+          `(cardinal ,quantity ,predicate))]
+    [`(quantifier "ro" ,predicate) `(every ,predicate)]
+    [`(quantifier "so'i" ,predicate) `(threshold many ,predicate)]
+    [`(quantifier "du'e" ,predicate) `(threshold too-many ,predicate)]
+    [_ #f]))
+
+(define (in-place-argument-composition? terms fields)
+  (or (for/or ([term (in-list terms)]) (argument-spec term fields))
+      (and (> (length terms) 1)
+           (ormap argument-like-term? terms))))
+
+(define (replace-argument-payload term payload)
+  (match term
+    [`(label ,label ,_) `(label ,label ,payload)]
+    [_ payload]))
+
+(define (argument-spec-readings spec)
+  (match spec
+    [`(le ,_) '(le)]
+    [`(name ,_) '(name)]
+    [`(cardinal ,_ ,_) '(witness-set)]
+    [`(inner-pa described ,_ ,_) '(le inner-pa)]
+    [`(inner-pa lexical ,_ ,_) '(inner-pa)]
+    [`(inner-no described ,_) '(le)]
+    [`(inner-no lexical ,_) '()]
+    [`(every ,_) '(importing)]
+    [`(threshold many ,_) '(many)]
+    [`(threshold too-many ,_) '(too-many)]
+    [_ '()]))
+
+(define (argument-spec-rows spec)
+  (match spec
+    [`(lo ,predicate) (list predicate)]
+    [`(le ,predicate) (list predicate 'skicu)]
+    [`(name ,_) '()]
+    [`(cardinal ,_ ,predicate) (list predicate)]
+    [`(inner-pa lexical ,_ ,predicate) (list predicate)]
+    [`(inner-pa described ,_ ,predicate) (list predicate 'skicu)]
+    [`(inner-no lexical ,predicate) (list predicate)]
+    [`(inner-no described ,predicate) (list predicate 'skicu)]
+    [`(every ,predicate) (list predicate)]
+    [`(threshold ,_ ,predicate) (list predicate)]
+    [_ '()]))
+
+(define (argument-spec-sites spec)
+  (match spec
+    [`(threshold many ,_) '((threshold many (deps ())))]
+    [`(threshold too-many ,_)
+     '((purpose too-many (deps ()))
+       (threshold too-many (deps (purpose))))]
+    [_ '()]))
+
+(define (non-bind-argument-spec? spec)
+  (member (first spec) '(inner-no every threshold)))
+
+(define (argument-wrapper spec variable body)
+  (match spec
+    [`(lo ,predicate) `(lo ,predicate (argument ,variable ,body))]
+    [`(le ,predicate) `(le ,predicate (argument ,variable ,body))]
+    [`(name ,name) `(la ,name (argument ,variable ,body))]
+    [`(cardinal ,quantity ,predicate)
+     `(cardinal witness none ,quantity ,predicate
+                (argument ,variable ,body) () ())]
+    [`(inner-pa lexical ,quantity ,predicate)
+     `(lo ,predicate (select ,quantity (argument ,variable ,body)))]
+    [`(inner-pa described ,quantity ,predicate)
+     `(le ,predicate (select ,quantity (argument ,variable ,body)))]
+    [_ (error 'argument-wrapper "unsupported Bind argument: ~e" spec)]))
+
+(define (in-place-argument-source view category fields inv)
+  (define selbri (hash-ref view 'selbri))
+  (define relation (hash-ref selbri 'relation))
+  (define terms (hash-ref view 'terms))
+  (define bindings '())
+  (define unsupported '())
+  (define avoid `(,view ,fields))
+  (define transformed
+    (for/list ([term (in-list terms)])
+      (define spec (argument-spec term fields))
+      (cond
+        [spec
+         (define variable
+           (variable-not-in `(,avoid ,bindings) '$arg))
+         (set! bindings (append bindings (list (list variable spec))))
+         (replace-argument-payload term `(value ,variable))]
+        [(argument-like-term? term)
+         (set! unsupported (append unsupported (list term)))
+         term]
+        [else term])))
+  (define non-bindings
+    (filter (lambda (binding)
+              (non-bind-argument-spec? (second binding)))
+            bindings))
+  (cond
+    [(pair? unsupported)
+     (define global-cardinal?
+       (and (member 'global-exact (rr-value fields 'readings))
+            (for/or ([term (in-list unsupported)])
+              (match (argument-payload term)
+                [`(quantifier ,(? number?) ,_) #t]
+                [_ #f]))))
+     (no-lowering
+      (if global-cardinal? "L5.2" "L1.4") 'rule-underspecified
+      (if global-cardinal?
+          "marked global quantification yields Content and exports no witness value for an argument place"
+          "argument term has no general in-place binder composition")
+      unsupported)]
+    [(and (pair? non-bindings) (> (length bindings) 1))
+     (no-lowering
+      (case (first (second (first non-bindings)))
+        [(inner-no) "L3.10"] [(every) "L5.1"]
+        [(threshold) "L5.28"] [else "L1.4"])
+      'rule-underspecified
+      "spec §4.1 orders Bind computations but does not settle in-situ scope between a generalized quantifier and another computed argument"
+      (map second bindings))]
+    [(not (member category '(sentence content)))
+     (no-lowering "L1.1" 'rule-underspecified
+                  "in-place argument computations require a clause consumer"
+                  category)]
+    [else
+     (define host-rows
+       (if (hash-ref selbri 'tanru #f)
+           (hash-ref selbri 'tanru)
+           (list relation)))
+     (define expected-rows
+       (append host-rows (append-map argument-spec-rows (map second bindings))))
+     (define expected-readings
+       (remove-duplicates
+        (append (if (eq? category 'sentence) '(actual) '())
+                (append-map argument-spec-readings (map second bindings)))))
+     (define expected-sites
+       (append
+        (if (hash-ref selbri 'tanru #f)
+            `((tanru-link
+               ,(string->symbol
+                 (format "~a-~a" (first (hash-ref selbri 'tanru))
+                         (second (hash-ref selbri 'tanru))))
+               (deps ())))
+            '())
+        (append-map argument-spec-sites (map second bindings))))
+     (define check
+       (validated-path fields "L1.1" expected-readings expected-rows
+                       expected-sites #:force? (eq? category 'sentence)))
+     (define placed
+       (application-source (hash-set view 'terms transformed) fields inv))
+     (cond
+       [(no-lowering? placed) placed]
+       [(no-lowering? check) check]
+       [else
+        (define close-source
+          `(close ,(if (hash-ref selbri 'negated) 'clause 'shorthand)
+                  ,(if (hash-ref selbri 'negated) `(na ,placed) placed)))
+        (define non-binding
+          (and (pair? non-bindings) (first non-bindings)))
+        (cond
+          [non-binding
+           (match-define (list variable spec) non-binding)
+           (match spec
+             [`(inner-no ,basis ,predicate)
+              (if (eq? category 'sentence)
+                  `(inner-no ,basis ,predicate ,check
+                             (argument ,variable ,close-source))
+                  (no-lowering "L3.10" 'rule-underspecified
+                               "inner no needs a formed force consumer"
+                               category))]
+             [`(every ,predicate)
+              (define source
+                `(every ,predicate (argument ,variable ,close-source)))
+              (if (eq? category 'sentence) `(force ,check ,source) source)]
+             [`(threshold ,kind ,predicate)
+              (if (eq? category 'sentence)
+                  `(threshold ,check ,kind ,predicate
+                              (argument ,variable ,close-source))
+                  (no-lowering "L5.28" 'rule-underspecified
+                               "threshold argument needs a formed force consumer"
+                               category))])]
+          [else
+           (define base
+             (if (eq? category 'sentence)
+                 `(force ,check ,close-source)
+                 close-source))
+           (foldr (lambda (binding body)
+                    (argument-wrapper (second binding) (first binding) body))
+                  base bindings)])])]))
+
 (define (view->sigma view category fields inv)
   (define selbri (hash-ref view 'selbri))
   (define relation (hash-ref selbri 'relation))
@@ -2261,9 +2594,10 @@
           (or (hash-ref view 'termset)
               (hash-ref selbri 'scalar #f)
               (member 'gradable (rr-value fields 'readings))
-              (not (andmap (lambda (term)
-                             (match term [`(value ,_) #t] [_ #f]))
-                           terms))))
+              (not (or (andmap (lambda (term)
+                                 (match term [`(value ,_) #t] [_ #f]))
+                               terms)
+                       (in-place-argument-composition? terms fields)))))
      (no-lowering "L1.10" 'rule-underspecified
                   "tanru has an unconsumed sibling modifier or term form"
                   (hasheq 'terms terms
@@ -2297,6 +2631,8 @@
                 `(termset ,(force-or-none) ,n1 ,p1 ,n2 ,p2 ,relation))])
          (no-lowering "L5.3" 'rule-underspecified
                       "termset shape is not mechanically supported" terms))]
+    [(in-place-argument-composition? terms fields)
+     (in-place-argument-source view category fields inv)]
     [(and (= (length terms) 1)
           (match (first terms) [`(description ,_ ,_ ,_) #t] [_ #f]))
      (match (first terms)
