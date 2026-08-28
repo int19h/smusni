@@ -146,7 +146,9 @@ M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
 (46 lowering judgments; fixtures are explicitly not exhaustive).
 `inventory/lowering.sexp` identifies candidate fence keys, while one tracked
 `gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
-preserve ordered cases. Refresh parser fixtures deliberately with:
+preserve ordered cases. The same refresh maintains an offline gentufa fixture
+for structural-classifier regressions, so the ordinary check remains independent
+of a local jbotci installation. Refresh parser fixtures deliberately with:
 
 ```sh
 racket tools/smusni-redex/lower.rkt --refresh-parses
@@ -225,3 +227,36 @@ derivation; it is not labelled `redex-check`.
 version rejects generation for the judgment's ellipsis patterns, so the report
 records seed/attempts/size as unavailable and labels coverage fixture-only
 rather than describing it as randomized testing.
+
+### Non-gating corpus probe (#56 M4 increment 2)
+
+Run `racket tools/smusni-redex/lower.rkt --probe-all` to inspect every surface
+specimen with the installed jbotci version. Existing tracked parse/RR fixtures
+are labelled `verified`. Every other case is parsed live and receives a
+generated eight-field skeleton labelled `unverified-skeleton`; such a result is
+discovery-only and is never reported as a match or accepted as promotion
+evidence. The command writes no fixture and is not part of `tools/check-smusni`.
+
+The report prints every case, the first refusal where applicable, verified vs
+skeleton totals, parse-error count and keys, formed coverage before/after the
+increment, promoted verified candidates, and the exhaustive disposition of the
+17 starting rule IDs. A parse error is never absence evidence: while any remain,
+every no-lead disposition is explicitly limited to parsed cases. Only the live
+gentufa call is inside the parse-error boundary; skeleton construction,
+lowering, classification, and normalized comparison failures abort the probe.
+
+Rule leads come from parse constructs and grammatical loci; focal citations are
+printed only as a cross-check. Every detector excludes quoted ancestry, and an
+L5.23 chain requires repeated `joi` nodes at one parent locus or `se` inside the
+same `JoiConnective`; unrelated statements cannot combine into a lead. JOI and
+JEK attribution uses the nearest recognized grammatical locus, `.i TAG bo`
+inspects only the direct I-tail connective and requires a tag before grouping
+`bo`, and L3.10 inspects only the matched description tail's direct quantifier.
+The lowering gate compares classifier
+leads with derivation rules on every verified fixture parse and reports the
+consistency count. Direct classifier tests supply a minimal positive parse for
+every starting rule and exercise wrong-locus and quoted-material negatives. M4
+increment 2 promotes only specimens with reviewed eight-field RR:
+samples #27 (L5.22 constitution-bearing `joi`) and #45 (L3.10 explicit inner
+zero). The latter consumes the parsed `no` quantifier itself; question-answer
+substitution is explanatory context, not an RR reading or fixture shortcut.

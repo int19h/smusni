@@ -1,0 +1,124 @@
+{
+  "cases": [
+    {
+      "category": "utterance",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi joi do"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "FragmentStatement": {
+                      "TermsFragment": {
+                        "terms": [
+                          {
+                            "ConnectedTerm": {
+                              "leading_term": {
+                                "SumtiTerm": {
+                                  "base_sumti": {
+                                    "leading_sumti": {
+                                      "continuations": [
+                                        {
+                                          "connective": {
+                                            "JoikConnective": {
+                                              "JoiConnective": {
+                                                "joi": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "joĭ",
+                                                        "span": [
+                                                          3,
+                                                          6
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "sumti": {
+                                            "leading_sumti": {
+                                              "SimpleSumti": {
+                                                "base_sumti": {
+                                                  "SumtiBase": {
+                                                    "ProSumti": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "do",
+                                                            "span": [
+                                                              7,
+                                                              9
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "SimpleSumti": {
+                                            "base_sumti": {
+                                              "SumtiBase": {
+                                                "ProSumti": {
+                                                  "Plain": {
+                                                    "PlainWord": {
+                                                      "Cmavo": {
+                                                        "phonemes": "mi",
+                                                        "span": [
+                                                          0,
+                                                          2
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "mi joi do — the distinct canonical Group<Entity> reading [P40]",
+      "surface": "mi joi do",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "72483335a75e31f291142a3eae2a3a1708356925",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 27,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

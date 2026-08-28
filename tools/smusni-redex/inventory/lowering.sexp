@@ -35,6 +35,9 @@
   (candidate "samples.md" 23 "51894d5541b6381e478bca7b33a039b6f96feab4"
     (rules "L3.3")
     (case 1 "la .alis. klama" sentence (promised-rows klama)))
+  (candidate "samples.md" 27 "72483335a75e31f291142a3eae2a3a1708356925"
+    (rules "L7.4" "L5.22")
+    (case 1 "mi joi do" utterance (promised-rows)))
   (candidate "samples.md" 30 "bb927fff8f0424bed33e08d63acaa232f3cca35c"
     (rules "L3.5" "L3.6")
     (case 1 "lo'i gerku" utterance (promised-rows gerku selcmi)))
@@ -47,6 +50,9 @@
   (candidate "samples.md" 44 "8eac378a0dbb7e9bb101843b6c5f2217febf3ca7"
     (rules "L5.1")
     (case 1 "ro gerku cu blabi" sentence (promised-rows gerku blabi)))
+  (candidate "samples.md" 45 "7549d4565ac0ab1e545914425fc678ca69065913"
+    (rules "L3.10")
+    (case 1 "lo no prenu cu jmaji" sentence (promised-rows prenu jmaji)))
   (candidate "samples.md" 46 "16d5445b9f0efb113e3a9f4a03224a1f770d4959"
     (rules "L5.3")
     (case 1 "ci gerku ce'e re prenu cu nelci" sentence

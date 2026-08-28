@@ -1,7 +1,9 @@
 #lang racket
 
-(require rackunit
+(require json
+         rackunit
          racket/list
+         racket/runtime-path
          racket/set
          redex/reduction-semantics
          "../elaborate.rkt"
@@ -12,11 +14,11 @@
 (define manifest (load-lowering-manifest))
 (check-equal? (lowering-manifest-families manifest) '("L0" "L1" "L3" "L5"))
 (check-equal? (lowering-manifest-rule-count manifest) 46)
-(check-equal? (length (lowering-manifest-candidates manifest)) 25)
+(check-equal? (length (lowering-manifest-candidates manifest)) 27)
 (check-equal?
  (for/sum ([candidate (in-list (lowering-manifest-candidates manifest))])
    (length (lowering-candidate-cases candidate)))
- 28)
+ 30)
 
 (define rules (fragment-rule-ids manifest))
 (check-equal? (length rules) 46)
@@ -32,7 +34,7 @@
   (map symbol->string (judgment-form->rule-names m3-lower)))
 (check-equal? (length redex-rule-names)
               (set-count (list->set redex-rule-names)))
-(check-equal? (length redex-rule-names) 29)
+(check-equal? (length redex-rule-names) 31)
 (for ([name (in-list redex-rule-names)])
   (check-not-false (member name rules)))
 
@@ -191,6 +193,20 @@
         (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
     (Assert (Close (klama $alis))))
  '("L3.3"))
+(check-lowers
+ "samples.md" 45
+ '(Assert
+   (No (λ ($x :: Entity) (prenu $x))
+       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+ '("L3.10"))
+(check-lowers
+ "samples.md" 27
+ '(Bind ($basis :: DecompositionBasis (Group Entity) Entity)
+        (Context (GroupBasisConstraint joi Entity) deps…)
+    (Bind ($group :: Referents (Group Entity))
+          (JoiGroup $basis Speaker Audience)
+      (Mention $group)))
+ '("L5.22"))
 (check-lowers
  "samples.md" 30
  '(Bind ($base :: Referents Entity)
@@ -570,7 +586,7 @@
                        (eq? (case-report-disposition report)
                             'in-fragment/matched))
                      reports)
-              28)
+              30)
 (check-equal? (count (lambda (report)
                        (eq? (case-report-disposition report) 'unresolved))
                      reports)
@@ -585,8 +601,8 @@
                             'out-of-fragment))
                      reports)
               0)
-(check-equal? (length reports) 28)
-(check-equal? (length fence-reports) 25)
+(check-equal? (length reports) 30)
+(check-equal? (length fence-reports) 27)
 (define fence-17-report
   (findf (lambda (report)
            (and (string=? (fence-report-source report) "samples.md")
@@ -787,6 +803,176 @@
                    'sumti (hasheq 'ProSumti
                                   (synthetic-terminal 'Cmavo "ti" 14))))))
 
+;; Increment-2 structural lead classifier: one minimal positive per exhaustive
+;; rule id, with locus-sensitive connectives and no reliance on citations.
+(define (lead-cmavo word [start 20])
+  (synthetic-terminal 'Cmavo word start))
+(define (minimal-description gadri #:quantifier [quantifier #f]
+                             #:possessor? [possessor? #f])
+  (hasheq
+   'DescriptorWithGadriSumti
+   (hasheq
+    'description (lead-cmavo gadri)
+    'tail
+    (hasheq
+     'leading_tail_elements
+     (if possessor? (hasheq 'tail_sumti (synthetic-pro "mi" 21)) #hasheq())
+     'tail
+     (hasheq
+      (if quantifier 'QuantifierRelationDescriptionTail
+          'RelationDescriptionTail)
+      (if quantifier
+          (hasheq 'quantifier
+                  (hasheq 'PaRunQuantifier (lead-cmavo quantifier 22)))
+          #hasheq()))))))
+
+(define structural-lead-positives
+  (list
+   (cons "L1.7" (lead-cmavo "fi'a"))
+   (cons "L3.10" (minimal-description "lo" #:quantifier "no"))
+   (cons "L3.11" (minimal-description "le" #:possessor? #t))
+   (cons "L3.12" (minimal-description "lei"))
+   (cons "L3.13" (minimal-description "lai"))
+   (cons "L5.4" (lead-cmavo "da'a"))
+   (cons "L5.5" (lead-cmavo "bu'a"))
+   (cons "L5.6" (lead-cmavo "cei"))
+   (cons "L5.10" (lead-cmavo "ja'a"))
+   (cons "L5.13"
+         (hasheq 'IStatementConnection
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
+   (cons "L5.15"
+         (hasheq
+          'IStatementConnection
+          (hasheq
+           'continuations
+           (list
+            (hasheq
+             'SimpleIConnectiveStatementTail
+             (hasheq
+              'connective
+              (hasheq 'ITagBoStatementConnective
+                      (hasheq 'tense_modal (lead-cmavo "ba")
+                              'bo (lead-cmavo "bo")))))))))
+   (cons "L5.16"
+         (hasheq 'CoSelbri
+                 (hasheq 'JekConnective (lead-cmavo "je"))))
+   (cons "L5.17"
+         (hasheq 'CoSelbri
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
+   (cons "L5.19" (lead-cmavo "bi'o"))
+   (cons "L5.22"
+         (hasheq 'ConnectedTerm
+                 (hasheq 'JoiConnective (lead-cmavo "joi"))))
+   (cons "L5.23"
+         (hasheq
+          'ConnectedTerm
+          (hasheq 'chain
+                  (list (hasheq 'JoiConnective (lead-cmavo "joi" 23))
+                        (hasheq 'JoiConnective (lead-cmavo "joi" 24))))))
+   (cons "L5.27" (lead-cmavo "ku'a"))))
+(define increment-2-rule-ids
+  '("L1.7" "L3.10" "L3.11" "L3.12" "L3.13"
+    "L5.4" "L5.5" "L5.6" "L5.10" "L5.13" "L5.15" "L5.16"
+    "L5.17" "L5.19" "L5.22" "L5.23" "L5.27"))
+(check-equal? (sort (map car structural-lead-positives) string<?)
+              (sort increment-2-rule-ids string<?))
+(for ([entry (in-list structural-lead-positives)])
+  (check-not-false
+   (member (car entry) (structural-rule-leads (cdr entry)))
+   (format "classifier positive for ~a" (car entry))))
+
+;; Wrong loci and quoted material do not become structural leads.
+(define i-jek
+  (hasheq 'IStatementConnection
+          (hasheq 'JekConnective (lead-cmavo "je" 25))))
+(check-false (member "L5.16" (structural-rule-leads i-jek)))
+(define i-joi
+  (hasheq 'IStatementConnection
+          (hasheq 'JoiConnective (lead-cmavo "joi" 26))))
+(check-false (member "L5.17" (structural-rule-leads i-joi)))
+(check-false (member "L5.22" (structural-rule-leads i-joi)))
+(check-false (member "L5.15" (structural-rule-leads (lead-cmavo "bo" 27))))
+(for ([entry (in-list structural-lead-positives)])
+  (define quoted
+    (hasheq 'QuotedSumti (hasheq 'TextQuote (cdr entry))))
+  (check-false
+   (member (car entry) (structural-rule-leads quoted))
+   (format "quoted classifier negative for ~a" (car entry))))
+(define se-joi
+  (hasheq 'ConnectedTerm
+          (hasheq 'JoiConnective
+                  (list (lead-cmavo "se" 29)
+                        (lead-cmavo "joi" 30)))))
+(check-not-false (member "L5.23" (structural-rule-leads se-joi)))
+
+(define-runtime-path structural-probe-path
+  "../inventory/parses/structural-probes.json")
+(define structural-probe-fixture
+  (call-with-input-file structural-probe-path read-json))
+(check-equal? (hash-ref structural-probe-fixture 'schema)
+              "smusni-gentufa-structural-probe-fixture-1")
+(check-true (string? (hash-ref structural-probe-fixture 'jbotci_version)))
+(define structural-probe-cases
+  (hash-ref structural-probe-fixture 'cases))
+(check-equal? (length structural-probe-cases) 22)
+(define structural-probe-parses
+  (for/hash ([case (in-list structural-probe-cases)]
+             [expected-index (in-naturals 1)])
+    (define surface (hash-ref case 'surface))
+    (check-equal? (hash-ref case 'index) expected-index)
+    (check-equal? (hash-ref case 'command)
+                  (list "jbotci" "gentufa" "--format" "json" surface))
+    (values surface (hash-ref case 'parse))))
+(check-equal? (hash-count structural-probe-parses)
+              (length structural-probe-cases))
+(define (real-leads text)
+  (structural-rule-leads
+   (hash-ref structural-probe-parses text
+             (lambda () (error 'lower-test "missing structural probe: ~s" text)))))
+
+(define structural-probe-expectations
+  '(("lu lo no prenu cu jmaji li'u" ())
+    ("lu mi joi do li'u" ())
+    ("se klama mi .i mi joi do" ("L5.22"))
+    ("mi joi do .i ti joi ta" ("L5.22"))
+    ("mi tavla fe do joi ti fi ta joi tu" ("L5.22"))
+    ("mi joi do joi ti" ("L5.22" "L5.23"))
+    ("lo nu ta du lo mi zdani" ("L3.11"))
+    ("mi joi do cu klama .i je ti klama" ("L5.22"))
+    ("mi klama .i je ti joi ta cu klama" ("L5.22"))
+    ("mi tavla be do joi ti" ("L5.22"))
+    ("mi melbi joi xamgu .i je do klama" ("L5.17"))
+    ("mi melbi bo xamgu .i je do klama" ())
+    ("lo prenu poi no gerku cu batci ke'a cu klama" ())
+    ("mi klama .i joi do stali" ("L5.13"))
+    ("mi melbi joi xamgu" ("L5.17"))
+    ("mi klama .i ba bo do stali" ("L5.15"))
+    ("mi klama .i je bo do stali" ())
+    ("mi klama .i je ba bo do stali" ("L5.15"))
+    ("mi klama .i bo do stali" ())
+    ("lo nu lo no gerku cu bajra cu fasnu" ("L3.10"))
+    ("mi melbi je xamgu" ("L5.16"))
+    ("mi djuno lo du'u do klama .i je ti stali" ())))
+(for ([entry (in-list structural-probe-expectations)])
+  (check-equal? (real-leads (first entry)) (second entry) (first entry)))
+
+;; The probe's exception boundary classifies only parser failures. A defect in
+;; any post-parse stage must escape and fail the probe instead of weakening an
+;; absence claim through a false parse-error record.
+(check-equal?
+ (call-with-probe-parse
+  (lambda () (error 'parser "synthetic parse failure"))
+  (lambda (_) 'parse-error)
+  (lambda (_) 'parsed))
+ 'parse-error)
+(check-exn
+ #rx"synthetic post-parse failure"
+ (lambda ()
+   (call-with-probe-parse
+    (lambda () #hasheq())
+    (lambda (_) 'parse-error)
+    (lambda (_) (error 'skeleton "synthetic post-parse failure")))))
+
 ;; A handled bridi must account for every direct semantic term. Adding a
 ;; second term beside the formerly sole description is refused, not silently
 ;; converted to a tavla/blabi application with the description erased.
@@ -879,6 +1065,17 @@
                      (rr-case-fields le-rr)))
 (check-true (no-lowering? no-le-sigma))
 (check-equal? (no-lowering-rule no-le-sigma) "L3.10")
+
+(define explicit-zero-lo-result
+  (lower (add-inner-count description-row-parse "no") description-row-rr))
+(check-true (lowered? explicit-zero-lo-result))
+(when (lowered? explicit-zero-lo-result)
+  (check-true
+   (redex-alpha-equivalent?
+    (plain (lowered-term explicit-zero-lo-result))
+    '(Assert
+      (No (λ ($x :: Entity) (mlatu $x))
+          (λ ($w :: Referents Entity) (Close (blabi $w))))))))
 
 (define-values (collection-parse collection-rr)
   (case-input "samples.md" 30))
