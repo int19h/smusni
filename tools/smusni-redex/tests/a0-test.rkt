@@ -427,6 +427,8 @@
 (check-equal? (length witnessed-rules) (length a0-required-rules))
 (check-equal? (sort (map first a0-rule-anchors) string<?)
               (sort a0-required-rules string<?))
+(check-equal? (second (assoc "A0-T-Context" a0-rule-anchors)) "spec §5.3")
+(check-equal? (second (assoc "A0-T-Equality" a0-rule-anchors)) "spec §4.5")
 (check-equal? uncovered-rules '())
 (check-true (andmap (lambda (entry) (positive? (cdr entry))) native-cases))
 
