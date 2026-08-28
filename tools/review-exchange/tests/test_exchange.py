@@ -7,10 +7,18 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from importlib import util as importlib_util
+from io import StringIO
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 TOOL = HERE.parent / "exchange.py"
+MODULE_SPEC = importlib_util.spec_from_file_location("review_exchange", TOOL)
+EXCHANGE = importlib_util.module_from_spec(MODULE_SPEC)
+assert MODULE_SPEC.loader is not None
+MODULE_SPEC.loader.exec_module(EXCHANGE)
 
 REGISTRY = """
 protocol = "smusni-review-mail/v3"
@@ -97,8 +105,34 @@ Read and disposition captured in: legacy reply.
 """
 
 
+class FakeClock:
+    """Monotonic clock whose sleep advances immediately and runs timed events."""
+
+    def __init__(self):
+        self.now = 0.0
+        self.events = []
+
+    def monotonic(self):
+        return self.now
+
+    def schedule(self, when, callback):
+        self.events.append((when, callback))
+        self.events.sort(key=lambda event: event[0])
+
+    def sleep(self, duration):
+        target = self.now + duration
+        while self.events and self.events[0][0] <= target:
+            when, callback = self.events.pop(0)
+            self.now = when
+            callback()
+        self.now = target
+
+
 class ExchangeTest(unittest.TestCase):
     def setUp(self):
+        self.outer_binding = os.environ.pop("SMUSNI_EXCHANGE_ACTOR", None)
+        if self.outer_binding is not None:
+            self.addCleanup(os.environ.__setitem__, "SMUSNI_EXCHANGE_ACTOR", self.outer_binding)
         self.tmp = Path(tempfile.mkdtemp())
         (self.tmp / "tools" / "review-exchange").mkdir(parents=True)
         (self.tmp / "tools" / "review-exchange" / "participants.toml").write_text(REGISTRY)
@@ -133,6 +167,33 @@ class ExchangeTest(unittest.TestCase):
         for k, v in kw.items():
             args += [f"--{k.replace('_', '-')}", v]
         return self.run_tool(*args).stdout.strip()
+
+    def publish_message(self, actor, to, slug="note", *, no_ack=False):
+        args = ["new", "--actor", actor, "--to", to, "--kind", "handoff", "--slug", slug]
+        if no_ack:
+            args.append("--no-ack")
+        draft = self.run_tool(*args).stdout.strip()
+        self.fill(draft)
+        path = self.run_tool("publish", "--actor", actor, draft).stdout.strip()
+        return Path(path).stem
+
+    def registry(self):
+        return EXCHANGE.Registry(self.tmp)
+
+    def wait(self, actor, clock, *, idle=5, debounce=5, broadcasts=False, scan=None):
+        reg = self.registry()
+        return EXCHANGE.wait_for_batch(
+            reg,
+            actor,
+            idle_timeout=idle,
+            debounce=debounce,
+            include_broadcasts=broadcasts,
+            initial_spool=EXCHANGE.Spool(reg),
+            scan=scan or (lambda: EXCHANGE.Spool(reg)),
+            monotonic=clock.monotonic,
+            sleep=clock.sleep,
+            poll_interval=1,
+        )
 
     # ---- sessions
 
@@ -253,6 +314,180 @@ class ExchangeTest(unittest.TestCase):
         a = self.new(f1, c1, slug="same")
         b = self.new(f1, c1, slug="same")
         self.assertNotEqual(a, b)
+
+    # ---- blocking wait
+
+    def test_wait_batches_direct_messages_and_resets_trailing_edge(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.publish_message(f1, c1, "first"))
+        clock.schedule(3, lambda: self.publish_message(f1, c1, "second"))
+
+        result = self.wait(c1, clock, idle=10, debounce=3)
+
+        self.assertEqual(result.outcome, "batch")
+        self.assertEqual([message.id.split("-", 2)[2] for message in result.messages], ["first", "second"])
+        self.assertEqual(clock.now, 6)
+
+    def test_wait_ignores_unrelated_and_default_broadcast_traffic(self):
+        f1, c1, k1 = self.join("fable"), self.join("codex"), self.join("kimi")
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.publish_message(f1, k1, "unrelated"))
+        clock.schedule(2, lambda: self.publish_message(f1, "all", "broadcast"))
+
+        result = self.wait(c1, clock, idle=4, debounce=3)
+
+        self.assertEqual(result.outcome, "empty")
+        self.assertEqual(result.messages, [])
+        self.assertEqual(clock.now, 4)
+
+    def test_wait_can_include_broadcasts(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.publish_message(f1, "all", "broadcast"))
+
+        result = self.wait(c1, clock, idle=4, debounce=2, broadcasts=True)
+
+        self.assertEqual(result.outcome, "batch")
+        self.assertEqual([message.id.split("-", 2)[2] for message in result.messages], ["broadcast"])
+        self.assertEqual(clock.now, 3)
+
+    def test_wait_includes_new_no_ack_direct_mail(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.publish_message(f1, c1, "fyi", no_ack=True))
+
+        result = self.wait(c1, clock, idle=4, debounce=2)
+
+        self.assertEqual(result.outcome, "batch")
+        self.assertFalse(result.messages[0].ack_required)
+        direct, broadcast = result.spool.pending_for(c1)
+        self.assertEqual((direct, broadcast), ([], []))
+
+    def test_wait_first_snapshot_is_baseline_and_next_scan_catches_startup_race(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        old = self.publish_message(f1, c1, "already-seen")
+        clock = FakeClock()
+        published = []
+        calls = 0
+
+        def scan():
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                published.append(self.publish_message(f1, c1, "racing"))
+            return EXCHANGE.Spool(self.registry())
+
+        result = self.wait(c1, clock, idle=4, debounce=2, scan=scan)
+
+        self.assertEqual([message.id for message in result.messages], published)
+        self.assertNotIn(old, [message.id for message in result.messages])
+
+    def test_wait_final_scan_catches_quiet_boundary_race(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        clock = FakeClock()
+        published = []
+        calls = 0
+
+        def scan():
+            nonlocal calls
+            calls += 1
+            if calls == 3:  # t=2 boundary's second, race-closing scan
+                published.append(self.publish_message(f1, c1, "at-boundary"))
+            return EXCHANGE.Spool(self.registry())
+
+        result = self.wait(c1, clock, idle=2, debounce=2, scan=scan)
+
+        self.assertEqual([message.id for message in result.messages], published)
+        self.assertEqual(clock.now, 4)
+
+    def test_wait_rejects_validation_error_unknown_bound_and_retired_actor(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        reg = self.registry()
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "unknown actor") as unknown:
+            EXCHANGE.cmd_wait(reg, "nobody_1", idle_timeout=1, debounce=1, include_broadcasts=False)
+        self.assertEqual(unknown.exception.code, EXCHANGE.EXIT_OWNERSHIP)
+
+        with mock.patch.dict(os.environ, {EXCHANGE.BINDING_ENV: f1}):
+            with self.assertRaisesRegex(EXCHANGE.ExchangeError, "bound to actor") as bound:
+                EXCHANGE.cmd_wait(reg, c1, idle_timeout=1, debounce=1, include_broadcasts=False)
+        self.assertEqual(bound.exception.code, EXCHANGE.EXIT_OWNERSHIP)
+
+        self.run_tool("retire", "--actor", c1)
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "retired session") as retired:
+            EXCHANGE.cmd_wait(self.registry(), c1, idle_timeout=1, debounce=1, include_broadcasts=False)
+        self.assertEqual(retired.exception.code, EXCHANGE.EXIT_OWNERSHIP)
+
+        messages = self.spool / "messages"
+        messages.mkdir(exist_ok=True)
+        (messages / "broken.md").write_text("not front matter")
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "validation errors") as invalid:
+            EXCHANGE.cmd_wait(self.registry(), f1, idle_timeout=1, debounce=1, include_broadcasts=False)
+        self.assertEqual(invalid.exception.code, EXCHANGE.EXIT_VALIDATION)
+
+    def test_wait_output_is_stable_and_reuses_status_view(self):
+        f1, c1 = self.join("fable"), self.join("codex")
+        clock = FakeClock()
+        clock.schedule(1, lambda: self.publish_message(f1, c1, "z-last"))
+        clock.schedule(1, lambda: self.publish_message(f1, c1, "a-first"))
+        reg = self.registry()
+        output = StringIO()
+
+        with redirect_stdout(output):
+            EXCHANGE.cmd_wait(
+                reg,
+                c1,
+                idle_timeout=4,
+                debounce=2,
+                include_broadcasts=False,
+                monotonic=clock.monotonic,
+                sleep=clock.sleep,
+                scan=lambda: EXCHANGE.Spool(reg),
+                poll_interval=1,
+            )
+
+        lines = output.getvalue().splitlines()
+        self.assertEqual(lines[0], f"WAIT_BATCH actor={c1} new=2")
+        new_lines = [line for line in lines if line.startswith("NEW ")]
+        self.assertEqual(new_lines, sorted(new_lines))
+        status = EXCHANGE.status_lines(EXCHANGE.Spool(reg), c1)
+        self.assertEqual(lines[-len(status):], status)
+
+    def test_wait_empty_output_and_duration_parser(self):
+        c1 = self.join("codex")
+        clock = FakeClock()
+        reg = self.registry()
+        output = StringIO()
+
+        with mock.patch.dict(os.environ, {EXCHANGE.BINDING_ENV: c1}), redirect_stdout(output):
+            EXCHANGE.cmd_wait(
+                reg,
+                None,
+                idle_timeout=2,
+                debounce=3,
+                include_broadcasts=False,
+                monotonic=clock.monotonic,
+                sleep=clock.sleep,
+                scan=lambda: EXCHANGE.Spool(reg),
+                poll_interval=1,
+            )
+
+        self.assertTrue(output.getvalue().startswith(f"WAIT_EMPTY actor={c1}\n"))
+        self.assertEqual(EXCHANGE.parse_duration("500ms"), 0.5)
+        self.assertEqual(EXCHANGE.parse_duration("5m"), 300)
+        for bad in ("0s", "5", "1 minute", "-2s", "infs"):
+            with self.assertRaises(EXCHANGE.argparse.ArgumentTypeError):
+                EXCHANGE.parse_duration(bad)
+
+    def test_wait_interruption_is_clean_and_explicit(self):
+        c1 = self.join("codex")
+        output = StringIO()
+
+        with mock.patch.object(EXCHANGE, "cmd_wait", side_effect=KeyboardInterrupt), redirect_stdout(output):
+            code = EXCHANGE.main(["--root", str(self.tmp), "wait", "--actor", c1])
+
+        self.assertEqual(code, 130)
+        self.assertEqual(output.getvalue(), f"WAIT_INTERRUPTED actor={c1}\n")
 
     # ---- legacy history
 

@@ -15,13 +15,15 @@ Commands:
   sessions                                      list registered sessions
   validate                                      validate history, messages, sessions
   status   --actor A                            list what A owes
+  wait     [--actor A] [--idle-timeout 5m] [--debounce 5m]
+           [--include-broadcasts]                block for a new message batch
   new      --actor A --to L|all --kind K --slug S [--issues ..] [--reply-to ID]
            [--supersedes ID] [--no-ack] [--model M] [--client C]
   publish  --actor A DRAFT                      validate, expand `all`, publish atomically
   ack      --actor A ID --disposition TEXT      acknowledge a received message
 
 Exit codes: 0 ok · 1 usage · 2 validation · 3 ownership/permission ·
-4 collision/duplicate · 5 unknown reference.
+4 collision/duplicate · 5 unknown reference · 130 interrupted wait.
 """
 
 from __future__ import annotations
@@ -29,11 +31,14 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import math
 import os
 import re
 import sys
+import time
 import tomllib
 from pathlib import Path
+from typing import Callable, NamedTuple
 
 V1 = "smusni-review-mail/v1"
 V2 = "smusni-review-mail/v2"
@@ -44,7 +49,9 @@ SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 MODEL_RE = re.compile(r"^[a-z][a-z0-9]*$")
 SESSION_RE = re.compile(r"^([a-z][a-z0-9]*)_(\d+)(?:\.(\d+))?$")
 ISSUES_RE = re.compile(r"^#\d+(,#\d+)*$")
+DURATION_RE = re.compile(r"^(?:\d+(?:\.\d+)?|\.\d+)(ms|s|m|h)$")
 V1_LEGACY_SENDERS = {"owner"}  # historical alias of the human partner
+WAIT_POLL_SECONDS = 1.0
 
 EXIT_USAGE, EXIT_VALIDATION, EXIT_OWNERSHIP, EXIT_COLLISION, EXIT_UNKNOWN = 1, 2, 3, 4, 5
 
@@ -664,6 +671,21 @@ def stamp(t: _dt.datetime) -> tuple[str, str]:
     return t.strftime("%Y%m%dT%H%M%SZ"), t.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def parse_duration(value: str) -> float:
+    """Parse a positive duration such as ``250ms``, ``30s``, or ``5m``."""
+    match = DURATION_RE.fullmatch(value)
+    if not match:
+        raise argparse.ArgumentTypeError(
+            "duration must be a positive number followed by ms, s, m, or h (for example 500ms or 5m)"
+        )
+    amount = float(value[:-len(match.group(1))])
+    multiplier = {"ms": 0.001, "s": 1.0, "m": 60.0, "h": 3600.0}[match.group(1)]
+    seconds = amount * multiplier
+    if not math.isfinite(seconds) or seconds <= 0:
+        raise argparse.ArgumentTypeError("duration must be greater than zero and finite")
+    return seconds
+
+
 def cmd_validate(reg: Registry) -> int:
     spool = Spool(reg)
     for e in spool.errors:
@@ -737,29 +759,187 @@ def cmd_retire(reg: Registry, actor: str | None, note: str | None) -> int:
     return 0
 
 
-def cmd_status(reg: Registry, actor: str) -> int:
-    spool = Spool(reg)
+def status_lines(spool: Spool, actor: str) -> list[str]:
+    """Render the one canonical actor-status view for ``status`` and ``wait``."""
     if not spool.actors.is_actor(actor):
         raise ExchangeError(EXIT_OWNERSHIP, spool.actors.describe_unknown(actor))
+    lines: list[str] = []
     for e in spool.errors:
-        print(f"ERROR {e}")
+        lines.append(f"ERROR {e}")
     acks = sum(len(v) for v in spool.acked.values())
-    print(f"generation={reg.generation} sessions={len(spool.sessions.by_id)} messages={len(spool.published)} drafts={len(spool.drafts)} acknowledgements={acks} errors={len(spool.errors)}")
+    lines.append(
+        f"generation={spool.reg.generation} sessions={len(spool.sessions.by_id)} "
+        f"messages={len(spool.published)} drafts={len(spool.drafts)} "
+        f"acknowledgements={acks} errors={len(spool.errors)}"
+    )
     session = spool.sessions.get(actor)
     if session:
-        print(f"session={actor} model={session.model} generation={session.data.get('generation')} status={session.data.get('status')}")
+        lines.append(
+            f"session={actor} model={session.model} "
+            f"generation={session.data.get('generation')} status={session.data.get('status')}"
+        )
     for w in spool.draft_warnings(actor):
-        print(f"WARNING {w}")
+        lines.append(f"WARNING {w}")
     direct, broadcast = spool.pending_for(actor)
-    print(f"pending_for_{actor}={len(direct) + len(broadcast)} direct={len(direct)} broadcast={len(broadcast)}")
+    lines.append(
+        f"pending_for_{actor}={len(direct) + len(broadcast)} "
+        f"direct={len(direct)} broadcast={len(broadcast)}"
+    )
     for m in direct:
-        print(f"PENDING {m.id} {m.path}")
+        lines.append(f"PENDING {m.id} {m.path}")
     for m in broadcast:
-        print(f"PENDING-BROADCAST {m.id} {m.path}")
+        lines.append(f"PENDING-BROADCAST {m.id} {m.path}")
     if not spool.actors.acknowledges(actor):
         for m in spool.addressed_to(actor):
-            print(f"ADDRESSED {m.id} {m.path}")
+            lines.append(f"ADDRESSED {m.id} {m.path}")
+    return lines
+
+
+def cmd_status(reg: Registry, actor: str) -> int:
+    spool = Spool(reg)
+    for line in status_lines(spool, actor):
+        print(line)
     return EXIT_VALIDATION if spool.errors else 0
+
+
+class WaitResult(NamedTuple):
+    outcome: str
+    messages: list[Message]
+    spool: Spool
+
+
+def _require_waitable_spool(spool: Spool, actor: str) -> None:
+    if spool.errors:
+        detail = "\n".join(f"ERROR {error}" for error in spool.errors)
+        raise ExchangeError(EXIT_VALIDATION, f"spool has validation errors:\n{detail}")
+    session = spool.sessions.get(actor)
+    if session is None:
+        raise ExchangeError(EXIT_USAGE, f"wait requires a registered session actor, not {actor!r}")
+    if not session.active:
+        raise ExchangeError(EXIT_OWNERSHIP, f"cannot wait for retired session actor {actor!r}")
+
+
+def _new_qualifying_messages(
+    spool: Spool,
+    actor: str,
+    observed_ids: set[str],
+    *,
+    include_broadcasts: bool,
+) -> list[Message]:
+    """Return qualifying publications found by set difference from prior scans."""
+    unseen_ids = set(spool.published) - observed_ids
+    observed_ids.update(spool.published)
+    qualifying = []
+    for message_id in unseen_ids:
+        message = spool.published[message_id]
+        if not spool._addressed(message, actor):
+            continue
+        if message.data.get("audience", "direct") == "all" and not include_broadcasts:
+            continue
+        qualifying.append(message)
+    return sorted(qualifying, key=lambda message: message.id)
+
+
+def wait_for_batch(
+    reg: Registry,
+    actor: str,
+    *,
+    idle_timeout: float,
+    debounce: float,
+    include_broadcasts: bool = False,
+    initial_spool: Spool | None = None,
+    scan: Callable[[], Spool] | None = None,
+    monotonic: Callable[[], float] = time.monotonic,
+    sleep: Callable[[float], None] = time.sleep,
+    poll_interval: float = WAIT_POLL_SECONDS,
+) -> WaitResult:
+    """Block for one trailing-edge-debounced batch, without mutating the spool.
+
+    The first validated scan is the baseline. Only message ids appearing in a
+    later validated scan can enter the batch. A second scan at an expired idle
+    or quiet boundary closes the race between the boundary scan and return.
+    Clock, sleeper, and scanner injection keep the timer logic deterministic in
+    tests while the CLI uses a portable one-second polling scan.
+    """
+    if idle_timeout <= 0 or debounce <= 0 or poll_interval <= 0:
+        raise ValueError("wait durations and poll interval must be positive")
+    scan = scan or (lambda: Spool(reg))
+    current = initial_spool or scan()
+    _require_waitable_spool(current, actor)
+    observed_ids = set(current.published)
+    batch: dict[str, Message] = {}
+    deadline = monotonic() + idle_timeout
+
+    while True:
+        remaining = deadline - monotonic()
+        if remaining > 0:
+            sleep(min(poll_interval, remaining))
+
+        current = scan()
+        _require_waitable_spool(current, actor)
+        arrivals = _new_qualifying_messages(
+            current, actor, observed_ids, include_broadcasts=include_broadcasts
+        )
+        if arrivals:
+            batch.update((message.id, message) for message in arrivals)
+            deadline = monotonic() + debounce
+            continue
+
+        if monotonic() < deadline:
+            continue
+
+        # The scan that noticed the expired deadline is not the return
+        # boundary: scan once more so a publication in that narrow race wins.
+        current = scan()
+        _require_waitable_spool(current, actor)
+        arrivals = _new_qualifying_messages(
+            current, actor, observed_ids, include_broadcasts=include_broadcasts
+        )
+        if arrivals:
+            batch.update((message.id, message) for message in arrivals)
+            deadline = monotonic() + debounce
+            continue
+
+        messages = [batch[message_id] for message_id in sorted(batch)]
+        return WaitResult("batch" if messages else "empty", messages, current)
+
+
+def cmd_wait(
+    reg: Registry,
+    actor: str | None,
+    *,
+    idle_timeout: float,
+    debounce: float,
+    include_broadcasts: bool,
+    monotonic: Callable[[], float] = time.monotonic,
+    sleep: Callable[[float], None] = time.sleep,
+    scan: Callable[[], Spool] | None = None,
+    poll_interval: float = WAIT_POLL_SECONDS,
+) -> int:
+    initial = Spool(reg)
+    actor = bound_actor(initial.actors, actor)
+    _require_waitable_spool(initial, actor)
+    result = wait_for_batch(
+        reg,
+        actor,
+        idle_timeout=idle_timeout,
+        debounce=debounce,
+        include_broadcasts=include_broadcasts,
+        initial_spool=initial,
+        scan=scan,
+        monotonic=monotonic,
+        sleep=sleep,
+        poll_interval=poll_interval,
+    )
+    if result.outcome == "batch":
+        print(f"WAIT_BATCH actor={actor} new={len(result.messages)}")
+        for message in result.messages:
+            print(f"NEW {message.id} {message.path}")
+    else:
+        print(f"WAIT_EMPTY actor={actor}")
+    for line in status_lines(result.spool, actor):
+        print(line)
+    return 0
 
 
 def _message_title(message: Message) -> str:
@@ -1127,6 +1307,19 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("join"); p.add_argument("--model", required=True); p.add_argument("--client"); p.add_argument("--note")
     p = sub.add_parser("retire"); p.add_argument("--actor"); p.add_argument("--note")
     p = sub.add_parser("status"); p.add_argument("--actor", required=True)
+    p = sub.add_parser(
+        "wait",
+        help="block for a new direct-message batch, or one idle interval",
+        description=(
+            "Take a validated baseline snapshot, then wait for newly published messages "
+            "addressed to one active session. Durations are positive numbers with an "
+            "ms, s, m, or h suffix (for example 500ms, 30s, or 5m)."
+        ),
+    )
+    p.add_argument("--actor", help=f"session actor (default: ${BINDING_ENV})")
+    p.add_argument("--idle-timeout", type=parse_duration, default=parse_duration("5m"), metavar="DURATION")
+    p.add_argument("--debounce", type=parse_duration, default=parse_duration("5m"), metavar="DURATION")
+    p.add_argument("--include-broadcasts", action="store_true", help="let new broadcasts join and reset the batch")
     p = sub.add_parser("new")
     p.add_argument("--actor"); p.add_argument("--to", required=True)
     p.add_argument("--kind", required=True); p.add_argument("--slug", required=True)
@@ -1151,12 +1344,25 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_retire(reg, a.actor, a.note)
         if a.command == "status":
             return cmd_status(reg, a.actor)
+        if a.command == "wait":
+            return cmd_wait(
+                reg,
+                a.actor,
+                idle_timeout=a.idle_timeout,
+                debounce=a.debounce,
+                include_broadcasts=a.include_broadcasts,
+            )
         if a.command == "new":
             return cmd_new(reg, a)
         if a.command == "publish":
             return cmd_publish(reg, a.actor, Path(a.draft))
         if a.command == "ack":
             return cmd_ack(reg, a.actor, a.message_id, a.disposition)
+    except KeyboardInterrupt:
+        if a.command == "wait":
+            actor = a.actor or os.environ.get(BINDING_ENV, "").strip() or "unknown"
+            print(f"WAIT_INTERRUPTED actor={actor}")
+        return 130
     except ExchangeError as exc:
         print(f"ERROR {exc}", file=sys.stderr)
         return exc.code
