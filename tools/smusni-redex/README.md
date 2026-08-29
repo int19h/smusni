@@ -505,14 +505,17 @@ limitation without calling the term ill typed.
 `Presuppose` emits `projective` and a structured obligation containing the
 alpha-normalized condition and body computation category. Obligation union is
 set-like modulo alpha, including variables bound outside the condition by a
-surrounding lambda, `Let`, or `Bind`. The expected-mode Presuppose rule follows
-nested wrappers only to an ultimately expected-only reference computation, so
-a synthable body has exactly the ordinary `Check-Synth` proof. Generic negation
-removes only escaping `refer`, retaining context, projective, effectful-call,
-performance, and all obligations. Direct GQ rules are record-equal to their
-executable expansions: the exporting forms add `refer`; zero/non-exporting
-forms do not; `Every` inherits MaxRefer's projective inhabitedness obligation;
-and every selection restrictor is a pure member property.
+surrounding lambda, `Let`, or `Bind`. The complete obligation set is normalized
+under one synthetic binder so one source variable has one canonical identity
+across every obligation, even when a genuine free variable reserves a generated
+alpha name. The expected-mode Presuppose rule follows nested wrappers only to
+an ultimately expected-only reference computation, so a synthable body has
+exactly the ordinary `Check-Synth` proof. Generic negation removes only escaping
+`refer`, retaining context, projective, effectful-call, performance, and all
+obligations. Direct GQ rules are record-equal to their executable expansions:
+the exporting forms add `refer`; zero/non-exporting forms do not; `Every`
+inherits MaxRefer's projective inhabitedness obligation; and every selection
+restrictor is a pure member property.
 
 The definition ledger now has 12 B1 `ported` entries and 18 reviewed equation
 ranges total. A parsed-definiens gate reads each RHS with the notation reader,

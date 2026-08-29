@@ -263,6 +263,24 @@
            (Presuppose (= $renamed $free) ⊤))))
  '(typing (EFn (Entity) Content) ()
           ((presuppose (= $alpha0 $free) Content))))
+(define cross-obligation-alpha-left
+  (synth (term (($alpha0 Entity)))
+         (term
+          (λ (($x Entity))
+            (∧ (Presuppose (= $x $x) ⊤)
+               (Presuppose (= $x $alpha0) ⊤))))))
+(define cross-obligation-alpha-right
+  (synth (term (($alpha0 Entity)))
+         (term
+          (λ (($y Entity))
+            (∧ (Presuppose (= $y $y) ⊤)
+               (Presuppose (= $y $alpha0) ⊤))))))
+(check-equal? cross-obligation-alpha-left cross-obligation-alpha-right)
+(check-equal?
+ cross-obligation-alpha-left
+ '(typing (EFn (Entity) Content) ()
+          ((presuppose (= $alpha1 $alpha0) Content)
+           (presuppose (= $alpha1 $alpha1) Content))))
 
 (define enclosing-let-left
   (synth (term (($value Entity)))
