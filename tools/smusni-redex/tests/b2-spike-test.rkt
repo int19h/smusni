@@ -131,18 +131,34 @@
   (b2-compile-term alpha-source-left))
 (define-values (alpha-node-right _alpha-count-right)
   (b2-compile-term alpha-source-right))
-(check-equal? (b2-node->alpha-datum alpha-node-left)
-              (b2-node->alpha-datum alpha-node-right))
+(define alpha-condition-left (b2-node-at-path alpha-node-left '(2 2 1)))
+(define alpha-condition-right (b2-node-at-path alpha-node-right '(2 2 1)))
+(check-equal? (b2-node->alpha-datum alpha-condition-left)
+              (b2-node->alpha-datum alpha-condition-right))
 (check-equal?
- (b2-node->alpha-datum alpha-node-left)
- '(λ (($alpha1 Entity))
-    (λ (($alpha0 Entity))
-      (Presuppose (= $alpha1 $alpha0) ⊤))))
+ (b2-node->alpha-datum alpha-condition-left)
+ '(= $alpha1 $alpha0))
+(define sibling-condition-left
+  '(∧ (∃ (λ (($x Entity)) (= $x $x)))
+      (∃ (λ (($y Entity)) (= $y $y)))))
+(define sibling-condition-right
+  '(∧ (∃ (λ (($a Entity)) (= $a $a)))
+      (∃ (λ (($b Entity)) (= $b $b)))))
+(define-values (sibling-node-left _sibling-count-left)
+  (b2-compile-term sibling-condition-left))
+(define-values (sibling-node-right _sibling-count-right)
+  (b2-compile-term sibling-condition-right))
+(check-equal? (b2-node->alpha-datum sibling-node-left)
+              (b2-node->alpha-datum sibling-node-right))
+(check-equal?
+ (b2-node->alpha-datum sibling-node-left)
+ '(∧ (∃ (λ (($alpha0 Entity)) (= $alpha0 $alpha0)))
+     (∃ (λ (($alpha1 Entity)) (= $alpha1 $alpha1)))))
 (define-values (free-alpha-node _free-alpha-count)
   (b2-compile-term '(λ (($x Entity)) (= $x $alpha0))))
 (check-equal?
- (b2-node->alpha-datum free-alpha-node)
- '(λ (($alpha1 Entity)) (= $alpha1 $alpha0)))
+ (b2-node->alpha-datum (b2-node-at-path free-alpha-node '(2)))
+ '(= $alpha1 $alpha0))
 
 ;; Shadowing is preserved by opaque environment snapshots and extension.
 (define shadow-env
@@ -328,10 +344,25 @@
                   (b2-reference-proofs '() datum))))
 (check-true (positive? generated-zero-count))
 
-;; R1 and K1/C1 hard stops are executable. Timing begins outside the public raw
-;; API; each query compiles once and reports exact occurrence counts.
-(define identity-report (run-b2-identity-micro))
-(check-true (b2-identity-micro-passed? identity-report))
+;; R1 and K1/C1 hard stops are executable. The five-process R1 measurement is
+;; explicit because the human-partner option-B decision shelves full migration
+;; and removes worker startup from every ordinary check-smusni run:
+;;   SMUSNI_B2_R1_FULL=1 raco test tools/smusni-redex/tests/b2-spike-test.rkt
+;; The default path retains a one-process exact-input sanity ratio.
+(define full-r1? (equal? (getenv "SMUSNI_B2_R1_FULL") "1"))
+(if full-r1?
+    (let ([identity-report (run-b2-identity-micro)])
+      (check-true (b2-identity-micro-passed? identity-report)))
+    (let* ([samples (run-b2-identity-trial '(16 32 64) 600 0)]
+           [per-call (map second (sort samples < #:key first))]
+           [ratio (/ (apply max per-call)
+                     (max 0.000001 (apply min per-call)))])
+      (check-true (<= ratio 1.5))
+      (printf "B2 identity sanity (full R1 flagged off): per-call-ms=~s max/min=~a result=pass\n"
+              (map (lambda (value) (~r value #:precision '(= 6))) per-call)
+              (~r ratio #:precision '(= 3)))))
+;; Public timing begins outside the raw API; each query compiles once and
+;; reports exact occurrence counts.
 (define growth-report (run-b2-spike-growth))
 (check-true (b2-spike-growth-passed? growth-report))
 (check-true

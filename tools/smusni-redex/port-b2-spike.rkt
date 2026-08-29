@@ -59,7 +59,7 @@
 (struct b2-binding-group (ordinal))
 (struct b2-binding (scope-group position source-symbol))
 (struct b2-node
-  (kind atom children path value-form? expected-only? binding))
+  (kind atom children path value-form? expected-only? binding binding-role))
 (struct b2-env (bindings resolved-bindings))
 
 (struct b2-proof (statement name subs) #:transparent)
@@ -132,15 +132,18 @@
   ;; Every atomic term in the closed grammar is a value. Atomic metadata is
   ;; compiled by the same generic datum traversal but is never independently
   ;; submitted to the typing judgment.
-  (values (b2-node 'atom datum '() path #t #f
-                   (or binding (scope-binding scope datum)))
+  (define resolved-binding (or binding (scope-binding scope datum)))
+  (values (b2-node 'atom datum '() path #t #f resolved-binding
+                   (cond [binding 'declaration]
+                         [resolved-binding 'reference]
+                         [else #f]))
           1))
 
 (define (make-list-node children path)
   (b2-node 'list #f children path
            (list-node-value-form? children)
            (list-node-expected-only? children)
-           #f))
+           #f #f))
 
 (define (compile-sequence datums path scope next-group)
   (define-values (reversed count)
@@ -247,7 +250,7 @@
 (define (compile-datum datum path scope next-group)
   (cond
     [(quoted-head? datum)
-     (values (b2-node 'opaque datum '() path #f #f #f) 1)]
+     (values (b2-node 'opaque datum '() path #f #f #f #f) 1)]
     [(and (list? datum) (pair? datum) (eq? (first datum) 'λ))
      (compile-lambda datum path scope next-group)]
     [(and (list? datum) (pair? datum) (eq? (first datum) 'Let))
@@ -285,20 +288,26 @@
     [else (error 'b2-node->datum "unknown node kind: ~e" (b2-node-kind node))]))
 
 ;; Project bound declarations/references through their resolved opaque identity.
-;; Groups are named in scope-exit order (inner groups first), while binders in
-;; one multi-lambda group retain source order. This matches the existing
-;; scope-record alpha policy and prevents raw/free $alphaN spellings from
-;; masquerading as a bound identity.
+;; Declarations inside the projected subtree are named in ordinary left-to-
+;; right syntax traversal order, exactly like alpha-normalize-datum. References
+;; whose declarations are outside the subtree are then named by scope-exit
+;; order (inner groups first). Truly free $alphaN spellings are reserved first.
 (define (b2-node->alpha-datum node)
   (unless (b2-node? node)
     (raise-argument-error 'b2-node->alpha-datum "b2-node?" node))
-  (define bindings '())
+  (define internal-bindings-reversed '())
+  (define external-bindings-reversed '())
   (define free-symbols (mutable-set))
   (define (collect current)
     (unless (eq? (b2-node-kind current) 'opaque)
       (define binding (b2-node-binding current))
       (cond
-        [binding (set! bindings (cons binding bindings))]
+        [(eq? (b2-node-binding-role current) 'declaration)
+         (set! internal-bindings-reversed
+               (cons binding internal-bindings-reversed))]
+        [(eq? (b2-node-binding-role current) 'reference)
+         (set! external-bindings-reversed
+               (cons binding external-bindings-reversed))]
         [(and (eq? (b2-node-kind current) 'atom)
               (symbol? (b2-node-atom current))
               (string-prefix? (symbol->string (b2-node-atom current)) "$"))
@@ -306,9 +315,18 @@
       (for ([child (in-list (b2-node-children current))])
         (collect child))))
   (collect node)
-  (define unique-bindings (remove-duplicates bindings eq?))
-  (define ordered-bindings
-    (sort unique-bindings
+  (define internal-bindings
+    (remove-duplicates (reverse internal-bindings-reversed) eq?))
+  (define internal-groups
+    (for/seteq ([binding (in-list internal-bindings)])
+      (b2-binding-scope-group binding)))
+  (define external-bindings
+    (filter
+     (lambda (binding)
+       (not (set-member? internal-groups (b2-binding-scope-group binding))))
+     (remove-duplicates (reverse external-bindings-reversed) eq?)))
+  (define ordered-external-bindings
+    (sort external-bindings
           (lambda (left right)
             (define left-group
               (b2-binding-group-ordinal (b2-binding-scope-group left)))
@@ -318,6 +336,8 @@
                 (and (= left-group right-group)
                      (< (b2-binding-position left)
                         (b2-binding-position right)))))))
+  (define ordered-bindings
+    (append internal-bindings ordered-external-bindings))
   (define names (make-hasheq))
   (define used (set-copy free-symbols))
   (define counter 0)
@@ -723,12 +743,12 @@
 
 (define (micro-descendant-root depth serial)
   (define descendant
-    (for/fold ([child (b2-node 'atom serial '() '(leaf) #t #f #f)])
+    (for/fold ([child (b2-node 'atom serial '() '(leaf) #t #f #f #f)])
               ([index (in-range depth)])
       (b2-node 'list #f (list child)
-               (list 'descendant index) #f #f #f)))
+               (list 'descendant index) #f #f #f #f)))
   (b2-node 'list #f (list descendant)
-           (list 'root serial depth) #f #f #f))
+           (list 'root serial depth) #f #f #f #f))
 
 (define (run-b2-identity-trial depths repetitions trial)
   (define order

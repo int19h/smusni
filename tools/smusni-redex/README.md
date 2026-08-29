@@ -578,9 +578,11 @@ exactly.
 
 The accepted R1–R4/K1/C1–C4 gates are executable:
 
-- five fresh Racket worker processes run the Redex identity-path microbenchmark;
-  each varies both descendant count and environment depth at 16/32/64, with a
-  1.5× max/min ceiling and a 10% material-slope noise boundary;
+- under the explicit `SMUSNI_B2_R1_FULL=1` test flag, five fresh Racket worker
+  processes run the Redex identity-path microbenchmark; each varies both
+  descendant count and environment depth at 16/32/64, with a 1.5× max/min
+  ceiling and a 10% material-slope noise boundary. Ordinary `check-smusni`
+  runs one in-process exact-input sanity ratio and does not pay worker startup;
 - one macro invocation emits each executable rule and its accessor-shape/raw-
   production descriptor; that accessor token also executes the rule's root
   match. Missing/duplicate/stale descriptor mutations fail;
@@ -596,19 +598,22 @@ The accepted R1–R4/K1/C1–C4 gates are executable:
   opacity-aware occurrence count.
 
 The corrected tracked literal measurement is R1 per-call
-0.012896/0.012520/0.013352 ms (max/min 1.066×, pass). Public compile+judge at
-16/32/64 is 1.448/4.027/11.760 ms, including compile
-0.068/0.136/0.365 ms, with node counts 97/193/385 and doubling ratios
-2.781×/2.921× (both below the 4× hard stop). The report-only 32/64/128 point is
-3.398/10.212/36.646 ms total, compile 0.158/0.335/0.978 ms, judge
-3.239/9.875/35.666 ms, node counts 193/385/769, ratios 3.005×/3.589×; copied
+0.012513/0.012169/0.013439 ms (max/min 1.104×, pass). Public compile+judge at
+16/32/64 is 1.588/4.375/12.240 ms, including compile
+0.086/0.151/0.533 ms, with node counts 97/193/385 and doubling ratios
+2.755×/2.798× (both below the 4× hard stop). The report-only 32/64/128 point is
+3.861/10.569/35.458 ms total, compile 0.168/0.367/0.994 ms, judge
+3.691/10.200/34.462 ms, node counts 193/385/769, ratios 2.738×/3.355×; copied
 list paths remain a full-migration review item rather than a hidden claim of
 asymptotic completion.
 Cache capacity controls at 256 and 4096 remained above 5×, while disabling
 caching worsened the second ratio to 6.340×; capacity tuning is therefore not
 the mechanism.
 
-This measurement releases no full rule migration and no B2 family clause. The
-temporary slice and its profile await exact review. Full migration/public-API
-switch is a separate second PR only after that review; host traversal remains a
-separate design and is never an automatic fallback.
+This measurement releases no full rule migration. By the human-partner option-B
+decision, full migration/public-API switching is deferred until a practical
+typing trigger fires on real terms or lowering outputs; the raw judgment remains
+the executable vehicle for B-family work. The spike is retained as measured
+fallback evidence. Host traversal remains a separate design and is never an
+automatic fallback. Run the isolated R1 evidence explicitly with
+`SMUSNI_B2_R1_FULL=1 raco test tools/smusni-redex/tests/b2-spike-test.rkt`.
