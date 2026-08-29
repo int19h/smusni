@@ -498,6 +498,461 @@ def Primitive.all : List Primitive := [
   .xor,
 ]
 
+inductive FirstOrderPrimitive where
+  | add
+  | lessThan
+  | equal
+  | actContent
+  | admissibleCutoff
+  | admissibleThreshold
+  | aggregate
+  | among
+  | amountValue
+  | answer
+  | ask
+  | assert
+  | attachedAddress
+  | attachedDisplay
+  | audience
+  | basisUnitAt
+  | card
+  | closeClause
+  | combine
+  | contrast
+  | contributesAt
+  | currentToken
+  | deictic
+  | desire
+  | do
+  | doOOthers
+  | dropPlace
+  | during
+  | enumerationOrdinal
+  | eventOfContent
+  | evidentialBasis
+  | express
+  | generic
+  | happiness
+  | hearsay
+  | holds
+  | host
+  | inContext
+  | innatelyCapable
+  | intense
+  | interpretAct
+  | interpretContent
+  | jaiRoleAdmissible
+  | jeiRel
+  | letteralSign
+  | list
+  | local
+  | locutionOf
+  | maAOthers
+  | manyK
+  | mention
+  | metalinguisticallyDefective
+  | miAOthers
+  | mixAt
+  | moderate
+  | motionVector
+  | named
+  | nameSign
+  | newTopic
+  | niRel
+  | now
+  | observation
+  | opaqueQuote
+  | openQ
+  | otherThan
+  | peerUnitAt
+  | perform
+  | polar
+  | presuppose
+  | questionOf
+  | realizedAct
+  | realizedContent
+  | realizedDiscourse
+  | realizes
+  | refer
+  | reify
+  | resume
+  | scalar
+  | selectAllBut
+  | selectAtLeast
+  | selectExactly
+  | sentenceSign
+  | set
+  | setOf
+  | shiftedGround
+  | speaker
+  | speakerOf
+  | stateClause
+  | structuredQuote
+  | suhuRel
+  | supplement
+  | tanruAdmissible
+  | teha
+  | tooManyK
+  | topicAdmissible
+  | typical
+  | unhappiness
+  | wordSign
+  | not
+  | multiply
+  | divide
+  | implies
+  | iff
+  | forall
+  | exists
+  | memberOf
+  | subtract
+  | and
+  | or
+  | lessOrEqual
+  | xor
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+def FirstOrderPrimitive.name : FirstOrderPrimitive → String
+  | .add => "term:+"
+  | .lessThan => "term:<"
+  | .equal => "term:="
+  | .actContent => "term:ActContent"
+  | .admissibleCutoff => "term:AdmissibleCutoff"
+  | .admissibleThreshold => "term:AdmissibleThreshold"
+  | .aggregate => "term:Aggregate"
+  | .among => "term:Among"
+  | .amountValue => "term:AmountValue"
+  | .answer => "term:Answer"
+  | .ask => "term:Ask"
+  | .assert => "term:Assert"
+  | .attachedAddress => "term:AttachedAddress"
+  | .attachedDisplay => "term:AttachedDisplay"
+  | .audience => "term:Audience"
+  | .basisUnitAt => "term:BasisUnitAt"
+  | .card => "term:Card"
+  | .closeClause => "term:CloseClause"
+  | .combine => "term:Combine"
+  | .contrast => "term:Contrast"
+  | .contributesAt => "term:ContributesAt"
+  | .currentToken => "term:CurrentToken"
+  | .deictic => "term:Deictic"
+  | .desire => "term:Desire"
+  | .do => "term:Do"
+  | .doOOthers => "term:DoOOthers"
+  | .dropPlace => "term:DropPlace"
+  | .during => "term:During"
+  | .enumerationOrdinal => "term:EnumerationOrdinal"
+  | .eventOfContent => "term:EventOfContent"
+  | .evidentialBasis => "term:EvidentialBasis"
+  | .express => "term:Express"
+  | .generic => "term:Generic"
+  | .happiness => "term:Happiness"
+  | .hearsay => "term:Hearsay"
+  | .holds => "term:Holds"
+  | .host => "term:Host"
+  | .inContext => "term:InContext"
+  | .innatelyCapable => "term:InnatelyCapable"
+  | .intense => "term:Intense"
+  | .interpretAct => "term:InterpretAct"
+  | .interpretContent => "term:InterpretContent"
+  | .jaiRoleAdmissible => "term:JaiRoleAdmissible"
+  | .jeiRel => "term:JeiRel"
+  | .letteralSign => "term:LetteralSign"
+  | .list => "term:List"
+  | .local => "term:Local"
+  | .locutionOf => "term:LocutionOf"
+  | .maAOthers => "term:MaAOthers"
+  | .manyK => "term:ManyK"
+  | .mention => "term:Mention"
+  | .metalinguisticallyDefective => "term:MetalinguisticallyDefective"
+  | .miAOthers => "term:MiAOthers"
+  | .mixAt => "term:MixAt"
+  | .moderate => "term:Moderate"
+  | .motionVector => "term:MotionVector"
+  | .named => "term:Named"
+  | .nameSign => "term:NameSign"
+  | .newTopic => "term:NewTopic"
+  | .niRel => "term:NiRel"
+  | .now => "term:Now"
+  | .observation => "term:Observation"
+  | .opaqueQuote => "term:OpaqueQuote"
+  | .openQ => "term:OpenQ"
+  | .otherThan => "term:OtherThan"
+  | .peerUnitAt => "term:PeerUnitAt"
+  | .perform => "term:Perform"
+  | .polar => "term:Polar"
+  | .presuppose => "term:Presuppose"
+  | .questionOf => "term:QuestionOf"
+  | .realizedAct => "term:RealizedAct"
+  | .realizedContent => "term:RealizedContent"
+  | .realizedDiscourse => "term:RealizedDiscourse"
+  | .realizes => "term:Realizes"
+  | .refer => "term:Refer"
+  | .reify => "term:Reify"
+  | .resume => "term:Resume"
+  | .scalar => "term:Scalar"
+  | .selectAllBut => "term:SelectAllBut"
+  | .selectAtLeast => "term:SelectAtLeast"
+  | .selectExactly => "term:SelectExactly"
+  | .sentenceSign => "term:SentenceSign"
+  | .set => "term:Set"
+  | .setOf => "term:SetOf"
+  | .shiftedGround => "term:ShiftedGround"
+  | .speaker => "term:Speaker"
+  | .speakerOf => "term:SpeakerOf"
+  | .stateClause => "term:StateClause"
+  | .structuredQuote => "term:StructuredQuote"
+  | .suhuRel => "term:SuhuRel"
+  | .supplement => "term:Supplement"
+  | .tanruAdmissible => "term:TanruAdmissible"
+  | .teha => "term:te'a"
+  | .tooManyK => "term:TooManyK"
+  | .topicAdmissible => "term:TopicAdmissible"
+  | .typical => "term:Typical"
+  | .unhappiness => "term:Unhappiness"
+  | .wordSign => "term:WordSign"
+  | .not => "term:¬"
+  | .multiply => "term:×"
+  | .divide => "term:÷"
+  | .implies => "term:→"
+  | .iff => "term:↔"
+  | .forall => "term:∀"
+  | .exists => "term:∃"
+  | .memberOf => "term:∈"
+  | .subtract => "term:−"
+  | .and => "term:∧"
+  | .or => "term:∨"
+  | .lessOrEqual => "term:≤"
+  | .xor => "term:⊕"
+
+def FirstOrderPrimitive.ofName : String → Option FirstOrderPrimitive
+  | "term:+" => Option.some .add
+  | "term:<" => Option.some .lessThan
+  | "term:=" => Option.some .equal
+  | "term:ActContent" => Option.some .actContent
+  | "term:AdmissibleCutoff" => Option.some .admissibleCutoff
+  | "term:AdmissibleThreshold" => Option.some .admissibleThreshold
+  | "term:Aggregate" => Option.some .aggregate
+  | "term:Among" => Option.some .among
+  | "term:AmountValue" => Option.some .amountValue
+  | "term:Answer" => Option.some .answer
+  | "term:Ask" => Option.some .ask
+  | "term:Assert" => Option.some .assert
+  | "term:AttachedAddress" => Option.some .attachedAddress
+  | "term:AttachedDisplay" => Option.some .attachedDisplay
+  | "term:Audience" => Option.some .audience
+  | "term:BasisUnitAt" => Option.some .basisUnitAt
+  | "term:Card" => Option.some .card
+  | "term:CloseClause" => Option.some .closeClause
+  | "term:Combine" => Option.some .combine
+  | "term:Contrast" => Option.some .contrast
+  | "term:ContributesAt" => Option.some .contributesAt
+  | "term:CurrentToken" => Option.some .currentToken
+  | "term:Deictic" => Option.some .deictic
+  | "term:Desire" => Option.some .desire
+  | "term:Do" => Option.some .do
+  | "term:DoOOthers" => Option.some .doOOthers
+  | "term:DropPlace" => Option.some .dropPlace
+  | "term:During" => Option.some .during
+  | "term:EnumerationOrdinal" => Option.some .enumerationOrdinal
+  | "term:EventOfContent" => Option.some .eventOfContent
+  | "term:EvidentialBasis" => Option.some .evidentialBasis
+  | "term:Express" => Option.some .express
+  | "term:Generic" => Option.some .generic
+  | "term:Happiness" => Option.some .happiness
+  | "term:Hearsay" => Option.some .hearsay
+  | "term:Holds" => Option.some .holds
+  | "term:Host" => Option.some .host
+  | "term:InContext" => Option.some .inContext
+  | "term:InnatelyCapable" => Option.some .innatelyCapable
+  | "term:Intense" => Option.some .intense
+  | "term:InterpretAct" => Option.some .interpretAct
+  | "term:InterpretContent" => Option.some .interpretContent
+  | "term:JaiRoleAdmissible" => Option.some .jaiRoleAdmissible
+  | "term:JeiRel" => Option.some .jeiRel
+  | "term:LetteralSign" => Option.some .letteralSign
+  | "term:List" => Option.some .list
+  | "term:Local" => Option.some .local
+  | "term:LocutionOf" => Option.some .locutionOf
+  | "term:MaAOthers" => Option.some .maAOthers
+  | "term:ManyK" => Option.some .manyK
+  | "term:Mention" => Option.some .mention
+  | "term:MetalinguisticallyDefective" => Option.some .metalinguisticallyDefective
+  | "term:MiAOthers" => Option.some .miAOthers
+  | "term:MixAt" => Option.some .mixAt
+  | "term:Moderate" => Option.some .moderate
+  | "term:MotionVector" => Option.some .motionVector
+  | "term:Named" => Option.some .named
+  | "term:NameSign" => Option.some .nameSign
+  | "term:NewTopic" => Option.some .newTopic
+  | "term:NiRel" => Option.some .niRel
+  | "term:Now" => Option.some .now
+  | "term:Observation" => Option.some .observation
+  | "term:OpaqueQuote" => Option.some .opaqueQuote
+  | "term:OpenQ" => Option.some .openQ
+  | "term:OtherThan" => Option.some .otherThan
+  | "term:PeerUnitAt" => Option.some .peerUnitAt
+  | "term:Perform" => Option.some .perform
+  | "term:Polar" => Option.some .polar
+  | "term:Presuppose" => Option.some .presuppose
+  | "term:QuestionOf" => Option.some .questionOf
+  | "term:RealizedAct" => Option.some .realizedAct
+  | "term:RealizedContent" => Option.some .realizedContent
+  | "term:RealizedDiscourse" => Option.some .realizedDiscourse
+  | "term:Realizes" => Option.some .realizes
+  | "term:Refer" => Option.some .refer
+  | "term:Reify" => Option.some .reify
+  | "term:Resume" => Option.some .resume
+  | "term:Scalar" => Option.some .scalar
+  | "term:SelectAllBut" => Option.some .selectAllBut
+  | "term:SelectAtLeast" => Option.some .selectAtLeast
+  | "term:SelectExactly" => Option.some .selectExactly
+  | "term:SentenceSign" => Option.some .sentenceSign
+  | "term:Set" => Option.some .set
+  | "term:SetOf" => Option.some .setOf
+  | "term:ShiftedGround" => Option.some .shiftedGround
+  | "term:Speaker" => Option.some .speaker
+  | "term:SpeakerOf" => Option.some .speakerOf
+  | "term:StateClause" => Option.some .stateClause
+  | "term:StructuredQuote" => Option.some .structuredQuote
+  | "term:SuhuRel" => Option.some .suhuRel
+  | "term:Supplement" => Option.some .supplement
+  | "term:TanruAdmissible" => Option.some .tanruAdmissible
+  | "term:te'a" => Option.some .teha
+  | "term:TooManyK" => Option.some .tooManyK
+  | "term:TopicAdmissible" => Option.some .topicAdmissible
+  | "term:Typical" => Option.some .typical
+  | "term:Unhappiness" => Option.some .unhappiness
+  | "term:WordSign" => Option.some .wordSign
+  | "term:¬" => Option.some .not
+  | "term:×" => Option.some .multiply
+  | "term:÷" => Option.some .divide
+  | "term:→" => Option.some .implies
+  | "term:↔" => Option.some .iff
+  | "term:∀" => Option.some .forall
+  | "term:∃" => Option.some .exists
+  | "term:∈" => Option.some .memberOf
+  | "term:−" => Option.some .subtract
+  | "term:∧" => Option.some .and
+  | "term:∨" => Option.some .or
+  | "term:≤" => Option.some .lessOrEqual
+  | "term:⊕" => Option.some .xor
+  | _ => Option.none
+
+def FirstOrderPrimitive.all : List FirstOrderPrimitive := [
+  .add,
+  .lessThan,
+  .equal,
+  .actContent,
+  .admissibleCutoff,
+  .admissibleThreshold,
+  .aggregate,
+  .among,
+  .amountValue,
+  .answer,
+  .ask,
+  .assert,
+  .attachedAddress,
+  .attachedDisplay,
+  .audience,
+  .basisUnitAt,
+  .card,
+  .closeClause,
+  .combine,
+  .contrast,
+  .contributesAt,
+  .currentToken,
+  .deictic,
+  .desire,
+  .do,
+  .doOOthers,
+  .dropPlace,
+  .during,
+  .enumerationOrdinal,
+  .eventOfContent,
+  .evidentialBasis,
+  .express,
+  .generic,
+  .happiness,
+  .hearsay,
+  .holds,
+  .host,
+  .inContext,
+  .innatelyCapable,
+  .intense,
+  .interpretAct,
+  .interpretContent,
+  .jaiRoleAdmissible,
+  .jeiRel,
+  .letteralSign,
+  .list,
+  .local,
+  .locutionOf,
+  .maAOthers,
+  .manyK,
+  .mention,
+  .metalinguisticallyDefective,
+  .miAOthers,
+  .mixAt,
+  .moderate,
+  .motionVector,
+  .named,
+  .nameSign,
+  .newTopic,
+  .niRel,
+  .now,
+  .observation,
+  .opaqueQuote,
+  .openQ,
+  .otherThan,
+  .peerUnitAt,
+  .perform,
+  .polar,
+  .presuppose,
+  .questionOf,
+  .realizedAct,
+  .realizedContent,
+  .realizedDiscourse,
+  .realizes,
+  .refer,
+  .reify,
+  .resume,
+  .scalar,
+  .selectAllBut,
+  .selectAtLeast,
+  .selectExactly,
+  .sentenceSign,
+  .set,
+  .setOf,
+  .shiftedGround,
+  .speaker,
+  .speakerOf,
+  .stateClause,
+  .structuredQuote,
+  .suhuRel,
+  .supplement,
+  .tanruAdmissible,
+  .teha,
+  .tooManyK,
+  .topicAdmissible,
+  .typical,
+  .unhappiness,
+  .wordSign,
+  .not,
+  .multiply,
+  .divide,
+  .implies,
+  .iff,
+  .forall,
+  .exists,
+  .memberOf,
+  .subtract,
+  .and,
+  .or,
+  .lessOrEqual,
+  .xor,
+]
+
 inductive SurfaceHead where
   | actualClause
   | additive

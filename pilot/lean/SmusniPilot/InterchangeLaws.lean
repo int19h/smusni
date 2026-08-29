@@ -22,21 +22,23 @@ mutual
     | bind {scope : Nat} (binderType : Ty)
         (computation : TermDatum scope)
         (body : TermDatum (scope + 1)) : TermDatum scope
-    | apply {scope : Nat}
-        (function argument : TermDatum scope) : TermDatum scope
+    | apply {scope : Nat} (function : TermDatum scope)
+        (arguments : TermDatumList scope) : TermDatum scope
     | lexical {scope : Nat} (predicate : String)
         (arguments : TermDatumList scope) : TermDatum scope
-    | context {scope : Nat} (site : Site scope)
+    | context {scope : Nat} (site : SiteId)
         (arguments : TermDatumList scope) : TermDatum scope
-    | vague {scope : Nat} (site : Site scope)
+    | vague {scope : Nat} (site : SiteId)
         (constraint : TermDatum scope) : TermDatum scope
-    | primitive {scope : Nat} (operator : Primitive)
+    | primitive {scope : Nat} (operator : FirstOrderPrimitive)
         (arguments : TermDatumList scope) : TermDatum scope
     deriving Repr
 
   inductive TermDatumList : Nat → Type where
     | nil {scope : Nat} : TermDatumList scope
-    | cons {scope : Nat} (head : TermDatum scope)
+    | positional {scope : Nat} (head : TermDatum scope)
+        (tail : TermDatumList scope) : TermDatumList scope
+    | labelled {scope : Nat} (label : String) (head : TermDatum scope)
         (tail : TermDatumList scope) : TermDatumList scope
     deriving Repr
 end
@@ -51,8 +53,8 @@ mutual
     | .lambda binderType body => .lambda binderType (TermDatum.ofTerm body)
     | .bind binderType computation body =>
         .bind binderType (TermDatum.ofTerm computation) (TermDatum.ofTerm body)
-    | .apply function argument =>
-        .apply (TermDatum.ofTerm function) (TermDatum.ofTerm argument)
+    | .apply function arguments =>
+        .apply (TermDatum.ofTerm function) (TermDatumList.ofTerms arguments)
     | .lexical predicate arguments =>
         .lexical predicate (TermDatumList.ofTerms arguments)
     | .context site arguments =>
@@ -64,8 +66,10 @@ mutual
   def TermDatumList.ofTerms {scope : Nat} :
       TermList scope → TermDatumList scope
     | .nil => .nil
-    | .cons head tail =>
-        .cons (TermDatum.ofTerm head) (TermDatumList.ofTerms tail)
+    | .positional head tail =>
+        .positional (TermDatum.ofTerm head) (TermDatumList.ofTerms tail)
+    | .labelled label head tail =>
+        .labelled label (TermDatum.ofTerm head) (TermDatumList.ofTerms tail)
 end
 
 mutual
@@ -78,8 +82,8 @@ mutual
     | .lambda binderType body => .lambda binderType (TermDatum.toTerm body)
     | .bind binderType computation body =>
         .bind binderType (TermDatum.toTerm computation) (TermDatum.toTerm body)
-    | .apply function argument =>
-        .apply (TermDatum.toTerm function) (TermDatum.toTerm argument)
+    | .apply function arguments =>
+        .apply (TermDatum.toTerm function) (TermDatumList.toTerms arguments)
     | .lexical predicate arguments =>
         .lexical predicate (TermDatumList.toTerms arguments)
     | .context site arguments =>
@@ -91,8 +95,10 @@ mutual
   def TermDatumList.toTerms {scope : Nat} :
       TermDatumList scope → TermList scope
     | .nil => .nil
-    | .cons head tail =>
-        .cons (TermDatum.toTerm head) (TermDatumList.toTerms tail)
+    | .positional head tail =>
+        .positional (TermDatum.toTerm head) (TermDatumList.toTerms tail)
+    | .labelled label head tail =>
+        .labelled label (TermDatum.toTerm head) (TermDatumList.toTerms tail)
 end
 
 @[simp] theorem TermDatum.toTerm_ofTerm {scope : Nat} (term : Term scope) :

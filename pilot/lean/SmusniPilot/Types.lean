@@ -6,6 +6,7 @@ inductive Ty where
   | named (name : TypeName) (arguments : List Ty)
   | variable (name : String)
   | index (value : String)
+  | function (effectful : Bool) (parameters : List Ty) (result : Ty)
   deriving Repr, BEq, Inhabited
 
 structure FreeId where
@@ -36,5 +37,30 @@ structure Site (scope : Nat) where
   dependencies : List (Dependency scope)
   rrLink : Option String := none
   deriving Repr, DecidableEq, BEq
+
+inductive SerializedDependency where
+  | bound (index : Nat)
+  | free (identity : FreeId)
+  | site (identity : SiteId)
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+structure SiteEntry where
+  identity : SiteId
+  role : SiteRole
+  dependencies : List SerializedDependency
+  rrLink : Option String := Option.none
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+def SerializedDependency.ofDependency {scope : Nat} :
+    Dependency scope → SerializedDependency
+  | .bound index => .bound index.val
+  | .free identity => .free identity
+  | .site identity => .site identity
+
+def SiteEntry.ofSite {scope : Nat} (site : Site scope) : SiteEntry :=
+  { identity := site.identity
+    role := site.role
+    dependencies := site.dependencies.map SerializedDependency.ofDependency
+    rrLink := site.rrLink }
 
 end SmusniPilot

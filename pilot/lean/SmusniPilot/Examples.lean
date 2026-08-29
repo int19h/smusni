@@ -22,17 +22,20 @@ theorem binder_spelling_is_nonsemantic (first second : String) :
     eraseNamedIdentity first = eraseNamedIdentity second := rfl
 
 def sharedSiteFunction : Term 0 :=
-  .lambda entityTy (.context (writtenSite 0 .context) .nil)
+  .lambda entityTy
+    (.context (writtenSite (scope := 0) 0 .context).identity .nil)
 
 def sharedSiteUsedTwice : Term 0 :=
   .primitive .and <|
-    .cons (.apply sharedSiteFunction (.natural 1)) <|
-    .cons (.apply sharedSiteFunction (.natural 2)) .nil
+    .positional (.apply sharedSiteFunction (.positional (.natural 1) .nil)) <|
+    .positional (.apply sharedSiteFunction (.positional (.natural 2) .nil)) .nil
 
 def copiedSites : Term 0 :=
   .primitive .and <|
-    .cons (.context (writtenSite 0 .context) .nil) <|
-    .cons (.context (writtenSite 1 .context) .nil) .nil
+    .positional
+      (.context (writtenSite (scope := 0) 0 .context).identity .nil) <|
+    .positional
+      (.context (writtenSite (scope := 0) 1 .context).identity .nil) .nil
 
 theorem sharing_preserves_one_site_identity :
     sharedSiteUsedTwice.siteIds =
@@ -46,14 +49,13 @@ theorem copying_mints_distinct_site_identities :
        (writtenSite (scope := 0) 1 .context).identity] :=
   rfl
 
-def dependentSiteTerm : Term 1 :=
-  .context (writtenSite 7 .context [.bound 0]) .nil
+def dependentSite : Site 1 := writtenSite 7 .context [.bound 0]
 
 def replacementFree : FreeId := { domain := "$replacement", serial := 0 }
 
 theorem dependency_substitution_is_capture_avoiding :
-    dependentSiteTerm.substitute (fun _ => .free replacementFree) =
-      (.context (writtenSite 7 .context [.free replacementFree]) .nil : Term 0) :=
+    dependentSite.substitute (fun _ => .free replacementFree) =
+      (writtenSite 7 .context [.free replacementFree] : Site 0) :=
   rfl
 
 def exampleBundle : Interchange.Bundle 0 :=
@@ -81,22 +83,32 @@ example :
   Interchange.BundleDatum.toBundle_ofBundle exampleBundle
 
 def generatedCoreTerms : List (Term 0) :=
-  let primitiveTerms := Primitive.all.zipIdx.map fun (operator, index) =>
-    .primitive operator (.cons (.natural index) .nil)
+  let primitiveTerms := FirstOrderPrimitive.all.zipIdx.map fun (operator, index) =>
+    .primitive operator (.positional (.natural index) .nil)
   let siteTerms := (List.range 128).map fun ordinal =>
-    .context (writtenSite ordinal .context) (.cons (.natural ordinal) .nil)
+    .context (writtenSite (scope := 0) ordinal .context).identity
+      (.positional (.natural ordinal) .nil)
   let binderTerms := (List.range 64).map fun literal =>
-    .lambda entityTy (.apply (.bound 0) (.natural literal))
+    .lambda entityTy (.apply (.bound 0) (.positional (.natural literal) .nil))
   primitiveTerms ++ siteTerms ++ binderTerms
+
+def generatedBundle (term : Term 0) : Interchange.Bundle 0 :=
+  let sites := term.siteIds.eraseDups.map fun identity =>
+    { identity, role := .context, dependencies := [] }
+  { version := 1, term, sites, sourceMap := [] }
 
 def runGeneratedRoundTrips : IO Nat := do
   for (term, index) in generatedCoreTerms.zipIdx do
-    let bundle : Interchange.Bundle 0 :=
-      { version := 1, term, sites := [], sourceMap := [] }
+    let bundle := generatedBundle term
     let encoded := Interchange.Bundle.encode bundle
     let decoded ← IO.ofExcept (Interchange.Bundle.decode 0 encoded)
     if !(Interchange.Bundle.encode decoded == encoded) then
       throw <| IO.userError s!"generated bundle round trip failed at {index}"
+    let canonical := Interchange.renderCanonicalTerm term
+    let decodedTerm ← IO.ofExcept
+      (Interchange.decodeCanonicalTerm 0 canonical)
+    if Interchange.renderCanonicalTerm decodedTerm != canonical then
+      throw <| IO.userError s!"generated canonical term round trip failed at {index}"
   pure generatedCoreTerms.length
 
 def runLocalGates : IO Unit := do
@@ -115,13 +127,51 @@ def runLocalGates : IO Unit := do
     throw <| IO.userError "shared site identity was rekeyed"
   if copiedSites.siteIds.head? == copiedSites.siteIds.getLast? then
     throw <| IO.userError "copied occurrences reused a site identity"
+  let missing := { exampleBundle with sites := exampleBundle.sites.drop 1 }
+  if missing.validate.isOk then
+    throw <| IO.userError "missing site sidecar entry was accepted"
+  let extraEntry : SiteEntry :=
+    { identity :=
+        { document := "extra"
+          occurrence := 99
+          expansionRole := "written-context" }
+      role := .context, dependencies := [] }
+  let extra := { exampleBundle with sites := exampleBundle.sites ++ [extraEntry] }
+  if extra.validate.isOk then
+    throw <| IO.userError "extra site sidecar entry was accepted"
+  let duplicate :=
+    { exampleBundle with sites := exampleBundle.sites ++ [exampleBundle.sites.head!] }
+  if duplicate.validate.isOk then
+    throw <| IO.userError "duplicate site sidecar entry was accepted"
+  let conflictingEntry :=
+    { exampleBundle.sites.head! with role := SiteRole.vague }
+  let conflict :=
+    { exampleBundle with sites := conflictingEntry :: exampleBundle.sites.tail }
+  if conflict.validate.isOk then
+    throw <| IO.userError "conflicting site role was accepted"
+  let scopedId : SiteId :=
+    { document := "scope"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let scopedBundle : Interchange.Bundle 0 :=
+    { version := 1
+      term := .context scopedId .nil
+      sites := [
+        { identity := scopedId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  if scopedBundle.validate.isOk then
+    throw <| IO.userError "out-of-scope site dependency was accepted"
   let alphaX := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($x :: Entity) $x)"))
   let alphaY := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($renamed :: Entity) $renamed)"))
   let bundleX ← IO.ofExcept (Interchange.Bundle.ofSurface "alpha" alphaX)
   let bundleY ← IO.ofExcept (Interchange.Bundle.ofSurface "alpha" alphaY)
-  if !(Interchange.encodeTerm bundleX.term == Interchange.encodeTerm bundleY.term) then
+  if Interchange.renderCanonicalTerm bundleX.term !=
+      Interchange.renderCanonicalTerm bundleY.term then
     throw <| IO.userError "alpha-renamed binders changed CoreTerm"
   if bundleX.sourceMap.head?.bind (·.binderSpellings.head?) ==
       bundleY.sourceMap.head?.bind (·.binderSpellings.head?) then

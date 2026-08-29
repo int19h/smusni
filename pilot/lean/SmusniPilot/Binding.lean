@@ -36,21 +36,21 @@ mutual
     | .bind binderType computation body =>
         .bind binderType (computation.rename ρ)
           (body.rename (Renaming.lift ρ))
-    | .apply function argument =>
-        .apply (function.rename ρ) (argument.rename ρ)
+    | .apply function arguments =>
+        .apply (function.rename ρ) (arguments.rename ρ)
     | .lexical predicate arguments =>
         .lexical predicate (arguments.rename ρ)
-    | .context site arguments =>
-        .context (site.rename ρ) (arguments.rename ρ)
-    | .vague site constraint =>
-        .vague (site.rename ρ) (constraint.rename ρ)
+    | .context site arguments => .context site (arguments.rename ρ)
+    | .vague site constraint => .vague site (constraint.rename ρ)
     | .primitive operator arguments =>
         .primitive operator (arguments.rename ρ)
 
   def TermList.rename {source target : Nat}
       (ρ : Renaming source target) : TermList source → TermList target
     | .nil => .nil
-    | .cons head tail => .cons (head.rename ρ) (tail.rename ρ)
+    | .positional head tail => .positional (head.rename ρ) (tail.rename ρ)
+    | .labelled label head tail =>
+        .labelled label (head.rename ρ) (tail.rename ρ)
 end
 
 mutual
@@ -68,16 +68,17 @@ mutual
     | .lambda _ body => body.dependencies.filterMap Dependency.lower
     | .bind _ computation body =>
         computation.dependencies ++ body.dependencies.filterMap Dependency.lower
-    | .apply function argument => function.dependencies ++ argument.dependencies
+    | .apply function arguments => function.dependencies ++ arguments.dependencies
     | .lexical _ arguments => arguments.dependencies
-    | .context site arguments => site.dependencies ++ arguments.dependencies
-    | .vague site constraint => site.dependencies ++ constraint.dependencies
+    | .context _ arguments => arguments.dependencies
+    | .vague _ constraint => constraint.dependencies
     | .primitive _ arguments => arguments.dependencies
 
   def TermList.dependencies {scope : Nat} :
       TermList scope → List (Dependency scope)
     | .nil => []
-    | .cons head tail => head.dependencies ++ tail.dependencies
+    | .positional head tail | .labelled _ head tail =>
+        head.dependencies ++ tail.dependencies
 end
 
 namespace Substitution
@@ -118,17 +119,15 @@ mutual
     | .bind binderType computation body =>
         .bind binderType (computation.substitute substitution)
           (body.substitute (Substitution.lift substitution))
-    | .apply function argument =>
+    | .apply function arguments =>
         .apply (function.substitute substitution)
-          (argument.substitute substitution)
+          (arguments.substitute substitution)
     | .lexical predicate arguments =>
         .lexical predicate (arguments.substitute substitution)
     | .context site arguments =>
-        .context (site.substitute substitution)
-          (arguments.substitute substitution)
+        .context site (arguments.substitute substitution)
     | .vague site constraint =>
-        .vague (site.substitute substitution)
-          (constraint.substitute substitution)
+        .vague site (constraint.substitute substitution)
     | .primitive operator arguments =>
         .primitive operator (arguments.substitute substitution)
 
@@ -136,8 +135,11 @@ mutual
       (substitution : Substitution source target) :
       TermList source → TermList target
     | .nil => .nil
-    | .cons head tail =>
-        .cons (head.substitute substitution) (tail.substitute substitution)
+    | .positional head tail =>
+        .positional (head.substitute substitution) (tail.substitute substitution)
+    | .labelled label head tail =>
+        .labelled label (head.substitute substitution)
+          (tail.substitute substitution)
 end
 
 def Term.weaken {scope : Nat} (term : Term scope) : Term (scope + 1) :=

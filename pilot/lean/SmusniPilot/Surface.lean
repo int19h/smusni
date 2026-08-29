@@ -112,7 +112,8 @@ partial def SurfaceTerm.definedHeadsWith (lexicalHeads : List String) :
         | some head => [head]
         | none => []
   | .empty _ => []
-  | .form _ (.defined head) _ => [head]
+  | .form _ (.defined head) arguments =>
+      head :: arguments.flatMap (definedHeadsWith lexicalHeads)
   | term@(.form _ (.variable _) arguments) =>
       if term.isBinderDescriptor then []
       else arguments.flatMap (definedHeadsWith lexicalHeads)
@@ -144,10 +145,49 @@ partial def SurfaceTerm.offendingHeadsWith (lexicalHeads : List String) :
   | term@(.form _ (.variable _) arguments) =>
       if term.isBinderDescriptor then []
       else arguments.flatMap (offendingHeadsWith lexicalHeads)
-  | .form _ (.defined _) _ => []
+  | .form _ (.defined _) arguments =>
+      arguments.flatMap (offendingHeadsWith lexicalHeads)
   | .form _ _ arguments => arguments.flatMap (offendingHeadsWith lexicalHeads)
   | .application _ function arguments =>
       offendingHeadsWith lexicalHeads function ++
         arguments.flatMap (offendingHeadsWith lexicalHeads)
+
+partial def SurfaceTerm.structuralErrors : SurfaceTerm → List String
+  | .atom (.symbol raw) =>
+      if ["λ", "Bind", "Context", "Vague"].contains raw then
+        ["term:" ++ raw ++ ":missing-form"]
+      else []
+  | .atom (.string _) | .empty _ => []
+  | .form _ (.primitive .lambda) arguments =>
+      (if arguments.length == 2 then [] else ["term:λ:bad-arity"]) ++
+        arguments.flatMap structuralErrors
+  | .form _ (.primitive .bind) arguments =>
+      (if arguments.length >= 3 && arguments.length % 2 == 1 then []
+       else ["term:Bind:bad-clauses"]) ++
+        arguments.flatMap structuralErrors
+  | .form _ (.primitive .vague) arguments =>
+      (if arguments.length == 1 then [] else ["term:Vague:bad-arity"]) ++
+        arguments.flatMap structuralErrors
+  | .form _ _ arguments => arguments.flatMap structuralErrors
+  | .application _ function arguments =>
+      function.structuralErrors ++ arguments.flatMap structuralErrors
+
+partial def SurfaceTerm.containsDollarVariable : SurfaceTerm → Bool
+  | .atom (.symbol raw) => raw.startsWith "$"
+  | .atom (.string _) | .empty _ => false
+  | .form _ (.variable _) _ => true
+  | .form _ _ arguments => arguments.any containsDollarVariable
+  | .application _ function arguments =>
+      function.containsDollarVariable || arguments.any containsDollarVariable
+
+partial def SurfaceTerm.hasVariableUnderDefined : SurfaceTerm → Bool
+  | .atom _ | .empty _ => false
+  | .form _ (.defined _) arguments =>
+      arguments.any containsDollarVariable ||
+        arguments.any hasVariableUnderDefined
+  | .form _ _ arguments => arguments.any hasVariableUnderDefined
+  | .application _ function arguments =>
+      function.hasVariableUnderDefined ||
+        arguments.any hasVariableUnderDefined
 
 end SmusniPilot

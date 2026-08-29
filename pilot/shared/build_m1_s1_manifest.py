@@ -60,7 +60,9 @@ def collect_term_heads(
                 names.append(item)
         return names
 
-    def walk(value: Any, bound_names: set[str]) -> None:
+    def walk(
+        value: Any, bound_names: set[str], check_undeclared_free: bool = True
+    ) -> None:
         if isinstance(value, str):
             if value.startswith('"') and value.endswith('"'):
                 found.add("$string")
@@ -71,8 +73,12 @@ def collect_term_heads(
             elif raw.startswith("$"):
                 if raw in bound_names or raw in free_names:
                     found.add("$variable")
+                elif not check_undeclared_free:
+                    found.add("$variable")
                 else:
                     found.add("$undeclared-free:" + raw)
+            elif raw in {"λ", "Bind", "Context", "Vague"}:
+                found.add("$malformed-structural:" + raw)
             elif raw.startswith(":") or raw in data_names:
                 pass
             elif raw in lexical_heads:
@@ -87,9 +93,9 @@ def collect_term_heads(
         first = value[0]
         if isinstance(first, list):
             found.add("$application")
-            walk(first, bound_names)
+            walk(first, bound_names, check_undeclared_free)
             for argument in value[1:]:
-                walk(argument, bound_names)
+                walk(argument, bound_names, check_undeclared_free)
             return
         if not isinstance(first, str):
             return
@@ -97,12 +103,32 @@ def collect_term_heads(
             # Binder or environment entry; its type belongs to the typed
             # record schema, not to the term-former partition.
             return
+        if first == "λ" and len(value) != 3:
+            found.add("$malformed-structural:λ")
+            for nested in value[1:]:
+                walk(nested, bound_names, check_undeclared_free)
+            return
+        if first == "Bind" and (len(value) < 4 or len(value) % 2 != 0):
+            found.add("$malformed-structural:Bind")
+            for nested in value[1:]:
+                walk(nested, bound_names, check_undeclared_free)
+            return
+        if first == "Vague" and len(value) != 2:
+            found.add("$malformed-structural:Vague")
+            for nested in value[1:]:
+                walk(nested, bound_names, check_undeclared_free)
+            return
         if first in known and known[first] == "defined-surface":
             found.add(first)
+            for nested in value[1:]:
+                walk(nested, bound_names, False)
             return
         if first == "λ" and len(value) == 3:
             found.add(first)
-            walk(value[2], bound_names | set(binder_names(value[1])))
+            walk(
+                value[2], bound_names | set(binder_names(value[1])),
+                check_undeclared_free
+            )
             return
         if first == "Bind" and len(value) >= 4:
             found.add(first)
@@ -110,20 +136,23 @@ def collect_term_heads(
             remaining = value[1:]
             while len(remaining) > 1:
                 names = set(binder_names(remaining[0]))
-                walk(remaining[1], current_bound)
+                walk(remaining[1], current_bound, check_undeclared_free)
                 current_bound |= names
                 remaining = remaining[2:]
             if remaining:
-                walk(remaining[0], current_bound)
+                walk(remaining[0], current_bound, check_undeclared_free)
             return
         if first.startswith("$"):
             if first in bound_names or first in free_names:
                 found.add("$application")
                 found.add("$variable")
+            elif not check_undeclared_free:
+                found.add("$application")
+                found.add("$variable")
             else:
                 found.add("$undeclared-free:" + first)
             for nested in value[1:]:
-                walk(nested, bound_names)
+                walk(nested, bound_names, check_undeclared_free)
             return
         if first in lexical_heads:
             found.add("$lexical-predication")
@@ -134,7 +163,7 @@ def collect_term_heads(
         else:
             found.add("$unknown-head:" + first)
         for nested in value[1:]:
-            walk(nested, bound_names)
+            walk(nested, bound_names, check_undeclared_free)
 
     walk(term, set())
     return found
@@ -158,6 +187,27 @@ def has_fence_kind(value: Any, wanted: str) -> bool:
         if str(value[3]).strip('"') == wanted:
             return True
     return any(has_fence_kind(item, wanted) for item in value)
+
+
+def has_variable_under_defined(
+    term: Any, dispositions: dict[str, str]
+) -> bool:
+    def contains_variable(value: Any) -> bool:
+        if isinstance(value, str):
+            return not (value.startswith('"') and value.endswith('"')) and \
+                value.startswith("$")
+        return isinstance(value, list) and any(contains_variable(item) for item in value)
+
+    if not isinstance(term, list) or not term:
+        return False
+    first = term[0]
+    if isinstance(first, str) and dispositions.get(first) == "defined-surface":
+        if any(contains_variable(item) for item in term[1:]):
+            return True
+    return any(
+        has_variable_under_defined(item, dispositions) for item in term
+        if isinstance(item, list)
+    )
 
 
 def build() -> dict[str, Any]:
@@ -184,6 +234,7 @@ def build() -> dict[str, Any]:
     inventory_hashes: set[str] = set()
     counts = {"primitive-core": 0, "pending-milestone-2": 0, "out-of-slice": 0}
     l530_count = 0
+    defined_payload_variable_cases = 0
 
     for entry in cases_node[1:]:
         case_id = sexp_field(entry, "id").strip('"')
@@ -224,6 +275,9 @@ def build() -> dict[str, Any]:
         counts[tag] += 1
         l530 = is_l530_provenance(provenance)
         l530_count += int(l530)
+        defined_payload_variable_cases += int(
+            has_variable_under_defined(term, term_dispositions)
+        )
         cases.append(
             {
                 "id": case_id,
@@ -289,6 +343,7 @@ def build() -> dict[str, Any]:
             "l5_30_cases": l530_count,
             "typed_records": len(records),
             "skeleton_probe_records": skeleton_count,
+            "defined_payload_variable_cases": defined_payload_variable_cases,
         },
         "cases": sorted(cases, key=lambda item: item["id"]),
         "typed_records": records,

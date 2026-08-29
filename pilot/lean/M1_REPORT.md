@@ -14,13 +14,17 @@ authority, and it implements no M2 elaboration or typing.
 
 ## Constructor disposition and representation
 
-The matrix was committed before constructors at base main
-`892a7040d4f3786be42635089b6aac7743ba6b74`. Its current 286 namespace-qualified
-rows are:
+The pre-constructor commit `d900e16` recorded 282 rows: 119 primitive, 84
+defined, 68 type/index data, 6 gap, and 5 tool rows. Review of the first
+implementation then exposed four missing syntax/data categories, so the
+current matrix has 286 namespace-qualified rows: the original rows plus
+`term:$index`, `term:$string`, `type:$index`, and `type:$variable`. Both points
+in that history are recorded here rather than retroactively describing all 286
+as pre-code.
 
 | disposition | count | Lean representation |
 |---|---:|---|
-| `primitive-core` | 121 | one constructor in generated `Primitive` |
+| `primitive-core` | 121 | full inventory; 111 generated first-order operators plus 10 structural forms |
 | `defined-surface` | 84 | one constructor in generated `SurfaceHead` |
 | `type-index-data` | 70 | one constructor in generated `TypeName`, or a special scoped/index case |
 | `gap-prose-only` | 6 | generated `GapHead`; never decodes to core |
@@ -32,9 +36,14 @@ pin the source digests. The special scoped `Term` constructors are bound/free
 variables, naturals, strings, index labels, λ, `Bind`, application, lexical predication,
 site-bearing `Context`/`Vague`, and generic primitive application.
 
-The `Primitive` argument to the last constructor has 121 named constructors.
+The full generated `Primitive` inventory has 121 names, while the argument to
+the generic core constructor is the generated 111-member
+`FirstOrderPrimitive`. The other ten inventory entries (`$application`,
+`$index`, `$lexical-predication`, `$natural`, `$string`, `$variable`, `Bind`,
+`Context`, `Vague`, and `λ`) are excluded by type and can only use their
+dedicated structural representation.
 This is a deliberate factorization of first-order syntax: without M2 typing,
-the remaining operators all have the same binding behavior, so 121 direct
+the remaining operators all have the same binding behavior, so 111 direct
 `Term` clauses would duplicate renaming/substitution logic without semantic
 content. λ, `Bind`, variables, application, lexical heads, and sites are direct
 constructors because their binding or identity behavior differs. M2 supplies
@@ -55,11 +64,14 @@ generic lexical predication.
 `Term n` uses `Fin n` for bound variables, so an ill-scoped bound variable is
 unrepresentable. Free/RR identities are explicit `FreeId`s. A `SiteId` is the
 structural triple `(document identity, occurrence ordinal, expansion role)`;
-`Site n` also carries role, scoped dependency profile, and RR linkage. The
-decoder assigns written sites in deterministic traversal/source order, never
-from byte offsets.
+`Term` stores only that identity at a site occurrence. The authoritative
+sidecar entry carries role, serialized scoped dependency profile, and RR
+linkage; `Site n` remains the scoped algebraic form used to state and prove
+dependency transformations. The decoder assigns written sites and sidecar
+entries together in deterministic traversal/source order, never from byte
+offsets.
 
-Binding infrastructure is 619 lines including scoped data/core, or 492 lines
+Binding infrastructure is 786 lines including scoped data/core, or 588 lines
 for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
@@ -67,11 +79,13 @@ for operations and proofs alone:
 - capture-avoiding lowering of dependency-profile references across binders;
 - identity renaming/substitution;
 - renaming composition;
+- renaming followed by substitution;
 - substitution followed by renaming commutes with renaming every replacement;
+- substitution composition;
 - dependency-list and site transformation compatibility;
 - renaming preserves the complete site-ID list;
 - substitution preserves every pre-existing site ID;
-- site renaming/substitution never changes the site identity;
+- site-profile renaming/substitution never changes the site identity;
 - source binder spellings erase to equal core terms.
 
 All are kernel theorems in `BindingLaws.lean`/`Examples.lean`; none is assumed.
@@ -104,8 +118,13 @@ The versioned bundle contains:
 The kernel theorem `BundleDatum.toBundle_ofBundle` proves exact round trip for
 every internal bundle through an independent typed structured transport AST.
 The textual S-expression reader is the untrusted byte boundary; runtime gates
-check `encode(decode(encode(b))) = encode(b)` for the example bundle, every 51
-already-primitive S1 payloads, and 313 programmatically generated core terms.
+check `encode(decode(encode(b))) = encode(b)` for the example bundle, every 50
+already-primitive S1 payloads, and 303 programmatically generated core terms.
+The core term encoding contains only site-ID references. Bundle validation
+requires exactly one sidecar entry for every referenced identity, rejects
+missing, extra, duplicate, role-conflicting, and out-of-scope entries, and is
+run after both source decoding and text decoding. Each primitive S1 case also
+passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
 
@@ -116,16 +135,23 @@ and every RR/parse record digest:
 
 | tag | count | result |
 |---|---:|---|
-| `primitive-core` | 51 | decoded to `Bundle` and text-round-tripped |
-| `pending-milestone-2` | 264 | decoded/round-tripped as `SurfaceTerm` |
-| `out-of-slice` | 22 | declaration/schema/placeholders named with offending heads |
+| `primitive-core` | 50 | decoded to `Bundle` and text-round-tripped |
+| `pending-milestone-2` | 256 | decoded/round-tripped as `SurfaceTerm` |
+| `out-of-slice` | 31 | declaration/schema/placeholders/malformed structure named with offending heads |
 
 Both verified L5.30 fence cases are present and pending M2. All 29 RR and 31
 gentufa parse fixtures are read from disk and validated as typed records; both
 structural/skeleton probe files are included. RR fixtures validate exact
 version/root/fence metadata, all eight named fields, no duplicates/unknowns,
-and natural case indices. Parse fixtures validate the per-case index, command,
-surface, and parse payload shapes. No fixture term appears as a Lean literal.
+and natural case indices. Parse fixtures require one of the three recorded
+schema names, `jbotci_version`, a nonempty case array, ordinary-fixture source,
+ordinal, and fence metadata, plus schema-appropriate per-case fields and
+types. The port corpus validates its version, count, digests/source tables,
+case field set, nonempty inventory hashes, and environments; environments are
+list-shaped, contain only `$`-identity/type pairs, and reject duplicate
+identities. Negative mutations cover corpus version/count/environment errors,
+missing and unknown parse schemas, empty cases, missing parse fields, and each
+invalid sidecar class. No fixture term appears as a Lean literal.
 Lean verifies the recorded base commit, matrix/corpus/fixture SHA-256 values,
 every typed-record digest, and both per-case inventory hashes before counting a
 gate. The base commit is a fixed constant, never recomputed from moving
@@ -135,9 +161,19 @@ Classification is fail-closed: only fixture-declared lexical heads are
 lexical; `$` applications resolve through binder/free environments; undeclared
 free IDs, unknown atoms/operators, schematic placeholders, and declaration
 fences are out-of-slice. Defined constants in atom position stay pending M2.
-Strings and labels have explicit literal constructors. Six durable probes cover
+Unknown structure inside a defined form is still scanned and makes the case
+out-of-slice; the outer defined head does not hide it. There are 232 cases with
+one or more `$` spellings under a defined payload. Their binder/free status is
+explicitly undetermined in M1 because it depends on M2 definition-specific
+binder signatures; they are not silently diagnosed as undeclared.
+Strings and index atoms have explicit literal constructors; argument labels
+have explicit label/value list nodes. Direct probes cover
 bound function application, `(Refer This)`, unknown `Zzz`, opaque string
-payloads, undeclared `$ghost`, and schematic `C/H/deps…`.
+payloads, undeclared `$ghost`, schematic `C/H/deps…`, unknown `Zzz` nested
+under defined `Let`, malformed structural
+forms, rejection of structural operators through the first-order constructor,
+variadic/labelled applications, and empty/multiple/nested `Fn`/`EFn`
+parameter lists.
 
 The strict reader exposed 28 RR files with an extra trailing `)`. The existing
 Racket loader read only one datum and ignored trailing bytes. This branch
@@ -148,35 +184,37 @@ full Racket gate passes 1,830 tests after the correction.
 Literal M1 runner result:
 
 ```text
-S1 total=337 primitive=51 pending-m2=264 out-of-slice=22
-core-decoded=51 surface-roundtrips=337 text-roundtrips=337
-generated-roundtrips=313
+S1 total=337 primitive=50 pending-m2=256 out-of-slice=31
+core-decoded=50 core-canonical-roundtrips=50
+surface-roundtrips=337 text-roundtrips=337
+defined-payload-variable-cases=232 generated-roundtrips=303
 ```
 
 ## Timing
 
-- clean M1 build after `lake clean`: 7.87 s wall, 22.87 s user, 3.82 s system,
-  1,676,340 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.36 s wall, 0.11 s user, 0.17 s system,
-  129,180 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.57 s wall, 28.18 s user, 3.98 s system,
+  1,704,300 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.15 s system,
+  133,432 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
 ## Explicit limits / not yet general
 
-- M1 performs no surface-to-core elaboration for the 264 defined-form cases;
+- M1 performs no surface-to-core elaboration for the 256 defined-form cases;
   they are `pending-milestone-2`, not successes or gaps.
-- `Ty` records named formers, variables, and index data but does not validate
-  arity/subsorting; that is extrinsic M2 typing.
-- Generic primitive nodes do not validate operator arity or result category in
-  M1.
+- `Ty` records named formers, variables, index data, and explicit `Fn`/`EFn`
+  parameter lists/results but does not validate arity/subsorting; that is
+  extrinsic M2 typing.
+- First-order primitive nodes do not validate operator arity or result category
+  in M1; structural form shapes are validated before core decoding.
 - The source map records stable structural ordinals/source order and binder
   spellings. Physical line/column fields exist but are absent when the frozen
   inventory does not preserve them.
 - The surface decoder normalizes multi-parameter λ telescopes and multi-binding
-  `Bind` forms to source-ordered nesting. Variadic ordinary application is
-  represented as disclosed left-associated application; M2 typing must check
-  the original operator arity rather than infer it from that nesting.
+  `Bind` forms to source-ordered nesting. Variadic ordinary application is one
+  application node with an ordered list of positional/labelled fills, so no
+  source arity or label structure is lost before M2 typing.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
 - Text parsing and file hashing remain outside the Lean kernel; the typed
   structured round-trip theorem and runtime corpus gates make that boundary

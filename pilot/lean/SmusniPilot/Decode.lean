@@ -13,6 +13,7 @@ def typeName? (raw : String) : Option TypeName :=
   (TypeName.ofName ("type-form:" ++ raw)).orElse fun _ =>
   TypeName.ofName ("type:" ++ raw)
 
+mutual
 partial def decodeTy : SurfaceTerm → Except String Ty
   | .empty _ => .ok (.named .typeFormRow [])
   | .atom (.symbol name) =>
@@ -21,6 +22,10 @@ partial def decodeTy : SurfaceTerm → Except String Ty
         | some typeName => .ok (.named typeName [])
         | none => .ok (.variable name)
   | .form _ (.unknown name) [] => decodeTy (.atom (.symbol name))
+  | .form _ (.unknown "Fn") [parameters, result] =>
+      return .function false (← decodeTyParameters parameters) (← decodeTy result)
+  | .form _ (.unknown "EFn") [parameters, result] =>
+      return .function true (← decodeTyParameters parameters) (← decodeTy result)
   | term@(.form _ (.unknown name) arguments) => do
       if name.toNat?.isSome then pure (.index term.toSExpr.render)
       else
@@ -37,6 +42,16 @@ partial def decodeTy : SurfaceTerm → Except String Ty
   | .application _ function arguments =>
       return .named .typeFormRow (← (function :: arguments).mapM decodeTy)
   | term => .error s!"not a type expression: {repr term}"
+
+partial def decodeTyParameters : SurfaceTerm → Except String (List Ty)
+  | .empty _ => pure []
+  | .application _ function [] => return [← decodeTy function]
+  | .application _ function arguments => (function :: arguments).mapM decodeTy
+  | .form _ kind arguments =>
+      let head := .atom (.symbol kind.spelling)
+      (head :: arguments).mapM decodeTy
+  | term => return [← decodeTy term]
+end
 
 def typeFromParts : List SurfaceTerm → Except String Ty
   | [] => .error "binder is missing a type"
@@ -99,6 +114,7 @@ structure DecodeNote where
 structure DecodeState where
   nextSite : Nat := 0
   nextSource : Nat := 0
+  sites : List SiteEntry := []
   sourceNotes : List DecodeNote := []
   deriving Repr, Inhabited
 
@@ -116,17 +132,23 @@ def DecodeState.recordSource (state : DecodeState) (document : String)
 def freshSite (document expansionRole : String) (role : SiteRole)
     (rrLink : Option String)
     {scope : Nat} (dependencies : List (Dependency scope))
-    (state : DecodeState) : Site scope × DecodeState :=
+    (state : DecodeState) : SiteId × DecodeState :=
   let identity : SiteId :=
     { document, occurrence := state.nextSite, expansionRole }
+  let entry : SiteEntry :=
+    { identity, role
+      dependencies := dependencies.map SerializedDependency.ofDependency
+      rrLink }
   let afterSource := state.recordSource document []
-  ({ identity, role, dependencies, rrLink },
-    { afterSource with nextSite := state.nextSite + 1 })
+  (identity,
+    { afterSource with
+      nextSite := state.nextSite + 1
+      sites := state.sites ++ [entry] })
 
 def applyAll {scope : Nat} (function : Term scope) :
     TermList scope → Term scope
   | .nil => function
-  | .cons argument rest => applyAll (.apply function argument) rest
+  | arguments => .apply function arguments
 
 mutual
   partial def decodeCore (document : String) (lexicalHeads freeNames : List String)
@@ -151,7 +173,7 @@ mutual
         else if lexicalHeads.contains value then
           pure (.lexical value .nil, state)
         else
-          match Primitive.ofName ("term:" ++ value) with
+          match FirstOrderPrimitive.ofName ("term:" ++ value) with
           | some primitive => pure (.primitive primitive .nil, state)
           | none =>
               match SurfaceHead.ofName ("term:" ++ value) with
@@ -235,10 +257,12 @@ mutual
             arguments state
         pure (.lexical predicate decoded, after)
     | .form _ (.primitive operator) arguments =>
+        let some firstOrder := FirstOrderPrimitive.ofName operator.name
+          | .error s!"structural primitive {operator.name} has invalid shape"
         let (decoded, after) ←
           decodeCoreList document lexicalHeads freeNames rrLink environment
             arguments state
-        pure (.primitive operator decoded, after)
+        pure (.primitive firstOrder decoded, after)
 
   partial def decodeCoreList (document : String)
       (lexicalHeads freeNames : List String) (rrLink : Option String)
@@ -247,12 +271,26 @@ mutual
       Except String (TermList environment.length × DecodeState)
     | [], state => pure (.nil, state)
     | head :: tail, state => do
-        let (decodedHead, afterHead) ←
-          decodeCore document lexicalHeads freeNames rrLink environment head state
-        let (decodedTail, afterTail) ←
-          decodeCoreList document lexicalHeads freeNames rrLink environment
-            tail afterHead
-        pure (.cons decodedHead decodedTail, afterTail)
+        let positional :
+            Except String (TermList environment.length × DecodeState) := do
+          let (decodedHead, afterHead) ←
+            decodeCore document lexicalHeads freeNames rrLink environment head state
+          let (decodedTail, afterTail) ←
+            decodeCoreList document lexicalHeads freeNames rrLink environment
+              tail afterHead
+          pure (.positional decodedHead decodedTail, afterTail)
+        match head, tail with
+        | .atom (.symbol label), value :: rest =>
+            if label.startsWith ":" then
+              let (decodedHead, afterHead) ←
+                decodeCore document lexicalHeads freeNames rrLink environment
+                  value state
+              let (decodedTail, afterTail) ←
+                decodeCoreList document lexicalHeads freeNames rrLink environment
+                  rest afterHead
+              pure (.labelled label decodedHead decodedTail, afterTail)
+            else positional
+        | _, _ => positional
 
   partial def decodeLambdas (document : String)
       (lexicalHeads freeNames : List String) (rrLink : Option String)

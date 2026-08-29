@@ -100,8 +100,7 @@ theorem Term.rename_compose {first second third : Nat}
         (terms.rename firstMap).rename secondMap =
           terms.rename (fun index => secondMap (firstMap index))) <;>
     intros <;>
-    simp_all [Term.rename, TermList.rename, Site.rename_compose,
-      Renaming.lift_compose]
+    simp_all [Term.rename, TermList.rename, Renaming.lift_compose]
 
 theorem TermList.rename_compose {first second third : Nat}
     (secondMap : Renaming second third)
@@ -118,8 +117,7 @@ theorem TermList.rename_compose {first second third : Nat}
           term.rename (fun index => secondMap (firstMap index)))
     <;>
     intros <;>
-    simp_all [Term.rename, TermList.rename, Site.rename_compose,
-      Renaming.lift_compose]
+    simp_all [Term.rename, TermList.rename, Renaming.lift_compose]
 
 @[simp] theorem Substitution.lift_identity {scope : Nat} :
     Substitution.lift (Substitution.identity (scope := scope)) =
@@ -169,8 +167,7 @@ theorem Term.siteIds_rename {source target : Nat}
       ∀ {target} (ρ : Renaming source target),
         (terms.rename ρ).siteIds = terms.siteIds) <;>
     intros <;>
-    simp_all [Term.rename, TermList.rename, Term.siteIds, TermList.siteIds,
-      Site.rename]
+    simp_all [Term.rename, TermList.rename, Term.siteIds, TermList.siteIds]
 
 theorem TermList.siteIds_rename {source target : Nat}
     (ρ : Renaming source target) (terms : TermList source) :
@@ -182,8 +179,7 @@ theorem TermList.siteIds_rename {source target : Nat}
         (term.rename ρ).siteIds = term.siteIds)
     <;>
     intros <;>
-    simp_all [Term.rename, TermList.rename, Term.siteIds, TermList.siteIds,
-      Site.rename]
+    simp_all [Term.rename, TermList.rename, Term.siteIds, TermList.siteIds]
 
 theorem Dependency.lower_rename {source target : Nat}
     (ρ : Renaming source target) (dependency : Dependency (source + 1)) :
@@ -224,7 +220,7 @@ theorem Term.dependencies_rename {source target : Nat}
     intros <;>
     simp_all [Term.rename, TermList.rename, Term.dependencies,
       TermList.dependencies, Dependency.lowerList_rename, List.map_append,
-      Site.rename, Function.comp_def]
+      Function.comp_def]
 
 theorem TermList.dependencies_rename {source target : Nat}
     (ρ : Renaming source target) (terms : TermList source) :
@@ -239,7 +235,7 @@ theorem TermList.dependencies_rename {source target : Nat}
     intros <;>
     simp_all [Term.rename, TermList.rename, Term.dependencies,
       TermList.dependencies, Dependency.lowerList_rename, List.map_append,
-      Site.rename, Function.comp_def]
+      Function.comp_def]
 
 theorem Dependency.substitute_rename {source middle target : Nat}
     (σ : Substitution source middle) (ρ : Renaming middle target)
@@ -293,7 +289,7 @@ theorem Term.substitute_rename {source middle target : Nat}
           terms.substitute (fun index => (σ index).rename ρ)) <;>
     intros <;>
     simp_all [Term.substitute, TermList.substitute, Term.rename,
-      TermList.rename, Site.substitute_rename, Substitution.lift_rename]
+      TermList.rename, Substitution.lift_rename]
 
 theorem TermList.substitute_rename {source middle target : Nat}
     (σ : Substitution source middle) (ρ : Renaming middle target)
@@ -309,7 +305,97 @@ theorem TermList.substitute_rename {source middle target : Nat}
           term.substitute (fun index => (σ index).rename ρ)) <;>
     intros <;>
     simp_all [Term.substitute, TermList.substitute, Term.rename,
-      TermList.rename, Site.substitute_rename, Substitution.lift_rename]
+      TermList.rename, Substitution.lift_rename]
+
+theorem Substitution.lift_after_renaming {source middle target : Nat}
+    (ρ : Renaming source middle) (σ : Substitution middle target)
+    (index : Fin (source + 1)) :
+    Substitution.lift σ (Renaming.lift ρ index) =
+      Substitution.lift (fun sourceIndex => σ (ρ sourceIndex)) index := by
+  refine Fin.cases ?_ ?_ index
+  · rfl
+  · intro predecessor
+    rfl
+
+theorem Term.rename_substitute {source middle target : Nat}
+    (ρ : Renaming source middle) (σ : Substitution middle target)
+    (term : Term source) :
+    (term.rename ρ).substitute σ =
+      term.substitute (fun index => σ (ρ index)) := by
+  revert middle target ρ σ
+  induction term using Term.rec
+    (motive_2 := fun source terms =>
+      ∀ {middle target} (ρ : Renaming source middle)
+        (σ : Substitution middle target),
+        (terms.rename ρ).substitute σ =
+          terms.substitute (fun index => σ (ρ index))) <;>
+    intros <;>
+    simp_all [Term.rename, TermList.rename, Term.substitute,
+      TermList.substitute, Substitution.lift_after_renaming]
+
+theorem TermList.rename_substitute {source middle target : Nat}
+    (ρ : Renaming source middle) (σ : Substitution middle target)
+    (terms : TermList source) :
+    (terms.rename ρ).substitute σ =
+      terms.substitute (fun index => σ (ρ index)) := by
+  revert middle target ρ σ
+  induction terms using TermList.rec
+    (motive_1 := fun source term =>
+      ∀ {middle target} (ρ : Renaming source middle)
+        (σ : Substitution middle target),
+        (term.rename ρ).substitute σ =
+          term.substitute (fun index => σ (ρ index))) <;>
+    intros <;>
+    simp_all [Term.rename, TermList.rename, Term.substitute,
+      TermList.substitute, Substitution.lift_after_renaming]
+
+theorem Substitution.lift_compose {source middle target : Nat}
+    (σ : Substitution source middle) (τ : Substitution middle target)
+    (index : Fin (source + 1)) :
+    (Substitution.lift σ index).substitute (Substitution.lift τ) =
+      Substitution.lift (fun sourceIndex => (σ sourceIndex).substitute τ)
+        index := by
+  refine Fin.cases ?_ ?_ index
+  · rfl
+  · intro predecessor
+    change
+      ((σ predecessor).rename Fin.succ).substitute (Substitution.lift τ) =
+        ((σ predecessor).substitute τ).rename Fin.succ
+    rw [Term.rename_substitute]
+    rw [Term.substitute_rename]
+    rfl
+
+theorem Term.substitute_compose {source middle target : Nat}
+    (σ : Substitution source middle) (τ : Substitution middle target)
+    (term : Term source) :
+    (term.substitute σ).substitute τ =
+      term.substitute (fun index => (σ index).substitute τ) := by
+  revert middle target σ τ
+  induction term using Term.rec
+    (motive_2 := fun source terms =>
+      ∀ {middle target} (σ : Substitution source middle)
+        (τ : Substitution middle target),
+        (terms.substitute σ).substitute τ =
+          terms.substitute (fun index => (σ index).substitute τ)) <;>
+    intros <;>
+    simp_all [Term.substitute, TermList.substitute,
+      Substitution.lift_compose]
+
+theorem TermList.substitute_compose {source middle target : Nat}
+    (σ : Substitution source middle) (τ : Substitution middle target)
+    (terms : TermList source) :
+    (terms.substitute σ).substitute τ =
+      terms.substitute (fun index => (σ index).substitute τ) := by
+  revert middle target σ τ
+  induction terms using TermList.rec
+    (motive_1 := fun source term =>
+      ∀ {middle target} (σ : Substitution source middle)
+        (τ : Substitution middle target),
+        (term.substitute σ).substitute τ =
+          term.substitute (fun index => (σ index).substitute τ)) <;>
+    intros <;>
+    simp_all [Term.substitute, TermList.substitute,
+      Substitution.lift_compose]
 
 @[simp] theorem Site.rename_preserves_identity {source target : Nat}
     (ρ : Renaming source target) (site : Site source) :
@@ -331,7 +417,7 @@ theorem Term.siteId_mem_substitute {source target : Nat}
           identity ∈ (terms.substitute σ).siteIds) <;>
     intros <;>
     simp_all [Term.substitute, TermList.substitute, Term.siteIds,
-      TermList.siteIds, Site.substitute_preserves_identity] <;> grind
+      TermList.siteIds] <;> grind
 
 theorem TermList.siteId_mem_substitute {source target : Nat}
     (σ : Substitution source target) (terms : TermList source)
@@ -345,6 +431,6 @@ theorem TermList.siteId_mem_substitute {source target : Nat}
           identity ∈ (term.substitute σ).siteIds) <;>
     intros <;>
     simp_all [Term.substitute, TermList.substitute, Term.siteIds,
-      TermList.siteIds, Site.substitute_preserves_identity] <;> grind
+      TermList.siteIds] <;> grind
 
 end SmusniPilot

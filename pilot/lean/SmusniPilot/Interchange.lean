@@ -28,6 +28,9 @@ def encodeTy : Ty → SExpr
       list [symbol "ty", string name.name, vector (arguments.map encodeTy)]
   | .variable name => list [symbol "type-variable", string name]
   | .index value => list [symbol "type-index", string value]
+  | .function effectful parameters result =>
+      list [symbol (if effectful then "effectful-function-type" else "function-type"),
+        vector (parameters.map encodeTy), encodeTy result]
 
 partial def decodeTy : SExpr → Except String Ty
   | .list .paren
@@ -42,6 +45,13 @@ partial def decodeTy : SExpr → Except String Ty
   | .list .paren
       [.atom (.symbol "type-index"), .atom (.string value)] =>
       pure (.index value)
+  | .list .paren
+      [.atom (.symbol "function-type"), .list .square parameters, result] =>
+      return .function false (← parameters.mapM decodeTy) (← decodeTy result)
+  | .list .paren
+      [ .atom (.symbol "effectful-function-type"),
+        .list .square parameters, result ] =>
+      return .function true (← parameters.mapM decodeTy) (← decodeTy result)
   | value => .error s!"malformed encoded type: {repr value}"
 
 def encodeFreeId (identity : FreeId) : SExpr :=
@@ -125,23 +135,29 @@ mutual
     | .bind binderType computation body =>
         list [symbol "bind", encodeTy binderType,
           encodeTerm computation, encodeTerm body]
-    | .apply function argument =>
-        list [symbol "apply", encodeTerm function, encodeTerm argument]
+    | .apply function arguments =>
+        list [symbol "apply", encodeTerm function, encodeTerms arguments]
     | .lexical predicate arguments =>
         list [symbol "lexical", string predicate, encodeTerms arguments]
     | .context site arguments =>
-        list [symbol "context", encodeSite site, encodeTerms arguments]
+        list [symbol "context", encodeSiteId site, encodeTerms arguments]
     | .vague site constraint =>
-        list [symbol "vague", encodeSite site, encodeTerm constraint]
+        list [symbol "vague", encodeSiteId site, encodeTerm constraint]
     | .primitive operator arguments =>
         list [symbol "primitive", string operator.name, encodeTerms arguments]
 
   partial def encodeTerms {scope : Nat} : TermList scope → SExpr
     | .nil => vector []
-    | .cons head tail =>
+    | .positional head tail =>
         match encodeTerms tail with
-        | .list .square rest => vector (encodeTerm head :: rest)
-        | _ => vector [encodeTerm head]
+        | .list .square rest =>
+            vector (list [symbol "positional", encodeTerm head] :: rest)
+        | _ => vector [list [symbol "positional", encodeTerm head]]
+    | .labelled label head tail =>
+        match encodeTerms tail with
+        | .list .square rest =>
+            vector (list [symbol "labelled", string label, encodeTerm head] :: rest)
+        | _ => vector [list [symbol "labelled", string label, encodeTerm head]]
 end
 
 mutual
@@ -164,45 +180,45 @@ mutual
         [.atom (.symbol "bind"), rawType, computation, body] =>
         return .bind (← decodeTy rawType) (← decodeTerm scope computation)
           (← decodeTerm (scope + 1) body)
-    | .list .paren [.atom (.symbol "apply"), function, argument] =>
-        return .apply (← decodeTerm scope function) (← decodeTerm scope argument)
+    | .list .paren [.atom (.symbol "apply"), function, arguments] =>
+        return .apply (← decodeTerm scope function) (← decodeTerms scope arguments)
     | .list .paren
         [.atom (.symbol "lexical"), .atom (.string predicate), arguments] =>
         return .lexical predicate (← decodeTerms scope arguments)
     | .list .paren [.atom (.symbol "context"), rawSite, arguments] =>
-        return .context (← decodeSite scope rawSite)
+        return .context (← decodeSiteId rawSite)
           (← decodeTerms scope arguments)
     | .list .paren [.atom (.symbol "vague"), rawSite, constraint] =>
-        return .vague (← decodeSite scope rawSite)
+        return .vague (← decodeSiteId rawSite)
           (← decodeTerm scope constraint)
     | .list .paren
         [ .atom (.symbol "primitive"), .atom (.string rawOperator),
           arguments ] => do
-        let some operator := Primitive.ofName rawOperator
+        let some operator := FirstOrderPrimitive.ofName rawOperator
           | .error s!"unknown primitive {rawOperator}"
         return .primitive operator (← decodeTerms scope arguments)
     | value => .error s!"malformed encoded term: {repr value}"
 
   partial def decodeTerms (scope : Nat) : SExpr → Except String (TermList scope)
     | .list .square [] => pure .nil
-    | .list .square (head :: tail) =>
-        return .cons (← decodeTerm scope head)
+    | .list .square
+        (.list .paren [.atom (.symbol "positional"), head] :: tail) =>
+        return .positional (← decodeTerm scope head)
+          (← decodeTerms scope (.list .square tail))
+    | .list .square
+        ( .list .paren
+            [.atom (.symbol "labelled"), .atom (.string label), head] :: tail) =>
+        return .labelled label (← decodeTerm scope head)
           (← decodeTerms scope (.list .square tail))
     | value => .error s!"malformed encoded term list: {repr value}"
 end
 
-inductive SerializedDependency where
-  | bound (index : Nat)
-  | free (identity : FreeId)
-  | site (identity : SiteId)
-  deriving Repr, DecidableEq, BEq
+def renderCanonicalTerm {scope : Nat} (term : Term scope) : String :=
+  (encodeTerm term).render
 
-structure SiteEntry where
-  identity : SiteId
-  role : SiteRole
-  dependencies : List SerializedDependency
-  rrLink : Option String := Option.none
-  deriving Repr, DecidableEq, BEq
+def decodeCanonicalTerm (scope : Nat) (source : String) :
+    Except String (Term scope) :=
+  SExpr.parse source >>= decodeTerm scope
 
 structure SourceNote where
   document : String
@@ -212,37 +228,6 @@ structure SourceNote where
   line : Option Nat := Option.none
   column : Option Nat := Option.none
   deriving Repr, DecidableEq, BEq
-
-def SerializedDependency.ofDependency {scope : Nat} :
-    Dependency scope → SerializedDependency
-  | .bound index => .bound index.val
-  | .free identity => .free identity
-  | .site identity => .site identity
-
-def SiteEntry.ofSite {scope : Nat} (site : Site scope) : SiteEntry :=
-  { identity := site.identity
-    role := site.role
-    dependencies := site.dependencies.map SerializedDependency.ofDependency
-    rrLink := site.rrLink }
-
-mutual
-  def Term.siteEntries {scope : Nat} : Term scope → List SiteEntry
-    | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
-    | .lambda _ body => Term.siteEntries body
-    | .bind _ computation body =>
-        Term.siteEntries computation ++ Term.siteEntries body
-    | .apply function argument =>
-        Term.siteEntries function ++ Term.siteEntries argument
-    | .lexical _ arguments => TermList.siteEntries arguments
-    | .context site arguments =>
-        SiteEntry.ofSite site :: TermList.siteEntries arguments
-    | .vague site constraint => SiteEntry.ofSite site :: Term.siteEntries constraint
-    | .primitive _ arguments => TermList.siteEntries arguments
-
-  def TermList.siteEntries {scope : Nat} : TermList scope → List SiteEntry
-    | .nil => []
-    | .cons head tail => Term.siteEntries head ++ TermList.siteEntries tail
-end
 
 def SourceNote.ofDecodeNote (note : DecodeNote) : SourceNote :=
   { document := note.document
@@ -257,27 +242,55 @@ structure Bundle (scope : Nat) where
   sourceMap : List SourceNote
   deriving Repr
 
+def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
+    Except String Unit := do
+  if bundle.version != 1 then
+    .error s!"unsupported interchange version {bundle.version}"
+  let uses := bundle.term.siteUses
+  for entry in bundle.sites do
+    let copies := bundle.sites.filter fun other =>
+      other.identity == entry.identity
+    if copies.length != 1 then
+      .error s!"duplicate site sidecar entry: {repr entry.identity}"
+    if !(uses.any fun use => use.identity == entry.identity) then
+      .error s!"extra site sidecar entry: {repr entry.identity}"
+  for use in uses do
+    let some entry := bundle.sites.find? fun candidate =>
+        candidate.identity == use.identity
+      | .error s!"missing site sidecar entry: {repr use.identity}"
+    if entry.role != use.role then
+      .error s!"site role conflicts with term occurrence: {repr use.identity}"
+    if entry.dependencies.any fun
+        | .bound index => !(index < use.scope)
+        | _ => false then
+      .error s!"site dependency outside occurrence scope: {repr use.identity}"
+  pure ()
+
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :
     Except String (Bundle 0) := do
   let (term, state) ← decodeClosedCore document surface
-  pure {
+  let bundle : Bundle 0 := {
     version := 1
     term
-    sites := Term.siteEntries term
+    sites := state.sites
     sourceMap := state.sourceNotes.map SourceNote.ofDecodeNote
   }
+  bundle.validate
+  pure bundle
 
 def Bundle.ofSurfaceWith (document : String) (lexicalHeads freeNames : List String)
     (rrLink : Option String) (surface : SurfaceTerm) :
     Except String (Bundle 0) := do
   let (term, state) ←
     decodeClosedCoreWith document lexicalHeads freeNames rrLink surface
-  pure {
+  let bundle : Bundle 0 := {
     version := 1
     term
-    sites := Term.siteEntries term
+    sites := state.sites
     sourceMap := state.sourceNotes.map SourceNote.ofDecodeNote
   }
+  bundle.validate
+  pure bundle
 
 def encodeSerializedDependency : SerializedDependency → SExpr
   | .bound index => list [symbol "bound", symbol (toString index)]
@@ -362,12 +375,14 @@ def Bundle.decode (scope : Nat) : SExpr → Except String (Bundle scope)
         .list .paren [.atom (.symbol "sites"), .list .square rawSites],
         .list .paren
           [.atom (.symbol "source-map"), .list .square rawSourceMap] ] => do
-      pure {
+      let bundle : Bundle scope := {
         version := ← expectNat rawVersion
         term := ← decodeTerm scope rawTerm
         sites := ← rawSites.mapM decodeSiteEntry
         sourceMap := ← rawSourceMap.mapM decodeSourceNote
       }
+      bundle.validate
+      pure bundle
   | value => .error s!"malformed interchange bundle: {repr value}"
 
 end Interchange

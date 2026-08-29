@@ -11,7 +11,9 @@ def main (arguments : List String) : IO UInt32 := do
     s!"S1 total={result.total} primitive={result.primitive} " ++
       s!"pending-m2={result.pendingM2} out-of-slice={result.outOfSlice} " ++
       s!"core-decoded={result.decodedCore} " ++
+      s!"core-canonical-roundtrips={result.coreCanonicalRoundTrips} " ++
       s!"surface-roundtrips={result.surfaceRoundTrips} " ++
       s!"text-roundtrips={result.textRoundTrips} " ++
+      s!"defined-payload-variable-cases={result.definedPayloadVariableCases} " ++
       s!"generated-roundtrips={generated}"
   return 0

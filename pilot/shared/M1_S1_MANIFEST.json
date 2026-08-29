@@ -6,6 +6,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "Audience",
+        "Speaker",
         "SpeakerDescribes"
       ],
       "id": "0096bd8d12fdb3e65c68c83276b97a592f2c63c8",
@@ -49,9 +51,11 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Ask",
         "Close",
-        "Polar"
+        "Polar",
+        "Speaker"
       ],
       "id": "0347d6a60531d233b4926705a0d467d921d7f383",
       "l5_30": false,
@@ -84,10 +88,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "ZipWith"
       ],
       "heads": [
-        "ZipWith"
+        "$lexical-predication",
+        "$variable",
+        "Audience",
+        "Close",
+        "List",
+        "Speaker",
+        "ZipWith",
+        "λ"
       ],
       "id": "04cdfd2f45e14a4ad9d525b9aa39518337dfe160",
       "l5_30": false,
@@ -118,9 +130,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Bind",
+        "Close",
+        "Context",
+        "Realizes",
         "Utterance"
       ],
       "id": "073ee5bf35a3890acdc3607d2c8a4da8b02c7370",
@@ -138,14 +159,19 @@
         "Close"
       ],
       "heads": [
+        "$unknown:t",
+        "$variable",
         "Bind",
         "Close",
         "Context",
-        "Express"
+        "Express",
+        "MetalinguisticallyDefective"
       ],
       "id": "0866c651f54812b5e0bad5918396c84626e724ec",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown:t"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -153,7 +179,7 @@
         "expansion",
         "3"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "dfa0b85f22a7c7da7ea066d86ad16681c7be7bf3030f849e5ed35ef0793ac685"
     },
     {
@@ -185,6 +211,8 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Bind",
         "Close",
         "Context",
@@ -206,9 +234,11 @@
       ],
       "heads": [
         "$variable",
+        "Audience",
         "Bind",
         "JoiGroup",
         "Mention",
+        "Speaker",
         "λ"
       ],
       "id": "0967138ba2c03fb8e742cef631d6184778d2e1df",
@@ -224,6 +254,8 @@
     {
       "defined_heads": [],
       "heads": [
+        "$malformed-structural:Bind",
+        "$undeclared-free:$v",
         "$unknown-head:C",
         "$unknown:P",
         "$unknown:deps…",
@@ -235,6 +267,8 @@
       "id": "0a645a80aa44e24b1869b994b71fb60954952e76",
       "l5_30": false,
       "offending_heads": [
+        "$malformed-structural:Bind",
+        "$undeclared-free:$v",
         "$unknown-head:C",
         "$unknown:P",
         "$unknown:deps…"
@@ -251,10 +285,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
-        "No"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "No",
+        "λ"
       ],
       "id": "0aca32fd93634be168dabf02d8e7156122b58fc3",
       "l5_30": false,
@@ -268,11 +309,18 @@
     },
     {
       "defined_heads": [
-        "Every"
+        "Close",
+        "Every",
+        "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Every"
+        "Close",
+        "Every",
+        "Some",
+        "λ"
       ],
       "id": "0b9143a8dcab3aa4be92bcca72f9cfccf0bf8651",
       "l5_30": false,
@@ -286,9 +334,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Realizes",
+        "Speaker",
         "Utterance"
       ],
       "id": "0c922978048b59e608214963b1d0df02db18d47d",
@@ -303,10 +359,24 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "AttachedDisplay",
+        "Bind",
+        "Close",
+        "Do",
+        "Express",
+        "Happiness",
+        "Host",
+        "Let",
+        "Moderate",
+        "Perform",
+        "Speaker"
       ],
       "id": "0c9cfd6de375ffa1d4fff442d727306600ec85f1",
       "l5_30": false,
@@ -323,6 +393,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Distrib"
       ],
       "heads": [
@@ -331,6 +402,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Distrib",
         "SelectExactly",
         "λ"
@@ -353,11 +425,13 @@
         "$unknown:deps…",
         "$unknown:joi",
         "$variable",
+        "Audience",
         "Bind",
         "Context",
         "GroupBasisConstraint",
         "JoiGroup",
-        "Mention"
+        "Mention",
+        "Speaker"
       ],
       "id": "0ece3aadcc3b41fbbf88f39d20c08ef00b6fd2f1",
       "l5_30": false,
@@ -378,6 +452,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
@@ -418,15 +494,18 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Tanru"
       ],
       "heads": [
+        "$application",
         "$lexical-predication",
         "$variable",
         "Assert",
         "Bind",
         "Close",
         "Refer",
+        "Tanru",
         "λ"
       ],
       "id": "10271f5cd15177653fb20555c557dabc18896f9f",
@@ -444,6 +523,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$string",
         "$variable",
         "Assert",
@@ -472,6 +552,7 @@
       ],
       "heads": [
         "$application",
+        "$lexical-predication",
         "$natural",
         "$variable",
         "AmountValue",
@@ -481,6 +562,7 @@
         "Mention",
         "NiRel",
         "Refer",
+        "Speaker",
         "λ",
         "−"
       ],
@@ -516,11 +598,18 @@
     },
     {
       "defined_heads": [
-        "No"
+        "Close",
+        "No",
+        "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "SpeakerDescribes",
+        "λ"
       ],
       "id": "12696cbbe5b9fa3067f9b7568ce20edc67521ea1",
       "l5_30": false,
@@ -534,10 +623,18 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
-        "AtLeast"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "AtLeast",
+        "Bind",
+        "Close",
+        "Context",
+        "λ"
       ],
       "id": "1341fba432fc31883c7f2d4446847faa032bdea4",
       "l5_30": false,
@@ -664,10 +761,12 @@
         "SelectSome"
       ],
       "heads": [
+        "$lexical-predication",
         "$variable",
         "Bind",
         "Mention",
-        "SelectSome"
+        "SelectSome",
+        "λ"
       ],
       "id": "1b5d8a8c9fc9f9c06284e64734fc8ff9e530d6f9",
       "l5_30": false,
@@ -681,11 +780,15 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "This"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Close",
+        "Speaker",
+        "This"
       ],
       "id": "1d527189e0fc7be74b6b111c0b9cab7084796948",
       "l5_30": false,
@@ -708,10 +811,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
-        "Some"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Some",
+        "λ"
       ],
       "id": "1daf460b64ca380a9652b69a2b4870ff4d842e2a",
       "l5_30": false,
@@ -748,6 +858,7 @@
         "components_κ"
       ],
       "heads": [
+        "$variable",
         "components_κ",
         "λ"
       ],
@@ -763,12 +874,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "1f879cecd53e2fce98547b4d8ef87f2446308ebe",
       "l5_30": false,
@@ -852,10 +969,15 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "AtLeast",
+        "Close",
         "SetOf",
         "λ"
       ],
@@ -874,10 +996,14 @@
         "Close"
       ],
       "heads": [
+        "$application",
+        "$variable",
         "Assert",
+        "Audience",
         "Bind",
         "Close",
-        "Context"
+        "Context",
+        "Speaker"
       ],
       "id": "25087496e92097ae61f36b808ff5f741839aa26b",
       "l5_30": false,
@@ -900,10 +1026,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
-        "GlobalExactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "GlobalExactly",
+        "λ"
       ],
       "id": "258b2f3c9ce1b2f40ce28b1d99b981a3b7eed627",
       "l5_30": false,
@@ -927,6 +1061,7 @@
         "Bind",
         "Close",
         "SelectExactly",
+        "Speaker",
         "λ"
       ],
       "id": "274806f8603d12078502192f6527633e6c13994d",
@@ -941,9 +1076,14 @@
     },
     {
       "defined_heads": [
+        "Close",
         "MoreThan"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
         "MoreThan",
         "SetOf",
         "λ"
@@ -960,10 +1100,19 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "That",
+        "This",
+        "Yonder"
       ],
       "heads": [
+        "$application",
+        "$variable",
         "Close",
+        "Speaker",
+        "That",
+        "This",
+        "Yonder",
         "λ"
       ],
       "id": "28fbdf74f01c2a49cfa6a93342e5a31e69556abd",
@@ -978,7 +1127,8 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
         "$lexical-predication",
@@ -986,6 +1136,7 @@
         "AdmissibleThreshold",
         "AtLeast",
         "Bind",
+        "Close",
         "ManyK",
         "Mention",
         "Vague",
@@ -1009,11 +1160,13 @@
         "$unknown:deps…",
         "$unknown:joi",
         "$variable",
+        "Audience",
         "Bind",
         "Context",
         "GroupBasisConstraint",
         "JoiGroup",
-        "Mention"
+        "Mention",
+        "Speaker"
       ],
       "id": "29cfac1e53b52ee33c264cbbe992f9a08f2ec434",
       "l5_30": false,
@@ -1033,10 +1186,15 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
-        "Some"
+        "$lexical-predication",
+        "$variable",
+        "Close",
+        "Some",
+        "λ"
       ],
       "id": "2a7470be1e19c3e1181aa00354f7d2f741d424e0",
       "l5_30": false,
@@ -1050,11 +1208,16 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "This",
+        "Yonder"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Close",
+        "This",
+        "Yonder"
       ],
       "id": "2a77400013781a3399170c4f6346aa424e3ecfb5",
       "l5_30": false,
@@ -1077,10 +1240,18 @@
     },
     {
       "defined_heads": [
-        "AtMost"
+        "AtMost",
+        "Close"
       ],
       "heads": [
-        "AtMost"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "AtMost",
+        "Bind",
+        "Close",
+        "Context",
+        "λ"
       ],
       "id": "2aef1b5ba045c6dddd31e5b6c700ea6ba5769506",
       "l5_30": false,
@@ -1115,13 +1286,20 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "Speaker",
+        "λ"
       ],
       "id": "2b5c18cc087f6f317b301f14f4f395bfc2ca10bd",
       "l5_30": false,
@@ -1144,6 +1322,7 @@
         "Bind",
         "Close",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "2bbd7ecacd72e5bf39fddcbd8685bbb0c8a298e1",
@@ -1183,10 +1362,16 @@
     },
     {
       "defined_heads": [
+        "DirectClause",
         "JoiClause"
       ],
       "heads": [
-        "JoiClause"
+        "$lexical-predication",
+        "$variable",
+        "Audience",
+        "DirectClause",
+        "JoiClause",
+        "Speaker"
       ],
       "id": "2eef7541db79306d1e64f5831e6f90db4c1f70e7",
       "l5_30": false,
@@ -1203,11 +1388,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "λ"
       ],
       "id": "2fcf22efb7f6212bf8ca744449fafda776c6f1c5",
       "l5_30": false,
@@ -1221,6 +1411,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
@@ -1228,6 +1419,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Every",
         "Refer",
         "λ"
@@ -1258,7 +1450,10 @@
         "Close",
         "CoRef",
         "Context",
+        "EventOfContent",
+        "Holds",
         "Refer",
+        "Speaker",
         "λ",
         "∃",
         "∧"
@@ -1278,9 +1473,14 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
         "Exactly",
         "SetOf",
         "λ"
@@ -1300,6 +1500,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -1315,10 +1517,25 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "AttachedDisplay",
+        "Audience",
+        "Bind",
+        "Close",
+        "Do",
+        "Express",
+        "Host",
+        "Intense",
+        "Let",
+        "Perform",
+        "Speaker",
+        "Unhappiness"
       ],
       "id": "33adac16a15100bdd23e72514dc4a78a96e70a6b",
       "l5_30": false,
@@ -1335,10 +1552,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
         "Mention",
+        "Realizes",
+        "Speaker",
         "StructuredQuote",
         "Utterance"
       ],
@@ -1360,11 +1585,14 @@
         "DirectClause"
       ],
       "heads": [
+        "$unknown:P",
         "DirectClause"
       ],
       "id": "366e1a5abd4c7ae5b9b88f0e8841e15b3b97636a",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown:P"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -1372,7 +1600,7 @@
         "expansion",
         "1"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "36ae04f2f31f9da029ec7c9fa9ff07c90fc5a869074ba9bfcbcc3040fef1aa22"
     },
     {
@@ -1387,6 +1615,7 @@
         "Bind",
         "Close",
         "SelectExactly",
+        "Speaker",
         "λ"
       ],
       "id": "37da0499ed432c8b54b6d072a4b1c3852e9ad2df",
@@ -1401,11 +1630,18 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "This"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$natural",
         "Assert",
-        "Close"
+        "Close",
+        "DropPlace",
+        "Speaker",
+        "This"
       ],
       "id": "393a9cba36ee0d4534cbacaafe7f62cab410ac61",
       "l5_30": false,
@@ -1431,8 +1667,10 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Close",
-        "Mention"
+        "Mention",
+        "Speaker"
       ],
       "id": "3948dd78d5112f473847359d17f681269520ce9f",
       "l5_30": false,
@@ -1469,11 +1707,16 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Tanru"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Close",
+        "Speaker",
+        "Tanru"
       ],
       "id": "3979ffbe4ee43bf95c862561488670edac08c7d3",
       "l5_30": false,
@@ -1496,9 +1739,13 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Most"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "Most",
         "SetOf",
         "λ"
@@ -1525,6 +1772,7 @@
         "Bind",
         "Close",
         "SelectExactly",
+        "Speaker",
         "λ"
       ],
       "id": "3adb0bedbd092a0ff9e28b5abeb9d81c14d69fb7",
@@ -1561,15 +1809,21 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Grade",
+        "That"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
         "$variable",
         "AdmissibleCutoff",
         "Assert",
         "Bind",
         "Close",
         "Context",
+        "Grade",
+        "That",
         "Vague",
         "λ"
       ],
@@ -1594,12 +1848,21 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "DirectClause"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "CloseClause",
+        "DirectClause",
+        "Now",
+        "Speaker",
+        "λ",
+        "∧"
       ],
       "id": "3e8c8c7868f35edb1613d8831930f09d2906e461",
       "l5_30": false,
@@ -1619,10 +1882,14 @@
         "Close"
       ],
       "heads": [
+        "$application",
+        "$variable",
+        "Audience",
         "Bind",
         "Close",
         "Context",
-        "Mention"
+        "Mention",
+        "Speaker"
       ],
       "id": "4042ee2afc837aa8bea2a718993dd4ed719ad42d",
       "l5_30": false,
@@ -1636,10 +1903,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
-        "Some"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Some",
+        "λ"
       ],
       "id": "411ad460c5065d3e54df4217a226516cb9b7e4ea",
       "l5_30": false,
@@ -1657,6 +1931,7 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
         "$unknown:deps…",
         "$unknown:lu'o",
@@ -1698,10 +1973,13 @@
         "SelectSome"
       ],
       "heads": [
+        "$lexical-predication",
         "$variable",
         "Bind",
+        "Context",
         "Mention",
-        "SelectSome"
+        "SelectSome",
+        "λ"
       ],
       "id": "414f10bf35ddfae2fb13794f4f47e52537896503",
       "l5_30": false,
@@ -1715,10 +1993,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
-        "Every"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Every",
+        "λ"
       ],
       "id": "425860a14d288938ee20bc473c86d3a5ce7f287b",
       "l5_30": false,
@@ -1732,11 +2017,18 @@
     },
     {
       "defined_heads": [
-        "Every"
+        "Close",
+        "Every",
+        "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Every"
+        "Close",
+        "Every",
+        "Some",
+        "λ"
       ],
       "id": "428f277a9ec2c492ede935d0c890b996747f1a48",
       "l5_30": true,
@@ -1756,6 +2048,8 @@
         "Exactly"
       ],
       "heads": [
+        "$natural",
+        "$variable",
         "Exactly",
         "λ"
       ],
@@ -1771,7 +2065,8 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
         "$lexical-predication",
@@ -1780,6 +2075,7 @@
         "Assert",
         "AtLeast",
         "Bind",
+        "Close",
         "ManyK",
         "Vague",
         "λ"
@@ -1808,7 +2104,10 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Close",
+        "Speaker",
         "λ"
       ],
       "id": "44e5b78b641625649b30470a6137d2e0f0c9f199",
@@ -1826,6 +2125,7 @@
         "JoiPred"
       ],
       "heads": [
+        "$variable",
         "JoiPred",
         "λ"
       ],
@@ -1841,7 +2141,8 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
         "$lexical-predication",
@@ -1850,7 +2151,9 @@
         "Assert",
         "AtLeast",
         "Bind",
+        "Close",
         "ManyK",
+        "Speaker",
         "Vague",
         "λ"
       ],
@@ -1866,7 +2169,8 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "DirectClause"
       ],
       "heads": [
         "$application",
@@ -1877,6 +2181,8 @@
         "Bind",
         "CloseClause",
         "Context",
+        "DirectClause",
+        "Speaker",
         "λ",
         "∧"
       ],
@@ -1895,11 +2201,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Every"
+        "Close",
+        "Every",
+        "λ"
       ],
       "id": "4852eeac9e86db4cb6d6d4a19469f720a7962e82",
       "l5_30": false,
@@ -1922,9 +2233,14 @@
     },
     {
       "defined_heads": [
+        "Close",
         "FewerThan"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
         "FewerThan",
         "SetOf",
         "λ"
@@ -1941,9 +2257,14 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
         "GlobalExactly",
         "SetOf",
         "λ"
@@ -1963,6 +2284,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -1996,9 +2319,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Realizes",
+        "Speaker",
         "Utterance"
       ],
       "id": "4b7c0047d00b990773438fa855778e97eba36466",
@@ -2064,6 +2395,7 @@
         "Bind",
         "Close",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "4cc6a45509151b5a0827ca4741f05c3e9e3afb8c",
@@ -2078,10 +2410,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
-        "Some"
+        "$lexical-predication",
+        "$variable",
+        "Close",
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "4d4ad03ba86cacd6bea93987224d45d7ee5e94bc",
       "l5_30": false,
@@ -2095,14 +2433,28 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$unknown-head:i-rel",
+        "$unknown:c",
+        "$unknown:degree",
+        "$variable",
+        "Close",
+        "Holds",
+        "Let",
+        "Reify",
+        "Speaker",
+        "Supplement"
       ],
       "id": "4da638eae98bc6ab7d89acb0b43b5542c9098130",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown-head:i-rel",
+        "$unknown:c",
+        "$unknown:degree"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -2110,7 +2462,7 @@
         "schema",
         "1"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "5e295b186173183176073ae8eaacc52b97861949d4efdddb855a28c0839f318e"
     },
     {
@@ -2124,6 +2476,7 @@
         "Close",
         "Mention",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "4dac43977fdeb1253b10b424e67c05ad70fea1f2",
@@ -2141,8 +2494,10 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Close",
+        "Speaker"
       ],
       "id": "4e062973565a461bfbff8b1c1e2b311b9849f16b",
       "l5_30": false,
@@ -2160,6 +2515,7 @@
       ],
       "heads": [
         "$application",
+        "$lexical-predication",
         "$variable",
         "Bind",
         "Close",
@@ -2167,6 +2523,7 @@
         "JeiRel",
         "Mention",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "4e4c65ee9d06e77cf05541003764e803eb2f029a",
@@ -2187,6 +2544,7 @@
         "components_κ"
       ],
       "heads": [
+        "$variable",
         "components_κ",
         "λ"
       ],
@@ -2202,12 +2560,26 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "CoRef",
+        "That"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "Bind",
+        "CloseClause",
+        "CoRef",
+        "Now",
+        "Refer",
+        "Speaker",
+        "StateClause",
+        "That",
+        "λ",
+        "∧"
       ],
       "id": "4ee660f130373350ce3c4f0a56ee041f0315a00d",
       "l5_30": false,
@@ -2265,13 +2637,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly",
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
+        "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Exactly",
         "SelectExactly",
         "SpeakerDescribes",
@@ -2338,6 +2714,7 @@
         "Bind",
         "Close",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "50ef8b629c53200c229526eff8a75f8fba6b259b",
@@ -2355,8 +2732,10 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Close",
+        "Speaker"
       ],
       "id": "519c65d3104d364d4363ff8b27eecdec8abe7b27",
       "l5_30": false,
@@ -2382,11 +2761,14 @@
         "NahiObjection"
       ],
       "heads": [
+        "$unknown:t",
         "NahiObjection"
       ],
       "id": "51a6e367cefb3a8da504692e60e94ca70c9ad766",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown:t"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -2394,15 +2776,23 @@
         "expansion",
         "1"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "81d0c57f124234b78e32567a01d5d7ec99795374524400df8bc12ee56a11ab8f"
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
-        "GlobalExactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "GlobalExactly",
+        "λ"
       ],
       "id": "536aa8f5d8a23f0b5e51bf8b6b43a218c4634bcb",
       "l5_30": false,
@@ -2416,6 +2806,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Distrib"
       ],
       "heads": [
@@ -2424,6 +2815,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Distrib",
         "SelectExactly",
         "λ"
@@ -2463,6 +2855,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -2478,7 +2872,8 @@
     },
     {
       "defined_heads": [
-        "CoRef"
+        "CoRef",
+        "That"
       ],
       "heads": [
         "$lexical-predication",
@@ -2489,6 +2884,7 @@
         "Refer",
         "Speaker",
         "StateClause",
+        "That",
         "λ"
       ],
       "id": "5593ba637e4c0e8adfc4e6f65eeaaeb14fca6952",
@@ -2545,10 +2941,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
-        "No"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "No",
+        "λ"
       ],
       "id": "58c16dbd8c5ab4d9d247b7053a082b392b277d90",
       "l5_30": false,
@@ -2642,11 +3045,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Some"
+        "Close",
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "5adee1115a50ccc807e02297198c6d2c11bb1ea9",
       "l5_30": false,
@@ -2663,8 +3072,12 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Audience",
+        "Close",
+        "Combine",
+        "Speaker"
       ],
       "id": "5b327dd7decfabf290e971fdee6123a55d5c4d26",
       "l5_30": false,
@@ -2684,6 +3097,7 @@
         "components_κ"
       ],
       "heads": [
+        "$variable",
         "components_κ",
         "λ"
       ],
@@ -2702,8 +3116,11 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$string",
         "Assert",
-        "Close"
+        "Close",
+        "WordSign"
       ],
       "id": "5ce3bc7019740c791f9acdfc644d21e92d62dcb7",
       "l5_30": false,
@@ -2720,12 +3137,17 @@
     },
     {
       "defined_heads": [
-        "ClauseAnd"
+        "ClauseAnd",
+        "DirectClause"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
+        "Audience",
         "ClauseAnd",
-        "CloseClause"
+        "CloseClause",
+        "DirectClause",
+        "Speaker"
       ],
       "id": "5d4266a179a6ecd2851da5ebcd79df5aa1eee0c1",
       "l5_30": false,
@@ -2742,10 +3164,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "ZipWith"
       ],
       "heads": [
-        "ZipWith"
+        "$lexical-predication",
+        "$variable",
+        "Audience",
+        "Close",
+        "List",
+        "Speaker",
+        "ZipWith",
+        "λ"
       ],
       "id": "5f5b053a4dcccf2858daa126fd3d854e0e78d516",
       "l5_30": false,
@@ -2765,12 +3195,15 @@
         "Close"
       ],
       "heads": [
+        "$application",
         "$lexical-predication",
         "$variable",
         "Bind",
         "Close",
         "Mention",
         "Refer",
+        "Speaker",
+        "SuhuRel",
         "λ"
       ],
       "id": "5fb2cbaf51ee51ea8e04140f1410110e6f30ccbf",
@@ -2788,11 +3221,21 @@
     },
     {
       "defined_heads": [
-        "Every"
+        "Close",
+        "Every",
+        "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Assert",
-        "Every"
+        "Bind",
+        "Close",
+        "Context",
+        "Every",
+        "GlobalExactly",
+        "λ"
       ],
       "id": "5feeebff2d1f37decc454689cbde025cfd011b4a",
       "l5_30": false,
@@ -2827,11 +3270,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "Mention",
-        "Some"
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "60e32117d888221df45163e11f73a0509649fe93",
       "l5_30": false,
@@ -2848,6 +3297,7 @@
         "JoiPred"
       ],
       "heads": [
+        "$variable",
         "JoiPred",
         "λ"
       ],
@@ -2863,10 +3313,23 @@
     },
     {
       "defined_heads": [
+        "Close",
+        "DuhuRel",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "DuhuRel",
+        "Let",
+        "Mention",
+        "Refer",
+        "Reify",
+        "Speaker",
+        "λ"
       ],
       "id": "60f76316a5e31d58945dd08dd80aa0e7de574156",
       "l5_30": false,
@@ -2904,10 +3367,16 @@
     },
     {
       "defined_heads": [
-        "At"
+        "At",
+        "This",
+        "Yonder"
       ],
       "heads": [
-        "At"
+        "$lexical-predication",
+        "$natural",
+        "At",
+        "This",
+        "Yonder"
       ],
       "id": "61e7f726d86ec7b7adc2ccf7ac91fe3648a8bc8d",
       "l5_30": false,
@@ -2924,6 +3393,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
@@ -2931,6 +3401,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Every",
         "Refer",
         "λ"
@@ -2947,6 +3418,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
@@ -2954,6 +3426,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "No",
         "Refer",
         "λ"
@@ -2973,11 +3446,18 @@
         "JoiClause"
       ],
       "heads": [
+        "$unknown:C",
+        "$unknown:D",
+        "$unknown:κ",
         "JoiClause"
       ],
       "id": "64125e1a71389c1db079c16d8749a3cb12f5ac87",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown:C",
+        "$unknown:D",
+        "$unknown:κ"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -2985,15 +3465,22 @@
         "expansion",
         "1"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "d50640da222caaf7a7d19ad2831232f35d808c474253fe5ac474b3227adb09c6"
     },
     {
       "defined_heads": [
+        "ActualClause",
         "Most"
       ],
       "heads": [
-        "Most"
+        "$lexical-predication",
+        "$variable",
+        "ActualClause",
+        "CloseClause",
+        "Most",
+        "StateClause",
+        "λ"
       ],
       "id": "64511f306af2f3116c75e73deaaaf0a40a24b2d4",
       "l5_30": false,
@@ -3007,13 +3494,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
         "$lexical-predication",
+        "$natural",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Context",
         "GlobalExactly",
         "Refer",
@@ -3034,6 +3524,7 @@
         "SpeakerDescribesUnaddressed"
       ],
       "heads": [
+        "Speaker",
         "SpeakerDescribesUnaddressed"
       ],
       "id": "649acb449be6c7865400e5a8c62f81bce43fd9eb",
@@ -3071,9 +3562,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
         "Exactly",
         "SetOf",
         "λ"
@@ -3116,8 +3614,12 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Assert",
-        "Close"
+        "Audience",
+        "Close",
+        "Combine",
+        "Speaker"
       ],
       "id": "676aca15433b25852f0cb06540b381890f0b57a6",
       "l5_30": false,
@@ -3134,9 +3636,13 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "No",
         "SetOf",
         "λ"
@@ -3153,12 +3659,16 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "This"
       ],
       "heads": [
+        "$application",
+        "$variable",
         "Ask",
         "Close",
         "OpenQ",
+        "This",
         "λ"
       ],
       "id": "69925ab636769ec1b0e1d0518911333bf0a93f82",
@@ -3180,12 +3690,16 @@
       ],
       "heads": [
         "$application",
+        "$unknown:H",
+        "$unknown:M",
         "$unknown:fills…",
         "Tanru"
       ],
       "id": "6a1c5ef9eea345828a4649ab920afacd84c77109",
       "l5_30": false,
       "offending_heads": [
+        "$unknown:H",
+        "$unknown:M",
         "$unknown:fills…"
       ],
       "provenance": [
@@ -3203,6 +3717,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$string",
         "$variable",
         "Assert",
@@ -3210,6 +3725,7 @@
         "Close",
         "Named",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "6acd3321836246a9a199a76f55d4d3e00e681762",
@@ -3224,10 +3740,15 @@
     },
     {
       "defined_heads": [
-        "At"
+        "At",
+        "This"
       ],
       "heads": [
-        "At"
+        "$lexical-predication",
+        "$natural",
+        "At",
+        "Speaker",
+        "This"
       ],
       "id": "6ad5c738ca1088e7ba024723e0fdb99ee9a8185a",
       "l5_30": false,
@@ -3247,6 +3768,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -3262,6 +3785,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "MoreThan"
       ],
       "heads": [
@@ -3270,8 +3794,10 @@
         "AdmissibleThreshold",
         "Assert",
         "Bind",
+        "Close",
         "Context",
         "MoreThan",
+        "Speaker",
         "TooManyK",
         "Vague",
         "λ"
@@ -3321,10 +3847,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
-        "Some"
+        "$lexical-predication",
+        "$variable",
+        "Close",
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "6dda66c58218158e235fe50e2f640eb4570dc8d9",
       "l5_30": false,
@@ -3338,10 +3870,15 @@
     },
     {
       "defined_heads": [
-        "AtMost"
+        "AtMost",
+        "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "AtMost",
+        "Close",
         "SetOf",
         "λ"
       ],
@@ -3357,10 +3894,25 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "AttachedDisplay",
+        "Audience",
+        "Bind",
+        "Close",
+        "Do",
+        "Express",
+        "Happiness",
+        "Host",
+        "Let",
+        "Moderate",
+        "Perform",
+        "Speaker"
       ],
       "id": "6e60ee9760e47fd7461b482efbc63e5c17e28444",
       "l5_30": false,
@@ -3377,10 +3929,15 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Most"
       ],
       "heads": [
-        "Most"
+        "$lexical-predication",
+        "$variable",
+        "Close",
+        "Most",
+        "λ"
       ],
       "id": "6ebb2ef1253124da54c8a896d7c857e2ff5f15a7",
       "l5_30": false,
@@ -3429,13 +3986,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
         "$string",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Exactly",
         "Named",
         "Refer",
@@ -3453,10 +4014,24 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "AttachedDisplay",
+        "Audience",
+        "Bind",
+        "Close",
+        "Contrast",
+        "Do",
+        "Express",
+        "Host",
+        "Let",
+        "Perform",
+        "Speaker"
       ],
       "id": "6f6172a19fbd27927333f4dd1fa4152e9a5ae5c8",
       "l5_30": false,
@@ -3473,9 +4048,13 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "Every",
         "SetOf",
         "λ"
@@ -3508,12 +4087,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "7093b728d78697d97257006327e2dcbdb9a365aa",
       "l5_30": false,
@@ -3554,15 +4139,21 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Grade",
+        "That"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
         "$variable",
         "AdmissibleCutoff",
         "Bind",
         "Close",
         "Context",
+        "Grade",
         "Mention",
+        "That",
         "Vague",
         "λ"
       ],
@@ -3581,6 +4172,7 @@
         "CoveredBy"
       ],
       "heads": [
+        "$variable",
         "CoveredBy",
         "λ"
       ],
@@ -3613,10 +4205,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "MoreThan"
       ],
       "heads": [
-        "MoreThan"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "MoreThan",
+        "λ"
       ],
       "id": "7489629dc458e9a2b37b77e7009276d086528421",
       "l5_30": false,
@@ -3631,7 +4231,8 @@
     {
       "defined_heads": [
         "ClauseNot",
-        "Close"
+        "Close",
+        "DirectClause"
       ],
       "heads": [
         "$lexical-predication",
@@ -3641,6 +4242,7 @@
         "ClauseNot",
         "Close",
         "CloseClause",
+        "DirectClause",
         "Refer",
         "Supplement",
         "λ"
@@ -3692,10 +4294,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Most"
       ],
       "heads": [
-        "Most"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Most",
+        "λ"
       ],
       "id": "769eb014190e70a8acf769022780b850d68d1851",
       "l5_30": false,
@@ -3712,9 +4321,13 @@
         "ActualClause"
       ],
       "heads": [
+        "$natural",
+        "+",
+        "=",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "CloseClause",
+        "StateClause"
       ],
       "id": "77203a69c8a8ae700cf674d7702a3b9f8e87cd23",
       "l5_30": false,
@@ -3761,30 +4374,43 @@
     },
     {
       "defined_heads": [
-        "At"
+        "At",
+        "This"
       ],
       "heads": [
-        "At"
+        "$lexical-predication",
+        "$unknown:x2",
+        "At",
+        "This"
       ],
       "id": "79d9d13ae89321d21b507ecebb218ef7241987a5",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown:x2"
+      ],
       "provenance": [
         "test",
         "\"types-test.rkt\""
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "40ddf3834cd047b74cb06a0080c4b759bebad2ab8ca26ee2ba8da38402f7dddb"
     },
     {
       "defined_heads": [
+        "CapableClause",
+        "DirectClause",
         "Every"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
+        "CapableClause",
         "CloseClause",
+        "DirectClause",
         "Every",
-        "StateClause"
+        "StateClause",
+        "λ"
       ],
       "id": "7a7bc52f4703c4bb7d58afbb508f66cd197d2e9d",
       "l5_30": false,
@@ -3805,7 +4431,9 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
@@ -3825,11 +4453,20 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "ContextualAnswer"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Answer",
         "Assert",
-        "Close"
+        "Close",
+        "ContextualAnswer",
+        "OpenQ",
+        "Reify",
+        "Speaker",
+        "λ"
       ],
       "id": "7c86998bff2d73214b21607337441097d5bec8a4",
       "l5_30": false,
@@ -3846,10 +4483,15 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "AtLeast",
+        "Close",
         "SetOf",
         "λ"
       ],
@@ -3920,6 +4562,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Close",
         "Combine",
         "Speaker"
@@ -3957,13 +4600,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
         "$lexical-predication",
+        "$natural",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Exactly",
         "Refer",
         "λ"
@@ -3980,12 +4626,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "808a6f9bdbbb1073dda1dc3a393dee0026919d4f",
       "l5_30": false,
@@ -3999,10 +4651,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
-        "Exactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Exactly",
+        "λ"
       ],
       "id": "80b377eeaeeff358d3b8c1f73fd2749ffb17cb57",
       "l5_30": false,
@@ -4018,28 +4678,36 @@
       "defined_heads": [],
       "heads": [
         "$lexical-predication",
+        "$malformed-structural:Vague",
         "$variable",
         "Bind",
         "SetOf",
-        "Vague",
         "λ"
       ],
       "id": "81249b21b108a39d8e6dbc5d9a71fd9489173945",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$malformed-structural:Vague"
+      ],
       "provenance": [
         "test",
         "\"types-test.rkt\""
       ],
-      "tag": "primitive-core",
+      "tag": "out-of-slice",
       "term_sha256": "9cb77efa3b6d9c2ce815b39aa7f9b420f35f2892e2197b9e5d79ca69c8445208"
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
-        "GlobalExactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
+        "GlobalExactly",
+        "λ"
       ],
       "id": "81d3fa49e84bfcf00813d35fad8d70b23b8d3935",
       "l5_30": false,
@@ -4053,10 +4721,20 @@
     },
     {
       "defined_heads": [
+        "Close",
+        "This",
         "ZipWith"
       ],
       "heads": [
-        "ZipWith"
+        "$lexical-predication",
+        "$variable",
+        "Audience",
+        "Close",
+        "List",
+        "Speaker",
+        "This",
+        "ZipWith",
+        "λ"
       ],
       "id": "81df027209c0b4d617774e9d08f18bdddafa8181",
       "l5_30": false,
@@ -4113,6 +4791,7 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "Speaker",
         "SpeakerDescribes"
       ],
       "id": "824c1e691101b06fe9aac23a3b2f39f98e6b22f4",
@@ -4130,8 +4809,10 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Close",
-        "SentenceSign"
+        "SentenceSign",
+        "Speaker"
       ],
       "id": "8360021fa7e50952cd0f155fbb5c8ea9a845b60f",
       "l5_30": false,
@@ -4186,7 +4867,11 @@
         "GlobalExactly"
       ],
       "heads": [
-        "GlobalExactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "GlobalExactly",
+        "λ"
       ],
       "id": "8447f6258b31394149ce313493c037835dfbdc08",
       "l5_30": false,
@@ -4222,13 +4907,20 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "That"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "Bind",
         "Close",
         "Context",
-        "Mention"
+        "Mention",
+        "OtherThan",
+        "Scalar",
+        "That"
       ],
       "id": "862720c1f474ff4d4b38b17c7d11f43a86a253d7",
       "l5_30": false,
@@ -4242,12 +4934,24 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "Close",
+        "DirectClause",
+        "This"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "Close",
+        "CloseClause",
+        "DirectClause",
+        "Speaker",
+        "This",
+        "λ",
+        "∧"
       ],
       "id": "87729f831145ac5f8259b3df8468e51ff499d945",
       "l5_30": false,
@@ -4268,10 +4972,13 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
         "Refer",
+        "Speaker",
         "SpeakerDescribes",
         "λ"
       ],
@@ -4295,12 +5002,14 @@
         "$unknown:deps…",
         "$unknown:joi",
         "$variable",
+        "Audience",
         "Bind",
         "Close",
         "Context",
         "GroupBasisConstraint",
         "JoiGroup",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "89ce9e32a227ba2c0991003aea571f49397878ad",
@@ -4324,9 +5033,12 @@
         "GunmaAt"
       ],
       "heads": [
+        "$unknown:Cs",
         "$unknown:T",
         "$unknown:deps…",
+        "$unknown:g",
         "$unknown:gunma",
+        "$variable",
         "Bind",
         "Context",
         "GroupBasisConstraint",
@@ -4335,8 +5047,10 @@
       "id": "8a1193cce45a6c5199e42931bb1ecdbb8e785682",
       "l5_30": false,
       "offending_heads": [
+        "$unknown:Cs",
         "$unknown:T",
         "$unknown:deps…",
+        "$unknown:g",
         "$unknown:gunma"
       ],
       "provenance": [
@@ -4386,7 +5100,8 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
         "$lexical-predication",
@@ -4395,6 +5110,7 @@
         "Assert",
         "AtLeast",
         "Bind",
+        "Close",
         "ManyK",
         "Refer",
         "Vague",
@@ -4415,6 +5131,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -4430,10 +5148,18 @@
     },
     {
       "defined_heads": [
+        "CapableClause",
+        "DirectClause",
         "Every"
       ],
       "heads": [
-        "Every"
+        "$lexical-predication",
+        "$variable",
+        "CapableClause",
+        "CloseClause",
+        "DirectClause",
+        "Every",
+        "λ"
       ],
       "id": "8d78f8d8c9f89d2cb1bfb69d3d0cd6bacb75a01f",
       "l5_30": false,
@@ -4447,10 +5173,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "MoreThan"
       ],
       "heads": [
-        "MoreThan"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "MoreThan",
+        "λ"
       ],
       "id": "8e1fab41bbb56ee118edf789bec2b290dedfaa2e",
       "l5_30": false,
@@ -4482,7 +5216,8 @@
     },
     {
       "defined_heads": [
-        "ClauseNot"
+        "ClauseNot",
+        "DirectClause"
       ],
       "heads": [
         "$lexical-predication",
@@ -4491,6 +5226,7 @@
         "Bind",
         "ClauseNot",
         "CloseClause",
+        "DirectClause",
         "Refer",
         "λ"
       ],
@@ -4509,13 +5245,19 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "90ea9f4b3bd16e1989e5d78f7db1bfc8698c46bd",
       "l5_30": false,
@@ -4551,11 +5293,22 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "ClauseAnd"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "=",
         "ActualClause",
-        "CloseClause"
+        "ClauseAnd",
+        "CloseClause",
+        "Now",
+        "StateClause",
+        "¬",
+        "λ",
+        "∧"
       ],
       "id": "91f8c739192a10fa78ea94b2b69c1b90b75da2f3",
       "l5_30": false,
@@ -4572,10 +5325,14 @@
     },
     {
       "defined_heads": [
-        "At"
+        "At",
+        "This"
       ],
       "heads": [
-        "At"
+        "$lexical-predication",
+        "$natural",
+        "At",
+        "This"
       ],
       "id": "945980eea61c7655bfce9429087472892c9e5c2e",
       "l5_30": false,
@@ -4609,10 +5366,18 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
-        "AtLeast"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "AtLeast",
+        "Bind",
+        "Close",
+        "Context",
+        "λ"
       ],
       "id": "94cf88a0926fcd3b3ed426e8325e749edea9ed95",
       "l5_30": false,
@@ -4643,10 +5408,15 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
-        "Every"
+        "$lexical-predication",
+        "$variable",
+        "Close",
+        "Every",
+        "λ"
       ],
       "id": "9950bcb96b07982d231b52cb8af364c40cb79561",
       "l5_30": false,
@@ -4660,13 +5430,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
         "$lexical-predication",
+        "$natural",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Exactly",
         "Refer",
         "λ"
@@ -4686,6 +5459,8 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Close",
         "λ"
       ],
@@ -4704,7 +5479,8 @@
     },
     {
       "defined_heads": [
-        "ClauseNot"
+        "ClauseNot",
+        "DirectClause"
       ],
       "heads": [
         "$lexical-predication",
@@ -4713,6 +5489,7 @@
         "Bind",
         "ClauseNot",
         "CloseClause",
+        "DirectClause",
         "Refer",
         "λ"
       ],
@@ -4756,6 +5533,8 @@
         "SpeakerDescribesUnaddressed"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
@@ -4786,13 +5565,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
         "$string",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Exactly",
         "Named",
         "Refer",
@@ -4810,12 +5593,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "9e06566d9890b2c704417adef0a5b50d9cdcd8e4",
       "l5_30": false,
@@ -4856,11 +5645,21 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Close"
+        "Close",
+        "Realizes",
+        "Speaker",
+        "SpeakerOf",
+        "StructuredQuote",
+        "Utterance",
+        "∧"
       ],
       "id": "9e92668ab98024785d0970b737b5341085a4077b",
       "l5_30": false,
@@ -4877,13 +5676,20 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "Speaker",
+        "λ"
       ],
       "id": "9eb692db840e8b2093a85c697191a3a561335644",
       "l5_30": false,
@@ -4897,17 +5703,22 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "JaiRaise"
       ],
       "heads": [
+        "$application",
         "$lexical-predication",
         "$variable",
         "Assert",
+        "Audience",
         "Bind",
         "Close",
         "Context",
+        "JaiRaise",
         "JaiRoleAdmissible",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "9ef0e5d14ff5ff503f0484da5278c30ab478157b",
@@ -4929,6 +5740,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
@@ -4951,12 +5764,18 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "ClauseNot",
+        "DirectClause"
       ],
       "heads": [
+        "$lexical-predication",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "ClauseNot",
+        "CloseClause",
+        "DirectClause",
+        "Speaker"
       ],
       "id": "a067d7b81eee439b527591238e0133cbe858de9e",
       "l5_30": false,
@@ -4979,10 +5798,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "FewerThan"
       ],
       "heads": [
-        "FewerThan"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "FewerThan",
+        "λ"
       ],
       "id": "a13da18fac2b9d1a13e06cf1ecc0c540d5adf01e",
       "l5_30": false,
@@ -4996,10 +5823,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "FewerThan"
       ],
       "heads": [
-        "FewerThan"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "FewerThan",
+        "λ"
       ],
       "id": "a276ef47aa851126f08e68dcf950821a4344f119",
       "l5_30": false,
@@ -5013,13 +5848,20 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "That"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
-        "Context"
+        "Context",
+        "OtherThan",
+        "Scalar",
+        "That"
       ],
       "id": "a2dc1056807fe3a1cce4875395f0186fd4a8c7ac",
       "l5_30": false,
@@ -5042,6 +5884,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Distrib"
       ],
       "heads": [
@@ -5049,6 +5892,7 @@
         "$natural",
         "$variable",
         "Bind",
+        "Close",
         "Distrib",
         "Mention",
         "SelectExactly",
@@ -5066,11 +5910,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "Speaker",
+        "λ"
       ],
       "id": "a6c8d36f67dc1c2896c84ec3fa881889f761b7d4",
       "l5_30": false,
@@ -5084,11 +5934,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "Mention",
-        "Some"
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "a80380a1b22f80fe8a622376789319b054091307",
       "l5_30": false,
@@ -5118,12 +5974,19 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "ClauseAnd",
+        "DirectClause"
       ],
       "heads": [
+        "$lexical-predication",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "Audience",
+        "ClauseAnd",
+        "CloseClause",
+        "DirectClause",
+        "Speaker"
       ],
       "id": "aa0dd9901b5864fc4e903c94fbc93cf17efeea3e",
       "l5_30": false,
@@ -5147,17 +6010,20 @@
     {
       "defined_heads": [],
       "heads": [
+        "$malformed-structural:Bind",
+        "$undeclared-free:$v1",
         "$undeclared-free:$vk",
         "$unknown-head:P",
         "$unknown:…",
         "$variable",
-        "Bind",
         "Context",
         "λ"
       ],
       "id": "aa858d84d132cf65d1892b7c0fb6e769d733fe52",
       "l5_30": false,
       "offending_heads": [
+        "$malformed-structural:Bind",
+        "$undeclared-free:$v1",
         "$undeclared-free:$vk",
         "$unknown-head:P",
         "$unknown:…"
@@ -5226,7 +6092,8 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
         "$lexical-predication",
@@ -5235,6 +6102,7 @@
         "Assert",
         "AtLeast",
         "Bind",
+        "Close",
         "ManyK",
         "Refer",
         "Vague",
@@ -5252,6 +6120,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "MoreThan"
       ],
       "heads": [
@@ -5260,6 +6129,7 @@
         "AdmissibleThreshold",
         "Assert",
         "Bind",
+        "Close",
         "Context",
         "MoreThan",
         "TooManyK",
@@ -5326,7 +6196,9 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
+        "$variable",
         "Assert",
         "Bind",
         "CoRef",
@@ -5352,13 +6224,19 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Bind",
+        "Close",
         "Context",
         "GlobalExactly",
-        "Mention"
+        "Mention",
+        "λ"
       ],
       "id": "afdc655e5d92abe64d7f60264ba07d4e6d7aac18",
       "l5_30": false,
@@ -5375,6 +6253,8 @@
         "SpeakerDescribesUnaddressed"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribesUnaddressed",
         "λ"
       ],
@@ -5393,6 +6273,8 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Close",
         "Mention",
         "λ"
@@ -5451,11 +6333,15 @@
         "Close"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
         "$variable",
         "Bind",
         "Close",
         "Mention",
+        "NiRel",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "b4f5a39f1b309245b2d50930cb69faed4a7b4716",
@@ -5476,6 +6362,8 @@
         "MeiRel"
       ],
       "heads": [
+        "$natural",
+        "$variable",
         "MeiRel",
         "λ"
       ],
@@ -5491,6 +6379,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Reciprocate"
       ],
       "heads": [
@@ -5499,6 +6388,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Reciprocate",
         "SelectExactly",
         "λ"
@@ -5523,6 +6413,8 @@
       "heads": [
         "$undeclared-free:$p",
         "$unknown-head:C",
+        "$unknown:R",
+        "$unknown:v",
         "$unknown:…",
         "$unknown:ℓ1",
         "$unknown:ℓn",
@@ -5536,6 +6428,8 @@
       "offending_heads": [
         "$undeclared-free:$p",
         "$unknown-head:C",
+        "$unknown:R",
+        "$unknown:v",
         "$unknown:…",
         "$unknown:ℓ1",
         "$unknown:ℓn"
@@ -5555,25 +6449,37 @@
         "Sign"
       ],
       "heads": [
+        "$application",
+        "$string",
+        "$unknown-head:TextOf",
+        "$variable",
         "Sign"
       ],
       "id": "b8c1017a9761f7a8aa76cd65f01fbc950d366411",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown-head:TextOf"
+      ],
       "provenance": [
         "test",
         "\"types-test.rkt\""
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "d51e8a41aae5256aed242691c99697b994c9b0acb7bcfbf0bb717314abaa2437"
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "Speaker",
+        "λ"
       ],
       "id": "b92059ed2600b14c09f0cbb9515567e36d32a11b",
       "l5_30": false,
@@ -5633,6 +6539,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
@@ -5640,6 +6547,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Refer",
         "Some",
         "λ"
@@ -5659,6 +6567,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$string",
         "$variable",
         "Assert",
@@ -5687,6 +6596,8 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "SpeakerDescribes",
         "λ"
       ],
@@ -5702,12 +6613,19 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "ClauseOr",
+        "DirectClause"
       ],
       "heads": [
+        "$lexical-predication",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "Audience",
+        "ClauseOr",
+        "CloseClause",
+        "DirectClause",
+        "Speaker"
       ],
       "id": "bee7ef18ac1ee28a7164c789ee5c46634de0cc8b",
       "l5_30": false,
@@ -5755,6 +6673,7 @@
         "components_κ"
       ],
       "heads": [
+        "$variable",
         "Mention",
         "components_κ",
         "λ"
@@ -5774,13 +6693,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
         "$lexical-predication",
+        "$natural",
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Context",
         "GlobalExactly",
         "Refer",
@@ -5798,13 +6720,24 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "That",
+        "This",
+        "Yonder"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
+        "Audience",
         "Bind",
         "Close",
-        "Context"
+        "Combine",
+        "Context",
+        "Speaker",
+        "That",
+        "This",
+        "Yonder"
       ],
       "id": "c2799738837df743badc2bd6823a7203c718f4d4",
       "l5_30": false,
@@ -5853,11 +6786,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "Assert",
-        "Exactly"
+        "Close",
+        "Exactly",
+        "λ"
       ],
       "id": "c2893c48f65e9358154c3c71c07d9f10e125e8b4",
       "l5_30": false,
@@ -5871,10 +6810,14 @@
     },
     {
       "defined_heads": [
-        "At"
+        "At",
+        "This"
       ],
       "heads": [
-        "At"
+        "$lexical-predication",
+        "$natural",
+        "At",
+        "This"
       ],
       "id": "c36e531d29b8e0adf0b57c08256f64221be3890f",
       "l5_30": false,
@@ -5891,6 +6834,7 @@
         "Close"
       ],
       "heads": [
+        "$variable",
         "Close",
         "λ"
       ],
@@ -5906,10 +6850,22 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Audience",
+        "Bind",
+        "Close",
+        "Context",
+        "Express",
+        "Host",
+        "Let",
+        "MetalinguisticallyDefective",
+        "Perform"
       ],
       "id": "c3f807759c2a4b21cc592b0ff7b4858dbd44f1a8",
       "l5_30": false,
@@ -5929,11 +6885,14 @@
         "Utterance"
       ],
       "heads": [
+        "$unknown-head:fact…",
         "Utterance"
       ],
       "id": "c4532d6576b18413ddd5c681dc3ecb11ed01a35c",
       "l5_30": false,
-      "offending_heads": [],
+      "offending_heads": [
+        "$unknown-head:fact…"
+      ],
       "provenance": [
         "fence",
         "\"spec.md\"",
@@ -5941,7 +6900,7 @@
         "expansion",
         "1"
       ],
-      "tag": "pending-milestone-2",
+      "tag": "out-of-slice",
       "term_sha256": "80a55f62719245442f1fec9271f4e3935e9c7f405be1ddb7b88878c1022e06a4"
     },
     {
@@ -5965,6 +6924,7 @@
         "CoveredBy"
       ],
       "heads": [
+        "$variable",
         "CoveredBy",
         "λ"
       ],
@@ -5987,6 +6947,7 @@
         "Bind",
         "Massify",
         "Mention",
+        "Speaker",
         "λ"
       ],
       "id": "c514182c124a29774fb65f68a9f1b73a31b5130b",
@@ -6024,7 +6985,8 @@
     },
     {
       "defined_heads": [
-        "ClauseNot"
+        "ClauseNot",
+        "DirectClause"
       ],
       "heads": [
         "$lexical-predication",
@@ -6033,6 +6995,7 @@
         "Bind",
         "ClauseNot",
         "CloseClause",
+        "DirectClause",
         "Refer",
         "λ"
       ],
@@ -6067,10 +7030,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Do",
+        "Let",
+        "Perform",
+        "Speaker"
       ],
       "id": "cb0c2d14a541bd5721c594d8492a196ae21fc449",
       "l5_30": false,
@@ -6094,6 +7065,7 @@
         "Bind",
         "Massify",
         "Mention",
+        "Speaker",
         "λ"
       ],
       "id": "cb238239f922d167cfddd4bbb3dfeaea323ce103",
@@ -6172,9 +7144,13 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Close",
         "SetOf",
         "Some",
         "λ"
@@ -6213,11 +7189,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Every"
+        "Close",
+        "Every",
+        "Speaker",
+        "λ"
       ],
       "id": "cf2374e6e207721068753ffa99278a37b7d56886",
       "l5_30": false,
@@ -6231,10 +7213,18 @@
     },
     {
       "defined_heads": [
-        "AtMost"
+        "AtMost",
+        "Close"
       ],
       "heads": [
-        "AtMost"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "AtMost",
+        "Bind",
+        "Close",
+        "Context",
+        "λ"
       ],
       "id": "d12cc9e49c7b44ac7c5244121e90ff57baa5d4a7",
       "l5_30": false,
@@ -6286,20 +7276,40 @@
     },
     {
       "defined_heads": [
+        "ActualClause",
         "CardBasis",
+        "Close",
+        "DirectClause",
+        "Exactly",
         "Let"
       ],
       "heads": [
+        "$application",
         "$lexical-predication",
         "$natural",
         "$variable",
         "=",
+        "ActualClause",
+        "Assert",
+        "AttachedDisplay",
         "Bind",
         "CardBasis",
+        "Close",
+        "CloseClause",
         "Context",
+        "DirectClause",
         "Do",
+        "Exactly",
+        "Express",
+        "Host",
+        "Intense",
         "Let",
+        "Perform",
         "Refer",
+        "Speaker",
+        "Supplement",
+        "Unhappiness",
+        "¬",
         "λ",
         "∧"
       ],
@@ -6318,11 +7328,19 @@
     },
     {
       "defined_heads": [
-        "No"
+        "Close",
+        "No",
+        "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "Speaker",
+        "SpeakerDescribes",
+        "λ"
       ],
       "id": "d58306a054f5e6c76392d4f9d5345c97f47768ab",
       "l5_30": false,
@@ -6336,6 +7354,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
@@ -6343,6 +7362,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "No",
         "Refer",
         "λ"
@@ -6376,6 +7396,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
@@ -6383,6 +7404,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Refer",
         "Some",
         "λ"
@@ -6399,9 +7421,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Realizes",
+        "Speaker",
         "Utterance"
       ],
       "id": "d7d6670d2b3feae13b0f326ab972adfa34a4acde",
@@ -6419,6 +7449,7 @@
         "CoveredBy"
       ],
       "heads": [
+        "$variable",
         "CoveredBy",
         "λ"
       ],
@@ -6434,12 +7465,16 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "DirectClause"
       ],
       "heads": [
+        "$lexical-predication",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "CloseClause",
+        "DirectClause",
+        "Speaker"
       ],
       "id": "d98ba3acc2773fb33ca425ffc9b881e6035c72f7",
       "l5_30": false,
@@ -6459,6 +7494,8 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Ask",
         "Close",
         "OpenQ",
@@ -6479,12 +7516,22 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "DirectClause"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
         "ActualClause",
         "Assert",
-        "CloseClause"
+        "CloseClause",
+        "DirectClause",
+        "Now",
+        "Speaker",
+        "λ",
+        "∃",
+        "∧"
       ],
       "id": "da36a5fa379d04d4403128cb08e14f83646fb251",
       "l5_30": false,
@@ -6501,11 +7548,16 @@
     },
     {
       "defined_heads": [
+        "Close",
         "No"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "No"
+        "Close",
+        "No",
+        "λ"
       ],
       "id": "da97e598f0594e6ba811953858f978a3c3a9528f",
       "l5_30": false,
@@ -6528,13 +7580,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "GlobalExactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
         "$variable",
         "Bind",
+        "Close",
         "Context",
-        "GlobalExactly"
+        "GlobalExactly",
+        "λ"
       ],
       "id": "db9e84ebb83dc304f85923c2946dc35e1a13993e",
       "l5_30": false,
@@ -6570,10 +7627,20 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "That",
+        "This",
+        "Yonder"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
+        "Audience",
         "Close",
+        "Speaker",
+        "That",
+        "This",
+        "Yonder",
         "λ"
       ],
       "id": "dc8abeca8e3526d994a07a53ed902fb903195b26",
@@ -6618,11 +7685,14 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
         "SelectExactly",
+        "Speaker",
         "SpeakerDescribes",
         "λ"
       ],
@@ -6661,7 +7731,9 @@
         "$lexical-predication",
         "$unknown-head:C",
         "$unknown-head:D",
+        "$unknown:κ",
         "$variable",
+        "Combine",
         "CompleteGunmaAt",
         "λ",
         "∃",
@@ -6671,7 +7743,8 @@
       "l5_30": false,
       "offending_heads": [
         "$unknown-head:C",
-        "$unknown-head:D"
+        "$unknown-head:D",
+        "$unknown:κ"
       ],
       "provenance": [
         "fence",
@@ -6685,12 +7758,18 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "At",
+        "Close",
+        "This"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Ask",
+        "At",
         "Close",
         "OpenQ",
+        "This",
         "λ"
       ],
       "id": "e05eea1c9037225b3aa1687dbfb384c05b2dff84",
@@ -6732,10 +7811,25 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "AttachedDisplay",
+        "Audience",
+        "Bind",
+        "Close",
+        "Do",
+        "EvidentialBasis",
+        "Express",
+        "Host",
+        "Let",
+        "Observation",
+        "Perform",
+        "Speaker"
       ],
       "id": "e265f654d73091e8db042b5820cba0df47e812be",
       "l5_30": false,
@@ -6826,6 +7920,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$string",
         "$variable",
         "Assert",
@@ -6847,6 +7942,7 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Every"
       ],
       "heads": [
@@ -6854,6 +7950,7 @@
         "$variable",
         "Assert",
         "Bind",
+        "Close",
         "Every",
         "Refer",
         "λ"
@@ -6873,13 +7970,15 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$variable",
         "Assert",
         "Bind",
         "Close",
         "Local",
         "Mention",
-        "Perform"
+        "Perform",
+        "Speaker"
       ],
       "id": "e6de3a77f1ef095f2c747f051f659f74f57ebab3",
       "l5_30": false,
@@ -6896,8 +7995,12 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "Close",
-        "Express"
+        "Desire",
+        "Express",
+        "Reify",
+        "Speaker"
       ],
       "id": "e72922e2754b6fbae2733c861813fd899a07eb3a",
       "l5_30": false,
@@ -6914,11 +8017,19 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
         "InterpretContent",
         "Mention",
+        "Realizes",
+        "Speaker",
         "StructuredQuote",
         "Utterance"
       ],
@@ -6940,7 +8051,10 @@
         "Let"
       ],
       "heads": [
-        "Let"
+        "$variable",
+        "Let",
+        "Mention",
+        "Speaker"
       ],
       "id": "e97a3f27befc567d541ac57e93d47c88db3e5370",
       "l5_30": false,
@@ -7067,10 +8181,13 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
         "Bind",
         "Close",
         "Refer",
+        "Speaker",
         "SpeakerDescribes",
         "λ"
       ],
@@ -7092,6 +8209,7 @@
         "Close"
       ],
       "heads": [
+        "$lexical-predication",
         "$string",
         "$variable",
         "Assert",
@@ -7099,6 +8217,7 @@
         "Close",
         "Named",
         "Refer",
+        "Speaker",
         "λ"
       ],
       "id": "ef0d085f9a8c3af028bb48b3c99f40d636cb9385",
@@ -7113,9 +8232,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Utterance"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Realizes",
+        "Speaker",
         "StructuredQuote",
         "Utterance"
       ],
@@ -7131,10 +8258,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Most"
       ],
       "heads": [
-        "Most"
+        "$lexical-predication",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Most",
+        "λ"
       ],
       "id": "f46f128f1808d5c87cf4daeb48aa8181cd8a4f31",
       "l5_30": false,
@@ -7148,10 +8282,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Let"
       ],
       "heads": [
-        "Let"
+        "$lexical-predication",
+        "$variable",
+        "Assert",
+        "Close",
+        "Do",
+        "Let",
+        "Perform",
+        "Speaker"
       ],
       "id": "f653cb0a56774dea1f78c007c770b90d51c88371",
       "l5_30": false,
@@ -7196,11 +8338,17 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Some"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Some"
+        "Close",
+        "Some",
+        "Speaker",
+        "λ"
       ],
       "id": "f9f7acbbeb94b894a71e501a3ec02e82877fd496",
       "l5_30": false,
@@ -7214,14 +8362,22 @@
     },
     {
       "defined_heads": [
-        "ActualClause"
+        "ActualClause",
+        "DirectClause"
       ],
       "heads": [
+        "$application",
+        "$lexical-predication",
         "$variable",
         "ActualClause",
         "Bind",
+        "DirectClause",
         "Mention",
-        "Refer"
+        "Now",
+        "Refer",
+        "Speaker",
+        "λ",
+        "∧"
       ],
       "id": "fa25a1474471285c63f17b365ac422e2523e0dfc",
       "l5_30": false,
@@ -7238,9 +8394,14 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Close",
         "Exactly",
         "SetOf",
         "λ"
@@ -7289,11 +8450,22 @@
     },
     {
       "defined_heads": [
-        "Close"
+        "Close",
+        "Let"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
-        "Close"
+        "Audience",
+        "Close",
+        "EvidentialBasis",
+        "Hearsay",
+        "Holds",
+        "Let",
+        "Reify",
+        "Speaker",
+        "Supplement"
       ],
       "id": "fdcc4eabea6f2fa114a1eef0cb43fcc0aa653e60",
       "l5_30": false,
@@ -7310,10 +8482,17 @@
     },
     {
       "defined_heads": [
-        "AtLeast"
+        "AtLeast",
+        "Close"
       ],
       "heads": [
+        "$lexical-predication",
+        "$natural",
+        "$variable",
         "AtLeast",
+        "Bind",
+        "Close",
+        "Context",
         "SetOf",
         "λ"
       ],
@@ -7333,11 +8512,16 @@
         "CoRef"
       ],
       "heads": [
+        "$lexical-predication",
+        "$variable",
         "Assert",
+        "Audience",
         "Bind",
         "Close",
         "CoRef",
         "Refer",
+        "Reify",
+        "Speaker",
         "λ"
       ],
       "id": "fe8530425b9329992abd7b0afef0a0782e184f12",
@@ -7358,6 +8542,7 @@
         "SpeakerDescribes"
       ],
       "heads": [
+        "$lexical-predication",
         "$natural",
         "$variable",
         "Bind",
@@ -7379,10 +8564,18 @@
     },
     {
       "defined_heads": [
+        "Close",
         "Exactly"
       ],
       "heads": [
-        "Exactly"
+        "$lexical-predication",
+        "$natural",
+        "$variable",
+        "Bind",
+        "Close",
+        "Context",
+        "Exactly",
+        "λ"
       ],
       "id": "ff0589096c5b179be217803445eae85e2e574fdc",
       "l5_30": false,
@@ -7396,10 +8589,11 @@
     }
   ],
   "counts": {
+    "defined_payload_variable_cases": 232,
     "l5_30_cases": 2,
-    "out_of_slice": 22,
-    "pending_milestone_2": 264,
-    "primitive_core": 51,
+    "out_of_slice": 31,
+    "pending_milestone_2": 256,
+    "primitive_core": 50,
     "skeleton_probe_records": 2,
     "total_cases": 337,
     "typed_records": 60
