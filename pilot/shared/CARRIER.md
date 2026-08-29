@@ -37,10 +37,11 @@ profile is an *index* of evaluation, never a branch choice and never a
 memoized state component.
 
 S5. **Projective commitments survive at-issue falsity.** `Presuppose π b`
-appends π's closure (with trigger site and handler scope) to the current
-branch's trace and evaluates b; `Supplement a σ b` likewise; traces of
-branches that die on at-issue grounds are kept in `spent` and discharged
-at the handler (§5.5; MODEL_REPAIR §1, §3).
+emits π's closure (with trigger site and handler scope) into the current
+branch's obligations and evaluates b; `Supplement a σ b` likewise.
+Emissions combine under P3/P4; the emissions of branches that die on
+at-issue grounds remain observable at, and are discharged by, the handler
+(§5.5). MODEL_REPAIR's `spent` channel is one profile realizing this.
 
 S6. **Accessibility rows are the escape/visibility statement** (§5.4 table):
 `∧`/`Do` sequence left-to-right with both operands' introductions
@@ -71,8 +72,9 @@ participates in identity — and evaluating it runs that content at the
 S9. **`Perform` phasing** (§7.1 :2043–2057, fixed without deciding #11's
 policies): create the occurrence with a fresh extensional capture and
 associate it with `CurrentToken`; run the captured payload; discharge
-presuppositions and commit supplements (including `spent`); apply the force
-update per surviving lineage; return the opaque `ActOccurrence` handle. Two
+presuppositions and commit supplements, including those of extinguished
+branches (S5); apply the force update per surviving lineage; return the
+opaque `ActOccurrence` handle. Two
 executions of one act value are distinct occurrences even with equal
 captures. An uninterpretable payload may leave an occurrence without a
 defined realized Content. No term inspects the capture.
@@ -143,7 +145,7 @@ Operations : refer, select* (witness laws), context(site, deps), vague(site) via
 | C2 | `Vague` site under negation/quantification | denotation is the profile family; no branch per sharpening; supertruth across admissible profiles (live §5.1; C3's open objection to the supertruth reading is recorded in COUNTEREXAMPLES and is not decided here) |
 | C4 | `mi na klama` with an unresolvable destination site | `Undef`, never true |
 | C4′ | unresolved `Context` in one disjunct, `Live` in the other | per P1 profile; record each |
-| FP | a well-formed *false* at-issue content carrying `Presuppose π` | π present in `spent`/trace at the handler |
+| FP | a well-formed *false* at-issue content carrying `Presuppose π` | π observable at the handler through the selected P3/P4 profile |
 | DF | `∧` whose left conjunct is false on some branches, right conjunct reads state | right runs only on surviving branches |
 | ER | `Refer` with an `EFn` restrictor that introduces | introductions survive with the referent; `Local` around it projects them |
 | PO | one act value performed twice under distinct captures | two occurrences; `ActContent` identical; `RealizedContent` per capture |
