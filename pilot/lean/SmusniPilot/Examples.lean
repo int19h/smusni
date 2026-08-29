@@ -181,6 +181,24 @@ def runLocalGates : IO Unit := do
   if dangling.validate.isOk then
     throw <| IO.userError "dangling site dependency was accepted"
 
+  let selfLoopId : SiteId :=
+    { document := "self-loop"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let selfLoopBundle : Interchange.Bundle 0 :=
+    { version := 1
+      term := .context selfLoopId .nil
+      sites := [
+        { identity := selfLoopId
+          role := .context
+          dependencies := [.site selfLoopId] }
+      ]
+      sourceMap := [] }
+  let selfLoopClosure ← IO.ofExcept <|
+    Interchange.buildTypedClosureUses selfLoopBundle
+  if selfLoopClosure.length != 1 then
+    throw <| IO.userError "typed closure duplicated a self-dependent site"
+
   let boundSiteId : SiteId :=
     { document := "bundle-binding"
       occurrence := 0

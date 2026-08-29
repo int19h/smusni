@@ -296,6 +296,30 @@ def buildTypedSiteUseWitness {scope : Nat} (bundle : Bundle scope)
         else .error s!"site role conflicts with occurrence: {repr use.identity}"
       else .error s!"site lookup identity mismatch: {repr use.identity}"
 
+def dedupSiteUses : List SiteUse → List SiteUse
+  | [] => []
+  | use :: rest =>
+      let tail := dedupSiteUses rest
+      if tail.contains use then tail else use :: tail
+
+@[simp] theorem mem_dedupSiteUses (use : SiteUse) (uses : List SiteUse) :
+    use ∈ dedupSiteUses uses ↔ use ∈ uses := by
+  induction uses with
+  | nil => simp [dedupSiteUses]
+  | cons head tail ih =>
+      simp only [dedupSiteUses]
+      split <;> grind
+
+theorem nodup_dedupSiteUses (uses : List SiteUse) :
+    (dedupSiteUses uses).Nodup := by
+  induction uses with
+  | nil => simp [dedupSiteUses]
+  | cons head tail ih =>
+      simp only [dedupSiteUses]
+      split
+      · exact ih
+      · constructor <;> grind
+
 def siteUseUniverse {scope : Nat} (bundle : Bundle scope) : List SiteUse :=
   let roots := bundle.term.siteUses
   let scopes := (roots.map (fun use => use.scope)).eraseDups
@@ -304,7 +328,7 @@ def siteUseUniverse {scope : Nat} (bundle : Bundle scope) : List SiteUse :=
       identity := entry.identity
       role := entry.role
       scope := occurrenceScope }
-  (roots ++ tableUses).eraseDups
+  dedupSiteUses (roots ++ tableUses)
 
 def cSpikeDependencySiteUses (sites : List SiteEntry) (scope : Nat) :
     List SerializedDependency → Except String (List SiteUse)
@@ -336,6 +360,41 @@ theorem mem_cSpikeEnqueue_of_mem_pending (seen pending additions : List SiteUse)
       · exact ih pending present
       · exact ih (pending ++ [head]) (List.mem_append_left _ present)
 
+structure ClosureTraversalInvariant {scope : Nat} (bundle : Bundle scope)
+    (universeUses unseen pending : List SiteUse)
+    (seen : List (Sigma fun use => TypedSiteUseWitness bundle use)) : Prop where
+  unseenUnique : unseen.Nodup
+  pendingUnique : pending.Nodup
+  seenUnique : (seen.map Sigma.fst).Nodup
+  pendingInUnseen : ∀ use, use ∈ pending → use ∈ unseen
+  seenDisjointUnseen : ∀ use, use ∈ seen.map Sigma.fst → use ∉ unseen
+  partition : ∀ use, use ∈ universeUses ↔
+    use ∈ unseen ∨ use ∈ seen.map Sigma.fst
+  childrenAccounted : ∀ use witness,
+    (⟨use, witness⟩ : Sigma fun use => TypedSiteUseWitness bundle use) ∈ seen →
+    ∀ child, child ∈ (cSpikeDependencySiteUses bundle.sites use.scope
+      witness.entry.dependencies).toOption.getD [] →
+      child ∈ pending ∨ child ∈ seen.map Sigma.fst
+
+theorem termRoot_mem_siteUseUniverse {scope : Nat} (bundle : Bundle scope)
+    (use : SiteUse) (present : use ∈ bundle.term.siteUses) :
+    use ∈ siteUseUniverse bundle := by
+  simp [siteUseUniverse, present]
+
+theorem initialClosureTraversalInvariant {scope : Nat} (bundle : Bundle scope) :
+    ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      (siteUseUniverse bundle) (dedupSiteUses bundle.term.siteUses) [] := by
+  refine {
+    unseenUnique := nodup_dedupSiteUses _
+    pendingUnique := nodup_dedupSiteUses _
+    seenUnique := by simp
+    pendingInUnseen := ?_
+    seenDisjointUnseen := by simp
+    partition := by simp
+    childrenAccounted := by simp }
+  intro use present
+  exact termRoot_mem_siteUseUniverse bundle use (by simpa using present)
+
 def buildClosureUsesLoop {scope : Nat} (bundle : Bundle scope) :
     (unseen pending : List SiteUse) →
     (seen : List (Sigma fun use => TypedSiteUseWitness bundle use)) →
@@ -351,7 +410,7 @@ def buildClosureUsesLoop {scope : Nat} (bundle : Bundle scope) :
             | .error message => .error message
             | .ok children =>
                 let queued := cSpikeEnqueue
-                  (seen.map Sigma.fst) pending children
+                  (use :: seen.map Sigma.fst) pending children
                 buildClosureUsesLoop bundle (unseen.erase use) queued
                   (⟨use, witness⟩ :: seen)
       else .error s!"closure queue invariant violated: {repr use}"
@@ -366,7 +425,7 @@ decreasing_by
 
 def buildTypedClosureUses {scope : Nat} (bundle : Bundle scope) :
     Except String (List (Sigma fun use => TypedSiteUseWitness bundle use)) :=
-  let roots := bundle.term.siteUses.eraseDups
+  let roots := dedupSiteUses bundle.term.siteUses
   buildClosureUsesLoop bundle (siteUseUniverse bundle) roots []
 
 theorem buildClosureUsesLoop_preserves_pending {scope : Nat}
@@ -399,7 +458,7 @@ theorem buildTypedClosureUses_rootsCovered {scope : Nat}
     ∀ use, use ∈ bundle.term.siteUses → use ∈ result.map Sigma.fst := by
   intro use present
   apply buildClosureUsesLoop_preserves_pending bundle
-    (siteUseUniverse bundle) (bundle.term.siteUses.eraseDups) [] result
+    (siteUseUniverse bundle) (dedupSiteUses bundle.term.siteUses) [] result
     success use
   exact Or.inl (by simpa using present)
 
