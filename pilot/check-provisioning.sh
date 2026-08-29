@@ -13,12 +13,17 @@ if [[ -z "$isabelle_bin" ]]; then
   fi
 fi
 
+python3 "$pilot_root/check_pins.py" \
+  --pilot-root "$pilot_root" \
+  --rocq-switch "$rocq_switch" \
+  --isabelle-bin "$isabelle_bin" \
+  --self-test
+
 echo "== Lean/Plausible =="
 (
   cd "$pilot_root/lean"
   lean --version
   lake --version
-  lake update
   lake build
   lake exe smoke
 )
@@ -47,5 +52,10 @@ diff -u "$pilot_root/rocq/smoke/Generated.v" "$rocq_tmp/Generated.v"
 echo "== Isabelle quotient/lifting/Nitpick =="
 "$isabelle_bin" version
 "$isabelle_bin" build -D "$pilot_root/isabelle" -v
+
+python3 "$pilot_root/check_pins.py" \
+  --pilot-root "$pilot_root" \
+  --rocq-switch "$rocq_switch" \
+  --isabelle-bin "$isabelle_bin"
 
 echo "provisioning smoke: ok"

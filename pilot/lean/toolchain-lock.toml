@@ -1,0 +1,6 @@
+toolchain = "leanprover/lean4:v4.33.1"
+lean_version = "4.33.1"
+lean_commit = "819816b2e0a3bf405af45ae5c7af2491d8f5bee6"
+lake_version_prefix = "5.0.0-src+819816b"
+manifest_sha256 = "b19b563926e28783cc581caf4d32552f7847588cca47c712fc5dd3a22e95241c"
+plausible_revision = "b7eb3304aeae834b12dda98993a37f6a41f6f0bb"

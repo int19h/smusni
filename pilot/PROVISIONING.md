@@ -20,7 +20,8 @@ later full slice.
 ## Lean
 
 Pinned files: `pilot/lean/lean-toolchain`, `lakefile.toml`, and
-`lake-manifest.json`.
+`lake-manifest.json`; `toolchain-lock.toml` pins the exact Lean/Lake versions,
+Lean commit, Plausible revision, and manifest digest.
 
 - Lean 4.33.1, commit
   `819816b2e0a3bf405af45ae5c7af2491d8f5bee6`; Lake 5.0.0.
@@ -53,7 +54,8 @@ custom-type generator.
 ## Rocq tuple
 
 Pinned direct dependencies are in `smusni-pilot-rocq.opam`; the full installed
-closure is in `.opam.locked`.
+closure is in `.opam.locked`. `repository-snapshot.toml` records the repository
+configuration and SHA-256 of every direct package's registry metadata.
 
 Joint constraint intersection consulted from the active package registries:
 
@@ -122,7 +124,23 @@ and Nitpick compose. `HOL-Nominal` was deliberately not tested, per the plan.
 
 Run `./pilot/check-provisioning.sh` with the pinned external toolchains. The
 script regenerates Autosubst output and diffs it byte-for-byte before compiling
-the combined Rocq smoke. Its warm full three-platform run took 5.23 s.
+the combined Rocq smoke. The recurring path builds directly from the Lake
+manifest and does not run `lake update`.
+
+`check_pins.py` runs before and after the smokes and fails closed:
+
+- Lean must be selected through the elan proxy and match exact version/commit;
+  Lake and the tracked manifest digest/Plausible revision must match.
+- Every installed opam `name=version` must exactly equal all 57 entries in the
+  locked closure; repository configuration and direct package metadata must
+  match `repository-snapshot.toml`.
+- The Isabelle executable must report the release pinned by `bundle.toml`.
+
+Its `--self-test` path creates temporary wrong Lean toolchain, mutated opam
+lock, and wrong Isabelle release files and proves each verifier rejects the
+mismatch. Archive checksum verification remains an install-time operation, not
+a warm-run 1.2 GiB read. The pre-enforcement warm three-platform run took
+5.23 s; the enforced pin-self-test plus three-platform run took 9.89 s.
 
 Not done generally in Step −1:
 
