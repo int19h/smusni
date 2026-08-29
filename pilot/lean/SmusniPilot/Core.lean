@@ -7,6 +7,8 @@ mutual
     | bound {scope : Nat} (index : Fin scope) : Term scope
     | free {scope : Nat} (identity : FreeId) : Term scope
     | natural {scope : Nat} (literal : Nat) : Term scope
+    | string {scope : Nat} (literal : String) : Term scope
+    | index {scope : Nat} (literal : String) : Term scope
     | lambda {scope : Nat} (binderType : Ty)
         (body : Term (scope + 1)) : Term scope
     | bind {scope : Nat} (binderType : Ty)
@@ -47,7 +49,7 @@ end TermList
 
 mutual
   def Term.siteIds {scope : Nat} : Term scope → List SiteId
-    | .bound _ | .free _ | .natural _ => []
+    | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body => body.siteIds
     | .bind _ computation body => computation.siteIds ++ body.siteIds
     | .apply function argument => function.siteIds ++ argument.siteIds
@@ -63,7 +65,7 @@ end
 
 mutual
   def Term.freeIds {scope : Nat} : Term scope → List FreeId
-    | .bound _ | .natural _ => []
+    | .bound _ | .natural _ | .string _ | .index _ => []
     | .free identity => [identity]
     | .lambda _ body => body.freeIds
     | .bind _ computation body => computation.freeIds ++ body.freeIds

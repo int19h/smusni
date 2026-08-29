@@ -15,6 +15,8 @@ mutual
     | bound {scope : Nat} (index : Fin scope) : TermDatum scope
     | free {scope : Nat} (identity : FreeId) : TermDatum scope
     | natural {scope : Nat} (literal : Nat) : TermDatum scope
+    | string {scope : Nat} (literal : String) : TermDatum scope
+    | index {scope : Nat} (literal : String) : TermDatum scope
     | lambda {scope : Nat} (binderType : Ty)
         (body : TermDatum (scope + 1)) : TermDatum scope
     | bind {scope : Nat} (binderType : Ty)
@@ -44,6 +46,8 @@ mutual
     | .bound index => .bound index
     | .free identity => .free identity
     | .natural literal => .natural literal
+    | .string literal => .string literal
+    | .index literal => .index literal
     | .lambda binderType body => .lambda binderType (TermDatum.ofTerm body)
     | .bind binderType computation body =>
         .bind binderType (TermDatum.ofTerm computation) (TermDatum.ofTerm body)
@@ -69,6 +73,8 @@ mutual
     | .bound index => .bound index
     | .free identity => .free identity
     | .natural literal => .natural literal
+    | .string literal => .string literal
+    | .index literal => .index literal
     | .lambda binderType body => .lambda binderType (TermDatum.toTerm body)
     | .bind binderType computation body =>
         .bind binderType (TermDatum.toTerm computation) (TermDatum.toTerm body)

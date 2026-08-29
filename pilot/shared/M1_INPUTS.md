@@ -20,7 +20,7 @@ Every row has exactly one of the five brief-prescribed dispositions:
 
 | disposition | count |
 |---|---:|
-| `primitive-core` | 119 |
+| `primitive-core` | 121 |
 | `defined-surface` | 84 |
 | `type-index-data` | 70 |
 | `gap-prose-only` | 6 |
@@ -41,9 +41,9 @@ their recursively observed constructor heads:
 
 | tag | count | M1 disposition |
 |---|---:|---|
-| `primitive-core` | 68 | decode and round-trip as `CoreTerm` in M1 |
-| `pending-milestone-2` | 269 | decode as `SurfaceTerm`; typed elaboration waits for M2 |
-| `out-of-slice` | 0 | would name every offending head |
+| `primitive-core` | 51 | decode and round-trip as `CoreTerm` in M1 |
+| `pending-milestone-2` | 264 | decode as `SurfaceTerm`; typed elaboration waits for M2 |
+| `out-of-slice` | 22 | schematic/placeholder/declaration cases with every offending head named |
 
 Both verified L5.30 fence cases are present and tagged
 `pending-milestone-2`. The manifest also pins 29 RR fixtures and 31 parse

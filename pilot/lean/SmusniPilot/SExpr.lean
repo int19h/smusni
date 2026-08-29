@@ -39,7 +39,7 @@ def isWhitespace (character : Char) : Bool :=
     character == '\t'
 
 def isDelimiter (character : Char) : Bool :=
-  isWhitespace character || "(){}[];\"".contains character
+  isWhitespace character || "(){}[];\"|".contains character
 
 def dropComment : List Char → List Char
   | [] => []
@@ -76,6 +76,15 @@ def readQuoted (characters : List Char) : Except String (String × List Char) :=
     | character :: rest => loop rest (character :: reversed)
   loop characters []
 
+def readBarSymbol (characters : List Char) :
+    Except String (String × List Char) :=
+  let rec loop (remaining : List Char) (reversed : List Char) :=
+    match remaining with
+    | [] => .error "unterminated bar-escaped symbol"
+    | '|' :: rest => .ok (String.ofList reversed.reverse, rest)
+    | character :: rest => loop rest (character :: reversed)
+  loop characters []
+
 mutual
   partial def parseOne : List Char → Except String (SExpr × List Char)
     | characters =>
@@ -84,6 +93,9 @@ mutual
         | '"' :: rest => do
             let (value, remaining) ← readQuoted rest
             pure (.atom (.string value), remaining)
+        | '|' :: rest => do
+            let (value, remaining) ← readBarSymbol rest
+            pure (.atom (.symbol value), remaining)
         | character :: rest =>
             match bracketOfOpen? character with
             | some bracket => do

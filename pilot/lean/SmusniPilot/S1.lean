@@ -6,6 +6,9 @@ namespace SmusniPilot
 
 open Lean
 
+def pinnedM1BaseHead : String :=
+  "892a7040d4f3786be42635089b6aac7743ba6b74"
+
 structure S1Counts where
   total_cases : Nat
   primitive_core : Nat
@@ -34,11 +37,21 @@ structure S1TypedRecord where
   skeleton_probe : Option Bool := none
   deriving FromJson
 
+structure S1Sources where
+  constructor_matrix_sha256 : String
+  fixtures : String
+  fixtures_sha256 : String
+  inventory_hashes : Array String
+  port_corpus : String
+  port_corpus_sha256 : String
+  rr_syntax_normalization : String
+  deriving FromJson
+
 structure S1Manifest where
   schema : String
   version : Nat
   base_head : String
-  sources : Json
+  sources : S1Sources
   counts : S1Counts
   cases : Array S1CaseRecord
   typed_records : Array S1TypedRecord
@@ -49,6 +62,7 @@ structure CorpusCase where
   provenance : SExpr
   term : SExpr
   environment : SExpr
+  inventory : List String
   deriving Repr
 
 def SExpr.stringValue? : SExpr → Option String
@@ -65,6 +79,12 @@ def SExpr.field? (name : String) : List SExpr → Option SExpr
       else field? name rest
   | _ :: rest => field? name rest
 
+def SExpr.stringList : SExpr → Except String (List String)
+  | .list _ items => items.mapM fun
+      | .atom (.string value) => pure value
+      | value => .error s!"expected string list item, got {repr value}"
+  | value => .error s!"expected list of strings, got {repr value}"
+
 def decodeCorpusCase : SExpr → Except String CorpusCase
   | .list _ (.atom (.symbol "case") :: fields) => do
       let some rawId := SExpr.field? "id" fields
@@ -77,7 +97,10 @@ def decodeCorpusCase : SExpr → Except String CorpusCase
         | .error s!"corpus case {id} missing term"
       let some environment := SExpr.field? "env" fields
         | .error s!"corpus case {id} missing env"
-      pure { id, provenance, term, environment }
+      let some rawInventory := SExpr.field? "inventory" fields
+        | .error s!"corpus case {id} missing inventory hashes"
+      let inventory ← rawInventory.stringList
+      pure { id, provenance, term, environment, inventory }
   | value => .error s!"malformed corpus case: {repr value}"
 
 def decodeCorpus : SExpr → Except String (List CorpusCase)
@@ -97,10 +120,78 @@ def decodeLexicalHeads : SExpr → Except String (List String)
         | _ => none
   | _ => .error "malformed lexical fixture inventory"
 
-def expectedTag (surface : SurfaceTerm) : String :=
-  if !surface.offendingHeads.isEmpty then "out-of-slice"
-  else if !surface.definedHeads.isEmpty then "pending-milestone-2"
+partial def undeclaredVariables (freeNames boundNames : List String) :
+    SurfaceTerm → List String
+  | .atom (.symbol name) =>
+      if name.startsWith "$" &&
+          !boundNames.contains name && !freeNames.contains name then [name]
+      else []
+  | .atom _ | .empty _ => []
+  | .form _ (.defined _) _ => []
+  | .form _ (.primitive .lambda) [binders, body] =>
+      match decodeBinderGroup binders with
+      | .ok decoded =>
+          undeclaredVariables freeNames
+            (decoded.map (·.spelling) ++ boundNames) body
+      | .error _ => ["$malformed-lambda-binder"]
+  | .form _ (.primitive .bind) arguments =>
+      match decodeBindClauses arguments with
+      | .ok (clauses, body) =>
+          let rec visit (currentBound : List String) :
+              List (Binder × SurfaceTerm) → List String
+            | [] => undeclaredVariables freeNames currentBound body
+            | (binder, computation) :: rest =>
+                undeclaredVariables freeNames currentBound computation ++
+                  visit (binder.spelling :: currentBound) rest
+          visit boundNames clauses
+      | .error error => ["$malformed-bind-binder:" ++ error]
+  | term@(.form _ (.variable name) arguments) =>
+      if term.isBinderDescriptor then []
+      else
+        (if boundNames.contains name || freeNames.contains name then [] else [name]) ++
+          arguments.flatMap (undeclaredVariables freeNames boundNames)
+  | .form _ _ arguments =>
+      arguments.flatMap (undeclaredVariables freeNames boundNames)
+  | .application _ function arguments =>
+      undeclaredVariables freeNames boundNames function ++
+        arguments.flatMap (undeclaredVariables freeNames boundNames)
+
+def expectedTag (lexicalHeads freeNames : List String)
+    (surface : SurfaceTerm) : String :=
+  if !(surface.offendingHeadsWith lexicalHeads).isEmpty ||
+      !(undeclaredVariables freeNames [] surface).isEmpty then "out-of-slice"
+  else if !(surface.definedHeadsWith lexicalHeads).isEmpty then
+    "pending-milestone-2"
   else "primitive-core"
+
+def freeNamesFromEnvironment : SExpr → List String
+  | .list _ entries => entries.filterMap fun
+      | .list _ (.atom (.symbol name) :: _) =>
+          if name.startsWith "$" then some name else none
+      | _ => none
+  | _ => []
+
+def padOrdinal (ordinal : Nat) : String :=
+  let raw := toString ordinal
+  if raw.length == 1 then "00" ++ raw
+  else if raw.length == 2 then "0" ++ raw
+  else raw
+
+partial def rrLinkFromProvenance : SExpr → Option String
+  | .list _ (.atom (.symbol "fence") :: .atom (.string source) ::
+      .atom (.symbol rawOrdinal) :: _) => do
+      let ordinal ← rawOrdinal.toNat?
+      let stem := (source.dropEnd 3).toString
+      pure s!"tools/smusni-redex/inventory/rr/{stem}-{padOrdinal ordinal}.sexp"
+  | .list _ items => items.findSome? rrLinkFromProvenance
+  | _ => none
+
+partial def provenanceHasFenceKind (wanted : String) : SExpr → Bool
+  | .list _
+      (.atom (.symbol "fence") :: _source :: _ordinal ::
+       .atom (.symbol kind) :: _) => kind == wanted
+  | .list _ items => items.any (provenanceHasFenceKind wanted)
+  | _ => false
 
 def findManifestCase (manifest : S1Manifest) (id : String) :
     Option S1CaseRecord :=
@@ -212,14 +303,62 @@ def S1Run.addTag (run : S1Run) (tag : String) : S1Run :=
       if tag == "pending-milestone-2" then 1 else 0
     outOfSlice := run.outOfSlice + if tag == "out-of-slice" then 1 else 0 }
 
+def probeSurface (source : String) : Except String SurfaceTerm :=
+  return SurfaceTerm.ofSExprWithLexicon [] (← SExpr.parse source)
+
+def runClassifierProbes : IO Unit := do
+  let boundApplication ← IO.ofExcept <|
+    probeSurface "(λ ($f :: Entity) ($f 1))"
+  if expectedTag [] [] boundApplication != "primitive-core" then
+    throw <| IO.userError "bound-application probe was not primitive-core"
+  let boundBundle ← IO.ofExcept <|
+    Interchange.Bundle.ofSurfaceWith "probe-bound" [] [] none boundApplication
+  match boundBundle.term with
+  | .lambda _ (.apply (.bound _) (.natural 1)) => pure ()
+  | _ => throw <| IO.userError "bound application decoded as lexical/free"
+
+  let definedAtom ← IO.ofExcept <| probeSurface "(Refer This)"
+  if expectedTag [] [] definedAtom != "pending-milestone-2" then
+    throw <| IO.userError "defined atom probe did not stay pending M2"
+
+  let unknown ← IO.ofExcept <| probeSurface "(Zzz 1)"
+  if expectedTag [] [] unknown != "out-of-slice" then
+    throw <| IO.userError "unknown-head probe failed open"
+
+  let stringPayload ← IO.ofExcept <| probeSurface "(OpaqueQuote \"mi klama\")"
+  if expectedTag [] [] stringPayload != "primitive-core" then
+    throw <| IO.userError "string payload probe was not primitive-core"
+  let stringBundle ← IO.ofExcept <|
+    Interchange.Bundle.ofSurfaceWith "probe-string" [] [] none stringPayload
+  match stringBundle.term with
+  | .primitive .opaqueQuote (.cons (.string "mi klama") .nil) => pure ()
+  | _ => throw <| IO.userError "string payload decoded as lexical"
+
+  let ghost ← IO.ofExcept <| probeSurface "(Refer $ghost)"
+  if expectedTag [] [] ghost != "out-of-slice" then
+    throw <| IO.userError "undeclared-free probe failed open"
+  if (Interchange.Bundle.ofSurfaceWith "probe-ghost" [] [] none ghost).isOk then
+    throw <| IO.userError "undeclared free identity was synthesized"
+
+  let schematic ← IO.ofExcept <| probeSurface "(C H deps…)"
+  if expectedTag [] [] schematic != "out-of-slice" then
+    throw <| IO.userError "schematic-head probe failed open"
+
 def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
     (run : S1Run) (record : CorpusCase) : IO S1Run := do
   let some expected := findManifestCase manifest record.id
     | throw <| IO.userError s!"case absent from S1 manifest: {record.id}"
   let surface := SurfaceTerm.ofSExprWithLexicon lexicalHeads record.term
-  let actualTag := expectedTag surface
+  let freeNames := freeNamesFromEnvironment record.environment
+  let actualTag :=
+    if provenanceHasFenceKind "declaration" record.provenance then
+      "out-of-slice"
+    else expectedTag lexicalHeads freeNames surface
   if actualTag != expected.tag then
-    throw <| IO.userError s!"case {record.id}: tag {actualTag}, expected {expected.tag}"
+    throw <| IO.userError <|
+      s!"case {record.id}: tag {actualTag}, expected {expected.tag}; " ++
+      s!"heads={repr (surface.offendingHeadsWith lexicalHeads)} " ++
+      s!"free={repr (undeclaredVariables freeNames [] surface)}"
   let canonical := surface.toSExpr
   let reparsedSurface := SurfaceTerm.ofSExprWithLexicon lexicalHeads canonical
   if !(reparsedSurface == surface) then
@@ -231,8 +370,17 @@ def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
   updated := { updated with
     surfaceRoundTrips := updated.surfaceRoundTrips + 1
     textRoundTrips := updated.textRoundTrips + 1 }
+  if record.inventory.toArray != manifest.sources.inventory_hashes then
+    throw <| IO.userError s!"case {record.id}: inventory hash mismatch"
   if actualTag == "primitive-core" then
-    let bundle ← IO.ofExcept (Interchange.Bundle.ofSurface record.id surface)
+    let rrLink := (rrLinkFromProvenance record.provenance).bind fun candidate =>
+      if manifest.typed_records.any fun typed => typed.path == candidate
+      then some candidate else none
+    let bundle ← IO.ofExcept <|
+      Interchange.Bundle.ofSurfaceWith record.id lexicalHeads freeNames
+        rrLink surface
+    if bundle.sites.any fun site => site.rrLink != rrLink then
+      throw <| IO.userError s!"case {record.id}: site RR linkage mismatch"
     let encoded := Interchange.Bundle.encode bundle
     let decoded ← IO.ofExcept (Interchange.Bundle.decode 0 encoded)
     if !(Interchange.Bundle.encode decoded == encoded) then
@@ -241,16 +389,28 @@ def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
   pure updated
 
 def runS1 (root : String) : IO S1Run := do
+  runClassifierProbes
   let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")
   let manifest : S1Manifest ←
     IO.ofExcept (Json.parse manifestSource >>= fromJson?)
   if manifest.schema != "smusni-pilot-s1" || manifest.version != 1 then
     throw <| IO.userError "unsupported S1 manifest"
-  let corpusSource ← IO.FS.readFile
-    (root ++ "/tools/smusni-redex/inventory/port-corpus.sexp")
+  if manifest.base_head != pinnedM1BaseHead then
+    throw <| IO.userError "S1 manifest base head drift"
+  let corpusDigest ← sha256File root manifest.sources.port_corpus
+  if corpusDigest != manifest.sources.port_corpus_sha256 then
+    throw <| IO.userError "port corpus source digest mismatch"
+  let fixtureDigest ← sha256File root manifest.sources.fixtures
+  if fixtureDigest != manifest.sources.fixtures_sha256 then
+    throw <| IO.userError "lexical fixture source digest mismatch"
+  let matrixDigest ← sha256File root
+    "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv"
+  if matrixDigest != manifest.sources.constructor_matrix_sha256 then
+    throw <| IO.userError "constructor matrix digest mismatch"
+  let corpusSource ← IO.FS.readFile (root ++ "/" ++ manifest.sources.port_corpus)
   let corpus ← IO.ofExcept (SExpr.parse corpusSource >>= decodeCorpus)
   let fixtureSource ← IO.FS.readFile
-    (root ++ "/tools/smusni-redex/inventory/fixtures.sexp")
+    (root ++ "/" ++ manifest.sources.fixtures)
   let lexicalHeads ← IO.ofExcept
     (SExpr.parse fixtureSource >>= decodeLexicalHeads)
   let run ← corpus.foldlM (validateCorpusCase lexicalHeads manifest) {}

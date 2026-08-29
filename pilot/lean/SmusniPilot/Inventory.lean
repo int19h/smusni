@@ -5,8 +5,10 @@ namespace SmusniPilot
 
 inductive Primitive where
   | application
+  | index
   | lexicalPredication
   | natural
+  | string
   | variable
   | add
   | lessThan
@@ -127,8 +129,10 @@ inductive Primitive where
 
 def Primitive.name : Primitive → String
   | .application => "term:$application"
+  | .index => "term:$index"
   | .lexicalPredication => "term:$lexical-predication"
   | .natural => "term:$natural"
+  | .string => "term:$string"
   | .variable => "term:$variable"
   | .add => "term:+"
   | .lessThan => "term:<"
@@ -248,8 +252,10 @@ def Primitive.name : Primitive → String
 
 def Primitive.ofName : String → Option Primitive
   | "term:$application" => Option.some .application
+  | "term:$index" => Option.some .index
   | "term:$lexical-predication" => Option.some .lexicalPredication
   | "term:$natural" => Option.some .natural
+  | "term:$string" => Option.some .string
   | "term:$variable" => Option.some .variable
   | "term:+" => Option.some .add
   | "term:<" => Option.some .lessThan
@@ -370,8 +376,10 @@ def Primitive.ofName : String → Option Primitive
 
 def Primitive.all : List Primitive := [
   .application,
+  .index,
   .lexicalPredication,
   .natural,
+  .string,
   .variable,
   .add,
   .lessThan,

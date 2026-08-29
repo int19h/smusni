@@ -34,8 +34,10 @@ sort:TruthValue	type-index-data	core	spec §3.1
 sort:Unit	type-index-data	core	spec §3.4
 sort:UtteranceToken	type-index-data	core	spec §3.1
 term:$application	primitive-core	a0-grammar,spec-appendix	SmusniA0 generic application grammar | spec Appendix: the kernel
+term:$index	primitive-core	spec-appendix	spec Appendix: the kernel
 term:$lexical-predication	primitive-core	spec-appendix	spec Appendix: the kernel
 term:$natural	primitive-core	a0-grammar	SmusniA0 atom n
+term:$string	primitive-core	spec-appendix	spec Appendix: the kernel
 term:$variable	primitive-core	a0-grammar	SmusniA0 atom x
 term:+	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.9
 term:<	primitive-core	spec-appendix	spec Appendix: the kernel

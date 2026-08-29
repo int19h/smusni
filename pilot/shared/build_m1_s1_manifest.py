@@ -6,11 +6,16 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import subprocess
 from pathlib import Path
 from typing import Any
 
-from build_m1_constructor_matrix import ROOT, build_rows, parse_sexp, sha256
+from build_m1_constructor_matrix import (
+    BASE_HEAD,
+    ROOT,
+    build_rows,
+    parse_sexp,
+    sha256,
+)
 
 
 CORPUS = ROOT / "tools/smusni-redex/inventory/port-corpus.sexp"
@@ -37,19 +42,54 @@ def canonical_hash(value: Any) -> str:
 
 
 def collect_term_heads(
-    term: Any, known: dict[str, str], lexical_heads: set[str]
+    term: Any, known: dict[str, str], lexical_heads: set[str],
+    data_names: set[str], free_names: set[str]
 ) -> set[str]:
     found: set[str] = set()
 
-    def walk(value: Any) -> None:
+    def binder_names(value: Any) -> list[str]:
+        if not isinstance(value, list) or not value:
+            return []
+        if isinstance(value[0], list):
+            return [name for item in value for name in binder_names(item)]
+        names = []
+        for item in value:
+            if item == "::":
+                break
+            if isinstance(item, str) and item.startswith("$"):
+                names.append(item)
+        return names
+
+    def walk(value: Any, bound_names: set[str]) -> None:
+        if isinstance(value, str):
+            if value.startswith('"') and value.endswith('"'):
+                found.add("$string")
+                return
+            raw = value.strip('"')
+            if raw.isdigit():
+                found.add("$natural")
+            elif raw.startswith("$"):
+                if raw in bound_names or raw in free_names:
+                    found.add("$variable")
+                else:
+                    found.add("$undeclared-free:" + raw)
+            elif raw.startswith(":") or raw in data_names:
+                pass
+            elif raw in lexical_heads:
+                found.add("$lexical-predication")
+            elif raw in known:
+                found.add(raw)
+            else:
+                found.add("$unknown:" + raw)
+            return
         if not isinstance(value, list) or not value:
             return
         first = value[0]
         if isinstance(first, list):
             found.add("$application")
-            walk(first)
+            walk(first, bound_names)
             for argument in value[1:]:
-                walk(argument)
+                walk(argument, bound_names)
             return
         if not isinstance(first, str):
             return
@@ -57,10 +97,33 @@ def collect_term_heads(
             # Binder or environment entry; its type belongs to the typed
             # record schema, not to the term-former partition.
             return
-        if first in {"λ", "Let", "Bind"}:
+        if first in known and known[first] == "defined-surface":
             found.add(first)
+            return
+        if first == "λ" and len(value) == 3:
+            found.add(first)
+            walk(value[2], bound_names | set(binder_names(value[1])))
+            return
+        if first == "Bind" and len(value) >= 4:
+            found.add(first)
+            current_bound = set(bound_names)
+            remaining = value[1:]
+            while len(remaining) > 1:
+                names = set(binder_names(remaining[0]))
+                walk(remaining[1], current_bound)
+                current_bound |= names
+                remaining = remaining[2:]
+            if remaining:
+                walk(remaining[0], current_bound)
+            return
+        if first.startswith("$"):
+            if first in bound_names or first in free_names:
+                found.add("$application")
+                found.add("$variable")
+            else:
+                found.add("$undeclared-free:" + first)
             for nested in value[1:]:
-                walk(nested)
+                walk(nested, bound_names)
             return
         if first in lexical_heads:
             found.add("$lexical-predication")
@@ -69,19 +132,12 @@ def collect_term_heads(
         elif first.startswith(":") or first in {"row", "fill"}:
             pass
         else:
-            # The A0 grammar licenses lexical predicate constants through
-            # generic application. Unknown fixed heads are therefore lexical,
-            # not silently new semantic operators.
-            found.add("$lexical-predication")
+            found.add("$unknown-head:" + first)
         for nested in value[1:]:
-            walk(nested)
+            walk(nested, bound_names)
 
-    walk(term)
+    walk(term, set())
     return found
-
-
-def provenance_text(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
 def is_l530_provenance(value: Any) -> bool:
@@ -95,12 +151,26 @@ def is_l530_provenance(value: Any) -> bool:
     return any(is_l530_provenance(item) for item in value)
 
 
+def has_fence_kind(value: Any, wanted: str) -> bool:
+    if not isinstance(value, list):
+        return False
+    if len(value) >= 4 and value[0] == "fence":
+        if str(value[3]).strip('"') == wanted:
+            return True
+    return any(has_fence_kind(item, wanted) for item in value)
+
+
 def build() -> dict[str, Any]:
     matrix = build_rows()
     term_dispositions = {
         key.split(":", 1)[1]: row.disposition
         for key, row in matrix.items()
         if key.startswith("term:")
+    }
+    data_names = {
+        key.split(":", 1)[1]
+        for key, row in matrix.items()
+        if row.disposition == "type-index-data"
     }
     corpus = parse_sexp(CORPUS.read_text(encoding="utf-8"))
     fixture_inventory = parse_sexp(FIXTURES.read_text(encoding="utf-8"))
@@ -119,12 +189,21 @@ def build() -> dict[str, Any]:
         case_id = sexp_field(entry, "id").strip('"')
         provenance = sexp_field(entry, "provenance")
         term = sexp_field(entry, "term")
+        environment = sexp_field(entry, "env")
+        free_names = {
+            item[0]
+            for item in environment
+            if isinstance(item, list) and item and
+            isinstance(item[0], str) and item[0].startswith("$")
+        } if isinstance(environment, list) else set()
         inventory = sexp_field(entry, "inventory")
         if isinstance(inventory, str):
             inventory = [inventory]
         normalized_inventory = [item.strip('"') for item in inventory]
         inventory_hashes.update(normalized_inventory)
-        heads = collect_term_heads(term, term_dispositions, lexical_heads)
+        heads = collect_term_heads(
+            term, term_dispositions, lexical_heads, data_names, free_names
+        )
         defined = sorted(
             head for head in heads
             if term_dispositions.get(head) == "defined-surface"
@@ -134,6 +213,8 @@ def build() -> dict[str, Any]:
             if term_dispositions.get(head) in {"gap-prose-only", "tool-only"}
             or head not in term_dispositions
         )
+        if has_fence_kind(provenance, "declaration"):
+            offending.append("$nonterm:declaration")
         if offending:
             tag = "out-of-slice"
         elif defined:
@@ -184,13 +265,10 @@ def build() -> dict[str, Any]:
     if skeleton_count != 2:
         raise ValueError(f"expected both skeleton probe records, got {skeleton_count}")
 
-    base_head = subprocess.check_output(
-        ["git", "rev-parse", "origin/main"], cwd=ROOT, text=True
-    ).strip()
     return {
         "schema": "smusni-pilot-s1",
         "version": 1,
-        "base_head": base_head,
+        "base_head": BASE_HEAD,
         "sources": {
             "port_corpus": str(CORPUS.relative_to(ROOT)),
             "port_corpus_sha256": sha256(CORPUS),

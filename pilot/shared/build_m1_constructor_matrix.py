@@ -13,7 +13,6 @@ import argparse
 import csv
 import hashlib
 import re
-import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
@@ -25,6 +24,7 @@ DEFINITIONS = ROOT / "tools/smusni-redex/inventory/definitions.sexp"
 A0 = ROOT / "tools/smusni-redex/port-a0.rkt"
 SPEC = ROOT / "spec.md"
 OUTPUT = ROOT / "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv"
+BASE_HEAD = "892a7040d4f3786be42635089b6aac7743ba6b74"
 
 PRIMITIVE = "primitive-core"
 DEFINED = "defined-surface"
@@ -38,6 +38,8 @@ DISPOSITIONS = {PRIMITIVE, DEFINED, DATA, GAP, TOOL}
 # Rows already present in core.sexp gain a second source; rows missing from the
 # current inventory are still dispositioned rather than silently lost.
 SPEC_PRIMITIVES = {
+    "$index",
+    "$string",
     "$application",
     "$lexical-predication",
     "ActContent",
@@ -389,11 +391,8 @@ def build_rows() -> dict[str, Row]:
 
 
 def render(rows: dict[str, Row]) -> str:
-    base_head = subprocess.check_output(
-        ["git", "rev-parse", "origin/main"], cwd=ROOT, text=True
-    ).strip()
     header = [
-        f"# base_head\t{base_head}",
+        f"# base_head\t{BASE_HEAD}",
         f"# core_sha256\t{sha256(CORE)}",
         f"# definitions_sha256\t{sha256(DEFINITIONS)}",
         f"# a0_sha256\t{sha256(A0)}",

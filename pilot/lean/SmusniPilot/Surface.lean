@@ -9,6 +9,8 @@ inductive SurfaceKind where
   | gap (head : GapHead)
   | tool (head : ToolHead)
   | lexical (head : String)
+  | variable (name : String)
+  | unknown (head : String)
   deriving Repr, BEq, Inhabited
 
 inductive SurfaceTerm where
@@ -29,9 +31,12 @@ def SurfaceKind.spelling : SurfaceKind → String
   | .gap head => rawTermName head.name
   | .tool head => rawTermName head.name
   | .lexical head => head
+  | .variable name => name
+  | .unknown head => head
 
 def classifySurfaceKind (head : String) : SurfaceKind :=
-  let qualified := "term:" ++ head
+  if head.startsWith "$" then .variable head
+  else let qualified := "term:" ++ head
   match Primitive.ofName qualified with
   | some primitive => .primitive primitive
   | none =>
@@ -43,7 +48,7 @@ def classifySurfaceKind (head : String) : SurfaceKind :=
           | none =>
               match ToolHead.ofName qualified with
               | some tool => .tool tool
-              | none => .lexical head
+              | none => .unknown head
 
 def SurfaceTerm.ofSExprWithLexicon (lexicalHeads : List String) :
     SExpr → SurfaceTerm
@@ -88,5 +93,61 @@ def SurfaceTerm.offendingHeads : SurfaceTerm → List String
   | .form _ _ arguments => arguments.flatMap offendingHeads
   | .application _ function arguments =>
       function.offendingHeads ++ arguments.flatMap offendingHeads
+
+def SurfaceTerm.isBinderDescriptor : SurfaceTerm → Bool
+  | .form _ (.variable _) arguments =>
+      arguments.any fun
+        | .atom (.symbol "::") => true
+        | _ => false
+  | _ => false
+
+partial def SurfaceTerm.definedHeadsWith (lexicalHeads : List String) :
+    SurfaceTerm → List SurfaceHead
+  | .atom (.string _) => []
+  | .atom (.symbol raw) =>
+      if raw.toNat?.isSome || raw.startsWith "$" || raw.startsWith ":" ||
+          lexicalHeads.contains raw
+      then []
+      else match SurfaceHead.ofName ("term:" ++ raw) with
+        | some head => [head]
+        | none => []
+  | .empty _ => []
+  | .form _ (.defined head) _ => [head]
+  | term@(.form _ (.variable _) arguments) =>
+      if term.isBinderDescriptor then []
+      else arguments.flatMap (definedHeadsWith lexicalHeads)
+  | .form _ _ arguments =>
+      arguments.flatMap (definedHeadsWith lexicalHeads)
+  | .application _ function arguments =>
+      definedHeadsWith lexicalHeads function ++
+        arguments.flatMap (definedHeadsWith lexicalHeads)
+
+partial def SurfaceTerm.offendingHeadsWith (lexicalHeads : List String) :
+    SurfaceTerm → List String
+  | .atom (.string _) => []
+  | .atom (.symbol raw) =>
+      if raw.toNat?.isSome || raw.startsWith "$" || raw.startsWith ":" ||
+          lexicalHeads.contains raw
+      then []
+      else
+        let qualified := "term:" ++ raw
+        if (Primitive.ofName qualified).isSome ||
+            (SurfaceHead.ofName qualified).isSome then []
+        else [qualified]
+  | .empty _ => []
+  | .form _ (.gap head) arguments =>
+      head.name :: arguments.flatMap (offendingHeadsWith lexicalHeads)
+  | .form _ (.tool head) arguments =>
+      head.name :: arguments.flatMap (offendingHeadsWith lexicalHeads)
+  | .form _ (.unknown head) arguments =>
+      ("term:" ++ head) :: arguments.flatMap (offendingHeadsWith lexicalHeads)
+  | term@(.form _ (.variable _) arguments) =>
+      if term.isBinderDescriptor then []
+      else arguments.flatMap (offendingHeadsWith lexicalHeads)
+  | .form _ (.defined _) _ => []
+  | .form _ _ arguments => arguments.flatMap (offendingHeadsWith lexicalHeads)
+  | .application _ function arguments =>
+      offendingHeadsWith lexicalHeads function ++
+        arguments.flatMap (offendingHeadsWith lexicalHeads)
 
 end SmusniPilot

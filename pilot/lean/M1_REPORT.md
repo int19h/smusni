@@ -15,12 +15,12 @@ authority, and it implements no M2 elaboration or typing.
 ## Constructor disposition and representation
 
 The matrix was committed before constructors at base main
-`892a7040d4f3786be42635089b6aac7743ba6b74`. Its current 284 namespace-qualified
+`892a7040d4f3786be42635089b6aac7743ba6b74`. Its current 286 namespace-qualified
 rows are:
 
 | disposition | count | Lean representation |
 |---|---:|---|
-| `primitive-core` | 119 | one constructor in generated `Primitive` |
+| `primitive-core` | 121 | one constructor in generated `Primitive` |
 | `defined-surface` | 84 | one constructor in generated `SurfaceHead` |
 | `type-index-data` | 70 | one constructor in generated `TypeName`, or a special scoped/index case |
 | `gap-prose-only` | 6 | generated `GapHead`; never decodes to core |
@@ -29,12 +29,12 @@ rows are:
 The complete list, sources, and evidence are in
 `pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv`; its fail-closed builders also
 pin the source digests. The special scoped `Term` constructors are bound/free
-variables, naturals, λ, `Bind`, application, lexical predication,
+variables, naturals, strings, index labels, λ, `Bind`, application, lexical predication,
 site-bearing `Context`/`Vague`, and generic primitive application.
 
-The `Primitive` argument to the last constructor has 119 named constructors.
+The `Primitive` argument to the last constructor has 121 named constructors.
 This is a deliberate factorization of first-order syntax: without M2 typing,
-the remaining operators all have the same binding behavior, so 119 direct
+the remaining operators all have the same binding behavior, so 121 direct
 `Term` clauses would duplicate renaming/substitution logic without semantic
 content. λ, `Bind`, variables, application, lexical heads, and sites are direct
 constructors because their binding or identity behavior differs. M2 supplies
@@ -96,15 +96,16 @@ The versioned bundle contains:
 
 - the term datum;
 - a semantic site table (identity, role, scoped dependencies serialized by
-  de Bruijn number, and RR linkage); and
+  de Bruijn number, and RR linkage to the actual typed fixture path or `none`);
+  and
 - a nonsemantic source map (binder spellings, structural position/source
   ordinal, and source order; optional physical line/column fields).
 
 The kernel theorem `BundleDatum.toBundle_ofBundle` proves exact round trip for
 every internal bundle through an independent typed structured transport AST.
 The textual S-expression reader is the untrusted byte boundary; runtime gates
-check `encode(decode(encode(b))) = encode(b)` for the example bundle, every 68
-already-primitive S1 payloads, and 311 programmatically generated core terms.
+check `encode(decode(encode(b))) = encode(b)` for the example bundle, every 51
+already-primitive S1 payloads, and 313 programmatically generated core terms.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
 
@@ -115,9 +116,9 @@ and every RR/parse record digest:
 
 | tag | count | result |
 |---|---:|---|
-| `primitive-core` | 68 | decoded to `Bundle` and text-round-tripped |
-| `pending-milestone-2` | 269 | decoded/round-tripped as `SurfaceTerm` |
-| `out-of-slice` | 0 | none |
+| `primitive-core` | 51 | decoded to `Bundle` and text-round-tripped |
+| `pending-milestone-2` | 264 | decoded/round-tripped as `SurfaceTerm` |
+| `out-of-slice` | 22 | declaration/schema/placeholders named with offending heads |
 
 Both verified L5.30 fence cases are present and pending M2. All 29 RR and 31
 gentufa parse fixtures are read from disk and validated as typed records; both
@@ -125,6 +126,18 @@ structural/skeleton probe files are included. RR fixtures validate exact
 version/root/fence metadata, all eight named fields, no duplicates/unknowns,
 and natural case indices. Parse fixtures validate the per-case index, command,
 surface, and parse payload shapes. No fixture term appears as a Lean literal.
+Lean verifies the recorded base commit, matrix/corpus/fixture SHA-256 values,
+every typed-record digest, and both per-case inventory hashes before counting a
+gate. The base commit is a fixed constant, never recomputed from moving
+`origin/main`.
+
+Classification is fail-closed: only fixture-declared lexical heads are
+lexical; `$` applications resolve through binder/free environments; undeclared
+free IDs, unknown atoms/operators, schematic placeholders, and declaration
+fences are out-of-slice. Defined constants in atom position stay pending M2.
+Strings and labels have explicit literal constructors. Six durable probes cover
+bound function application, `(Refer This)`, unknown `Zzz`, opaque string
+payloads, undeclared `$ghost`, and schematic `C/H/deps…`.
 
 The strict reader exposed 28 RR files with an extra trailing `)`. The existing
 Racket loader read only one datum and ignored trailing bytes. This branch
@@ -135,23 +148,23 @@ full Racket gate passes 1,830 tests after the correction.
 Literal M1 runner result:
 
 ```text
-S1 total=337 primitive=68 pending-m2=269 out-of-slice=0
-core-decoded=68 surface-roundtrips=337 text-roundtrips=337
-generated-roundtrips=311
+S1 total=337 primitive=51 pending-m2=264 out-of-slice=22
+core-decoded=51 surface-roundtrips=337 text-roundtrips=337
+generated-roundtrips=313
 ```
 
 ## Timing
 
-- clean M1 build after `lake clean`: 7.67 s wall, 21.91 s user, 3.85 s system,
-  1,653,652 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.17 s system,
-  133,304 KiB maximum RSS.
+- clean M1 build after `lake clean`: 7.87 s wall, 22.87 s user, 3.82 s system,
+  1,676,340 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.36 s wall, 0.11 s user, 0.17 s system,
+  129,180 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
 ## Explicit limits / not yet general
 
-- M1 performs no surface-to-core elaboration for the 269 defined-form cases;
+- M1 performs no surface-to-core elaboration for the 264 defined-form cases;
   they are `pending-milestone-2`, not successes or gaps.
 - `Ty` records named formers, variables, and index data but does not validate
   arity/subsorting; that is extrinsic M2 typing.
@@ -160,9 +173,10 @@ Build time is not reported as runtime.
 - The source map records stable structural ordinals/source order and binder
   spellings. Physical line/column fields exist but are absent when the frozen
   inventory does not preserve them.
-- The current surface decoder normalizes multi-parameter λ telescopes to nested
-  single binders. Multi-binding `Bind` is not accepted directly; the live S1
-  uses explicit nesting and M2 must preserve the same source order.
+- The surface decoder normalizes multi-parameter λ telescopes and multi-binding
+  `Bind` forms to source-ordered nesting. Variadic ordinary application is
+  represented as disclosed left-associated application; M2 typing must check
+  the original operator arity rather than infer it from that nesting.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
 - Text parsing and file hashing remain outside the Lean kernel; the typed
   structured round-trip theorem and runtime corpus gates make that boundary

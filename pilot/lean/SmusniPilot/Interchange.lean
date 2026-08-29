@@ -118,6 +118,8 @@ mutual
     | .bound index => list [symbol "bound", symbol (toString index.val)]
     | .free identity => list [symbol "free", encodeFreeId identity]
     | .natural literal => list [symbol "natural", symbol (toString literal)]
+    | .string literal => list [symbol "string", string literal]
+    | .index literal => list [symbol "index", string literal]
     | .lambda binderType body =>
         list [symbol "lambda", encodeTy binderType, encodeTerm body]
     | .bind binderType computation body =>
@@ -152,6 +154,10 @@ mutual
         return .free (← decodeFreeId rawIdentity)
     | .list .paren [.atom (.symbol "natural"), literal] =>
         return .natural (← expectNat literal)
+    | .list .paren [.atom (.symbol "string"), .atom (.string literal)] =>
+        return .string literal
+    | .list .paren [.atom (.symbol "index"), .atom (.string literal)] =>
+        return .index literal
     | .list .paren [.atom (.symbol "lambda"), rawType, body] =>
         return .lambda (← decodeTy rawType) (← decodeTerm (scope + 1) body)
     | .list .paren
@@ -221,7 +227,7 @@ def SiteEntry.ofSite {scope : Nat} (site : Site scope) : SiteEntry :=
 
 mutual
   def Term.siteEntries {scope : Nat} : Term scope → List SiteEntry
-    | .bound _ | .free _ | .natural _ => []
+    | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body => Term.siteEntries body
     | .bind _ computation body =>
         Term.siteEntries computation ++ Term.siteEntries body
@@ -254,6 +260,18 @@ structure Bundle (scope : Nat) where
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :
     Except String (Bundle 0) := do
   let (term, state) ← decodeClosedCore document surface
+  pure {
+    version := 1
+    term
+    sites := Term.siteEntries term
+    sourceMap := state.sourceNotes.map SourceNote.ofDecodeNote
+  }
+
+def Bundle.ofSurfaceWith (document : String) (lexicalHeads freeNames : List String)
+    (rrLink : Option String) (surface : SurfaceTerm) :
+    Except String (Bundle 0) := do
+  let (term, state) ←
+    decodeClosedCoreWith document lexicalHeads freeNames rrLink surface
   pure {
     version := 1
     term

@@ -29,6 +29,8 @@ mutual
     | .bound index => .bound (ρ index)
     | .free identity => .free identity
     | .natural literal => .natural literal
+    | .string literal => .string literal
+    | .index literal => .index literal
     | .lambda binderType body =>
         .lambda binderType (body.rename (Renaming.lift ρ))
     | .bind binderType computation body =>
@@ -62,7 +64,7 @@ mutual
   def Term.dependencies {scope : Nat} : Term scope → List (Dependency scope)
     | .bound index => [.bound index]
     | .free identity => [.free identity]
-    | .natural _ => []
+    | .natural _ | .string _ | .index _ => []
     | .lambda _ body => body.dependencies.filterMap Dependency.lower
     | .bind _ computation body =>
         computation.dependencies ++ body.dependencies.filterMap Dependency.lower
@@ -109,6 +111,8 @@ mutual
     | .bound index => substitution index
     | .free identity => .free identity
     | .natural literal => .natural literal
+    | .string literal => .string literal
+    | .index literal => .index literal
     | .lambda binderType body =>
         .lambda binderType (body.substitute (Substitution.lift substitution))
     | .bind binderType computation body =>
