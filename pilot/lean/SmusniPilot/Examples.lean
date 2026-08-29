@@ -3,6 +3,10 @@ import SmusniPilot.BundleBinding
 
 namespace SmusniPilot
 
+def IO.ofBundleBinding {value : Type}
+    (result : Except Interchange.BundleBindingConflict value) : IO value :=
+  IO.ofExcept (result.mapError Interchange.BundleBindingConflict.message)
+
 def entityTy : Ty := .named .sortEntity []
 
 def writtenSite {scope : Nat} (ordinal : Nat) (role : SiteRole)
@@ -191,7 +195,7 @@ def runLocalGates : IO Unit := do
       ]
       sourceMap := [] }
   let checkedBound ← IO.ofExcept boundSiteBundle.checked
-  let weakened ← IO.ofExcept checkedBound.weaken
+  let weakened ← IO.ofBundleBinding checkedBound.weaken
   match weakened.bundle.sites with
   | [{ dependencies := [.bound 1], .. }] => pure ()
   | _ => throw <| IO.userError <|
@@ -199,7 +203,7 @@ def runLocalGates : IO Unit := do
   let replacement : Interchange.Bundle 0 :=
     { version := 1, term := .natural 7, sites := [], sourceMap := [] }
   let checkedReplacement ← IO.ofExcept replacement.checked
-  let substituted ← IO.ofExcept <|
+  let substituted ← IO.ofBundleBinding <|
     checkedBound.substitute fun _ => checkedReplacement
   match substituted.bundle.term, substituted.bundle.sites with
   | .context identity (.positional (.natural 7) .nil),
@@ -231,7 +235,7 @@ def runLocalGates : IO Unit := do
       sites := []
       sourceMap := [] }
   let checkedUnderBinder ← IO.ofExcept underBinderSource.checked
-  let inserted ← IO.ofExcept <|
+  let inserted ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedInserted
   match inserted.bundle.term, inserted.bundle.sites with
   | .lambda _ (.context identity (.positional (.bound index) .nil)),
@@ -257,7 +261,7 @@ def runLocalGates : IO Unit := do
       ]
       sourceMap := [] }
   let checkedNested ← IO.ofExcept nestedReplacement.checked
-  let nestedResult ← IO.ofExcept <|
+  let nestedResult ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedNested
   match nestedResult.bundle.term, nestedResult.bundle.sites with
   | .lambda _ (.lambda _

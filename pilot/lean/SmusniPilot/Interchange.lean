@@ -242,6 +242,48 @@ structure Bundle (scope : Nat) where
   sourceMap : List SourceNote
   deriving Repr
 
+def validateSiteDependencies (sites : List SiteEntry) :
+    List SerializedDependency → Except String Unit
+  | [] => pure ()
+  | .site identity :: rest =>
+      if sites.any fun candidate => candidate.identity == identity then
+        validateSiteDependencies sites rest
+      else .error s!"dangling site dependency: {repr identity}"
+  | _ :: rest => validateSiteDependencies sites rest
+
+def validateSiteUse (sites : List SiteEntry) (use : SiteUse) :
+    Except String Unit :=
+  match sites.find? fun candidate =>
+      candidate.identity == use.identity with
+  | none => .error s!"missing site sidecar entry: {repr use.identity}"
+  | some entry =>
+      if entry.role != use.role then
+        .error s!"site role conflicts with term occurrence: {repr use.identity}"
+      else
+        -- The binding layer calls this same typed deserializer before applying
+        -- a total `Site.rename`/`Site.substitute` transform.
+        match SiteEntry.toSite use.scope entry with
+        | .error message => .error message
+        | .ok _ => validateSiteDependencies sites entry.dependencies
+
+theorem validateSiteUse_deserializes (sites : List SiteEntry) (use : SiteUse)
+    (success : validateSiteUse sites use = .ok ()) :
+    ∃ entry site,
+      sites.find? (fun candidate => candidate.identity == use.identity) =
+        some entry ∧
+      SiteEntry.toSite use.scope entry = .ok site := by
+  unfold validateSiteUse at success
+  cases lookup : sites.find? (fun candidate => candidate.identity == use.identity)
+  with
+  | none => simp [lookup] at success
+  | some entry =>
+      cases roleConflict : entry.role != use.role with
+      | true => simp [lookup, roleConflict] at success
+      | false =>
+          cases typed : SiteEntry.toSite use.scope entry with
+          | error message => simp [lookup, roleConflict, typed] at success
+          | ok site => exact ⟨entry, site, rfl, typed⟩
+
 def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
     Except String Unit := do
   if bundle.version != 1 then
@@ -255,22 +297,7 @@ def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
     if !(uses.any fun use => use.identity == entry.identity) then
       .error s!"extra site sidecar entry: {repr entry.identity}"
   for use in uses do
-    let some entry := bundle.sites.find? fun candidate =>
-        candidate.identity == use.identity
-      | .error s!"missing site sidecar entry: {repr use.identity}"
-    if entry.role != use.role then
-      .error s!"site role conflicts with term occurrence: {repr use.identity}"
-    if entry.dependencies.any fun
-        | .bound index => !(index < use.scope)
-        | _ => false then
-      .error s!"site dependency outside occurrence scope: {repr use.identity}"
-    for dependency in entry.dependencies do
-      match dependency with
-      | .site identity =>
-          if !(bundle.sites.any fun candidate =>
-              candidate.identity == identity) then
-            .error s!"dangling site dependency: {repr identity}"
-      | _ => pure ()
+    validateSiteUse bundle.sites use
   pure ()
 
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :

@@ -9,6 +9,19 @@ structure ValidatedBundle (scope : Nat) where
   valid : bundle.validate = .ok ()
   deriving Repr
 
+inductive BundleBindingConflict where
+  | tableReconciliation (detail : String)
+  deriving Repr, DecidableEq, BEq
+
+def BundleBindingConflict.message : BundleBindingConflict → String
+  | .tableReconciliation detail =>
+      "bundle-binding table-reconciliation conflict: " ++ detail
+
+def asBindingConflict {value : Type} : Except String value →
+    Except BundleBindingConflict value
+  | .ok result => .ok result
+  | .error detail => .error (.tableReconciliation detail)
+
 def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle scope) :=
   match evidence : bundle.validate with
@@ -19,25 +32,6 @@ theorem ValidatedBundle.validate_ok {scope : Nat}
     (bundle : ValidatedBundle scope) :
     bundle.bundle.validate = .ok () :=
   bundle.valid
-
-def SerializedDependency.toDependency (scope : Nat) :
-    SerializedDependency → Except String (Dependency scope)
-  | .bound index =>
-      if inBounds : index < scope then pure (.bound ⟨index, inBounds⟩)
-      else .error s!"bound dependency {index} outside scope {scope}"
-  | .free identity => pure (.free identity)
-  | .site identity => pure (.site identity)
-
-def siteEntryToSite (scope : Nat) (entry : SiteEntry) :
-    Except String (Site scope) := do
-  let dependencies ← entry.dependencies.mapM
-    (SerializedDependency.toDependency scope)
-  pure {
-    identity := entry.identity
-    role := entry.role
-    dependencies
-    rrLink := entry.rrLink
-  }
 
 @[simp] theorem toDependency_ofDependency {scope : Nat}
     (dependency : Dependency scope) :
@@ -67,10 +61,10 @@ def siteEntryToSite (scope : Nat) (entry : SiteEntry) :
       rfl
 
 @[simp] theorem siteEntryToSite_ofSite {scope : Nat} (site : Site scope) :
-    siteEntryToSite scope (SiteEntry.ofSite site) = .ok site := by
+    SiteEntry.toSite scope (SiteEntry.ofSite site) = .ok site := by
   cases site with
   | mk identity role dependencies rrLink =>
-      unfold siteEntryToSite SiteEntry.ofSite
+      unfold SiteEntry.toSite SiteEntry.ofSite
       rw [mapM_toDependency_ofDependency]
       rfl
 
@@ -138,19 +132,19 @@ theorem shiftTypedSite_dependencies {scope : Nat} (depth : Nat)
 
 def shiftSiteEntry {scope : Nat} (depth : Nat) (entry : SiteEntry) :
     Except String SiteEntry := do
-  let site ← siteEntryToSite scope entry
+  let site ← SiteEntry.toSite scope entry
   pure <| SiteEntry.ofSite (shiftTypedSite depth site)
 
 def renameSiteEntry {source target : Nat} (depth : Nat)
     (ρ : Renaming source target) (entry : SiteEntry) :
     Except String SiteEntry := do
-  let site ← siteEntryToSite (source + depth) entry
+  let site ← SiteEntry.toSite (source + depth) entry
   pure <| SiteEntry.ofSite (renameTypedSite depth ρ site)
 
 def substituteSiteEntry {source target : Nat} (depth : Nat)
     (σ : Fin source → ValidatedBundle target) (entry : SiteEntry) :
     Except String SiteEntry := do
-  let site ← siteEntryToSite (source + depth) entry
+  let site ← SiteEntry.toSite (source + depth) entry
   pure <| SiteEntry.ofSite (substituteTypedSite depth σ site)
 
 def siteUseDepth (outerScope : Nat) (use : SiteUse) : Except String Nat := do
@@ -271,16 +265,16 @@ def Bundle.rename {source target : Nat} (bundle : Bundle source)
 
 def ValidatedBundle.rename {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target) :
-    Except String (ValidatedBundle target) :=
-  bundle.bundle.rename ρ
+    Except BundleBindingConflict (ValidatedBundle target) :=
+  asBindingConflict (bundle.bundle.rename ρ)
 
 def Bundle.weaken {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle (scope + 1)) :=
   bundle.rename Fin.succ
 
 def ValidatedBundle.weaken {scope : Nat} (bundle : ValidatedBundle scope) :
-    Except String (ValidatedBundle (scope + 1)) :=
-  bundle.bundle.weaken
+    Except BundleBindingConflict (ValidatedBundle (scope + 1)) :=
+  bundle.rename Fin.succ
 
 def Bundle.substitute {source target : Nat} (bundle : Bundle source)
     (σ : Fin source → ValidatedBundle target) :
@@ -304,8 +298,8 @@ def Bundle.substitute {source target : Nat} (bundle : Bundle source)
 def ValidatedBundle.substitute {source target : Nat}
     (bundle : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) :
-    Except String (ValidatedBundle target) :=
-  bundle.bundle.substitute σ
+    Except BundleBindingConflict (ValidatedBundle target) :=
+  asBindingConflict (bundle.bundle.substitute σ)
 
 theorem Bundle.term_rename_preserves_site_ids {source target : Nat}
     (bundle : Bundle source) (ρ : Renaming source target) :

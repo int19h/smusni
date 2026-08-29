@@ -63,4 +63,23 @@ def SiteEntry.ofSite {scope : Nat} (site : Site scope) : SiteEntry :=
     dependencies := site.dependencies.map SerializedDependency.ofDependency
     rrLink := site.rrLink }
 
+def SerializedDependency.toDependency (scope : Nat) :
+    SerializedDependency → Except String (Dependency scope)
+  | .bound index =>
+      if inBounds : index < scope then pure (.bound ⟨index, inBounds⟩)
+      else .error s!"bound dependency {index} outside scope {scope}"
+  | .free identity => pure (.free identity)
+  | .site identity => pure (.site identity)
+
+def SiteEntry.toSite (scope : Nat) (entry : SiteEntry) :
+    Except String (Site scope) := do
+  let dependencies ← entry.dependencies.mapM
+    (SerializedDependency.toDependency scope)
+  pure {
+    identity := entry.identity
+    role := entry.role
+    dependencies
+    rrLink := entry.rrLink
+  }
+
 end SmusniPilot
