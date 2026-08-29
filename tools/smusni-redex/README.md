@@ -495,18 +495,24 @@ and `Natural + Natural` remains `Natural`. The primitive selection floor accepts
 a positive literal or a typed successor in either orientation; a bare Natural
 variable proves no positivity for `SelectAtLeast`. Defined `AtLeast` itself is
 total at every Natural, including a symbolic variable, with positive-branch
-effects as a static upper bound. Its two-equation metafunction cannot choose a
+effects as a static upper bound. Obligations contributed by the restrictor or
+nuclear scope are not upper bounds: the symbolic typing record guards each as
+`(when-positive n obligation)`, because the zero instantiation reduces to `⊤`
+and contributes none. Its two-equation metafunction cannot choose a
 zero/positive reduction before substitution; the ledger records that executable
 limitation without calling the term ill typed.
 
 `Presuppose` emits `projective` and a structured obligation containing the
 alpha-normalized condition and body computation category. Obligation union is
-set-like modulo alpha. Generic negation removes only escaping `refer`, retaining
-context, projective, effectful-call, performance, and all obligations. Direct
-GQ rules are record-equal to their executable expansions: the exporting forms
-add `refer`; zero/non-exporting forms do not; `Every` inherits MaxRefer's
-projective inhabitedness obligation; and every selection restrictor is a pure
-member property.
+set-like modulo alpha, including variables bound outside the condition by a
+surrounding lambda, `Let`, or `Bind`. The expected-mode Presuppose rule follows
+nested wrappers only to an ultimately expected-only reference computation, so
+a synthable body has exactly the ordinary `Check-Synth` proof. Generic negation
+removes only escaping `refer`, retaining context, projective, effectful-call,
+performance, and all obligations. Direct GQ rules are record-equal to their
+executable expansions: the exporting forms add `refer`; zero/non-exporting
+forms do not; `Every` inherits MaxRefer's projective inhabitedness obligation;
+and every selection restrictor is a pure member property.
 
 The definition ledger now has 12 B1 `ported` entries and 18 reviewed equation
 ranges total. A parsed-definiens gate reads each RHS with the notation reader,
@@ -515,12 +521,18 @@ symmetrically compares dependencies over the full registered semantic-head
 universe. Sixty-seven entries remain explicitly `unranged`; none is silently
 passed. Four previously ranged A0 dependency lists changed under the declared
 rule. A separate migration manifest maps 22 legacy semantic sources to 30
-named target rules (18 full, 4 partial) without changing Phase 0 source classes.
+named target rules (14 full, 8 partial) without changing Phase 0 source classes.
+Its expected helper sources are derived from live semantic-helper reachability
+starting at the selected B1 branches, with shared A0 foundations explicitly
+excluded. A live call-site scan rejects `full` whenever an out-of-B1 semantic
+branch still invokes that helper.
 
 All 32 deterministic lowering outputs have tracked dispositions: seven select
 maximal B1-closed subterms with captured binder environments, paths, fence/rule
 provenance and stable ids; 25 contain no B1 family head; none is
-unrepresentable. Those seven join the structural differential automatically.
+unrepresentable. Quote and Syntax are opaque to both head classification and
+tree traversal, so semantic-looking quoted data cannot become a replayed
+subterm. Those seven join the structural differential automatically.
 The current oracle runs 48 eligible frozen cases, 29 general mechanism probes,
 and seven lowering subterms: 84 total, zero unwaived differences, 29 used
 field-scoped waivers, zero stale. Coverage is 78/78 derivation rules and

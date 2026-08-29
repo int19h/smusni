@@ -71,6 +71,8 @@
          load-b1-lowering-manifest
          refresh-b1-lowering-manifest!
          b1-lowering-manifest-findings
+         b1-family-heads-in
+         b1-selected-subterms
          load-a0-waivers
          load-port-waivers
          load-target-migrations
@@ -1444,10 +1446,13 @@
       FewerThan Some No Every SelectExactly SelectAtLeast SelectSome
       SelectAllBut ∀ ∃ →))
 
-(define b1-helper-functions
-  '(effectful-property? ensure-same-property-domain gq-result-effects
-    literal-zero? merge-results property-domain pure-property-domain
-    quantifier-domain-type? pure-typing?))
+;; These mechanisms are shared A0 foundations rather than vertical-family
+;; migration sources: B1 rules consume their already-ported compatibility and
+;; effect-set semantics through generic premises.  Every other semantic helper
+;; reachable from a B1 source branch is derived below and must have a migration
+;; entry; this small exclusion is reviewed data, not a completeness allowlist.
+(define b1-shared-helper-functions
+  '(dynamic-effect? first-order-type? same-parameter-type? type-compatible?))
 
 (define (pattern-mentions-b1-head? pattern)
   (define (symbols datum)
@@ -1460,24 +1465,102 @@
   (not (set-empty?
         (set-intersect (symbols pattern) (list->set b1-source-heads)))))
 
+(define (b1-migration-branch-source-ids branches)
+  (sort
+   (for/list ([entry (in-list branches)]
+              #:when
+              (and (eq? (branch-entry-class entry) 'semantic-clause)
+                   (or (member (branch-entry-function entry)
+                               '(infer-logical infer-quantifier))
+                       (and (member (branch-entry-function entry)
+                                    '(infer-application infer-with-expected))
+                            (pattern-mentions-b1-head?
+                             (branch-entry-pattern entry))))))
+     (branch-entry-id entry))
+   string<?))
+
+(define (syntax-symbols-in-line-range module start-line end-line)
+  (define found (mutable-set))
+  (define (walk node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (if parts
+          (for ([part (in-list parts)]) (walk part))
+          (let ([line (syntax-line node)] [datum (syntax-e node)])
+            (when (and line (<= start-line line end-line) (symbol? datum))
+              (set-add! found datum))))))
+  (walk module)
+  (set-copy found))
+
+;; Derive helper membership from the live syntax of the selected semantic
+;; branches.  This closes the former hand-written helper list: adding a direct
+;; semantic helper call to a B1 branch makes that helper a required migration
+;; source even if nobody remembers to update a declaration.
+(define (branch-direct-semantic-helpers branches helpers [path types-path])
+  (define module (read-module-syntax path))
+  (define semantic-helper-names
+    (for/set ([helper (in-list helpers)]
+              #:when (eq? (helper-entry-class helper) 'semantic-clause))
+      (helper-entry-function helper)))
+  (for/hash ([branch (in-list branches)])
+    (values
+     (branch-entry-id branch)
+     (set-intersect
+      semantic-helper-names
+      (syntax-symbols-in-line-range
+       module (branch-entry-start-line branch) (branch-entry-end-line branch))))))
+
+(define (helper-direct-semantic-helpers helpers [path types-path])
+  (define module (read-module-syntax path))
+  (define semantic-helper-names
+    (for/set ([helper (in-list helpers)]
+              #:when (eq? (helper-entry-class helper) 'semantic-clause))
+      (helper-entry-function helper)))
+  (for/hash ([helper (in-list helpers)])
+    (values
+     (helper-entry-function helper)
+     (set-remove
+      (set-intersect
+       semantic-helper-names
+       (syntax-symbols-in-line-range
+        module (helper-entry-start-line helper) (helper-entry-end-line helper)))
+      (helper-entry-function helper)))))
+
+(define (reachable-semantic-helpers initial helper-calls [shared (set)])
+  (let loop ([todo (set->list initial)] [seen (set)])
+    (cond
+      [(null? todo) seen]
+      [(set-member? seen (first todo))
+       (loop (rest todo) seen)]
+      [else
+       (define helper (first todo))
+       (loop (append (if (set-member? shared helper)
+                         '()
+                         (set->list (hash-ref helper-calls helper (set))))
+                     (rest todo))
+             (set-add seen helper))])))
+
 (define (b1-migration-source-ids branches helpers decisions)
+  (define b1-branch-ids (b1-migration-branch-source-ids branches))
+  (define direct-helpers (branch-direct-semantic-helpers branches helpers))
+  (define helper-calls (helper-direct-semantic-helpers helpers))
+  (define b1-direct-helper-names
+    (for/fold ([found (set)]) ([id (in-list b1-branch-ids)])
+      (set-union found (hash-ref direct-helpers id (set)))))
+  (define shared-helper-names (list->set b1-shared-helper-functions))
+  (define b1-helper-names
+    (set-subtract
+     (reachable-semantic-helpers
+      b1-direct-helper-names helper-calls shared-helper-names)
+     shared-helper-names))
   (sort
    (append
-    (for/list ([entry (in-list branches)]
-               #:when
-               (and (eq? (branch-entry-class entry) 'semantic-clause)
-                    (or (member (branch-entry-function entry)
-                                '(infer-logical infer-quantifier))
-                        (and (member (branch-entry-function entry)
-                                     '(infer-application infer-with-expected))
-                             (pattern-mentions-b1-head?
-                              (branch-entry-pattern entry))))))
-      (branch-entry-id entry))
+    b1-branch-ids
     (for/list ([entry (in-list helpers)]
                #:when
                (and (eq? (helper-entry-class entry) 'semantic-clause)
-                    (member (helper-entry-function entry)
-                            b1-helper-functions)))
+                    (set-member? b1-helper-names
+                                 (helper-entry-function entry))))
       (helper-entry-id entry))
     (for/list ([entry (in-list decisions)]
                #:when
@@ -1524,18 +1607,54 @@
   (unless (= (length sources) (set-count (list->set sources)))
     (note! "B1 target migrations contain duplicate sources"))
   (define expected (b1-migration-source-ids branches helpers decisions))
+  (define b1-branch-ids
+    (list->set (b1-migration-branch-source-ids branches)))
+  (define direct-helpers (branch-direct-semantic-helpers branches helpers))
+  (define helper-calls (helper-direct-semantic-helpers helpers))
+  (define shared-helper-names (list->set b1-shared-helper-functions))
   (define missing (set-subtract (list->set expected) (list->set sources)))
   (define extra (set-subtract (list->set sources) (list->set expected)))
   (unless (and (set-empty? missing) (set-empty? extra))
     (note! "B1 target migration sources differ: missing=~s extra=~s"
            (sort (set->list missing) string<?)
            (sort (set->list extra) string<?)))
+  (for ([branch (in-list branches)]
+        #:when
+        (and (eq? (branch-entry-class branch) 'semantic-clause)
+             (pattern-mentions-b1-head? (branch-entry-pattern branch))
+             (not (set-member? b1-branch-ids (branch-entry-id branch)))))
+    (note! "semantic branch ~a mentions a B1 family head outside the selected migration sources"
+           (branch-entry-id branch)))
   (define rules (list->set a0-required-rules))
+  (define helper-by-id
+    (for/hash ([helper (in-list helpers)])
+      (values (helper-entry-id helper) helper)))
   (for ([migration (in-list b1)])
     (for ([target (in-list (target-migration-targets migration))])
       (unless (set-member? rules target)
         (note! "B1 migration ~a names absent target rule ~a"
-               (target-migration-source migration) target))))
+               (target-migration-source migration) target)))
+    (define helper
+      (hash-ref helper-by-id (target-migration-source migration) #f))
+    (when (and helper (eq? (target-migration-extent migration) 'full))
+      (define outside-branches
+        (sort
+         (for/list ([branch (in-list branches)]
+                    #:when
+                    (and (eq? (branch-entry-class branch) 'semantic-clause)
+                         (not (set-member? b1-branch-ids
+                                           (branch-entry-id branch)))
+                         (set-member?
+                          (reachable-semantic-helpers
+                           (hash-ref direct-helpers
+                                     (branch-entry-id branch) (set))
+                           helper-calls shared-helper-names)
+                          (helper-entry-function helper))))
+           (branch-entry-id branch))
+         string<?))
+      (unless (null? outside-branches)
+        (note! "B1 migration ~a claims full extent but has live out-of-B1 uses in ~s"
+               (target-migration-source migration) outside-branches))))
   (reverse findings))
 
 (struct diagnostic-taxonomy
@@ -2282,6 +2401,7 @@
       [(and (not (set-empty? family-heads)) (eligible? term environment))
        (list (selected term environment path))]
       [(not (list? term)) '()]
+      [(and (pair? term) (member (first term) '(Quote Syntax))) '()]
       [else
        (match term
          [`(λ ,binder ,body)

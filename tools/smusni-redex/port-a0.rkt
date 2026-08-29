@@ -60,6 +60,7 @@
   [comp-category Content ClauseContent Discourse (RefComp τ) (PerfComp τ)]
   [obligation finite-set-cardinality-defined
               (presuppose t comp-category)
+              (when-positive t obligation)
               variable-not-otherwise-mentioned]
   [force Assertion Expressive]
   [τ Entity Eventuality Number Natural Cardinal Content ClauseContent
@@ -786,11 +787,31 @@
   (match obligation
     [`(presuppose ,condition ,category)
      `(presuppose ,(alpha-normalize-datum condition) ,category)]
+    [`(when-positive ,count ,nested)
+     `(when-positive ,(alpha-normalize-datum count)
+        ,(normalize-obligation nested))]
     [_ obligation]))
 
 (define (canonical-obligation-set values)
   (sort (remove-duplicates (map normalize-obligation values))
         string<? #:key (lambda (value) (format "~s" value))))
+
+;; An obligation emitted inside a core binder may mention that binder.  At the
+;; emission site the variable is free relative to the condition alone, so the
+;; ordinary condition-local normalizer must not rename it.  When the typing
+;; derivation exits the binder, normalize the complete obligation as one datum
+;; under a synthetic binder.  Keeping the whole obligation together preserves
+;; identity across all of its term-valued fields (for example a symbolic count
+;; and the condition guarded by that count).
+(define (scope-obligation-set binders obligations)
+  (canonical-obligation-set
+   (for/list ([obligation (in-list obligations)])
+     (match (alpha-normalize-datum
+             `(λ ,binders (ObligationMarker ,obligation)))
+       [`(λ ,_ (ObligationMarker ,normalized)) normalized]
+       [other
+        (error 'scope-obligation-set
+               "cannot unwrap normalized obligation scope ~e" other)]))))
 
 (define (a0-compatible? actual expected)
   (or (equal? actual expected)
@@ -876,9 +897,15 @@
 (define (a0-reference-computation-form? datum)
   (and (list? datum)
        (pair? datum)
-       (member (first datum)
-               '(Context Vague Refer SelectExactly SelectAtLeast SelectSome
-                         SelectAllBut Massify MaxRefer Presuppose))))
+       (match datum
+         [`(Presuppose ,_ ,body)
+          (a0-reference-computation-form? body)]
+         [`(,head . ,_)
+          (and (member head
+                       '(Context Vague Refer SelectExactly SelectAtLeast
+                                 SelectSome SelectAllBut Massify MaxRefer))
+               #t)]
+         [_ #f])))
 
 (define (a0-value-datum? datum)
   (redex-match? SmusniA0 v datum))
@@ -897,6 +924,26 @@
       (append extra-effects (append-map record-effects records)))
     ,(canonical-obligation-set
       (append extra-obligations (append-map record-obligations records)))))
+
+(define (scope-record-datum binders record)
+  `(typing ,(record-type record)
+           ,(record-effects record)
+           ,(scope-obligation-set binders (record-obligations record))))
+
+(define (merge-positive-conditional-record-datums
+         output count count-record conditional-records extra-effects)
+  `(typing
+    ,output
+    ,(canonical-symbol-set
+      (append extra-effects
+              (append-map record-effects
+                          (cons count-record conditional-records))))
+    ,(canonical-obligation-set
+      (append
+       (record-obligations count-record)
+       (for*/list ([record (in-list conditional-records)]
+                   [obligation (in-list (record-obligations record))])
+         `(when-positive ,count ,obligation))))))
 
 (define (negate-record-datum record)
   `(typing Content
@@ -953,6 +1000,19 @@
                          (term (effect ...)) (term (obligation ...)))])
 
 (define-metafunction SmusniA0
+  scope-record : ((x τ) ...) R -> R
+  [(scope-record ((x τ) ...) R)
+   ,(scope-record-datum (term ((x τ) ...)) (term R))])
+
+(define-metafunction SmusniA0
+  merge-positive-conditional-records : τ t R (R ...) (effect ...) -> R
+  [(merge-positive-conditional-records
+    τ t_count R_count (R_conditional ...) (effect ...))
+   ,(merge-positive-conditional-record-datums
+     (term τ) (term t_count) (term R_count) (term (R_conditional ...))
+     (term (effect ...)))])
+
+(define-metafunction SmusniA0
   negate-record : R -> R
   [(negate-record R) ,(negate-record-datum (term R))])
 
@@ -996,40 +1056,56 @@
   [(where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body
             (typing τ_body () (obligation ...)))
+   (where (typing τ_body () (obligation_scoped ...))
+          (scope-record ((x τ))
+                        (typing τ_body () (obligation ...))))
    ----------------------------------------------- "A0-T-Lambda-Pure"
    (a0-type synth Γ
             (λ ((x τ)) t_body)
-            (typing (Fn (τ) τ_body) () (obligation ...)))]
+            (typing (Fn (τ) τ_body) () (obligation_scoped ...)))]
 
   [(where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body
             (typing τ_body (effect_0 effect_rest ...) (obligation ...)))
+   (where (typing τ_body (effect_0 effect_rest ...) (obligation_scoped ...))
+          (scope-record
+           ((x τ))
+           (typing τ_body (effect_0 effect_rest ...) (obligation ...))))
    ----------------------------------------------- "A0-T-Lambda-Effectful"
    (a0-type synth Γ
             (λ ((x τ)) t_body)
-            (typing (EFn (τ) τ_body) () (obligation ...)))]
+            (typing (EFn (τ) τ_body) () (obligation_scoped ...)))]
 
   [(where Γ_body
           (extend-env Γ
                       ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)))
    (a0-type synth Γ_body t_body
             (typing τ_body () (obligation ...)))
+   (where (typing τ_body () (obligation_scoped ...))
+          (scope-record
+           ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)
+           (typing τ_body () (obligation ...))))
    ----------------------------------------------- "A0-T-Lambda-Multi-Pure"
    (a0-type synth Γ
             (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body)
             (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body)
-                    () (obligation ...)))]
+                    () (obligation_scoped ...)))]
 
   [(where Γ_body
           (extend-env Γ
                       ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)))
    (a0-type synth Γ_body t_body
             (typing τ_body (effect_0 effect_rest ...) (obligation ...)))
+   (where (typing τ_body (effect_0 effect_rest ...)
+                         (obligation_scoped ...))
+          (scope-record
+           ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)
+           (typing τ_body (effect_0 effect_rest ...) (obligation ...))))
    ----------------------------------------------- "A0-T-Lambda-Multi-Effectful"
    (a0-type synth Γ
             (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body)
             (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body)
-                    () (obligation ...)))]
+                    () (obligation_scoped ...)))]
 
   [(side-condition ,(a0-value-datum? (term t_value)))
    (a0-type synth Γ t_value
@@ -1039,10 +1115,11 @@
    (where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body R_body)
    (where τ_body (record-type-of R_body))
+   (where R_body_scoped (scope-record ((x τ)) R_body))
    (where R_out
           (merge-records
            τ_body
-           ((typing τ_value () (obligation_value ...)) R_body) () ()))
+           ((typing τ_value () (obligation_value ...)) R_body_scoped) () ()))
    ----------------------------------------------- "A0-T-Let"
    (a0-type synth Γ (Let (x τ) t_value t_body) R_out)]
 
@@ -1058,7 +1135,8 @@
    (where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body R_body)
    (where τ_body (record-type-of R_body))
-   (where R_out (merge-records τ_body (R_comp R_body) () ()))
+   (where R_body_scoped (scope-record ((x τ)) R_body))
+   (where R_out (merge-records τ_body (R_comp R_body_scoped) () ()))
    ----------------------------------------------- "A0-T-Bind-Reference"
    (a0-type synth Γ
             (Bind ((x τ t_comp)) t_body) R_out)]
@@ -1067,11 +1145,13 @@
    (where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body
             (typing (Act force) (effect_body ...) (obligation_body ...)))
+   (where R_body_scoped
+          (scope-record
+           ((x τ))
+           (typing (Act force) (effect_body ...) (obligation_body ...))))
    (where R_out
           (merge-records Discourse
-                         (R_comp
-                          (typing (Act force)
-                                  (effect_body ...) (obligation_body ...)))
+                         (R_comp R_body_scoped)
                          (performance) ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Act"
    (a0-type synth Γ
@@ -1081,11 +1161,14 @@
    (where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body
             (typing (PerfComp τ_body) (effect_body ...) (obligation_body ...)))
+   (where R_body_scoped
+          (scope-record
+           ((x τ))
+           (typing (PerfComp τ_body)
+                   (effect_body ...) (obligation_body ...))))
    (where R_out
           (merge-records (PerfComp τ_body)
-                         (R_comp
-                          (typing (PerfComp τ_body)
-                                  (effect_body ...) (obligation_body ...)))
+                         (R_comp R_body_scoped)
                          () ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Comp"
    (a0-type synth Γ
@@ -1095,11 +1178,13 @@
    (where Γ_body (extend-env Γ ((x τ))))
    (a0-type synth Γ_body t_body
             (typing Discourse (effect_body ...) (obligation_body ...)))
+   (where R_body_scoped
+          (scope-record
+           ((x τ))
+           (typing Discourse (effect_body ...) (obligation_body ...))))
    (where R_out
           (merge-records Discourse
-                         (R_comp
-                          (typing Discourse
-                                  (effect_body ...) (obligation_body ...)))
+                         (R_comp R_body_scoped)
                          () ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Discourse"
    (a0-type synth Γ
@@ -1278,7 +1363,8 @@
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #t))
    (where R_out
-          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+          (merge-positive-conditional-records
+           Content t_count R_n (R_P R_Q) (effect_extra ...)))
    ----------------------------------------------- "B1-T-AtLeast-Symbolic"
    (a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)]
 
@@ -1365,7 +1451,8 @@
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #f))
    (where R_out
-          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+          (merge-positive-conditional-records
+           Content t_count R_n (R_P R_Q) (effect_extra ...)))
    ----------------------------------------------- "B1-T-FewerThan-Symbolic"
    (a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)]
 

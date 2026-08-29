@@ -221,6 +221,125 @@
           ((presuppose
             (∃ (λ (($alpha0 Entity)) (Among $alpha0 Speaker)))
             Content))))
+
+;; Expected-only Presuppose formation stays exclusive from Check-Synth even
+;; through arbitrarily nested wrappers.  The ultimate synthable variable uses
+;; Check-Synth only; the ultimate Context uses the direct expected-mode rule.
+(check-equal?
+ (check-at (term (($r (RefComp Entity))))
+           (term (Presuppose ⊤ (Presuppose ⊤ $r)))
+           (term (RefComp Entity)))
+ '(typing (RefComp Entity) (projective)
+          ((presuppose ⊤ (RefComp Entity)))))
+(check-equal?
+ (check-at '()
+           (term (Presuppose ⊤ (Presuppose ⊤ (Context))))
+           (term (RefComp (Referents Entity))))
+ '(typing (RefComp (Referents Entity)) (context projective)
+          ((presuppose ⊤ (RefComp (Referents Entity))))))
+
+;; Conditions can depend on an enclosing binder.  Canonicalization happens as
+;; the derivation exits λ, Let, and Bind, so alpha variants have identical
+;; complete records without rewriting genuinely free variables.
+(define enclosing-lambda-left
+  (synth '()
+         (term
+          (λ (($x Entity))
+            (Presuppose (= $x $x) ⊤)))))
+(define enclosing-lambda-right
+  (synth '()
+         (term
+          (λ (($y Entity))
+            (Presuppose (= $y $y) ⊤)))))
+(check-equal? enclosing-lambda-left enclosing-lambda-right)
+(check-equal?
+ enclosing-lambda-left
+ '(typing (EFn (Entity) Content) ()
+          ((presuppose (= $alpha0 $alpha0) Content))))
+(check-equal?
+ (synth (term (($free Entity)))
+        (term
+         (λ (($renamed Entity))
+           (Presuppose (= $renamed $free) ⊤))))
+ '(typing (EFn (Entity) Content) ()
+          ((presuppose (= $alpha0 $free) Content))))
+
+(define enclosing-let-left
+  (synth (term (($value Entity)))
+         (term
+          (Let ($x Entity) $value
+            (Presuppose (= $x $x) ⊤)))))
+(define enclosing-let-right
+  (synth (term (($value Entity)))
+         (term
+          (Let ($y Entity) $value
+            (Presuppose (= $y $y) ⊤)))))
+(check-equal? enclosing-let-left enclosing-let-right)
+(check-equal?
+ enclosing-let-left
+ '(typing Content (projective)
+          ((presuppose (= $alpha0 $alpha0) Content))))
+
+(define enclosing-bind-left
+  (synth '()
+         (term
+          (Bind (($x (Referents Entity) (Context)))
+            (Presuppose (Among $x $x) ⊤)))))
+(define enclosing-bind-right
+  (synth '()
+         (term
+          (Bind (($y (Referents Entity) (Context)))
+            (Presuppose (Among $y $y) ⊤)))))
+(check-equal? enclosing-bind-left enclosing-bind-right)
+(check-equal?
+ enclosing-bind-left
+ '(typing Content (context projective)
+          ((presuppose (Among $alpha0 $alpha0) Content))))
+
+;; A symbolic count may instantiate to the obligation-free zero branch.  Its
+;; positive-branch effects remain the authorized static upper bound, while P/Q
+;; obligations are represented explicitly as conditional on positivity.
+(define Q-projective
+  '(λ (($w (Referents Entity))) (Presuppose ⊤ ⊤)))
+(check-equal?
+ (synth (term ((n Natural)))
+        (term (AtLeast n ,P ,Q-projective)))
+ '(typing Content (effectful-call refer)
+          ((when-positive n (presuppose ⊤ Content)))))
+(check-equal?
+ (synth '() (term (AtLeast 0 ,P ,Q-projective)))
+ '(typing Content () ()))
+(check-equal?
+ (synth (term ((n Natural)))
+        (term (FewerThan n ,P ,Q-projective)))
+ '(typing Content (effectful-call)
+          ((when-positive n (presuppose ⊤ Content)))))
+(check-equal?
+ (synth '() (term (FewerThan 0 ,P ,Q-projective)))
+ '(typing Content () ()))
+(define guarded-binder-left
+  (synth '()
+         (term
+          (λ (($n Natural))
+            (AtLeast
+             $n ,P
+             (λ (($w (Referents Entity)))
+               (Presuppose (= $n $n) ⊤)))))))
+(define guarded-binder-right
+  (synth '()
+         (term
+          (λ (($m Natural))
+            (AtLeast
+             $m ,P
+             (λ (($w (Referents Entity)))
+               (Presuppose (= $m $m) ⊤)))))))
+(check-equal? guarded-binder-left guarded-binder-right)
+(check-equal?
+ guarded-binder-left
+ '(typing (EFn (Natural) Content) ()
+          ((when-positive
+            $alpha0
+            (presuppose (= $alpha0 $alpha0) Content)))))
 (check-equal?
  (synth '()
         (term

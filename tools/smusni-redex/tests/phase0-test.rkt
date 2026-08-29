@@ -487,6 +487,62 @@
  (findf (lambda (message) (string-contains? message "absent target rule"))
         (target-migration-findings
          (cons bad-target (rest b1-target-migrations)))))
+(define effectful-migration
+  (findf (lambda (entry)
+           (string-prefix? (target-migration-source entry)
+                           "H.effectful-property?."))
+         b1-target-migrations))
+(for ([prefix (in-list
+               '("H.effectful-property?."
+                 "H.ensure-same-property-domain."
+                 "H.property-domain."
+                 "H.pure-property-domain."))])
+  (define migration
+    (findf (lambda (entry)
+             (string-prefix? (target-migration-source entry) prefix))
+           b1-target-migrations))
+  (define false-full
+    (struct-copy target-migration migration [extent 'full]))
+  (check-not-false
+   (findf
+    (lambda (message)
+      (and (string-contains? message "claims full extent")
+           (string-contains? message "live out-of-B1 uses")))
+    (target-migration-findings
+     (cons false-full (remove migration b1-target-migrations))))))
+;; Helper coverage is derived from live B1 branch/helper reachability, not a
+;; hand-written helper allowlist: deleting a reached semantic helper cannot
+;; pass.
+(check-not-false
+ (findf
+  (lambda (message)
+    (and (string-contains? message "sources differ")
+         (string-contains? message "effectful-property?")))
+  (target-migration-findings
+   (remove effectful-migration b1-target-migrations))))
+(define synthetic-unselected-family-branch
+  (branch-entry "B.synthetic-unselected-family" 'infer-core
+                '(eq? head 'AtLeast) 1 1 "synthetic"
+                'semantic-clause "Synthetic mutation branch."))
+(check-not-false
+ (findf
+  (lambda (message)
+    (string-contains? message
+                      "mentions a B1 family head outside"))
+  (target-migration-findings
+   b1-target-migrations
+   (cons synthetic-unselected-family-branch (load-infer-branches)))))
+
+;; Quotation is opaque to both family-head classification and maximal-subterm
+;; extraction.  Semantic-looking data inside Quote/Syntax is never replayed as
+;; an executable B1 lowering candidate.
+(for ([quoted (in-list
+               '((Quote (Some P Q))
+                 (Syntax (AtLeast 2 P Q))))])
+  (check-true (set-empty? (b1-family-heads-in quoted)))
+  (check-equal?
+   (b1-selected-subterms "synthetic-opaque" 1 0 '(synthetic) quoted)
+   '()))
 
 (define lowering-subterm-manifest (load-b1-lowering-manifest))
 (check-equal? (b1-lowering-manifest-findings lowering-subterm-manifest) '())
