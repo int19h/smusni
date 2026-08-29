@@ -4,23 +4,22 @@ import SmusniPilot.BindingLaws
 namespace SmusniPilot
 namespace Interchange
 
-structure ScopedSiteUse {scope : Nat} (bundle : Bundle scope)
-    (raw : SiteUse) where
+structure ScopedSiteUse (scope : Nat) (raw : SiteUse) where
   depth : Nat
   scopeEq : raw.scope = scope + depth
   entry : SiteEntry
-  lookup : bundle.sites.find? (fun candidate =>
-    candidate.identity == raw.identity) = some entry
+  entryIdentity : entry.identity = raw.identity
+  entryRole : entry.role = raw.role
   site : Site (scope + depth)
-  deserialized : SiteEntry.toSite (scope + depth) entry = .ok site
+  siteIdentity : site.identity = entry.identity
+  siteRole : site.role = entry.role
 
-structure ScopedSiteClosure {scope : Nat} (bundle : Bundle scope)
-    (uses : List SiteUse) where
-  entries : List (Sigma fun raw => ScopedSiteUse bundle raw)
+structure ScopedSiteClosure (scope : Nat) (uses : List SiteUse) where
+  entries : List (Sigma fun raw => ScopedSiteUse scope raw)
   coverage : entries.map Sigma.fst = uses
 
 def buildScopedSiteUse {scope : Nat} (bundle : Bundle scope) (raw : SiteUse) :
-    Except String (ScopedSiteUse bundle raw) := do
+    Except String (ScopedSiteUse scope raw) := do
   if below : scope <= raw.scope then
     let depth := raw.scope - scope
     have scopeEq : raw.scope = scope + depth := by omega
@@ -28,19 +27,27 @@ def buildScopedSiteUse {scope : Nat} (bundle : Bundle scope) (raw : SiteUse) :
         candidate.identity == raw.identity) with
     | none => .error s!"missing site sidecar entry: {repr raw.identity}"
     | some entry =>
-        match deserialized : SiteEntry.toSite (scope + depth) entry with
-        | .error message => .error message
-        | .ok site => pure {
-            depth := depth
-            scopeEq := scopeEq
-            entry := entry
-            lookup := lookup
-            site := site
-            deserialized := deserialized }
+        if identityMatches : entry.identity = raw.identity then
+          if roleMatches : entry.role = raw.role then
+            match deserialized : SiteEntry.toSite (scope + depth) entry with
+            | .error message => .error message
+            | .ok site => pure {
+                depth := depth
+                scopeEq := scopeEq
+                entry := entry
+                entryIdentity := identityMatches
+                entryRole := roleMatches
+                site := site
+                siteIdentity := SiteEntry.toSite_preserves_identity
+                  entry site deserialized
+                siteRole := SiteEntry.toSite_preserves_role
+                  entry site deserialized }
+          else .error s!"site role conflicts with occurrence: {repr raw.identity}"
+        else .error s!"site lookup identity mismatch: {repr raw.identity}"
   else .error s!"site occurrence scope {raw.scope} is below {scope}"
 
 def buildScopedSiteClosure {scope : Nat} (bundle : Bundle scope) :
-    (uses : List SiteUse) → Except String (ScopedSiteClosure bundle uses)
+    (uses : List SiteUse) → Except String (ScopedSiteClosure scope uses)
   | [] => pure { entries := [], coverage := rfl }
   | use :: rest => do
       let first ← buildScopedSiteUse bundle use
@@ -102,16 +109,15 @@ def dependencyTypedSubstitutionUse {source depth : Nat} :
   | .free _ | .site _ => none
 
 def ScopedSiteUse.typedSubstitutionUses {source : Nat}
-    {bundle : Bundle source} {raw : SiteUse}
-    (use : ScopedSiteUse bundle raw) : List (TypedSubstitutionUse source) :=
+    {raw : SiteUse} (use : ScopedSiteUse source raw) :
+    List (TypedSubstitutionUse source) :=
   use.site.dependencies.filterMap dependencyTypedSubstitutionUse
 
 structure ValidatedBundle (scope : Nat) where
+  private mk ::
   bundle : Bundle scope
   uses : List SiteUse
-  usesValid : bundle.validateWithUses = .ok uses
-  closure : ScopedSiteClosure bundle uses
-  valid : bundle.validate = .ok ()
+  closure : ScopedSiteClosure scope uses
 
 structure SiteEntryConflict where
   identity : SiteId
@@ -137,21 +143,14 @@ theorem BundleBindingConflict.has_unequal_candidates
 
 def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle scope) :=
-  match evidence : bundle.validateWithUses with
+  match bundle.validateWithUses with
   | .ok uses => do
       let closure ← buildScopedSiteClosure bundle uses
       .ok {
         bundle
         uses
-        usesValid := evidence
-        closure
-        valid := validateWithUses_implies_validate bundle uses evidence }
+        closure }
   | .error message => .error message
-
-theorem ValidatedBundle.validate_ok {scope : Nat}
-    (bundle : ValidatedBundle scope) :
-    bundle.bundle.validate = .ok () :=
-  bundle.valid
 
 @[simp] theorem toDependency_ofDependency {scope : Nat}
     (dependency : Dependency scope) :
@@ -251,36 +250,110 @@ theorem shiftTypedSite_dependencies {scope : Nat} (depth : Nat)
       site.identity := rfl
 
 def renameScopedSiteCandidate {source target : Nat}
-    (bundle : ValidatedBundle source) (ρ : Renaming source target) :
-    (entry : Sigma fun raw => ScopedSiteUse bundle.bundle raw) → SiteEntry
+    (ρ : Renaming source target) :
+    (entry : Sigma fun raw => ScopedSiteUse source raw) → SiteEntry
   | ⟨_, use⟩ => SiteEntry.ofSite (renameTypedSite use.depth ρ use.site)
 
 def substituteScopedSiteCandidate {source target : Nat}
-    (bundle : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) :
-    (entry : Sigma fun raw => ScopedSiteUse bundle.bundle raw) → SiteEntry
+    (entry : Sigma fun raw => ScopedSiteUse source raw) → SiteEntry
   | ⟨_, use⟩ =>
       SiteEntry.ofSite (substituteTypedSite use.depth σ use.site)
 
+def renameScopedSiteUse {source target : Nat} (ρ : Renaming source target) :
+    (entry : Sigma fun raw => ScopedSiteUse source raw) →
+      Sigma fun raw => ScopedSiteUse target raw
+  | ⟨raw, use⟩ =>
+      let site := renameTypedSite use.depth ρ use.site
+      let tableEntry := SiteEntry.ofSite site
+      let outputRaw : SiteUse := {
+        identity := raw.identity
+        role := raw.role
+        scope := target + use.depth }
+      ⟨outputRaw, {
+        depth := use.depth
+        scopeEq := rfl
+        entry := tableEntry
+        entryIdentity := by
+          calc
+            tableEntry.identity = site.identity := rfl
+            _ = use.site.identity := rfl
+            _ = use.entry.identity := use.siteIdentity
+            _ = raw.identity := use.entryIdentity
+        entryRole := by
+          calc
+            tableEntry.role = site.role := rfl
+            _ = use.site.role := rfl
+            _ = use.entry.role := use.siteRole
+            _ = raw.role := use.entryRole
+        site := site
+        siteIdentity := rfl
+        siteRole := rfl }⟩
+
+def substituteScopedSiteUse {source target : Nat}
+    (σ : Fin source → ValidatedBundle target) :
+    (entry : Sigma fun raw => ScopedSiteUse source raw) →
+      Sigma fun raw => ScopedSiteUse target raw
+  | ⟨raw, use⟩ =>
+      let site := substituteTypedSite use.depth σ use.site
+      let tableEntry := SiteEntry.ofSite site
+      let outputRaw : SiteUse := {
+        identity := raw.identity
+        role := raw.role
+        scope := target + use.depth }
+      ⟨outputRaw, {
+        depth := use.depth
+        scopeEq := rfl
+        entry := tableEntry
+        entryIdentity := by
+          calc
+            tableEntry.identity = site.identity := rfl
+            _ = use.site.identity := rfl
+            _ = use.entry.identity := use.siteIdentity
+            _ = raw.identity := use.entryIdentity
+        entryRole := by
+          calc
+            tableEntry.role = site.role := rfl
+            _ = use.site.role := rfl
+            _ = use.entry.role := use.siteRole
+            _ = raw.role := use.entryRole
+        site := site
+        siteIdentity := rfl
+        siteRole := rfl }⟩
+
+def scopedSiteEntryCandidates {scope : Nat}
+    (entries : List (Sigma fun raw => ScopedSiteUse scope raw)) :
+    List SiteEntry :=
+  entries.map fun entry => entry.snd.entry
+
+theorem Site.cast_preserves_identity {source target : Nat}
+    (equal : source = target) (site : Site source) :
+    (equal ▸ site).identity = site.identity := by
+  cases equal
+  rfl
+
+theorem Site.cast_preserves_role {source target : Nat}
+    (equal : source = target) (site : Site source) :
+    (equal ▸ site).role = site.role := by
+  cases equal
+  rfl
+
 theorem renameScopedSiteCandidate_preserves_identity {source target : Nat}
-    (bundle : ValidatedBundle source) (ρ : Renaming source target)
-    (entry : Sigma fun raw => ScopedSiteUse bundle.bundle raw) :
-    (renameScopedSiteCandidate bundle ρ entry).identity = entry.snd.entry.identity := by
+    (ρ : Renaming source target)
+    (entry : Sigma fun raw => ScopedSiteUse source raw) :
+    (renameScopedSiteCandidate ρ entry).identity = entry.snd.entry.identity := by
   cases entry with
   | mk raw use =>
-      change use.site.identity = use.entry.identity
-      exact SiteEntry.toSite_preserves_identity use.entry use.site use.deserialized
+      exact use.siteIdentity
 
 theorem substituteScopedSiteCandidate_preserves_identity {source target : Nat}
-    (bundle : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target)
-    (entry : Sigma fun raw => ScopedSiteUse bundle.bundle raw) :
-    (substituteScopedSiteCandidate bundle σ entry).identity =
+    (entry : Sigma fun raw => ScopedSiteUse source raw) :
+    (substituteScopedSiteCandidate σ entry).identity =
       entry.snd.entry.identity := by
   cases entry with
   | mk raw use =>
-      change use.site.identity = use.entry.identity
-      exact SiteEntry.toSite_preserves_identity use.entry use.site use.deserialized
+      exact use.siteIdentity
 
 def insertReconciledSiteEntry (entries : List SiteEntry)
     (candidate : SiteEntry) :
@@ -318,6 +391,53 @@ def replacementScopedSiteCandidates {source target : Nat}
               (Renaming.shiftN (scope := target) use.depth) siteUse.site
       shifted ++ replacementScopedSiteCandidates σ rest
 
+def insertReplacementScopedSiteUse {target : Nat} (insertionDepth : Nat) :
+    (entry : Sigma fun raw => ScopedSiteUse target raw) →
+      Sigma fun raw => ScopedSiteUse target raw
+  | ⟨raw, use⟩ =>
+      let site := renameTypedSite use.depth
+        (Renaming.shiftN (scope := target) insertionDepth) use.site
+      have scopeAssoc : target + insertionDepth + use.depth =
+          target + (insertionDepth + use.depth) := by omega
+      let shiftedSite : Site (target + (insertionDepth + use.depth)) :=
+        scopeAssoc ▸ site
+      let tableEntry := SiteEntry.ofSite shiftedSite
+      let outputRaw : SiteUse := {
+        identity := raw.identity
+        role := raw.role
+        scope := target + (insertionDepth + use.depth) }
+      ⟨outputRaw, {
+        depth := insertionDepth + use.depth
+        scopeEq := rfl
+        entry := tableEntry
+        entryIdentity := by
+          calc
+            tableEntry.identity = shiftedSite.identity := rfl
+            _ = site.identity := Site.cast_preserves_identity scopeAssoc site
+            _ = use.site.identity := rfl
+            _ = use.entry.identity := use.siteIdentity
+            _ = raw.identity := use.entryIdentity
+        entryRole := by
+          calc
+            tableEntry.role = shiftedSite.role := rfl
+            _ = site.role := Site.cast_preserves_role scopeAssoc site
+            _ = use.site.role := rfl
+            _ = use.entry.role := use.siteRole
+            _ = raw.role := use.entryRole
+        site := shiftedSite
+        siteIdentity := rfl
+        siteRole := rfl }⟩
+
+def replacementScopedSiteUses {source target : Nat}
+    (σ : Fin source → ValidatedBundle target) :
+    List (TypedSubstitutionUse source) →
+      List (Sigma fun raw => ScopedSiteUse target raw)
+  | [] => []
+  | use :: rest =>
+      let shifted := (σ use.index).closure.entries.map
+        (insertReplacementScopedSiteUse use.depth)
+      shifted ++ replacementScopedSiteUses σ rest
+
 def replacementSourceNotesForUses {source target : Nat}
     (σ : Fin source → ValidatedBundle target) :
     List (TypedSubstitutionUse source) → List SourceNote
@@ -327,26 +447,34 @@ def replacementSourceNotesForUses {source target : Nat}
 
 structure RenamedBundle {source target : Nat} (input : ValidatedBundle source)
     (ρ : Renaming source target) where
-  bundle : Bundle target
-  termEq : bundle.term = input.bundle.term.rename ρ
+  validated : ValidatedBundle target
+  termEq : validated.bundle.term = input.bundle.term.rename ρ
   sitesAreTypedCandidates :
     reconcileSiteEntries
-      (input.closure.entries.map (renameScopedSiteCandidate input ρ)) =
-        .ok bundle.sites
+      (scopedSiteEntryCandidates validated.closure.entries) =
+        .ok validated.bundle.sites
 
 structure SubstitutedBundle {source target : Nat}
     (input : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) where
-  bundle : Bundle target
-  termEq : bundle.term = input.bundle.term.substitute
+  validated : ValidatedBundle target
+  termEq : validated.bundle.term = input.bundle.term.substitute
     (fun index => (σ index).bundle.term)
   sitesAreTypedCandidates :
-    let uses := typedTermSubstitutionUses input.bundle.term ++
-      scopedSidecarSubstitutionUses input
-    let original := input.closure.entries.map
-      (substituteScopedSiteCandidate input σ)
-    let replacements := replacementScopedSiteCandidates σ uses
-    reconcileSiteEntries (original ++ replacements) = .ok bundle.sites
+    reconcileSiteEntries
+      (scopedSiteEntryCandidates validated.closure.entries) =
+        .ok validated.bundle.sites
+
+def RenamedBundle.bundle {source target : Nat}
+    {input : ValidatedBundle source} {ρ : Renaming source target}
+    (result : RenamedBundle input ρ) : Bundle target :=
+  result.validated.bundle
+
+def SubstitutedBundle.bundle {source target : Nat}
+    {input : ValidatedBundle source}
+    {σ : Fin source → ValidatedBundle target}
+    (result : SubstitutedBundle input σ) : Bundle target :=
+  result.validated.bundle
 
 def shiftSiteEntry {scope : Nat} (depth : Nat) (entry : SiteEntry) :
     Except String SiteEntry := do
@@ -491,16 +619,26 @@ def Bundle.rename {source target : Nat} (bundle : Bundle source)
 def ValidatedBundle.rename {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target) :
     Except BundleBindingConflict (RenamedBundle bundle ρ) :=
-  let candidates := bundle.closure.entries.map
-    (renameScopedSiteCandidate bundle ρ)
+  let outputEntries := bundle.closure.entries.map (renameScopedSiteUse ρ)
+  let outputUses := outputEntries.map Sigma.fst
+  let candidates := scopedSiteEntryCandidates outputEntries
   match evidence : reconcileSiteEntries candidates with
   | .error conflict => .error conflict
-  | .ok sites => .ok {
-      bundle := {
+  | .ok sites =>
+      let outputBundle : Bundle target := {
         version := bundle.bundle.version
         term := bundle.bundle.term.rename ρ
         sites
         sourceMap := bundle.bundle.sourceMap }
+      let outputClosure : ScopedSiteClosure target outputUses := {
+        entries := outputEntries
+        coverage := rfl }
+      let validated : ValidatedBundle target := {
+        bundle := outputBundle
+        uses := outputUses
+        closure := outputClosure }
+      .ok {
+      validated := validated
       termEq := rfl
       sitesAreTypedCandidates := evidence }
 
@@ -539,21 +677,32 @@ def ValidatedBundle.substitute {source target : Nat}
     (bundle : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) :
     Except BundleBindingConflict (SubstitutedBundle bundle σ) :=
-  let originalCandidates := bundle.closure.entries.map
-    (substituteScopedSiteCandidate bundle σ)
   let uses := typedTermSubstitutionUses bundle.bundle.term ++
     scopedSidecarSubstitutionUses bundle
-  let replacementCandidates := replacementScopedSiteCandidates σ uses
+  let originalEntries := bundle.closure.entries.map (substituteScopedSiteUse σ)
+  let replacementEntries := replacementScopedSiteUses σ uses
+  let outputEntries := originalEntries ++ replacementEntries
+  let outputUses := outputEntries.map Sigma.fst
+  let candidates := scopedSiteEntryCandidates outputEntries
   match evidence : reconcileSiteEntries
-      (originalCandidates ++ replacementCandidates) with
+      candidates with
   | .error conflict => .error conflict
-  | .ok sites => .ok {
-      bundle := {
+  | .ok sites =>
+      let outputBundle : Bundle target := {
         version := bundle.bundle.version
         term := bundle.bundle.term.substitute fun index => (σ index).bundle.term
         sites
         sourceMap := bundle.bundle.sourceMap ++
           replacementSourceNotesForUses σ uses }
+      let outputClosure : ScopedSiteClosure target outputUses := {
+        entries := outputEntries
+        coverage := rfl }
+      let validated : ValidatedBundle target := {
+        bundle := outputBundle
+        uses := outputUses
+        closure := outputClosure }
+      .ok {
+      validated := validated
       termEq := rfl
       sitesAreTypedCandidates := evidence }
 
@@ -561,6 +710,7 @@ theorem RenamedBundle.site_ids {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
     (result : RenamedBundle input ρ) :
     result.bundle.term.siteIds = input.bundle.term.siteIds := by
+  change result.validated.bundle.term.siteIds = input.bundle.term.siteIds
   rw [result.termEq]
   exact Term.siteIds_rename ρ input.bundle.term
 
@@ -570,6 +720,7 @@ theorem SubstitutedBundle.preserves_site_id {source target : Nat}
     (result : SubstitutedBundle input σ)
     (identity : SiteId) (present : identity ∈ input.bundle.term.siteIds) :
     identity ∈ result.bundle.term.siteIds := by
+  change identity ∈ result.validated.bundle.term.siteIds
   rw [result.termEq]
   exact Term.siteId_mem_substitute
     (fun index => (σ index).bundle.term) input.bundle.term identity present

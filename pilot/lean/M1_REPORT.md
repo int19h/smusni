@@ -71,8 +71,8 @@ dependency transformations. The decoder assigns written sites and sidecar
 entries together in deterministic traversal/source order, never from byte
 offsets.
 
-Binding infrastructure is 1,464 lines including scoped data/core and validated
-bundle operations, or 1,204 lines for operations and proofs alone:
+Binding infrastructure is 1,630 lines including scoped data/core and validated
+bundle operations, or 1,355 lines for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
@@ -155,12 +155,14 @@ internal string cannot be presented as that error. Dependency-only site entries
 are ordinary reachable graph nodes, not conflicts; the conflict is reserved for
 colliding identities or one shared identity requiring inconsistent transformed
 entries at distinct occurrence depths. Raw byte/bundle
-input may still fail schema or coherence
-validation before it becomes a `ValidatedBundle`; raw `Bundle` convenience
-operations retain those detailed boundary errors. Runtime gates revalidate
-every certified result; this is the current evidence that a certified output
-passes the full raw-bundle validator, not a kernel closure theorem. Validation
-is run after both source decoding and text decoding. Each primitive S1 case also
+input may still fail schema or coherence validation before it becomes a
+`ValidatedBundle`; raw `Bundle` convenience operations retain those detailed
+boundary errors. Each successful operation constructs a new
+private-constructor `ValidatedBundle` whose reachable uses and typed closure
+are derived from the complete transformed original/replacement closure, so
+callers do not re-enter the fallible raw checker. Runtime gates revalidate every
+certified result as redundant executable evidence. Validation is run after both
+source decoding and text decoding. Each primitive S1 case also
 passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
@@ -231,10 +233,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.58 s wall, 30.03 s user, 4.28 s system,
-  1,700,616 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.36 s wall, 0.11 s user, 0.16 s system,
-  139,540 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.69 s wall, 30.58 s user, 4.25 s system,
+  1,699,300 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.35 s wall, 0.11 s user, 0.16 s system,
+  133,152 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
@@ -255,11 +257,6 @@ Build time is not reported as runtime.
   application node with an ordered list of positional/labelled fills, so no
   source arity or label structure is lost before M2 typing.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
-- M1 proves the operation's term/table transformation and witnessed failure
-  boundary, but not the stronger closure theorem `validated input → every
-  successful certified output validates`; runtime result revalidation is the
-  current evidence. That theorem is M2 proof work before expansion/β uses the
-  API.
 - Raw `Bundle.rename`/`substitute` are non-semantic boundary conveniences that
   retain String diagnostics and duplicate parts of the validated path; the
   validated certified operations are the semantic M1 API. Remove the raw

@@ -196,17 +196,19 @@ def runLocalGates : IO Unit := do
       sourceMap := [] }
   let checkedBound ← IO.ofExcept boundSiteBundle.checked
   let weakenedBundle ← IO.ofBundleBinding checkedBound.weaken
-  let weakened ← IO.ofExcept weakenedBundle.bundle.checked
+  let weakened := weakenedBundle.validated
   match weakened.bundle.sites with
   | [{ dependencies := [.bound 1], .. }] => pure ()
   | _ => throw <| IO.userError <|
       "bundle weakening did not transform authoritative dependencies"
+  if !weakened.bundle.validate.isOk then
+    throw <| IO.userError "certified weakening failed redundant validation"
   let replacement : Interchange.Bundle 0 :=
     { version := 1, term := .natural 7, sites := [], sourceMap := [] }
   let checkedReplacement ← IO.ofExcept replacement.checked
   let substitutedBundle ← IO.ofBundleBinding <|
     checkedBound.substitute fun _ => checkedReplacement
-  let substituted ← IO.ofExcept substitutedBundle.bundle.checked
+  let substituted := substitutedBundle.validated
   match substituted.bundle.term, substituted.bundle.sites with
   | .context identity (.positional (.natural 7) .nil),
       [{ identity := entryIdentity, dependencies := [], .. }] =>
@@ -239,7 +241,7 @@ def runLocalGates : IO Unit := do
   let checkedUnderBinder ← IO.ofExcept underBinderSource.checked
   let insertedBundle ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedInserted
-  let inserted ← IO.ofExcept insertedBundle.bundle.checked
+  let inserted := insertedBundle.validated
   match inserted.bundle.term, inserted.bundle.sites with
   | .lambda _ (.context identity (.positional (.bound index) .nil)),
       [{ identity := entryIdentity, dependencies := [.bound dependency], .. }] =>
@@ -248,6 +250,9 @@ def runLocalGates : IO Unit := do
         throw <| IO.userError "lifted bundle substitution shifted incorrectly"
   | _, _ => throw <| IO.userError <|
       "bundle substitution lost an inserted authoritative site table"
+  if !inserted.bundle.validate.isOk then
+    throw <| IO.userError
+      "certified inserted substitution failed redundant validation"
 
   let nestedSiteId : SiteId :=
     { document := "nested-replacement"
@@ -266,7 +271,7 @@ def runLocalGates : IO Unit := do
   let checkedNested ← IO.ofExcept nestedReplacement.checked
   let nestedResultBundle ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedNested
-  let nestedResult ← IO.ofExcept nestedResultBundle.bundle.checked
+  let nestedResult := nestedResultBundle.validated
   match nestedResult.bundle.term, nestedResult.bundle.sites with
   | .lambda _ (.lambda _
         (.context identity (.positional (.bound index) .nil))),
@@ -277,6 +282,9 @@ def runLocalGates : IO Unit := do
           "nested replacement corrupted its internal binder dependency"
   | _, _ => throw <| IO.userError <|
       "nested replacement lost its term or authoritative site entry"
+  if !nestedResult.bundle.validate.isOk then
+    throw <| IO.userError
+      "certified nested substitution failed redundant validation"
 
   let sharedDepthId : SiteId :=
     { document := "shared-depth"
@@ -329,8 +337,7 @@ def runLocalGates : IO Unit := do
     IO.ofExcept dependencyOnlyReplacement.checked
   let dependencyOnlyResultBundle ← IO.ofBundleBinding <|
     checkedDependencySource.substitute fun _ => checkedDependencyReplacement
-  let dependencyOnlyResult ←
-    IO.ofExcept dependencyOnlyResultBundle.bundle.checked
+  let dependencyOnlyResult := dependencyOnlyResultBundle.validated
   let rootEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
     entry.identity == dependencyRootId
   let leafEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>

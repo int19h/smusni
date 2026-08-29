@@ -97,4 +97,19 @@ theorem SiteEntry.toSite_preserves_identity {scope : Nat}
       cases success
       rfl
 
+theorem SiteEntry.toSite_preserves_role {scope : Nat}
+    (entry : SiteEntry) (site : Site scope)
+    (success : entry.toSite scope = .ok site) :
+    site.role = entry.role := by
+  unfold SiteEntry.toSite at success
+  cases decoded : entry.dependencies.mapM
+      (SerializedDependency.toDependency scope) with
+  | error message =>
+      rw [decoded] at success
+      contradiction
+  | ok dependencies =>
+      rw [decoded] at success
+      cases success
+      rfl
+
 end SmusniPilot
