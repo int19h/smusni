@@ -71,8 +71,8 @@ dependency transformations. The decoder assigns written sites and sidecar
 entries together in deterministic traversal/source order, never from byte
 offsets.
 
-Binding infrastructure is 1,176 lines including scoped data/core and validated
-bundle operations, or 931 lines for operations and proofs alone:
+Binding infrastructure is 1,464 lines including scoped data/core and validated
+bundle operations, or 1,204 lines for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
@@ -84,8 +84,9 @@ bundle operations, or 931 lines for operations and proofs alone:
 - substitution composition;
 - bundle-level renaming, weakening, and substitution that transform the
   authoritative dependency table at each occurrence's lifted scope;
-- proof-carrying successful bundle operations, with merge conflicts rejected
-  when one shared site identity would acquire inconsistent entries;
+- proof-carrying `RenamedBundle`/`SubstitutedBundle` operation results: each
+  carries exact term equality and proof that its table is the reconciliation
+  of the complete typed per-use candidate list;
 - total typed site transforms defined directly through `Site.rename`,
   `Site.substitute`, `Renaming.liftN`, and `Substitution.liftN`, with kernel
   laws for dependency commutation, typed serialization round trip, and
@@ -142,16 +143,23 @@ At every occurrence it invokes the exact `SiteEntry.toSite use.scope` typed
 deserializer used by bundle binding; `siteEntryToSite_ofSite` proves the typed
 serialization round trip, and `validateSiteUse_deserializes` proves that every
 successful per-occurrence validation has a matching entry and typed `Site`.
-Thus a `ValidatedBundle` operation has no separate
-reachable scope-deserialization error class: its typed transform is total, and
-all operation-level refusals have the closed
-`BundleBindingConflict.inconsistentSharing` type. Dependency-only site entries
-are ordinary reachable graph nodes, not conflicts; this class is reserved for
+`Bundle.checked` also stores the complete reachable-use list plus a
+scope-indexed typed closure whose coverage equation is part of the value.
+Validated operations consume only that closure and total typed substitution-use
+collectors; they do not call a string-returning lookup, deserializer, closure,
+or final validator. Successful rename/substitute results carry term and typed
+candidate-table correspondence proofs, while the only error constructor is
+`BundleBindingConflict.inconsistentSharing` with an actual SiteId and two
+unequal `SiteEntry` candidates. `has_unequal_candidates` proves an arbitrary
+internal string cannot be presented as that error. Dependency-only site entries
+are ordinary reachable graph nodes, not conflicts; the conflict is reserved for
 colliding identities or one shared identity requiring inconsistent transformed
 entries at distinct occurrence depths. Raw byte/bundle
 input may still fail schema or coherence
-validation before it becomes a `ValidatedBundle`. Validation is run after both
-source decoding and text decoding. Each primitive S1 case also
+validation before it becomes a `ValidatedBundle`; raw `Bundle` convenience
+operations retain those detailed boundary errors. Runtime gates revalidate
+every certified result as a redundant executable check. Validation is run after
+both source decoding and text decoding. Each primitive S1 case also
 passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
@@ -222,10 +230,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.78 s wall, 29.55 s user, 4.23 s system,
-  1,701,148 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.16 s system,
-  133,376 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.58 s wall, 30.03 s user, 4.28 s system,
+  1,700,616 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.36 s wall, 0.11 s user, 0.16 s system,
+  139,540 KiB maximum RSS.
 
 Build time is not reported as runtime.
 

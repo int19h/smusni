@@ -323,8 +323,8 @@ def reachableSiteUses (sites : List SiteEntry) (roots : List SiteUse) :
   let fuel := (sites.length + 1) * (initial.length + 1)
   reachableSiteUsesLoop sites fuel initial []
 
-def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
-    Except String Unit := do
+def Bundle.validateWithUses {scope : Nat} (bundle : Bundle scope) :
+    Except String (List SiteUse) := do
   if bundle.version != 1 then
     .error s!"unsupported interchange version {bundle.version}"
   let uses := bundle.term.siteUses
@@ -337,7 +337,19 @@ def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
   for entry in bundle.sites do
     if !(reachable.any fun use => use.identity == entry.identity) then
       .error s!"unreachable site sidecar entry: {repr entry.identity}"
+  pure reachable
+
+def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
+    Except String Unit := do
+  let _ ← bundle.validateWithUses
   pure ()
+
+theorem validateWithUses_implies_validate {scope : Nat} (bundle : Bundle scope)
+    (uses : List SiteUse) (success : bundle.validateWithUses = .ok uses) :
+    bundle.validate = .ok () := by
+  unfold Bundle.validate
+  rw [success]
+  rfl
 
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :
     Except String (Bundle 0) := do

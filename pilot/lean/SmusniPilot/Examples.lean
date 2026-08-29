@@ -195,7 +195,8 @@ def runLocalGates : IO Unit := do
       ]
       sourceMap := [] }
   let checkedBound ← IO.ofExcept boundSiteBundle.checked
-  let weakened ← IO.ofBundleBinding checkedBound.weaken
+  let weakenedBundle ← IO.ofBundleBinding checkedBound.weaken
+  let weakened ← IO.ofExcept weakenedBundle.bundle.checked
   match weakened.bundle.sites with
   | [{ dependencies := [.bound 1], .. }] => pure ()
   | _ => throw <| IO.userError <|
@@ -203,8 +204,9 @@ def runLocalGates : IO Unit := do
   let replacement : Interchange.Bundle 0 :=
     { version := 1, term := .natural 7, sites := [], sourceMap := [] }
   let checkedReplacement ← IO.ofExcept replacement.checked
-  let substituted ← IO.ofBundleBinding <|
+  let substitutedBundle ← IO.ofBundleBinding <|
     checkedBound.substitute fun _ => checkedReplacement
+  let substituted ← IO.ofExcept substitutedBundle.bundle.checked
   match substituted.bundle.term, substituted.bundle.sites with
   | .context identity (.positional (.natural 7) .nil),
       [{ identity := entryIdentity, dependencies := [], .. }] =>
@@ -235,8 +237,9 @@ def runLocalGates : IO Unit := do
       sites := []
       sourceMap := [] }
   let checkedUnderBinder ← IO.ofExcept underBinderSource.checked
-  let inserted ← IO.ofBundleBinding <|
+  let insertedBundle ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedInserted
+  let inserted ← IO.ofExcept insertedBundle.bundle.checked
   match inserted.bundle.term, inserted.bundle.sites with
   | .lambda _ (.context identity (.positional (.bound index) .nil)),
       [{ identity := entryIdentity, dependencies := [.bound dependency], .. }] =>
@@ -261,8 +264,9 @@ def runLocalGates : IO Unit := do
       ]
       sourceMap := [] }
   let checkedNested ← IO.ofExcept nestedReplacement.checked
-  let nestedResult ← IO.ofBundleBinding <|
+  let nestedResultBundle ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedNested
+  let nestedResult ← IO.ofExcept nestedResultBundle.bundle.checked
   match nestedResult.bundle.term, nestedResult.bundle.sites with
   | .lambda _ (.lambda _
         (.context identity (.positional (.bound index) .nil))),
@@ -323,8 +327,10 @@ def runLocalGates : IO Unit := do
   let checkedDependencySource ← IO.ofExcept dependencyOnlySource.checked
   let checkedDependencyReplacement ←
     IO.ofExcept dependencyOnlyReplacement.checked
-  let dependencyOnlyResult ← IO.ofBundleBinding <|
+  let dependencyOnlyResultBundle ← IO.ofBundleBinding <|
     checkedDependencySource.substitute fun _ => checkedDependencyReplacement
+  let dependencyOnlyResult ←
+    IO.ofExcept dependencyOnlyResultBundle.bundle.checked
   let rootEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
     entry.identity == dependencyRootId
   let leafEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
