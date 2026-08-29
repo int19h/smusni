@@ -60,6 +60,21 @@ def collect_term_heads(
                 names.append(item)
         return names
 
+    def malformed_labels(arguments: list[Any]) -> bool:
+        index = 0
+        while index < len(arguments):
+            current = arguments[index]
+            if isinstance(current, str) and current.startswith(":"):
+                if index + 1 >= len(arguments):
+                    return True
+                following = arguments[index + 1]
+                if isinstance(following, str) and following.startswith(":"):
+                    return True
+                index += 2
+            else:
+                index += 1
+        return False
+
     def walk(
         value: Any, bound_names: set[str], check_undeclared_free: bool = True
     ) -> None:
@@ -103,6 +118,8 @@ def collect_term_heads(
             # Binder or environment entry; its type belongs to the typed
             # record schema, not to the term-former partition.
             return
+        if malformed_labels(value[1:]):
+            found.add("$malformed-label")
         if first == "λ" and len(value) != 3:
             found.add("$malformed-structural:λ")
             for nested in value[1:]:

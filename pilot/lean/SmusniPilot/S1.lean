@@ -247,7 +247,8 @@ def expectedTag (lexicalHeads freeNames : List String)
     (surface : SurfaceTerm) : String :=
   if !(surface.offendingHeadsWith lexicalHeads).isEmpty ||
       !(undeclaredVariables freeNames [] surface).isEmpty ||
-      !surface.structuralErrors.isEmpty then "out-of-slice"
+      !surface.structuralErrors.isEmpty || !surface.labelErrors.isEmpty then
+    "out-of-slice"
   else if !(surface.definedHeadsWith lexicalHeads).isEmpty then
     "pending-milestone-2"
   else "primitive-core"
@@ -512,6 +513,22 @@ def runClassifierProbes : IO Unit := do
         (.named .typeContent []) then
     throw <| IO.userError "nested function parameter type flattened"
 
+  let zeroCall ← IO.ofExcept <|
+    probeSurface "(λ ($f :: Fn () Content) ($f))"
+  let zeroBundle ← IO.ofExcept <|
+    Interchange.Bundle.ofSurfaceWith "probe-zero-call" [] [] none zeroCall
+  match zeroBundle.term with
+  | .lambda (.function false [] (.named .typeContent []))
+      (.apply (.bound _) .nil) => pure ()
+  | _ => throw <| IO.userError "zero-argument application was erased"
+
+  for source in ["(∧ 1 :role)", "(∧ :first :second 1)"] do
+    let malformed ← IO.ofExcept <| probeSurface source
+    if expectedTag [] [] malformed != "out-of-slice" then
+      throw <| IO.userError s!"malformed label sequence classified open: {source}"
+    if (Interchange.Bundle.ofSurfaceWith "probe-label" [] [] none malformed).isOk then
+      throw <| IO.userError s!"malformed label sequence decoded: {source}"
+
 def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
     (run : S1Run) (record : CorpusCase) : IO S1Run := do
   let some expected := findManifestCase manifest record.id
@@ -551,6 +568,11 @@ def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
         rrLink surface
     if bundle.sites.any fun site => site.rrLink != rrLink then
       throw <| IO.userError s!"case {record.id}: site RR linkage mismatch"
+    if record.id == "53f8d3bb7c342dc312a9a10e40de5ffbc8875ad4" then
+      match bundle.term with
+      | .lambda (.function false [] _) (.apply (.bound _) .nil) => pure ()
+      | _ => throw <| IO.userError <|
+          "frozen zero-argument application case lost its apply node"
     let encoded := Interchange.Bundle.encode bundle
     let decoded ← IO.ofExcept (Interchange.Bundle.decode 0 encoded)
     if !(Interchange.Bundle.encode decoded == encoded) then

@@ -71,8 +71,8 @@ dependency transformations. The decoder assigns written sites and sidecar
 entries together in deterministic traversal/source order, never from byte
 offsets.
 
-Binding infrastructure is 786 lines including scoped data/core, or 588 lines
-for operations and proofs alone:
+Binding infrastructure is 1,066 lines including scoped data/core and validated
+bundle operations, or 840 lines for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
@@ -82,6 +82,10 @@ for operations and proofs alone:
 - renaming followed by substitution;
 - substitution followed by renaming commutes with renaming every replacement;
 - substitution composition;
+- bundle-level renaming, weakening, and substitution that transform the
+  authoritative dependency table at each occurrence's lifted scope;
+- proof-carrying successful bundle operations, with merge conflicts rejected
+  when one shared site identity would acquire inconsistent entries;
 - dependency-list and site transformation compatibility;
 - renaming preserves the complete site-ID list;
 - substitution preserves every pre-existing site ID;
@@ -123,7 +127,8 @@ already-primitive S1 payloads, and 303 programmatically generated core terms.
 The core term encoding contains only site-ID references. Bundle validation
 requires exactly one sidecar entry for every referenced identity, rejects
 missing, extra, duplicate, role-conflicting, and out-of-scope entries, and is
-run after both source decoding and text decoding. Each primitive S1 case also
+rejects site-valued dependencies that do not resolve through that same table.
+It is run after both source decoding and text decoding. Each primitive S1 case also
 passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
@@ -172,8 +177,10 @@ bound function application, `(Refer This)`, unknown `Zzz`, opaque string
 payloads, undeclared `$ghost`, schematic `C/H/deps…`, unknown `Zzz` nested
 under defined `Let`, malformed structural
 forms, rejection of structural operators through the first-order constructor,
-variadic/labelled applications, and empty/multiple/nested `Fn`/`EFn`
-parameter lists.
+variadic/labelled applications, missing/consecutive label values, preservation
+of a nullary call as `apply f []`, and empty/multiple/nested `Fn`/`EFn`
+parameter lists. Bundle mutations additionally exercise scope-aware weakening
+and substitution of the term and authoritative site table together.
 
 The strict reader exposed 28 RR files with an extra trailing `)`. The existing
 Racket loader read only one datum and ignored trailing bytes. This branch
@@ -192,10 +199,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.57 s wall, 28.18 s user, 3.98 s system,
-  1,704,300 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.15 s system,
-  133,432 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.37 s wall, 28.91 s user, 4.04 s system,
+  1,706,796 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.38 s wall, 0.12 s user, 0.19 s system,
+  133,280 KiB maximum RSS.
 
 Build time is not reported as runtime.
 

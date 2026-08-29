@@ -190,4 +190,22 @@ partial def SurfaceTerm.hasVariableUnderDefined : SurfaceTerm → Bool
       function.hasVariableUnderDefined ||
         arguments.any hasVariableUnderDefined
 
+def SurfaceTerm.argumentLabelErrors : List SurfaceTerm → List String
+  | [] => []
+  | [.atom (.symbol label)] =>
+      if label.startsWith ":" then ["term:$label:missing-value"] else []
+  | .atom (.symbol label) :: .atom (.symbol value) :: rest =>
+      if label.startsWith ":" && value.startsWith ":" then
+        ["term:$label:label-value"] ++ argumentLabelErrors rest
+      else argumentLabelErrors (.atom (.symbol value) :: rest)
+  | _ :: rest => argumentLabelErrors rest
+
+partial def SurfaceTerm.labelErrors : SurfaceTerm → List String
+  | .atom _ | .empty _ => []
+  | .form _ _ arguments =>
+      argumentLabelErrors arguments ++ arguments.flatMap labelErrors
+  | .application _ function arguments =>
+      argumentLabelErrors arguments ++ function.labelErrors ++
+        arguments.flatMap labelErrors
+
 end SmusniPilot

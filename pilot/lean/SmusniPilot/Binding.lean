@@ -70,8 +70,8 @@ mutual
         computation.dependencies ++ body.dependencies.filterMap Dependency.lower
     | .apply function arguments => function.dependencies ++ arguments.dependencies
     | .lexical _ arguments => arguments.dependencies
-    | .context _ arguments => arguments.dependencies
-    | .vague _ constraint => constraint.dependencies
+    | .context site arguments => .site site :: arguments.dependencies
+    | .vague site constraint => .site site :: constraint.dependencies
     | .primitive _ arguments => arguments.dependencies
 
   def TermList.dependencies {scope : Nat} :

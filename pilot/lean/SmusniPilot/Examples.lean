@@ -1,4 +1,5 @@
 import SmusniPilot.InterchangeLaws
+import SmusniPilot.BundleBinding
 
 namespace SmusniPilot
 
@@ -164,6 +165,82 @@ def runLocalGates : IO Unit := do
       sourceMap := [] }
   if scopedBundle.validate.isOk then
     throw <| IO.userError "out-of-scope site dependency was accepted"
+  let danglingId : SiteId :=
+    { document := "dangling"
+      occurrence := 1
+      expansionRole := "written-context" }
+  let danglingEntry :=
+    { exampleBundle.sites.head! with
+      dependencies := [.site danglingId] }
+  let dangling :=
+    { exampleBundle with sites := danglingEntry :: exampleBundle.sites.tail }
+  if dangling.validate.isOk then
+    throw <| IO.userError "dangling site dependency was accepted"
+
+  let boundSiteId : SiteId :=
+    { document := "bundle-binding"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let boundSiteBundle : Interchange.Bundle 1 :=
+    { version := 1
+      term := .context boundSiteId (.positional (.bound 0) .nil)
+      sites := [
+        { identity := boundSiteId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let checkedBound ← IO.ofExcept boundSiteBundle.checked
+  let weakened ← IO.ofExcept checkedBound.weaken
+  match weakened.bundle.sites with
+  | [{ dependencies := [.bound 1], .. }] => pure ()
+  | _ => throw <| IO.userError <|
+      "bundle weakening did not transform authoritative dependencies"
+  let replacement : Interchange.Bundle 0 :=
+    { version := 1, term := .natural 7, sites := [], sourceMap := [] }
+  let checkedReplacement ← IO.ofExcept replacement.checked
+  let substituted ← IO.ofExcept <|
+    checkedBound.substitute fun _ => checkedReplacement
+  match substituted.bundle.term, substituted.bundle.sites with
+  | .context identity (.positional (.natural 7) .nil),
+      [{ identity := entryIdentity, dependencies := [], .. }] =>
+      if identity != boundSiteId || entryIdentity != boundSiteId then
+        throw <| IO.userError "bundle substitution rekeyed a site"
+  | _, _ => throw <| IO.userError <|
+      "bundle substitution did not transform term and sidecar together"
+  if !substituted.bundle.validate.isOk then
+    throw <| IO.userError "bundle substitution did not preserve validation"
+
+  let insertedSiteId : SiteId :=
+    { document := "inserted-bundle"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let insertedReplacement : Interchange.Bundle 1 :=
+    { version := 1
+      term := .context insertedSiteId (.positional (.bound 0) .nil)
+      sites := [
+        { identity := insertedSiteId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let checkedInserted ← IO.ofExcept insertedReplacement.checked
+  let underBinderSource : Interchange.Bundle 1 :=
+    { version := 1
+      term := .lambda entityTy (.bound 1)
+      sites := []
+      sourceMap := [] }
+  let checkedUnderBinder ← IO.ofExcept underBinderSource.checked
+  let inserted ← IO.ofExcept <|
+    checkedUnderBinder.substitute fun _ => checkedInserted
+  match inserted.bundle.term, inserted.bundle.sites with
+  | .lambda _ (.context identity (.positional (.bound index) .nil)),
+      [{ identity := entryIdentity, dependencies := [.bound dependency], .. }] =>
+      if identity != insertedSiteId || entryIdentity != insertedSiteId ||
+          index.val != 1 || dependency != 1 then
+        throw <| IO.userError "lifted bundle substitution shifted incorrectly"
+  | _, _ => throw <| IO.userError <|
+      "bundle substitution lost an inserted authoritative site table"
   let alphaX := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($x :: Entity) $x)"))
   let alphaY := SurfaceTerm.ofSExpr

@@ -129,4 +129,32 @@ mutual
         head.siteScopes ++ tail.siteScopes
 end
 
+mutual
+  def Term.substitutionUsesAt {scope : Nat} (depth : Nat) :
+      Term scope → List (Nat × Nat)
+    | .bound index =>
+        if index.val < depth then [] else [(index.val - depth, depth)]
+    | .free _ | .natural _ | .string _ | .index _ => []
+    | .lambda _ body => body.substitutionUsesAt (depth + 1)
+    | .bind _ computation body =>
+        computation.substitutionUsesAt depth ++
+          body.substitutionUsesAt (depth + 1)
+    | .apply function arguments =>
+        function.substitutionUsesAt depth ++
+          arguments.substitutionUsesAt depth
+    | .lexical _ arguments | .context _ arguments | .primitive _ arguments =>
+        arguments.substitutionUsesAt depth
+    | .vague _ constraint => constraint.substitutionUsesAt depth
+
+  def TermList.substitutionUsesAt {scope : Nat} (depth : Nat) :
+      TermList scope → List (Nat × Nat)
+    | .nil => []
+    | .positional head tail | .labelled _ head tail =>
+        head.substitutionUsesAt depth ++ tail.substitutionUsesAt depth
+end
+
+def Term.substitutionUses {scope : Nat} (term : Term scope) :
+    List (Nat × Nat) :=
+  term.substitutionUsesAt 0
+
 end SmusniPilot

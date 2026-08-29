@@ -264,6 +264,13 @@ def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
         | .bound index => !(index < use.scope)
         | _ => false then
       .error s!"site dependency outside occurrence scope: {repr use.identity}"
+    for dependency in entry.dependencies do
+      match dependency with
+      | .site identity =>
+          if !(bundle.sites.any fun candidate =>
+              candidate.identity == identity) then
+            .error s!"dangling site dependency: {repr identity}"
+      | _ => pure ()
   pure ()
 
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :

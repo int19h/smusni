@@ -146,9 +146,8 @@ def freshSite (document expansionRole : String) (role : SiteRole)
       sites := state.sites ++ [entry] })
 
 def applyAll {scope : Nat} (function : Term scope) :
-    TermList scope → Term scope
-  | .nil => function
-  | arguments => .apply function arguments
+    TermList scope → Term scope :=
+  fun arguments => .apply function arguments
 
 mutual
   partial def decodeCore (document : String) (lexicalHeads freeNames : List String)
@@ -280,15 +279,32 @@ mutual
               tail afterHead
           pure (.positional decodedHead decodedTail, afterTail)
         match head, tail with
+        | .atom (.symbol label), [] =>
+            if label.startsWith ":" then
+              .error s!"label {label} is missing a value"
+            else positional
         | .atom (.symbol label), value :: rest =>
             if label.startsWith ":" then
-              let (decodedHead, afterHead) ←
-                decodeCore document lexicalHeads freeNames rrLink environment
-                  value state
-              let (decodedTail, afterTail) ←
-                decodeCoreList document lexicalHeads freeNames rrLink environment
-                  rest afterHead
-              pure (.labelled label decodedHead decodedTail, afterTail)
+              match value with
+              | .atom (.symbol next) =>
+                  if next.startsWith ":" then
+                    .error s!"label {label} has label {next} as its value"
+                  else
+                    let (decodedHead, afterHead) ←
+                      decodeCore document lexicalHeads freeNames rrLink
+                        environment value state
+                    let (decodedTail, afterTail) ←
+                      decodeCoreList document lexicalHeads freeNames rrLink
+                        environment rest afterHead
+                    pure (.labelled label decodedHead decodedTail, afterTail)
+              | _ =>
+                  let (decodedHead, afterHead) ←
+                    decodeCore document lexicalHeads freeNames rrLink environment
+                      value state
+                  let (decodedTail, afterTail) ←
+                    decodeCoreList document lexicalHeads freeNames rrLink
+                      environment rest afterHead
+                  pure (.labelled label decodedHead decodedTail, afterTail)
             else positional
         | _, _ => positional
 
