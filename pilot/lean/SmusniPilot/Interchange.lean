@@ -341,6 +341,129 @@ def cSpikeDependencySiteUses (sites : List SiteEntry) (scope : Nat) :
         (← cSpikeDependencySiteUses sites scope rest))
   | _ :: rest => cSpikeDependencySiteUses sites scope rest
 
+theorem dependency_mem_cSpikeDependencySiteUses (sites : List SiteEntry)
+    (scope : Nat) (dependencies : List SerializedDependency)
+    (children : List SiteUse)
+    (success : cSpikeDependencySiteUses sites scope dependencies = .ok children)
+    (identity : SiteId) (present : .site identity ∈ dependencies) :
+    ∃ child, child ∈ children ∧ child.identity = identity ∧
+      child.scope = scope := by
+  induction dependencies generalizing children with
+  | nil => simp at present
+  | cons dependency rest ih =>
+      cases dependency with
+      | bound index =>
+          apply ih children
+          · exact success
+          · simpa using present
+      | free freeIdentity =>
+          apply ih children
+          · exact success
+          · simpa using present
+      | site headIdentity =>
+          simp only [cSpikeDependencySiteUses] at success
+          cases lookup : sites.find? (fun candidate =>
+              candidate.identity == headIdentity) with
+          | none => simp [lookup] at success
+          | some entry =>
+              simp only [lookup, bind, Except.bind] at success
+              cases tailResult : cSpikeDependencySiteUses sites scope rest with
+              | error message => simp [tailResult] at success
+              | ok tail =>
+                  rw [tailResult] at success
+                  let headChild : SiteUse :=
+                    SiteUse.mk headIdentity entry.role scope
+                  change Except.ok (headChild :: tail) =
+                    Except.ok children at success
+                  cases success
+                  simp only [List.mem_cons] at present
+                  rcases present with head | later
+                  · cases head
+                    exact ⟨headChild, by simp [headChild]⟩
+                  · obtain ⟨child, childMem, childIdentity, childScope⟩ :=
+                      ih tail tailResult later
+                    exact ⟨child, by simp [childMem], childIdentity, childScope⟩
+
+theorem scope_mem_of_mem_siteUseUniverse {scope : Nat}
+    (bundle : Bundle scope) (current : SiteUse)
+    (present : current ∈ siteUseUniverse bundle) :
+    current.scope ∈
+      (bundle.term.siteUses.map (fun use => use.scope)).eraseDups := by
+  simp only [siteUseUniverse, mem_dedupSiteUses, List.mem_append] at present
+  rcases present with root | table
+  · have mapped : current.scope ∈
+        bundle.term.siteUses.map (fun use => use.scope) :=
+      List.mem_map.mpr ⟨current, root, rfl⟩
+    simpa using mapped
+  · simp only [List.mem_flatMap] at table
+    rcases table with ⟨occurrenceScope, scopeMem, tableMem⟩
+    have currentScope : current.scope = occurrenceScope := by
+      simp only [List.mem_map] at tableMem
+      rcases tableMem with ⟨entry, _entryMem, entryEq⟩
+      subst current
+      rfl
+    rw [currentScope]
+    exact scopeMem
+
+theorem child_entry_of_mem_cSpikeDependencySiteUses
+    (sites : List SiteEntry) (scope : Nat) :
+    ∀ (dependencies : List SerializedDependency) (children : List SiteUse),
+      cSpikeDependencySiteUses sites scope dependencies = .ok children →
+      ∀ child, child ∈ children →
+        ∃ entry, entry ∈ sites ∧
+          child = SiteUse.mk entry.identity entry.role scope
+  | [], children, success, child, present => by
+      simp only [cSpikeDependencySiteUses, pure, Except.pure,
+        Except.ok.injEq] at success
+      subst success
+      simp at present
+  | .site identity :: rest, children, success, child, present => by
+      simp only [cSpikeDependencySiteUses] at success
+      cases lookup : sites.find? (fun candidate =>
+          candidate.identity == identity) with
+      | none => simp [lookup] at success
+      | some entry =>
+          rw [lookup] at success
+          have identityEq : entry.identity = identity := by
+            have found := List.find?_some lookup
+            simpa using found
+          cases recursive : cSpikeDependencySiteUses sites scope rest with
+          | error message => simp [recursive, Functor.map, Except.map] at success
+          | ok tail =>
+              simp only [recursive, bind, Except.bind, pure, Except.pure,
+                Except.ok.injEq] at success
+              subst success
+              simp only [List.mem_cons] at present
+              rcases present with rfl | inTail
+              · exact ⟨entry, List.mem_of_find?_eq_some lookup,
+                  by simp [identityEq]⟩
+              · exact child_entry_of_mem_cSpikeDependencySiteUses
+                  sites scope rest tail recursive child inTail
+  | .bound index :: rest, children, success, child, present => by
+      simp only [cSpikeDependencySiteUses] at success
+      exact child_entry_of_mem_cSpikeDependencySiteUses
+        sites scope rest children success child present
+  | .free identity :: rest, children, success, child, present => by
+      simp only [cSpikeDependencySiteUses] at success
+      exact child_entry_of_mem_cSpikeDependencySiteUses
+        sites scope rest children success child present
+
+theorem child_mem_siteUseUniverse {scope : Nat} (bundle : Bundle scope)
+    (current : SiteUse) (currentMem : current ∈ siteUseUniverse bundle)
+    (dependencies : List SerializedDependency) (children : List SiteUse)
+    (success : cSpikeDependencySiteUses bundle.sites current.scope
+      dependencies = .ok children)
+    (child : SiteUse) (present : child ∈ children) :
+    child ∈ siteUseUniverse bundle := by
+  obtain ⟨entry, entryMem, rfl⟩ :=
+    child_entry_of_mem_cSpikeDependencySiteUses bundle.sites
+      current.scope dependencies children success child present
+  have scopeMem :=
+    scope_mem_of_mem_siteUseUniverse bundle current currentMem
+  simp only [siteUseUniverse, mem_dedupSiteUses, List.mem_append,
+    List.mem_flatMap, List.mem_map]
+  exact Or.inr ⟨current.scope, scopeMem, entry, entryMem, rfl⟩
+
 def cSpikeEnqueue (seen pending : List SiteUse) :
     List SiteUse → List SiteUse
   | [] => pending
@@ -424,6 +547,115 @@ theorem initialClosureTraversalInvariant {scope : Nat} (bundle : Bundle scope) :
     childrenAccounted := by simp }
   intro use present
   exact termRoot_mem_siteUseUniverse bundle use (by simpa using present)
+
+theorem closureTraversalInvariant_step {scope : Nat}
+    (bundle : Bundle scope) (unseen : List SiteUse)
+    (current : SiteUse) (pending : List SiteUse)
+    (seen : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (invariant : ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      unseen (current :: pending) seen)
+    (witness : TypedSiteUseWitness bundle current)
+    (children : List SiteUse)
+    (childrenSuccess : cSpikeDependencySiteUses bundle.sites current.scope
+      witness.entry.dependencies = .ok children) :
+    ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      (unseen.erase current)
+      (cSpikeEnqueue (current :: seen.map Sigma.fst) pending children)
+      (⟨current, witness⟩ :: seen) := by
+  have currentInUnseen : current ∈ unseen :=
+    invariant.pendingInUnseen current (by simp)
+  have currentInUniverse : current ∈ siteUseUniverse bundle :=
+    (invariant.partition current).mpr (Or.inl currentInUnseen)
+  have pendingFacts := List.nodup_cons.mp invariant.pendingUnique
+  have currentNotPending : current ∉ pending := pendingFacts.1
+  have pendingUnique : pending.Nodup := pendingFacts.2
+  have currentNotSeen : current ∉ seen.map Sigma.fst := by
+    intro currentSeen
+    exact invariant.seenDisjointUnseen current currentSeen currentInUnseen
+  refine {
+    unseenUnique := invariant.unseenUnique.erase current
+    pendingUnique := nodup_cSpikeEnqueue _ _ _ pendingUnique
+    seenUnique := by
+      simp only [List.map_cons]
+      exact List.nodup_cons.mpr ⟨currentNotSeen, invariant.seenUnique⟩
+    pendingInUnseen := ?_
+    seenDisjointUnseen := ?_
+    partition := ?_
+    childrenAccounted := ?_ }
+  · intro use queuedMem
+    rcases (mem_cSpikeEnqueue_iff
+      (current :: seen.map Sigma.fst) pending children use).mp queuedMem with
+      inPending | ⟨inChildren, notBlocked⟩
+    · have oldUnseen := invariant.pendingInUnseen use (by simp [inPending])
+      have notCurrent : use ≠ current := by
+        intro equal
+        subst use
+        exact currentNotPending inPending
+      exact invariant.unseenUnique.mem_erase_iff.mpr
+        ⟨notCurrent, oldUnseen⟩
+    · have inUniverse := child_mem_siteUseUniverse bundle current
+        currentInUniverse witness.entry.dependencies children childrenSuccess
+        use inChildren
+      rcases (invariant.partition use).mp inUniverse with
+        inUnseen | inSeen
+      · have notCurrent : use ≠ current := by
+          intro equal
+          subst use
+          exact notBlocked (by simp)
+        exact invariant.unseenUnique.mem_erase_iff.mpr
+          ⟨notCurrent, inUnseen⟩
+      · exact False.elim (notBlocked (by simp [inSeen]))
+  · intro use inNewSeen inNewUnseen
+    simp only [List.map_cons, List.mem_cons] at inNewSeen
+    rcases inNewSeen with isCurrent | inOldSeen
+    · subst use
+      exact invariant.unseenUnique.not_mem_erase inNewUnseen
+    · exact invariant.seenDisjointUnseen use inOldSeen
+        (List.mem_of_mem_erase inNewUnseen)
+  · intro use
+    rw [invariant.partition use]
+    simp only [List.map_cons, List.mem_cons]
+    constructor
+    · intro oldState
+      rcases oldState with inUnseen | inSeen
+      · by_cases isCurrent : use = current
+        · exact Or.inr (Or.inl isCurrent)
+        · exact Or.inl <|
+            invariant.unseenUnique.mem_erase_iff.mpr
+              ⟨isCurrent, inUnseen⟩
+      · exact Or.inr (Or.inr inSeen)
+    · intro newState
+      rcases newState with inErased | isCurrentOrSeen
+      · exact Or.inl (List.mem_of_mem_erase inErased)
+      · rcases isCurrentOrSeen with isCurrent | inSeen
+        · subst use
+          exact Or.inl currentInUnseen
+        · exact Or.inr inSeen
+  · intro use useWitness inNewSeen identity dependencyPresent
+    simp only [List.mem_cons] at inNewSeen
+    rcases inNewSeen with isCurrent | inOldSeen
+    · cases isCurrent
+      obtain ⟨child, childMem, childIdentity, childScope⟩ :=
+        dependency_mem_cSpikeDependencySiteUses bundle.sites current.scope
+          witness.entry.dependencies children childrenSuccess identity
+          dependencyPresent
+      refine ⟨child, ?_, childIdentity, childScope⟩
+      by_cases blocked : child ∈ current :: seen.map Sigma.fst
+      · exact Or.inr (by simpa using blocked)
+      · exact Or.inl <| (mem_cSpikeEnqueue_iff
+          (current :: seen.map Sigma.fst) pending children child).mpr
+            (Or.inr ⟨childMem, blocked⟩)
+    · obtain ⟨child, childState, childIdentity, childScope⟩ :=
+        invariant.childrenAccounted use useWitness inOldSeen identity
+          dependencyPresent
+      refine ⟨child, ?_, childIdentity, childScope⟩
+      rcases childState with inOldPending | inOldSeenUses
+      · simp only [List.mem_cons] at inOldPending
+        rcases inOldPending with isCurrent | inPending
+        · exact Or.inr (by simp [isCurrent])
+        · exact Or.inl <| mem_cSpikeEnqueue_of_mem_pending
+            (current :: seen.map Sigma.fst) pending children child inPending
+      · exact Or.inr (by simp [inOldSeenUses])
 
 def buildClosureUsesLoop {scope : Nat} (bundle : Bundle scope) :
     (unseen pending : List SiteUse) →
