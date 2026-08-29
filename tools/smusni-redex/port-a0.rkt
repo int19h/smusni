@@ -16,12 +16,25 @@
          a0-expand-massify
          a0-expand-zipwith
          a0-expand-close
+         b1-expand-at-least
+         b1-expand-some
+         b1-expand-every
+         b1-expand-no
+         b1-expand-at-most
+         b1-expand-more-than
+         b1-expand-fewer-than
+         b1-expand-distrib
+         b1-expand-overlap
+         b1-expand-covered-by
+         b1-expand-select-some
+         b1-expand-max-refer
          a0-hoist
          site-plan
          introducing?
          hoist-ordered
          replace-site
          a0-type
+         negate-record
          a0-synth
          a0-check
          a0-required-rules
@@ -44,7 +57,10 @@
   [event-mode holding-state direct-event]
   [arrow Fn EFn]
   [effect context refer projective effectful-call performance]
-  [obligation finite-set-cardinality-defined variable-not-otherwise-mentioned]
+  [comp-category Content ClauseContent Discourse (RefComp τ) (PerfComp τ)]
+  [obligation finite-set-cardinality-defined
+              (presuppose t comp-category)
+              variable-not-otherwise-mentioned]
   [force Assertion Expressive]
   [τ Entity Eventuality Number Natural Cardinal Content ClauseContent
      Discourse ThresholdKind
@@ -73,10 +89,25 @@
      (SelectSome t)
      (SelectAllBut t t)
      (Exactly t t t)
+     (AtLeast t t t)
+     (Some t t)
+     (Every t t)
      (No t t)
+     (AtMost t t t)
      (GlobalExactly t t t)
      (TooMany t t)
      (MoreThan t t t)
+     (FewerThan t t t)
+     (Distrib t t)
+     (MaxRefer t)
+     (CoveredBy t t)
+     (Overlap t t)
+     (Among t t)
+     (∀ t)
+     (∃ t)
+     (→ t t)
+     (¬ t)
+     (Presuppose t t)
      (Massify t t)
      (Perform t)
      (CanonicalAggregateAt t t t)
@@ -84,6 +115,7 @@
      (SetOf t)
      (Card t)
      (= t t)
+     (+ t t)
      (∧ t t)
      (List t ...)
      (ZipWith t t t)
@@ -136,7 +168,7 @@
      (Bind ((x_w (Referents τ) (SelectExactly n t_P)))
        (t_Q x_w))
      (side-condition (positive? (term n)))
-     (where x_w ,(variable-not-in (term (τ t_P t_Q)) '$w))]))
+     (where x_w ,(variable-not-in (term (n τ t_P t_Q)) '$w))]))
 
 (define-definition-metafunction SmusniA0
   a0-expand-global-exactly : n τ t t -> t
@@ -316,6 +348,124 @@
              (label ...) fills
              (x_predicate t_supplied_event x_lexical_event x_clause_event)))])
   )
+
+;; --------------------------------------------------------------------------
+;; B1 quantifier/selection definitions
+
+(define (provably-positive-count? datum)
+  (or (and (exact-integer? datum) (positive? datum))
+      (match datum
+        [`(+ ,_ 1) #t]
+        [`(+ 1 ,_) #t]
+        [_ #f])))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-at-least : t τ t t -> t
+  (definition-case zero
+    [(b1-expand-at-least 0 τ t_P t_Q) ⊤])
+  (definition-case positive
+    [(b1-expand-at-least t_n τ t_P t_Q)
+     (Bind ((x_w (Referents τ) (SelectAtLeast t_n t_P)))
+       (t_Q x_w))
+     (side-condition (provably-positive-count? (term t_n)))
+     (where x_w ,(variable-not-in (term (t_n τ t_P t_Q)) '$w))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-some : τ t t -> t
+  (definition-case witness
+    [(b1-expand-some τ t_P t_Q)
+     (Bind ((x_w (Referents τ) (SelectSome t_P)))
+       (t_Q x_w))
+     (where x_w ,(variable-not-in (term (τ t_P t_Q)) '$w))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-every : τ t t -> t
+  (definition-case maximal-distribution
+    [(b1-expand-every τ t_P t_Q)
+     (Bind ((x_w (Referents τ) (MaxRefer t_P)))
+       (Distrib t_Q x_w))
+     (where x_w ,(variable-not-in (term (τ t_P t_Q)) '$w))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-no : τ t t -> t
+  (definition-case negated-some
+    [(b1-expand-no τ t_P t_Q)
+     (¬ (Some t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-at-most : t τ t t -> t
+  (definition-case negated-successor
+    [(b1-expand-at-most t_n τ t_P t_Q)
+     (¬ (AtLeast (+ t_n 1) t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-more-than : t τ t t -> t
+  (definition-case successor
+    [(b1-expand-more-than t_n τ t_P t_Q)
+     (AtLeast (+ t_n 1) t_P t_Q)]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-fewer-than : t τ t t -> t
+  (definition-case negated-at-least
+    [(b1-expand-fewer-than t_n τ t_P t_Q)
+     (¬ (AtLeast t_n t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-distrib : τ t t -> t
+  (definition-case universal-members
+    [(b1-expand-distrib τ t_Q t_r)
+     (∀ (λ ((x_member τ))
+          (→ (Among x_member t_r) (t_Q x_member))))
+     (where x_member
+            ,(variable-not-in (term (τ t_Q t_r)) '$member))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-overlap : τ t t -> t
+  (definition-case common-subreference
+    [(b1-expand-overlap τ t_a t_b)
+     (∃ (λ ((x_common (Referents τ)))
+          (∧ (Among x_common t_a) (Among x_common t_b))))
+     (where x_common
+            ,(variable-not-in (term (τ t_a t_b)) '$common))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-covered-by : τ t t -> t
+  (definition-case no-residue
+    [(b1-expand-covered-by τ t_P t_r)
+     (∧ (Distrib t_P t_r)
+        (∀ (λ ((x_subreference (Referents τ)))
+             (→ (Among x_subreference t_r)
+                (∃ (λ ((x_member τ))
+                     (∧ (t_P x_member)
+                        (Overlap x_member x_subreference))))))))
+     (where x_subreference
+            ,(variable-not-in (term (τ t_P t_r)) '$subreference))
+     (where x_member
+            ,(variable-not-in
+              (term (τ t_P t_r x_subreference)) '$member))]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-select-some : τ t -> t
+  (definition-case at-least-one
+    [(b1-expand-select-some τ t_P)
+     (SelectAtLeast 1 t_P)]))
+
+(define-definition-metafunction SmusniA0
+  b1-expand-max-refer : τ t -> t
+  (definition-case inhabited-maximal-reference
+    [(b1-expand-max-refer τ t_P)
+     (Presuppose
+      (∃ t_P)
+      (Refer
+       (λ ((x_reference (Referents τ)))
+         (∧ (CoveredBy t_P x_reference)
+            (∀ (λ ((x_member τ))
+                 (→ (t_P x_member)
+                    (Among x_member x_reference))))))))
+     (where x_reference
+            ,(variable-not-in (term (τ t_P)) '$reference))
+     (where x_member
+            ,(variable-not-in (term (τ t_P x_reference)) '$member))]))
 
 ;; --------------------------------------------------------------------------
 ;; A0 L0.1 hoisting over adapter-supplied site data
@@ -583,6 +733,65 @@
 (define (canonical-symbol-set values)
   (sort (remove-duplicates values) symbol<?))
 
+(define (alpha-normalize-datum datum)
+  (define used (box (free-core-variables datum)))
+  (define counter (box 0))
+  (define (fresh-variable)
+    (let loop ()
+      (define candidate
+        (string->symbol (format "$alpha~a" (unbox counter))))
+      (set-box! counter (add1 (unbox counter)))
+      (if (set-member? (unbox used) candidate)
+          (loop)
+          (begin
+            (set-box! used (set-add (unbox used) candidate))
+            candidate))))
+  (define (walk value environment)
+    (cond
+      [(symbol? value) (hash-ref environment value value)]
+      [(not (list? value)) value]
+      [(quoted-head? value) value]
+      [else
+       (match value
+         [`(λ ,binders ,body)
+          (define-values (normalized-bindings extended)
+            (for/fold ([normalized '()] [scope environment])
+                      ([binder (in-list binders)])
+              (match-define (list variable type) binder)
+              (define replacement (fresh-variable))
+              (values (append normalized (list (list replacement type)))
+                      (hash-set scope variable replacement))))
+          `(λ ,normalized-bindings ,(walk body extended))]
+         [`(Let (,variable ,type) ,active ,body)
+          (define replacement (fresh-variable))
+          `(Let (,replacement ,type)
+             ,(walk active environment)
+             ,(walk body (hash-set environment variable replacement)))]
+         [`(Bind ,bindings ,body)
+          (define-values (normalized-bindings extended)
+            (for/fold ([normalized '()] [scope environment])
+                      ([binding (in-list bindings)])
+              (match-define (list variable type computation) binding)
+              (define replacement (fresh-variable))
+              (values
+               (append normalized
+                       (list (list replacement type
+                                   (walk computation scope))))
+               (hash-set scope variable replacement))))
+          `(Bind ,normalized-bindings ,(walk body extended))]
+         [_ (map (lambda (child) (walk child environment)) value)])]))
+  (walk datum (hash)))
+
+(define (normalize-obligation obligation)
+  (match obligation
+    [`(presuppose ,condition ,category)
+     `(presuppose ,(alpha-normalize-datum condition) ,category)]
+    [_ obligation]))
+
+(define (canonical-obligation-set values)
+  (sort (remove-duplicates (map normalize-obligation values))
+        string<? #:key (lambda (value) (format "~s" value))))
+
 (define (a0-compatible? actual expected)
   (or (equal? actual expected)
       (and (equal? actual 'Cardinal)
@@ -625,6 +834,52 @@
         [`(List ,_) #t]
         [_ #f])))
 
+(define (a0-first-order-type? type)
+  (or (member type '(Entity Eventuality Number Natural Cardinal))
+      (match type
+        [`(Set ,_) #t]
+        [`(Group ,_) #t]
+        [`(List ,_) #t]
+        [_ #f])))
+
+(define (a0-quantifier-domain-type? type)
+  (or (a0-first-order-type? type)
+      (match type
+        [`(Referents ,inner) (a0-first-order-type? inner)]
+        [_ #f])))
+
+(define (a0-reference-inner type)
+  (match type
+    [`(Referents ,inner) inner]
+    [_ (and (a0-first-order-type? type) type)]))
+
+(define (a0-reference-compatible? left right)
+  (define left-inner (a0-reference-inner left))
+  (define right-inner (a0-reference-inner right))
+  (and left-inner right-inner
+       (or (a0-compatible? left-inner right-inner)
+           (a0-compatible? right-inner left-inner))))
+
+(define (a0-comp-category? type)
+  (or (member type '(Content ClauseContent Discourse))
+      (match type
+        [`(RefComp ,_) #t]
+        [`(PerfComp ,_) #t]
+        [_ #f])))
+
+(define (a0-number-join left right)
+  (define ranks (hash 'Cardinal 0 'Natural 1 'Number 2))
+  (and (hash-has-key? ranks left)
+       (hash-has-key? ranks right)
+       (if (>= (hash-ref ranks left) (hash-ref ranks right)) left right)))
+
+(define (a0-reference-computation-form? datum)
+  (and (list? datum)
+       (pair? datum)
+       (member (first datum)
+               '(Context Vague Refer SelectExactly SelectAtLeast SelectSome
+                         SelectAllBut Massify MaxRefer Presuppose))))
+
 (define (a0-value-datum? datum)
   (redex-match? SmusniA0 v datum))
 
@@ -640,8 +895,27 @@
     ,output
     ,(canonical-symbol-set
       (append extra-effects (append-map record-effects records)))
-    ,(canonical-symbol-set
+    ,(canonical-obligation-set
       (append extra-obligations (append-map record-obligations records)))))
+
+(define (negate-record-datum record)
+  `(typing Content
+           ,(canonical-symbol-set
+             (remove 'refer (record-effects record)))
+           ,(canonical-obligation-set (record-obligations record))))
+
+(define (presuppose-record-datum condition condition-record body-record)
+  (define body-type (record-type body-record))
+  `(typing
+    ,body-type
+    ,(canonical-symbol-set
+      (append '(projective)
+              (remove 'refer (record-effects condition-record))
+              (record-effects body-record)))
+    ,(canonical-obligation-set
+      (append (record-obligations condition-record)
+              (record-obligations body-record)
+              (list `(presuppose ,condition ,body-type))))))
 
 (define (gq-extra-effects nuclear-type exports?)
   (canonical-symbol-set
@@ -650,13 +924,23 @@
         '(effectful-call) '())
     (if exports? '(refer) '()))))
 
+(define (extend-environment-datum environment bindings)
+  (foldr cons environment bindings))
+
+(define (lookup-environment-datum environment variable)
+  (match (assoc variable environment)
+    [(list _ type) type]
+    [_ 'not-found]))
+
+(define-metafunction SmusniA0
+  extend-env : Γ ((x τ) ...) -> Γ
+  [(extend-env Γ ((x τ) ...))
+   ,(extend-environment-datum (term Γ) (term ((x τ) ...)))])
+
 (define-metafunction SmusniA0
   env-lookup : Γ x -> lookup-result
-  [(env-lookup () x) not-found]
-  [(env-lookup ((x τ) (x_rest τ_rest) ...) x) τ]
-  [(env-lookup ((x_other τ_other) (x_rest τ_rest) ...) x)
-   (env-lookup ((x_rest τ_rest) ...) x)
-   (side-condition (not (equal? (term x_other) (term x))))])
+  [(env-lookup Γ x)
+   ,(lookup-environment-datum (term Γ) (term x))])
 
 (define-metafunction SmusniA0
   record-type-of : R -> τ
@@ -667,6 +951,16 @@
   [(merge-records τ (R ...) (effect ...) (obligation ...))
    ,(merge-record-datums (term τ) (term (R ...))
                          (term (effect ...)) (term (obligation ...)))])
+
+(define-metafunction SmusniA0
+  negate-record : R -> R
+  [(negate-record R) ,(negate-record-datum (term R))])
+
+(define-metafunction SmusniA0
+  presuppose-record : t R R -> R
+  [(presuppose-record t_condition R_condition R_body)
+   ,(presuppose-record-datum
+     (term t_condition) (term R_condition) (term R_body))])
 
 (define-metafunction SmusniA0
   nest-bind : (binding ...) t -> t
@@ -699,55 +993,58 @@
    ----------------------------------------------- "A0-T-Variable"
    (a0-type synth Γ x (typing τ () ()))]
 
-  [(a0-type synth ((x τ) (x_env τ_env) ...) t_body
+  [(where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body
             (typing τ_body () (obligation ...)))
    ----------------------------------------------- "A0-T-Lambda-Pure"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (λ ((x τ)) t_body)
             (typing (Fn (τ) τ_body) () (obligation ...)))]
 
-  [(a0-type synth ((x τ) (x_env τ_env) ...) t_body
+  [(where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body
             (typing τ_body (effect_0 effect_rest ...) (obligation ...)))
    ----------------------------------------------- "A0-T-Lambda-Effectful"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (λ ((x τ)) t_body)
             (typing (EFn (τ) τ_body) () (obligation ...)))]
 
-  [(a0-type synth
-            ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...
-             (x_env τ_env) ...)
-            t_body
+  [(where Γ_body
+          (extend-env Γ
+                      ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)))
+   (a0-type synth Γ_body t_body
             (typing τ_body () (obligation ...)))
    ----------------------------------------------- "A0-T-Lambda-Multi-Pure"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body)
             (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body)
                     () (obligation ...)))]
 
-  [(a0-type synth
-            ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...
-             (x_env τ_env) ...)
-            t_body
+  [(where Γ_body
+          (extend-env Γ
+                      ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...)))
+   (a0-type synth Γ_body t_body
             (typing τ_body (effect_0 effect_rest ...) (obligation ...)))
    ----------------------------------------------- "A0-T-Lambda-Multi-Effectful"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body)
             (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body)
                     () (obligation ...)))]
 
   [(side-condition ,(a0-value-datum? (term t_value)))
-   (a0-type synth ((x_env τ_env) ...) t_value
+   (a0-type synth Γ t_value
             (typing τ_value () (obligation_value ...)))
    (side-condition
     ,(a0-compatible? (term τ_value) (term τ)))
-   (a0-type synth ((x τ) (x_env τ_env) ...) t_body R_body)
+   (where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body R_body)
    (where τ_body (record-type-of R_body))
    (where R_out
           (merge-records
            τ_body
            ((typing τ_value () (obligation_value ...)) R_body) () ()))
    ----------------------------------------------- "A0-T-Let"
-   (a0-type synth ((x_env τ_env) ...) (Let (x τ) t_value t_body) R_out)]
+   (a0-type synth Γ (Let (x τ) t_value t_body) R_out)]
 
   [(where t_nested
           (nest-bind (binding_0 binding_1 binding_rest ...) t_body))
@@ -757,16 +1054,18 @@
             (Bind (binding_0 binding_1 binding_rest ...) t_body)
             R_out)]
 
-  [(a0-type (check (RefComp τ)) ((x_env τ_env) ...) t_comp R_comp)
-   (a0-type synth ((x τ) (x_env τ_env) ...) t_body R_body)
+  [(a0-type (check (RefComp τ)) Γ t_comp R_comp)
+   (where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body R_body)
    (where τ_body (record-type-of R_body))
    (where R_out (merge-records τ_body (R_comp R_body) () ()))
    ----------------------------------------------- "A0-T-Bind-Reference"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (Bind ((x τ t_comp)) t_body) R_out)]
 
-  [(a0-type (check (PerfComp τ)) ((x_env τ_env) ...) t_comp R_comp)
-   (a0-type synth ((x τ) (x_env τ_env) ...) t_body
+  [(a0-type (check (PerfComp τ)) Γ t_comp R_comp)
+   (where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body
             (typing (Act force) (effect_body ...) (obligation_body ...)))
    (where R_out
           (merge-records Discourse
@@ -775,11 +1074,12 @@
                                   (effect_body ...) (obligation_body ...)))
                          (performance) ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Act"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (Bind ((x τ t_comp)) t_body) R_out)]
 
-  [(a0-type (check (PerfComp τ)) ((x_env τ_env) ...) t_comp R_comp)
-   (a0-type synth ((x τ) (x_env τ_env) ...) t_body
+  [(a0-type (check (PerfComp τ)) Γ t_comp R_comp)
+   (where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body
             (typing (PerfComp τ_body) (effect_body ...) (obligation_body ...)))
    (where R_out
           (merge-records (PerfComp τ_body)
@@ -788,11 +1088,12 @@
                                   (effect_body ...) (obligation_body ...)))
                          () ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Comp"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (Bind ((x τ t_comp)) t_body) R_out)]
 
-  [(a0-type (check (PerfComp τ)) ((x_env τ_env) ...) t_comp R_comp)
-   (a0-type synth ((x τ) (x_env τ_env) ...) t_body
+  [(a0-type (check (PerfComp τ)) Γ t_comp R_comp)
+   (where Γ_body (extend-env Γ ((x τ))))
+   (a0-type synth Γ_body t_body
             (typing Discourse (effect_body ...) (obligation_body ...)))
    (where R_out
           (merge-records Discourse
@@ -801,7 +1102,7 @@
                                   (effect_body ...) (obligation_body ...)))
                          () ()))
    ----------------------------------------------- "A0-T-Bind-Performance-Discourse"
-   (a0-type synth ((x_env τ_env) ...)
+   (a0-type synth Γ
             (Bind ((x τ t_comp)) t_body) R_out)]
 
   [(a0-type synth Γ t_actual R_actual)
@@ -845,8 +1146,8 @@
    ----------------------------------------------- "A0-T-Refer-Member"
    (a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)]
 
-  [(a0-type (check Natural) Γ n_1 R_count)
-   (side-condition ,(positive? (term n_1)))
+  [(a0-type (check Natural) Γ t_count R_count)
+   (side-condition ,(provably-positive-count? (term t_count)))
    (a0-type synth Γ t_property
             (typing (Fn (τ) Content) () (obligation ...)))
    (where R_out
@@ -856,7 +1157,7 @@
                          (refer) ()))
    ----------------------------------------------- "A0-T-SelectExactly"
    (a0-type (check (RefComp (Referents τ))) Γ
-            (SelectExactly n_1 t_property) R_out)]
+            (SelectExactly t_count t_property) R_out)]
 
   [(a0-type synth Γ t_property
             (typing (Fn (τ) Content) () (obligation ...)))
@@ -868,6 +1169,42 @@
    ----------------------------------------------- "A0-T-SelectSome"
    (a0-type (check (RefComp (Referents τ))) Γ
             (SelectSome t_property) R_out)]
+
+  [(a0-type (check Natural) Γ t_count R_count)
+   (side-condition ,(provably-positive-count? (term t_count)))
+   (a0-type synth Γ t_property
+            (typing (Fn (τ) Content) () (obligation ...)))
+   (where R_out
+          (merge-records
+           (RefComp (Referents τ))
+           (R_count (typing (Fn (τ) Content) () (obligation ...)))
+           (refer) ()))
+   ----------------------------------------------- "B1-T-SelectAtLeast"
+   (a0-type (check (RefComp (Referents τ))) Γ
+            (SelectAtLeast t_count t_property) R_out)]
+
+  [(a0-type (check Natural) Γ t_count R_count)
+   (a0-type synth Γ t_property
+            (typing (Fn (τ) Content) () (obligation ...)))
+   (where R_out
+          (merge-records
+           (RefComp (Referents τ))
+           (R_count (typing (Fn (τ) Content) () (obligation ...)))
+           (refer) ()))
+   ----------------------------------------------- "B1-T-SelectAllBut"
+   (a0-type (check (RefComp (Referents τ))) Γ
+            (SelectAllBut t_count t_property) R_out)]
+
+  [(a0-type synth Γ v_P
+            (typing (Fn (τ) Content) () (obligation ...)))
+   (where R_out
+          (merge-records
+           (RefComp (Referents τ))
+           ((typing (Fn (τ) Content) () (obligation ...)))
+           (projective refer)
+           ((presuppose (∃ v_P) (RefComp (Referents τ))))))
+   ----------------------------------------------- "B1-T-MaxRefer"
+   (a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)]
 
   [(a0-type synth Γ t_basis
             (typing (DecompositionBasis (Group τ) τ)
@@ -891,48 +1228,146 @@
             (typing (PerfComp (ActOccurrence force))
                     (performance) (obligation ...)))]
 
-  [(a0-type synth Γ t_P R_P)
+  [(a0-type synth Γ v_P R_P)
    (where (Fn (τ) Content) (record-type-of R_P))
-   (a0-type (check (EFn ((Referents τ)) Content)) Γ t_Q R_Q)
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
    (where R_n (typing Natural () ()))
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #f))
    (where R_out
           (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
    ----------------------------------------------- "A0-T-Exactly-Zero"
-   (a0-type synth Γ (Exactly 0 t_P t_Q) R_out)]
+   (a0-type synth Γ (Exactly 0 v_P v_Q) R_out)]
 
-  [(a0-type (check Natural) Γ n_1 R_n)
-   (side-condition ,(positive? (term n_1)))
-   (a0-type synth Γ t_P R_P)
+  [(a0-type (check Natural) Γ t_count R_n)
+   (side-condition ,(provably-positive-count? (term t_count)))
+   (a0-type synth Γ v_P R_P)
    (where (Fn (τ) Content) (record-type-of R_P))
-   (a0-type (check (EFn ((Referents τ)) Content)) Γ t_Q R_Q)
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #t))
    (where R_out
           (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
    ----------------------------------------------- "A0-T-Exactly-Positive"
-   (a0-type synth Γ (Exactly n_1 t_P t_Q) R_out)]
+   (a0-type synth Γ (Exactly t_count v_P v_Q) R_out)]
 
-  [(a0-type synth Γ t_P R_P)
+  [(a0-type synth Γ v_P (typing (Fn (τ) Content) () (obligation_P ...)))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   ----------------------------------------------- "B1-T-AtLeast-Zero"
+   (a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))]
+
+  [(a0-type (check Natural) Γ t_count R_n)
+   (side-condition ,(provably-positive-count? (term t_count)))
+   (a0-type synth Γ v_P R_P)
    (where (Fn (τ) Content) (record-type-of R_P))
-   (a0-type (check (EFn ((Referents τ)) Content)) Γ t_Q R_Q)
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #t))
+   (where R_out
+          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-AtLeast-Positive"
+   (a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)]
+
+  [(a0-type (check Natural) Γ t_count R_n)
+   (side-condition
+    ,(and (not (equal? (term t_count) 0))
+          (not (provably-positive-count? (term t_count)))))
+   (a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #t))
+   (where R_out
+          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-AtLeast-Symbolic"
+   (a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)]
+
+  [(a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #t))
+   (where R_out (merge-records Content (R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-Some"
+   (a0-type synth Γ (Some v_P v_Q) R_out)]
+
+  [(a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type synth Γ v_Q R_Q)
+   (where (arrow (τ) Content) (record-type-of R_Q))
+   (where (effect_extra ...)
+          ,(canonical-symbol-set
+            (append '(projective refer)
+                    (if (equal? (term arrow) 'EFn)
+                        '(effectful-call) '()))))
+   (where R_out
+          (merge-records
+           Content (R_P R_Q) (effect_extra ...)
+           ((presuppose (∃ v_P) (RefComp (Referents τ))))))
+   ----------------------------------------------- "B1-T-Every"
+   (a0-type synth Γ (Every v_P v_Q) R_out)]
+
+  [(a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #f))
    (where R_out (merge-records Content (R_P R_Q) (effect_extra ...) ()))
    ----------------------------------------------- "A0-T-No"
-   (a0-type synth Γ (No t_P t_Q) R_out)]
+   (a0-type synth Γ (No v_P v_Q) R_out)]
 
   [(a0-type (check Natural) Γ t_n R_n)
-   (a0-type synth Γ t_P R_P)
+   (a0-type synth Γ v_P R_P)
    (where (Fn (τ) Content) (record-type-of R_P))
-   (a0-type (check (EFn ((Referents τ)) Content)) Γ t_Q R_Q)
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #f))
+   (where R_out
+          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-AtMost"
+   (a0-type synth Γ (AtMost t_n v_P v_Q) R_out)]
+
+  [(a0-type (check Natural) Γ t_n R_n)
+   (a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
    (where (effect_extra ...)
           ,(gq-extra-effects (term (record-type-of R_Q)) #t))
    (where R_out
           (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
    ----------------------------------------------- "A0-T-MoreThan"
-   (a0-type synth Γ (MoreThan t_n t_P t_Q) R_out)]
+   (a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)]
+
+  [(a0-type synth Γ v_P (typing (Fn (τ) Content) () (obligation_P ...)))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   ----------------------------------------------- "B1-T-FewerThan-Zero"
+   (a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))]
+
+  [(a0-type (check Natural) Γ t_count R_n)
+   (side-condition ,(provably-positive-count? (term t_count)))
+   (a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #f))
+   (where R_out
+          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-FewerThan-Positive"
+   (a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)]
+
+  [(a0-type (check Natural) Γ t_count R_n)
+   (side-condition
+    ,(and (not (equal? (term t_count) 0))
+          (not (provably-positive-count? (term t_count)))))
+   (a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
+   (a0-type (check (EFn ((Referents τ)) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #f))
+   (where R_out
+          (merge-records Content (R_n R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-FewerThan-Symbolic"
+   (a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)]
 
   [(a0-type (check Natural) Γ t_n R_n)
    (a0-type synth Γ t_P R_P)
@@ -1004,17 +1439,139 @@
    ----------------------------------------------- "A0-T-Equality"
    (a0-type synth Γ (= t_left t_right) R_out)]
 
+  [(a0-type synth Γ t_left R_left)
+   (a0-type synth Γ t_right R_right)
+   (where τ_left (record-type-of R_left))
+   (where τ_right (record-type-of R_right))
+   (where τ_result
+          ,(a0-number-join (term τ_left) (term τ_right)))
+   (where R_out (merge-records τ_result (R_left R_right) () ()))
+   ----------------------------------------------- "B1-T-Addition"
+   (a0-type synth Γ (+ t_left t_right) R_out)]
+
   [(a0-type (check Content) Γ t_left R_left)
    (a0-type (check Content) Γ t_right R_right)
    (where R_out (merge-records Content (R_left R_right) () ()))
    ----------------------------------------------- "A0-T-And"
    (a0-type synth Γ (∧ t_left t_right) R_out)]
 
+  [(a0-type (check Content) Γ t_left R_left)
+   (a0-type (check Content) Γ t_right R_right)
+   (where R_out (merge-records Content (R_left R_right) () ()))
+   ----------------------------------------------- "B1-T-Implication"
+   (a0-type synth Γ (→ t_left t_right) R_out)]
+
+  [(a0-type (check Content) Γ t_body R_body)
+   (where R_out (negate-record R_body))
+   ----------------------------------------------- "B1-T-Negation"
+   (a0-type synth Γ (¬ t_body) R_out)]
+
+  [(a0-type synth Γ v_property
+            (typing (arrow (τ_domain τ_rest ...) Content)
+                    (effect_property ...) (obligation ...)))
+   (side-condition
+    ,(andmap a0-quantifier-domain-type?
+             (term (τ_domain τ_rest ...))))
+   (where (effect_extra ...)
+          ,(if (equal? (term arrow) 'EFn) '(effectful-call) '()))
+   (where R_out
+          (merge-records
+           Content
+           ((typing (arrow (τ_domain τ_rest ...) Content)
+                    (effect_property ...) (obligation ...)))
+           (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-Forall"
+   (a0-type synth Γ (∀ v_property) R_out)]
+
+  [(a0-type synth Γ v_property
+            (typing (arrow (τ_domain τ_rest ...) Content)
+                    (effect_property ...) (obligation ...)))
+   (side-condition
+    ,(andmap a0-quantifier-domain-type?
+             (term (τ_domain τ_rest ...))))
+   (where (effect_extra ...)
+          ,(if (equal? (term arrow) 'EFn) '(effectful-call) '()))
+   (where R_out
+          (merge-records
+           Content
+           ((typing (arrow (τ_domain τ_rest ...) Content)
+                    (effect_property ...) (obligation ...)))
+           (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-Exists"
+   (a0-type synth Γ (∃ v_property) R_out)]
+
+  [(a0-type synth Γ t_left R_left)
+   (a0-type synth Γ t_right R_right)
+   (where τ_left (record-type-of R_left))
+   (where τ_right (record-type-of R_right))
+   (side-condition
+    ,(a0-reference-compatible? (term τ_left) (term τ_right)))
+   (where R_out (merge-records Content (R_left R_right) () ()))
+   ----------------------------------------------- "B1-T-Among"
+   (a0-type synth Γ (Among t_left t_right) R_out)]
+
+  [(a0-type (check Content) Γ t_condition R_condition)
+   (a0-type synth Γ t_body R_body)
+   (where τ_body (record-type-of R_body))
+   (side-condition ,(a0-comp-category? (term τ_body)))
+   (where R_out
+          (presuppose-record t_condition R_condition R_body))
+   ----------------------------------------------- "B1-T-Presuppose-Synth"
+   (a0-type synth Γ (Presuppose t_condition t_body) R_out)]
+
+  [(side-condition
+    ,(a0-reference-computation-form? (term t_body)))
+   (a0-type (check Content) Γ t_condition R_condition)
+   (a0-type (check (RefComp τ)) Γ t_body R_body)
+   (where R_out
+          (presuppose-record t_condition R_condition R_body))
+   ----------------------------------------------- "B1-T-Presuppose-Reference"
+   (a0-type (check (RefComp τ)) Γ
+            (Presuppose t_condition t_body) R_out)]
+
   [(a0-type (check (Referents Eventuality)) Γ t_left R_left)
    (a0-type (check (Referents Eventuality)) Γ t_right R_right)
    (where R_out (merge-records Content (R_left R_right) () ()))
    ----------------------------------------------- "A0-T-CoRef"
    (a0-type synth Γ (CoRef t_left t_right) R_out)]
+
+  [(a0-type synth Γ v_Q
+            (typing (arrow (τ) Content)
+                    (effect_Q ...) (obligation_Q ...)))
+   (a0-type (check (Referents τ)) Γ t_reference R_reference)
+   (where (effect_extra ...)
+          ,(if (equal? (term arrow) 'EFn) '(effectful-call) '()))
+   (where R_out
+          (merge-records
+           Content
+           ((typing (arrow (τ) Content)
+                    (effect_Q ...) (obligation_Q ...))
+            R_reference)
+           (effect_extra ...) ()))
+   ----------------------------------------------- "B1-T-Distrib"
+   (a0-type synth Γ (Distrib v_Q t_reference) R_out)]
+
+  [(a0-type synth Γ v_P
+            (typing (Fn (τ) Content) () (obligation_P ...)))
+   (a0-type (check (Referents τ)) Γ t_reference R_reference)
+   (where R_out
+          (merge-records
+           Content
+           ((typing (Fn (τ) Content) () (obligation_P ...))
+            R_reference)
+           () ()))
+   ----------------------------------------------- "B1-T-CoveredBy"
+   (a0-type synth Γ (CoveredBy v_P t_reference) R_out)]
+
+  [(a0-type synth Γ t_left R_left)
+   (a0-type synth Γ t_right R_right)
+   (where τ_left (record-type-of R_left))
+   (where τ_right (record-type-of R_right))
+   (side-condition
+    ,(a0-reference-compatible? (term τ_left) (term τ_right)))
+   (where R_out (merge-records Content (R_left R_right) () ()))
+   ----------------------------------------------- "B1-T-Overlap"
+   (a0-type synth Γ (Overlap t_left t_right) R_out)]
 
   [(a0-type (check τ) Γ t_item R_item) ...
    (where R_out (merge-records (List τ) (R_item ...) () ()))
@@ -1218,7 +1775,16 @@
     "A0-T-ActualClause-Event-Pure" "A0-T-ActualClause-Event-Effectful"
     "A0-T-CloseClause" "A0-T-CloseWith"
     "A0-T-Apply-ClauseContent"
-    "A0-T-Apply-Pure" "A0-T-Apply-Effectful"))
+    "A0-T-Apply-Pure" "A0-T-Apply-Effectful"
+    "B1-T-SelectAtLeast" "B1-T-SelectAllBut" "B1-T-MaxRefer"
+    "B1-T-Implication" "B1-T-Negation" "B1-T-Forall" "B1-T-Exists"
+    "B1-T-Among" "B1-T-Presuppose-Synth"
+    "B1-T-Presuppose-Reference" "B1-T-Distrib" "B1-T-CoveredBy"
+    "B1-T-Overlap" "B1-T-Addition"
+    "B1-T-AtLeast-Zero" "B1-T-AtLeast-Positive"
+    "B1-T-AtLeast-Symbolic" "B1-T-Some"
+    "B1-T-Every" "B1-T-AtMost" "B1-T-FewerThan-Zero"
+    "B1-T-FewerThan-Positive" "B1-T-FewerThan-Symbolic"))
 
 ;; Adjacent provenance table required by the A0 brief. These are normative
 ;; formation/typing anchors, not claims that the derived Redex rule is itself
@@ -1278,7 +1844,30 @@
     ("A0-T-CloseWith" "spec §4.6")
     ("A0-T-Apply-ClauseContent" "spec §3.4, §4.6")
     ("A0-T-Apply-Pure" "spec §3.3, §4.4")
-    ("A0-T-Apply-Effectful" "spec §3.3, §4.4")))
+    ("A0-T-Apply-Effectful" "spec §3.3, §4.4")
+    ("B1-T-SelectAtLeast" "spec §5.6; §12 selection floor")
+    ("B1-T-SelectAllBut" "spec §5.6; §12 SelectAllBut")
+    ("B1-T-MaxRefer" "spec §5.3; §12 MaxRefer")
+    ("B1-T-Implication" "spec §4.5")
+    ("B1-T-Negation" "spec §4.5, §5.4")
+    ("B1-T-Forall" "spec §4.5")
+    ("B1-T-Exists" "spec §4.5")
+    ("B1-T-Among" "spec §4.8")
+    ("B1-T-Presuppose-Synth" "spec §5.5")
+    ("B1-T-Presuppose-Reference" "spec §5.5")
+    ("B1-T-Distrib" "spec §4.8; §12 Distrib")
+    ("B1-T-CoveredBy" "spec §4.8")
+    ("B1-T-Overlap" "spec §4.8; §12 Overlap")
+    ("B1-T-Addition" "spec §4.9")
+    ("B1-T-AtLeast-Zero" "spec §4.10; §12 AtLeast zero")
+    ("B1-T-AtLeast-Positive" "spec §4.10; §12 AtLeast")
+    ("B1-T-AtLeast-Symbolic" "spec §4.10; §12 AtLeast totality")
+    ("B1-T-Some" "spec §4.10; §12 Some")
+    ("B1-T-Every" "spec §4.10; §12 Every")
+    ("B1-T-AtMost" "spec §4.10; §12 AtMost")
+    ("B1-T-FewerThan-Zero" "spec §4.10; §12 FewerThan zero")
+    ("B1-T-FewerThan-Positive" "spec §4.10; §12 FewerThan")
+    ("B1-T-FewerThan-Symbolic" "spec §4.10; §12 FewerThan totality")))
 
 (define a0-coverage-probes
   `((synth () 3)
@@ -1375,7 +1964,54 @@
             ($event (Referents Eventuality)))
            ($clause $event))
     (synth ((f (Fn (Natural) Content))) (f 1))
-    (synth ((f (EFn (Natural) Content))) (f 1))))
+    (synth ((f (EFn (Natural) Content))) (f 1))
+    (check () (SelectAtLeast 1 (λ (($x Entity)) ⊤))
+           (RefComp (Referents Entity)))
+    (check () (SelectAllBut 0 (λ (($x Entity)) ⊤))
+           (RefComp (Referents Entity)))
+    (check ((P (Fn (Entity) Content))) (MaxRefer P)
+           (RefComp (Referents Entity)))
+    (synth () (→ ⊤ ⊤))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (¬ (Some P Q)))
+    (synth () (∀ (λ (($x Entity)) ⊤)))
+    (synth () (∃ (λ (($x Entity)) ⊤)))
+    (synth () (Among Speaker Audience))
+    (synth () (Presuppose ⊤ ⊤))
+    (check () (Presuppose ⊤ (Context))
+           (RefComp (Referents Entity)))
+    (synth ((Q (EFn (Entity) Content))) (Distrib Q Speaker))
+    (synth ((P (Fn (Entity) Content))) (CoveredBy P Speaker))
+    (synth () (Overlap Speaker Audience))
+    (synth () (+ 1 2))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (AtLeast 0 P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (AtLeast 1 P Q))
+    (synth ((n Natural) (P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (AtLeast n P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (Some P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn (Entity) Content)))
+           (Every P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (AtMost 1 P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (FewerThan 0 P Q))
+    (synth ((n Natural) (P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (FewerThan n P Q))
+    (synth ((P (Fn (Entity) Content))
+            (Q (EFn ((Referents Entity)) Content)))
+           (FewerThan 1 P Q))))
 
 (define (derivation-rule-names derivation)
   (append (if (derivation-name derivation)
@@ -1404,7 +2040,19 @@
           (make-coverage a0-expand-massify)
           (make-coverage a0-expand-zipwith)
           (make-coverage a0-expand-close)
-          (make-coverage a0-hoist)))
+          (make-coverage a0-hoist)
+          (make-coverage b1-expand-at-least)
+          (make-coverage b1-expand-some)
+          (make-coverage b1-expand-every)
+          (make-coverage b1-expand-no)
+          (make-coverage b1-expand-at-most)
+          (make-coverage b1-expand-more-than)
+          (make-coverage b1-expand-fewer-than)
+          (make-coverage b1-expand-distrib)
+          (make-coverage b1-expand-overlap)
+          (make-coverage b1-expand-covered-by)
+          (make-coverage b1-expand-select-some)
+          (make-coverage b1-expand-max-refer)))
   (parameterize ([relation-coverage coverages])
     (term (a0-expand-let $x Entity Speaker (P $x)))
     (term (a0-expand-exactly 0 Entity P Q))
@@ -1418,6 +2066,19 @@
     (term (a0-expand-close (row p 1 direct-event (1)) ()))
     (term (a0-expand-close (row p 1 direct-event (1))
                            ((Eventuality $shared-event))))
+    (term (b1-expand-at-least 0 Entity P Q))
+    (term (b1-expand-at-least 2 Entity P Q))
+    (term (b1-expand-some Entity P Q))
+    (term (b1-expand-every Entity P Q))
+    (term (b1-expand-no Entity P Q))
+    (term (b1-expand-at-most n Entity P Q))
+    (term (b1-expand-more-than n Entity P Q))
+    (term (b1-expand-fewer-than n Entity P Q))
+    (term (b1-expand-distrib Entity Q r))
+    (term (b1-expand-overlap Entity a b))
+    (term (b1-expand-covered-by Entity P r))
+    (term (b1-expand-select-some Entity P))
+    (term (b1-expand-max-refer Entity P))
     (term (a0-hoist () (λ (($x Entity)) ⊤) (sites)))
     (term (a0-hoist ()
                     (λ (($x Entity)) (SelectSome (λ (($y Entity)) ⊤)))
