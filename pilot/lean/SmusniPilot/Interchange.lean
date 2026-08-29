@@ -284,6 +284,45 @@ theorem validateSiteUse_deserializes (sites : List SiteEntry) (use : SiteUse)
           | error message => simp [lookup, roleConflict, typed] at success
           | ok site => exact ⟨entry, site, rfl, typed⟩
 
+def dependencySiteUses (sites : List SiteEntry) (scope : Nat) :
+    List SerializedDependency → Except String (List SiteUse)
+  | [] => pure []
+  | .site identity :: rest => do
+      let some entry := sites.find? fun candidate =>
+          candidate.identity == identity
+        | .error s!"dangling site dependency: {repr identity}"
+      pure ({ identity, role := entry.role, scope } ::
+        (← dependencySiteUses sites scope rest))
+  | _ :: rest => dependencySiteUses sites scope rest
+
+def enqueueNewSiteUses (seen pending : List SiteUse) :
+    List SiteUse → List SiteUse
+  | [] => pending
+  | use :: rest =>
+      if seen.contains use || pending.contains use then
+        enqueueNewSiteUses seen pending rest
+      else enqueueNewSiteUses seen (pending ++ [use]) rest
+
+def reachableSiteUsesLoop (sites : List SiteEntry) :
+    Nat → List SiteUse → List SiteUse → Except String (List SiteUse)
+  | 0, [], seen => pure seen
+  | 0, _ :: _, _ => .error "site dependency closure exceeded finite table bound"
+  | _ + 1, [], seen => pure seen
+  | fuel + 1, use :: pending, seen => do
+      validateSiteUse sites use
+      let some entry := sites.find? fun candidate =>
+          candidate.identity == use.identity
+        | .error s!"missing site sidecar entry: {repr use.identity}"
+      let children ← dependencySiteUses sites use.scope entry.dependencies
+      let next := enqueueNewSiteUses (use :: seen) pending children
+      reachableSiteUsesLoop sites fuel next (use :: seen)
+
+def reachableSiteUses (sites : List SiteEntry) (roots : List SiteUse) :
+    Except String (List SiteUse) :=
+  let initial := roots.eraseDups
+  let fuel := (sites.length + 1) * (initial.length + 1)
+  reachableSiteUsesLoop sites fuel initial []
+
 def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
     Except String Unit := do
   if bundle.version != 1 then
@@ -294,10 +333,10 @@ def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
       other.identity == entry.identity
     if copies.length != 1 then
       .error s!"duplicate site sidecar entry: {repr entry.identity}"
-    if !(uses.any fun use => use.identity == entry.identity) then
-      .error s!"extra site sidecar entry: {repr entry.identity}"
-  for use in uses do
-    validateSiteUse bundle.sites use
+  let reachable ← reachableSiteUses bundle.sites uses
+  for entry in bundle.sites do
+    if !(reachable.any fun use => use.identity == entry.identity) then
+      .error s!"unreachable site sidecar entry: {repr entry.identity}"
   pure ()
 
 def Bundle.ofSurface (document : String) (surface : SurfaceTerm) :

@@ -293,6 +293,51 @@ def runLocalGates : IO Unit := do
   if checkedSharedDepth.weaken.isOk then
     throw <| IO.userError
       "inconsistent shared-site transforms did not report a merge conflict"
+
+  let dependencyRootId : SiteId :=
+    { document := "dependency-root"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let dependencyLeafId : SiteId :=
+    { document := "dependency-leaf"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let dependencyOnlySource : Interchange.Bundle 1 :=
+    { version := 1
+      term := .context dependencyRootId .nil
+      sites := [
+        { identity := dependencyRootId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let dependencyOnlyReplacement : Interchange.Bundle 0 :=
+    { version := 1
+      term := .context dependencyLeafId .nil
+      sites := [
+        { identity := dependencyLeafId
+          role := .context
+          dependencies := [] }
+      ]
+      sourceMap := [] }
+  let checkedDependencySource ← IO.ofExcept dependencyOnlySource.checked
+  let checkedDependencyReplacement ←
+    IO.ofExcept dependencyOnlyReplacement.checked
+  let dependencyOnlyResult ← IO.ofBundleBinding <|
+    checkedDependencySource.substitute fun _ => checkedDependencyReplacement
+  let rootEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
+    entry.identity == dependencyRootId
+  let leafEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
+    entry.identity == dependencyLeafId
+  match rootEntry, leafEntry with
+  | some { dependencies := [.site target], .. },
+      some { dependencies := [], .. } =>
+      if target != dependencyLeafId then
+        throw <| IO.userError "dependency-only site edge was rekeyed"
+  | _, _ => throw <| IO.userError <|
+      "dependency-only reachable site was rejected or lost"
+  if !dependencyOnlyResult.bundle.validate.isOk then
+    throw <| IO.userError "dependency-only reachable site did not validate"
   let alphaX := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($x :: Entity) $x)"))
   let alphaY := SurfaceTerm.ofSExpr

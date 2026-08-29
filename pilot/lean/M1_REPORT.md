@@ -134,6 +134,10 @@ The core term encoding contains only site-ID references. Bundle validation
 requires exactly one sidecar entry for every referenced identity, rejects
 missing, extra, duplicate, role-conflicting, and out-of-scope entries, and
 rejects site-valued dependencies that do not resolve through that same table.
+Term occurrences are roots of a reachable sidecar graph: a `.site B`
+dependency makes `B` reachable even without a `B` term node and propagates the
+referencing occurrence's scope for `B`'s typed dependency check; only entries
+unreachable from both term roots and dependency edges are extra.
 At every occurrence it invokes the exact `SiteEntry.toSite use.scope` typed
 deserializer used by bundle binding; `siteEntryToSite_ofSite` proves the typed
 serialization round trip, and `validateSiteUse_deserializes` proves that every
@@ -141,9 +145,10 @@ successful per-occurrence validation has a matching entry and typed `Site`.
 Thus a `ValidatedBundle` operation has no separate
 reachable scope-deserialization error class: its typed transform is total, and
 all operation-level refusals have the closed
-`BundleBindingConflict.tableReconciliation` type. This named boundary covers
-inconsistent transformed entries for one shared site identity and any other
-strict term/table reachability conflict during reconciliation. Raw byte/bundle
+`BundleBindingConflict.inconsistentSharing` type. Dependency-only site entries
+are ordinary reachable graph nodes, not conflicts; this class is reserved for
+colliding identities or one shared identity requiring inconsistent transformed
+entries at distinct occurrence depths. Raw byte/bundle
 input may still fail schema or coherence
 validation before it becomes a `ValidatedBundle`. Validation is run after both
 source decoding and text decoding. Each primitive S1 case also
@@ -217,10 +222,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.59 s wall, 29.23 s user, 4.10 s system,
-  1,701,960 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.34 s wall, 0.11 s user, 0.15 s system,
-  133,280 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.78 s wall, 29.55 s user, 4.23 s system,
+  1,701,148 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.16 s system,
+  133,376 KiB maximum RSS.
 
 Build time is not reported as runtime.
 

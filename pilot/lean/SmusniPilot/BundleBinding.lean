@@ -10,17 +10,17 @@ structure ValidatedBundle (scope : Nat) where
   deriving Repr
 
 inductive BundleBindingConflict where
-  | tableReconciliation (detail : String)
+  | inconsistentSharing (detail : String)
   deriving Repr, DecidableEq, BEq
 
 def BundleBindingConflict.message : BundleBindingConflict → String
-  | .tableReconciliation detail =>
-      "bundle-binding table-reconciliation conflict: " ++ detail
+  | .inconsistentSharing detail =>
+      "bundle-binding inconsistent-sharing conflict: " ++ detail
 
 def asBindingConflict {value : Type} : Except String value →
     Except BundleBindingConflict value
   | .ok result => .ok result
-  | .error detail => .error (.tableReconciliation detail)
+  | .error detail => .error (.inconsistentSharing detail)
 
 def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle scope) :=
@@ -198,10 +198,12 @@ def replacementSiteEntries {source target : Nat}
   | (rawIndex, depth) :: rest => do
       if inBounds : rawIndex < source then
         let replacement := (σ ⟨rawIndex, inBounds⟩).bundle
+        let replacementUses ← reachableSiteUses replacement.sites
+          replacement.term.siteUses
         let shifted ← renameSiteTable
           (source := target) (target := target + depth)
           (Renaming.shiftN (scope := target) depth)
-          replacement.term.siteUses replacement.sites
+          replacementUses replacement.sites
         pure (shifted ++ (← replacementSiteEntries σ rest))
       else .error s!"substitution use {rawIndex} is outside source scope"
 
@@ -255,7 +257,8 @@ def mergeSiteEntries (candidates : List SiteEntry) :
 def Bundle.rename {source target : Nat} (bundle : Bundle source)
     (ρ : Renaming source target) : Except String (ValidatedBundle target) := do
   bundle.validate
-  let sites ← renameSiteTable ρ bundle.term.siteUses bundle.sites
+  let uses ← reachableSiteUses bundle.sites bundle.term.siteUses
+  let sites ← renameSiteTable ρ uses bundle.sites
   let result : Bundle target :=
     { version := bundle.version
       term := bundle.term.rename ρ
@@ -280,9 +283,9 @@ def Bundle.substitute {source target : Nat} (bundle : Bundle source)
     (σ : Fin source → ValidatedBundle target) :
     Except String (ValidatedBundle target) := do
   bundle.validate
-  let originalSites ← substituteSiteTable σ bundle.term.siteUses bundle.sites
-  let sidecarUses ←
-    sidecarSubstitutionUses source bundle.term.siteUses bundle.sites
+  let uses ← reachableSiteUses bundle.sites bundle.term.siteUses
+  let originalSites ← substituteSiteTable σ uses bundle.sites
+  let sidecarUses ← sidecarSubstitutionUses source uses bundle.sites
   let replacementSites ← replacementSiteEntries σ
     (bundle.term.substitutionUses ++ sidecarUses)
   let sites ← mergeSiteEntries (originalSites ++ replacementSites)
