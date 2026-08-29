@@ -360,6 +360,35 @@ theorem mem_cSpikeEnqueue_of_mem_pending (seen pending additions : List SiteUse)
       · exact ih pending present
       · exact ih (pending ++ [head]) (List.mem_append_left _ present)
 
+theorem mem_cSpikeEnqueue_iff (blocked pending additions : List SiteUse)
+    (use : SiteUse) :
+    use ∈ cSpikeEnqueue blocked pending additions ↔
+      use ∈ pending ∨ (use ∈ additions ∧ use ∉ blocked) := by
+  induction additions generalizing pending with
+  | nil => simp [cSpikeEnqueue]
+  | cons head tail ih =>
+      simp only [cSpikeEnqueue]
+      split <;> simp_all <;> grind
+
+theorem nodup_cSpikeEnqueue (blocked pending additions : List SiteUse)
+    (pendingUnique : pending.Nodup) :
+    (cSpikeEnqueue blocked pending additions).Nodup := by
+  induction additions generalizing pending with
+  | nil => exact pendingUnique
+  | cons head tail ih =>
+      simp only [cSpikeEnqueue]
+      split
+      · exact ih pending pendingUnique
+      · apply ih (pending ++ [head])
+        apply List.nodup_append.mpr
+        refine ⟨pendingUnique, by simp, ?_⟩
+        intro a inPending b inSingleton
+        simp only [List.mem_singleton] at inSingleton
+        subst b
+        intro equal
+        subst a
+        exact (by simp_all)
+
 structure ClosureTraversalInvariant {scope : Nat} (bundle : Bundle scope)
     (universeUses unseen pending : List SiteUse)
     (seen : List (Sigma fun use => TypedSiteUseWitness bundle use)) : Prop where
@@ -372,9 +401,10 @@ structure ClosureTraversalInvariant {scope : Nat} (bundle : Bundle scope)
     use ∈ unseen ∨ use ∈ seen.map Sigma.fst
   childrenAccounted : ∀ use witness,
     (⟨use, witness⟩ : Sigma fun use => TypedSiteUseWitness bundle use) ∈ seen →
-    ∀ child, child ∈ (cSpikeDependencySiteUses bundle.sites use.scope
-      witness.entry.dependencies).toOption.getD [] →
-      child ∈ pending ∨ child ∈ seen.map Sigma.fst
+    ∀ identity, .site identity ∈ witness.entry.dependencies →
+      ∃ child,
+        (child ∈ pending ∨ child ∈ seen.map Sigma.fst) ∧
+        child.identity = identity ∧ child.scope = use.scope
 
 theorem termRoot_mem_siteUseUniverse {scope : Nat} (bundle : Bundle scope)
     (use : SiteUse) (present : use ∈ bundle.term.siteUses) :
