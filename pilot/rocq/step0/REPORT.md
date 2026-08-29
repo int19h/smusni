@@ -71,9 +71,16 @@ per-rule sampler was supplied.
 ## Literal results
 
 Final warm core compilation (`coqc Step0.v`) took 1.53 seconds with 514,744
-KiB maximum RSS. The producer-only runner took 186.76 seconds wall time in
+KiB maximum RSS. The seeded producer-only runner took 188.23 seconds wall time in
 total, dominated by checking-mode discards. These build/runner figures are
 kept separate from the per-checker elapsed times below.
+
+Every randomized runner uses the pre-registered replay seed **740019** and
+replay size **0**. `measured_args` sets that replay explicitly for the full,
+producer-only, shrink, and fuel-control budgets. QuickChick 2.2.0's bundled
+OCaml extraction maps `mkRandomSeed : Z → RandomSeed` directly to
+`Random.init : int → _`; the file supplies the type-correct compatibility
+override using `Big_int_Z.int_of_big_int`. No alternate seed was tried.
 
 ### Required full validation path
 
@@ -87,9 +94,9 @@ The script sets `ulimit -v 8388608` and a 300-second wall limit. Result:
 
 ```text
 QuickChecking synth_generated
-Time Elapsed: 14.266917s
+Time Elapsed: 15.931616s
 Fatal error: out of memory
-maxresident: 7,460,860 KiB
+maxresident: 7,460,880 KiB
 exit: 1 (native runner status 134 / SIGABRT)
 ```
 
@@ -103,7 +110,7 @@ SMUSNI_STEP0_RSS_LIMIT_KIB=4194304 ./run-bounded.sh RunFuelProbe.v
 ```
 
 At derived-checker fuel 8 and a 300-case budget it exhausts the 4 GiB bound in
-15.988962 seconds (`maxresident: 3,712,544 KiB`, exit 1 / native status 134).
+16.351228 seconds (`maxresident: 3,712,568 KiB`, exit 1 / native status 134).
 
 ### Producer-only diagnostic
 
@@ -123,8 +130,8 @@ The literal analyzed run was:
 | discards | 0 | 100,000 |
 | discard ratio | 0 | 0.833340 |
 | maximum binder depth | 6 | 6 |
-| elapsed | 13.750749 s | 170.967962 s |
-| cases/minute | 87,267.97 | 7,018.51 |
+| elapsed | 14.043049 s | 172.176010 s |
+| cases/minute | 85,451.53 | 6,969.26 |
 
 Case coverage counts presence of a rule in a generated case's complete
 recursive trace, not raw constructor occurrences:
@@ -133,19 +140,19 @@ recursive trace, not raw constructor occurrences:
 |---|---:|---:|
 | `A0-Synth` | 20,000 | n/a |
 | `A0-Check` | n/a | 19,999 |
-| `A0-T-Natural` | 12,918 | 16,829 |
-| `A0-T-Top` | 12,158 | 16,460 |
-| `A0-T-Variable` | 375 | 754 |
-| `A0-T-Lambda-Pure` | 8,417 | 15,824 |
-| `A0-T-Lambda-Effectful` | 4,133 | 13,012 |
-| `A0-T-Check-Synth` | 289 | 2,376 |
-| `A0-T-Context` | 9,510 | 19,406 |
-| `A0-T-SelectExactly` | 0 | 1 |
-| `A0-T-SelectSome` | 3 | 11 |
-| `A0-T-Bind-Reference` | 9,333 | 16,071 |
-| `A0-T-Apply-Pure` | 1,143 | 4,853 |
-| `A0-T-Apply-Effectful` | 289 | 1,624 |
-| `A0-T-Equality` | 1,871 | 7,062 |
+| `A0-T-Natural` | 12,879 | 16,900 |
+| `A0-T-Top` | 12,151 | 16,498 |
+| `A0-T-Variable` | 354 | 823 |
+| `A0-T-Lambda-Pure` | 8,291 | 15,923 |
+| `A0-T-Lambda-Effectful` | 4,125 | 13,044 |
+| `A0-T-Check-Synth` | 296 | 2,462 |
+| `A0-T-Context` | 9,510 | 19,419 |
+| `A0-T-SelectExactly` | 0 | 5 |
+| `A0-T-SelectSome` | 2 | 8 |
+| `A0-T-Bind-Reference` | 9,339 | 16,146 |
+| `A0-T-Apply-Pure` | 1,166 | 5,041 |
+| `A0-T-Apply-Effectful` | 329 | 1,656 |
+| `A0-T-Equality` | 1,928 | 7,082 |
 
 The producer reaches both expected-only selections in checking mode and
 `SelectSome` under recursive synthesis through annotated `Bind`, without
@@ -160,16 +167,16 @@ at the disclosed discard ceiling.
 
 | Property | Result | Literal stop |
 |---|---|---:|
-| synthesis scope preservation | FAIL | 76 tests, 0 discards |
-| checking scope preservation | FAIL | 3 tests, 12 discards |
+| synthesis scope preservation | FAIL | 69 tests, 0 discards |
+| checking scope preservation | FAIL | 12 tests, 37 discards |
 
 `./run-bounded.sh RunDerivationShrinking.v`:
 
 ```text
 QuickChecking synth_derivation_preserving_shrinks
-Time Elapsed: 13.388851s
+Time Elapsed: 15.088412s
 Fatal error: out of memory
-maxresident: 7,460,856 KiB
+maxresident: 7,460,864 KiB
 exit: 1
 ```
 

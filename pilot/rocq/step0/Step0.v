@@ -1,5 +1,11 @@
-From Stdlib Require Import List Arith Bool String Program.Equality.
+From Stdlib Require Import List Arith Bool String Program.Equality ZArith.
 From QuickChick Require Import QuickChick.
+
+(* QuickChick 2.2.0's bundled extraction maps [mkRandomSeed : Z -> _]
+   directly to [Random.init : int -> _].  Preserve the public Coq API while
+   making the fixed replay seed executable. *)
+Extract Constant mkRandomSeed =>
+  "(fun x -> Random.init (Big_int_Z.int_of_big_int x); Random.get_state())".
 
 Import ListNotations.
 Open Scope string_scope.
@@ -602,8 +608,9 @@ Definition check_derivation_preserving_shrinks : Checker :=
 
 Definition measured_args (successes discards max_size : nat) : Args :=
   match stdArgs with
-  | MkArgs replay _ _ max_shrinks _ chatty analysis =>
-      MkArgs replay successes discards max_shrinks max_size chatty analysis
+  | MkArgs _ _ _ max_shrinks _ chatty analysis =>
+      MkArgs (Some (mkRandomSeed (740019%Z), 0))
+        successes discards max_shrinks max_size chatty analysis
   end.
 
 Definition step0_args := measured_args 20000 100000 7.
