@@ -77,15 +77,20 @@ and core typability never establishes Lojban expressibility.
   mechanizations, and certificates are derived artifacts today: they test the
   documents and do not become the semantic authority. **Adopted in principle
   (human partner, 2026-08-29; tracker #74):** once the platform selected by
-  the #74 pilot reaches *full-migration parity* — every live typing clause,
-  §12 definition, and §11 lowering rule reproduced with exact differential
-  and certificate coverage and no second live rule implementation — the
-  formal definitions become normative for **formation, typing, expansion,
-  and denotation**, and the corresponding prose becomes commentary. The
-  Lojban mapping, source evidence, pins, alternatives, gaps, and adequacy
-  claims stay documentary and normative; the §11 rule *text* stays normative
-  while its encodings remain derived. The transfer is an explicit, recorded
-  event, not a consequence of any PR merging.
+  the #74 pilot passes three recorded states, the formal definitions become
+  normative for **formation, typing, expansion, and denotation**, and the
+  corresponding prose becomes commentary: (1) *full-migration parity* —
+  every live formation rule, typing clause, §12 definition, §11 lowering
+  rule, and denotation/model operation or law in that scope carries an
+  explicit formal coverage or disposition entry, and the formal artifact
+  reproduces every live case with exact differential and certificate
+  coverage while the frozen Redex engine still serves as oracle; (2) *sole
+  source* — after a bounded overlap the Redex engine is retired or demoted
+  and one live formal rule source is confirmed; (3) the *transfer* itself,
+  an explicit recorded decision of the human partner. The Lojban mapping,
+  source evidence, pins, alternatives, gaps, and adequacy claims stay
+  documentary and normative; the §11 rule *text* stays normative while its
+  encodings remain derived. No PR merge transfers authority.
 
 When live `spec.md` and live `review/CONSENSUS.md` temporarily disagree because
 an accepted edit has not yet been applied, use the latest explicit user
