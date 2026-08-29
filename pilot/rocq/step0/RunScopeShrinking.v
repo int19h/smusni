@@ -1,0 +1,4 @@
+Require Import Step0.
+
+QuickChickWith shrink_args synth_scope_preserving_shrinks.
+QuickChickWith shrink_args check_scope_preserving_shrinks.

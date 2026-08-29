@@ -131,7 +131,7 @@ manifest and does not run `lake update`.
 
 - Lean must be selected through the elan proxy and match exact version/commit;
   Lake and the tracked manifest digest/Plausible revision must match.
-- Every installed opam `name=version` must exactly equal all 57 entries in the
+- Every installed opam `name=version` must exactly equal all 64 entries in the
   locked closure; repository configuration and direct package metadata must
   match `repository-snapshot.toml`.
 - The Isabelle executable must report the release pinned by `bundle.toml`.
