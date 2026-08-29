@@ -1,0 +1,3 @@
+session Smusni_Pilot_Smoke = HOL +
+  theories
+    Smoke

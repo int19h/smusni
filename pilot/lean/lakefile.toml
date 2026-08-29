@@ -1,0 +1,12 @@
+name = "smusni_pilot_lean"
+version = "0.1.0"
+defaultTargets = ["smoke"]
+
+[[require]]
+name = "plausible"
+git = "https://github.com/leanprover-community/plausible.git"
+rev = "b7eb3304aeae834b12dda98993a37f6a41f6f0bb"
+
+[[lean_exe]]
+name = "smoke"
+root = "Main"

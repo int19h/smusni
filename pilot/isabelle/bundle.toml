@@ -1,0 +1,5 @@
+release = "Isabelle2025-2"
+platform = "linux_arm"
+url = "https://www.cl.cam.ac.uk/research/hvg/Isabelle/dist/Isabelle2025-2_linux_arm.tar.gz"
+sha256 = "650a9669b4a087675afb34294d82ded2f0704d47d580dd9ed45cddc9f1764bdd"
+bytes = 1181119333

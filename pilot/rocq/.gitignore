@@ -1,0 +1,12 @@
+/_build/
+/smoke/.*.aux
+/smoke/*.aux
+/smoke/*.glob
+/smoke/*.cmi
+/smoke/*.cmo
+/smoke/*.vo
+/smoke/*.vok
+/smoke/*.vos
+/smoke/smoke_extract.ml
+/smoke/smoke_extract.mli
+/smoke/smoke_driver
