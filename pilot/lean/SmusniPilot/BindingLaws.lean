@@ -365,6 +365,21 @@ theorem Substitution.lift_compose {source middle target : Nat}
     rw [Term.substitute_rename]
     rfl
 
+theorem Substitution.liftN_shiftN {source target : Nat}
+    (σ : Substitution source target) (depth : Nat) (index : Fin source) :
+    Substitution.liftN σ depth (Renaming.shiftN depth index) =
+      (σ index).rename (Renaming.shiftN depth) := by
+  induction depth with
+  | zero => simp [Substitution.liftN, Renaming.shiftN]
+  | succ depth ih =>
+      change
+        (Substitution.liftN σ depth (Renaming.shiftN depth index)).rename
+            Fin.succ =
+          (σ index).rename
+            (fun sourceIndex => Fin.succ (Renaming.shiftN depth sourceIndex))
+      rw [ih]
+      rw [Term.rename_compose]
+
 theorem Term.substitute_compose {source middle target : Nat}
     (σ : Substitution source middle) (τ : Substitution middle target)
     (term : Term source) :

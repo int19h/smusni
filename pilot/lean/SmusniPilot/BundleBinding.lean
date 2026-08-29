@@ -203,8 +203,11 @@ def replacementSiteEntries {source target : Nat}
   | [] => pure []
   | (rawIndex, depth) :: rest => do
       if inBounds : rawIndex < source then
-        let shifted ← (σ ⟨rawIndex, inBounds⟩).bundle.sites.mapM
-          (shiftSiteEntry (scope := target) depth)
+        let replacement := (σ ⟨rawIndex, inBounds⟩).bundle
+        let shifted ← renameSiteTable
+          (source := target) (target := target + depth)
+          (Renaming.shiftN (scope := target) depth)
+          replacement.term.siteUses replacement.sites
         pure (shifted ++ (← replacementSiteEntries σ rest))
       else .error s!"substitution use {rawIndex} is outside source scope"
 

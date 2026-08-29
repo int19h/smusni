@@ -242,6 +242,34 @@ def runLocalGates : IO Unit := do
   | _, _ => throw <| IO.userError <|
       "bundle substitution lost an inserted authoritative site table"
 
+  let nestedSiteId : SiteId :=
+    { document := "nested-replacement"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let nestedReplacement : Interchange.Bundle 0 :=
+    { version := 1
+      term := .lambda entityTy <|
+        .context nestedSiteId (.positional (.bound 0) .nil)
+      sites := [
+        { identity := nestedSiteId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let checkedNested ← IO.ofExcept nestedReplacement.checked
+  let nestedResult ← IO.ofExcept <|
+    checkedUnderBinder.substitute fun _ => checkedNested
+  match nestedResult.bundle.term, nestedResult.bundle.sites with
+  | .lambda _ (.lambda _
+        (.context identity (.positional (.bound index) .nil))),
+      [{ identity := entryIdentity, dependencies := [.bound dependency], .. }] =>
+      if identity != nestedSiteId || entryIdentity != nestedSiteId ||
+          index.val != 0 || dependency != 0 then
+        throw <| IO.userError
+          "nested replacement corrupted its internal binder dependency"
+  | _, _ => throw <| IO.userError <|
+      "nested replacement lost its term or authoritative site entry"
+
   let sharedDepthId : SiteId :=
     { document := "shared-depth"
       occurrence := 0

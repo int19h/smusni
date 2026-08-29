@@ -71,8 +71,8 @@ dependency transformations. The decoder assigns written sites and sidecar
 entries together in deterministic traversal/source order, never from byte
 offsets.
 
-Binding infrastructure is 1,145 lines including scoped data/core and validated
-bundle operations, or 919 lines for operations and proofs alone:
+Binding infrastructure is 1,163 lines including scoped data/core and validated
+bundle operations, or 937 lines for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
@@ -89,7 +89,9 @@ bundle operations, or 919 lines for operations and proofs alone:
 - total typed site transforms defined directly through `Site.rename`,
   `Site.substitute`, `Renaming.liftN`, and `Substitution.liftN`, with kernel
   laws for dependency commutation, typed serialization round trip, and
-  serialized table-entry identity preservation;
+  serialized table-entry identity preservation; `liftN_shiftN` proves that a
+  replacement inserted below binders is renamed by the same typed shift used
+  for its authoritative site table;
 - dependency-list and site transformation compatibility;
 - renaming preserves the complete site-ID list;
 - substitution preserves every pre-existing site ID;
@@ -203,10 +205,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.58 s wall, 29.33 s user, 4.17 s system,
-  1,706,428 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.37 s wall, 0.11 s user, 0.17 s system,
-  135,508 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.67 s wall, 29.08 s user, 4.24 s system,
+  1,704,836 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.34 s wall, 0.09 s user, 0.16 s system,
+  133,304 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
