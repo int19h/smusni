@@ -1,0 +1,54 @@
+captured_utc = "2026-08-29T07:59:00Z"
+repos_config_sha256 = "3cb909f756d43053f7cce658a053e07a457305b9a02c4af80940cf93fa4a06bf"
+
+[[repositories]]
+name = "coq-released"
+url = "https://coq.inria.fr/opam/released"
+priority = 1
+
+[[repositories]]
+name = "default"
+url = "https://opam.ocaml.org"
+priority = 2
+
+[[packages]]
+repository = "default"
+name = "ocaml"
+version = "4.14.2"
+opam_sha256 = "d6bacc20994b8dd1be52ea269efa8d82243310a09027af585e8c078ad9d17b89"
+
+[[packages]]
+repository = "default"
+name = "rocq-core"
+version = "9.0.1"
+opam_sha256 = "e54cad1a3f23fabb4809db779c16c2e3b7e2829eab6b6d6145f4f14158151ba6"
+
+[[packages]]
+repository = "default"
+name = "rocq-stdlib"
+version = "9.0.0"
+opam_sha256 = "6ab3b7adfbb75f181b51cf5a7b756dae98f914ee69e8e0e4a7939f01826e1070"
+
+[[packages]]
+repository = "default"
+name = "coq"
+version = "9.0.1"
+opam_sha256 = "f9860561d70780ce73a27891b5dc3713abc0bf2424b7f67fe7f0d0c4ec37fb28"
+
+[[packages]]
+repository = "coq-released"
+name = "rocq-equations"
+version = "1.3.1+9.0"
+opam_sha256 = "932af5f088fc0b24f59cf79366a7eb170fc3ab92ebcb9333bdfb4897b50fa4be"
+
+[[packages]]
+repository = "coq-released"
+name = "rocq-autosubst-ocaml"
+version = "1.1+9.0"
+opam_sha256 = "d16ca30911982747e8aa9514ad93e6fbd0696ea27ee9a2a6645fb6b1b62a0a30"
+
+[[packages]]
+repository = "coq-released"
+name = "coq-quickchick"
+version = "2.2.0"
+opam_sha256 = "687682fa9d08e518200d191e052beba48cf465e0d5d87da9530ca5d9c12de07c"
