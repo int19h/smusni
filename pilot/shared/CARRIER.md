@@ -140,7 +140,7 @@ Operations : refer, select* (witness laws), context(site, deps), vague(site) via
 
 | id | probe | expected |
 |---|---|---|
-| C2 | `Vague` site under negation/quantification | denotation is the profile family; no branch per sharpening; supertruth across admissible profiles |
+| C2 | `Vague` site under negation/quantification | denotation is the profile family; no branch per sharpening; supertruth across admissible profiles (live §5.1; C3's open objection to the supertruth reading is recorded in COUNTEREXAMPLES and is not decided here) |
 | C4 | `mi na klama` with an unresolvable destination site | `Undef`, never true |
 | C4′ | unresolved `Context` in one disjunct, `Live` in the other | per P1 profile; record each |
 | FP | a well-formed *false* at-issue content carrying `Presuppose π` | π present in `spent`/trace at the handler |
