@@ -158,8 +158,9 @@ entries at distinct occurrence depths. Raw byte/bundle
 input may still fail schema or coherence
 validation before it becomes a `ValidatedBundle`; raw `Bundle` convenience
 operations retain those detailed boundary errors. Runtime gates revalidate
-every certified result as a redundant executable check. Validation is run after
-both source decoding and text decoding. Each primitive S1 case also
+every certified result; this is the current evidence that a certified output
+passes the full raw-bundle validator, not a kernel closure theorem. Validation
+is run after both source decoding and text decoding. Each primitive S1 case also
 passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
@@ -254,6 +255,15 @@ Build time is not reported as runtime.
   application node with an ordered list of positional/labelled fills, so no
   source arity or label structure is lost before M2 typing.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
+- M1 proves the operation's term/table transformation and witnessed failure
+  boundary, but not the stronger closure theorem `validated input → every
+  successful certified output validates`; runtime result revalidation is the
+  current evidence. That theorem is M2 proof work before expansion/β uses the
+  API.
+- Raw `Bundle.rename`/`substitute` are non-semantic boundary conveniences that
+  retain String diagnostics and duplicate parts of the validated path; the
+  validated certified operations are the semantic M1 API. Remove the raw
+  duplicates when M2 no longer needs boundary diagnostics.
 - Text parsing and file hashing remain outside the Lean kernel; the typed
   structured round-trip theorem and runtime corpus gates make that boundary
   explicit rather than pretending bytes are proved.
