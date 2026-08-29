@@ -570,7 +570,8 @@ node. Lambda, `Let`, and sequential `Bind` declarations receive opaque binder
 identities; every bound variable node links to its declaration identity, and
 the internal environment can extend/lookup by that identity while raw
 projection erases it. An identity-driven alpha projection reserves genuine
-free `$alphaN` names and names binder groups in scope-exit order. Environment
+free `$alphaN` names, names externally declared groups in scope-exit order,
+then names condition-internal declarations in syntax traversal order. Environment
 tests cover shadowing; targeted term tests cover multi-lambda, `Let`, sequential
 `Bind`, alpha/free-alpha collisions, equal subtrees, and both opaque heads. All
 84 A0/B1 differential inputs and 160 deterministic generated terms round-trip

@@ -288,10 +288,11 @@
     [else (error 'b2-node->datum "unknown node kind: ~e" (b2-node-kind node))]))
 
 ;; Project bound declarations/references through their resolved opaque identity.
-;; Declarations inside the projected subtree are named in ordinary left-to-
-;; right syntax traversal order, exactly like alpha-normalize-datum. References
-;; whose declarations are outside the subtree are then named by scope-exit
-;; order (inner groups first). Truly free $alphaN spellings are reserved first.
+;; References whose declarations are outside the projected subtree are named
+;; first by scope-exit order (inner groups first). Declarations inside the
+;; subtree are then named in ordinary left-to-right syntax traversal order,
+;; exactly like alpha-normalize-datum. Truly free $alphaN spellings are reserved
+;; before both classes.
 (define (b2-node->alpha-datum node)
   (unless (b2-node? node)
     (raise-argument-error 'b2-node->alpha-datum "b2-node?" node))
@@ -337,7 +338,7 @@
                      (< (b2-binding-position left)
                         (b2-binding-position right)))))))
   (define ordered-bindings
-    (append internal-bindings ordered-external-bindings))
+    (append ordered-external-bindings internal-bindings))
   (define names (make-hasheq))
   (define used (set-copy free-symbols))
   (define counter 0)

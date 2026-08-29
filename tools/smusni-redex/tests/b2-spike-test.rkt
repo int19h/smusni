@@ -160,6 +160,60 @@
  (b2-node->alpha-datum (b2-node-at-path free-alpha-node '(2)))
  '(= $alpha1 $alpha0))
 
+(define mixed-condition-left
+  '(λ (($alpha0 Entity))
+     (Presuppose
+      (∧ (= $alpha0 $alpha0)
+         (∃ (λ (($x Entity)) (= $x $x))))
+      ⊤)))
+(define mixed-condition-right
+  '(λ (($y Entity))
+     (Presuppose
+      (∧ (= $y $y)
+         (∃ (λ (($a Entity)) (= $a $a))))
+      ⊤)))
+(define-values (mixed-node-left _mixed-count-left)
+  (b2-compile-term mixed-condition-left))
+(define-values (mixed-node-right _mixed-count-right)
+  (b2-compile-term mixed-condition-right))
+(define mixed-projected-left
+  (b2-node->alpha-datum (b2-node-at-path mixed-node-left '(2 1))))
+(define mixed-projected-right
+  (b2-node->alpha-datum (b2-node-at-path mixed-node-right '(2 1))))
+(check-equal? mixed-projected-left mixed-projected-right)
+(check-equal?
+ mixed-projected-left
+ '(∧ (= $alpha0 $alpha0)
+     (∃ (λ (($alpha1 Entity)) (= $alpha1 $alpha1)))))
+
+(define mixed-free-condition-left
+  '(λ (($z Entity))
+     (Presuppose
+      (∧ (= $z $alpha0)
+         (∃ (λ (($x Entity)) (= $x $x))))
+      ⊤)))
+(define mixed-free-condition-right
+  '(λ (($q Entity))
+     (Presuppose
+      (∧ (= $q $alpha0)
+         (∃ (λ (($a Entity)) (= $a $a))))
+      ⊤)))
+(define-values (mixed-free-node-left _mixed-free-count-left)
+  (b2-compile-term mixed-free-condition-left))
+(define-values (mixed-free-node-right _mixed-free-count-right)
+  (b2-compile-term mixed-free-condition-right))
+(define mixed-free-projected-left
+  (b2-node->alpha-datum
+   (b2-node-at-path mixed-free-node-left '(2 1))))
+(define mixed-free-projected-right
+  (b2-node->alpha-datum
+   (b2-node-at-path mixed-free-node-right '(2 1))))
+(check-equal? mixed-free-projected-left mixed-free-projected-right)
+(check-equal?
+ mixed-free-projected-left
+ '(∧ (= $alpha1 $alpha0)
+     (∃ (λ (($alpha2 Entity)) (= $alpha2 $alpha2)))))
+
 ;; Shadowing is preserved by opaque environment snapshots and extension.
 (define shadow-env
   (b2-compile-env '(($x Entity) ($x Natural) ($free Entity))))
