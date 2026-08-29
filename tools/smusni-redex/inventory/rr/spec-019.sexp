@@ -5,4 +5,3 @@
     (attach ()) (readings (zip))       ; L5.21
     (rows (tavla))                    ; L1.1, L5.21
     (stores ()) (sites ()) (anaphora ()) (force ()))))
-)

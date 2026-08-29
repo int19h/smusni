@@ -35,6 +35,7 @@
          display-normalize
          load-lowering-manifest
          load-parse-fixture
+         read-exactly-one-datum
          load-rr-fixture
          validate-lowering-fixtures!
          refresh-parses!
@@ -1087,11 +1088,24 @@
            source ordinal index (sort unknown symbol<?)))
   (make-immutable-hash (hash->list fields)))
 
+(define (read-exactly-one-datum input source)
+  (define datum (read input))
+  (define trailing (read input))
+  (unless (eof-object? trailing)
+    (error 'read-exactly-one-datum
+           "trailing datum after root in ~a: ~e" source trailing))
+  datum)
+
 (define (load-rr-fixture candidate [_inv (load-inventory)])
   (define path (candidate-rr-path candidate))
   (unless (file-exists? path)
     (error 'load-rr-fixture "missing RR fixture ~a" path))
-  (match (call-with-input-file path read)
+  (define fixture-datum
+    (call-with-input-file
+     path
+     (lambda (input)
+       (read-exactly-one-datum input path))))
+  (match fixture-datum
     [`(smusni-rr-fixture 1
         (fence ,(? string? source) ,(? exact-positive-integer? ordinal)
                ,(? string? digest))

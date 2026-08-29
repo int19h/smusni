@@ -5,4 +5,3 @@
     (attach ()) (readings ())
     (rows (klama))                    ; L1.1
     (stores ()) (sites ()) (anaphora ()) (force ()))))
-)

@@ -78,6 +78,8 @@ SPEC_DEFINED = {
 }
 
 SPEC_DATA = {
+    "$index",
+    "$variable",
     "BasisKind",
     "ClauseContent",
     "Content",

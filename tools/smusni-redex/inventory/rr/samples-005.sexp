@@ -6,4 +6,3 @@
     (rows (klama))                        ; L1.4
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

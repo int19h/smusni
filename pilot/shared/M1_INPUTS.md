@@ -22,7 +22,7 @@ Every row has exactly one of the five brief-prescribed dispositions:
 |---|---:|
 | `primitive-core` | 119 |
 | `defined-surface` | 84 |
-| `type-index-data` | 68 |
+| `type-index-data` | 70 |
 | `gap-prose-only` | 6 |
 | `tool-only` | 5 |
 
@@ -59,3 +59,8 @@ python3 pilot/shared/build_m1_s1_manifest.py
 gentufa parse, corpus, and manifest records remain typed records; they are not
 misrepresented as terms. No corpus term is embedded as a Lean literal by
 these input builders.
+
+The manifest's `base_head` is the semantic selection snapshot. Its per-file
+digests include the M1 syntax-only normalization that removes one previously
+ignored trailing `)` from 28 RR fixtures; the manifest records that delta
+explicitly. The parsed RR datum in every corrected file is unchanged.

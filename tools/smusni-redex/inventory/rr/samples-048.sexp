@@ -8,4 +8,3 @@
     (sites ((threshold many (deps ()))))  ; L5.28
     (anaphora ())
     (force (assert)))))                   ; L1.2
-)

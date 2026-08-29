@@ -7797,16 +7797,16 @@
   ],
   "counts": {
     "l5_30_cases": 2,
-    "out-of-slice": 0,
-    "pending-milestone-2": 269,
-    "primitive-core": 68,
+    "out_of_slice": 0,
+    "pending_milestone_2": 269,
+    "primitive_core": 68,
     "skeleton_probe_records": 2,
     "total_cases": 337,
     "typed_records": 60
   },
   "schema": "smusni-pilot-s1",
   "sources": {
-    "constructor_matrix_sha256": "83db48da2409ddca17fd2995bdbb4025347afad7ee07cbf84e3957ed51ea60b6",
+    "constructor_matrix_sha256": "eb7f6cca4dc4b9421dad7242f18fd52c327c8eed32de5f7d695dfc60fa841f57",
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
     "fixtures_sha256": "67fc96ea02b1d8a6f40b9933983ca7785d69a88da5712b2db29baf9dc21ddb98",
     "inventory_hashes": [
@@ -7814,7 +7814,8 @@
       "b17425cef314392641e64df823b08b90ac382fff"
     ],
     "port_corpus": "tools/smusni-redex/inventory/port-corpus.sexp",
-    "port_corpus_sha256": "905917116248e7d28534b85a7c1feeb5ae69083c6e2a11af00dddb9ea0c2d153"
+    "port_corpus_sha256": "9247f2891b02603869efd128f23b6c0fbc6422b64a06197573dfb8c7420c9ae4",
+    "rr_syntax_normalization": "28 fixtures remove one ignored trailing ')' relative to base_head"
   },
   "typed_records": [
     {
@@ -7825,142 +7826,142 @@
     {
       "path": "tools/smusni-redex/inventory/rr/samples-003.sexp",
       "schema": "RRFixture",
-      "sha256": "dfa31fda62bfbe87500fb592c308b23f25447dd64165b2c726a8b8053fdadb78"
+      "sha256": "3af781087d59f7648e9cd0eb9d2d046a171112b9aa1b681f0fd3e2e1a3c2607a"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-004.sexp",
       "schema": "RRFixture",
-      "sha256": "994e5a7e1d5d05f848e7195039357089d39dfe71dff96ff5bfed85ea1277e516"
+      "sha256": "2421bd44959e2e6a290fd62e43efdecf8ed2adcc132a9218deae4a16c9a6ffc5"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-005.sexp",
       "schema": "RRFixture",
-      "sha256": "4f537ce358db40154115b4d463b4b232863c6c3a51b6be4af66100c06d2bc57f"
+      "sha256": "e3c4906c7ae249d94de403f6c1eee6828b49e4f88f9202709e538a916661fcc8"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-016.sexp",
       "schema": "RRFixture",
-      "sha256": "15c0553f8e3d8b7f7af11f95513f7f96a7301d805688103d9f69987303d95df2"
+      "sha256": "a7eff82c5054416c851b6dd16d486249b801cab7e9d63f35025964ad9901c552"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-017.sexp",
       "schema": "RRFixture",
-      "sha256": "cc145ada9ca5a925d7a4de0ffe5949225b9f39dc7523d5d7c53919193a41eca7"
+      "sha256": "92ee399e6da6dbaf37c53cf521a505d7791a93f601dcbb6a7d90159a7d596215"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-019.sexp",
       "schema": "RRFixture",
-      "sha256": "404aac4d00253d3042bc91ef632c3dc5741795c4a8532ff27c332e48d5535329"
+      "sha256": "519f71ebca22683bd8a06052ec94446f5168d3eafbac15194b34a95bf4d9ca2c"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-021.sexp",
       "schema": "RRFixture",
-      "sha256": "852b640c6441422ef43cf372b819c7f8361ed2b0dcd6fa3779ac2010bdb4e8f8"
+      "sha256": "e6bb1465b46e1ee4986f8a6e40d6205aaf84c7d42dd2b7f3607b99fa3b5e0be4"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-022.sexp",
       "schema": "RRFixture",
-      "sha256": "fe84e5d4a40d1484cc250ddb3ae2986350eefe960b018c4d413c6d4231edd263"
+      "sha256": "bb854611b3ced464d521c9660e15409ee0ce1b0cb70d416e12d43db6fff7e5f8"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-023.sexp",
       "schema": "RRFixture",
-      "sha256": "34926490bfc750497b5b8b72bdb0d3068d94d8da984b363d7097b3f9a137e52a"
+      "sha256": "d43211db5ab7f5c6113ad37628090f66bb3caa9ed8a252ded53f11c4b4b4e275"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-027.sexp",
       "schema": "RRFixture",
-      "sha256": "9b684a3c88608dde2af71bc8c25dd8dcb5713be2ae649b149c4fa0c5c70b3396"
+      "sha256": "6267dd57901adb6599badbbc3676da31a5919fac5f3ba854b2ec6391cf5f11bf"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-030.sexp",
       "schema": "RRFixture",
-      "sha256": "6c826a2927b765838cfff42124a99f2857e1d0f4e95cd30ec58ad1f0b9e83d92"
+      "sha256": "3c799cd871f54c75b2a1a4c3047309179f55a6f66d8ad99983b941277a45c300"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-034.sexp",
       "schema": "RRFixture",
-      "sha256": "b3974ea6f8b8f21e5be263571a018193866f1f508beaf731c68228f3a392e211"
+      "sha256": "3673dc9b3861cbe2e94a32bff019c5f65461ebca9bf358d20eb14082c43030d2"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-036.sexp",
       "schema": "RRFixture",
-      "sha256": "bdf2ad0ae076e3351d3f7a90278b2c8dd0e854f384cd9ef48771f3b9914d0fe8"
+      "sha256": "ba75299b53fd1a130e18fb295324918d31997a2f6814e09789eb2f9d7c2b5b3e"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-044.sexp",
       "schema": "RRFixture",
-      "sha256": "bdee060195fa02cf49d4e0d3079075cd6f0f96b031d886c16da4c289bbf0c859"
+      "sha256": "e731f400a1e66df4238c06d68d5bea3f253a25628d4f9522f401be38b99cdabe"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-045.sexp",
       "schema": "RRFixture",
-      "sha256": "456cd4f4bd562dc399671f71a56a1b22aee7e6b4f5e59681eb38a8504e13c0bc"
+      "sha256": "ecc5b740d09e15f5b101979fc8999c9a6ca2d300aa986f08f2d7909b971f285c"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-046.sexp",
       "schema": "RRFixture",
-      "sha256": "5fc744fcfdab462b31afd9b7d23e13528983d9c86d75f98269f62bc341333f00"
+      "sha256": "098b9dc04e6b525d1d4b344e12150c9e3fa0a798a04dfc2edf45a78b89ca99ca"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-048.sexp",
       "schema": "RRFixture",
-      "sha256": "d3cc98c0cf185aa554158c251bc2053e23fc6cb00fe2a5eba2abf0b8827d9a20"
+      "sha256": "b993ade5e054e6ccbb3760bcc4ef633a3393fb4b028e8ebd5947a4418c5d1a7a"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-058.sexp",
       "schema": "RRFixture",
-      "sha256": "f2dcad4d4beaee4a64d907fcd82983d49657e1d28d9c15c73e50c593cdb3e6c2"
+      "sha256": "870028b7286ad5244fd94ffcde9fa8df7c1587a32075335697cb3c373493075a"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-059.sexp",
       "schema": "RRFixture",
-      "sha256": "a2220a065cce93d0b9c996ec31a96bfce6b610dfb376cccb6c4b58dd39a27b55"
+      "sha256": "d47e251ce7365efd1225863708b8fc1aaa5e5cb2fad87a4ed7587547dc20f62b"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-063.sexp",
       "schema": "RRFixture",
-      "sha256": "fd99479160d3856eb2df76c56490da41f2978d78e64c971d07d287045d2916b7"
+      "sha256": "c0d5a0b90e6491fe9c0786b6566b348aba9510d0ace67b2832e059b67c12eaab"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-071.sexp",
       "schema": "RRFixture",
-      "sha256": "34be4ce0d239a1d3baacd2f4b4566f8a0b2ed3df0053e8786f36b17ae0b4c16d"
+      "sha256": "ee6cf629024740678eb320348c49752f7fe260e4ad667d701c49356492a017ff"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/samples-072.sexp",
       "schema": "RRFixture",
-      "sha256": "04af3109c14205912a3e38466c233a193f4b3b8f85b195675b1a8c94392b8816"
+      "sha256": "c963087d17c1145789c7d1b8f329ddd8003683b9155838fe2a29fa3743363195"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-001.sexp",
       "schema": "RRFixture",
-      "sha256": "eb5086f7115409014b69e10dcd8b2633565afeb640ebb302c3e584d4af1a30ee"
+      "sha256": "a6a528c35c4737a8c150c9074cf4d0d02c01594704a964fb57c174258df2d85a"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-002.sexp",
       "schema": "RRFixture",
-      "sha256": "93a625d9c6ca35d3fbd6f11c6932940abcea215c869b0059bb0e94976421cd4c"
+      "sha256": "148e19d34d13d0283836f312850b288888f0b25c49c7cd446edec10e3412bd89"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-004.sexp",
       "schema": "RRFixture",
-      "sha256": "468ab8a4e8ae3f83d7eaaeb8ef48a6f8114f130e5284d3796babcdf39f024b19"
+      "sha256": "18bf24222f41b95b54ab01a35c0754d20a96446a91ac4268fb742c6779a8088e"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-009.sexp",
       "schema": "RRFixture",
-      "sha256": "c52ffd24e6788001b8c554b0bb948421b4992c94fe00884666e69d3c8cc69567"
+      "sha256": "53c0c74d74332ff3f74d8f055026b694f05e5b5d7405b95e3a087a658c552d22"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-010.sexp",
       "schema": "RRFixture",
-      "sha256": "f73ea5f2835b8440e9c06ae3de6f2d64def7ddeff8350b5ca9ff023e677b265e"
+      "sha256": "5f102c8831d62bff50539c627e39bd07a8ebf17b7051664c63b50b3b7d7948d3"
     },
     {
       "path": "tools/smusni-redex/inventory/rr/spec-019.sexp",
       "schema": "RRFixture",
-      "sha256": "4fcf28089e5dc876a48b2693e0830817e873139e810dd53470c0458d527d3987"
+      "sha256": "2b8ad71cb0111111120f81c357b8e2e29fd34b64504f483053c100b895155488"
     },
     {
       "path": "tools/smusni-redex/inventory/parses/in-place-probes.json",

@@ -6,4 +6,3 @@
     (rows (gerku selcmi))                 ; L3.5, L3.6
     (stores ()) (sites ()) (anaphora ())
     (force (mention)))))                  ; utterance consumer
-)

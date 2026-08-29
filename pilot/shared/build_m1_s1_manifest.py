@@ -200,9 +200,13 @@ def build() -> dict[str, Any]:
                 ROOT / "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv"
             ),
             "inventory_hashes": sorted(inventory_hashes),
+            "rr_syntax_normalization":
+                "28 fixtures remove one ignored trailing ')' relative to base_head",
         },
         "counts": {
-            **counts,
+            "primitive_core": counts["primitive-core"],
+            "pending_milestone_2": counts["pending-milestone-2"],
+            "out_of_slice": counts["out-of-slice"],
             "total_cases": len(cases),
             "l5_30_cases": l530_count,
             "typed_records": len(records),

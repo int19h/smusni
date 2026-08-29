@@ -6,4 +6,3 @@
     (rows (gerku blabi))                  ; L1.1, L5.1
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

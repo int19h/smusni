@@ -20,4 +20,3 @@
     (rows ()) (stores ())
     (sites ((relation cohe (deps ()))))   ; L1.8
     (anaphora ()) (force (assert)))))     ; L1.2
-)

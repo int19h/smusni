@@ -192,7 +192,7 @@
   ("tools/smusni-redex/tests/extract-syntax-test.rkt"
    "0a25962f2a543ada90fc37f608f2e0dbcc2c9b80")
   ("tools/smusni-redex/tests/lower-test.rkt"
-   "9f6b7264ea533a7ba22f8257b4cc5f7b125ce9df")
+   "0f87d1012ebbde4aadf61002fb5f77cd0142c95f")
   ("tools/smusni-redex/tests/models-test.rkt"
    "d00c8deab0592b0056fcfd0f6ba0f5e81eeb559e")
   ("tools/smusni-redex/tests/rules-test.rkt"

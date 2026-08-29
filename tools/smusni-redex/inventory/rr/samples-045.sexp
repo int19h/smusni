@@ -6,4 +6,3 @@
     (rows (prenu jmaji))                  ; L1.1, L3.10
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

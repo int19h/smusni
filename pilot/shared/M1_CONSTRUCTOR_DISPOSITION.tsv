@@ -270,6 +270,8 @@ type-form:RowOf	type-index-data	core	spec §2, §3.3
 type-form:Set	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1, §4.9
 type-form:Sign	type-index-data	core	spec §3.1
 type-form:SignToken	type-index-data	core	spec §3.1
+type:$index	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:$variable	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
 type:BasisKind	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
 type:ClauseContent	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5
 type:Content	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5

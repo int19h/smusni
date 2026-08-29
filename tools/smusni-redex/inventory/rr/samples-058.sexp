@@ -8,4 +8,3 @@
     (sites ((tanru-link sutra-klama (deps ())))) ; L1.10
     (anaphora ())
     (force (assert)))))                   ; L1.2
-)
