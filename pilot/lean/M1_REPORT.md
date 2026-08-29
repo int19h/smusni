@@ -233,10 +233,10 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.69 s wall, 30.58 s user, 4.25 s system,
-  1,699,300 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.35 s wall, 0.11 s user, 0.16 s system,
-  133,152 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.31 s wall, 29.73 s user, 3.90 s system,
+  1,703,636 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.35 s wall, 0.12 s user, 0.16 s system,
+  133,292 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
