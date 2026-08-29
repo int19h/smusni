@@ -566,20 +566,27 @@ and asks an accessor for only the current node's immediate shape. The raw
 The compiler is a general opacity-aware datum traversal, not a case table. It
 creates distinct nodes for equal source occurrences, preserves paths and exact
 `datum → node → datum` round trips, and treats `Quote`/`Syntax` as one opaque
-node. Environment tests cover shadowing; targeted term tests cover multi-lambda,
-`Let`, sequential `Bind`, alpha/free-alpha collisions, equal subtrees, and both
-opaque heads. All 84 A0/B1 differential inputs and 160 deterministic generated
-terms round-trip exactly.
+node. Lambda, `Let`, and sequential `Bind` declarations receive opaque binder
+identities; every bound variable node links to its declaration identity, and
+the internal environment can extend/lookup by that identity while raw
+projection erases it. An identity-driven alpha projection reserves genuine
+free `$alphaN` names and names binder groups in scope-exit order. Environment
+tests cover shadowing; targeted term tests cover multi-lambda, `Let`, sequential
+`Bind`, alpha/free-alpha collisions, equal subtrees, and both opaque heads. All
+84 A0/B1 differential inputs and 160 deterministic generated terms round-trip
+exactly.
 
 The accepted R1–R4/K1/C1–C4 gates are executable:
 
 - five fresh Racket worker processes run the Redex identity-path microbenchmark;
   each varies both descendant count and environment depth at 16/32/64, with a
   1.5× max/min ceiling and a 10% material-slope noise boundary;
-- four unique rule descriptors map accessor shapes to raw productions, with
-  missing/duplicate/stale mutations;
-- a recursive leak gate rejects opaque node/environment sentinels in records,
-  proofs, lowerings, manifests, vectors, boxes, and hashes;
+- one macro invocation emits each executable rule and its accessor-shape/raw-
+  production descriptor; that accessor token also executes the rule's root
+  match. Missing/duplicate/stale descriptor mutations fail;
+- a fail-closed recursive leak gate rejects opaque node/environment/binder
+  sentinels, unknown opaque wrappers, and procedures, as well as identities in
+  records, proofs, lowerings, manifests, vectors, boxes, and hashes;
 - caching on/off produces identical records, derivation counts, and complete
   projected raw proof statements for the slice, all 84 A0/B1 inputs, and every
   generated success/failure; a test-only two-rule relation proves multiple
@@ -588,10 +595,15 @@ The accepted R1–R4/K1/C1–C4 gates are executable:
   environment compilation per salted query, and reports compile time and exact
   opacity-aware occurrence count.
 
-The tracked literal measurement is R1 per-call 0.012564/0.012403/0.012556 ms
-(max/min 1.013×, pass). Public compile+judge at 16/32/64 is
-1.338/3.365/11.041 ms, including compile 0.077/0.111/0.281 ms, with node counts
-97/193/385 and doubling ratios 2.515×/3.281× (both below the 4× hard stop).
+The corrected tracked literal measurement is R1 per-call
+0.012896/0.012520/0.013352 ms (max/min 1.066×, pass). Public compile+judge at
+16/32/64 is 1.448/4.027/11.760 ms, including compile
+0.068/0.136/0.365 ms, with node counts 97/193/385 and doubling ratios
+2.781×/2.921× (both below the 4× hard stop). The report-only 32/64/128 point is
+3.398/10.212/36.646 ms total, compile 0.158/0.335/0.978 ms, judge
+3.239/9.875/35.666 ms, node counts 193/385/769, ratios 3.005×/3.589×; copied
+list paths remain a full-migration review item rather than a hidden claim of
+asymptotic completion.
 Cache capacity controls at 256 and 4096 remained above 5×, while disabling
 caching worsened the second ratio to 6.340×; capacity tuning is therefore not
 the mechanism.

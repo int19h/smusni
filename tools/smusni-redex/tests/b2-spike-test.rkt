@@ -25,6 +25,7 @@
     (cache-controls ,_ ...)
     (identity-micro ,_ ... (result pass))
     (public-compile-and-judge ,_ ... (result pass))
+    (report-only-depth128 ,_ ...)
     (disposition ,(? string?))))
 
 ;; C3: direct lexical/occurrence coverage beyond the current generator's
@@ -46,6 +47,102 @@
 
 (for ([datum (in-list targeted-terms)])
   (check-round-trip datum))
+
+;; C3 correction: binder declarations and variable occurrences share resolved
+;; opaque identity. Projection erases it; alpha projection uses it to avoid raw
+;; `$alphaN` collisions independently of source binder spelling.
+(define-values (lambda-root _lambda-count)
+  (check-round-trip '(λ (($x Entity)) (= $x $x))))
+(define lambda-binding-node (b2-node-at-path lambda-root '(1 0 0)))
+(define lambda-left-ref (b2-node-at-path lambda-root '(2 1)))
+(define lambda-right-ref (b2-node-at-path lambda-root '(2 2)))
+(check-true (b2-binding? (b2-node-binding lambda-binding-node)))
+(check-true (eq? (b2-node-binding lambda-binding-node)
+                 (b2-node-binding lambda-left-ref)))
+(check-true (eq? (b2-node-binding lambda-left-ref)
+                 (b2-node-binding lambda-right-ref)))
+(define resolved-lambda-env
+  (b2-env-extend-binding (b2-compile-env '())
+                         (b2-node-binding lambda-binding-node) 'Entity))
+(check-equal? (b2-env-lookup-node resolved-lambda-env lambda-left-ref)
+              'Entity)
+(define-values (free-variable-node _free-variable-count)
+  (b2-compile-term '$free))
+(check-false (b2-node-binding free-variable-node))
+(check-equal?
+ (b2-env-lookup-node (b2-compile-env '(($free Entity))) free-variable-node)
+ 'Entity)
+
+(define-values (nested-shadow-root _nested-shadow-count)
+  (check-round-trip
+   '(λ (($x Entity)) (λ (($x Entity)) (= $x $x)))))
+(define outer-shadow-binding
+  (b2-node-binding (b2-node-at-path nested-shadow-root '(1 0 0))))
+(define inner-shadow-binding
+  (b2-node-binding (b2-node-at-path nested-shadow-root '(2 1 0 0))))
+(define inner-shadow-ref
+  (b2-node-binding (b2-node-at-path nested-shadow-root '(2 2 1))))
+(check-false (eq? outer-shadow-binding inner-shadow-binding))
+(check-true (eq? inner-shadow-binding inner-shadow-ref))
+
+(define-values (let-scope-root _let-scope-count)
+  (check-round-trip
+   '(λ (($x Entity))
+      (Let ($x Entity) $x (= $x $x)))))
+(define let-outer-binding
+  (b2-node-binding (b2-node-at-path let-scope-root '(1 0 0))))
+(define let-inner-binding
+  (b2-node-binding (b2-node-at-path let-scope-root '(2 1 0))))
+(check-true
+ (eq? let-outer-binding
+      (b2-node-binding (b2-node-at-path let-scope-root '(2 2)))))
+(check-true
+ (eq? let-inner-binding
+      (b2-node-binding (b2-node-at-path let-scope-root '(2 3 1)))))
+
+(define-values (bind-scope-root _bind-scope-count)
+  (check-round-trip
+   '(Bind (($x (Referents Entity) (Context))
+           ($y (Referents Entity) (Context $x)))
+      (Among $x $y))))
+(define bind-x
+  (b2-node-binding (b2-node-at-path bind-scope-root '(1 0 0))))
+(define bind-y
+  (b2-node-binding (b2-node-at-path bind-scope-root '(1 1 0))))
+(check-true
+ (eq? bind-x
+      (b2-node-binding (b2-node-at-path bind-scope-root '(1 1 2 1)))))
+(check-true
+ (eq? bind-x
+      (b2-node-binding (b2-node-at-path bind-scope-root '(2 1)))))
+(check-true
+ (eq? bind-y
+      (b2-node-binding (b2-node-at-path bind-scope-root '(2 2)))))
+
+(define alpha-source-left
+  '(λ (($alpha0 Entity))
+     (λ (($x Entity))
+       (Presuppose (= $alpha0 $x) ⊤))))
+(define alpha-source-right
+  '(λ (($y Entity))
+     (λ (($x Entity))
+       (Presuppose (= $y $x) ⊤))))
+(define-values (alpha-node-left _alpha-count-left)
+  (b2-compile-term alpha-source-left))
+(define-values (alpha-node-right _alpha-count-right)
+  (b2-compile-term alpha-source-right))
+(check-equal? (b2-node->alpha-datum alpha-node-left)
+              (b2-node->alpha-datum alpha-node-right))
+(check-equal?
+ (b2-node->alpha-datum alpha-node-left)
+ '(λ (($alpha1 Entity))
+    (λ (($alpha0 Entity))
+      (Presuppose (= $alpha1 $alpha0) ⊤))))
+(define-values (free-alpha-node _free-alpha-count)
+  (b2-compile-term '(λ (($x Entity)) (= $x $alpha0))))
+(check-equal?
+ (b2-node->alpha-datum free-alpha-node)
+ '(λ (($alpha1 Entity)) (= $alpha1 $alpha0)))
 
 ;; Shadowing is preserved by opaque environment snapshots and extension.
 (define shadow-env
@@ -87,6 +184,25 @@
 
 ;; R2 descriptors are complete, one-to-one, and mutation-sensitive.
 (check-equal? (b2-descriptor-findings) '())
+(define descriptor-env (b2-compile-env '()))
+(define-values (descriptor-natural _descriptor-natural-count)
+  (b2-compile-term 1))
+(define-values (descriptor-top _descriptor-top-count)
+  (b2-compile-term '⊤))
+(define-values (descriptor-let _descriptor-let-count)
+  (b2-compile-term '(Let ($x Natural) 1 ⊤)))
+(check-true (b2-rule-input-matches? 'node:any
+                                    descriptor-env descriptor-natural))
+(check-true (b2-rule-input-matches? 'node:atom-natural
+                                    descriptor-env descriptor-natural))
+(check-false (b2-rule-input-matches? 'node:atom-natural
+                                     descriptor-env descriptor-top))
+(check-true (b2-rule-input-matches? 'node:atom-top
+                                    descriptor-env descriptor-top))
+(check-true (b2-rule-input-matches? 'node:list-let
+                                    descriptor-env descriptor-let))
+(check-false (b2-rule-input-matches? 'node:list-let
+                                     descriptor-env descriptor-natural))
 (check-not-equal? (b2-descriptor-findings (rest b2-rule-descriptors)) '())
 (check-not-equal?
  (b2-descriptor-findings
@@ -113,6 +229,11 @@
 (check-false
  (b2-execution-identity-free?
   (b2-proof `(a0-type synth () ⊤ ,sentinel-node) "sentinel" '())))
+(struct opaque-wrapper (value))
+(check-false
+ (b2-execution-identity-free? (opaque-wrapper sentinel-node)))
+(check-false
+ (b2-execution-identity-free? (lambda () sentinel-node)))
 (check-exn exn:fail?
            (lambda ()
              (b2-assert-no-execution-identities

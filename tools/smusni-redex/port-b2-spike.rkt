@@ -5,6 +5,7 @@
          racket/port
          racket/runtime-path
          racket/set
+         racket/string
          racket/system
          redex/reduction-semantics
          "port-a0.rkt")
@@ -12,6 +13,8 @@
 (provide SmusniB2Spike
          (struct-out b2-node)
          (struct-out b2-env)
+         (struct-out b2-binding-group)
+         (struct-out b2-binding)
          (struct-out b2-proof)
          (struct-out b2-spike-run)
          (struct-out b2-identity-micro)
@@ -22,13 +25,18 @@
          b2-identity-probe
          b2-compile-term
          b2-node->datum
+         b2-node->alpha-datum
          b2-node-at-path
          b2-raw-occurrence-count
          b2-compile-env
          b2-env->datum
          b2-env-extend
+         b2-env-extend-binding
          b2-env-lookup
+         b2-env-lookup-binding
+         b2-env-lookup-node
          b2-node-head
+         b2-rule-input-matches?
          b2-rule-descriptors
          b2-descriptor-findings
          b2-execution-identity-free?
@@ -48,8 +56,11 @@
 ;; without traversing descendants or environment bindings. They are an
 ;; execution representation only; b2-node->datum and b2-env->datum are the
 ;; sole projection boundary back to semantic data.
-(struct b2-node (kind atom children path value-form? expected-only?))
-(struct b2-env (bindings))
+(struct b2-binding-group (ordinal))
+(struct b2-binding (scope-group position source-symbol))
+(struct b2-node
+  (kind atom children path value-form? expected-only? binding))
+(struct b2-env (bindings resolved-bindings))
 
 (struct b2-proof (statement name subs) #:transparent)
 (struct b2-spike-run
@@ -106,28 +117,148 @@
      (b2-node-expected-only? (third children))]
     [else #f]))
 
-(define (compile-datum datum path)
+(define (fresh-binding-group! next-group)
+  (define group (b2-binding-group (unbox next-group)))
+  (set-box! next-group (add1 (unbox next-group)))
+  group)
+
+(define (scope-binding scope datum)
+  (and (symbol? datum)
+       (match (assoc datum scope)
+         [(cons _ binding) binding]
+         [_ #f])))
+
+(define (compile-atom datum path scope [binding #f])
+  ;; Every atomic term in the closed grammar is a value. Atomic metadata is
+  ;; compiled by the same generic datum traversal but is never independently
+  ;; submitted to the typing judgment.
+  (values (b2-node 'atom datum '() path #t #f
+                   (or binding (scope-binding scope datum)))
+          1))
+
+(define (make-list-node children path)
+  (b2-node 'list #f children path
+           (list-node-value-form? children)
+           (list-node-expected-only? children)
+           #f))
+
+(define (compile-sequence datums path scope next-group)
+  (define-values (reversed count)
+    (for/fold ([compiled '()] [count 0])
+              ([value (in-list datums)] [index (in-naturals)])
+      (define-values (node node-count)
+        (compile-datum value (append path (list index)) scope next-group))
+      (values (cons node compiled) (+ count node-count))))
+  (values (reverse reversed) count))
+
+(define (compile-binder-list binders path scope next-group)
+  (define group (fresh-binding-group! next-group))
+  (define bindings
+    (for/list ([binder (in-list binders)] [position (in-naturals)])
+      (match binder
+        [(list (? symbol? variable) _)
+         (b2-binding group position variable)])))
+  (define-values (entries-reversed entry-count)
+    (for/fold ([entries '()] [count 0])
+              ([binder (in-list binders)]
+               [binding (in-list bindings)]
+               [index (in-naturals)])
+      (match-define (list variable type) binder)
+      (define entry-path (append path (list index)))
+      (define-values (variable-node variable-count)
+        (compile-atom variable (append entry-path '(0)) scope binding))
+      (define-values (type-node type-count)
+        (compile-datum type (append entry-path '(1)) scope next-group))
+      (values
+       (cons (make-list-node (list variable-node type-node) entry-path)
+             entries)
+       (+ count 1 variable-count type-count))))
+  (values (make-list-node (reverse entries-reversed) path)
+          (add1 entry-count)
+          (map cons (map first binders) bindings)))
+
+(define (compile-lambda datum path scope next-group)
+  (match-define `(λ ,binders ,body) datum)
+  (define-values (head head-count)
+    (compile-atom 'λ (append path '(0)) scope))
+  (define-values (binder-node binder-count new-bindings)
+    (compile-binder-list binders (append path '(1)) scope next-group))
+  (define body-scope (append new-bindings scope))
+  (define-values (body-node body-count)
+    (compile-datum body (append path '(2)) body-scope next-group))
+  (values (make-list-node (list head binder-node body-node) path)
+          (+ 1 head-count binder-count body-count)))
+
+(define (compile-let datum path scope next-group)
+  (match-define `(Let (,variable ,type) ,active ,body) datum)
+  (define group (fresh-binding-group! next-group))
+  (define binding (b2-binding group 0 variable))
+  (define-values (head head-count)
+    (compile-atom 'Let (append path '(0)) scope))
+  (define binder-path (append path '(1)))
+  (define-values (variable-node variable-count)
+    (compile-atom variable (append binder-path '(0)) scope binding))
+  (define-values (type-node type-count)
+    (compile-datum type (append binder-path '(1)) scope next-group))
+  (define binder-node
+    (make-list-node (list variable-node type-node) binder-path))
+  (define-values (active-node active-count)
+    (compile-datum active (append path '(2)) scope next-group))
+  (define-values (body-node body-count)
+    (compile-datum body (append path '(3))
+                   (cons (cons variable binding) scope) next-group))
+  (values (make-list-node
+           (list head binder-node active-node body-node) path)
+          (+ 2 head-count variable-count type-count
+             active-count body-count)))
+
+(define (compile-bind datum path scope next-group)
+  (match-define `(Bind ,bindings ,body) datum)
+  (define-values (head head-count)
+    (compile-atom 'Bind (append path '(0)) scope))
+  (define bindings-path (append path '(1)))
+  (define-values (entries-reversed entry-count final-scope)
+    (for/fold ([entries '()] [count 0] [current-scope scope])
+              ([binder (in-list bindings)] [index (in-naturals)])
+      (match-define (list variable type computation) binder)
+      (define group (fresh-binding-group! next-group))
+      (define binding (b2-binding group 0 variable))
+      (define entry-path (append bindings-path (list index)))
+      (define-values (variable-node variable-count)
+        (compile-atom variable (append entry-path '(0)) current-scope binding))
+      (define-values (type-node type-count)
+        (compile-datum type (append entry-path '(1)) current-scope next-group))
+      (define-values (computation-node computation-count)
+        (compile-datum computation (append entry-path '(2))
+                       current-scope next-group))
+      (values
+       (cons (make-list-node
+              (list variable-node type-node computation-node) entry-path)
+             entries)
+       (+ count 1 variable-count type-count computation-count)
+       (cons (cons variable binding) current-scope))))
+  (define bindings-node
+    (make-list-node (reverse entries-reversed) bindings-path))
+  (define-values (body-node body-count)
+    (compile-datum body (append path '(2)) final-scope next-group))
+  (values (make-list-node (list head bindings-node body-node) path)
+          (+ 2 head-count entry-count body-count)))
+
+(define (compile-datum datum path scope next-group)
   (cond
     [(quoted-head? datum)
-     (values (b2-node 'opaque datum '() path #f #f) 1)]
+     (values (b2-node 'opaque datum '() path #f #f #f) 1)]
+    [(and (list? datum) (pair? datum) (eq? (first datum) 'λ))
+     (compile-lambda datum path scope next-group)]
+    [(and (list? datum) (pair? datum) (eq? (first datum) 'Let))
+     (compile-let datum path scope next-group)]
+    [(and (list? datum) (pair? datum) (eq? (first datum) 'Bind))
+     (compile-bind datum path scope next-group)]
     [(list? datum)
-     (define-values (children-reversed child-count)
-       (for/fold ([children '()] [count 0])
-                 ([child (in-list datum)] [index (in-naturals)])
-         (define-values (compiled child-nodes)
-           (compile-datum child (append path (list index))))
-         (values (cons compiled children) (+ count child-nodes))))
-     (define children (reverse children-reversed))
-     (values
-      (b2-node 'list #f children path
-               (list-node-value-form? children)
-               (list-node-expected-only? children))
-      (add1 child-count))]
-    [else
-     ;; Every atomic term in the closed grammar is a value. Atomic metadata is
-     ;; compiled by the same generic datum traversal but is never independently
-     ;; submitted to the typing judgment.
-     (values (b2-node 'atom datum '() path #t #f) 1)]))
+     (define-values (children child-count)
+       (compile-sequence datum path scope next-group))
+     (values (make-list-node children path) (add1 child-count))]
+    [else (compile-atom datum path scope)]))
 
 (define (b2-raw-occurrence-count datum)
   (cond
@@ -140,7 +271,7 @@
 (define (b2-compile-term datum)
   (unless (redex-match? SmusniA0 t datum)
     (raise-argument-error 'b2-compile-term "SmusniA0 term datum" datum))
-  (define-values (root count) (compile-datum datum '()))
+  (define-values (root count) (compile-datum datum '() '() (box 0)))
   (unless (= count (b2-raw-occurrence-count datum))
     (error 'b2-compile-term "node/occurrence count mismatch for ~e" datum))
   (values root count))
@@ -152,6 +283,64 @@
     [(atom opaque) (b2-node-atom node)]
     [(list) (map b2-node->datum (b2-node-children node))]
     [else (error 'b2-node->datum "unknown node kind: ~e" (b2-node-kind node))]))
+
+;; Project bound declarations/references through their resolved opaque identity.
+;; Groups are named in scope-exit order (inner groups first), while binders in
+;; one multi-lambda group retain source order. This matches the existing
+;; scope-record alpha policy and prevents raw/free $alphaN spellings from
+;; masquerading as a bound identity.
+(define (b2-node->alpha-datum node)
+  (unless (b2-node? node)
+    (raise-argument-error 'b2-node->alpha-datum "b2-node?" node))
+  (define bindings '())
+  (define free-symbols (mutable-set))
+  (define (collect current)
+    (unless (eq? (b2-node-kind current) 'opaque)
+      (define binding (b2-node-binding current))
+      (cond
+        [binding (set! bindings (cons binding bindings))]
+        [(and (eq? (b2-node-kind current) 'atom)
+              (symbol? (b2-node-atom current))
+              (string-prefix? (symbol->string (b2-node-atom current)) "$"))
+         (set-add! free-symbols (b2-node-atom current))])
+      (for ([child (in-list (b2-node-children current))])
+        (collect child))))
+  (collect node)
+  (define unique-bindings (remove-duplicates bindings eq?))
+  (define ordered-bindings
+    (sort unique-bindings
+          (lambda (left right)
+            (define left-group
+              (b2-binding-group-ordinal (b2-binding-scope-group left)))
+            (define right-group
+              (b2-binding-group-ordinal (b2-binding-scope-group right)))
+            (or (> left-group right-group)
+                (and (= left-group right-group)
+                     (< (b2-binding-position left)
+                        (b2-binding-position right)))))))
+  (define names (make-hasheq))
+  (define used (set-copy free-symbols))
+  (define counter 0)
+  (define (fresh-name)
+    (let loop ()
+      (define candidate (string->symbol (format "$alpha~a" counter)))
+      (set! counter (add1 counter))
+      (if (set-member? used candidate)
+          (loop)
+          (begin (set-add! used candidate) candidate))))
+  (for ([binding (in-list ordered-bindings)])
+    (hash-set! names binding (fresh-name)))
+  (define (project current)
+    (case (b2-node-kind current)
+      [(opaque) (b2-node-atom current)]
+      [(atom)
+       (define binding (b2-node-binding current))
+       (if binding (hash-ref names binding) (b2-node-atom current))]
+      [(list) (map project (b2-node-children current))]
+      [else
+       (error 'b2-node->alpha-datum
+              "unknown node kind: ~e" (b2-node-kind current))]))
+  (project node))
 
 (define (b2-node-at-path node path)
   (cond
@@ -170,7 +359,7 @@
   (unless (redex-match? SmusniA0 Γ environment)
     (raise-argument-error 'b2-compile-env "SmusniA0 environment datum"
                           environment))
-  (b2-env environment))
+  (b2-env environment '()))
 
 (define (b2-env->datum environment)
   (unless (b2-env? environment)
@@ -184,12 +373,39 @@
                        bindings))
     (raise-arguments-error 'b2-env-extend "invalid environment extension"
                            "environment" environment "bindings" bindings))
-  (b2-env (foldr cons (b2-env-bindings environment) bindings)))
+  (b2-env (foldr cons (b2-env-bindings environment) bindings)
+          (b2-env-resolved-bindings environment)))
+
+(define (b2-env-extend-binding environment binding type)
+  (unless (and (b2-env? environment) (b2-binding? binding))
+    (raise-arguments-error
+     'b2-env-extend-binding "invalid resolved binding extension"
+     "environment" environment "binding" binding))
+  (b2-env
+   (cons (list (b2-binding-source-symbol binding) type)
+         (b2-env-bindings environment))
+   (cons (cons binding type) (b2-env-resolved-bindings environment))))
 
 (define (b2-env-lookup environment variable)
   (match (assoc variable (b2-env-bindings environment))
     [(list _ type) type]
     [_ 'not-found]))
+
+(define (b2-env-lookup-binding environment binding)
+  (match (assq binding (b2-env-resolved-bindings environment))
+    [(cons _ type) type]
+    [_ 'not-found]))
+
+(define (b2-env-lookup-node environment node)
+  (unless (and (b2-env? environment)
+               (b2-node? node)
+               (eq? (b2-node-kind node) 'atom))
+    (raise-arguments-error 'b2-env-lookup-node "invalid variable lookup"
+                           "environment" environment "node" node))
+  (define binding (b2-node-binding node))
+  (if binding
+      (b2-env-lookup-binding environment binding)
+      (b2-env-lookup environment (b2-node-atom node))))
 
 (define (b2-let-shape node)
   (and (eq? (b2-node-head node) 'Let)
@@ -198,46 +414,87 @@
               [binder-datum (b2-node->datum (second children))])
          (match binder-datum
            [(list (? symbol? variable) type)
-            (list variable type (third children) (fourth children))]
+            (define binding
+              (b2-node-binding
+               (first (b2-node-children (second children)))))
+            (and binding
+                 (list variable type binding
+                       (third children) (fourth children)))]
            [_ #f]))))
 
 (define-extended-language SmusniB2Spike SmusniA0
   [N any]
   [E any])
 
-(define-judgment-form SmusniB2Spike
-  #:mode (b2-spike-type I I I O)
-  #:contract (b2-spike-type direction E N R)
+(define (b2-rule-input-matches? accessor environment node)
+  (and
+   (b2-env? environment)
+   (b2-node? node)
+   (case accessor
+     [(node:any) #t]
+     [(node:atom-natural)
+      (and (eq? (b2-node-kind node) 'atom)
+           (exact-nonnegative-integer? (b2-node-atom node)))]
+     [(node:atom-top) (node-atom=? node '⊤)]
+     [(node:list-let) (and (b2-let-shape node) #t)]
+     [else #f])))
 
-  [(side-condition
-    ,(and (b2-env? (term E))
-          (b2-node? (term N))
-          (node-atom=? (term N) (b2-node-atom (term N)))
-          (exact-nonnegative-integer? (b2-node-atom (term N)))))
-   ----------------------------------------------- "A0-T-Natural"
-   (b2-spike-type synth E N (typing Natural () ()))]
+(define-syntax-rule
+  (define-b2-spike-judgment
+    language name descriptor-name mode contract (environment-var node-var)
+    (rule rule-name accessor production (premise ...) conclusion) ...)
+  (begin
+    ;; The executable clause and its accessor/raw-production descriptor are one
+    ;; generating form. A code-side rule edit cannot leave a detached descriptor
+    ;; table green.
+    (define-judgment-form language
+      #:mode mode
+      #:contract contract
+      [(side-condition
+        ,(b2-rule-input-matches?
+          accessor (term environment-var) (term node-var)))
+       premise ...
+       ----------------------------------------------- rule-name
+       conclusion] ...)
+    (define descriptor-name
+      (list (b2-rule-descriptor rule-name accessor production) ...))))
 
-  [(side-condition
-    ,(and (b2-env? (term E)) (node-atom=? (term N) '⊤)))
-   ----------------------------------------------- "A0-T-Top"
-   (b2-spike-type synth E N (typing Content () ()))]
+(define-b2-spike-judgment
+  SmusniB2Spike b2-spike-type b2-spike-type-descriptors
+  (b2-spike-type I I I O)
+  (b2-spike-type direction E N R)
+  (E N)
 
-  [(side-condition ,(and (b2-env? (term E)) (b2-node? (term N))))
-   (where (x τ N_value N_body) ,(b2-let-shape (term N)))
-   (side-condition ,(b2-node-value-form? (term N_value)))
-   (b2-spike-type synth E N_value (typing τ_value () ()))
-   (side-condition ,(a0-compatible? (term τ_value) (term τ)))
-   (where E_body ,(b2-env-extend (term E) (list (list (term x) (term τ)))))
-   (b2-spike-type synth E_body N_body R_body)
-   ----------------------------------------------- "A0-T-Let"
-   (b2-spike-type synth E N R_body)])
+  (rule "A0-T-Natural" 'node:atom-natural
+        '(a0-type synth Γ n (typing Natural () ()))
+        ()
+        (b2-spike-type synth E N (typing Natural () ())))
 
-(define-judgment-form SmusniB2Spike
-  #:mode (b2-spike-synth I I O)
-  #:contract (b2-spike-synth E N R)
-  [(b2-spike-type synth E N R)
-   ----------------------------------------------- "A0-Synth"
-   (b2-spike-synth E N R)])
+  (rule "A0-T-Top" 'node:atom-top
+        '(a0-type synth Γ ⊤ (typing Content () ()))
+        ()
+        (b2-spike-type synth E N (typing Content () ())))
+
+  (rule "A0-T-Let" 'node:list-let
+        '(a0-type synth Γ (Let (x τ) t_value t_body) R_out)
+        ((where (x τ N_binding N_value N_body) ,(b2-let-shape (term N)))
+         (side-condition ,(b2-node-value-form? (term N_value)))
+         (b2-spike-type synth E N_value (typing τ_value () ()))
+         (side-condition ,(a0-compatible? (term τ_value) (term τ)))
+         (where E_body
+                ,(b2-env-extend-binding
+                  (term E) (term N_binding) (term τ)))
+         (b2-spike-type synth E_body N_body R_body))
+        (b2-spike-type synth E N R_body)))
+
+(define-b2-spike-judgment
+  SmusniB2Spike b2-spike-synth b2-spike-synth-descriptors
+  (b2-spike-synth I I O)
+  (b2-spike-synth E N R)
+  (E N)
+  (rule "A0-Synth" 'node:any '(a0-synth Γ t R)
+        ((b2-spike-type synth E N R))
+        (b2-spike-synth E N R)))
 
 ;; R1 exercises the exact Redex judgment input path with distinct opaque roots.
 (define-judgment-form SmusniB2Spike
@@ -248,18 +505,7 @@
    (b2-identity-probe E N)])
 
 (define b2-rule-descriptors
-  (list
-   (b2-rule-descriptor
-    "A0-Synth" 'node:any '(a0-synth Γ t R))
-   (b2-rule-descriptor
-    "A0-T-Natural" 'node:atom-natural
-    '(a0-type synth Γ n (typing Natural () ())))
-   (b2-rule-descriptor
-    "A0-T-Top" 'node:atom-top
-    '(a0-type synth Γ ⊤ (typing Content () ())))
-   (b2-rule-descriptor
-    "A0-T-Let" 'node:list-let
-    '(a0-type synth Γ (Let (x τ) t_value t_body) R_out))))
+  (append b2-spike-synth-descriptors b2-spike-type-descriptors))
 
 (define descriptor-production-by-accessor
   (for/hash ([descriptor (in-list b2-rule-descriptors)])
@@ -301,10 +547,17 @@
   (define seen (make-hasheq))
   (define (walk item)
     (cond
-      [(or (b2-node? item) (b2-env? item)) #f]
+      [(or (b2-node? item) (b2-env? item)
+           (b2-binding? item) (b2-binding-group? item))
+       #f]
       [(or (symbol? item) (number? item) (string? item) (boolean? item)
-           (char? item) (keyword? item) (null? item) (procedure? item))
+           (char? item) (keyword? item) (bytes? item) (null? item)
+           (void? item) (eof-object? item))
        #t]
+      ;; A closure can capture an execution identity, and Racket provides no
+      ;; sound general environment inspector. Fail closed even for a closure
+      ;; that happens not to capture one.
+      [(procedure? item) #f]
       [(hash-ref seen item #f) #t]
       [else
        (hash-set! seen item #t)
@@ -316,12 +569,16 @@
           (for/and ([(key datum) (in-hash item)])
             (and (walk key) (walk datum)))]
          [(struct? item)
-          (with-handlers ([exn:fail? (lambda (_) #t)])
-            (for/and ([part (in-vector (struct->vector item))]
-                      [index (in-naturals)]
-                      #:unless (zero? index))
-              (walk part)))]
-         [else #t])]))
+          (with-handlers ([exn:fail? (lambda (_) #f)])
+            (define parts (struct->vector item))
+            (and (> (vector-length parts) 1)
+                 (not (for/or ([part (in-vector parts)]) (eq? part '...)))
+                 (for/and ([part (in-vector parts)]
+                           [index (in-naturals)]
+                           #:unless (zero? index))
+                   (walk part))))]
+         ;; Unknown containers cannot be proven identity-free.
+         [else #f])]))
   (walk value))
 
 (define (b2-assert-no-execution-identities value [who 'b2-identity-gate])
@@ -455,7 +712,7 @@
          #t]
         [else
          (match (b2-let-shape node)
-           [(list _ _ active body)
+           [(list _ _ _ active body)
             (and (b2-node-value-form? active) (walk active) (walk body))]
            [_ #f])]))
     (walk root)))
@@ -466,11 +723,12 @@
 
 (define (micro-descendant-root depth serial)
   (define descendant
-    (for/fold ([child (b2-node 'atom serial '() '(leaf) #t #f)])
+    (for/fold ([child (b2-node 'atom serial '() '(leaf) #t #f #f)])
               ([index (in-range depth)])
-      (b2-node 'list #f (list child) (list 'descendant index) #f #f)))
+      (b2-node 'list #f (list child)
+               (list 'descendant index) #f #f #f)))
   (b2-node 'list #f (list descendant)
-           (list 'root serial depth) #f #f))
+           (list 'root serial depth) #f #f #f))
 
 (define (run-b2-identity-trial depths repetitions trial)
   (define order
@@ -478,9 +736,10 @@
             (take depths (modulo trial (length depths)))))
   (for/list ([depth (in-list order)])
     (define environment
-      (b2-env
-       (for/list ([index (in-range depth)])
-         (list (string->symbol (format "$micro_~a" index)) 'Natural))))
+        (b2-env
+         (for/list ([index (in-range depth)])
+           (list (string->symbol (format "$micro_~a" index)) 'Natural))
+         '()))
     (define roots
       (for/list ([serial (in-range repetitions)])
         (micro-descendant-root depth (+ (* trial repetitions) serial))))
