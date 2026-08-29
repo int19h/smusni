@@ -799,19 +799,20 @@
 ;; An obligation emitted inside a core binder may mention that binder.  At the
 ;; emission site the variable is free relative to the condition alone, so the
 ;; ordinary condition-local normalizer must not rename it.  When the typing
-;; derivation exits the binder, normalize the complete obligation as one datum
-;; under a synthetic binder.  Keeping the whole obligation together preserves
-;; identity across all of its term-valued fields (for example a symbolic count
-;; and the condition guarded by that count).
+;; derivation exits the binder, normalize the complete obligation set as one
+;; datum under a synthetic binder.  Keeping the set together preserves one
+;; identity across every occurrence of the binder, including term-valued fields
+;; in different obligations.
 (define (scope-obligation-set binders obligations)
-  (canonical-obligation-set
-   (for/list ([obligation (in-list obligations)])
-     (match (alpha-normalize-datum
-             `(λ ,binders (ObligationMarker ,obligation)))
-       [`(λ ,_ (ObligationMarker ,normalized)) normalized]
-       [other
-        (error 'scope-obligation-set
-               "cannot unwrap normalized obligation scope ~e" other)]))))
+  (if (null? obligations)
+      '()
+      (match (alpha-normalize-datum
+              `(λ ,binders (ObligationSetMarker ,@obligations)))
+        [`(λ ,_ (ObligationSetMarker ,normalized ...))
+         (canonical-obligation-set normalized)]
+        [other
+         (error 'scope-obligation-set
+                "cannot unwrap normalized obligation scope ~e" other)])))
 
 (define (a0-compatible? actual expected)
   (or (equal? actual expected)
