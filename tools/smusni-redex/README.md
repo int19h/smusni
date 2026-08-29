@@ -447,7 +447,7 @@ run, one compound constructor, seven rule names, and binder depth one. It is the
 `fixture/enumeration-only`; A0 does not claim useful whole-language random
 properties.
 
-The current ordinary benchmark denominator is four A0-eligible specimen terms
+At A0 the ordinary benchmark denominator was four eligible specimen terms
 out of the historical 96. Five warm runs measure the legacy engine, A0 engine,
 and true side-by-side execution separately. The report also gives the top five
 A0 proof rules by inclusive attributed term time; this is clause-level hotspot
@@ -466,3 +466,85 @@ probes, six L0.1 profile environments, definition-source ranges, and the ten
 field-scoped differential waivers. The remaining differential population is
 computed from the frozen corpus; row declarations and lexical function types
 are derived from the live checker inventory rather than keyed by fixture text.
+
+## Redex port B1 quantifier/selection family (#52)
+
+B1 begins with the pre-registered growth trigger rather than hiding it behind
+new clauses. On the same inert-value nested-`Let` profile at depths 16/32/64,
+the merged A0 judgment took 39.470/203.902/1116.855 ms. Host compatibility and
+record canonicalization together account for less than 0.01 ms at depth 64;
+`Check-Synth` and `env-lookup` are not used by the trigger term. Shadow
+judgments show that a constant environment still scales nearly quadratically,
+while growing the environment adds a secondary cost. B1 removes whole-list
+environment splits from every binder rule and makes lookup one host association
+search; the immediate after-local profile is 34.012/184.243/919.325 ms, a
+17.7% depth-64 improvement, but both doubling ratios remain above 4×. The
+tracked profile records the premise counts, microbenchmarks, shadow controls,
+and the remaining plan: repeated Redex full-subterm/cache-key matching needs a
+larger representation redesign before later family growth. The trigger remains
+visible and report-only as briefed. With all B1 clauses loaded, the exact full
+run reports 48.111/260.418/1363.879 ms (5.413×/5.237×), so family growth has not
+made the unresolved architecture disappear.
+
+The closed grammar and judgment add the exhaustive B1 family: `AtLeast`
+(separate zero, provably-positive, and symbolic typing cases), `Some`, `Every`, `No`, `AtMost`, `MoreThan`,
+`FewerThan`, `Distrib`, `MaxRefer`, `SelectSome`, `CoveredBy`, and `Overlap`,
+plus the required selection/logical/presupposition primitives. Primitive `+`
+is the v1.4 support exception: schematic `n+1` is represented as `(+ n 1)`,
+and `Natural + Natural` remains `Natural`. The primitive selection floor accepts
+a positive literal or a typed successor in either orientation; a bare Natural
+variable proves no positivity for `SelectAtLeast`. Defined `AtLeast` itself is
+total at every Natural, including a symbolic variable, with positive-branch
+effects as a static upper bound. Obligations contributed by the restrictor or
+nuclear scope are not upper bounds: the symbolic typing record guards each as
+`(when-positive n obligation)`, because the zero instantiation reduces to `⊤`
+and contributes none. Its two-equation metafunction cannot choose a
+zero/positive reduction before substitution; the ledger records that executable
+limitation without calling the term ill typed.
+
+`Presuppose` emits `projective` and a structured obligation containing the
+alpha-normalized condition and body computation category. Obligation union is
+set-like modulo alpha, including variables bound outside the condition by a
+surrounding lambda, `Let`, or `Bind`. The expected-mode Presuppose rule follows
+nested wrappers only to an ultimately expected-only reference computation, so
+a synthable body has exactly the ordinary `Check-Synth` proof. Generic negation
+removes only escaping `refer`, retaining context, projective, effectful-call,
+performance, and all obligations. Direct GQ rules are record-equal to their
+executable expansions: the exporting forms add `refer`; zero/non-exporting
+forms do not; `Every` inherits MaxRefer's projective inhabitedness obligation;
+and every selection restrictor is a pure member property.
+
+The definition ledger now has 12 B1 `ported` entries and 18 reviewed equation
+ranges total. A parsed-definiens gate reads each RHS with the notation reader,
+normalizes source `n+1` to semantic head `+`, excludes LHS/types/prose, and
+symmetrically compares dependencies over the full registered semantic-head
+universe. Sixty-seven entries remain explicitly `unranged`; none is silently
+passed. Four previously ranged A0 dependency lists changed under the declared
+rule. A separate migration manifest maps 22 legacy semantic sources to 30
+named target rules (14 full, 8 partial) without changing Phase 0 source classes.
+Its expected helper sources are derived from live semantic-helper reachability
+starting at the selected B1 branches, with shared A0 foundations explicitly
+excluded. A live call-site scan rejects `full` whenever an out-of-B1 semantic
+branch still invokes that helper.
+
+All 32 deterministic lowering outputs have tracked dispositions: seven select
+maximal B1-closed subterms with captured binder environments, paths, fence/rule
+provenance and stable ids; 25 contain no B1 family head; none is
+unrepresentable. Quote and Syntax are opaque to both head classification and
+tree traversal, so semantic-looking quoted data cannot become a replayed
+subterm. Those seven join the structural differential automatically.
+The current oracle runs 48 eligible frozen cases, 29 general mechanism probes,
+and seven lowering subterms: 84 total, zero unwaived differences, 29 used
+field-scoped waivers, zero stale. Coverage is 78/78 derivation rules and
+anchors, with 28/28 native definition/L0.1 cases and an empty dead-clause
+report. Raw generation remains honestly `fixture/enumeration-only`.
+The final measurement is 21/500 well-typed terms (95.8% discard), 168.0
+cases/minute, zero compound constructors, six witnessed rules, and binder depth
+zero.
+
+The current ordinary benchmark uses five B1-eligible specimen terms out of the
+historical 96. Five isolated warm runs call the actual named engines: legacy
+34.218 ms / 25 derivations, B1 9.713 ms / 25, and true side-by-side 47.756 ms /
+50 in the latest standalone gate; deterministic inclusive rule hotspots are
+printed. Every ordinary trigger remains clear. Neither legacy lowering hybrid
+is retired in B1.

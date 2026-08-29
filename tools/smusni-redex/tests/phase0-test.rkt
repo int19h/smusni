@@ -97,7 +97,7 @@
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'none))
                      definitions)
-              78)
+              66)
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'legacy-hybrid))
                      definitions)
@@ -106,6 +106,56 @@
                        (eq? (definition-entry-port-state entry) 'a0))
                      definitions)
               7)
+(check-equal? (count (lambda (entry)
+                       (eq? (definition-entry-port-state entry) 'ported))
+                     definitions)
+              12)
+(check-equal? (count (lambda (entry)
+                       (pair? (definition-entry-equation-ranges entry)))
+                     definitions)
+              18)
+(define covered-by-definition
+  (findf (lambda (entry)
+           (string=? (definition-entry-id entry) "D4.8.CoveredBy"))
+         definitions))
+(check-not-false
+ (member 'Overlap (definition-entry-dependencies covered-by-definition)))
+(define (replace-definition wanted replacement)
+  (for/list ([entry (in-list definitions)])
+    (if (string=? (definition-entry-id entry) wanted) replacement entry)))
+(define missing-dependency
+  (struct-copy definition-entry covered-by-definition
+               [dependencies
+                (remove 'Overlap
+                        (definition-entry-dependencies covered-by-definition))]))
+(check-not-false
+ (findf (lambda (message)
+          (and (string-contains? message "dependency mismatch")
+               (string-contains? message "Overlap")))
+        (definition-ledger-findings
+         observations
+         (replace-definition "D4.8.CoveredBy" missing-dependency))))
+(define extra-dependency
+  (struct-copy definition-entry covered-by-definition
+               [dependencies
+                (cons 'UnitSet
+                      (definition-entry-dependencies covered-by-definition))]))
+(check-not-false
+ (findf (lambda (message)
+          (and (string-contains? message "dependency mismatch")
+               (string-contains? message "UnitSet")))
+        (definition-ledger-findings
+         observations
+         (replace-definition "D4.8.CoveredBy" extra-dependency))))
+(define stale-equation-digest
+  (struct-copy definition-entry covered-by-definition
+               [equation-source-sha1 "stale"]))
+(check-not-false
+ (findf (lambda (message)
+          (string-contains? message "stale equation source digest"))
+        (definition-ledger-findings
+         observations
+         (replace-definition "D4.8.CoveredBy" stale-equation-digest))))
 (define implementation-index (definition-implementation-index))
 (define test-inclusive-index
   (definition-implementation-index #:include-tests? #t))
@@ -398,9 +448,9 @@
   (run-a0-differential #:print? #f))
 (define current-a0-differential-cases (a0-differential-cases))
 (check-true a0-differential-ok?)
-(check-equal? (length a0-mechanism-cases) 11)
-(check-equal? (length current-a0-differential-cases) 42)
-(check-equal? (length (load-a0-waivers)) 10)
+(check-equal? (length a0-mechanism-cases) 29)
+(check-equal? (length current-a0-differential-cases) 84)
+(check-equal? (length (load-a0-waivers)) 29)
 (for ([item (in-list current-a0-differential-cases)])
   (define record (a0-port-record item))
   (when (eq? (port-record-status record) 'success)
@@ -420,6 +470,102 @@
          corpus)))
 (check-equal? a0-differences '())
 (check-equal? a0-stale-waivers '())
+
+;; B1 keeps source classification immutable and gates a separate, many-target
+;; migration axis. Every deterministic lowering output has a tracked total
+;; disposition, and selected subterms carry captured environments/provenance.
+(define target-migrations (load-target-migrations))
+(define b1-target-migrations
+  (filter (lambda (entry) (eq? (target-migration-family entry) 'B1))
+          target-migrations))
+(check-equal? (length b1-target-migrations) 22)
+(check-equal? (target-migration-findings target-migrations) '())
+(define bad-target
+  (struct-copy target-migration (first b1-target-migrations)
+               [targets '("B1-T-Does-Not-Exist")]))
+(check-not-false
+ (findf (lambda (message) (string-contains? message "absent target rule"))
+        (target-migration-findings
+         (cons bad-target (rest b1-target-migrations)))))
+(define effectful-migration
+  (findf (lambda (entry)
+           (string-prefix? (target-migration-source entry)
+                           "H.effectful-property?."))
+         b1-target-migrations))
+(for ([prefix (in-list
+               '("H.effectful-property?."
+                 "H.ensure-same-property-domain."
+                 "H.property-domain."
+                 "H.pure-property-domain."))])
+  (define migration
+    (findf (lambda (entry)
+             (string-prefix? (target-migration-source entry) prefix))
+           b1-target-migrations))
+  (define false-full
+    (struct-copy target-migration migration [extent 'full]))
+  (check-not-false
+   (findf
+    (lambda (message)
+      (and (string-contains? message "claims full extent")
+           (string-contains? message "live out-of-B1 uses")))
+    (target-migration-findings
+     (cons false-full (remove migration b1-target-migrations))))))
+;; Helper coverage is derived from live B1 branch/helper reachability, not a
+;; hand-written helper allowlist: deleting a reached semantic helper cannot
+;; pass.
+(check-not-false
+ (findf
+  (lambda (message)
+    (and (string-contains? message "sources differ")
+         (string-contains? message "effectful-property?")))
+  (target-migration-findings
+   (remove effectful-migration b1-target-migrations))))
+(define synthetic-unselected-family-branch
+  (branch-entry "B.synthetic-unselected-family" 'infer-core
+                '(eq? head 'AtLeast) 1 1 "synthetic"
+                'semantic-clause "Synthetic mutation branch."))
+(check-not-false
+ (findf
+  (lambda (message)
+    (string-contains? message
+                      "mentions a B1 family head outside"))
+  (target-migration-findings
+   b1-target-migrations
+   (cons synthetic-unselected-family-branch (load-infer-branches)))))
+
+;; Quotation is opaque to both family-head classification and maximal-subterm
+;; extraction.  Semantic-looking data inside Quote/Syntax is never replayed as
+;; an executable B1 lowering candidate.
+(for ([quoted (in-list
+               '((Quote (Some P Q))
+                 (Syntax (AtLeast 2 P Q))))])
+  (check-true (set-empty? (b1-family-heads-in quoted)))
+  (check-equal?
+   (b1-selected-subterms "synthetic-opaque" 1 0 '(synthetic) quoted)
+   '()))
+
+(define lowering-subterm-manifest (load-b1-lowering-manifest))
+(check-equal? (b1-lowering-manifest-findings lowering-subterm-manifest) '())
+(match lowering-subterm-manifest
+  [`(smusni-b1-lowering-subterms 1 (count 32) ,_ ...
+     (outputs ,outputs ...))
+   (define (count-disposition wanted)
+     (count (lambda (output)
+              (match output
+                [`(output ,_ ... (disposition ,found) ,_ ...)
+                 (eq? found wanted)]))
+            outputs))
+   (check-equal? (count-disposition 'selected) 7)
+   (check-equal? (count-disposition 'no-family-head) 25)
+   (check-equal? (count-disposition 'unrepresentable) 0)
+   (check-equal?
+    (for/sum ([output (in-list outputs)])
+      (match output
+        [`(output ,_ ... (subterms ,subterms ...)) (length subterms)]))
+    7)])
+(check-match (load-b1-growth-profile)
+             `(smusni-b1-growth-profile 1
+                (base-head ,_) (depths 16 32 64) ,_ ...))
 
 ;; Benchmark modes execute their named engines. New/side modes expose A0
 ;; proof-rule hotspots; old-only is not silently reused as the new engine.

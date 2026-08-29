@@ -16,6 +16,7 @@
          redex/reduction-semantics
          "extract.rkt"
          "inventory.rkt"
+         "lower.rkt"
          "port-a0.rkt"
          "syntax.rkt"
          "types.rkt")
@@ -36,6 +37,7 @@
          (struct-out port-case)
          (struct-out port-record)
          (struct-out benchmark-mode)
+         (struct-out target-migration)
          extract-definition-observations
          definition-observation-source-digest
          definition-ranges-source-digest
@@ -66,8 +68,16 @@
          a0-corpus-eligible?
          a0-mechanism-cases
          a0-differential-cases
+         load-b1-lowering-manifest
+         refresh-b1-lowering-manifest!
+         b1-lowering-manifest-findings
+         b1-family-heads-in
+         b1-selected-subterms
          load-a0-waivers
          load-port-waivers
+         load-target-migrations
+         target-migration-findings
+         load-b1-growth-profile
          run-benchmarks
          run-benchmark-mode
          specimen-benchmark-cases
@@ -97,6 +107,12 @@
 (define port-baseline-path (build-path inventory-dir "port-baseline.sexp"))
 (define production-modules-path
   (build-path inventory-dir "port-production-modules.sexp"))
+(define target-migrations-path
+  (build-path inventory-dir "target-migrations.sexp"))
+(define b1-lowering-manifest-path
+  (build-path inventory-dir "b1-lowering-subterms.sexp"))
+(define b1-growth-profile-path
+  (build-path inventory-dir "b1-growth-profile.sexp"))
 
 (define definition-statuses
   '(executable primitive-or-partial-operator mapping-schema
@@ -121,10 +137,12 @@
 (struct definition-observation (head section lines lhs) #:transparent)
 (struct definition-entry
   (id head section spec-source-sha1 spec-source-ranges
+      equation-source-sha1 equation-ranges
       status issue port-state dependencies implementations
       legacy-implementations domains reason)
   #:transparent)
 (struct definition-domain (name status issue port-state reason) #:transparent)
+(struct target-migration (family source targets extent reason) #:transparent)
 
 (define port-states '(none legacy-hybrid a0 ported))
 
@@ -246,6 +264,15 @@
      (values 'blocked issue)]
     [_ (error 'load-definition-ledger "invalid definition status: ~e" raw)]))
 
+(define (parse-definition-ranges id label raw-ranges)
+  (for/list ([range (in-list raw-ranges)])
+    (match range
+      [`(,(? exact-positive-integer? start)
+         ,(? exact-positive-integer? end))
+       #:when (<= start end) (list start end)]
+      [_ (error 'load-definition-ledger
+                "definition ~a has invalid ~a range ~e" id label range)])))
+
 (define (load-definition-ledger [path definitions-path])
   (match (call-with-input-file path read)
     [`(smusni-definition-ledger 1 ,raw-entries ...)
@@ -255,55 +282,72 @@
                        (section ,(? string? section))
                        (spec-source-sha1 ,spec-source-sha1)
                        (spec-source-ranges ,raw-ranges ...)
-                       (status ,raw-status)
-                       (port-state ,(? symbol? port-state))
-                       (dependencies ,(? symbol? dependencies) ...)
-                       (legacy-implementations ,legacy ...)
-                       (implementations ,implementations ...)
-                       (domains ,raw-domains ...)
-                       (reason ,(? string? reason)))
-          (define-values (status issue) (parse-status raw-status))
-          (unless (member port-state port-states)
-            (error 'load-definition-ledger "invalid port state in ~a: ~e"
-                   id port-state))
-          (unless (or (eq? status 'executable) (sentence? reason))
-            (error 'load-definition-ledger
-                   "non-executable ~a needs a one-sentence reason" id))
-          (define domains
-            (for/list ([raw-domain (in-list raw-domains)])
-              (match raw-domain
-                [`(domain ,(? symbol? name) (status ,domain-status)
-                          (port-state ,(? symbol? domain-port-state))
-                          (reason ,(? string? domain-reason)))
-                 (define-values (parsed-status parsed-issue)
-                   (parse-status domain-status))
-                 (unless (sentence? domain-reason)
-                   (error 'load-definition-ledger
-                          "definition ~a domain ~a needs one sentence" id name))
-                 (unless (member domain-port-state port-states)
-                   (error 'load-definition-ledger
-                          "definition ~a domain ~a has invalid port state ~e"
-                          id name domain-port-state))
-                 (definition-domain name parsed-status parsed-issue
-                                    domain-port-state domain-reason)]
-                [_ (error 'load-definition-ledger
-                          "invalid definition domain in ~a: ~e" id raw-domain)])))
-          (unless (or (eq? spec-source-sha1 'none)
-                      (string? spec-source-sha1))
-            (error 'load-definition-ledger
-                   "definition ~a has invalid spec-source-sha1" id))
-          (define spec-source-ranges
-            (for/list ([range (in-list raw-ranges)])
-              (match range
-                [`(,(? exact-positive-integer? start)
-                   ,(? exact-positive-integer? end))
-                 #:when (<= start end) (list start end)]
-                [_ (error 'load-definition-ledger
-                          "definition ~a has invalid source range ~e" id range)])))
-          (definition-entry id head section spec-source-sha1 spec-source-ranges
-                            status issue port-state dependencies
-                            implementations legacy domains reason)]
-         [_ (error 'load-definition-ledger "invalid definition entry: ~e" raw)]))]
+                       ,tail ...)
+          (define-values
+            (equation-source-sha1 raw-equation-ranges remainder)
+            (match tail
+              [`((equation-source-sha1 ,digest)
+                 (equation-ranges ,equation-ranges ...) ,rest ...)
+               (values digest equation-ranges rest)]
+              [_ (values 'none '() tail)]))
+          (match remainder
+            [`((status ,raw-status)
+               (port-state ,(? symbol? port-state))
+               (dependencies ,(? symbol? dependencies) ...)
+               (legacy-implementations ,legacy ...)
+               (implementations ,implementations ...)
+               (domains ,raw-domains ...)
+               (reason ,(? string? reason)))
+             (define-values (status issue) (parse-status raw-status))
+             (unless (member port-state port-states)
+               (error 'load-definition-ledger "invalid port state in ~a: ~e"
+                      id port-state))
+             (unless (or (eq? status 'executable) (sentence? reason))
+               (error 'load-definition-ledger
+                      "non-executable ~a needs a one-sentence reason" id))
+             (define domains
+               (for/list ([raw-domain (in-list raw-domains)])
+                 (match raw-domain
+                   [`(domain ,(? symbol? name) (status ,domain-status)
+                             (port-state ,(? symbol? domain-port-state))
+                             (reason ,(? string? domain-reason)))
+                    (define-values (parsed-status parsed-issue)
+                      (parse-status domain-status))
+                    (unless (sentence? domain-reason)
+                      (error 'load-definition-ledger
+                             "definition ~a domain ~a needs one sentence" id))
+                    (unless (member domain-port-state port-states)
+                      (error 'load-definition-ledger
+                             "definition ~a domain ~a has invalid port state ~e"
+                             id name domain-port-state))
+                    (definition-domain name parsed-status parsed-issue
+                                       domain-port-state domain-reason)]
+                   [_ (error 'load-definition-ledger
+                             "invalid definition domain in ~a: ~e"
+                             id raw-domain)])))
+             (for ([digest (in-list (list spec-source-sha1
+                                          equation-source-sha1))]
+                   [label (in-list '(spec-source equation-source))])
+               (unless (or (eq? digest 'none) (string? digest))
+                 (error 'load-definition-ledger
+                        "definition ~a has invalid ~a sha1" id label)))
+             (define spec-source-ranges
+               (parse-definition-ranges id 'source raw-ranges))
+             (define equation-ranges
+               (parse-definition-ranges id 'equation raw-equation-ranges))
+             (unless (eq? (eq? equation-source-sha1 'none)
+                          (null? equation-ranges))
+               (error 'load-definition-ledger
+                      "definition ~a equation digest/ranges disagree" id))
+             (definition-entry
+              id head section spec-source-sha1 spec-source-ranges
+              equation-source-sha1 equation-ranges
+              status issue port-state dependencies implementations legacy
+              domains reason)]
+            [_ (error 'load-definition-ledger
+                      "invalid definition tail in ~a: ~e" id remainder)])]
+         [_ (error 'load-definition-ledger
+                   "invalid definition entry: ~e" raw)]))]
     [_ (error 'load-definition-ledger "unsupported definitions ledger")]))
 
 (define (definition-key item)
@@ -326,6 +370,96 @@
    (for*/list ([range (in-list ranges)]
                [line-number (in-range (first range) (add1 (second range)))])
      (list line-number (list-ref lines (sub1 line-number))))))
+
+(define (equation-range-rhs range [path spec-path])
+  (define lines (file->lines path))
+  (define source
+    (string-join
+     (for/list ([line-number (in-range (first range) (add1 (second range)))])
+       (first (string-split (list-ref lines (sub1 line-number)) ";")))
+     "\n"))
+  (define marker
+    (match (regexp-match-positions #px"≝" source)
+      [(list (cons _ end)) end]
+      [_ #f]))
+  (unless marker
+    (error 'equation-range-rhs "equation range ~e contains no ≝" range))
+  (define raw-rhs (string-trim (substring source marker)))
+  (define rhs-fragment
+    (match (regexp-match #px"^`([^`]*)`" raw-rhs)
+      [(list _ inline) inline]
+      [_
+       (match (regexp-match #px"^([^`]*)`" raw-rhs)
+         [(list _ inline) inline]
+         [_ raw-rhs])]))
+  (define rhs
+    (string-trim
+     (regexp-replace*
+      #px"n[+]1"
+      (string-replace rhs-fragment "`" "")
+      "(+ n 1)")))
+  (define forms (map core->plain-datum (read-core-forms rhs 'definition-rhs)))
+  (cond
+    [(null? forms)
+     (error 'equation-range-rhs "equation range ~e has an empty RHS" range)]
+    [(null? (rest forms)) (first forms)]
+    [else forms]))
+
+(define (definition-semantic-head-universe entries [inv (load-inventory)])
+  (set-union (list->set (hash-keys (inventory-forms inv)))
+             (list->set (map definition-entry-head entries))))
+
+(define (rhs-semantic-heads datum universe subject)
+  (define (head-set head)
+    (if (and (symbol? head)
+             (not (eq? head subject))
+             (set-member? universe head))
+        (set head)
+        (set)))
+  (cond
+    [(not (list? datum)) (set)]
+    [(null? datum) (set)]
+    [else
+     (match datum
+       [`(λ ,_ ,body)
+        (set-union (head-set 'λ)
+                   (rhs-semantic-heads body universe subject))]
+       [`(Let ,_ ,active ,body)
+        (set-union
+         (head-set 'Let)
+         (rhs-semantic-heads active universe subject)
+         (rhs-semantic-heads body universe subject))]
+       [`(Bind ,pieces ...)
+        (define body (last pieces))
+        (define alternating (drop-right pieces 1))
+        (set-union
+         (head-set 'Bind)
+         (for/fold ([heads (set)])
+                   ([index (in-range 1 (length alternating) 2)])
+           (set-union
+            heads
+            (rhs-semantic-heads (list-ref alternating index)
+                                universe subject)))
+       (rhs-semantic-heads body universe subject))]
+       [`(,head ,arguments ...)
+        (for/fold ([heads (set-union
+                           (head-set head)
+                           (if (list? head)
+                               (rhs-semantic-heads head universe subject)
+                               (set)))])
+                  ([argument (in-list arguments)])
+          (set-union heads
+                     (rhs-semantic-heads argument universe subject)))]
+       [_ (set)])]))
+
+(define (definition-equation-dependencies entry entries)
+  (define universe (definition-semantic-head-universe entries))
+  (for/fold ([heads (set)])
+            ([range (in-list (definition-entry-equation-ranges entry))])
+    (set-union
+     heads
+     (rhs-semantic-heads (equation-range-rhs range) universe
+                         (definition-entry-head entry)))))
 
 (define (racket-sources)
   (for/list ([path (in-directory tool-dir)]
@@ -532,6 +666,32 @@
     (unless (= (length names) (set-count (list->set names)))
       (note! "definition ~a has duplicate domain entries"
              (definition-entry-id entry))))
+  (for ([entry (in-list entries)]
+        #:when (pair? (definition-entry-equation-ranges entry)))
+    (define ranges (definition-entry-equation-ranges entry))
+    (unless (and (string? (definition-entry-equation-source-sha1 entry))
+                 (string=? (definition-entry-equation-source-sha1 entry)
+                           (definition-ranges-source-digest ranges)))
+      (note! "definition ~a has a stale equation source digest"
+             (definition-entry-id entry)))
+    (with-handlers ([exn:fail?
+                     (lambda (exception)
+                       (note! "definition ~a equation parse failed: ~a"
+                              (definition-entry-id entry)
+                              (exn-message exception)))])
+      (define derived (definition-equation-dependencies entry entries))
+      (define recorded (list->set (definition-entry-dependencies entry)))
+      (unless (= (length (definition-entry-dependencies entry))
+                 (set-count recorded))
+        (note! "definition ~a has duplicate dependencies"
+               (definition-entry-id entry)))
+      (define missing (set-subtract derived recorded))
+      (define extra (set-subtract recorded derived))
+      (unless (and (set-empty? missing) (set-empty? extra))
+        (note! "definition ~a dependency mismatch: missing=~s extra=~s"
+               (definition-entry-id entry)
+               (sort (set->list missing) symbol<?)
+               (sort (set->list extra) symbol<?)))))
   (define bindings (module-binding-index))
   (for ([entry (in-list entries)]
         #:when (eq? (definition-entry-port-state entry) 'legacy-hybrid))
@@ -1278,6 +1438,225 @@
              (value-helper-entry-id entry))))
   (reverse findings))
 
+;; B1 target migration is a separate axis from the immutable Phase 0 source
+;; classification. One source mechanism may map to several target rules, and
+;; grouped legacy branches may be only partially consumed by this family.
+(define b1-source-heads
+  '(+ ¬ Among Presuppose Distrib CoveredBy Exactly AtLeast MoreThan AtMost
+      FewerThan Some No Every SelectExactly SelectAtLeast SelectSome
+      SelectAllBut ∀ ∃ →))
+
+;; These mechanisms are shared A0 foundations rather than vertical-family
+;; migration sources: B1 rules consume their already-ported compatibility and
+;; effect-set semantics through generic premises.  Every other semantic helper
+;; reachable from a B1 source branch is derived below and must have a migration
+;; entry; this small exclusion is reviewed data, not a completeness allowlist.
+(define b1-shared-helper-functions
+  '(dynamic-effect? first-order-type? same-parameter-type? type-compatible?))
+
+(define (pattern-mentions-b1-head? pattern)
+  (define (symbols datum)
+    (cond
+      [(symbol? datum) (set datum)]
+      [(list? datum)
+       (for/fold ([found (set)]) ([item (in-list datum)])
+         (set-union found (symbols item)))]
+      [else (set)]))
+  (not (set-empty?
+        (set-intersect (symbols pattern) (list->set b1-source-heads)))))
+
+(define (b1-migration-branch-source-ids branches)
+  (sort
+   (for/list ([entry (in-list branches)]
+              #:when
+              (and (eq? (branch-entry-class entry) 'semantic-clause)
+                   (or (member (branch-entry-function entry)
+                               '(infer-logical infer-quantifier))
+                       (and (member (branch-entry-function entry)
+                                    '(infer-application infer-with-expected))
+                            (pattern-mentions-b1-head?
+                             (branch-entry-pattern entry))))))
+     (branch-entry-id entry))
+   string<?))
+
+(define (syntax-symbols-in-line-range module start-line end-line)
+  (define found (mutable-set))
+  (define (walk node)
+    (when (syntax? node)
+      (define parts (syntax-list node))
+      (if parts
+          (for ([part (in-list parts)]) (walk part))
+          (let ([line (syntax-line node)] [datum (syntax-e node)])
+            (when (and line (<= start-line line end-line) (symbol? datum))
+              (set-add! found datum))))))
+  (walk module)
+  (set-copy found))
+
+;; Derive helper membership from the live syntax of the selected semantic
+;; branches.  This closes the former hand-written helper list: adding a direct
+;; semantic helper call to a B1 branch makes that helper a required migration
+;; source even if nobody remembers to update a declaration.
+(define (branch-direct-semantic-helpers branches helpers [path types-path])
+  (define module (read-module-syntax path))
+  (define semantic-helper-names
+    (for/set ([helper (in-list helpers)]
+              #:when (eq? (helper-entry-class helper) 'semantic-clause))
+      (helper-entry-function helper)))
+  (for/hash ([branch (in-list branches)])
+    (values
+     (branch-entry-id branch)
+     (set-intersect
+      semantic-helper-names
+      (syntax-symbols-in-line-range
+       module (branch-entry-start-line branch) (branch-entry-end-line branch))))))
+
+(define (helper-direct-semantic-helpers helpers [path types-path])
+  (define module (read-module-syntax path))
+  (define semantic-helper-names
+    (for/set ([helper (in-list helpers)]
+              #:when (eq? (helper-entry-class helper) 'semantic-clause))
+      (helper-entry-function helper)))
+  (for/hash ([helper (in-list helpers)])
+    (values
+     (helper-entry-function helper)
+     (set-remove
+      (set-intersect
+       semantic-helper-names
+       (syntax-symbols-in-line-range
+        module (helper-entry-start-line helper) (helper-entry-end-line helper)))
+      (helper-entry-function helper)))))
+
+(define (reachable-semantic-helpers initial helper-calls [shared (set)])
+  (let loop ([todo (set->list initial)] [seen (set)])
+    (cond
+      [(null? todo) seen]
+      [(set-member? seen (first todo))
+       (loop (rest todo) seen)]
+      [else
+       (define helper (first todo))
+       (loop (append (if (set-member? shared helper)
+                         '()
+                         (set->list (hash-ref helper-calls helper (set))))
+                     (rest todo))
+             (set-add seen helper))])))
+
+(define (b1-migration-source-ids branches helpers decisions)
+  (define b1-branch-ids (b1-migration-branch-source-ids branches))
+  (define direct-helpers (branch-direct-semantic-helpers branches helpers))
+  (define helper-calls (helper-direct-semantic-helpers helpers))
+  (define b1-direct-helper-names
+    (for/fold ([found (set)]) ([id (in-list b1-branch-ids)])
+      (set-union found (hash-ref direct-helpers id (set)))))
+  (define shared-helper-names (list->set b1-shared-helper-functions))
+  (define b1-helper-names
+    (set-subtract
+     (reachable-semantic-helpers
+      b1-direct-helper-names helper-calls shared-helper-names)
+     shared-helper-names))
+  (sort
+   (append
+    b1-branch-ids
+    (for/list ([entry (in-list helpers)]
+               #:when
+               (and (eq? (helper-entry-class entry) 'semantic-clause)
+                    (set-member? b1-helper-names
+                                 (helper-entry-function entry))))
+      (helper-entry-id entry))
+    (for/list ([entry (in-list decisions)]
+               #:when
+               (and (eq? (decision-entry-class entry) 'semantic-clause)
+                    (eq? (decision-entry-function entry) 'infer-quantifier)))
+      (decision-entry-id entry)))
+   string<?))
+
+(define (load-target-migrations [path target-migrations-path])
+  (match (call-with-input-file path read)
+    [`(smusni-target-migrations 1 ,raw ...)
+     (for/list ([item (in-list raw)])
+       (match item
+         [`(migration (family ,(? symbol? family))
+                      (source ,(? string? source))
+                      (targets ,(? string? targets) ...)
+                      (extent ,(? symbol? extent))
+                      (reason ,(? string? reason)))
+          (unless (member extent '(full partial))
+            (error 'load-target-migrations "invalid extent in ~e" item))
+          (unless (and (pair? targets)
+                       (= (length targets)
+                          (set-count (list->set targets))))
+            (error 'load-target-migrations "invalid target set in ~e" item))
+          (unless (sentence? reason)
+            (error 'load-target-migrations "migration needs a sentence: ~e"
+                   item))
+          (target-migration family source targets extent reason)]
+         [_ (error 'load-target-migrations "invalid migration: ~e" item)]))]
+    [_ (error 'load-target-migrations "unsupported target migrations")]))
+
+(define (target-migration-findings
+         [migrations (load-target-migrations)]
+         [branches (load-infer-branches)]
+         [helpers (load-infer-helpers)]
+         [decisions (load-infer-decisions)])
+  (define findings '())
+  (define (note! format-string . arguments)
+    (set! findings (cons (apply format format-string arguments) findings)))
+  (define b1 (filter (lambda (entry)
+                       (eq? (target-migration-family entry) 'B1))
+                     migrations))
+  (define sources (map target-migration-source b1))
+  (unless (= (length sources) (set-count (list->set sources)))
+    (note! "B1 target migrations contain duplicate sources"))
+  (define expected (b1-migration-source-ids branches helpers decisions))
+  (define b1-branch-ids
+    (list->set (b1-migration-branch-source-ids branches)))
+  (define direct-helpers (branch-direct-semantic-helpers branches helpers))
+  (define helper-calls (helper-direct-semantic-helpers helpers))
+  (define shared-helper-names (list->set b1-shared-helper-functions))
+  (define missing (set-subtract (list->set expected) (list->set sources)))
+  (define extra (set-subtract (list->set sources) (list->set expected)))
+  (unless (and (set-empty? missing) (set-empty? extra))
+    (note! "B1 target migration sources differ: missing=~s extra=~s"
+           (sort (set->list missing) string<?)
+           (sort (set->list extra) string<?)))
+  (for ([branch (in-list branches)]
+        #:when
+        (and (eq? (branch-entry-class branch) 'semantic-clause)
+             (pattern-mentions-b1-head? (branch-entry-pattern branch))
+             (not (set-member? b1-branch-ids (branch-entry-id branch)))))
+    (note! "semantic branch ~a mentions a B1 family head outside the selected migration sources"
+           (branch-entry-id branch)))
+  (define rules (list->set a0-required-rules))
+  (define helper-by-id
+    (for/hash ([helper (in-list helpers)])
+      (values (helper-entry-id helper) helper)))
+  (for ([migration (in-list b1)])
+    (for ([target (in-list (target-migration-targets migration))])
+      (unless (set-member? rules target)
+        (note! "B1 migration ~a names absent target rule ~a"
+               (target-migration-source migration) target)))
+    (define helper
+      (hash-ref helper-by-id (target-migration-source migration) #f))
+    (when (and helper (eq? (target-migration-extent migration) 'full))
+      (define outside-branches
+        (sort
+         (for/list ([branch (in-list branches)]
+                    #:when
+                    (and (eq? (branch-entry-class branch) 'semantic-clause)
+                         (not (set-member? b1-branch-ids
+                                           (branch-entry-id branch)))
+                         (set-member?
+                          (reachable-semantic-helpers
+                           (hash-ref direct-helpers
+                                     (branch-entry-id branch) (set))
+                           helper-calls shared-helper-names)
+                          (helper-entry-function helper))))
+           (branch-entry-id branch))
+         string<?))
+      (unless (null? outside-branches)
+        (note! "B1 migration ~a claims full extent but has live out-of-B1 uses in ~s"
+               (target-migration-source migration) outside-branches))))
+  (reverse findings))
+
 (struct diagnostic-taxonomy
   (typing-causes no-lowering-causes allowed-evidence forbidden-evidence)
   #:transparent)
@@ -1689,6 +2068,24 @@
                             (legacy-datum->a0 (first remaining) inv))
                       fills))])])))
 
+(define (legacy-row-application->a0 predicate arguments row inv)
+  (define fills
+    (legacy-close-arguments->fills arguments (row-decl-total row) inv))
+  (define ordinary
+    (for/list ([label (in-range 1 (add1 (row-decl-total row)))])
+      (match (assoc label fills)
+        [(list _ value) value]
+        [_ #f])))
+  (define event
+    (match (assoc 'Eventuality fills)
+      [(list _ value) value]
+      [_ #f]))
+  (and (andmap values ordinary)
+       (case (row-decl-event-mode row)
+         [(holding-state) (and (not event) `(,predicate ,@ordinary))]
+         [(direct-event) (and event `(,predicate ,@ordinary ,event))]
+         [else #f])))
+
 (define (legacy-datum->a0 datum [inv (load-inventory)])
   (cond
     [(not (list? datum)) datum]
@@ -1721,6 +2118,11 @@
                ,(range 1 (add1 (row-decl-total row))))
           ,(legacy-close-arguments->fills
             arguments (row-decl-total row) inv))]
+       [`(,predicate ,arguments ...)
+        #:when (and (symbol? predicate) (inventory-row inv predicate))
+        (or (legacy-row-application->a0
+             predicate arguments (inventory-row inv predicate) inv)
+            (map (lambda (child) (legacy-datum->a0 child inv)) datum))]
        [_ (map (lambda (child) (legacy-datum->a0 child inv)) datum)])]))
 
 (define a0-mechanism-cases
@@ -1766,17 +2168,84 @@
               '(Close (tavla Speaker Audience)) '() '(core fixture))
    (port-case "a0-close-explicit-event" '((a0 Close explicit-event))
               '(Close (bajra Speaker :Eventuality $event))
-              '(($event Referents Eventuality)) '(core fixture))))
+              '(($event Referents Eventuality)) '(core fixture))
+   (port-case "b1-atleast-zero" '((b1 AtLeast zero))
+              '(AtLeast 0 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-atleast-positive" '((b1 AtLeast positive))
+              '(AtLeast 2 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-atleast-symbolic" '((b1 AtLeast symbolic))
+              '(AtLeast $n $P $Q)
+              '(($n . Natural) ($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-some" '((b1 Some))
+              '(Some $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-every" '((b1 Every))
+              '(Every $P $Q)
+              '(($P Fn (Entity) Content) ($Q EFn (Entity) Content))
+              '(core fixture))
+   (port-case "b1-atmost" '((b1 AtMost))
+              '(AtMost $n $P $Q)
+              '(($n . Natural) ($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-fewer-zero" '((b1 FewerThan zero))
+              '(FewerThan 0 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-fewer-positive" '((b1 FewerThan positive))
+              '(FewerThan 2 $P $Q)
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-fewer-symbolic" '((b1 FewerThan symbolic))
+              '(FewerThan $n $P $Q)
+              '(($n . Natural) ($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-distrib" '((b1 Distrib))
+              '(Distrib $Q $r)
+              '(($Q EFn (Entity) Content) ($r Referents Entity))
+              '(core fixture))
+   (port-case "b1-covered-by" '((b1 CoveredBy))
+              '(CoveredBy $P $r)
+              '(($P Fn (Entity) Content) ($r Referents Entity))
+              '(core fixture))
+   (port-case "b1-overlap" '((b1 Overlap))
+              '(Overlap $left $right)
+              '(($left Referents Entity) ($right Referents Entity))
+              '(core fixture))
+   (port-case "b1-max-refer" '((b1 MaxRefer))
+              '(Bind ($r :: Referents Entity) (MaxRefer $P) $r)
+              '(($P Fn (Entity) Content)) '(core fixture))
+   (port-case "b1-select-atleast" '((b1 SelectAtLeast))
+              '(Bind ($r :: Referents Entity) (SelectAtLeast 2 $P) $r)
+              '(($P Fn (Entity) Content)) '(core fixture))
+   (port-case "b1-select-all-but" '((b1 SelectAllBut))
+              '(Bind ($r :: Referents Entity) (SelectAllBut 0 $P) $r)
+              '(($P Fn (Entity) Content)) '(core fixture))
+   (port-case "b1-presuppose" '((b1 Presuppose))
+              '(Presuppose ⊤ ⊤) '() '(core fixture))
+   (port-case "b1-negation" '((b1 negation))
+              '(¬ (Some $P $Q))
+              '(($P Fn (Entity) Content)
+                ($Q EFn ((Referents Entity)) Content)) '(core fixture))
+   (port-case "b1-addition" '((b1 addition))
+              '(+ $n 1) '(($n . Natural)) '(core fixture))))
 
 (define a0-typed-form-heads
   '(λ Let Bind Context Vague Refer
     SelectExactly SelectAtLeast SelectSome SelectAllBut
-    Exactly No GlobalExactly TooMany MoreThan Massify Perform
-    CanonicalAggregateAt AdmissibleThreshold SetOf Card = ∧ List ZipWith
+    Exactly AtLeast Some Every No AtMost GlobalExactly TooMany MoreThan
+    FewerThan Distrib MaxRefer CoveredBy Overlap Massify Perform
+    CanonicalAggregateAt AdmissibleThreshold SetOf Card = + ∧ → ¬ ∀ ∃ Among
+    Presuppose List ZipWith
     CoRef CloseClause ActualClause DirectClause StateClause CloseWith))
 
 (define (a0-environment-names environment)
-  (for/set ([entry (in-list environment)]) (first entry)))
+  (for/set ([entry (in-list environment)]) (car entry)))
 
 (define (a0-type-datum? datum)
   (redex-match? SmusniA0 τ datum))
@@ -1847,8 +2316,10 @@
           [else
            (define row (inventory-row inv head))
            (and row
-                (eq? (row-decl-event-mode row) 'holding-state)
-                (= (length arguments) (row-decl-total row))
+                (= (length arguments)
+                   (+ (row-decl-total row)
+                      (if (eq? (row-decl-event-mode row) 'direct-event)
+                          1 0)))
                 (andmap (lambda (argument)
                           (a0-bank-datum? argument bound environment inv))
                         arguments))])]
@@ -1871,10 +2342,184 @@
   (append
    (filter (lambda (item) (a0-corpus-eligible? item inv))
            (load-port-corpus))
-   a0-mechanism-cases))
+   a0-mechanism-cases
+   (b1-lowering-differential-cases)))
 
 (define (load-a0-waivers)
   (load-port-waivers a0-waivers-path))
+
+;; Every deterministic lowering output receives one B1 disposition. Selected
+;; subterms are maximal with respect to the extended closed grammar and retain
+;; the lexical binder environment needed to replay them independently.
+(define b1-lowering-family-heads
+  '(AtLeast Some Every No AtMost MoreThan FewerThan Distrib MaxRefer
+    CoveredBy Overlap SelectAtLeast SelectSome SelectAllBut ∀ ∃ → ¬
+    Presuppose +))
+
+(define (b1-family-heads-in datum)
+  (cond
+    [(not (list? datum)) (set)]
+    [(null? datum) (set)]
+    [(and (symbol? (first datum))
+          (member (first datum) '(Quote Syntax)))
+     (set)]
+    [else
+     (for/fold ([heads
+                 (if (and (symbol? (first datum))
+                          (member (first datum) b1-lowering-family-heads))
+                     (set (first datum)) (set))])
+               ([child (in-list datum)])
+       (set-union heads (b1-family-heads-in child)))]))
+
+(define (binder-pair->port-environment pair)
+  (match-define (list variable type) pair)
+  (if (list? type) `(,variable ,@type) `(,variable . ,type)))
+
+(define (extend-port-environment environment pairs)
+  (append (map binder-pair->port-environment pairs) environment))
+
+(define (b1-subterm-id source ordinal index path term environment)
+  (substring
+   (datum-digest (list source ordinal index path term environment)) 0 16))
+
+(define (b1-selected-subterms source ordinal index rules datum)
+  (define inv (load-inventory))
+  (define inventory-digests
+    (list (inventory-core-digest inv) (inventory-fixture-digest inv)))
+  (define (eligible? term environment)
+    (a0-corpus-eligible?
+     (port-case "candidate" '() term environment inventory-digests) inv))
+  (define (selected term environment path)
+    `(subterm
+      (id ,(b1-subterm-id source ordinal index path term environment))
+      (path ,@path)
+      (term ,term)
+      (env ,environment)))
+  (define (walk term environment path)
+    (define family-heads (b1-family-heads-in term))
+    (cond
+      [(and (not (set-empty? family-heads)) (eligible? term environment))
+       (list (selected term environment path))]
+      [(not (list? term)) '()]
+      [(and (pair? term) (member (first term) '(Quote Syntax))) '()]
+      [else
+       (match term
+         [`(λ ,binder ,body)
+          (define pairs (legacy-binder-pairs binder))
+          (walk body (extend-port-environment environment pairs)
+                (append path '(2)))]
+         [`(Let ,binder ,active ,body)
+          (define pairs (legacy-binder-pairs binder))
+          (append
+           (walk active environment (append path '(2)))
+           (walk body (extend-port-environment environment pairs)
+                 (append path '(3))))]
+         [`(Bind . ,pieces)
+          (define body (last pieces))
+          (define alternating (drop-right pieces 1))
+          (define-values (found scope)
+            (for/fold ([found '()] [scope environment])
+                      ([position (in-range 0 (length alternating) 2)])
+              (define pairs
+                (legacy-binder-pairs (list-ref alternating position)))
+              (values
+               (append found
+                       (walk (list-ref alternating (add1 position)) scope
+                             (append path (list (+ position 2)))))
+               (extend-port-environment scope pairs))))
+          (append found
+                  (walk body scope
+                        (append path (list (add1 (length alternating))))))]
+         [_
+          (append-map
+           (lambda (child position)
+             (walk child environment (append path (list position))))
+           term (range (length term)))])]))
+  (walk datum '() '()))
+
+(define (live-b1-lowering-outputs)
+  (define-values (ok? reports _fences) (run-lowering-gate #:print? #f))
+  (unless ok? (error 'live-b1-lowering-outputs "lowering gate is not green"))
+  (for/list ([report (in-list reports)])
+    (define source (case-report-source report))
+    (define ordinal (case-report-ordinal report))
+    (define index (case-report-index report))
+    (define produced (case-report-produced report))
+    (define heads (b1-family-heads-in produced))
+    (define subterms
+      (b1-selected-subterms source ordinal index
+                            (case-report-rules report) produced))
+    (define disposition
+      (cond [(pair? subterms) 'selected]
+            [(set-empty? heads) 'no-family-head]
+            [else 'unrepresentable]))
+    `(output
+      (key ,(format "~a#~a.~a" source ordinal index))
+      (source ,source ,ordinal ,index)
+      (rules ,@(case-report-rules report))
+      (disposition ,disposition)
+      (offending ,@(if (eq? disposition 'unrepresentable)
+                       (sort (set->list heads) symbol<?) '()))
+      (subterms ,@subterms))))
+
+(define (b1-lowering-manifest-datum)
+  (define outputs (live-b1-lowering-outputs))
+  `(smusni-b1-lowering-subterms 1
+     (count ,(length outputs))
+     (outputs-sha1 ,(datum-digest outputs))
+     (outputs ,@outputs)))
+
+(define (refresh-b1-lowering-manifest! [path b1-lowering-manifest-path])
+  (define datum (b1-lowering-manifest-datum))
+  (call-with-output-file path
+    (lambda (out) (pretty-write datum out))
+    #:exists 'truncate/replace)
+  datum)
+
+(define (load-b1-lowering-manifest [path b1-lowering-manifest-path])
+  (define datum (call-with-input-file path read))
+  (match datum
+    [`(smusni-b1-lowering-subterms 1
+       (count ,(? exact-nonnegative-integer? count))
+       (outputs-sha1 ,(? string? digest))
+       (outputs ,outputs ...))
+     (unless (= count (length outputs))
+       (error 'load-b1-lowering-manifest "output count is stale"))
+     (unless (string=? digest (datum-digest outputs))
+       (error 'load-b1-lowering-manifest "output digest is stale"))
+     datum]
+    [_ (error 'load-b1-lowering-manifest "unsupported B1 lowering manifest")]))
+
+(define (b1-lowering-manifest-findings
+         [recorded (load-b1-lowering-manifest)])
+  (if (equal? recorded (b1-lowering-manifest-datum))
+      '()
+      '("B1 lowering subterm manifest is stale")))
+
+(define (b1-lowering-differential-cases
+         [manifest (load-b1-lowering-manifest)])
+  (define inv (load-inventory))
+  (define inventory-digests
+    (list (inventory-core-digest inv) (inventory-fixture-digest inv)))
+  (match manifest
+    [`(smusni-b1-lowering-subterms 1 ,_ ... (outputs ,outputs ...))
+     (append-map
+      (lambda (output)
+        (match output
+          [`(output (key ,key) (source ,source ,ordinal ,index)
+                    (rules ,rules ...) (disposition ,_)
+                    (offending ,_ ...)
+                    (subterms ,subterms ...))
+           (for/list ([subterm (in-list subterms)])
+             (match subterm
+               [`(subterm (id ,id) (path ,path ...)
+                          (term ,term) (env ,environment))
+                (port-case
+                 (format "b1-lowering-~a" id)
+                 `((lowering ,source ,ordinal ,index
+                             (rules ,@rules) (path ,@path) (output ,key)))
+                 term environment inventory-digests)]))]))
+      outputs)]))
 
 (define (a0-row-environment datum inv)
   (cond
@@ -1892,14 +2537,19 @@
        [`(,(? symbol? predicate) ,arguments ...)
         (define row (inventory-row inv predicate))
         (append
-         (if (and row
-                  (eq? (row-decl-event-mode row) 'holding-state)
-                  (= (length arguments) (row-decl-total row)))
-             (list
-              (list predicate
-                    `(Fn ,(make-list (row-decl-total row)
-                                    '(Referents Entity))
-                         Content)))
+             (if (and row
+                      (= (length arguments)
+                         (+ (row-decl-total row)
+                            (if (eq? (row-decl-event-mode row) 'direct-event)
+                                1 0))))
+                 (list
+                  (list predicate
+                        `(Fn ,(append
+                               (make-list (row-decl-total row)
+                                          '(Referents Entity))
+                               (if (eq? (row-decl-event-mode row) 'direct-event)
+                                   '((Referents Eventuality)) '()))
+                             Content)))
              '())
          (append-map (lambda (argument)
                        (a0-row-environment argument inv))
@@ -1958,10 +2608,12 @@
                       #:old-engine legacy-record #:new-engine a0-port-record
                       #:print? #f))
   (when print?
-    (printf "A0 differential: cases=~a frozen=~a mechanism=~a differences=~a waivers=~a stale-waivers=~a\n"
+    (define lowering-count (length (b1-lowering-differential-cases)))
+    (printf "A0/B1 differential: cases=~a frozen=~a mechanism=~a lowering-subterms=~a differences=~a waivers=~a stale-waivers=~a\n"
             (length cases)
-            (- (length cases) (length a0-mechanism-cases))
+            (- (length cases) (length a0-mechanism-cases) lowering-count)
             (length a0-mechanism-cases)
+            lowering-count
             (length differences) (- (length waivers) (length stale))
             (length stale)))
   (values ok? differences stale))
@@ -2205,6 +2857,35 @@
      datum]
     [_ (error 'load-port-baseline "unsupported port baseline")]))
 
+(define (load-b1-growth-profile [path b1-growth-profile-path])
+  (define datum (call-with-input-file path read))
+  (match datum
+    [`(smusni-b1-growth-profile 1
+       (base-head ,(? string? _))
+       (depths ,(? exact-positive-integer? depths) ...)
+       (before-ms ,(? positive? before) ...)
+       (after-local-ms ,(? positive? after) ...)
+       (before-ratios ,(? positive? before-ratios) ...)
+       (after-local-ratios ,(? positive? after-ratios) ...)
+       (attribution ,_ ...)
+       (mitigation ,(? string? mitigation))
+       (conclusion ,(? string? conclusion)))
+     (unless (and (equal? depths '(16 32 64))
+                  (= (length before) 3) (= (length after) 3)
+                  (= (length before-ratios) 2)
+                  (= (length after-ratios) 2)
+                  (< (last after) (last before))
+                  (sentence? mitigation) (sentence? conclusion))
+       (error 'load-b1-growth-profile "invalid B1 growth profile"))
+     datum]
+    [_ (error 'load-b1-growth-profile "unsupported B1 growth profile")]))
+
+(define (b1-growth-profile-findings)
+  (with-handlers ([exn:fail? (lambda (exception)
+                               (list (exn-message exception)))])
+    (load-b1-growth-profile)
+    '()))
+
 (define (print-baseline-trigger-report baseline current-modes)
   (match-define
     `(smusni-port-baseline 1 (head ,head) (corpus-sha1 ,_)
@@ -2258,7 +2939,16 @@
                (a0-size-growth-milliseconds growth))
           (map (lambda (value) (~r value #:precision '(= 3)))
                (a0-size-growth-ratios growth))
-          size-growth-factor))
+          size-growth-factor)
+  (match (load-b1-growth-profile)
+    [`(smusni-b1-growth-profile 1 ,_ (depths ,depths ...)
+       (before-ms ,before ...) (after-local-ms ,after ...)
+       (before-ratios ,before-ratios ...)
+       (after-local-ratios ,after-ratios ...) ,_ ...)
+     (printf "  B1 opener profile: depths=~s before-ms=~s after-local-ms=~s before-ratios=~s after-local-ratios=~s depth64-improvement=~a%\n"
+             depths before after before-ratios after-ratios
+             (~r (* 100.0 (- 1 (/ (last after) (last before))))
+                 #:precision '(= 1)))]))
 
 (define (report-full-gate-trigger observed-ms
                                   [baseline (load-port-baseline)])
@@ -2293,6 +2983,13 @@
                 (if (definition-entry-issue entry)
                     (format ", ~a" (definition-entry-issue entry)) "")
                 (definition-entry-reason entry)))))
+  (printf "definition equation ranges: reviewed=~a unranged=~a\n"
+          (count (lambda (entry)
+                   (pair? (definition-entry-equation-ranges entry)))
+                 definitions)
+          (count (lambda (entry)
+                   (null? (definition-entry-equation-ranges entry)))
+                 definitions))
   (for ([state (in-list port-states)])
     (printf "definition ledger port-state ~a: ~a\n" state
             (count (lambda (entry)
@@ -2327,6 +3024,35 @@
     (printf "reachable values ~a: ~a\n" class
             (count (lambda (entry) (eq? (value-helper-entry-class entry) class))
                    values)))
+  (define migrations
+    (filter (lambda (entry) (eq? (target-migration-family entry) 'B1))
+            (load-target-migrations)))
+  (printf "B1 target migrations: sources=~a full=~a partial=~a targets=~a\n"
+          (length migrations)
+          (count (lambda (entry)
+                   (eq? (target-migration-extent entry) 'full))
+                 migrations)
+          (count (lambda (entry)
+                   (eq? (target-migration-extent entry) 'partial))
+                 migrations)
+          (set-count
+           (list->set (append-map target-migration-targets migrations))))
+  (match (load-b1-lowering-manifest)
+    [`(smusni-b1-lowering-subterms 1 ,_ ... (outputs ,outputs ...))
+     (define (disposition-count wanted)
+       (count (lambda (output)
+                (match output
+                  [`(output ,_ ... (disposition ,found) ,_ ...)
+                   (eq? found wanted)]))
+              outputs))
+     (define subterm-count
+       (for/sum ([output (in-list outputs)])
+         (match output
+           [`(output ,_ ... (subterms ,subterms ...)) (length subterms)])))
+     (printf "B1 lowering manifest: outputs=~a selected=~a no-family-head=~a unrepresentable=~a subterms=~a\n"
+             (length outputs) (disposition-count 'selected)
+             (disposition-count 'no-family-head)
+             (disposition-count 'unrepresentable) subterm-count)])
   (printf "diagnostic taxonomy: typing=~a no-lowering=~a allowed-evidence=~a forbidden-evidence=~a\n"
           (length (diagnostic-taxonomy-typing-causes taxonomy))
           (length (diagnostic-taxonomy-no-lowering-causes taxonomy))
@@ -2341,6 +3067,9 @@
     (append (definition-ledger-findings
              (extract-definition-observations) definitions)
             (infer-branch-findings (extract-infer-branches) branches)
+            (target-migration-findings)
+            (b1-lowering-manifest-findings)
+            (b1-growth-profile-findings)
             (diagnostic-taxonomy-findings taxonomy)))
   (define cases
     (with-handlers ([exn:fail? (lambda (exception)
@@ -2383,6 +3112,9 @@
     (set! action 'refresh-baseline)]
    [("--refresh-branches") "refresh reviewed infer branch ranges and source digests"
     (set! action 'refresh-branches)]
+   [("--refresh-b1-lowering")
+    "regenerate the tracked B1 lowering-subterm dispositions"
+    (set! action 'refresh-b1-lowering)]
    [("--full-gate-ms") milliseconds "record the measured pre-port full-gate baseline"
     (set! full-gate-ms (string->number milliseconds))]
    [("--report-full-gate-ms") milliseconds
@@ -2401,6 +3133,11 @@
      (define entries (refresh-infer-branch-metadata!))
      (printf "infer-core branch metadata refreshed: ~a entries\n"
              (length entries))]
+    [(refresh-b1-lowering)
+     (define datum (refresh-b1-lowering-manifest!))
+     (match datum
+       [`(smusni-b1-lowering-subterms 1 (count ,count) ,_ ...)
+        (printf "B1 lowering manifest refreshed: ~a outputs\n" count)])]
     [(report-full-gate)
      (void (report-full-gate-trigger observed-full-gate-ms))]
     [else (exit (if (run-phase0-gate) 0 1))]))

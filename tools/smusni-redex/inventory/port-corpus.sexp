@@ -99,7 +99,7 @@
  (definition-sources
   (ActualClause "12" "1c2fd41e3f5cef8b46853a7498d8c800ff5f8e7a")
   (Additive "12" "a9542af3fe9c579e411f47b65c6000207f06a6a5")
-  (AtLeast "12" "c93d0dce9d9243eceeabd8b2a5d159279e3adcbe")
+  (AtLeast "12" "20b1e099b421adcd9eecc03a37f1a2479c4a1083")
   (AtMost "12" "dfe99ff1052e003fad9450683cd6c456a44c99d1")
   (COI-schemas-prose "12" "e219cf8e64bda5c1fc482c64ffae26dc8779d875")
   (COIExpress "12" "e7f31f6871669a0b3d324a5aae3c4883c14c3089")
@@ -107,9 +107,9 @@
   (CapableClause "12" "9cb4f8e309f2bb628ec422bb6d73d9bf6a3f9e92")
   (CoRef "12" "a3b8711567cbab9668127a47b95d026be2fe1232")
   (DemonstratedClause "12" "0c7297a6165e44ae9f17d9648a89dd8e6acd7d1e")
-  (Distrib "12" "1d9bc7c360263f8d15eec5ffce16ac9578b60278")
+  (Distrib "12" "1795c4787baaf5964a8bff48b1bb2705a165bc44")
   (Enough "12" "8958a1aaf71808dba2fecb697ba42fce304fa52c")
-  (Every "12" "ca352071c96768c68d63bf3f87eaf4036692e1b5")
+  (Every "12" "b0ee1faf419372cef5e59fd9f3b9e4258095d98a")
   (Exactly "12" "bb45dd616e7461e16cbf8b2dce69b0e216f3c66f")
   (Few "12" "8a1c5cfb535ffe5b2becff67522f9fd0e8fdad84")
   (FewerThan "12" "92546d8f7488e601322b4631aefe4b15d1bd42ae")
@@ -126,7 +126,7 @@
   (JoiTanru "12" "c800187716182c33fda79eb4f41ca46916ae479e")
   (Many "12" "48dd9b9221a1a5090f9885c61d16b511ffb781cc")
   (Massify "12" "ba3854dcca84f6df53b1688c039ea9b83114d7ba")
-  (MaxRefer "12" "8ba8b6faaf1072c73121d66b5a2e5a2de9c8a0af")
+  (MaxRefer "12" "95e376fb51889cf09c3d76996eefe1b22911fad8")
   (MePred "12" "dc1cb770fdcd0044b0053be9b66689f298b9b540")
   (MemberCover "12" "f4c1308ac55194328b484dece9c70e3cd3e9066a")
   (MetricBall "12" "43fdd321fc15924458f06f6dc2eae82b6368a2ac")
@@ -166,7 +166,7 @@
   (Close "4.6" "479e81d19d4915cafff69e9deadd7d40c8b16d7a")
   (DirectClause "4.6" "74606a90d83aa5c7810f97b5e745598f69dc662b")
   (CardBasis "4.8" "893537c68ef90b52b3dcfd21c9cd60a2b7c99db6")
-  (CoveredBy "4.8" "c1b1c1f18a7978e7917bb0ebe1328b798964eabe")
+  (CoveredBy "4.8" "151a19d670e9d6374eae4178f418d72591a9d097")
   (> "4.9" "13c6bda7e489391c74a38fc410200555ea51a52c")
   (CompleteGunmaAt "4.9" "fc20e59775d183c0146a02fbd2bb87bd0bdceea1")
   (ComponentAt "4.9" "4f1762fae730cd769e04b5c2ddb49752dbccffc4")
@@ -176,7 +176,7 @@
   (This "5.1" "02abc444a1b6e848447695eddbe78855855332c6")
   (Yonder "5.1" "5a76730ea8fa99d27be74f32790f2de05bf10740")
   (Refer "5.3" "78b1b97f68ef4b796403cbd76f8535c847885b92")
-  (SelectSome "5.6" "2421413a8b8dba2d541068b80e5235ba71e5f0dd")
+  (SelectSome "5.6" "0c89fe3d44d03d0f8b8c1b9898cf2e1e3e37eec9")
   (Tanru "6.2" "cd54277e65f2100968916331389a7f078bf69108")
   (Utterance "7.4" "c77194c62627f1fba325c47eb852f10fe20b08fa")
   (Answer "8.2" "2cdcdebe6847c89fca87f0ee4259f3539955f3a6")
@@ -185,6 +185,8 @@
  (test-sources
   ("tools/smusni-redex/tests/a0-test.rkt"
    "6b5905a9723977e27a1a8817b9bd58c35dff2e31")
+  ("tools/smusni-redex/tests/b1-test.rkt"
+   "5026c589c3266bf74b6e521c702c040d2230f935")
   ("tools/smusni-redex/tests/elaborate-test.rkt"
    "eba3b38d9c963350f1341b4561e8a8bf32767683")
   ("tools/smusni-redex/tests/extract-syntax-test.rkt"
