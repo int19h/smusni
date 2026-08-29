@@ -15,7 +15,7 @@ Commands:
   sessions                                      list registered sessions
   validate                                      validate history, messages, sessions
   status   --actor A                            list what A owes
-  wait     [--actor A] [--idle-timeout 5m] [--debounce 5m]
+  wait     [--actor A] [--idle-timeout 1h] [--debounce 5m]
            [--include-broadcasts]                block for a new message batch
   new      --actor A --to L|all --kind K --slug S [--issues ..] [--reply-to ID]
            [--supersedes ID] [--no-ack] [--model M] [--client C]
@@ -1317,7 +1317,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     p.add_argument("--actor", help=f"session actor (default: ${BINDING_ENV})")
-    p.add_argument("--idle-timeout", type=parse_duration, default=parse_duration("5m"), metavar="DURATION")
+    p.add_argument("--idle-timeout", type=parse_duration, default=parse_duration("1h"), metavar="DURATION")
     p.add_argument("--debounce", type=parse_duration, default=parse_duration("5m"), metavar="DURATION")
     p.add_argument("--include-broadcasts", action="store_true", help="let new broadcasts join and reset the batch")
     p = sub.add_parser("new")

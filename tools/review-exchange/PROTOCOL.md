@@ -79,8 +79,9 @@ A new session needs no launch prompt. At its first turn it:
 
 ## Scheduling: no predetermined order
 
-Outside explicit inbox-wait mode, sessions do not poll. The human partner
-wakes a session, and that session processes whatever is pending for its actor.
+Waiting on the inbox is the default end-of-turn state (below); a session
+processes whatever is pending for its actor when a batch arrives or when the
+human partner wakes it.
 **The protocol imposes no turn order** — not round-robin, not hub-and-spoke,
 not "everyone answers before anyone replies." A message is addressed to the
 audience the sender actually needs; the human partner decides who is woken
@@ -89,12 +90,12 @@ answer it so that the discussion starts from the strongest premise. Nothing in
 the pending sets, acknowledgements, or wait mode encodes or requires a
 sequence.
 
-### Opt-in inbox-wait mode
+### Default inbox-wait mode
 
-After its normal end-of-turn status check, a session explicitly asked to wait
-may run the following as the foreground tool call. It must not background the
-process: the still-running command is what keeps that interactive model turn
-suspended.
+After its normal end-of-turn status check, a session runs the following as the
+foreground tool call unless the human partner has directed it not to wait. It
+must not background the process: the still-running command is what keeps that
+interactive model turn suspended.
 
 ```sh
 python3 tools/review-exchange/exchange.py wait --actor <id>
@@ -119,17 +120,21 @@ The command never acknowledges mail or mutates messages, acknowledgements, or
 session state. An unknown actor, a retired session, or an invalid spool is an
 error; normal client interruption stops the foreground command.
 
-Both `--idle-timeout` and `--debounce` default to `5m`. A duration is a positive
+`--idle-timeout` defaults to `1h` and `--debounce` to `5m`; a harness that
+caps a single foreground call shorter than an hour passes a shorter
+`--idle-timeout` (and, if it wants prompt returns, a shorter `--debounce`) and
+chains calls. A duration is a positive
 number immediately followed by `ms`, `s`, `m`, or `h`; decimals are allowed
 (`500ms`, `30s`, `2.5m`). Continuous qualifying traffic can intentionally keep
 the trailing-edge wait open without a maximum batch age.
 
 One invocation returns one batch or one empty interval; the session maintains
-the wait-mode policy across turns. After the first consecutive `WAIT_EMPTY`,
-re-arm `wait` once. After the second consecutive `WAIT_EMPTY`, leave wait mode
-and yield. Any `WAIT_BATCH` resets the consecutive-empty count to zero. Errors
-and interruptions do not increment it. Leaving wait mode does not retire the
-session.
+the wait-mode policy across turns. The policy is a one-hour idle window: use
+the longest idle interval the harness allows per call, not exceeding one hour,
+and chain calls until either a `WAIT_BATCH` arrives or a full hour has passed
+with no qualifying message. Handling a batch restarts the hour. Leave wait mode
+and yield only when the hour expires empty. Errors and interruptions do not
+count toward the hour. Leaving wait mode does not retire the session.
 
 ## Layout
 
@@ -283,7 +288,7 @@ Run from the repository root:
 ```sh
 python3 tools/review-exchange/exchange.py join --model <slug> [--note '…']   # once, first turn: prints your id
 python3 tools/review-exchange/exchange.py status --actor <actor>   # start and end of a turn
-python3 tools/review-exchange/exchange.py wait --actor <actor> [--idle-timeout 5m] [--debounce 5m] [--include-broadcasts]
+python3 tools/review-exchange/exchange.py wait --actor <actor> [--idle-timeout 1h] [--debounce 5m] [--include-broadcasts]
 python3 tools/review-exchange/exchange.py sessions                 # who exists, active or retired
 python3 tools/review-exchange/exchange.py snapshot                 # validated read model as JSON
 python3 tools/review-exchange/exchange.py retire --actor <actor> [--note '…']   # handoff
