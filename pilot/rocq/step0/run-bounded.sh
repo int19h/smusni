@@ -2,12 +2,12 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "usage: $0 RunValidation.v|RunDerivationShrinking.v" >&2
+  echo "usage: $0 RunValidation.v|RunDerivationShrinking.v|RunFuelProbe.v" >&2
   exit 2
 fi
 
 case "$1" in
-  RunValidation.v|RunDerivationShrinking.v) ;;
+  RunValidation.v|RunDerivationShrinking.v|RunFuelProbe.v) ;;
   *)
     echo "refusing unrecognized runner: $1" >&2
     exit 2

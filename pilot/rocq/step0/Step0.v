@@ -1,4 +1,4 @@
-From Stdlib Require Import List Arith Bool String.
+From Stdlib Require Import List Arith Bool String Program.Equality.
 From QuickChick Require Import QuickChick.
 
 Import ListNotations.
@@ -173,7 +173,6 @@ Definition compatible (actual expected : ty) : bool :=
 Definition equality_type (candidate : ty) : bool :=
   match candidate with
   | TEntity | TNatural | TNumber => true
-  | TRef _ => true
   | _ => false
   end.
 
@@ -183,9 +182,23 @@ Definition effect_equal (first second : effect) : bool :=
 Definition obligation_equal (first second : obligation) : bool :=
   if obligation_eq_dec first second then true else false.
 
-Definition add_effect (candidate : effect) (values : list effect) : list effect :=
-  if existsb (fun existing => effect_equal candidate existing) values
-  then values else values ++ [candidate].
+Definition effect_rank (candidate : effect) : nat :=
+  match candidate with
+  | EContext => 0
+  | EEffectfulCall => 1
+  | ERefer => 2
+  end.
+
+Fixpoint add_effect (candidate : effect)
+    (values : list effect) : list effect :=
+  match values with
+  | [] => [candidate]
+  | existing :: rest =>
+      if effect_equal candidate existing then values
+      else if Nat.ltb (effect_rank candidate) (effect_rank existing)
+        then candidate :: values
+        else existing :: add_effect candidate rest
+  end.
 
 Fixpoint union_effects (first second : list effect) : list effect :=
   match second with
@@ -516,13 +529,15 @@ Definition dec_true {P : Prop} `{DecOpt P} (fuel : nat) : bool :=
   | _ => false
   end.
 
-Definition synth_generated : Checker :=
+Definition synth_generated_with_fuel (fuel : nat) : Checker :=
   forAllMaybe (genST (fun generated => synth_query [] generated))
     (fun generated =>
        collect
          (trace_mask (R_A0_Synth :: case_trace generated),
           term_depth (case_term generated))
-         (checker (dec_true (P := synth_query [] generated) 120))).
+         (checker (dec_true (P := synth_query [] generated) fuel))).
+
+Definition synth_generated : Checker := synth_generated_with_fuel 120.
 
 Definition check_generated : Checker :=
   forAll arbitrary (fun expected =>
@@ -593,6 +608,7 @@ Definition measured_args (successes discards max_size : nat) : Args :=
 
 Definition step0_args := measured_args 20000 100000 7.
 Definition shrink_args := measured_args 2000 20000 7.
+Definition fuel_probe_args := measured_args 300 3000 7.
 
 Example positive_context_two_arguments :
   exists result_record result_trace,
@@ -638,6 +654,79 @@ Proof.
       * reflexivity.
   - eapply A0_T_Variable.
     apply LookupNow.
+Qed.
+
+Example canonical_mixed_effect_record :
+  merge_two TContent
+    (MkTyping (TRefComp (TRef TEntity)) [ERefer] [])
+    (MkTyping TContent [EContext] []) [] =
+  MkTyping TContent [EContext; ERefer] [].
+Proof. reflexivity. Qed.
+
+Example positive_refer_before_context_is_canonical :
+  exists result_trace,
+    a0_type [] Synth
+      (MkTypedCase
+        (TBind (TRef TEntity)
+          (TSelectSome (TLam TEntity TTop))
+          (TBind TContent TContextNil TTop))
+        (MkTyping TContent [EContext; ERefer] [])
+        result_trace).
+Proof.
+  rewrite <- canonical_mixed_effect_record.
+  eexists.
+  eapply A0_T_Bind_Reference with
+    (computation_record :=
+      MkTyping (TRefComp (TRef TEntity)) [ERefer] [])
+    (body_record := MkTyping TContent [EContext] []).
+  - eapply A0_T_Select_Some with
+      (property_obligations := [])
+      (property_trace := [R_LambdaPure; R_Top]).
+    eapply A0_T_Lambda_Pure with
+      (body_record := MkTyping TContent [] [])
+      (body_trace := [R_Top]).
+    + apply A0_T_Top.
+    + reflexivity.
+  - eapply A0_T_Bind_Reference with
+      (computation_record := MkTyping (TRefComp TContent) [EContext] [])
+      (body_record := MkTyping TContent [] []).
+    + apply A0_T_Context_Nil.
+    + apply A0_T_Top.
+Qed.
+
+Lemma plural_self_equality_body_negative :
+  ~ a0_type [TRef TEntity] Synth
+      (MkTypedCase (TEquality (TVar 0) (TVar 0))
+        (MkTyping TContent [] [])
+        [R_Equality; R_Variable; R_Variable]).
+Proof.
+  intro derivation.
+  dependent destruction derivation.
+  repeat match goal with
+  | nested : a0_type _ _ _ |- _ => dependent destruction nested
+  end.
+  repeat match goal with
+  | lookup : env_lookup _ _ _ |- _ => dependent destruction lookup
+  end.
+  simpl in *; discriminate.
+Qed.
+
+Example closed_lambda_plural_self_equality_negative :
+  ~ a0_type [] Synth
+      (MkTypedCase
+        (TLam (TRef TEntity) (TEquality (TVar 0) (TVar 0)))
+        (MkTyping (TArrow Pure (TRef TEntity) TContent) [] [])
+        [R_LambdaPure; R_Equality; R_Variable; R_Variable]).
+Proof.
+  intro derivation.
+  dependent destruction derivation.
+  repeat match goal with
+  | nested : a0_type _ _ _ |- _ => dependent destruction nested
+  end.
+  repeat match goal with
+  | lookup : env_lookup _ _ _ |- _ => dependent destruction lookup
+  end.
+  simpl in *; discriminate.
 Qed.
 
 Example negative_wrong_expected :
