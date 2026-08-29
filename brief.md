@@ -165,8 +165,9 @@ smuggling in an implementation?
 
 ## Derived artifacts
 
-The documents are the definition; anything executable or machine-checked
-is a **derived artifact**, never the authority. A Redex-based checker
+The documents are the definition today; anything executable or
+machine-checked is a **derived artifact** until the recorded authority
+transfer described below. A Redex-based checker
 (`tools/smusni-redex`, run by `tools/check-smusni`) already extracts the
 specimens from the specification and samples, type-checks them against a
 fixture lexicon, and exercises the model-profile fixtures; it tests the
@@ -177,8 +178,17 @@ objects rather than prose, with a bounded Redex-to-Lean pilot queued in the
 tracker. Lojban text could later be fed in through an independently
 specified parsing and reading-resolution layer, and a **Metamath
 cross-check** against Brismu's derivations would test the pin list from
-the opposite direction. Each is started only on explicit decision; none may
-ever become a place where the definition lives.
+the opposite direction. Each is started only on explicit decision. The project has adopted in
+principle (2026-08-29) that, after a platform pilot selects a host, that
+host reproduces every live formation rule, typing clause, library
+definition, lowering rule, and denotation law with exact differential and
+certificate coverage against the frozen checker, and the checker is then
+retired so that one formal rule source remains, the formal definitions become the normative
+statement of formation, typing, expansion, and denotation, with the prose
+as commentary — while the Lojban mapping, evidence, pins, alternatives,
+gaps, and adequacy claims remain documentary and normative. That transfer
+is an explicit recorded decision; until it happens, nothing executable is a
+place where the definition lives.
 
 ## Coverage
 
