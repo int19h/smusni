@@ -117,7 +117,9 @@ structure ValidatedBundle (scope : Nat) where
   private mk ::
   bundle : Bundle scope
   uses : List SiteUse
+  usesValid : bundle.validateWithUses = .ok uses
   closure : ScopedSiteClosure scope uses
+  valid : bundle.validate = .ok ()
 
 structure SiteEntryConflict where
   identity : SiteId
@@ -127,29 +129,30 @@ structure SiteEntryConflict where
 
 inductive BundleBindingConflict where
   | inconsistentSharing (witness : SiteEntryConflict)
+  | outputValidationFailure (detail : String)
 
 def BundleBindingConflict.message : BundleBindingConflict → String
   | .inconsistentSharing witness =>
       s!"bundle-binding inconsistent-sharing conflict at {repr witness.identity}: " ++
         s!"{repr witness.first} versus {repr witness.second}"
+  | .outputValidationFailure detail =>
+      "bundle-binding output validation failure: " ++ detail
 
-theorem BundleBindingConflict.has_unequal_candidates
-    (conflict : BundleBindingConflict) :
-    ∃ witness, conflict = .inconsistentSharing witness ∧
-      witness.first ≠ witness.second := by
-  cases conflict with
-  | inconsistentSharing witness =>
-      exact ⟨witness, rfl, witness.unequal⟩
+theorem BundleBindingConflict.inconsistent_has_unequal_candidates
+    (witness : SiteEntryConflict) : witness.first ≠ witness.second :=
+  witness.unequal
 
 def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle scope) :=
-  match bundle.validateWithUses with
+  match evidence : bundle.validateWithUses with
   | .ok uses => do
       let closure ← buildScopedSiteClosure bundle uses
       .ok {
         bundle
         uses
-        closure }
+        usesValid := evidence
+        closure
+        valid := validateWithUses_implies_validate bundle uses evidence }
   | .error message => .error message
 
 @[simp] theorem toDependency_ofDependency {scope : Nat}
@@ -447,34 +450,39 @@ def replacementSourceNotesForUses {source target : Nat}
 
 structure RenamedBundle {source target : Nat} (input : ValidatedBundle source)
     (ρ : Renaming source target) where
+  certified : Bundle target
   validated : ValidatedBundle target
-  termEq : validated.bundle.term = input.bundle.term.rename ρ
+  termEq : certified.term = input.bundle.term.rename ρ
   sitesAreTypedCandidates :
     reconcileSiteEntries
-      (scopedSiteEntryCandidates validated.closure.entries) =
-        .ok validated.bundle.sites
+      (input.closure.entries.map (renameScopedSiteCandidate ρ)) =
+        .ok certified.sites
 
 structure SubstitutedBundle {source target : Nat}
     (input : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) where
+  certified : Bundle target
   validated : ValidatedBundle target
-  termEq : validated.bundle.term = input.bundle.term.substitute
+  termEq : certified.term = input.bundle.term.substitute
     (fun index => (σ index).bundle.term)
   sitesAreTypedCandidates :
+    let uses := typedTermSubstitutionUses input.bundle.term ++
+      scopedSidecarSubstitutionUses input
+    let original := input.closure.entries.map (substituteScopedSiteCandidate σ)
+    let replacements := replacementScopedSiteCandidates σ uses
     reconcileSiteEntries
-      (scopedSiteEntryCandidates validated.closure.entries) =
-        .ok validated.bundle.sites
+      (original ++ replacements) = .ok certified.sites
 
 def RenamedBundle.bundle {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
     (result : RenamedBundle input ρ) : Bundle target :=
-  result.validated.bundle
+  result.certified
 
 def SubstitutedBundle.bundle {source target : Nat}
     {input : ValidatedBundle source}
     {σ : Fin source → ValidatedBundle target}
     (result : SubstitutedBundle input σ) : Bundle target :=
-  result.validated.bundle
+  result.certified
 
 def shiftSiteEntry {scope : Nat} (depth : Nat) (entry : SiteEntry) :
     Except String SiteEntry := do
@@ -619,9 +627,7 @@ def Bundle.rename {source target : Nat} (bundle : Bundle source)
 def ValidatedBundle.rename {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target) :
     Except BundleBindingConflict (RenamedBundle bundle ρ) :=
-  let outputEntries := bundle.closure.entries.map (renameScopedSiteUse ρ)
-  let outputUses := outputEntries.map Sigma.fst
-  let candidates := scopedSiteEntryCandidates outputEntries
+  let candidates := bundle.closure.entries.map (renameScopedSiteCandidate ρ)
   match evidence : reconcileSiteEntries candidates with
   | .error conflict => .error conflict
   | .ok sites =>
@@ -630,17 +636,13 @@ def ValidatedBundle.rename {source target : Nat}
         term := bundle.bundle.term.rename ρ
         sites
         sourceMap := bundle.bundle.sourceMap }
-      let outputClosure : ScopedSiteClosure target outputUses := {
-        entries := outputEntries
-        coverage := rfl }
-      let validated : ValidatedBundle target := {
-        bundle := outputBundle
-        uses := outputUses
-        closure := outputClosure }
-      .ok {
-      validated := validated
-      termEq := rfl
-      sitesAreTypedCandidates := evidence }
+      match outputBundle.checked with
+      | .error detail => .error (.outputValidationFailure detail)
+      | .ok validated => .ok {
+          certified := outputBundle
+          validated := validated
+          termEq := rfl
+          sitesAreTypedCandidates := evidence }
 
 def Bundle.weaken {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle (scope + 1)) :=
@@ -679,11 +681,10 @@ def ValidatedBundle.substitute {source target : Nat}
     Except BundleBindingConflict (SubstitutedBundle bundle σ) :=
   let uses := typedTermSubstitutionUses bundle.bundle.term ++
     scopedSidecarSubstitutionUses bundle
-  let originalEntries := bundle.closure.entries.map (substituteScopedSiteUse σ)
-  let replacementEntries := replacementScopedSiteUses σ uses
-  let outputEntries := originalEntries ++ replacementEntries
-  let outputUses := outputEntries.map Sigma.fst
-  let candidates := scopedSiteEntryCandidates outputEntries
+  let originalCandidates := bundle.closure.entries.map
+    (substituteScopedSiteCandidate σ)
+  let replacementCandidates := replacementScopedSiteCandidates σ uses
+  let candidates := originalCandidates ++ replacementCandidates
   match evidence : reconcileSiteEntries
       candidates with
   | .error conflict => .error conflict
@@ -694,23 +695,19 @@ def ValidatedBundle.substitute {source target : Nat}
         sites
         sourceMap := bundle.bundle.sourceMap ++
           replacementSourceNotesForUses σ uses }
-      let outputClosure : ScopedSiteClosure target outputUses := {
-        entries := outputEntries
-        coverage := rfl }
-      let validated : ValidatedBundle target := {
-        bundle := outputBundle
-        uses := outputUses
-        closure := outputClosure }
-      .ok {
-      validated := validated
-      termEq := rfl
-      sitesAreTypedCandidates := evidence }
+      match outputBundle.checked with
+      | .error detail => .error (.outputValidationFailure detail)
+      | .ok validated => .ok {
+          certified := outputBundle
+          validated := validated
+          termEq := rfl
+          sitesAreTypedCandidates := evidence }
 
 theorem RenamedBundle.site_ids {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
     (result : RenamedBundle input ρ) :
     result.bundle.term.siteIds = input.bundle.term.siteIds := by
-  change result.validated.bundle.term.siteIds = input.bundle.term.siteIds
+  change result.certified.term.siteIds = input.bundle.term.siteIds
   rw [result.termEq]
   exact Term.siteIds_rename ρ input.bundle.term
 
@@ -720,7 +717,7 @@ theorem SubstitutedBundle.preserves_site_id {source target : Nat}
     (result : SubstitutedBundle input σ)
     (identity : SiteId) (present : identity ∈ input.bundle.term.siteIds) :
     identity ∈ result.bundle.term.siteIds := by
-  change identity ∈ result.validated.bundle.term.siteIds
+  change identity ∈ result.certified.term.siteIds
   rw [result.termEq]
   exact Term.siteId_mem_substitute
     (fun index => (σ index).bundle.term) input.bundle.term identity present

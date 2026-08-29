@@ -1,13 +1,20 @@
 # Lean milestone 1 report — term, interchange, binders
 
-## Outcome
+## Outcome — PARTIAL / Gate-C FAIL
 
-M1 is implemented on the pinned Lean 4.33.1 / Lake 5.0.0 toolchain. It builds
+M1 is partially implemented on the pinned Lean 4.33.1 / Lake 5.0.0 toolchain. It builds
 one primitive-only, well-scoped `CoreTerm` representation; a distinct
 non-denoting `SurfaceTerm`; generic and typed S-expression transport; semantic
 site tables plus nonsemantic source maps; and complete runtime ingestion of the
 pinned S1 inputs. No `sorry`, axiom, corpus literal table, `Lean.Expr`
 whitelist, intrinsic type/effect index, or §12 constructor is present.
+
+The remaining M1 closure deliverable is **not proved**: rename/substitute do
+not derive `validateWithUses = ok` for their candidate output. Certified
+transforms therefore run the raw checker before returning a strong
+`ValidatedBundle`; runtime validation is the evidence. The five graph/closure
+proof obligations are recorded on #19 as Gate-C failure evidence. This report
+does not call M1 PASS.
 
 This is derived pilot evidence. It neither selects Lean nor transfers semantic
 authority, and it implements no M2 elaboration or typing.
@@ -71,8 +78,8 @@ dependency transformations. The decoder assigns written sites and sidecar
 entries together in deterministic traversal/source order, never from byte
 offsets.
 
-Binding infrastructure is 1,630 lines including scoped data/core and validated
-bundle operations, or 1,355 lines for operations and proofs alone:
+Binding infrastructure is 1,627 lines including scoped data/core and validated
+bundle operations, or 1,352 lines for operations and proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
@@ -84,9 +91,9 @@ bundle operations, or 1,355 lines for operations and proofs alone:
 - substitution composition;
 - bundle-level renaming, weakening, and substitution that transform the
   authoritative dependency table at each occurrence's lifted scope;
-- proof-carrying `RenamedBundle`/`SubstitutedBundle` operation results: each
-  carries exact term equality and proof that its table is the reconciliation
-  of the complete typed per-use candidate list;
+- proof-carrying `RenamedBundle`/`SubstitutedBundle` transformation results:
+  each carries exact term equality and typed-candidate reconciliation, then
+  obtains its strong output `ValidatedBundle` through the fallible raw checker;
 - total typed site transforms defined directly through `Site.rename`,
   `Site.substitute`, `Renaming.liftN`, and `Substitution.liftN`, with kernel
   laws for dependency commutation, typed serialization round trip, and
@@ -145,24 +152,19 @@ serialization round trip, and `validateSiteUse_deserializes` proves that every
 successful per-occurrence validation has a matching entry and typed `Site`.
 `Bundle.checked` also stores the complete reachable-use list plus a
 scope-indexed typed closure whose coverage equation is part of the value.
-Validated operations consume only that closure and total typed substitution-use
-collectors; they do not call a string-returning lookup, deserializer, closure,
-or final validator. Successful rename/substitute results carry term and typed
-candidate-table correspondence proofs, while the only error constructor is
-`BundleBindingConflict.inconsistentSharing` with an actual SiteId and two
-unequal `SiteEntry` candidates. `has_unequal_candidates` proves an arbitrary
-internal string cannot be presented as that error. Dependency-only site entries
+Validated operations consume that closure and total typed substitution-use
+collectors to build a certified candidate result, then call the raw checker to
+establish output coherence. Public failures distinguish
+`inconsistentSharing` (an actual SiteId and two unequal candidates) from
+`outputValidationFailure` (the checker diagnostic); no blanket mapping is
+used. Dependency-only site entries
 are ordinary reachable graph nodes, not conflicts; the conflict is reserved for
 colliding identities or one shared identity requiring inconsistent transformed
 entries at distinct occurrence depths. Raw byte/bundle
-input may still fail schema or coherence validation before it becomes a
-`ValidatedBundle`; raw `Bundle` convenience operations retain those detailed
-boundary errors. Each successful operation constructs a new
-private-constructor `ValidatedBundle` whose reachable uses and typed closure
-are derived from the complete transformed original/replacement closure, so
-callers do not re-enter the fallible raw checker. Runtime gates revalidate every
-certified result as redundant executable evidence. Validation is run after both
-source decoding and text decoding. Each primitive S1 case also
+input may fail schema or coherence validation before it becomes a strong
+`ValidatedBundle` carrying `usesValid` and `valid`. Runtime output checking is
+the current coherence evidence, not a proof of closure. Validation is run
+after both source decoding and text decoding. Each primitive S1 case also
 passes a term-only source-to-core-to-canonical round trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
@@ -233,12 +235,22 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.31 s wall, 29.73 s user, 3.90 s system,
-  1,703,636 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.35 s wall, 0.12 s user, 0.16 s system,
-  133,292 KiB maximum RSS.
+- clean M1 build after `lake clean`: 9.39 s wall, 29.71 s user, 4.05 s system,
+  1,700,108 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.16 s system,
+  135,408 KiB maximum RSS.
 
 Build time is not reported as runtime.
+
+## C-spike disposition
+
+The bounded C spike attempted to make the typed closure builder itself the
+validity invariant (`9fc5243..2a2f640`). Exact review showed that the private
+closure still lacked proofs connecting output term roots, propagated
+dependency edges, reconciled rows, and the executable validator. Gate-C
+evidence on #19 enumerates those obligations. The automatic B fallback is
+therefore active in this head: strong checked output, explicit validation
+failure, and a PARTIAL result. No extension of the spike was taken.
 
 ## Explicit limits / not yet general
 
@@ -257,6 +269,11 @@ Build time is not reported as runtime.
   application node with an ordered list of positional/labelled fills, so no
   source arity or label structure is lost before M2 typing.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
+- **Gate-C FAIL:** M1 lacks the theorem that renamed/substituted roots and
+  transitive `.site` edges exactly cover the reconciled output table and hence
+  imply `validateWithUses = ok` / `validate = ok`. M2 may use only the checked
+  API and must not treat runtime validation as proof. This theorem remains a
+  named blocker for full-migration parity and any authority transfer.
 - Raw `Bundle.rename`/`substitute` are non-semantic boundary conveniences that
   retain String diagnostics and duplicate parts of the validated path; the
   validated certified operations are the semantic M1 API. Remove the raw
