@@ -73,9 +73,19 @@ and core typability never establishes Lojban expressibility.
 - **`review/ADJUDICATIONS.md`** and the response/review files are design history
   and detailed dockets. Earlier passages may be superseded by later closure
   notes; never treat the whole file as one current position.
-- Executable semantics, parsers, type-checkers, Redex models, Lean
-  mechanizations, and certificates are derived artifacts. They test the
-  documents; they do not become the semantic authority.
+- Executable semantics, parsers, type-checkers, Redex models, proof-assistant
+  mechanizations, and certificates are derived artifacts today: they test the
+  documents and do not become the semantic authority. **Adopted in principle
+  (human partner, 2026-08-29; tracker #74):** once the platform selected by
+  the #74 pilot reaches *full-migration parity* — every live typing clause,
+  §12 definition, and §11 lowering rule reproduced with exact differential
+  and certificate coverage and no second live rule implementation — the
+  formal definitions become normative for **formation, typing, expansion,
+  and denotation**, and the corresponding prose becomes commentary. The
+  Lojban mapping, source evidence, pins, alternatives, gaps, and adequacy
+  claims stay documentary and normative; the §11 rule *text* stays normative
+  while its encodings remain derived. The transfer is an explicit, recorded
+  event, not a consequence of any PR merging.
 
 When live `spec.md` and live `review/CONSENSUS.md` temporarily disagree because
 an accepted edit has not yet been applied, use the latest explicit user
