@@ -12,18 +12,18 @@ inductive Ty where
 structure FreeId where
   domain : String
   serial : Nat
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, BEq, ReflBEq, LawfulBEq, Inhabited
 
 structure SiteId where
   document : String
   occurrence : Nat
   expansionRole : String
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, BEq, ReflBEq, LawfulBEq, Inhabited
 
 inductive SiteRole where
   | context
   | vague
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, BEq, ReflBEq, LawfulBEq, Inhabited
 
 inductive Dependency (scope : Nat) where
   | bound (index : Fin scope)

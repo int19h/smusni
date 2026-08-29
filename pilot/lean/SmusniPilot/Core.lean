@@ -38,7 +38,7 @@ structure SiteUse where
   identity : SiteId
   role : SiteRole
   scope : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq, BEq, ReflBEq, LawfulBEq
 
 mutual
   def Term.siteUses {scope : Nat} : Term scope → List SiteUse

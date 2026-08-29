@@ -242,6 +242,167 @@ structure Bundle (scope : Nat) where
   sourceMap : List SourceNote
   deriving Repr
 
+/-!
+The C-spike coherence object is the single semantic validity invariant.  Raw
+ingestion must construct it; certified binding operations must transform it.
+The executable validator is being migrated to this structure so it no longer
+has a second fuel/order-sensitive notion of reachability.
+-/
+structure TypedSiteUseWitness {scope : Nat} (bundle : Bundle scope)
+    (use : SiteUse) where
+  entry : SiteEntry
+  entryInTable : entry ∈ bundle.sites
+  entryIdentity : entry.identity = use.identity
+  entryRole : entry.role = use.role
+  site : Site use.scope
+  typed : SiteEntry.toSite use.scope entry = .ok site
+
+structure BundleCoherence {scope : Nat} (bundle : Bundle scope) where
+  uses : List SiteUse
+  usesUnique : uses.Nodup
+  rootsCovered : ∀ use, use ∈ bundle.term.siteUses → use ∈ uses
+  witness : ∀ use, use ∈ uses → TypedSiteUseWitness bundle use
+  edgesClosed : ∀ use (present : use ∈ uses)
+      (dependency : SerializedDependency) (_dependencyPresent :
+        dependency ∈ (witness use present).entry.dependencies)
+      (identity : SiteId),
+      dependency = .site identity →
+        ∃ child, child ∈ uses ∧ child.identity = identity ∧
+          child.scope = use.scope
+  tableUnique : (bundle.sites.map (fun entry => entry.identity)).Nodup
+  tableCovered : ∀ entry, entry ∈ bundle.sites →
+    ∃ use, use ∈ uses ∧ use.identity = entry.identity
+
+def buildTypedSiteUseWitness {scope : Nat} (bundle : Bundle scope)
+    (use : SiteUse) : Except String (TypedSiteUseWitness bundle use) := do
+  match lookup : bundle.sites.find? (fun entry =>
+      entry.identity == use.identity) with
+  | none => .error s!"missing site sidecar entry: {repr use.identity}"
+  | some entry =>
+      if identityMatches : entry.identity = use.identity then
+        if roleMatches : entry.role = use.role then
+          match typed : SiteEntry.toSite use.scope entry with
+          | .error message => .error message
+          | .ok site =>
+              have entryInTable : entry ∈ bundle.sites := by
+                exact List.mem_of_find?_eq_some lookup
+              pure {
+                entry := entry
+                entryInTable := entryInTable
+                entryIdentity := identityMatches
+                entryRole := roleMatches
+                site := site
+                typed := typed }
+        else .error s!"site role conflicts with occurrence: {repr use.identity}"
+      else .error s!"site lookup identity mismatch: {repr use.identity}"
+
+def siteUseUniverse {scope : Nat} (bundle : Bundle scope) : List SiteUse :=
+  let roots := bundle.term.siteUses
+  let scopes := (roots.map (fun use => use.scope)).eraseDups
+  let tableUses := scopes.flatMap fun occurrenceScope =>
+    bundle.sites.map fun entry => {
+      identity := entry.identity
+      role := entry.role
+      scope := occurrenceScope }
+  (roots ++ tableUses).eraseDups
+
+def cSpikeDependencySiteUses (sites : List SiteEntry) (scope : Nat) :
+    List SerializedDependency → Except String (List SiteUse)
+  | [] => pure []
+  | .site identity :: rest => do
+      let some entry := sites.find? fun candidate =>
+          candidate.identity == identity
+        | .error s!"dangling site dependency: {repr identity}"
+      pure ({ identity, role := entry.role, scope } ::
+        (← cSpikeDependencySiteUses sites scope rest))
+  | _ :: rest => cSpikeDependencySiteUses sites scope rest
+
+def cSpikeEnqueue (seen pending : List SiteUse) :
+    List SiteUse → List SiteUse
+  | [] => pending
+  | use :: rest =>
+      if seen.contains use || pending.contains use then
+        cSpikeEnqueue seen pending rest
+      else cSpikeEnqueue seen (pending ++ [use]) rest
+
+theorem mem_cSpikeEnqueue_of_mem_pending (seen pending additions : List SiteUse)
+    (use : SiteUse) (present : use ∈ pending) :
+    use ∈ cSpikeEnqueue seen pending additions := by
+  induction additions generalizing pending with
+  | nil => exact present
+  | cons head tail ih =>
+      simp only [cSpikeEnqueue]
+      split
+      · exact ih pending present
+      · exact ih (pending ++ [head]) (List.mem_append_left _ present)
+
+def buildClosureUsesLoop {scope : Nat} (bundle : Bundle scope) :
+    (unseen pending : List SiteUse) →
+    (seen : List (Sigma fun use => TypedSiteUseWitness bundle use)) →
+    Except String (List (Sigma fun use => TypedSiteUseWitness bundle use))
+  | _, [], seen => pure seen
+  | unseen, use :: pending, seen =>
+      if _available : unseen.contains use then
+        match buildTypedSiteUseWitness bundle use with
+        | .error message => .error message
+        | .ok witness =>
+            match cSpikeDependencySiteUses bundle.sites use.scope
+                witness.entry.dependencies with
+            | .error message => .error message
+            | .ok children =>
+                let queued := cSpikeEnqueue
+                  (seen.map Sigma.fst) pending children
+                buildClosureUsesLoop bundle (unseen.erase use) queued
+                  (⟨use, witness⟩ :: seen)
+      else .error s!"closure queue invariant violated: {repr use}"
+termination_by unseen pending _ => (unseen.length, pending.length)
+decreasing_by
+  · have member : use ∈ unseen := List.contains_iff_mem.mp _available
+    have shorter : (unseen.erase use).length < unseen.length := by
+      have positive := List.length_pos_of_mem member
+      rw [List.length_erase_of_mem member]
+      omega
+    exact Prod.Lex.left queued.length (use :: pending).length shorter
+
+def buildTypedClosureUses {scope : Nat} (bundle : Bundle scope) :
+    Except String (List (Sigma fun use => TypedSiteUseWitness bundle use)) :=
+  let roots := bundle.term.siteUses.eraseDups
+  buildClosureUsesLoop bundle (siteUseUniverse bundle) roots []
+
+theorem buildClosureUsesLoop_preserves_pending {scope : Nat}
+    (bundle : Bundle scope) (unseen pending : List SiteUse)
+    (seen result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (success : buildClosureUsesLoop bundle unseen pending seen = .ok result) :
+    ∀ use, use ∈ pending ∨ use ∈ seen.map Sigma.fst →
+      use ∈ result.map Sigma.fst := by
+  fun_induction buildClosureUsesLoop <;> simp_all
+  case case1 unseen seen =>
+    cases success
+    intro entry present
+    exact ⟨entry, present, rfl⟩
+  case case4 unseen current pending seen witness children queued available
+      witnessEq childrenEq ih =>
+    intro use present
+    apply ih (by
+      simpa [queued, List.pmap_eq_map_attach] using success) use
+    rcases present with pendingOrCurrent | alreadySeen
+    · rcases pendingOrCurrent with isCurrent | inPending
+      · exact Or.inr (Or.inl isCurrent)
+      · exact Or.inl <|
+          mem_cSpikeEnqueue_of_mem_pending _ _ _ use inPending
+    · exact Or.inr (Or.inr alreadySeen)
+
+theorem buildTypedClosureUses_rootsCovered {scope : Nat}
+    (bundle : Bundle scope)
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (success : buildTypedClosureUses bundle = .ok result) :
+    ∀ use, use ∈ bundle.term.siteUses → use ∈ result.map Sigma.fst := by
+  intro use present
+  apply buildClosureUsesLoop_preserves_pending bundle
+    (siteUseUniverse bundle) (bundle.term.siteUses.eraseDups) [] result
+    success use
+  exact Or.inl (by simpa using present)
+
 def validateSiteDependencies (sites : List SiteEntry) :
     List SerializedDependency → Except String Unit
   | [] => pure ()
