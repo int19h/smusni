@@ -11,6 +11,15 @@ def lift {source target : Nat}
     (ρ : Renaming source target) : Renaming (source + 1) (target + 1) :=
   Fin.cases 0 (fun index => Fin.succ (ρ index))
 
+def liftN {source target : Nat} (ρ : Renaming source target) :
+    (depth : Nat) → Renaming (source + depth) (target + depth)
+  | 0 => ρ
+  | depth + 1 => lift (liftN ρ depth)
+
+def shiftN {scope : Nat} : (depth : Nat) → Renaming scope (scope + depth)
+  | 0 => fun index => index
+  | depth + 1 => fun index => Fin.succ (shiftN depth index)
+
 end Renaming
 
 def Dependency.rename {source target : Nat}
@@ -91,6 +100,11 @@ def lift {source target : Nat}
 
 def identity {scope : Nat} : Substitution scope scope :=
   fun index => .bound index
+
+def liftN {source target : Nat} (substitution : Substitution source target) :
+    (depth : Nat) → Substitution (source + depth) (target + depth)
+  | 0 => substitution
+  | depth + 1 => lift (liftN substitution depth)
 
 end Substitution
 

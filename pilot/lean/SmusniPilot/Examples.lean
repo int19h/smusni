@@ -241,6 +241,26 @@ def runLocalGates : IO Unit := do
         throw <| IO.userError "lifted bundle substitution shifted incorrectly"
   | _, _ => throw <| IO.userError <|
       "bundle substitution lost an inserted authoritative site table"
+
+  let sharedDepthId : SiteId :=
+    { document := "shared-depth"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let sharedDepthBundle : Interchange.Bundle 1 :=
+    { version := 1
+      term := .primitive .and <|
+        .positional (.context sharedDepthId .nil) <|
+        .positional (.lambda entityTy (.context sharedDepthId .nil)) .nil
+      sites := [
+        { identity := sharedDepthId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let checkedSharedDepth ← IO.ofExcept sharedDepthBundle.checked
+  if checkedSharedDepth.weaken.isOk then
+    throw <| IO.userError
+      "inconsistent shared-site transforms did not report a merge conflict"
   let alphaX := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($x :: Entity) $x)"))
   let alphaY := SurfaceTerm.ofSExpr

@@ -20,72 +20,138 @@ theorem ValidatedBundle.validate_ok {scope : Nat}
     bundle.bundle.validate = .ok () :=
   bundle.valid
 
-def shiftSerializedDependency (depth : Nat) :
-    SerializedDependency → SerializedDependency
-  | .bound index => .bound (index + depth)
-  | .free identity => .free identity
-  | .site identity => .site identity
-
-def shiftSiteEntry (depth : Nat) (entry : SiteEntry) : SiteEntry :=
-  { entry with
-    dependencies := entry.dependencies.map (shiftSerializedDependency depth) }
-
-def renameSerializedDependency {source target : Nat} (depth : Nat)
-    (ρ : Renaming source target) :
-    SerializedDependency → Except String SerializedDependency
+def SerializedDependency.toDependency (scope : Nat) :
+    SerializedDependency → Except String (Dependency scope)
   | .bound index =>
-      if index < depth then pure (.bound index)
-      else
-        let outerIndex := index - depth
-        if inBounds : outerIndex < source then
-          pure (.bound ((ρ ⟨outerIndex, inBounds⟩).val + depth))
-        else .error s!"bound dependency {index} is outside lifted source scope"
+      if inBounds : index < scope then pure (.bound ⟨index, inBounds⟩)
+      else .error s!"bound dependency {index} outside scope {scope}"
   | .free identity => pure (.free identity)
   | .site identity => pure (.site identity)
+
+def siteEntryToSite (scope : Nat) (entry : SiteEntry) :
+    Except String (Site scope) := do
+  let dependencies ← entry.dependencies.mapM
+    (SerializedDependency.toDependency scope)
+  pure {
+    identity := entry.identity
+    role := entry.role
+    dependencies
+    rrLink := entry.rrLink
+  }
+
+@[simp] theorem toDependency_ofDependency {scope : Nat}
+    (dependency : Dependency scope) :
+    SerializedDependency.toDependency scope
+      (SerializedDependency.ofDependency dependency) = .ok dependency := by
+  cases dependency with
+  | bound index =>
+      simp only [SerializedDependency.ofDependency,
+        SerializedDependency.toDependency]
+      rw [dif_pos index.isLt]
+      change Except.ok (Dependency.bound ⟨index.val, _⟩) =
+        Except.ok (Dependency.bound index)
+      congr
+  | free _ => rfl
+  | site _ => rfl
+
+@[simp] theorem mapM_toDependency_ofDependency {scope : Nat}
+    (dependencies : List (Dependency scope)) :
+    (dependencies.map SerializedDependency.ofDependency).mapM
+      (SerializedDependency.toDependency scope) = .ok dependencies := by
+  induction dependencies with
+  | nil => rfl
+  | cons head tail ih =>
+      simp only [List.map_cons, List.mapM_cons,
+        toDependency_ofDependency]
+      rw [ih]
+      rfl
+
+@[simp] theorem siteEntryToSite_ofSite {scope : Nat} (site : Site scope) :
+    siteEntryToSite scope (SiteEntry.ofSite site) = .ok site := by
+  cases site with
+  | mk identity role dependencies rrLink =>
+      unfold siteEntryToSite SiteEntry.ofSite
+      rw [mapM_toDependency_ofDependency]
+      rfl
+
+def renameTypedSite {source target : Nat} (depth : Nat)
+    (ρ : Renaming source target) (site : Site (source + depth)) :
+    Site (target + depth) :=
+  site.rename (Renaming.liftN ρ depth)
+
+def substituteTypedSite {source target : Nat} (depth : Nat)
+    (σ : Fin source → ValidatedBundle target)
+    (site : Site (source + depth)) : Site (target + depth) :=
+  site.substitute <| Substitution.liftN
+    (fun index => (σ index).bundle.term) depth
+
+def shiftTypedSite {scope : Nat} (depth : Nat) (site : Site scope) :
+    Site (scope + depth) :=
+  site.rename (Renaming.shiftN depth)
+
+@[simp] theorem renameTypedSite_preserves_identity {source target : Nat}
+    (depth : Nat) (ρ : Renaming source target)
+    (site : Site (source + depth)) :
+    (renameTypedSite depth ρ site).identity = site.identity := rfl
+
+@[simp] theorem substituteTypedSite_preserves_identity {source target : Nat}
+    (depth : Nat) (σ : Fin source → ValidatedBundle target)
+    (site : Site (source + depth)) :
+    (substituteTypedSite depth σ site).identity = site.identity := rfl
+
+@[simp] theorem shiftTypedSite_preserves_identity {scope : Nat}
+    (depth : Nat) (site : Site scope) :
+    (shiftTypedSite depth site).identity = site.identity := rfl
+
+theorem renameTypedSite_dependencies {source target : Nat} (depth : Nat)
+    (ρ : Renaming source target) (site : Site (source + depth)) :
+    (renameTypedSite depth ρ site).dependencies =
+      site.dependencies.map (Dependency.rename (Renaming.liftN ρ depth)) :=
+  rfl
+
+theorem substituteTypedSite_dependencies {source target : Nat} (depth : Nat)
+    (σ : Fin source → ValidatedBundle target)
+    (site : Site (source + depth)) :
+    (substituteTypedSite depth σ site).dependencies =
+      site.dependencies.flatMap (Dependency.substitute
+        (Substitution.liftN (fun index => (σ index).bundle.term) depth)) :=
+  rfl
+
+theorem shiftTypedSite_dependencies {scope : Nat} (depth : Nat)
+    (site : Site scope) :
+    (shiftTypedSite depth site).dependencies =
+      site.dependencies.map (Dependency.rename (Renaming.shiftN depth)) :=
+  rfl
+
+@[simp] theorem serializedRenameTypedSite_preserves_identity
+    {source target : Nat} (depth : Nat) (ρ : Renaming source target)
+    (site : Site (source + depth)) :
+    (SiteEntry.ofSite (renameTypedSite depth ρ site)).identity =
+      site.identity := rfl
+
+@[simp] theorem serializedSubstituteTypedSite_preserves_identity
+    {source target : Nat} (depth : Nat)
+    (σ : Fin source → ValidatedBundle target)
+    (site : Site (source + depth)) :
+    (SiteEntry.ofSite (substituteTypedSite depth σ site)).identity =
+      site.identity := rfl
+
+def shiftSiteEntry {scope : Nat} (depth : Nat) (entry : SiteEntry) :
+    Except String SiteEntry := do
+  let site ← siteEntryToSite scope entry
+  pure <| SiteEntry.ofSite (shiftTypedSite depth site)
 
 def renameSiteEntry {source target : Nat} (depth : Nat)
     (ρ : Renaming source target) (entry : SiteEntry) :
     Except String SiteEntry := do
-  let dependencies ←
-    entry.dependencies.mapM (renameSerializedDependency depth ρ)
-  pure { entry with dependencies }
-
-def serializedTermDependencyAtDepth {scope : Nat} (depth : Nat) :
-    Dependency scope → SerializedDependency
-  | .bound index => .bound (index.val + depth)
-  | .free identity => .free identity
-  | .site identity => .site identity
-
-def substituteSerializedDependency {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target) :
-    SerializedDependency → Except String (List SerializedDependency)
-  | .bound index =>
-      if index < depth then pure [.bound index]
-      else
-        let outerIndex := index - depth
-        if inBounds : outerIndex < source then
-          let replacement := (σ ⟨outerIndex, inBounds⟩).bundle.term
-          pure <| replacement.dependencies.map
-            (serializedTermDependencyAtDepth depth)
-        else .error s!"bound dependency {index} is outside lifted source scope"
-  | .free identity => pure [.free identity]
-  | .site identity => pure [.site identity]
-
-def substituteSerializedDependencies {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target) :
-    List SerializedDependency → Except String (List SerializedDependency)
-  | [] => pure []
-  | dependency :: rest => do
-      let first ← substituteSerializedDependency depth σ dependency
-      let remaining ← substituteSerializedDependencies depth σ rest
-      pure (first ++ remaining)
+  let site ← siteEntryToSite (source + depth) entry
+  pure <| SiteEntry.ofSite (renameTypedSite depth ρ site)
 
 def substituteSiteEntry {source target : Nat} (depth : Nat)
     (σ : Fin source → ValidatedBundle target) (entry : SiteEntry) :
     Except String SiteEntry := do
-  let dependencies ← substituteSerializedDependencies depth σ
-    entry.dependencies
-  pure { entry with dependencies }
+  let site ← siteEntryToSite (source + depth) entry
+  pure <| SiteEntry.ofSite (substituteTypedSite depth σ site)
 
 def siteUseDepth (outerScope : Nat) (use : SiteUse) : Except String Nat := do
   if outerScope <= use.scope then pure (use.scope - outerScope)
@@ -137,8 +203,8 @@ def replacementSiteEntries {source target : Nat}
   | [] => pure []
   | (rawIndex, depth) :: rest => do
       if inBounds : rawIndex < source then
-        let shifted := (σ ⟨rawIndex, inBounds⟩).bundle.sites.map
-          (shiftSiteEntry depth)
+        let shifted ← (σ ⟨rawIndex, inBounds⟩).bundle.sites.mapM
+          (shiftSiteEntry (scope := target) depth)
         pure (shifted ++ (← replacementSiteEntries σ rest))
       else .error s!"substitution use {rawIndex} is outside source scope"
 
@@ -250,19 +316,6 @@ theorem Bundle.term_substitute_preserves_site_id {source target : Nat}
       (bundle.term.substitute fun index => (σ index).bundle.term).siteIds :=
   Term.siteId_mem_substitute
     (fun index => (σ index).bundle.term) bundle.term identity present
-
-theorem Bundle.rename_result_valid {source target : Nat}
-    (bundle : Bundle source) (ρ : Renaming source target)
-    (result : ValidatedBundle target) (_success : bundle.rename ρ = .ok result) :
-    result.bundle.validate = .ok () := by
-  exact result.valid
-
-theorem Bundle.substitute_result_valid {source target : Nat}
-    (bundle : Bundle source) (σ : Fin source → ValidatedBundle target)
-    (result : ValidatedBundle target)
-    (_success : bundle.substitute σ = .ok result) :
-    result.bundle.validate = .ok () := by
-  exact result.valid
 
 end Interchange
 end SmusniPilot
