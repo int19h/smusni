@@ -187,6 +187,8 @@
    "6b5905a9723977e27a1a8817b9bd58c35dff2e31")
   ("tools/smusni-redex/tests/b1-test.rkt"
    "9174a1063657c501379493cfb0502f0f2c62f742")
+  ("tools/smusni-redex/tests/b2-spike-test.rkt"
+   "4a460199d8650ff081b0bd8d2810fb0f0f41a199")
   ("tools/smusni-redex/tests/elaborate-test.rkt"
    "eba3b38d9c963350f1341b4561e8a8bf32767683")
   ("tools/smusni-redex/tests/extract-syntax-test.rkt"
