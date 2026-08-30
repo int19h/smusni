@@ -86,7 +86,6 @@ def decodeRole : SExpr → Except String SiteRole
 def encodeDependency {scope : Nat} : Dependency scope → SExpr
   | .bound index => list [symbol "bound", symbol (toString index.val)]
   | .free identity => list [symbol "free", encodeFreeId identity]
-  | .site identity => list [symbol "site", encodeSiteId identity]
 
 def decodeDependency (scope : Nat) : SExpr → Except String (Dependency scope)
   | .list .paren [.atom (.symbol "bound"), rawIndex] => do
@@ -95,8 +94,9 @@ def decodeDependency (scope : Nat) : SExpr → Except String (Dependency scope)
       else .error s!"bound dependency {index} outside scope {scope}"
   | .list .paren [.atom (.symbol "free"), rawIdentity] =>
       return .free (← decodeFreeId rawIdentity)
-  | .list .paren [.atom (.symbol "site"), rawIdentity] =>
-      return .site (← decodeSiteId rawIdentity)
+  | .list .paren [.atom (.symbol "site"), rawIdentity] => do
+      let identity ← decodeSiteId rawIdentity
+      .error s!"legacy site dependency is not a semantic profile: {repr identity}"
   | value => .error s!"malformed dependency: {repr value}"
 
 def encodeSite {scope : Nat} (site : Site scope) : SExpr :=

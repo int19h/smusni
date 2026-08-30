@@ -112,11 +112,11 @@ def render() -> str:
     records = []
     for row in definitions["definitions"]:
         constructor = lean_name(row["id"])
-        selection = (
-            ".definitionPortState"
-            if row["selection"] == "definition-port-state"
-            else ".planV2Extra"
-        )
+        selection = {
+            "definition-port-state": ".definitionPortState",
+            "plan-v2-extra": ".planV2Extra",
+            "dependency-closure": ".dependencyClosure",
+        }[row["selection"]]
         supplement = row["supplement"]
         supplement_kind = (
             "none" if supplement is None
@@ -183,6 +183,7 @@ namespace SmusniPilot
 inductive M2DefinitionSelection where
   | definitionPortState
   | planV2Extra
+  | dependencyClosure
   deriving Repr, DecidableEq, BEq
 
 structure M2DefinitionRecord where

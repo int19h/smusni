@@ -69,11 +69,6 @@ theorem Dependency.rename_compose {first second third : Nat}
     (Dependency.free identity : Dependency source).rename ρ =
       Dependency.free identity := rfl
 
-@[simp] theorem Dependency.rename_site {source target : Nat}
-    (ρ : Renaming source target) (identity : SiteId) :
-    (Dependency.site identity : Dependency source).rename ρ =
-      Dependency.site identity := rfl
-
 theorem Site.rename_compose {first second third : Nat}
     (secondMap : Renaming second third)
     (firstMap : Renaming first second)
@@ -192,7 +187,6 @@ theorem Dependency.lower_rename {source target : Nat}
       · intro predecessor
         rfl
   | free identity => rfl
-  | site identity => rfl
 
 @[simp] theorem Dependency.lowerList_rename {source target : Nat}
     (ρ : Renaming source target) (dependencies : List (Dependency (source + 1))) :
@@ -246,7 +240,6 @@ theorem Dependency.substitute_rename {source middle target : Nat}
   | bound index =>
       exact (Term.dependencies_rename ρ (σ index)).symm
   | free identity => rfl
-  | site identity => rfl
 
 theorem Site.substitute_rename {source middle target : Nat}
     (σ : Substitution source middle) (ρ : Renaming middle target)

@@ -7,16 +7,60 @@
     "spec": "spec.md",
     "spec_sha256": "19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4",
     "range_supplement": "pilot/shared/M2_RANGE_SUPPLEMENT.tsv",
-    "range_supplement_sha256": "139688ab798c8fb814acd4f22c6fda31d45ff5b29333b555a8c188dfcb2add72"
+    "range_supplement_sha256": "b8fc35d0dec17a0f81c0d9b30bca9f16f6bffb186321ec0986be1595de573f7b"
   },
   "counts": {
     "definition_port_state": 19,
     "plan_v2_extra": 3,
-    "selected_definitions": 22,
+    "dependency_closure": 6,
+    "selected_definitions": 28,
     "selected_domains": 1,
-    "selected_clauses": 28
+    "selected_clauses": 34
   },
   "definitions": [
+    {
+      "id": "D12.ActualClause",
+      "head": "ActualClause",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "StateClause",
+        "fasnu"
+      ],
+      "cases": [
+        "actual-event"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3728,
+            3741
+          ]
+        ],
+        "range_sha256": "114ba3296c3329ea84daa83d1a6ed0d8077cfb9514f2ed539b6d7651da8beef2"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3734,
+            3735
+          ]
+        ],
+        "range_sha256": "01bc1f971b000f5b5b552524750498780991592d3e07059d24e3f62a22d48e1b"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "ActualClause is a required dependency of selected Close and has its library equation in the CAhA clause family."
+      }
+    },
     {
       "id": "D12.AtLeast",
       "head": "AtLeast",
@@ -113,6 +157,91 @@
         "range_sha256": "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
       },
       "supplement": null
+    },
+    {
+      "id": "D12.CanonicalAggregateAt",
+      "head": "CanonicalAggregateAt",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "Aggregate",
+        "CompleteGunmaAt"
+      ],
+      "cases": [
+        "aggregate-and-complete-gunma"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3558,
+            3571
+          ]
+        ],
+        "range_sha256": "d5efb742b3289b80fd49de807eec104dc0fbeafa69ac6523f25e7bc03d835bf1"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3562,
+            3563
+          ]
+        ],
+        "range_sha256": "15fda3225ab825817bea9675feece972c72157fc2cf80141d3b4e64a79cff21a"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "CanonicalAggregateAt is a required dependency of selected Massify."
+      }
+    },
+    {
+      "id": "D12.CoRef",
+      "head": "CoRef",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "Among"
+      ],
+      "cases": [
+        "mutual-among"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3643,
+            3650
+          ]
+        ],
+        "range_sha256": "28e8f0e85a1f67fb0feb12d656532547f4deb488199680f4d7989be9a83218ca"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3646,
+            3646
+          ]
+        ],
+        "range_sha256": "c35affe506631c01fae26c01dfbf7b2424c64085548820de272201af682f5fa7"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "CoRef is reached through the CompleteGunmaAt dependency chain."
+      }
     },
     {
       "id": "D12.Distrib",
@@ -876,6 +1005,50 @@
       }
     },
     {
+      "id": "D4.6.DirectClause",
+      "head": "DirectClause",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "Bind",
+        "Context",
+        "StateClause"
+      ],
+      "cases": [
+        "defaulted-event-property"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            652,
+            680
+          ]
+        ],
+        "range_sha256": "312ceb30e7f4816c14b9cb4af08ae1ca3c1c708891eada707e5fc64e64b541a7"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            671,
+            674
+          ]
+        ],
+        "range_sha256": "bdaa049d7b930b3957e0e435c38a481ba40c74953a820cdcb96ca6ee31148849"
+      },
+      "supplement": {
+        "kind": "schema",
+        "reason": "DirectClause is a required dependency of selected Close; its equation is a row/default schema."
+      }
+    },
+    {
       "id": "D4.8.CoveredBy",
       "head": "CoveredBy",
       "selection": "definition-port-state",
@@ -920,6 +1093,94 @@
         "range_sha256": "119fa557a7a1fa02505e4a4852ed971dc1c77647ecd8bb4db3316a319730a0ce"
       },
       "supplement": null
+    },
+    {
+      "id": "D4.9.CompleteGunmaAt",
+      "head": "CompleteGunmaAt",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "GunmaAt",
+        "PeerUnitAt",
+        "BasisUnitAt"
+      ],
+      "cases": [
+        "complete-peer-cover"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            963,
+            977
+          ]
+        ],
+        "range_sha256": "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            972,
+            974
+          ]
+        ],
+        "range_sha256": "d44ad90034390d0f162e9167ab535d3cfc2188d3453410fc47ae994d611bd286"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "CompleteGunmaAt is reached through CanonicalAggregateAt and strengthens GunmaAt."
+      }
+    },
+    {
+      "id": "D4.9.GunmaAt",
+      "head": "GunmaAt",
+      "selection": "dependency-closure",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "PeerUnitAt",
+        "BasisUnitAt",
+        "CoRef"
+      ],
+      "cases": [
+        "basis-to-peer-cover"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            963,
+            977
+          ]
+        ],
+        "range_sha256": "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            968,
+            970
+          ]
+        ],
+        "range_sha256": "0d719677199b2a74789f78ff32c7da32f265a1d9f443b059d03d956ced96fe2f"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "GunmaAt is reached through CompleteGunmaAt."
+      }
     },
     {
       "id": "D5.3.Refer-member-lift",

@@ -4,8 +4,11 @@
 namespace SmusniPilot
 
 inductive M2DefinitionId where
+  | d12ActualClause
   | d12AtLeast
   | d12AtMost
+  | d12CanonicalAggregateAt
+  | d12CoRef
   | d12Distrib
   | d12Every
   | d12Exactly
@@ -23,14 +26,20 @@ inductive M2DefinitionId where
   | d12ZipWith
   | d44Let
   | d46Close
+  | d46DirectClause
   | d48CoveredBy
+  | d49CompleteGunmaAt
+  | d49GunmaAt
   | d53ReferMemberLift
   | d56SelectSome
   deriving Repr, DecidableEq, BEq
 
 def M2DefinitionId.name : M2DefinitionId → String
+  | .d12ActualClause => "D12.ActualClause"
   | .d12AtLeast => "D12.AtLeast"
   | .d12AtMost => "D12.AtMost"
+  | .d12CanonicalAggregateAt => "D12.CanonicalAggregateAt"
+  | .d12CoRef => "D12.CoRef"
   | .d12Distrib => "D12.Distrib"
   | .d12Every => "D12.Every"
   | .d12Exactly => "D12.Exactly"
@@ -48,13 +57,19 @@ def M2DefinitionId.name : M2DefinitionId → String
   | .d12ZipWith => "D12.ZipWith"
   | .d44Let => "D4.4.Let"
   | .d46Close => "D4.6.Close"
+  | .d46DirectClause => "D4.6.DirectClause"
   | .d48CoveredBy => "D4.8.CoveredBy"
+  | .d49CompleteGunmaAt => "D4.9.CompleteGunmaAt"
+  | .d49GunmaAt => "D4.9.GunmaAt"
   | .d53ReferMemberLift => "D5.3.Refer-member-lift"
   | .d56SelectSome => "D5.6.SelectSome"
 
 def M2DefinitionId.all : List M2DefinitionId := [
+  .d12ActualClause,
   .d12AtLeast,
   .d12AtMost,
+  .d12CanonicalAggregateAt,
+  .d12CoRef,
   .d12Distrib,
   .d12Every,
   .d12Exactly,
@@ -72,15 +87,21 @@ def M2DefinitionId.all : List M2DefinitionId := [
   .d12ZipWith,
   .d44Let,
   .d46Close,
+  .d46DirectClause,
   .d48CoveredBy,
+  .d49CompleteGunmaAt,
+  .d49GunmaAt,
   .d53ReferMemberLift,
   .d56SelectSome,
 ]
 
 inductive M2ClauseId where
+  | d12ActualClauseActualEvent
   | d12AtLeastPositive
   | d12AtLeastZero
   | d12AtMostNegatedSuccessor
+  | d12CanonicalAggregateAtAggregateAndCompleteGunma
+  | d12CoRefMutualAmong
   | d12DistribUniversalMembers
   | d12EveryMaximalDistribution
   | d12ExactlyPositive
@@ -103,15 +124,21 @@ inductive M2ClauseId where
   | d46CloseDirectEventExplicit
   | d46CloseDirectEventImplicit
   | d46CloseHoldingState
+  | d46DirectClauseDefaultedEventProperty
   | d48CoveredByNoResidue
+  | d49CompleteGunmaAtCompletePeerCover
+  | d49GunmaAtBasisToPeerCover
   | d53ReferMemberLiftMemberLift
   | d56SelectSomeAtLeastOne
   deriving Repr, DecidableEq, BEq
 
 def M2ClauseId.name : M2ClauseId → String
+  | .d12ActualClauseActualEvent => "D12.ActualClause/actual-event"
   | .d12AtLeastPositive => "D12.AtLeast/positive"
   | .d12AtLeastZero => "D12.AtLeast/zero"
   | .d12AtMostNegatedSuccessor => "D12.AtMost/negated-successor"
+  | .d12CanonicalAggregateAtAggregateAndCompleteGunma => "D12.CanonicalAggregateAt/aggregate-and-complete-gunma"
+  | .d12CoRefMutualAmong => "D12.CoRef/mutual-among"
   | .d12DistribUniversalMembers => "D12.Distrib/universal-members"
   | .d12EveryMaximalDistribution => "D12.Every/maximal-distribution"
   | .d12ExactlyPositive => "D12.Exactly/positive"
@@ -134,14 +161,20 @@ def M2ClauseId.name : M2ClauseId → String
   | .d46CloseDirectEventExplicit => "D4.6.Close/direct-event-explicit"
   | .d46CloseDirectEventImplicit => "D4.6.Close/direct-event-implicit"
   | .d46CloseHoldingState => "D4.6.Close/holding-state"
+  | .d46DirectClauseDefaultedEventProperty => "D4.6.DirectClause/defaulted-event-property"
   | .d48CoveredByNoResidue => "D4.8.CoveredBy/no-residue"
+  | .d49CompleteGunmaAtCompletePeerCover => "D4.9.CompleteGunmaAt/complete-peer-cover"
+  | .d49GunmaAtBasisToPeerCover => "D4.9.GunmaAt/basis-to-peer-cover"
   | .d53ReferMemberLiftMemberLift => "D5.3.Refer-member-lift/member-lift"
   | .d56SelectSomeAtLeastOne => "D5.6.SelectSome/at-least-one"
 
 def M2ClauseId.all : List M2ClauseId := [
+  .d12ActualClauseActualEvent,
   .d12AtLeastPositive,
   .d12AtLeastZero,
   .d12AtMostNegatedSuccessor,
+  .d12CanonicalAggregateAtAggregateAndCompleteGunma,
+  .d12CoRefMutualAmong,
   .d12DistribUniversalMembers,
   .d12EveryMaximalDistribution,
   .d12ExactlyPositive,
@@ -164,7 +197,10 @@ def M2ClauseId.all : List M2ClauseId := [
   .d46CloseDirectEventExplicit,
   .d46CloseDirectEventImplicit,
   .d46CloseHoldingState,
+  .d46DirectClauseDefaultedEventProperty,
   .d48CoveredByNoResidue,
+  .d49CompleteGunmaAtCompletePeerCover,
+  .d49GunmaAtBasisToPeerCover,
   .d53ReferMemberLiftMemberLift,
   .d56SelectSomeAtLeastOne,
 ]
@@ -448,6 +484,7 @@ structure SourceRange where
 inductive M2DefinitionSelection where
   | definitionPortState
   | planV2Extra
+  | dependencyClosure
   deriving Repr, DecidableEq, BEq
 
 structure M2DefinitionRecord where
@@ -466,6 +503,20 @@ structure M2DefinitionRecord where
   deriving Repr, DecidableEq, BEq
 
 def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
+  | .d12ActualClause => {
+      id := .d12ActualClause
+      head := "ActualClause"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["StateClause", "fasnu"]
+      clauses := [.d12ActualClauseActualEvent]
+      selectedDomains := []
+      specRanges := [{ start := 3728, stop := 3741 }]
+      equationRanges := [{ start := 3734, stop := 3735 }]
+      specDigest := "114ba3296c3329ea84daa83d1a6ed0d8077cfb9514f2ed539b6d7651da8beef2"
+      equationDigest := "01bc1f971b000f5b5b552524750498780991592d3e07059d24e3f62a22d48e1b"
+      supplementKind := some "definition"
+    }
   | .d12AtLeast => {
       id := .d12AtLeast
       head := "AtLeast"
@@ -493,6 +544,34 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       specDigest := "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
       equationDigest := "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
       supplementKind := none
+    }
+  | .d12CanonicalAggregateAt => {
+      id := .d12CanonicalAggregateAt
+      head := "CanonicalAggregateAt"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["Aggregate", "CompleteGunmaAt"]
+      clauses := [.d12CanonicalAggregateAtAggregateAndCompleteGunma]
+      selectedDomains := []
+      specRanges := [{ start := 3558, stop := 3571 }]
+      equationRanges := [{ start := 3562, stop := 3563 }]
+      specDigest := "d5efb742b3289b80fd49de807eec104dc0fbeafa69ac6523f25e7bc03d835bf1"
+      equationDigest := "15fda3225ab825817bea9675feece972c72157fc2cf80141d3b4e64a79cff21a"
+      supplementKind := some "definition"
+    }
+  | .d12CoRef => {
+      id := .d12CoRef
+      head := "CoRef"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["Among"]
+      clauses := [.d12CoRefMutualAmong]
+      selectedDomains := []
+      specRanges := [{ start := 3643, stop := 3650 }]
+      equationRanges := [{ start := 3646, stop := 3646 }]
+      specDigest := "28e8f0e85a1f67fb0feb12d656532547f4deb488199680f4d7989be9a83218ca"
+      equationDigest := "c35affe506631c01fae26c01dfbf7b2424c64085548820de272201af682f5fa7"
+      supplementKind := some "definition"
     }
   | .d12Distrib => {
       id := .d12Distrib
@@ -732,6 +811,20 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       equationDigest := "1a5024f1978bfc8fc6866a776468db34eb74ea609468759e204504b89c6fd9c6"
       supplementKind := some "definition"
     }
+  | .d46DirectClause => {
+      id := .d46DirectClause
+      head := "DirectClause"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["Bind", "Context", "StateClause"]
+      clauses := [.d46DirectClauseDefaultedEventProperty]
+      selectedDomains := []
+      specRanges := [{ start := 652, stop := 680 }]
+      equationRanges := [{ start := 671, stop := 674 }]
+      specDigest := "312ceb30e7f4816c14b9cb4af08ae1ca3c1c708891eada707e5fc64e64b541a7"
+      equationDigest := "bdaa049d7b930b3957e0e435c38a481ba40c74953a820cdcb96ca6ee31148849"
+      supplementKind := some "schema"
+    }
   | .d48CoveredBy => {
       id := .d48CoveredBy
       head := "CoveredBy"
@@ -745,6 +838,34 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       specDigest := "d274dd5d6df6cbe272866c81f5ff9552e648b52845f0902c55be66c9b10a5d86"
       equationDigest := "119fa557a7a1fa02505e4a4852ed971dc1c77647ecd8bb4db3316a319730a0ce"
       supplementKind := none
+    }
+  | .d49CompleteGunmaAt => {
+      id := .d49CompleteGunmaAt
+      head := "CompleteGunmaAt"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["GunmaAt", "PeerUnitAt", "BasisUnitAt"]
+      clauses := [.d49CompleteGunmaAtCompletePeerCover]
+      selectedDomains := []
+      specRanges := [{ start := 963, stop := 977 }]
+      equationRanges := [{ start := 972, stop := 974 }]
+      specDigest := "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+      equationDigest := "d44ad90034390d0f162e9167ab535d3cfc2188d3453410fc47ae994d611bd286"
+      supplementKind := some "definition"
+    }
+  | .d49GunmaAt => {
+      id := .d49GunmaAt
+      head := "GunmaAt"
+      selection := .dependencyClosure
+      portState := "none"
+      dependencies := ["PeerUnitAt", "BasisUnitAt", "CoRef"]
+      clauses := [.d49GunmaAtBasisToPeerCover]
+      selectedDomains := []
+      specRanges := [{ start := 963, stop := 977 }]
+      equationRanges := [{ start := 968, stop := 970 }]
+      specDigest := "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+      equationDigest := "0d719677199b2a74789f78ff32c7da32f265a1d9f443b059d03d956ced96fe2f"
+      supplementKind := some "definition"
     }
   | .d53ReferMemberLift => {
       id := .d53ReferMemberLift

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
-from build_m1_constructor_matrix import ROOT, field, parse_sexp, sha256
+from build_m1_constructor_matrix import ROOT, build_rows, field, parse_sexp, sha256
 
 
 DEFINITIONS = ROOT / "tools/smusni-redex/inventory/definitions.sexp"
@@ -30,6 +30,12 @@ REQUIRED_SUPPLEMENTS = {
     "D5.3.Refer-member-lift",
     "D12.JaiPromote",
     "D12.JaiRaise",
+    "D12.ActualClause",
+    "D12.CanonicalAggregateAt",
+    "D12.CoRef",
+    "D4.9.CompleteGunmaAt",
+    "D4.9.GunmaAt",
+    "D4.6.DirectClause",
 }
 
 
@@ -161,8 +167,40 @@ def build() -> dict[str, Any]:
         by_id[definition_id] = entry
 
     supplements = load_supplements()
+    defined_heads = {
+        key.split(":", 1)[1]
+        for key, row in build_rows().items()
+        if key.startswith("term:") and row.disposition == "defined-surface"
+    }
+    by_head: dict[str, list[str]] = {}
+    for definition_id, entry in by_id.items():
+        by_head.setdefault(clean(str(field(entry, "head"))), []).append(definition_id)
+
+    initial_ids = {
+        definition_id for definition_id, entry in by_id.items()
+        if clean(str(field(entry, "port-state"))) in SELECTED_PORT_STATES
+    } | EXTRA_IDS
+    selected_ids = set(initial_ids)
+    frontier = list(initial_ids)
+    while frontier:
+        definition_id = frontier.pop()
+        entry = by_id[definition_id]
+        for dependency in (clean(str(item)) for item in values(entry, "dependencies")):
+            if dependency not in defined_heads:
+                continue
+            candidates = by_head.get(dependency, [])
+            if len(candidates) != 1:
+                raise ValueError(
+                    f"selected dependency {dependency} has definition IDs {candidates}"
+                )
+            candidate = candidates[0]
+            if candidate not in selected_ids:
+                selected_ids.add(candidate)
+                frontier.append(candidate)
+
     selected: list[dict[str, Any]] = []
     port_selected = 0
+    dependency_selected = 0
     for definition_id, entry in by_id.items():
         port_state = clean(str(field(entry, "port-state")))
         selection = None
@@ -171,6 +209,9 @@ def build() -> dict[str, Any]:
             port_selected += 1
         elif definition_id in EXTRA_IDS:
             selection = "plan-v2-extra"
+        elif definition_id in selected_ids:
+            selection = "dependency-closure"
+            dependency_selected += 1
         if selection is None:
             continue
 
@@ -236,6 +277,10 @@ def build() -> dict[str, Any]:
         raise ValueError(f"expected 19 a0/ported definition rows, found {port_selected}")
     if {row["id"] for row in selected if row["selection"] == "plan-v2-extra"} != EXTRA_IDS:
         raise ValueError("M2 extra definition selection drift")
+    if dependency_selected != 6:
+        raise ValueError(
+            f"expected six dependency-closure definitions, found {dependency_selected}"
+        )
 
     selected_domain_count = sum(len(row["selected_domains"]) for row in selected)
     if selected_domain_count != 1:
@@ -255,6 +300,7 @@ def build() -> dict[str, Any]:
         "counts": {
             "definition_port_state": port_selected,
             "plan_v2_extra": len(EXTRA_IDS),
+            "dependency_closure": dependency_selected,
             "selected_definitions": len(selected),
             "selected_domains": selected_domain_count,
             "selected_clauses": sum(len(row["cases"]) for row in selected),

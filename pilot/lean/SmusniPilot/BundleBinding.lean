@@ -193,7 +193,6 @@ theorem Bundle.checked_bundle {scope : Nat} (bundle : Bundle scope)
         Except.ok (Dependency.bound index)
       congr
   | free _ => rfl
-  | site _ => rfl
 
 @[simp] theorem mapM_toDependency_ofDependency {scope : Nat}
     (dependencies : List (Dependency scope)) :

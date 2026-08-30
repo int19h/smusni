@@ -28,7 +28,6 @@ inductive SiteRole where
 inductive Dependency (scope : Nat) where
   | bound (index : Fin scope)
   | free (identity : FreeId)
-  | site (identity : SiteId)
   deriving Repr, DecidableEq, BEq
 
 structure Site (scope : Nat) where
@@ -55,7 +54,6 @@ def SerializedDependency.ofDependency {scope : Nat} :
     Dependency scope → SerializedDependency
   | .bound index => .bound index.val
   | .free identity => .free identity
-  | .site identity => .site identity
 
 def SiteEntry.ofSite {scope : Nat} (site : Site scope) : SiteEntry :=
   { identity := site.identity
@@ -69,7 +67,8 @@ def SerializedDependency.toDependency (scope : Nat) :
       if inBounds : index < scope then pure (.bound ⟨index, inBounds⟩)
       else .error s!"bound dependency {index} outside scope {scope}"
   | .free identity => pure (.free identity)
-  | .site identity => pure (.site identity)
+  | .site identity =>
+      .error s!"legacy site dependency is not a semantic profile: {repr identity}"
 
 def SiteEntry.toSite (scope : Nat) (entry : SiteEntry) :
     Except String (Site scope) := do
