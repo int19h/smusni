@@ -12,3 +12,6 @@ import SmusniPilot.BundleBinding
 import SmusniPilot.S1
 import SmusniPilot.Examples
 import SmusniPilot.M2Inventory
+import SmusniPilot.M2Typing
+import SmusniPilot.M2Examples
+import SmusniPilot.M2Templates

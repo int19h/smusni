@@ -17,3 +17,7 @@ name = "SmusniPilot"
 [[lean_exe]]
 name = "m1"
 root = "M1Main"
+
+[[lean_exe]]
+name = "m2"
+root = "M2Main"

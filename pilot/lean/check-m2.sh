@@ -18,4 +18,5 @@ if rg -n '\b(sorry|axiom|admit)\b' pilot/lean -g '*.lean'; then
 fi
 
 cd "$task_dir"
-lake build SmusniPilot.M2Inventory
+lake build m2
+lake exe m2
