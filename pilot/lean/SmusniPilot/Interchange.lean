@@ -261,6 +261,7 @@ structure BundleCoherence {scope : Nat} (bundle : Bundle scope) where
   uses : List SiteUse
   usesUnique : uses.Nodup
   rootsCovered : ∀ use, use ∈ bundle.term.siteUses → use ∈ uses
+  scopeBound : ∀ use, use ∈ uses → scope ≤ use.scope
   witness : ∀ use, use ∈ uses → TypedSiteUseWitness bundle use
   edgesClosed : ∀ use (present : use ∈ uses)
       (dependency : SerializedDependency) (_dependencyPresent :
@@ -404,6 +405,26 @@ theorem scope_mem_of_mem_siteUseUniverse {scope : Nat}
       rfl
     rw [currentScope]
     exact scopeMem
+
+theorem Term.scope_le_of_mem_siteUses {scope : Nat} (term : Term scope)
+    (use : SiteUse) (present : use ∈ term.siteUses) :
+    scope ≤ use.scope := by
+  revert use
+  induction term using Term.rec
+    (motive_2 := fun scope terms => ∀ use, use ∈ terms.siteUses →
+      scope ≤ use.scope) <;>
+    intros <;>
+    simp_all [Term.siteUses, TermList.siteUses] <;>
+    grind
+
+theorem scope_le_of_mem_siteUseUniverse {scope : Nat}
+    (bundle : Bundle scope) (use : SiteUse)
+    (present : use ∈ siteUseUniverse bundle) : scope ≤ use.scope := by
+  have scopePresent := scope_mem_of_mem_siteUseUniverse bundle use present
+  simp only [List.mem_eraseDups, List.mem_map] at scopePresent
+  rcases scopePresent with ⟨root, rootPresent, rootScope⟩
+  rw [← rootScope]
+  exact Term.scope_le_of_mem_siteUses bundle.term root rootPresent
 
 theorem child_entry_of_mem_cSpikeDependencySiteUses
     (sites : List SiteEntry) (scope : Nat) :
@@ -878,6 +899,11 @@ def Bundle.buildCoherence {scope : Nat} (bundle : Bundle scope) :
             rootsCovered := by
               exact buildTypedClosureUses_rootsCovered bundle result
                 closureSuccess
+            scopeBound := by
+              intro use present
+              obtain ⟨_finalUnseen, finalInvariant⟩ := terminal
+              apply scope_le_of_mem_siteUseUniverse bundle use
+              exact (finalInvariant.partition use).mpr (Or.inr present)
             witness := fun use present =>
               witnessFromResult result use present
             edgesClosed := by
