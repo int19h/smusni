@@ -450,7 +450,7 @@
 (check-true a0-differential-ok?)
 (check-equal? (length a0-mechanism-cases) 29)
 (check-equal? (length current-a0-differential-cases) 84)
-(check-equal? (length (load-a0-waivers)) 29)
+(check-equal? (length (load-a0-waivers)) 36)
 (for ([item (in-list current-a0-differential-cases)])
   (define record (a0-port-record item))
   (when (eq? (port-record-status record) 'success)

@@ -99,6 +99,17 @@
                      (flatten event-close))
               3)
 (check-not-false (member 'DirectClause (flatten event-close)))
+(check-true
+ (alpha-equivalent?
+  SmusniA0 event-close
+  '(CloseClause
+    (ActualClause
+     (DirectClause
+      (λ (($event (Referents Eventuality)))
+        (Bind (($place2 (Referents Entity) (Context))
+               ($place3 (Referents Entity) (Context))
+               ($place4 (Referents Entity) (Context)))
+          (bajra Speaker $place2 $place3 $place4 $event))))))))
 
 (define explicit-event-close
   (term (a0-expand-close
@@ -107,17 +118,17 @@
 (check-true
  (alpha-equivalent?
   SmusniA0 explicit-event-close
-  '(Bind (($place2 (Referents Entity) (Context))
-          ($place3 (Referents Entity) (Context))
-          ($place4 (Referents Entity) (Context)))
-     (CloseClause
-      (λ (($clause-event (Referents Eventuality)))
-        (∧ (CoRef $clause-event $shared-event)
-           ((ActualClause
-             (DirectClause
-              (λ (($lexical-event (Referents Eventuality)))
-                (bajra Speaker $place2 $place3 $place4 $lexical-event))))
-            $shared-event)))))))
+  '(CloseClause
+    (λ (($clause-event (Referents Eventuality)))
+      (∧ (CoRef $clause-event $shared-event)
+         ((ActualClause
+           (DirectClause
+            (λ (($lexical-event (Referents Eventuality)))
+              (Bind (($place2 (Referents Entity) (Context))
+                     ($place3 (Referents Entity) (Context))
+                     ($place4 (Referents Entity) (Context)))
+                (bajra Speaker $place2 $place3 $place4 $lexical-event)))))
+          $shared-event))))))
 (check-exn
  exn:fail?
  (lambda ()
@@ -130,6 +141,29 @@
    (term (a0-expand-close
           (row bajra 4 direct-event (1 2 3 4))
           ((Eventuality $left) (Eventuality $right))))))
+
+;; The transparent ClauseContent alias must retain pure/effectful refinement.
+;; Construction is inert; CloseClause exposes one conservative call only when
+;; it runs an EFn event property.
+(define pure-direct
+  (term (DirectClause
+         (λ (($event (Referents Eventuality))) ⊤))))
+(define effectful-direct
+  (term (DirectClause
+         (λ (($event (Referents Eventuality)))
+           (Bind (($default (Referents Entity) (Context))) ⊤)))))
+(check-equal? (synth '() pure-direct)
+              '(typing (Fn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() effectful-direct)
+              '(typing (EFn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (ActualClause ,pure-direct)))
+              '(typing (Fn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (ActualClause ,effectful-direct)))
+              '(typing (EFn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (CloseClause (ActualClause ,pure-direct))))
+              '(typing Content () ()))
+(check-equal? (synth '() (term (CloseClause (ActualClause ,effectful-direct))))
+              '(typing Content (effectful-call) ()))
 
 ;; Two-mode typing: definitions and their expansions agree record-for-record.
 (define gq-env
@@ -225,7 +259,7 @@
         (term (CloseWith
                (row bajra 4 direct-event (1 2 3 4))
                ((1 Speaker) (Eventuality $shared-event)))))
- '(typing Content (context) ()))
+ '(typing Content (effectful-call) ()))
 (define full-explicit-event-close
   (term (a0-expand-close
          (row bajra 4 direct-event (1 2 3 4))

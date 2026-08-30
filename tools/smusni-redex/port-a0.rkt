@@ -302,12 +302,12 @@
   (definition-case direct-event-implicit
     [(a0-expand-close
       (row x_predicate n direct-event (label ...)) fills)
-     (wrap-bindings
-      (binding ...)
-      (CloseClause
-       (ActualClause
-        (DirectClause
-         (λ ((x_event (Referents Eventuality)))
+     (CloseClause
+      (ActualClause
+       (DirectClause
+        (λ ((x_event (Referents Eventuality)))
+          (wrap-bindings
+           (binding ...)
            (x_predicate t_argument ... x_event))))))
      (side-condition
       (equal? 'implicit
@@ -320,16 +320,16 @@
   (definition-case direct-event-explicit
     [(a0-expand-close
       (row x_predicate n direct-event (label ...)) fills)
-     (wrap-bindings
-      (binding ...)
-      (CloseClause
-       (λ ((x_clause_event (Referents Eventuality)))
-         (∧ (CoRef x_clause_event t_supplied_event)
-            ((ActualClause
-              (DirectClause
-               (λ ((x_lexical_event (Referents Eventuality)))
-                 (x_predicate t_argument ... x_lexical_event))))
-             t_supplied_event)))))
+     (CloseClause
+      (λ ((x_clause_event (Referents Eventuality)))
+        (∧ (CoRef x_clause_event t_supplied_event)
+           ((ActualClause
+             (DirectClause
+              (λ ((x_lexical_event (Referents Eventuality)))
+                (wrap-bindings
+                 (binding ...)
+                 (x_predicate t_argument ... x_lexical_event)))))
+            t_supplied_event))))
      (side-condition
       (equal? 'explicit
               (close-input-kind (term n) (term (label ...)) (term fills)
@@ -1718,7 +1718,7 @@
                     (effect_property ...) (obligation ...)))
    (where R_out
           (merge-records
-           ClauseContent
+           (Fn ((Referents Eventuality)) Content)
            ((typing (Fn ((Referents Eventuality)) Content)
                     (effect_property ...) (obligation ...)))
            () ()))
@@ -1730,7 +1730,7 @@
                     (effect_property ...) (obligation ...)))
    (where R_out
           (merge-records
-           ClauseContent
+           (EFn ((Referents Eventuality)) Content)
            ((typing (EFn ((Referents Eventuality)) Content)
                     (effect_property ...) (obligation ...)))
            () ()))
@@ -1750,19 +1750,27 @@
   [(a0-type synth Γ t_property R_property)
    (where (Fn ((Referents Eventuality)) Content)
           (record-type-of R_property))
-   (where R_out (merge-records ClauseContent (R_property) () ()))
+   (where R_out
+          (merge-records (Fn ((Referents Eventuality)) Content)
+                         (R_property) () ()))
    ----------------------------------------------- "A0-T-ActualClause-Event-Pure"
    (a0-type synth Γ (ActualClause t_property) R_out)]
 
   [(a0-type synth Γ t_property R_property)
    (where (EFn ((Referents Eventuality)) Content)
           (record-type-of R_property))
-   (where R_out (merge-records ClauseContent (R_property) () ()))
+   (where R_out
+          (merge-records (EFn ((Referents Eventuality)) Content)
+                         (R_property) () ()))
    ----------------------------------------------- "A0-T-ActualClause-Event-Effectful"
    (a0-type synth Γ (ActualClause t_property) R_out)]
 
   [(a0-type (check ClauseContent) Γ t_clause R_clause)
-   (where R_out (merge-records Content (R_clause) () ()))
+   (where (effect_extra ...)
+          ,(match (record-type (term R_clause))
+             [`(EFn ,_ Content) '(effectful-call)]
+             [_ '()]))
+   (where R_out (merge-records Content (R_clause) (effect_extra ...) ()))
    ----------------------------------------------- "A0-T-CloseClause"
    (a0-type synth Γ (CloseClause t_clause) R_out)]
 
