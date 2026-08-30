@@ -7,7 +7,52 @@ inductive Ty where
   | variable (name : String)
   | index (value : String)
   | function (effectful : Bool) (parameters : List Ty) (result : Ty)
-  deriving Repr, BEq, Inhabited
+  deriving Repr, Inhabited
+
+mutual
+  def Ty.beq : Ty → Ty → Bool
+    | .named firstName firstArguments, .named secondName secondArguments =>
+        decide (firstName = secondName) && Ty.listBeq firstArguments secondArguments
+    | .variable first, .variable second => first == second
+    | .index first, .index second => first == second
+    | .function firstEffectful firstParameters firstResult,
+        .function secondEffectful secondParameters secondResult =>
+        firstEffectful == secondEffectful &&
+          Ty.listBeq firstParameters secondParameters &&
+          Ty.beq firstResult secondResult
+    | _, _ => false
+
+  def Ty.listBeq : List Ty → List Ty → Bool
+    | [], [] => true
+    | firstHead :: firstTail, secondHead :: secondTail =>
+        Ty.beq firstHead secondHead && Ty.listBeq firstTail secondTail
+    | _, _ => false
+end
+
+instance : BEq Ty := ⟨Ty.beq⟩
+
+mutual
+  theorem Ty.beq_self : ∀ type : Ty, Ty.beq type type = true
+    | .named name arguments => by
+        simp only [Ty.beq, decide_true, Bool.true_and]
+        exact Ty.listBeq_self arguments
+    | .variable name => by simp [Ty.beq]
+    | .index value => by simp [Ty.beq]
+    | .function effectful parameters result => by
+        simp only [Ty.beq, beq_self_eq_true, Bool.true_and]
+        rw [Ty.listBeq_self parameters, Ty.beq_self result]
+        rfl
+
+  theorem Ty.listBeq_self : ∀ types : List Ty, Ty.listBeq types types = true
+    | [] => rfl
+    | head :: tail => by
+        simp only [Ty.listBeq]
+        rw [Ty.beq_self head, Ty.listBeq_self tail]
+        rfl
+end
+
+instance : ReflBEq Ty where
+  rfl := Ty.beq_self _
 
 structure FreeId where
   domain : String

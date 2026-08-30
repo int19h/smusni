@@ -43,7 +43,7 @@ hand-authored data on the path is:
   with a nonempty defined-head set wholly contained in the generated 19-head
   a0/ported set.
 - `M2_REDEX_ORACLE.sexp`: generated from the corrected frozen A0/B1 definition
-  metafunctions. It contains 119 honest term targets and 41 explicit
+  metafunctions. It contains 118 honest term targets and 42 explicit
   oracle-unavailable dispositions; no unavailable target is called exact.
 
 The PR #82 typing regeneration changes five semantic rule bodies:
@@ -91,22 +91,46 @@ enclosing `SetOf` purity rule. `2b3c...` fails `refer-member-purity` and
 
 ## Declarative relation and theorems
 
-`M2Relation.lean` defines `TemplateEquation`, an independently inductive
-relation with a constructor for each executable definition family/case; it is
-not defined as `elaborate = ok`. `DeclarativeElaboration` combines that
-equation evidence with template-certificate, typing, and executable-agreement
-evidence. The current proved interface includes declarative soundness,
-executable completeness for a certified derivation, and exact executable
-output functionality (therefore stronger than uniqueness up to alpha/site
-allocation for a fixed key).
+`M2TypingJudgment.lean` is the Prop-valued A0 relation. Its mutually inductive
+`SynthJudgment`, `CheckJudgment`, `ApplyJudgment`, positional/row/lexical
+argument judgments, and primitive rule classes contain no fuel, search order,
+or stored executable equality. The supported rule IDs are selected from the
+generated 107-rule manifest; every other manifest record is returned by
+`unsupportedTypingRuleRecords` rather than silently defaulted.
+The present proved relation slice covers 33 generated rule records and lists
+74 exclusions; this is a theorem-domain statement, not a claim that the
+executable checker implements only those 33 records.
 
-`M2Typing.lean` proves:
+`M2TypingBridge.lean` proves relation-to-executable completeness by one mutual
+constructor induction. The checking companion is generated from that exact
+recursor/handler proof term, so internal recursive checks and public
+`checkBidirectional` cannot drift into two handwritten proof paths. On the
+relation-supported domain, `synth` and `checkBidirectional` are characterized
+in both directions. The public priority theorem exposes the three cases:
+compatible synthesis gives `fromSynth`; incompatible synthesis gives the named
+`type-mismatch` without fallback; synthesis failure invokes exactly the shared
+expected-clause interpreter. It also proves synthesis/checking observation
+functionality, synthesis-type uniqueness, judgment-relative wrong-type
+failure, purity, computation category, and the five-effect bound.
 
-- wrong-expected-type failure for the public bidirectional checker;
-- purity classifier soundness/completeness;
-- computation-category classifier soundness and completeness through a
-  dependent certificate; and
-- the conservative five-name effect bound for every `TypingResult`.
+`M2Relation.lean` now states definition side conditions through those typing
+judgments (`PurePropertyJudgment`, `ReferenceMemberJudgment`, and
+`DecompositionBasisJudgment`), not calls to `synth`. `TemplateEquation` remains
+Prop-valued and existential over derivations. The proved interface has both
+directions on the supported core dispatcher domain
+(`dispatch_sound_against_template` and `declarative_dispatch_complete`) and
+relation functionality without dispatcher-success assumptions.
+`SupplementalTemplateEquation` covers the Let, Refer-member-lift, Grade, and
+JaiRaise leaves. The recursive surface decoder/state allocator is explicitly
+outside the converse theorem: its template leaves are related, but the report
+does not promote decoding/control-flow equivalence to a semantic theorem.
+
+The hand-authored template RHSs in `M2Templates.lean` are the declarative
+content transcribed clause by clause from the generated manifest ranges; the
+dispatcher is proved to produce those RHSs. They are not fixture-keyed output
+records. Concrete unseen `ActualClause` and natural-typing instantiations in
+`M2Examples.lean` exercise both relation directions and the structural typing
+constructor directly.
 
 There are no `sorry`, `axiom`, or `admit` declarations.
 
@@ -131,8 +155,10 @@ occurrence/table/profile coherence is proved. The version-1 serialized `site`
 dependency tag remains decodable but is rejected as a semantic profile;
 internal `Dependency.site` is absent.
 
-The RR adoption audit covers 135 RR-linked site declarations in elaborated
-terms and finds zero declaration/emitted-site profile mismatch cases.
+The RR adoption audit decodes all 29 pinned RR fixtures: 32 linked cases,
+13 declared sites, 26 operand sites, 16 comparable cases (8 agreement and
+8 mismatch), and 16 unavailable cases. These report-only results are not the
+former 135/0 self-consistency claim.
 
 ## Parity result
 
@@ -141,18 +167,18 @@ row-label normalization, and (2) ordered `(site kind, binder scope,
 dependency support)` signatures. After PR #82 correction and regeneration:
 
 - generated cohort: 160;
-- honest Redex term targets: 119;
-- explicit oracle-unavailable: 41;
+- honest Redex term targets: 118;
+- explicit oracle-unavailable: 42;
 - comparable successful Lean terms: 118;
 - term matches: 118;
 - site-signature matches: 118;
 - differences: 0.
 
-The one available target not compared is `731809...`, a deliberate
-`CoveredBy` purity rejection with no successful Lean output. The 41 unavailable
-targets are 33 Redex definition/domain exclusions, 6 missing `Close` row
-adapter inputs, 1 `Refer-member-lift` (`port-state none`), and 1 unavailable
-typed Massify basis. These are dispositions, not waivers.
+Every available target is compared. The 42 unavailable targets are 33 Redex
+definition/domain exclusions, 6 missing `Close` row adapter inputs,
+1 `Refer-member-lift` (`port-state none`), 1 unavailable typed Massify basis,
+and `731809...`, whose Redex purity-oracle defect is tracked in #83. These are
+dispositions, not waivers.
 
 The three corpus extras remain separate: the two Grade cases (`3e12...`,
 `71ab...`) also contain unselected model-context `That`, so they do not acquire
@@ -179,5 +205,8 @@ On this VM after `lake clean`:
   completeness claim.
 - Fixture lexical rows remain pilot-only pending #12; place-row shape and
   event mode are consumed, and missing named rows fail closed.
-- The 41 oracle-unavailable parity cases retain the explicit reasons above.
+- The 42 oracle-unavailable parity cases retain the explicit reasons above.
+- The converse relation theorem covers `dispatchDefinition`; recursive surface
+  decoding/state allocation has a deliberately narrower claim, with explicit
+  Let/Refer-member/Grade/JaiRaise template-leaf relations only.
 - Final exact-head reviewer dispositions are not yet recorded here.

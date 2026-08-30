@@ -15,6 +15,8 @@ def main : IO Unit := do
   IO.println <|
     s!"M2 definitions={M2DefinitionId.all.length} " ++
     s!"clauses={M2ClauseId.all.length} typing-rules={M2TypingRuleId.all.length} " ++
+    s!"relation-rules={M2.implementedTypingRuleRecords.length} " ++
+    s!"relation-exclusions={M2.unsupportedTypingRuleRecords.length} " ++
     s!"all-s1={cases.outcomes.length} unchanged={cases.typedUnchanged} " ++
     s!"expanded={cases.typeDirectedExpansion} rejected={cases.typedRejection} " ++
     s!"pending-m3={cases.pendingMilestone3} blocked={cases.blocked} " ++

@@ -12,8 +12,64 @@ def IO.ofTyping {α : Type} (result : Except TypingError α) : IO α :=
 def typingExampleSite (role : String) : SiteId :=
   { document := "m2-typing", occurrence := 0, expansionRole := role }
 
+def unseenNaturalObservation : TypingObservation := { type := Ty.natural }
+
+theorem unseen_natural_structural_judgment :
+    SynthJudgment Environment.empty (.natural 917) unseenNaturalObservation :=
+  .natural Environment.empty 917
+
+theorem unseen_natural_judgment_executes :
+    ∃ result, synth Environment.empty (.natural 917) = .ok result ∧
+      result.observation = unseenNaturalObservation :=
+  synth_judgment_complete unseen_natural_structural_judgment
+
+def unseenRelationKey : ExpansionKey := {
+  document := "m2-relation-unseen"
+  occurrence := 73
+  definition := .d12ActualClause }
+
+def unseenRelationClause : Term 0 :=
+  .lambda (Ty.referents Ty.eventuality) (top (scope := 1))
+
+def unseenRelationPayload : ExpansionPayload 0 :=
+  (expandActualClause unseenRelationClause).payload
+
+theorem unseen_actual_clause_template :
+    TemplateEquation Environment.empty unseenRelationKey .d12ActualClause
+      [unseenRelationClause] unseenRelationPayload :=
+  .actualClause unseenRelationClause
+
+theorem unseen_actual_clause_dispatch_to_relation
+    (payload : ExpansionPayload 0)
+    (success : dispatchDefinition Environment.empty unseenRelationKey
+      .d12ActualClause [unseenRelationClause] = .ok payload) :
+    TemplateEquation Environment.empty unseenRelationKey .d12ActualClause
+      [unseenRelationClause] payload :=
+  dispatch_sound_against_template Environment.empty unseenRelationKey
+    .d12ActualClause [unseenRelationClause] payload success
+    ⟨unseenRelationPayload, unseen_actual_clause_template⟩
+
+theorem unseen_actual_clause_relation_to_dispatch
+    (certificate :
+      (show Expansion 0 from {
+        term := unseenRelationPayload.term
+        clauses := unseenRelationPayload.clauses }).validate .d12ActualClause = .ok ())
+    (typing : ∃ observation,
+      SynthJudgment Environment.empty unseenRelationPayload.term observation) :
+    dispatchDefinition Environment.empty unseenRelationKey .d12ActualClause
+      [unseenRelationClause] = .ok unseenRelationPayload :=
+  declarative_dispatch_complete Environment.empty unseenRelationKey
+    .d12ActualClause [unseenRelationClause] unseenRelationPayload
+    ⟨unseen_actual_clause_template, certificate, typing⟩
+
 def runM2TypingGates : IO Unit := do
   let environment := Environment.empty
+  if implementedTypingRuleRecords.length + unsupportedTypingRuleRecords.length !=
+      m2TypingRuleRecords.length ||
+      implementedTypingRuleRecords.any (fun implemented =>
+        unsupportedTypingRuleRecords.any (fun unsupported =>
+          implemented.id == unsupported.id)) then
+    throw <| IO.userError "declarative typing manifest partition is incomplete"
   let natural ← IO.ofTyping <| synth environment (.natural 7)
   if natural.type != Ty.natural ||
       !natural.trace.contains .a0TNatural ||
