@@ -90,7 +90,7 @@ mutual
                       "Refer property does not return Content"
                   else if parameter == Ty.referents memberType then
                     return (primitiveTerm, state)
-                  else if Ty.compatible parameter memberType && !effectful &&
+                  else if parameter == memberType && !effectful &&
                       isPure propertyResult then
                     let expansion := expandReferMember memberType property
                     match expansion.validate definition with
@@ -102,7 +102,8 @@ mutual
                           definitions := state.definitions ++ [definition]
                           clauses := state.clauses ++ expansion.clauses }
                         return (expansion.term, updated)
-                  else if Ty.compatible parameter memberType && effectful then
+                  else if parameter == memberType &&
+                      (effectful || !isPure propertyResult) then
                     return ← coreElaborationFailure "refer-member-purity"
                       "effectful member property must be hoisted before Refer"
                   else
@@ -904,6 +905,24 @@ def runM2Cases (root : String) : IO CaseRun := do
     IO.ofExcept <| classifyDecodedCase lexicalHeads manifestCase record
   if outcomes.length != manifest.counts.total_cases then
     throw <| IO.userError "M2 did not classify every S1 case"
+  let assertFrozen := fun (id : String) (disposition : CaseDisposition)
+      (rule : String) (definitions : List M2DefinitionId) => do
+    let some outcome := outcomes.find? fun candidate => candidate.id == id
+      | throw <| IO.userError s!"frozen Refer case is absent: {id}"
+    if outcome.disposition != disposition || outcome.decidingRule != rule ||
+        outcome.expandedDefinitions != definitions then
+      throw <| IO.userError <| s!"frozen Refer case drifted: {id} " ++
+        s!"got {repr outcome.disposition}/{outcome.decidingRule}/" ++
+        s!"{repr outcome.expandedDefinitions}"
+  assertFrozen "58c6ffc749c2646868481de082505374ffabf2df"
+    .typedRejection "set-property" [.d53ReferMemberLift]
+  assertFrozen "58da5cf5634a11f88da8aa2a3f88db4707056141"
+    .typeDirectedExpansion "generated definition-domain overload"
+    [.d53ReferMemberLift]
+  assertFrozen "2b3c9244ebe77552801d7ae17388f626b3dd74c3"
+    .typedRejection "refer-member-purity" []
+  assertFrozen "61a28f59bc37ccdacbcb320cc8b1704889eb23c8"
+    .typedUnchanged "bidirectional typing" []
   pure <| CaseRun.ofOutcomes outcomes
 
 end M2

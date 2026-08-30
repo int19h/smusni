@@ -117,6 +117,27 @@ def runM2TypingGates : IO Unit := do
       !referResult.trace.contains .a0TReferMember then
     throw <| IO.userError "member-level Refer dispatch failed"
 
+  let stateType := Ty.named0 .sortState
+  let stateProperty : Term 0 :=
+    .lambda stateType <| .primitive .equal <|
+      .positional (.bound 0) (.positional (.bound 0) .nil)
+  let stateRefer : Term 0 :=
+    .primitive .refer (.positional stateProperty .nil)
+  let _ ← IO.ofTyping <| checkBidirectional environment stateRefer
+    (Ty.refComp (Ty.referents stateType))
+  if (checkBidirectional environment stateRefer
+      (Ty.refComp (Ty.referents Ty.eventuality))).isOk then
+    throw <| IO.userError "Refer member lift accepted a subsort rather than exact domain"
+  let constructionEffectProperty : Term 0 :=
+    .bind stateType (.context (typingExampleSite "refer-construction") .nil)
+      (.lambda stateType <| .primitive .equal <|
+        .positional (.bound 0) (.positional (.bound 0) .nil))
+  let constructionEffectRefer : Term 0 :=
+    .primitive .refer (.positional constructionEffectProperty .nil)
+  if (checkBidirectional environment constructionEffectRefer
+      (Ty.refComp (Ty.referents stateType))).isOk then
+    throw <| IO.userError "Refer member lift accepted construction effects"
+
   let unsupported : Term 0 :=
     .primitive .multiply (.positional (.natural 2) (.positional (.natural 3) .nil))
   if (synth environment unsupported).isOk then

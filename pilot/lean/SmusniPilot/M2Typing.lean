@@ -647,7 +647,8 @@ mutual
                       let rule ←
                         if parameter == Ty.referents inner then
                           pure M2TypingRuleId.a0TReferReference
-                        else if !effectful && Ty.compatible parameter inner then
+                        else if !effectful && parameter == inner &&
+                            propertyResult.effects.isEmpty then
                           pure M2TypingRuleId.a0TReferMember
                         else failure "refer-property" "Refer property has the wrong domain/purity"
                       pure <| mergeResults expected [propertyResult]

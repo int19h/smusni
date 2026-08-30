@@ -146,38 +146,47 @@ structure RRDependencyComparison where
   undeclaredEmittedOrigins : List String
   deriving Repr, BEq
 
-def declaredRRKind (role : String) : SiteRole :=
-  if role == "threshold" || role == "cutoff" then .vague else .context
+def rrInjectiveAssignments : List RRDeclaredSite → List RRActualSite →
+    List (List (RRDeclaredSite × RRActualSite))
+  | [], _ => [[]]
+  | declaration :: rest, actual =>
+      actual.flatMap fun emitted =>
+        (rrInjectiveAssignments rest (actual.erase emitted)).map fun assignment =>
+          (declaration, emitted) :: assignment
+termination_by declared _ => declared.length
+
+def rrAssignmentPreservesDependencies
+    (assignment : List (RRDeclaredSite × RRActualSite)) : Bool :=
+  assignment.all fun pair =>
+    let mappedDependencies := pair.2.dependencies.mapM fun dependency =>
+      (assignment.find? fun candidate => candidate.2.identity == dependency).map
+        (fun candidate => candidate.1.role)
+    mappedDependencies == some pair.1.dependencies
 
 def rrDependencyComparison (declared : List RRDeclaredSite)
     (actual : List RRActualSite) : RRDependencyComparison :=
-  let step := fun
-      (state : List RRActualSite × List (RRDeclaredSite × RRActualSite) ×
-        List String) declaration =>
-    let remaining := state.1
-    let exact := remaining.find? fun emitted =>
-      emittedRRRole emitted.identity == declaration.role
-    let candidate := exact.orElse fun _ => remaining.find? fun emitted =>
-      emitted.role == declaredRRKind declaration.role
-    match candidate with
-    | some emitted =>
-        (remaining.erase emitted, state.2.1 ++ [(declaration, emitted)], state.2.2)
-    | none => (remaining, state.2.1, state.2.2 ++ [declaration.role])
-  let (remaining, matched, missing) := declared.foldl step (actual, [], [])
-  let dependencyRoles := fun (emitted : RRActualSite) =>
-    emitted.dependencies.map fun dependency =>
-      (matched.find? fun pair => pair.2.identity == dependency).map
-        (fun pair => pair.1.role) |>.getD (emittedRRRole dependency)
-  {
-    declaredRoles := declared.length
-    matchedRoles := matched.length
-    dependencyAgreements := matched.countP fun pair =>
-      pair.1.dependencies == dependencyRoles pair.2
-    dependencyMismatches := matched.countP fun pair =>
-      pair.1.dependencies != dependencyRoles pair.2
-    missingDeclaredRoles := missing
-    undeclaredEmittedOrigins := remaining.map fun emitted =>
-      emitted.identity.expansionRole }
+  let embedding := (rrInjectiveAssignments declared actual).find?
+    rrAssignmentPreservesDependencies
+  match embedding with
+  | some matched =>
+      let matchedIdentities := matched.map fun pair => pair.2.identity
+      {
+        declaredRoles := declared.length
+        matchedRoles := matched.length
+        dependencyAgreements := matched.length
+        dependencyMismatches := 0
+        missingDeclaredRoles := []
+        undeclaredEmittedOrigins := actual.filterMap fun emitted =>
+          if matchedIdentities.contains emitted.identity then none
+          else some emitted.identity.expansionRole }
+  | none => {
+      declaredRoles := declared.length
+      matchedRoles := 0
+      dependencyAgreements := 0
+      dependencyMismatches := 0
+      missingDeclaredRoles := declared.map (·.role)
+      undeclaredEmittedOrigins := actual.map fun emitted =>
+        emitted.identity.expansionRole }
 
 def rrDependencyAgreement (declared : List RRDeclaredSite)
     (actual : List RRActualSite) : Bool :=

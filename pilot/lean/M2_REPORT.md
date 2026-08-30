@@ -89,6 +89,15 @@ Both pure member-level `Refer` occurrences expand; `58c6...` then fails the
 enclosing `SetOf` purity rule. `2b3c...` fails `refer-member-purity` and
 `61a28...` stays reference-level primitive.
 
+Those four v1.2 Refer cases are hard assertions, not printed observations:
+`58c6... = typedRejection/set-property` after the member lift,
+`58da... = typeDirectedExpansion/generated definition-domain overload`,
+`2b3c... = typedRejection/refer-member-purity`, and
+`61a28... = typedUnchanged/bidirectional typing`, including exact expanded-ID
+lists. The public member checker and elaborator require an exact member domain
+and an effect-free property construction; subsort and construction-effect
+mutations have direct unseen gates.
+
 ## Declarative relation and theorems
 
 `M2TypingJudgment.lean` is the Prop-valued A0 relation. Its mutually inductive
@@ -167,8 +176,12 @@ occurrence/table/profile coherence is proved. The version-1 serialized `site`
 dependency tag remains decodable but is rejected as a semantic profile;
 internal `Dependency.site` is absent.
 
-The RR adoption audit decodes all 29 pinned RR fixtures and matches declarations
-to emitted sites by declared semantic role/site kind rather than list position.
+The RR adoption audit decodes all 29 pinned RR fixtures and searches for an
+injective structural embedding of the declared dependency graph in the emitted
+Context/Vague graph. Declared RR role names label fixture nodes and are used
+only to preserve edges under the injection; they are not matched to emitted
+`SiteRole` or `SiteId.expansionRole` names. Extra emitted nodes are retained as
+undeclared origins rather than mismatches.
 Across 32 linked cases it sees 13 declared roles and 26 emitted operand sites:
 6 declared roles match, all 6 matched dependency lists agree, 7 declarations
 remain unmatched, and 20 emitted sites are undeclared (principally
