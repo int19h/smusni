@@ -341,67 +341,6 @@ def cSpikeDependencySiteUses (sites : List SiteEntry) (scope : Nat) :
         (← cSpikeDependencySiteUses sites scope rest))
   | _ :: rest => cSpikeDependencySiteUses sites scope rest
 
-theorem mem_cSpikeDependencySiteUses (sites : List SiteEntry) (scope : Nat) :
-    ∀ (deps : List SerializedDependency) (children : List SiteUse),
-      cSpikeDependencySiteUses sites scope deps = .ok children →
-      ∀ child, child ∈ children →
-        ∃ entry, entry ∈ sites ∧
-          child = { identity := entry.identity, role := entry.role, scope := scope }
-  | [], children, ok, child, present => by
-      simp only [cSpikeDependencySiteUses, pure, Except.pure,
-        Except.ok.injEq] at ok
-      subst ok
-      simp at present
-  | .site identity :: rest, children, ok, child, present => by
-      simp only [cSpikeDependencySiteUses] at ok
-      cases lookup : sites.find? (fun candidate => candidate.identity == identity) with
-      | none => simp [lookup] at ok
-      | some entry =>
-          rw [lookup] at ok
-          have identityEq : entry.identity = identity := by
-            have := List.find?_some lookup
-            simpa using this
-          cases recursive : cSpikeDependencySiteUses sites scope rest with
-          | error message => simp [recursive, Functor.map, Except.map] at ok
-          | ok tail =>
-              simp only [recursive, bind, Except.bind, pure, Except.pure,
-                Except.ok.injEq] at ok
-              subst ok
-              simp only [List.mem_cons] at present
-              rcases present with rfl | inTail
-              · subst identityEq
-                exact ⟨entry, List.mem_of_find?_eq_some lookup, rfl⟩
-              · exact mem_cSpikeDependencySiteUses sites scope rest tail
-                  recursive child inTail
-  | .bound index :: rest, children, ok, child, present => by
-      simp only [cSpikeDependencySiteUses] at ok
-      exact mem_cSpikeDependencySiteUses sites scope rest children ok child present
-  | .free identity :: rest, children, ok, child, present => by
-      simp only [cSpikeDependencySiteUses] at ok
-      exact mem_cSpikeDependencySiteUses sites scope rest children ok child present
-
-theorem scope_mem_of_mem_siteUseUniverse {scope : Nat} (bundle : Bundle scope)
-    (current : SiteUse) (present : current ∈ siteUseUniverse bundle) :
-    current.scope ∈ (bundle.term.siteUses.map (fun use => use.scope)).eraseDups := by
-  simp only [siteUseUniverse, mem_dedupSiteUses, List.mem_append,
-    List.mem_flatMap, List.mem_map] at present
-  rcases present with root | ⟨occurrenceScope, scopeMem, entry, _, rfl⟩
-  · exact List.mem_eraseDups.mpr (List.mem_map.mpr ⟨current, root, rfl⟩)
-  · exact scopeMem
-
-theorem child_mem_siteUseUniverse {scope : Nat} (bundle : Bundle scope)
-    (current : SiteUse) (currentMem : current ∈ siteUseUniverse bundle)
-    (deps : List SerializedDependency) (children : List SiteUse)
-    (ok : cSpikeDependencySiteUses bundle.sites current.scope deps = .ok children)
-    (child : SiteUse) (present : child ∈ children) :
-    child ∈ siteUseUniverse bundle := by
-  obtain ⟨entry, entryMem, rfl⟩ :=
-    mem_cSpikeDependencySiteUses bundle.sites current.scope deps children ok child present
-  have scopeMem := scope_mem_of_mem_siteUseUniverse bundle current currentMem
-  simp only [siteUseUniverse, mem_dedupSiteUses, List.mem_append,
-    List.mem_flatMap, List.mem_map]
-  exact Or.inr ⟨current.scope, scopeMem, entry, entryMem, rfl⟩
-
 def cSpikeEnqueue (seen pending : List SiteUse) :
     List SiteUse → List SiteUse
   | [] => pending
