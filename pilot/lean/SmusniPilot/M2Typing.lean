@@ -881,7 +881,12 @@ mutual
         let [clause] ← expectArity operator arguments 1
           | failure "arity" "CloseClause expects one ClauseContent"
         let result ← check environment clause Ty.clauseContent
-        pure <| mergeResults Ty.content [result] [] [] .a0TCloseClause
+        let latentEffect := match result.type with
+          | .function true [parameter] output =>
+              if parameter == Ty.referents Ty.eventuality && output == Ty.content then
+                [.effectfulCall] else []
+          | _ => []
+        pure <| mergeResults Ty.content [result] latentEffect [] .a0TCloseClause
           |>.withRule .a0Synth
     | .perform => synthPerform environment arguments
     | .list => failure "expected-type" "List literals require an expected List<T>"
