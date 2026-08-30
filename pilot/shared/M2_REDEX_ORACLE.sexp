@@ -1383,22 +1383,8 @@
              $actual_event)
             (fasnu $actual_event)))))))))
   (case (id "7318097d39a3fd427b8496b52e0a9c8c908bd088")
-    (status available)
-    (term
-     (λ (($p :: (EFn (Entity) Content)) ($r :: (Referents Entity)))
-       (∧
-        (∀ (λ (($member :: Entity)) (→ (Among $member $r) ($p $member))))
-        (∀
-         (λ (($subreference :: (Referents Entity)))
-           (→
-            (Among $subreference $r)
-            (∃
-             (λ (($member :: Entity))
-               (∧
-                ($p $member)
-                (∃
-                 (λ (($common :: (Referents Entity)))
-                   (∧ (Among $common $member) (Among $common $subreference))))))))))))))
+    (status unavailable)
+    (reason "m2-oracle: CoveredBy member property is EFn; §5.3 purity rejects the term oracle (#83)"))
   (case (id "7489629dc458e9a2b37b77e7009276d086528421")
     (status unavailable)
     (reason

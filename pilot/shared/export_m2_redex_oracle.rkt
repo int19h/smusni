@@ -34,6 +34,12 @@
        [_ #f])]
     [_ #f]))
 
+(define (declared-effectful-property? property environment)
+  (and (symbol? property)
+       (match (lookup-type environment property)
+         [`(EFn (,_type) Content) #t]
+         [_ #f])))
+
 (define (reference-member term environment)
   (define type
     (cond [(eq? term 'Speaker) '(Referents Entity)]
@@ -167,6 +173,9 @@
      (unless type (error 'm2-oracle "Overlap member type unavailable"))
      (again (term (b1-expand-overlap ,type ,first ,second)))]
     [`(CoveredBy ,property ,reference)
+     (when (declared-effectful-property? property environment)
+       (error 'm2-oracle
+              "CoveredBy member property is EFn; §5.3 purity rejects the term oracle (#83)"))
      (define type (or (member-type property environment)
                       (reference-member reference environment)))
      (unless type (error 'm2-oracle "CoveredBy member type unavailable"))

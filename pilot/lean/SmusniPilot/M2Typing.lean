@@ -350,10 +350,27 @@ partial def isValue {scope : Nat} : Term scope → Bool
 
 def isPure (result : TypingResult) : Bool := result.effects.isEmpty
 
+structure PositionalOperand {scope : Nat} (source : TermList scope) where
+  term : Term scope
+  smaller : sizeOf term < sizeOf source
+
+def positionalOperands {scope : Nat} :
+    (source : TermList scope) →
+      Except TypingError (List (PositionalOperand source))
+  | .nil => pure []
+  | .labelled label _ _ =>
+      failure "labelled-fill" s!"labelled fill {label} requires row-directed typing"
+  | .positional head tail => do
+      let rest ← positionalOperands tail
+      let lifted := rest.map fun operand => {
+        term := operand.term
+        smaller := Nat.lt_trans operand.smaller (by simp_wf; omega) }
+      pure <| { term := head, smaller := by simp_wf; omega } :: lifted
+
 def expectArity {scope : Nat} (operator : FirstOrderPrimitive)
     (arguments : TermList scope) (arity : Nat) :
-    Except TypingError (List (Term scope)) := do
-  let terms ← positionalTerms arguments
+    Except TypingError (List (PositionalOperand arguments)) := do
+  let terms ← positionalOperands arguments
   if terms.length == arity then pure terms
   else failure "arity" s!"{operator.name} expects {arity} arguments, got {terms.length}"
 
@@ -372,7 +389,7 @@ def provablyPositive {scope : Nat} : Term scope → Bool
   | _ => false
 
 mutual
-  partial def synth {scope : Nat} (environment : Environment scope) :
+  def synth {scope : Nat} (environment : Environment scope) :
       Term scope → Except TypingError TypingResult
     | .bound index =>
         pure { type := environment.bound index, trace := [.a0TVariable, .a0Synth] }
@@ -421,8 +438,9 @@ mutual
     | .context _ _ => failure "expected-type" "Context requires an expected RefComp type"
     | .vague _ _ => failure "expected-type" "Vague requires an expected RefComp type"
     | .primitive operator arguments => synthPrimitive environment operator arguments
+  termination_by term => (sizeOf term, 0)
 
-  partial def check {scope : Nat} (environment : Environment scope)
+  def check {scope : Nat} (environment : Environment scope)
       (term : Term scope) (expected : Ty) : Except TypingError TypingResult :=
     match synth environment term with
     | .ok actual =>
@@ -433,12 +451,7 @@ mutual
     | .error synthError =>
       match term, Ty.asUnary expected .typeFormRefComp with
       | .context _ arguments, some _ => do
-          let operands ← positionalTerms arguments
-          let results ← operands.mapM fun operand => do
-            if !isValue operand then
-              failure "dependency-operand" "Context dependency operand is not a value"
-            else pure ()
-            synth environment operand
+          let results ← synthValueOperands environment arguments
           pure <| mergeResults expected results [.context] [] .a0TContext
             |>.withRule .a0Check
       | .vague _ constraint, some inner => do
@@ -451,95 +464,138 @@ mutual
       | .primitive .refer arguments, some reference =>
           match Ty.asUnary reference .typeFormReferents with
           | none => failure "refer-type" "Refer expects RefComp<Referents<T>>"
-          | some inner => do
-              let [property] ← expectArity .refer arguments 1
-                | failure "arity" "Refer expects one property"
-              let propertyResult ← synth environment property
-              match propertyResult.type with
-              | .function effectful [parameter] result =>
-                  if result != Ty.content then
-                    failure "refer-property" "Refer property must return Content"
-                  else pure ()
-                  let rule ←
-                    if parameter == Ty.referents inner then
-                      pure M2TypingRuleId.a0TReferReference
-                    else if !effectful && Ty.compatible parameter inner then
-                      pure M2TypingRuleId.a0TReferMember
-                    else failure "refer-property" "Refer property has the wrong domain/purity"
-                  pure <| mergeResults expected [propertyResult]
-                    ((if effectful then [.effectfulCall] else []) ++ [.refer]) [] rule
-                    |>.withRule .a0Check
-              | _ => failure "refer-property" "Refer property is not a function"
+          | some inner =>
+              match arguments with
+              | .positional property .nil => do
+                  let propertyResult ← synth environment property
+                  match propertyResult.type with
+                  | .function effectful [parameter] result =>
+                      if result != Ty.content then
+                        failure "refer-property" "Refer property must return Content"
+                      else pure ()
+                      let rule ←
+                        if parameter == Ty.referents inner then
+                          pure M2TypingRuleId.a0TReferReference
+                        else if !effectful && Ty.compatible parameter inner then
+                          pure M2TypingRuleId.a0TReferMember
+                        else failure "refer-property" "Refer property has the wrong domain/purity"
+                      pure <| mergeResults expected [propertyResult]
+                        ((if effectful then [.effectfulCall] else []) ++ [.refer]) [] rule
+                        |>.withRule .a0Check
+                  | _ => failure "refer-property" "Refer property is not a function"
+              | _ => failure "arity" "Refer expects one property"
       | .primitive .presuppose arguments, some _ =>
           checkPresupposeReference environment arguments expected
-      | .primitive .local arguments, some _ => do
-          let [body] ← expectArity .local arguments 1
-            | failure "arity" "Local expects one reference computation"
+      | .primitive .local (.positional body .nil), some _ => do
           let result ← check environment body expected
           pure <| mergeResults expected [result] [] [] .m2TLocal
             |>.withRule .a0Check
+      | .primitive .local _, some _ =>
+          failure "arity" "Local expects one reference computation"
       | .primitive operator arguments, some reference =>
           checkReferencePrimitive environment operator arguments reference expected
       | .primitive .list arguments, _ =>
           match expected with
           | .named .typeFormList [itemType] => do
-              let terms ← positionalTerms arguments
-              let results ← terms.mapM fun item => check environment item itemType
+              let results ← checkPositionalList environment arguments itemType
               pure <| mergeResults expected results [] [] .a0TListCheck
                 |>.withRule .a0Check
           | _ => .error synthError
       | _, _ => .error synthError
+  termination_by (sizeOf term, 1)
 
-  partial def applyFunction {scope : Nat} (environment : Environment scope)
+  def synthValueOperands {scope : Nat} (environment : Environment scope) :
+      TermList scope → Except TypingError (List TypingResult)
+    | .nil => pure []
+    | .labelled _ _ _ =>
+        failure "labelled-fill" "Context dependency operands must be positional"
+    | .positional head tail => do
+        if !isValue head then
+          failure "dependency-operand" "Context dependency operand is not a value"
+        let headResult ← synth environment head
+        pure <| headResult :: (← synthValueOperands environment tail)
+  termination_by arguments => (sizeOf arguments, 0)
+
+  def checkPositionalList {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) (expected : Ty) :
+      Except TypingError (List TypingResult) :=
+    match arguments with
+    | .nil => pure []
+    | .labelled _ _ _ =>
+        failure "labelled-fill" "this typing rule requires positional operands"
+    | .positional head tail => do
+        let headResult ← check environment head expected
+        pure <| headResult :: (← checkPositionalList environment tail expected)
+  termination_by (sizeOf arguments, 0)
+
+  def synthPositionalList {scope : Nat} (environment : Environment scope) :
+      TermList scope → Except TypingError (List TypingResult)
+    | .nil => pure []
+    | .labelled _ _ _ =>
+        failure "labelled-fill" "this typing rule requires positional operands"
+    | .positional head tail => do
+        let headResult ← synth environment head
+        pure <| headResult :: (← synthPositionalList environment tail)
+  termination_by arguments => (sizeOf arguments, 0)
+
+  def applyFunction {scope : Nat} (environment : Environment scope)
       (functionResult : TypingResult) (arguments : TermList scope) :
-      Except TypingError TypingResult := do
-    let items ← labelledTerms arguments
-    if (predTermShape functionResult.type).isNone &&
-        items.any fun item => item.1.isSome then
-      failure "labelled-fill" "labelled fills require a PredTerm row"
-    else pure ()
-    let terms := items.map (·.2)
+      Except TypingError TypingResult :=
     match functionResult.type with
     | .function effectful parameters result =>
-        if parameters.isEmpty && !terms.isEmpty then
-          failure "application-arity" "zero-parameter function cannot consume arguments"
-        else pure ()
-        let consumed := min parameters.length terms.length
-        let argumentResults ← ((terms.take consumed).zip
-          (parameters.take consumed)).mapM fun pair => check environment pair.1 pair.2
-        let rule := if effectful then .a0TApplyEffectful else .a0TApplyPure
-        if terms.length < parameters.length then
-          let remaining := parameters.drop consumed
-          pure <| mergeResults (.function effectful remaining result)
-            (functionResult :: argumentResults)
-            (if effectful then [.effectfulCall] else []) [] rule |>.withRule .a0Synth
-        else
-          let applied := mergeResults result (functionResult :: argumentResults)
-            (if effectful then [.effectfulCall] else []) [] rule |>.withRule .a0Synth
-          let remaining := terms.drop consumed
-          if remaining.isEmpty then pure applied
-          else applyFunction environment applied (positionalList remaining)
+        match arguments with
+        | .labelled _ _ _ =>
+            failure "labelled-fill" "labelled fills require a PredTerm row"
+        | .nil =>
+            let rule := if effectful then .a0TApplyEffectful else .a0TApplyPure
+            if parameters.isEmpty then
+              pure <| mergeResults result [functionResult]
+                (if effectful then [.effectfulCall] else []) [] rule
+                |>.withRule .a0Synth
+            else
+              pure <| mergeResults (.function effectful parameters result)
+                [functionResult] (if effectful then [.effectfulCall] else []) [] rule
+                |>.withRule .a0Synth
+        | .positional argument .nil =>
+            match parameters with
+            | [] => failure "application-arity"
+                "zero-parameter function cannot consume arguments"
+            | parameter :: remaining => do
+                let argumentResult ← check environment argument parameter
+                let output := if remaining.isEmpty then result
+                  else .function effectful remaining result
+                let rule := if effectful then .a0TApplyEffectful else .a0TApplyPure
+                let applied := mergeResults output [functionResult, argumentResult]
+                  (if effectful then [.effectfulCall] else []) [] rule
+                  |>.withRule .a0Synth
+                pure applied
+        | .positional argument tail =>
+            match parameters with
+            | [] => failure "application-arity"
+                "zero-parameter function cannot consume arguments"
+            | parameter :: remaining => do
+                let argumentResult ← check environment argument parameter
+                let output := if remaining.isEmpty then result
+                  else .function effectful remaining result
+                let rule := if effectful then .a0TApplyEffectful else .a0TApplyPure
+                let applied := mergeResults output [functionResult, argumentResult]
+                  (if effectful then [.effectfulCall] else []) [] rule
+                  |>.withRule .a0Synth
+                applyFunction environment applied tail
     | type =>
         if type == Ty.clauseContent then
-          let [argument] := terms
-            | failure "application-arity" "ClauseContent expects one event reference"
-          let result ← check environment argument (Ty.referents Ty.eventuality)
-          pure <| mergeResults Ty.content [functionResult, result] [] []
-            .a0TApplyClauseContent |>.withRule .a0Synth
+          match arguments with
+          | .positional argument .nil => do
+              let result ← check environment argument (Ty.referents Ty.eventuality)
+              pure <| mergeResults Ty.content [functionResult, result] [] []
+                .a0TApplyClauseContent |>.withRule .a0Synth
+          | _ => failure "application-arity" "ClauseContent expects one event reference"
         else match predTermShape type with
           | some (ordinary, eventRequired) => do
-              let items ← labelledTerms arguments
-              let ordinaryFilled := items.countP fun item =>
-                item.1 != some ":Eventuality"
-              let eventFilled := items.any fun item =>
-                item.1 == some ":Eventuality"
+              let (results, ordinaryFilled, eventFilled) ←
+                predTermArgumentResults environment arguments
               if ordinaryFilled > ordinary || (eventFilled && !eventRequired) then
                 failure "predterm-row" "application fills outside the PredTerm row"
-              else pure ()
-              let results ← items.mapM fun item =>
-                if item.1 == some ":Eventuality" then
-                  check environment item.2 (Ty.referents Ty.eventuality)
-                else synth environment item.2
               let output := if ordinaryFilled == ordinary &&
                   (!eventRequired || eventFilled) then Ty.content
                 else Ty.predTerm <| Ty.residualRow
@@ -547,45 +603,68 @@ mutual
               pure <| mergeResults output (functionResult :: results) [] []
                 .m2TPredTermApply |>.withRule .a0Synth
           | none => failure "application-type" s!"cannot apply {repr type}"
+  termination_by (sizeOf arguments, 1)
 
-  partial def lexicalArgumentResults {scope : Nat}
+  def predTermArgumentResults {scope : Nat} (environment : Environment scope) :
+      TermList scope → Except TypingError (List TypingResult × Nat × Bool)
+    | .nil => pure ([], 0, false)
+    | .positional term tail => do
+        let result ← synth environment term
+        let (rest, ordinary, eventFilled) ← predTermArgumentResults environment tail
+        pure (result :: rest, ordinary + 1, eventFilled)
+    | .labelled ":Eventuality" term tail => do
+        let result ← check environment term (Ty.referents Ty.eventuality)
+        let (rest, ordinary, _) ← predTermArgumentResults environment tail
+        pure (result :: rest, ordinary, true)
+    | .labelled _ term tail => do
+        let result ← synth environment term
+        let (rest, ordinary, eventFilled) ← predTermArgumentResults environment tail
+        pure (result :: rest, ordinary + 1, eventFilled)
+  termination_by arguments => (sizeOf arguments, 0)
+
+  def lexicalArgumentResults {scope : Nat}
       (environment : Environment scope) (row : M2LexicalRowRecord)
-      (arguments : TermList scope) :
-      Except TypingError (List TypingResult × Nat × Bool) := do
-    let items ← labelledTerms arguments
-    let labels := items.filterMap (·.1)
-    if labels.length != labels.eraseDups.length then
-      failure "lexical-label" s!"{row.head} repeats a labelled fill"
-    else pure ()
-    let mut ordinary := 0
-    let mut eventFilled := false
-    let mut results := []
-    for (label, term) in items do
-      match label with
-      | none =>
-          ordinary := ordinary + 1
-          results := results ++ [← synth environment term]
-      | some ":Eventuality" =>
+      (arguments : TermList scope) (seen : List String := []) :
+      Except TypingError (List TypingResult × Nat × Bool) :=
+    match arguments with
+    | .nil => pure ([], 0, false)
+    | .positional term tail => do
+        let result ← synth environment term
+        let (rest, ordinary, eventFilled) ←
+          lexicalArgumentResults environment row tail seen
+        let ordinary := ordinary + 1
+        if ordinary > row.ordinaryArity then
+          failure "lexical-arity"
+            s!"{row.head} has {row.ordinaryArity} ordinary places, got {ordinary}"
+        pure (result :: rest, ordinary, eventFilled)
+    | .labelled label term tail => do
+        if seen.contains label then
+          failure "lexical-label" s!"{row.head} repeats a labelled fill"
+        let seen := label :: seen
+        if label == ":Eventuality" then
           if row.eventMode != .directEvent then
             failure "lexical-label" s!"{row.head} has no Eventuality place"
-          else pure ()
-          eventFilled := true
-          results := results ++ [← check environment term (Ty.referents Ty.eventuality)]
-      | some label =>
+          let result ← check environment term (Ty.referents Ty.eventuality)
+          let (rest, ordinary, _) ←
+            lexicalArgumentResults environment row tail seen
+          pure (result :: rest, ordinary, true)
+        else
           let raw := (label.drop 1).toString
           let some place := raw.toNat?
             | failure "lexical-label" s!"{row.head} has unknown label {label}"
           if place == 0 || place > row.ordinaryArity then
             failure "lexical-label" s!"{row.head} label {label} is outside its row"
-          else pure ()
-          ordinary := ordinary + 1
-          results := results ++ [← synth environment term]
-    if ordinary > row.ordinaryArity then
-      failure "lexical-arity"
-        s!"{row.head} has {row.ordinaryArity} ordinary places, got {ordinary}"
-    pure (results, ordinary, eventFilled)
+          let result ← synth environment term
+          let (rest, ordinary, eventFilled) ←
+            lexicalArgumentResults environment row tail seen
+          let ordinary := ordinary + 1
+          if ordinary > row.ordinaryArity then
+            failure "lexical-arity"
+              s!"{row.head} has {row.ordinaryArity} ordinary places, got {ordinary}"
+          pure (result :: rest, ordinary, eventFilled)
+  termination_by (sizeOf arguments, 0)
 
-  partial def synthLexical {scope : Nat} (environment : Environment scope)
+  def synthLexical {scope : Nat} (environment : Environment scope)
       (predicate : String) (arguments : TermList scope) :
       Except TypingError TypingResult :=
     match environment.lookupLexical predicate with
@@ -601,8 +680,9 @@ mutual
             pure <| mergeResults
               (if complete then Ty.content else lexicalRowType row)
               results [] [] .m2TLexicalRow |>.withRule .a0Synth
+  termination_by (sizeOf arguments, 2)
 
-  partial def synthPrimitive {scope : Nat} (environment : Environment scope)
+  def synthPrimitive {scope : Nat} (environment : Environment scope)
       (operator : FirstOrderPrimitive) (arguments : TermList scope) :
       Except TypingError TypingResult :=
     match operator with
@@ -624,7 +704,8 @@ mutual
           effects := [.projective]
           obligations := [.definedness operator.name (Ty.referents Ty.entity)] }
     | .combine => do
-        let [first, second] ← expectArity operator arguments 2
+        let [⟨first, firstSmaller⟩, ⟨second, secondSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "Combine expects two referential values"
         let firstResult ← synth environment first
         let secondResult ← synth environment second
@@ -639,7 +720,8 @@ mutual
         pure <| mergeResults (Ty.referents common) [firstResult, secondResult]
           [] [] .m2TCombine |>.withRule .a0Synth
     | .memberOf => do
-        let [item, setTerm] ← expectArity operator arguments 2
+        let [⟨item, itemSmaller⟩, ⟨setTerm, setSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "membership expects an item and a set"
         let itemResult ← synth environment item
         let setResult ← synth environment setTerm
@@ -651,7 +733,7 @@ mutual
         pure <| mergeResults Ty.content [itemResult, setResult] [] []
           .m2TMemberOf |>.withRule .a0Synth
     | .assert => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Assert expects one Content"
         let result ← check environment content Ty.content
         let packaged : TypingResult := { type := Ty.act Ty.assertion }
@@ -659,7 +741,7 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TForce, .a0Synth] }
     | .express => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Express expects one Content"
         let result ← check environment content Ty.content
         let packaged : TypingResult := { type := Ty.act Ty.expressive }
@@ -667,7 +749,7 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TForce, .a0Synth] }
     | .mention => do
-        let [value] ← expectArity operator arguments 1
+        let [⟨value, valueSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Mention expects one value"
         let result ← synth environment value
         let packaged : TypingResult := { type := Ty.act Ty.expressive }
@@ -675,8 +757,7 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TForce, .a0Synth] }
     | .do => do
-        let terms ← positionalTerms arguments
-        let results ← terms.mapM fun term => synth environment term
+        let results ← synthPositionalList environment arguments
         for result in results do
           if result.type == Ty.discourse ||
               (Ty.asUnary result.type .typeFormAct).isSome ||
@@ -685,13 +766,13 @@ mutual
         pure <| mergeResults Ty.discourse results [.performance] []
           .m2TForce |>.withRule .a0Synth
     | .polar => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Polar expects one Content"
         let result ← check environment content Ty.content
         pure <| mergeResults (Ty.query (.named .sortBool [])) [result] [] []
           .m2TQuery |>.withRule .a0Synth
     | .openQ => do
-        let [property] ← expectArity operator arguments 1
+        let [⟨property, propertySmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "OpenQ expects one Content-valued function"
         let result ← synth environment property
         match result.type with
@@ -703,7 +784,7 @@ mutual
               .m2TQuery |>.withRule .a0Synth
         | _ => failure "query-type" "OpenQ expects a unary function"
     | .ask => do
-        let [query] ← expectArity operator arguments 1
+        let [⟨query, querySmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Ask expects one Query"
         let result ← synth environment query
         let some _ := Ty.asUnary result.type .typeFormQuery
@@ -713,7 +794,8 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TQuery, .a0Synth] }
     | .generic => do
-        let [mode, property, nuclear] ← expectArity operator arguments 3
+        let [⟨mode, modeSmaller⟩, ⟨property, propertySmaller⟩,
+          ⟨nuclear, nuclearSmaller⟩] ← expectArity operator arguments 3
           | failure "arity" "Generic expects mode, restrictor, and nuclear scope"
         let modeResult ← check environment mode Ty.genericMode
         let propertyResult ← synth environment property
@@ -728,7 +810,8 @@ mutual
           (if nuclearResult.type == Ty.effectfulFn [memberType] Ty.content then
             [.effectfulCall] else []) [] .m2TGeneric |>.withRule .a0Synth
     | .locutionOf => do
-        let [token, locution] ← expectArity operator arguments 2
+        let [⟨token, tokenSmaller⟩, ⟨locution, locutionSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "LocutionOf expects token and locution references"
         let tokenResult ← check environment token (Ty.referents Ty.utteranceToken)
         let locutionResult ← check environment locution (Ty.referents Ty.locution)
@@ -739,13 +822,14 @@ mutual
     | .contrast | .metalinguisticallyDefective | .realizes | .speakerOf =>
         contentInterface none
     | .holds => do
-        let [proposition] ← expectArity operator arguments 1
+        let [⟨proposition, propositionSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Holds expects one Proposition"
         let result ← check environment proposition Ty.proposition
         pure <| mergeResults Ty.content [result] [] [] .m2TContentInterfaces
           |>.withRule .a0Synth
     | .supplement => do
-        let [anchor, side, body] ← expectArity operator arguments 3
+        let [⟨anchor, anchorSmaller⟩, ⟨side, sideSmaller⟩,
+          ⟨body, bodySmaller⟩] ← expectArity operator arguments 3
           | failure "arity" "Supplement expects anchor, side, and body"
         let anchorResult ← synth environment anchor
         let sideResult ← check environment side Ty.content
@@ -757,7 +841,7 @@ mutual
     | .nameSign => signConstructor "Name"
     | .letteralSign => signConstructor "Letteral"
     | .sentenceSign => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "SentenceSign expects one Content"
         let result ← check environment content Ty.content
         let packaged : TypingResult := { type := Ty.sign "Sentence" }
@@ -765,7 +849,7 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TSign, .a0Synth] }
     | .reify => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Reify expects one Content"
         let result ← check environment content Ty.content
         let packaged : TypingResult := { type := Ty.proposition }
@@ -773,14 +857,15 @@ mutual
           obligations := result.obligations
           trace := result.trace ++ [.m2TReify, .a0Synth] }
     | .realizedContent => do
-        let [token] ← expectArity operator arguments 1
+        let [⟨token, tokenSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "RealizedContent expects one token reference"
         let result ← check environment token (Ty.referents Ty.utteranceToken)
         pure <| mergeResults Ty.content [result] [.projective]
           [.definedness "RealizedContent" Ty.content] .m2TRealizedContent
           |>.withRule .a0Synth
     | .dropPlace => do
-        let [relation, label] ← expectArity operator arguments 2
+        let [⟨relation, relationSmaller⟩, ⟨label, labelSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "DropPlace expects a relation and label"
         let relationResult ← synth environment relation
         let some row := Ty.asUnary relationResult.type .typeFormPredTerm
@@ -796,28 +881,31 @@ mutual
         pure <| mergeResults (Ty.predTerm (Ty.rowMinus row labelType))
           [relationResult] [] [] .m2TDropPlace |>.withRule .a0Synth
     | .teha => do
-        let [base, exponent] ← expectArity operator arguments 2
+        let [⟨base, baseSmaller⟩, ⟨exponent, exponentSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "te'a expects base and exponent"
         let baseResult ← check environment base Ty.number
         let exponentResult ← check environment exponent Ty.natural
         pure <| mergeResults Ty.number [baseResult, exponentResult] [] []
           .m2TTeha |>.withRule .a0Synth
     | .subtract => do
-        let [first, second] ← expectArity operator arguments 2
+        let [⟨first, firstSmaller⟩, ⟨second, secondSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "subtraction expects two numbers"
         let firstResult ← check environment first Ty.number
         let secondResult ← check environment second Ty.number
         pure <| mergeResults Ty.number [firstResult, secondResult] [] []
           .m2TNumericInterfaces |>.withRule .a0Synth
     | .amountValue => do
-        let [amount, scale] ← expectArity operator arguments 2
+        let [⟨amount, amountSmaller⟩, ⟨scale, scaleSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" "AmountValue expects amount and scale"
         let amountResult ← check environment amount (Ty.referents Ty.amount)
         let scaleResult ← check environment scale (Ty.referents Ty.scale)
         pure <| mergeResults Ty.number [amountResult, scaleResult] [] []
           .m2TNumericInterfaces |>.withRule .a0Synth
     | .niRel | .jeiRel | .suhuRel => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" s!"{operator.name} expects one Content"
         let result ← check environment content Ty.content
         pure <| mergeResults (Ty.predTerm (Ty.arityRow 2)) [result] [] []
@@ -835,15 +923,14 @@ mutual
             (Ty.compatible first.type second.type ||
               Ty.compatible second.type first.type) then pure Ty.content
         else failure "equality-type" "equality operands are incompatible"
-    | .and => do
-        let terms ← positionalTerms arguments
-        match terms with
-        | [] => pure { type := Ty.content, trace := [.a0TTop, .a0Synth] }
-        | [first, second] =>
-            let firstResult ← check environment first Ty.content
-            let secondResult ← check environment second Ty.content
-            pure <| mergeResults Ty.content [firstResult, secondResult] [] []
-              .a0TAnd |>.withRule .a0Synth
+    | .and =>
+        match arguments with
+        | .nil => pure { type := Ty.content, trace := [.a0TTop, .a0Synth] }
+        | .positional first (.positional second .nil) => do
+          let firstResult ← check environment first Ty.content
+          let secondResult ← check environment second Ty.content
+          pure <| mergeResults Ty.content [firstResult, secondResult] [] []
+            .a0TAnd |>.withRule .a0Synth
         | _ => failure "arity" "and expects zero or two operands"
     | .implies => binaryCheck .b1TImplication Ty.content Ty.content
     | .not => unaryCheck .b1TNegation Ty.content Ty.content
@@ -852,7 +939,7 @@ mutual
     | .among => referenceBinary .b1TAmong
     | .presuppose => synthPresuppose environment arguments
     | .setOf => do
-        let [property] ← expectArity operator arguments 1
+        let [⟨property, propertySmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "SetOf expects one property"
         let result ← synth environment property
         let some (effectful, inner) := oneArgumentFunction result
@@ -863,7 +950,7 @@ mutual
         pure <| mergeResults (Ty.set inner) [result] [] [] .a0TSetOf
           |>.withRule .a0Synth
     | .card => do
-        let [setTerm] ← expectArity operator arguments 1
+        let [⟨setTerm, setSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "Card expects one set"
         let setResult ← synth environment setTerm
         let some _ := Ty.asUnary setResult.type .typeFormSet
@@ -872,13 +959,13 @@ mutual
           [.finiteSetCardinalityDefined] .a0TCard |>.withRule .a0Synth
     | .admissibleThreshold => synthAdmissibleThreshold environment arguments
     | .stateClause => do
-        let [content] ← expectArity operator arguments 1
+        let [⟨content, contentSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "StateClause expects one Content"
         let result ← check environment content Ty.content
         pure <| mergeResults Ty.clauseContent [result] [] [] .a0TStateClause
           |>.withRule .a0Synth
     | .closeClause => do
-        let [clause] ← expectArity operator arguments 1
+        let [⟨clause, clauseSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" "CloseClause expects one ClauseContent"
         let result ← check environment clause Ty.clauseContent
         let latentEffect := match result.type with
@@ -894,6 +981,7 @@ mutual
         failure "expected-type" s!"{operator.name} requires an expected RefComp type"
     | _ => failure "unsupported-primitive"
         (s!"no M2 rule for first-order primitive {operator.name}")
+  termination_by (sizeOf arguments, 2)
     where
       constant (rule : M2TypingRuleId) (type : Ty) := do
         let terms ← positionalTerms arguments
@@ -904,12 +992,14 @@ mutual
           failure "typing-manifest" s!"constant {raw} is absent from the generated core input"
         else pure ()
         pure { type, trace := [rule, .a0Synth] }
-      signConstructor (kind : String) := do
-        let [text] ← expectArity operator arguments 1
-          | failure "arity" s!"{operator.name} expects one Text"
-        let result ← check environment text Ty.text
-        pure <| mergeResults (Ty.sign kind) [result] [] [] .m2TSign
-          |>.withRule .a0Synth
+      signConstructor (kind : String) :=
+        match arguments with
+        | .positional text .nil => do
+            let result ← check environment text Ty.text
+            pure <| mergeResults (Ty.sign kind) [result] [] [] .m2TSign
+              |>.withRule .a0Synth
+        | _ => failure "arity" s!"{operator.name} expects one Text"
+      termination_by (sizeOf arguments, 1)
       contentInterface (arity : Option Nat) := do
         let terms ← positionalTerms arguments
         match arity with
@@ -920,33 +1010,39 @@ mutual
         | none =>
             if terms.isEmpty then failure "arity" s!"{operator.name} expects arguments"
             else pure ()
-        let results ← terms.mapM fun term => synth environment term
+        let results ← synthPositionalList environment arguments
         pure <| mergeResults Ty.content results [] [] .m2TContentInterfaces
           |>.withRule .a0Synth
+      termination_by (sizeOf arguments, 1)
       binarySynth (rule : M2TypingRuleId)
           (resultType : TypingResult → TypingResult →
             Except TypingError Ty) := do
-        let [first, second] ← expectArity operator arguments 2
+        let [⟨first, firstSmaller⟩, ⟨second, secondSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" s!"{operator.name} expects two operands"
         let firstResult ← synth environment first
         let secondResult ← synth environment second
         let type ← resultType firstResult secondResult
         pure <| mergeResults type [firstResult, secondResult] [] [] rule
           |>.withRule .a0Synth
+      termination_by (sizeOf arguments, 1)
       binaryCheck (rule : M2TypingRuleId) (expected resultType : Ty) := do
-        let [first, second] ← expectArity operator arguments 2
+        let [⟨first, firstSmaller⟩, ⟨second, secondSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" s!"{operator.name} expects two operands"
         let firstResult ← check environment first expected
         let secondResult ← check environment second expected
         pure <| mergeResults resultType [firstResult, secondResult] [] [] rule
           |>.withRule .a0Synth
+      termination_by (sizeOf arguments, 1)
       unaryCheck (rule : M2TypingRuleId) (expected resultType : Ty) := do
-        let [term] ← expectArity operator arguments 1
+        let [⟨term, termSmaller⟩] ← expectArity operator arguments 1
           | failure "arity" s!"{operator.name} expects one operand"
         let result ← check environment term expected
         pure <| mergeResults resultType [result] [] [] rule |>.withRule .a0Synth
+      termination_by (sizeOf arguments, 1)
       quantify (rule : M2TypingRuleId) := do
-        let [property] ← expectArity operator arguments 1
+        let [⟨property, propertySmaller⟩] ← expectArity operator arguments 1
           | failure "arity" s!"{operator.name} expects one property"
         let result ← synth environment property
         match result.type with
@@ -959,8 +1055,10 @@ mutual
               (if effectful then [.effectfulCall] else []) [] rule
               |>.withRule .a0Synth
         | _ => failure "quantifier-property" "quantifier expects a function"
+      termination_by (sizeOf arguments, 1)
       referenceBinary (rule : M2TypingRuleId) := do
-        let [first, second] ← expectArity operator arguments 2
+        let [⟨first, firstSmaller⟩, ⟨second, secondSmaller⟩] ←
+          expectArity operator arguments 2
           | failure "arity" s!"{operator.name} expects two references"
         let firstResult ← synth environment first
         let secondResult ← synth environment second
@@ -969,150 +1067,172 @@ mutual
         else pure ()
         pure <| mergeResults Ty.content [firstResult, secondResult] [] [] rule
           |>.withRule .a0Synth
+      termination_by (sizeOf arguments, 1)
 
-  partial def checkReferencePrimitive {scope : Nat}
+  def checkReferencePrimitive {scope : Nat}
       (environment : Environment scope) (operator : FirstOrderPrimitive)
       (arguments : TermList scope) (reference : Ty) (expected : Ty) :
       Except TypingError TypingResult := do
     let some inner := Ty.asUnary reference .typeFormReferents
       | failure "reference-type" "expected RefComp<Referents<T>>"
     match operator with
-    | .selectExactly | .selectAtLeast | .selectAllBut => do
-        let [count, property] ← expectArity operator arguments 2
-          | failure "arity" s!"{operator.name} expects count and property"
-        let countResult ← check environment count Ty.natural
-        if operator != .selectAllBut && !provablyPositive count then
-          failure "selection-floor" s!"{operator.name} requires a positive count"
-        else pure ()
-        let propertyResult ← check environment property (Ty.pureFn [inner] Ty.content)
-        let rule := if operator == .selectExactly then .a0TSelectExactly
-          else if operator == .selectAtLeast then .b1TSelectAtLeast
-          else .b1TSelectAllBut
-        pure <| mergeResults expected [countResult, propertyResult] [.refer] [] rule
-          |>.withRule .a0Check
+    | .selectExactly | .selectAtLeast | .selectAllBut =>
+        match arguments with
+        | .positional count (.positional property .nil) => do
+            let countResult ← check environment count Ty.natural
+            if operator != .selectAllBut && !provablyPositive count then
+              failure "selection-floor" s!"{operator.name} requires a positive count"
+            else pure ()
+            let propertyResult ← check environment property (Ty.pureFn [inner] Ty.content)
+            let rule := if operator == .selectExactly then .a0TSelectExactly
+              else if operator == .selectAtLeast then .b1TSelectAtLeast
+              else .b1TSelectAllBut
+            pure <| mergeResults expected [countResult, propertyResult] [.refer] [] rule
+              |>.withRule .a0Check
+        | _ => failure "arity" s!"{operator.name} expects count and property"
     | _ => failure "reference-form" s!"{operator.name} is not a reference computation"
+  termination_by (sizeOf arguments, 0)
 
-  partial def synthPresuppose {scope : Nat} (environment : Environment scope)
-      (arguments : TermList scope) : Except TypingError TypingResult := do
-    let [condition, body] ← expectArity .presuppose arguments 2
-      | failure "arity" "Presuppose expects condition and body"
-    let conditionResult ← check environment condition Ty.content
-    let bodyResult ← synth environment body
-    if !computationCategoryClassifier bodyResult.type then
-      failure "presuppose-body" "Presuppose body is not a computation category"
-    else pure ()
-    pure <| mergeResults bodyResult.type [conditionResult, bodyResult]
-      [.projective] [.presuppose "condition" bodyResult.type]
-      .b1TPresupposeSynth |>.withRule .a0Synth
-
-  partial def checkPresupposeReference {scope : Nat}
-      (environment : Environment scope) (arguments : TermList scope)
-      (expected : Ty) : Except TypingError TypingResult := do
-    let [condition, body] ← expectArity .presuppose arguments 2
-      | failure "arity" "Presuppose expects condition and body"
-    let conditionResult ← check environment condition Ty.content
-    let bodyResult ← check environment body expected
-    pure <| mergeResults expected [conditionResult, bodyResult] [.projective]
-      [.presuppose "condition" expected] .b1TPresupposeReference
-      |>.withRule .a0Check
-
-  partial def synthAdmissibleThreshold {scope : Nat}
-      (environment : Environment scope) (arguments : TermList scope) :
-      Except TypingError TypingResult := do
-    let [kind, property, purpose] ← expectArity .admissibleThreshold arguments 3
-      | failure "arity" "AdmissibleThreshold expects kind, property, purpose"
-    let kindResult ← check environment kind Ty.thresholdKind
-    let propertyResult ← synth environment property
-    let some (effectful, _) := oneArgumentFunction propertyResult
-      | failure "threshold-property" "threshold property must be unary Content"
-    if effectful || !isPure propertyResult then
-      failure "threshold-property" "threshold property must be pure"
-    else pure ()
-    let purposeResult ← check environment purpose (Ty.referents Ty.entity)
-    pure <| mergeResults (Ty.pureFn [Ty.natural] Ty.content)
-      [kindResult, propertyResult, purposeResult] [] [] .a0TAdmissibleThreshold
-      |>.withRule .a0Synth
-
-  partial def synthPerform {scope : Nat} (environment : Environment scope)
-      (arguments : TermList scope) : Except TypingError TypingResult := do
-    let terms ← positionalTerms arguments
-    let (roleResult, act) ← match terms with
-      | [act] => pure (none, act)
-      | [role, act] =>
-          pure (some (← check environment role Ty.occurrenceRole), act)
-      | _ => failure "arity" "Perform expects an act, optionally preceded by a role"
-    let result ← synth environment act
-    match result.type with
-    | .named .typeFormAct [force] =>
-        pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
-          (roleResult.toList ++ [result]) [.performance] []
-          (if roleResult.isSome then .m2TPerformRole else .a0TPerform)
-          |>.withRule .a0Synth
-    | _ => failure "perform-type" "Perform expects Act<F>"
-
-  partial def synthAggregate {scope : Nat} (environment : Environment scope)
-      (arguments : TermList scope) : Except TypingError TypingResult := do
-    let [basis, group] ← expectArity .aggregate arguments 2
-      | failure "arity" "Aggregate expects basis and group"
-    let basisResult ← synth environment basis
-    let some (whole, component) :=
-        Ty.asBinary basisResult.type .typeFormDecompositionBasis
-      | failure "aggregate-type" "Aggregate basis has the wrong type"
-    let some inner := Ty.asUnary whole .typeFormGroup
-      | failure "aggregate-type" "Aggregate basis whole must be Group<T>"
-    if !Ty.compatible inner component || !Ty.compatible component inner then
-      failure "aggregate-type" "Aggregate basis component does not match its group"
-    else pure ()
-    let groupResult ← check environment group (Ty.group component)
-    pure <| mergeResults Ty.content [basisResult, groupResult] [] []
-      .m2TAggregate |>.withRule .a0Synth
-
-  partial def synthBasisUnitAt {scope : Nat} (environment : Environment scope)
-      (arguments : TermList scope) : Except TypingError TypingResult := do
-    let [basis, unit, cover] ← expectArity .basisUnitAt arguments 3
-      | failure "arity" "BasisUnitAt expects basis, unit, and cover"
-    let basisResult ← synth environment basis
-    let some (_, component) :=
-        Ty.asBinary basisResult.type .typeFormDecompositionBasis
-      | failure "basis-unit-type" "BasisUnitAt basis has the wrong type"
-    let unitResult ← check environment unit (Ty.referents component)
-    let coverResult ← check environment cover (Ty.referents component)
-    pure <| mergeResults Ty.content [basisResult, unitResult, coverResult] [] []
-      .m2TBasisUnitAt |>.withRule .a0Synth
-
-  partial def synthPeerUnitAt {scope : Nat} (environment : Environment scope)
-      (arguments : TermList scope) : Except TypingError TypingResult := do
-    let [basis, unit, wholeTerm] ← expectArity .peerUnitAt arguments 3
-      | failure "arity" "PeerUnitAt expects basis, unit, and whole"
-    let basisResult ← synth environment basis
-    let some (whole, component) :=
-        Ty.asBinary basisResult.type .typeFormDecompositionBasis
-      | failure "peer-unit-type" "PeerUnitAt basis has the wrong type"
-    let unitResult ← check environment unit (Ty.referents component)
-    let wholeResult ← check environment wholeTerm (Ty.referents whole)
-    pure <| mergeResults Ty.content [basisResult, unitResult, wholeResult] [] []
-      .m2TPeerUnitAt |>.withRule .a0Synth
-
-  partial def synthJaiRoleAdmissible {scope : Nat}
-      (environment : Environment scope) (arguments : TermList scope) :
-      Except TypingError TypingResult := do
-    let [relation, role] ← expectArity .jaiRoleAdmissible arguments 2
-      | failure "arity" "JaiRoleAdmissible expects relation and role"
-    let relationResult ← synth environment relation
-    let some _ := Ty.asUnary relationResult.type .typeFormPredTerm
-      | failure "jai-role-type" "JaiRoleAdmissible first operand is not PredTerm"
-    let roleResult ← synth environment role
-    match roleResult.type with
-    | .function false [first, second] result =>
-        if result != Ty.content ||
-            (Ty.asUnary first .typeFormReferents).isNone ||
-            (Ty.asUnary second .typeFormReferents).isNone ||
-            !isPure roleResult then
-          failure "jai-role-type" "raised role must be a pure binary reference relation"
+  def synthPresuppose {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional condition (.positional body .nil) => do
+        let conditionResult ← check environment condition Ty.content
+        let bodyResult ← synth environment body
+        if !computationCategoryClassifier bodyResult.type then
+          failure "presuppose-body" "Presuppose body is not a computation category"
         else pure ()
-    | _ => failure "jai-role-type" "raised role must be a pure binary reference relation"
-    pure <| mergeResults Ty.content [relationResult, roleResult] [] []
-      .m2TJaiRoleAdmissible |>.withRule .a0Synth
+        pure <| mergeResults bodyResult.type [conditionResult, bodyResult]
+          [.projective] [.presuppose "condition" bodyResult.type]
+          .b1TPresupposeSynth |>.withRule .a0Synth
+    | _ => failure "arity" "Presuppose expects condition and body"
+  termination_by (sizeOf arguments, 0)
+
+  def checkPresupposeReference {scope : Nat}
+      (environment : Environment scope) (arguments : TermList scope)
+      (expected : Ty) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional condition (.positional body .nil) => do
+        let conditionResult ← check environment condition Ty.content
+        let bodyResult ← check environment body expected
+        pure <| mergeResults expected [conditionResult, bodyResult] [.projective]
+          [.presuppose "condition" expected] .b1TPresupposeReference
+          |>.withRule .a0Check
+    | _ => failure "arity" "Presuppose expects condition and body"
+  termination_by (sizeOf arguments, 0)
+
+  def synthAdmissibleThreshold {scope : Nat}
+      (environment : Environment scope) (arguments : TermList scope) :
+      Except TypingError TypingResult :=
+    match arguments with
+    | .positional kind (.positional property (.positional purpose .nil)) => do
+        let kindResult ← check environment kind Ty.thresholdKind
+        let propertyResult ← synth environment property
+        let some (effectful, _) := oneArgumentFunction propertyResult
+          | failure "threshold-property" "threshold property must be unary Content"
+        if effectful || !isPure propertyResult then
+          failure "threshold-property" "threshold property must be pure"
+        else pure ()
+        let purposeResult ← check environment purpose (Ty.referents Ty.entity)
+        pure <| mergeResults (Ty.pureFn [Ty.natural] Ty.content)
+          [kindResult, propertyResult, purposeResult] [] [] .a0TAdmissibleThreshold
+          |>.withRule .a0Synth
+    | _ => failure "arity" "AdmissibleThreshold expects kind, property, purpose"
+  termination_by (sizeOf arguments, 0)
+
+  def synthPerform {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional act .nil => do
+        let result ← synth environment act
+        match result.type with
+        | .named .typeFormAct [force] =>
+            pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
+              [result] [.performance] [] .a0TPerform |>.withRule .a0Synth
+        | _ => failure "perform-type" "Perform expects Act<F>"
+    | .positional role (.positional act .nil) => do
+        let roleResult ← check environment role Ty.occurrenceRole
+        let result ← synth environment act
+        match result.type with
+        | .named .typeFormAct [force] =>
+            pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
+              [roleResult, result] [.performance] [] .m2TPerformRole
+              |>.withRule .a0Synth
+        | _ => failure "perform-type" "Perform expects Act<F>"
+    | _ => failure "arity" "Perform expects an act, optionally preceded by a role"
+  termination_by (sizeOf arguments, 0)
+
+  def synthAggregate {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional basis (.positional group .nil) => do
+        let basisResult ← synth environment basis
+        let some (whole, component) :=
+            Ty.asBinary basisResult.type .typeFormDecompositionBasis
+          | failure "aggregate-type" "Aggregate basis has the wrong type"
+        let some inner := Ty.asUnary whole .typeFormGroup
+          | failure "aggregate-type" "Aggregate basis whole must be Group<T>"
+        if !Ty.compatible inner component || !Ty.compatible component inner then
+          failure "aggregate-type" "Aggregate basis component does not match its group"
+        else pure ()
+        let groupResult ← check environment group (Ty.group component)
+        pure <| mergeResults Ty.content [basisResult, groupResult] [] []
+          .m2TAggregate |>.withRule .a0Synth
+    | _ => failure "arity" "Aggregate expects basis and group"
+  termination_by (sizeOf arguments, 0)
+
+  def synthBasisUnitAt {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional basis (.positional unit (.positional cover .nil)) => do
+        let basisResult ← synth environment basis
+        let some (_, component) :=
+            Ty.asBinary basisResult.type .typeFormDecompositionBasis
+          | failure "basis-unit-type" "BasisUnitAt basis has the wrong type"
+        let unitResult ← check environment unit (Ty.referents component)
+        let coverResult ← check environment cover (Ty.referents component)
+        pure <| mergeResults Ty.content [basisResult, unitResult, coverResult] [] []
+          .m2TBasisUnitAt |>.withRule .a0Synth
+    | _ => failure "arity" "BasisUnitAt expects basis, unit, and cover"
+  termination_by (sizeOf arguments, 0)
+
+  def synthPeerUnitAt {scope : Nat} (environment : Environment scope)
+      (arguments : TermList scope) : Except TypingError TypingResult :=
+    match arguments with
+    | .positional basis (.positional unit (.positional wholeTerm .nil)) => do
+        let basisResult ← synth environment basis
+        let some (whole, component) :=
+            Ty.asBinary basisResult.type .typeFormDecompositionBasis
+          | failure "peer-unit-type" "PeerUnitAt basis has the wrong type"
+        let unitResult ← check environment unit (Ty.referents component)
+        let wholeResult ← check environment wholeTerm (Ty.referents whole)
+        pure <| mergeResults Ty.content [basisResult, unitResult, wholeResult] [] []
+          .m2TPeerUnitAt |>.withRule .a0Synth
+    | _ => failure "arity" "PeerUnitAt expects basis, unit, and whole"
+  termination_by (sizeOf arguments, 0)
+
+  def synthJaiRoleAdmissible {scope : Nat}
+      (environment : Environment scope) (arguments : TermList scope) :
+      Except TypingError TypingResult :=
+    match arguments with
+    | .positional relation (.positional role .nil) => do
+        let relationResult ← synth environment relation
+        let some _ := Ty.asUnary relationResult.type .typeFormPredTerm
+          | failure "jai-role-type" "JaiRoleAdmissible first operand is not PredTerm"
+        let roleResult ← synth environment role
+        match roleResult.type with
+        | .function false [first, second] result =>
+            if result != Ty.content ||
+                (Ty.asUnary first .typeFormReferents).isNone ||
+                (Ty.asUnary second .typeFormReferents).isNone ||
+                !isPure roleResult then
+              failure "jai-role-type" "raised role must be a pure binary reference relation"
+            else pure ()
+        | _ => failure "jai-role-type" "raised role must be a pure binary reference relation"
+        pure <| mergeResults Ty.content [relationResult, roleResult] [] []
+          .m2TJaiRoleAdmissible |>.withRule .a0Synth
+    | _ => failure "arity" "JaiRoleAdmissible expects relation and role"
+  termination_by (sizeOf arguments, 0)
 end
 
 def typingRuleRecordsFor (result : TypingResult) : List M2TypingRuleRecord :=

@@ -38,39 +38,102 @@ mutual
         .labelled label (eraseSiteIds head) (eraseSiteIdsList tail)
 end
 
+def lexicalItems {scope : Nat} : TermList scope →
+    List (Option String × Term scope)
+  | .nil => []
+  | .positional head tail => (none, head) :: lexicalItems tail
+  | .labelled label head tail => (some label, head) :: lexicalItems tail
+
+def canonicalLabelledList {scope : Nat} :
+    List (String × Term scope) → TermList scope
+  | [] => .nil
+  | (label, head) :: tail =>
+      .labelled label head (canonicalLabelledList tail)
+
+def routeLexicalArguments {scope : Nat} (row : M2LexicalRowRecord)
+    (arguments : TermList scope) : Except String (TermList scope) := do
+  let items := lexicalItems arguments
+  let explicitLabels := items.filterMap (·.1)
+  if explicitLabels.length != explicitLabels.eraseDups.length then
+    throw s!"{row.head} repeats a labelled fill"
+  let mut explicitOrdinary : List Nat := []
+  let mut explicitEvent : Option (Term scope) := none
+  let mut explicitAssignments : List (Nat × Term scope) := []
+  let mut positional : List (Term scope) := []
+  for (label, term) in items do
+    match label with
+    | none => positional := positional ++ [term]
+    | some ":Eventuality" =>
+        if row.eventMode != .directEvent then
+          throw s!"{row.head} has no Eventuality place"
+        explicitEvent := some term
+    | some label =>
+        let some place := (label.drop 1).toString.toNat?
+          | throw s!"{row.head} has unknown label {label}"
+        if place == 0 || place > row.ordinaryArity then
+          throw s!"{row.head} label {label} is outside its row"
+        explicitOrdinary := explicitOrdinary ++ [place]
+        explicitAssignments := explicitAssignments ++ [(place, term)]
+  if explicitOrdinary.length != explicitOrdinary.eraseDups.length then
+    throw s!"{row.head} repeats an ordinary place"
+  let available := (List.range row.ordinaryArity).map (· + 1) |>.filter fun place =>
+    !explicitOrdinary.contains place
+  let ordinaryPositional := positional.take available.length
+  let trailing := positional.drop available.length
+  let positionalEvent ← match trailing with
+    | [] => pure none
+    | [term] =>
+        if row.eventMode == .directEvent && explicitEvent.isNone then pure (some term)
+        else throw s!"{row.head} has too many positional fills"
+    | _ => throw s!"{row.head} has too many positional fills"
+  let positionalAssignments := (available.zip ordinaryPositional).map fun pair =>
+    (pair.1, pair.2)
+  let assignments := explicitAssignments ++ positionalAssignments
+  let ordinary := (List.range row.ordinaryArity).filterMap fun offset =>
+    let place := offset + 1
+    (assignments.find? fun item => item.1 == place).map fun item =>
+      (s!":{place}", item.2)
+  let event := (explicitEvent.orElse fun _ => positionalEvent).toList.map fun term =>
+    (":Eventuality", term)
+  pure <| canonicalLabelledList (ordinary ++ event)
+
 mutual
-  def eraseLexicalLabels {scope : Nat} : Term scope → Term scope
-    | .bound index => .bound index
-    | .free identity => .free identity
-    | .natural value => .natural value
-    | .string value => .string value
-    | .index value => .index value
-    | .lambda type body => .lambda type (eraseLexicalLabels body)
+  def canonicalizeLexicalLabels {scope : Nat} :
+      Term scope → Except String (Term scope)
+    | .bound index => pure (Term.bound index)
+    | .free identity => pure (Term.free identity)
+    | .natural value => pure (Term.natural value)
+    | .string value => pure (Term.string value)
+    | .index value => pure (Term.index value)
+    | .lambda type body =>
+        return .lambda type (← canonicalizeLexicalLabels body)
     | .bind type computation body =>
-        .bind type (eraseLexicalLabels computation) (eraseLexicalLabels body)
+        return .bind type (← canonicalizeLexicalLabels computation)
+          (← canonicalizeLexicalLabels body)
     | .apply function arguments =>
-        .apply (eraseLexicalLabels function) (eraseLexicalLabelsList arguments)
-    | .lexical head arguments =>
-        .lexical head (eraseTermListLabels arguments)
+        return .apply (← canonicalizeLexicalLabels function)
+          (← canonicalizeLexicalLabelsList arguments)
+    | .lexical head arguments => do
+        let arguments ← canonicalizeLexicalLabelsList arguments
+        let some row := lookupLexicalRow head
+          | throw s!"missing typed lexical row {head}"
+        return .lexical head (← routeLexicalArguments row arguments)
     | .context site arguments =>
-        .context site (eraseLexicalLabelsList arguments)
-    | .vague site constraint => .vague site (eraseLexicalLabels constraint)
+        return .context site (← canonicalizeLexicalLabelsList arguments)
+    | .vague site constraint =>
+        return .vague site (← canonicalizeLexicalLabels constraint)
     | .primitive operator arguments =>
-        .primitive operator (eraseLexicalLabelsList arguments)
+        return .primitive operator (← canonicalizeLexicalLabelsList arguments)
 
-  def eraseLexicalLabelsList {scope : Nat} : TermList scope → TermList scope
-    | .nil => .nil
+  def canonicalizeLexicalLabelsList {scope : Nat} :
+      TermList scope → Except String (TermList scope)
+    | .nil => pure .nil
     | .positional head tail =>
-        .positional (eraseLexicalLabels head) (eraseLexicalLabelsList tail)
+        return .positional (← canonicalizeLexicalLabels head)
+          (← canonicalizeLexicalLabelsList tail)
     | .labelled label head tail =>
-        .labelled label (eraseLexicalLabels head) (eraseLexicalLabelsList tail)
-
-  def eraseTermListLabels {scope : Nat} : TermList scope → TermList scope
-    | .nil => .nil
-    | .positional head tail =>
-        .positional (eraseLexicalLabels head) (eraseTermListLabels tail)
-    | .labelled _ head tail =>
-        .positional (eraseLexicalLabels head) (eraseTermListLabels tail)
+        return .labelled label (← canonicalizeLexicalLabels head)
+          (← canonicalizeLexicalLabelsList tail)
 end
 
 structure RedexOracleCase where
@@ -131,6 +194,63 @@ structure ParityRun where
   differences : List ParityDifference
   deriving Repr
 
+def ParityRun.validate (run : ParityRun) : Except String Unit := do
+  if run.oracleAvailable + run.oracleUnavailable != run.cohort then
+    throw "parity oracle partition does not cover the cohort"
+  if run.compared != run.oracleAvailable then
+    throw s!"parity skipped available targets: available={run.oracleAvailable}, compared={run.compared}"
+  if run.termMatches != run.compared then
+    throw s!"parity term mismatch: compared={run.compared}, matches={run.termMatches}"
+  if run.siteMatches != run.compared then
+    throw s!"parity site mismatch: compared={run.compared}, matches={run.siteMatches}"
+  if !run.differences.isEmpty then
+    throw s!"parity has {run.differences.length} recorded differences"
+  if run.knownBlockerDifferences != 0 || run.unexplainedDifferences != 0 then
+    throw "parity difference counters are nonzero"
+
+def runM2ParityMutationGates : IO Unit := do
+  let some row := lookupLexicalRow "tavla"
+    | throw <| IO.userError "parity swap probe lacks the tavla row"
+  let speaker : Term 0 := .primitive .speaker .nil
+  let audience : Term 0 := .primitive .audience .nil
+  let first : Term 0 := .lexical "tavla" <|
+    .labelled ":2" speaker (.labelled ":1" audience .nil)
+  let second : Term 0 := .lexical "tavla" <|
+    .labelled ":1" speaker (.labelled ":2" audience .nil)
+  let firstRouted ← IO.ofExcept <| canonicalizeLexicalLabels first
+  let secondRouted ← IO.ofExcept <| canonicalizeLexicalLabels second
+  if Interchange.renderCanonicalTerm firstRouted ==
+      Interchange.renderCanonicalTerm secondRouted then
+    throw <| IO.userError "row routing erased swapped tavla places"
+  let duplicated : TermList 0 :=
+    .labelled ":1" speaker (.labelled ":1" audience .nil)
+  if (routeLexicalArguments row duplicated).isOk then
+    throw <| IO.userError "row routing accepted a duplicate lexical place"
+  let clean : ParityRun := {
+    cohort := 1
+    oracleAvailable := 1
+    oracleUnavailable := 0
+    compared := 1
+    termMatches := 1
+    siteMatches := 1
+    knownBlockerDifferences := 0
+    unexplainedDifferences := 0
+    differences := [] }
+  if !clean.validate.isOk then
+    throw <| IO.userError "clean parity mutation control failed"
+  let forcedDifference := { clean with
+    termMatches := 0
+    unexplainedDifferences := 1
+    differences := [{ id := "mutation", part := "term", detail := "forced" }] }
+  if forcedDifference.validate.isOk then
+    throw <| IO.userError "forced parity difference did not fail the gate"
+  let skippedAvailable := { clean with
+    compared := 0
+    termMatches := 0
+    siteMatches := 0 }
+  if skippedAvailable.validate.isOk then
+    throw <| IO.userError "available-but-uncompared parity target did not fail the gate"
+
 def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
   let oracleSource ← IO.FS.readFile (root ++ "/pilot/shared/M2_REDEX_ORACLE.sexp")
   let oracle ← IO.ofExcept (SExpr.parse oracleSource >>= decodeRedexOracle)
@@ -154,14 +274,10 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
         | throw <| IO.userError s!"oracle case {oracleCase.id} absent from M2 run"
       match outcome.term with
       | none =>
-          if outcome.disposition == .typedRejection ||
-              outcome.disposition == .blocked ||
-              outcome.disposition == .inputUnavailable then pure ()
-          else
-            differences := differences ++ [{
-              id := oracleCase.id
-              part := "term"
-              detail := "Lean elaboration produced no term for an available oracle case" }]
+          differences := differences ++ [{
+            id := oracleCase.id
+            part := "term"
+            detail := s!"Lean produced no term for an available oracle target ({repr outcome.disposition})" }]
       | some leanTerm =>
           let surface := SurfaceTerm.ofSExprWithLexicon lexicalHeads rawOracle
           let freeNames := freeNamesFromEnvironment corpusCase.environment
@@ -171,19 +287,25 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
                 id := oracleCase.id, part := "oracle-decode", detail }]
           | .ok redexBundle =>
               compared := compared + 1
-              let leanCanonical := Interchange.renderCanonicalTerm
-                (eraseLexicalLabels (eraseSiteIds leanTerm))
-              let redexCanonical := Interchange.renderCanonicalTerm
-                (eraseLexicalLabels (eraseSiteIds redexBundle.term))
-              if leanCanonical == redexCanonical then
-                termMatches := termMatches + 1
-              else
-                differences := differences ++ [{
-                  id := oracleCase.id
-                  part := "term"
-                  detail := "alpha-normal CoreTerm differs after SiteId erasure"
-                  knownIssue := if outcome.expandedDefinitions.contains .d46Close then
-                    some 81 else none }]
+              match canonicalizeLexicalLabels (eraseSiteIds leanTerm),
+                  canonicalizeLexicalLabels (eraseSiteIds redexBundle.term) with
+              | .ok leanRouted, .ok redexRouted =>
+                  let leanCanonical := Interchange.renderCanonicalTerm leanRouted
+                  let redexCanonical := Interchange.renderCanonicalTerm redexRouted
+                  if leanCanonical == redexCanonical then
+                    termMatches := termMatches + 1
+                  else
+                    differences := differences ++ [{
+                      id := oracleCase.id
+                      part := "term"
+                      detail := "alpha-normal CoreTerm differs after SiteId erasure and row routing"
+                      knownIssue := if outcome.expandedDefinitions.contains .d46Close then
+                        some 81 else none }]
+              | .error detail, _ | _, .error detail =>
+                  differences := differences ++ [{
+                    id := oracleCase.id
+                    part := "row-routing"
+                    detail }]
               let leanSites := emittedSiteSignature leanTerm
               let redexSites := emittedSiteSignature redexBundle.term
               if leanSites == redexSites then
