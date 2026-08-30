@@ -16,3 +16,6 @@ import SmusniPilot.M2Typing
 import SmusniPilot.M2Examples
 import SmusniPilot.M2Templates
 import SmusniPilot.M2Cases
+import SmusniPilot.M2Relation
+import SmusniPilot.M2Bundle
+import SmusniPilot.M2Parity

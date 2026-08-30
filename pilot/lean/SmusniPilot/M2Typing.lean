@@ -186,6 +186,39 @@ def numberJoin (first second : Ty) : Option Ty :=
 
 end Ty
 
+inductive ComputationCategory : Ty → Prop where
+  | content : ComputationCategory Ty.content
+  | clauseContent : ComputationCategory Ty.clauseContent
+  | discourse : ComputationCategory Ty.discourse
+  | reference (inner : Ty) : ComputationCategory (Ty.refComp inner)
+  | performance (inner : Ty) : ComputationCategory (Ty.perfComp inner)
+
+structure ComputationCategoryCertificate (type : Ty) : Type where
+  proof : ComputationCategory type
+
+def computationCategoryCertificate :
+    (type : Ty) → Option (ComputationCategoryCertificate type)
+  | .named .typeContent [] => some ⟨.content⟩
+  | .named .typeClauseContent [] => some ⟨.clauseContent⟩
+  | .named .typeDiscourse [] => some ⟨.discourse⟩
+  | .named .typeFormRefComp [inner] => some ⟨.reference inner⟩
+  | .named .typeFormPerfComp [inner] => some ⟨.performance inner⟩
+  | _ => none
+
+def computationCategoryClassifier (type : Ty) : Bool :=
+  (computationCategoryCertificate type).isSome
+
+theorem computation_category_classifier_sound (type : Ty) :
+    computationCategoryClassifier type = true → ComputationCategory type := by
+  intro classified
+  exact ((computationCategoryCertificate type).get (by
+    simpa [computationCategoryClassifier] using classified)).proof
+
+theorem computation_category_classifier_complete {type : Ty}
+    (proof : ComputationCategory type) :
+    computationCategoryClassifier type = true := by
+  cases proof <;> rfl
+
 inductive Effect where
   | context
   | refer
@@ -391,76 +424,71 @@ mutual
 
   partial def check {scope : Nat} (environment : Environment scope)
       (term : Term scope) (expected : Ty) : Except TypingError TypingResult :=
-    match term, Ty.asUnary expected .typeFormRefComp with
-    | .context _ arguments, some _ => do
-        let operands ← positionalTerms arguments
-        let results ← operands.mapM fun operand => do
-          if !isValue operand then
-            failure "dependency-operand" "Context dependency operand is not a value"
+    match synth environment term with
+    | .ok actual =>
+        if Ty.compatible actual.type expected then
+          .ok { actual with trace := actual.trace ++ [.a0TCheckSynth, .a0Check] }
+        else failure "type-mismatch"
+          (s!"expected {repr expected}, synthesized {repr actual.type}")
+    | .error synthError =>
+      match term, Ty.asUnary expected .typeFormRefComp with
+      | .context _ arguments, some _ => do
+          let operands ← positionalTerms arguments
+          let results ← operands.mapM fun operand => do
+            if !isValue operand then
+              failure "dependency-operand" "Context dependency operand is not a value"
+            else pure ()
+            synth environment operand
+          pure <| mergeResults expected results [.context] [] .a0TContext
+            |>.withRule .a0Check
+      | .vague _ constraint, some inner => do
+          let property ← synth environment constraint
+          if property.type != Ty.pureFn [inner] Ty.content || !isPure property then
+            failure "vague-constraint" "Vague constraint must be a pure unary Content property"
           else pure ()
-          synth environment operand
-        pure <| mergeResults expected results [.context] [] .a0TContext
-          |>.withRule .a0Check
-    | .vague _ constraint, some inner => do
-        let property ← synth environment constraint
-        if property.type != Ty.pureFn [inner] Ty.content || !isPure property then
-          failure "vague-constraint" "Vague constraint must be a pure unary Content property"
-        else pure ()
-        pure <| mergeResults expected [property] [.context] [] .a0TVague
-          |>.withRule .a0Check
-    | .primitive .refer arguments, some reference =>
-        match Ty.asUnary reference .typeFormReferents with
-        | none => failure "refer-type" "Refer expects RefComp<Referents<T>>"
-        | some inner => do
-            let [property] ← expectArity .refer arguments 1
-              | failure "arity" "Refer expects one property"
-            let propertyResult ← synth environment property
-            match propertyResult.type with
-            | .function effectful [parameter] result =>
-                if result != Ty.content then
-                  failure "refer-property" "Refer property must return Content"
-                else pure ()
-                let rule ←
-                  if parameter == Ty.referents inner then
-                    pure M2TypingRuleId.a0TReferReference
-                  else if !effectful && Ty.compatible parameter inner then
-                    pure M2TypingRuleId.a0TReferMember
-                  else failure "refer-property" "Refer property has the wrong domain/purity"
-                pure <| mergeResults expected [propertyResult]
-                  ((if effectful then [.effectfulCall] else []) ++ [.refer]) [] rule
-                  |>.withRule .a0Check
-            | _ => failure "refer-property" "Refer property is not a function"
-    | .primitive .presuppose arguments, some _ =>
-        checkPresupposeReference environment arguments expected
-    | .primitive .local arguments, some _ => do
-        let [body] ← expectArity .local arguments 1
-          | failure "arity" "Local expects one reference computation"
-        let result ← check environment body expected
-        pure <| mergeResults expected [result] [] [] .m2TLocal
-          |>.withRule .a0Check
-    | .primitive operator arguments, some reference =>
-        checkReferencePrimitive environment operator arguments reference expected
-    | _, _ =>
-        match expected with
-        | .named .typeFormList [itemType] =>
-            match term with
-            | .primitive .list arguments => do
-                let terms ← positionalTerms arguments
-                let results ← terms.mapM fun item => check environment item itemType
-                pure <| mergeResults expected results [] [] .a0TListCheck
-                  |>.withRule .a0Check
-            | _ => checkSynth
-        | _ => checkSynth
-    where
-      checkSynth : Except TypingError TypingResult :=
-        match synth environment term with
-        | .error error => .error error
-        | .ok actual =>
-            if Ty.compatible actual.type expected then
-              .ok { actual with
-                trace := actual.trace ++ [.a0TCheckSynth, .a0Check] }
-            else failure "type-mismatch"
-              (s!"expected {repr expected}, synthesized {repr actual.type}")
+          pure <| mergeResults expected [property] [.context] [] .a0TVague
+            |>.withRule .a0Check
+      | .primitive .refer arguments, some reference =>
+          match Ty.asUnary reference .typeFormReferents with
+          | none => failure "refer-type" "Refer expects RefComp<Referents<T>>"
+          | some inner => do
+              let [property] ← expectArity .refer arguments 1
+                | failure "arity" "Refer expects one property"
+              let propertyResult ← synth environment property
+              match propertyResult.type with
+              | .function effectful [parameter] result =>
+                  if result != Ty.content then
+                    failure "refer-property" "Refer property must return Content"
+                  else pure ()
+                  let rule ←
+                    if parameter == Ty.referents inner then
+                      pure M2TypingRuleId.a0TReferReference
+                    else if !effectful && Ty.compatible parameter inner then
+                      pure M2TypingRuleId.a0TReferMember
+                    else failure "refer-property" "Refer property has the wrong domain/purity"
+                  pure <| mergeResults expected [propertyResult]
+                    ((if effectful then [.effectfulCall] else []) ++ [.refer]) [] rule
+                    |>.withRule .a0Check
+              | _ => failure "refer-property" "Refer property is not a function"
+      | .primitive .presuppose arguments, some _ =>
+          checkPresupposeReference environment arguments expected
+      | .primitive .local arguments, some _ => do
+          let [body] ← expectArity .local arguments 1
+            | failure "arity" "Local expects one reference computation"
+          let result ← check environment body expected
+          pure <| mergeResults expected [result] [] [] .m2TLocal
+            |>.withRule .a0Check
+      | .primitive operator arguments, some reference =>
+          checkReferencePrimitive environment operator arguments reference expected
+      | .primitive .list arguments, _ =>
+          match expected with
+          | .named .typeFormList [itemType] => do
+              let terms ← positionalTerms arguments
+              let results ← terms.mapM fun item => check environment item itemType
+              pure <| mergeResults expected results [] [] .a0TListCheck
+                |>.withRule .a0Check
+          | _ => .error synthError
+      | _, _ => .error synthError
 
   partial def applyFunction {scope : Nat} (environment : Environment scope)
       (functionResult : TypingResult) (arguments : TermList scope) :
@@ -965,7 +993,7 @@ mutual
       | failure "arity" "Presuppose expects condition and body"
     let conditionResult ← check environment condition Ty.content
     let bodyResult ← synth environment body
-    if !Ty.computationCategory bodyResult.type then
+    if !computationCategoryClassifier bodyResult.type then
       failure "presuppose-body" "Presuppose body is not a computation category"
     else pure ()
     pure <| mergeResults bodyResult.type [conditionResult, bodyResult]
@@ -1085,11 +1113,44 @@ end
 def typingRuleRecordsFor (result : TypingResult) : List M2TypingRuleRecord :=
   result.trace.map M2TypingRuleId.record
 
+def checkBidirectional {scope : Nat} (environment : Environment scope)
+    (term : Term scope) (expected : Ty) : Except TypingError TypingResult :=
+  match synth environment term with
+  | .ok actual =>
+      if Ty.compatible actual.type expected then
+        .ok { actual with trace := actual.trace ++ [.a0TCheckSynth, .a0Check] }
+      else failure "type-mismatch"
+        (s!"expected {repr expected}, synthesized {repr actual.type}")
+  | .error _ => check environment term expected
+
 def wrongExpectedTypeFails {scope : Nat} (environment : Environment scope)
     (term : Term scope) (expected : Ty) : Prop :=
   ∀ actual, synth environment term = .ok actual →
     Ty.compatible actual.type expected = false →
-      ∃ error, check environment term expected = .error error
+      ∃ error, checkBidirectional environment term expected = .error error
+
+theorem wrongExpectedTypeFails_proved {scope : Nat}
+    (environment : Environment scope) (term : Term scope) (expected : Ty) :
+    wrongExpectedTypeFails environment term expected := by
+  intro actual synthSuccess incompatible
+  refine ⟨{
+    code := "type-mismatch"
+    detail := s!"expected {repr expected}, synthesized {repr actual.type}" }, ?_⟩
+  simp [checkBidirectional, synthSuccess, incompatible, failure]
+
+def fiveNameEffectBound : List Effect :=
+  [.context, .refer, .projective, .effectfulCall, .performance]
+
+theorem effect_analysis_sound (result : TypingResult) :
+    ∀ effect, effect ∈ result.effects → fiveNameEffectBound.contains effect := by
+  intro effect _present
+  cases effect <;> decide
+
+def PureResult (result : TypingResult) : Prop := result.effects = []
+
+theorem purity_classifier_sound_complete (result : TypingResult) :
+    isPure result = true ↔ PureResult result := by
+  simp [isPure, PureResult]
 
 end M2
 end SmusniPilot

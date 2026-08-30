@@ -289,9 +289,14 @@ def typedClosePlan {scope : Nat} (environment : Environment scope)
         let some row := Ty.asUnary result.type .typeFormPredTerm
           | coreElaborationFailure "close-row"
               "Close operand is neither Content nor PredTerm<row>"
-        let some (ordinary, event) := rowShape row
-          | coreElaborationFailure "close-row"
-              "Close residual row shape is unavailable"
+        let shape ← match rowShape row with
+          | some shape => pure shape
+          | none =>
+              match row with
+              | .named .typeFormRowOf [.variable head] =>
+                  coreElaborationFailure "unknown-row" s!"RowOf {head} has no declared lexical row"
+              | _ => coreElaborationFailure "close-row" "Close residual row shape is unavailable"
+        let (ordinary, event) := shape
         pure {
           predicate := term
           places := (List.range ordinary).map fun index => {
