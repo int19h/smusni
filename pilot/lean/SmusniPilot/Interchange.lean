@@ -690,28 +690,68 @@ def buildTypedClosureUses {scope : Nat} (bundle : Bundle scope) :
   let roots := dedupSiteUses bundle.term.siteUses
   buildClosureUsesLoop bundle (siteUseUniverse bundle) roots []
 
-theorem buildClosureUsesLoop_preserves_pending {scope : Nat}
+theorem buildClosureUsesLoop_success {scope : Nat}
     (bundle : Bundle scope) (unseen pending : List SiteUse)
     (seen result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (invariant : ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      unseen pending seen)
     (success : buildClosureUsesLoop bundle unseen pending seen = .ok result) :
-    ∀ use, use ∈ pending ∨ use ∈ seen.map Sigma.fst →
-      use ∈ result.map Sigma.fst := by
+    (∃ finalUnseen, ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      finalUnseen [] result) ∧
+    (∀ use, use ∈ pending ∨ use ∈ seen.map Sigma.fst →
+      use ∈ result.map Sigma.fst) := by
   fun_induction buildClosureUsesLoop <;> simp_all
   case case1 unseen seen =>
     cases success
-    intro entry present
-    exact ⟨entry, present, rfl⟩
+    constructor
+    · exact ⟨unseen, invariant⟩
+    · intro entry present
+      exact ⟨entry, present, rfl⟩
   case case4 unseen current pending seen witness children queued available
       witnessEq childrenEq ih =>
+    have nextInvariant := closureTraversalInvariant_step bundle unseen current
+      pending seen invariant witness children childrenEq
+    have queuedInvariant : ClosureTraversalInvariant bundle
+        (siteUseUniverse bundle) (unseen.erase current) queued
+        (⟨current, witness⟩ :: seen) := by
+      simpa [queued] using nextInvariant
+    have recursiveSuccess :
+        buildClosureUsesLoop bundle (unseen.erase current) queued
+          (⟨current, witness⟩ :: seen) = .ok result := by
+      simpa [queued, List.pmap_eq_map_attach] using success
+    obtain ⟨terminal, preserved⟩ := ih queuedInvariant recursiveSuccess
+    constructor
+    · exact terminal
     intro use present
-    apply ih (by
-      simpa [queued, List.pmap_eq_map_attach] using success) use
+    apply preserved use
     rcases present with pendingOrCurrent | alreadySeen
     · rcases pendingOrCurrent with isCurrent | inPending
       · exact Or.inr (Or.inl isCurrent)
       · exact Or.inl <|
           mem_cSpikeEnqueue_of_mem_pending _ _ _ use inPending
     · exact Or.inr (Or.inr alreadySeen)
+
+theorem buildClosureUsesLoop_preserves_invariant {scope : Nat}
+    (bundle : Bundle scope) (unseen pending : List SiteUse)
+    (seen result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (invariant : ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      unseen pending seen)
+    (success : buildClosureUsesLoop bundle unseen pending seen = .ok result) :
+    ∃ finalUnseen, ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      finalUnseen [] result :=
+  (buildClosureUsesLoop_success bundle unseen pending seen result invariant
+    success).1
+
+theorem buildClosureUsesLoop_preserves_pending {scope : Nat}
+    (bundle : Bundle scope) (unseen pending : List SiteUse)
+    (seen result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (invariant : ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      unseen pending seen)
+    (success : buildClosureUsesLoop bundle unseen pending seen = .ok result) :
+    ∀ use, use ∈ pending ∨ use ∈ seen.map Sigma.fst →
+      use ∈ result.map Sigma.fst :=
+  (buildClosureUsesLoop_success bundle unseen pending seen result invariant
+    success).2
 
 theorem buildTypedClosureUses_rootsCovered {scope : Nat}
     (bundle : Bundle scope)
@@ -721,105 +761,144 @@ theorem buildTypedClosureUses_rootsCovered {scope : Nat}
   intro use present
   apply buildClosureUsesLoop_preserves_pending bundle
     (siteUseUniverse bundle) (dedupSiteUses bundle.term.siteUses) [] result
-    success use
+    (initialClosureTraversalInvariant bundle) success use
   exact Or.inl (by simpa using present)
 
-def validateSiteDependencies (sites : List SiteEntry) :
-    List SerializedDependency → Except String Unit
-  | [] => pure ()
-  | .site identity :: rest =>
-      if sites.any fun candidate => candidate.identity == identity then
-        validateSiteDependencies sites rest
-      else .error s!"dangling site dependency: {repr identity}"
-  | _ :: rest => validateSiteDependencies sites rest
+theorem buildTypedClosureUses_terminalInvariant {scope : Nat}
+    (bundle : Bundle scope)
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (success : buildTypedClosureUses bundle = .ok result) :
+    ∃ finalUnseen, ClosureTraversalInvariant bundle (siteUseUniverse bundle)
+      finalUnseen [] result := by
+  apply buildClosureUsesLoop_preserves_invariant bundle
+    (siteUseUniverse bundle) (dedupSiteUses bundle.term.siteUses) [] result
+    (initialClosureTraversalInvariant bundle)
+  exact success
 
-def validateSiteUse (sites : List SiteEntry) (use : SiteUse) :
-    Except String Unit :=
-  match sites.find? fun candidate =>
-      candidate.identity == use.identity with
-  | none => .error s!"missing site sidecar entry: {repr use.identity}"
-  | some entry =>
-      if entry.role != use.role then
-        .error s!"site role conflicts with term occurrence: {repr use.identity}"
+def witnessFromResult {scope : Nat} {bundle : Bundle scope} :
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use)) →
+    (use : SiteUse) → use ∈ result.map Sigma.fst →
+      TypedSiteUseWitness bundle use
+  | [], use, present => by simp at present
+  | ⟨candidate, witness⟩ :: rest, use, present =>
+      if same : candidate = use then
+        same ▸ witness
       else
-        -- The binding layer calls this same typed deserializer before applying
-        -- a total `Site.rename`/`Site.substitute` transform.
-        match SiteEntry.toSite use.scope entry with
+        witnessFromResult rest use (by
+          simp only [List.map_cons, List.mem_cons] at present
+          rcases present with equal | later
+          · exact False.elim (same equal.symm)
+          · exact later)
+
+theorem witnessFromResult_mem {scope : Nat} {bundle : Bundle scope}
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (use : SiteUse) (present : use ∈ result.map Sigma.fst) :
+    (⟨use, witnessFromResult result use present⟩ :
+      Sigma fun use => TypedSiteUseWitness bundle use) ∈ result := by
+  induction result with
+  | nil => simp at present
+  | cons head rest ih =>
+      rcases head with ⟨candidate, witness⟩
+      simp only [List.map_cons, List.mem_cons] at present
+      simp only [witnessFromResult]
+      split
+      · next same =>
+          subst candidate
+          exact List.mem_cons_self
+      · next different =>
+          apply List.mem_cons_of_mem
+          apply ih
+
+structure SiteTableUniqueWitness (sites : List SiteEntry) : Type where
+  unique : (sites.map fun entry => entry.identity).Nodup
+
+def checkSiteTableUnique : (sites : List SiteEntry) →
+    Except String (SiteTableUniqueWitness sites)
+  | [] => .ok { unique := by simp }
+  | entry :: rest =>
+      if duplicate : entry.identity ∈ rest.map (fun candidate =>
+          candidate.identity) then
+        .error s!"duplicate site sidecar entry: {repr entry.identity}"
+      else
+        match checkSiteTableUnique rest with
         | .error message => .error message
-        | .ok _ => validateSiteDependencies sites entry.dependencies
+        | .ok restUnique =>
+            .ok {
+              unique := by
+                simp only [List.map_cons, List.nodup_cons]
+                exact ⟨duplicate, restUnique.unique⟩ }
 
-theorem validateSiteUse_deserializes (sites : List SiteEntry) (use : SiteUse)
-    (success : validateSiteUse sites use = .ok ()) :
-    ∃ entry site,
-      sites.find? (fun candidate => candidate.identity == use.identity) =
-        some entry ∧
-      SiteEntry.toSite use.scope entry = .ok site := by
-  unfold validateSiteUse at success
-  cases lookup : sites.find? (fun candidate => candidate.identity == use.identity)
-  with
-  | none => simp [lookup] at success
-  | some entry =>
-      cases roleConflict : entry.role != use.role with
-      | true => simp [lookup, roleConflict] at success
-      | false =>
-          cases typed : SiteEntry.toSite use.scope entry with
-          | error message => simp [lookup, roleConflict, typed] at success
-          | ok site => exact ⟨entry, site, rfl, typed⟩
+structure SiteTableCoverageWitness (uses : List SiteUse)
+    (sites : List SiteEntry) : Type where
+  covered : ∀ entry, entry ∈ sites →
+    ∃ use, use ∈ uses ∧ use.identity = entry.identity
 
-def dependencySiteUses (sites : List SiteEntry) (scope : Nat) :
-    List SerializedDependency → Except String (List SiteUse)
-  | [] => pure []
-  | .site identity :: rest => do
-      let some entry := sites.find? fun candidate =>
-          candidate.identity == identity
-        | .error s!"dangling site dependency: {repr identity}"
-      pure ({ identity, role := entry.role, scope } ::
-        (← dependencySiteUses sites scope rest))
-  | _ :: rest => dependencySiteUses sites scope rest
+def checkSiteTableCovered (uses : List SiteUse) :
+    (sites : List SiteEntry) →
+      Except String (SiteTableCoverageWitness uses sites)
+  | [] => .ok { covered := by simp }
+  | entry :: rest =>
+      match lookup : uses.find? (fun use => use.identity == entry.identity) with
+      | none =>
+          .error s!"unreachable site sidecar entry: {repr entry.identity}"
+      | some use =>
+          match checkSiteTableCovered uses rest with
+          | .error message => .error message
+          | .ok restCovered =>
+              .ok {
+                covered := by
+                  intro candidate present
+                  simp only [List.mem_cons] at present
+                  rcases present with isEntry | inRest
+                  · subst candidate
+                    refine ⟨use, List.mem_of_find?_eq_some lookup, ?_⟩
+                    have found := List.find?_some lookup
+                    simpa using found
+                  · exact restCovered.covered candidate inRest }
 
-def enqueueNewSiteUses (seen pending : List SiteUse) :
-    List SiteUse → List SiteUse
-  | [] => pending
-  | use :: rest =>
-      if seen.contains use || pending.contains use then
-        enqueueNewSiteUses seen pending rest
-      else enqueueNewSiteUses seen (pending ++ [use]) rest
-
-def reachableSiteUsesLoop (sites : List SiteEntry) :
-    Nat → List SiteUse → List SiteUse → Except String (List SiteUse)
-  | 0, [], seen => pure seen
-  | 0, _ :: _, _ => .error "site dependency closure exceeded finite table bound"
-  | _ + 1, [], seen => pure seen
-  | fuel + 1, use :: pending, seen => do
-      validateSiteUse sites use
-      let some entry := sites.find? fun candidate =>
-          candidate.identity == use.identity
-        | .error s!"missing site sidecar entry: {repr use.identity}"
-      let children ← dependencySiteUses sites use.scope entry.dependencies
-      let next := enqueueNewSiteUses (use :: seen) pending children
-      reachableSiteUsesLoop sites fuel next (use :: seen)
-
-def reachableSiteUses (sites : List SiteEntry) (roots : List SiteUse) :
-    Except String (List SiteUse) :=
-  let initial := roots.eraseDups
-  let fuel := (sites.length + 1) * (initial.length + 1)
-  reachableSiteUsesLoop sites fuel initial []
+def Bundle.buildCoherence {scope : Nat} (bundle : Bundle scope) :
+    Except String (BundleCoherence bundle) := do
+  if bundle.version != 1 then
+    .error s!"unsupported interchange version {bundle.version}"
+  let tableUnique ← checkSiteTableUnique bundle.sites
+  match closureSuccess : buildTypedClosureUses bundle with
+  | .error message => .error message
+  | .ok result =>
+      let uses := result.map Sigma.fst
+      match checkSiteTableCovered uses bundle.sites with
+      | .error message => .error message
+      | .ok tableCovered =>
+          have terminal := buildTypedClosureUses_terminalInvariant bundle result
+            closureSuccess
+          .ok {
+            uses := uses
+            usesUnique := by
+              obtain ⟨_finalUnseen, finalInvariant⟩ := terminal
+              exact finalInvariant.seenUnique
+            rootsCovered := by
+              exact buildTypedClosureUses_rootsCovered bundle result
+                closureSuccess
+            witness := fun use present =>
+              witnessFromResult result use present
+            edgesClosed := by
+              intro use present dependency dependencyPresent identity isSite
+              subst dependency
+              obtain ⟨finalUnseen, finalInvariant⟩ := terminal
+              obtain ⟨child, childState, childIdentity, childScope⟩ :=
+                finalInvariant.childrenAccounted use
+                  (witnessFromResult result use present)
+                  (witnessFromResult_mem result use present)
+                  identity dependencyPresent
+              rcases childState with inPending | inResult
+              · simp at inPending
+              · exact ⟨child, inResult, childIdentity, childScope⟩
+            tableUnique := tableUnique.unique
+            tableCovered := tableCovered.covered }
 
 def Bundle.validateWithUses {scope : Nat} (bundle : Bundle scope) :
     Except String (List SiteUse) := do
-  if bundle.version != 1 then
-    .error s!"unsupported interchange version {bundle.version}"
-  let uses := bundle.term.siteUses
-  for entry in bundle.sites do
-    let copies := bundle.sites.filter fun other =>
-      other.identity == entry.identity
-    if copies.length != 1 then
-      .error s!"duplicate site sidecar entry: {repr entry.identity}"
-  let reachable ← reachableSiteUses bundle.sites uses
-  for entry in bundle.sites do
-    if !(reachable.any fun use => use.identity == entry.identity) then
-      .error s!"unreachable site sidecar entry: {repr entry.identity}"
-  pure reachable
+  let coherence ← bundle.buildCoherence
+  pure coherence.uses
 
 def Bundle.validate {scope : Nat} (bundle : Bundle scope) :
     Except String Unit := do

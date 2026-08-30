@@ -116,6 +116,7 @@ def ScopedSiteUse.typedSubstitutionUses {source : Nat}
 structure ValidatedBundle (scope : Nat) where
   private mk ::
   bundle : Bundle scope
+  coherence : BundleCoherence bundle
   uses : List SiteUse
   usesValid : bundle.validateWithUses = .ok uses
   closure : ScopedSiteClosure scope uses
@@ -144,15 +145,21 @@ theorem BundleBindingConflict.inconsistent_has_unequal_candidates
 
 def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
     Except String (ValidatedBundle scope) :=
-  match evidence : bundle.validateWithUses with
-  | .ok uses => do
-      let closure ← buildScopedSiteClosure bundle uses
+  match evidence : bundle.buildCoherence with
+  | .ok coherence => do
+      let closure ← buildScopedSiteClosure bundle coherence.uses
+      have usesValid : bundle.validateWithUses = .ok coherence.uses := by
+        unfold Bundle.validateWithUses
+        rw [evidence]
+        rfl
       .ok {
         bundle
-        uses
-        usesValid := evidence
+        coherence
+        uses := coherence.uses
+        usesValid
         closure
-        valid := validateWithUses_implies_validate bundle uses evidence }
+        valid := validateWithUses_implies_validate bundle coherence.uses
+          usesValid }
   | .error message => .error message
 
 @[simp] theorem toDependency_ofDependency {scope : Nat}
@@ -551,9 +558,9 @@ def replacementSiteEntries {source target : Nat}
   | [] => pure []
   | (rawIndex, depth) :: rest => do
       if inBounds : rawIndex < source then
-        let replacement := (σ ⟨rawIndex, inBounds⟩).bundle
-        let replacementUses ← reachableSiteUses replacement.sites
-          replacement.term.siteUses
+        let replacementValidated := σ ⟨rawIndex, inBounds⟩
+        let replacement := replacementValidated.bundle
+        let replacementUses := replacementValidated.uses
         let shifted ← renameSiteTable
           (source := target) (target := target + depth)
           (Renaming.shiftN (scope := target) depth)
