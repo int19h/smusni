@@ -142,6 +142,29 @@
           (row bajra 4 direct-event (1 2 3 4))
           ((Eventuality $left) (Eventuality $right))))))
 
+;; The transparent ClauseContent alias must retain pure/effectful refinement.
+;; Construction is inert; CloseClause exposes one conservative call only when
+;; it runs an EFn event property.
+(define pure-direct
+  (term (DirectClause
+         (λ (($event (Referents Eventuality))) ⊤))))
+(define effectful-direct
+  (term (DirectClause
+         (λ (($event (Referents Eventuality)))
+           (Bind (($default (Referents Entity) (Context))) ⊤)))))
+(check-equal? (synth '() pure-direct)
+              '(typing (Fn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() effectful-direct)
+              '(typing (EFn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (ActualClause ,pure-direct)))
+              '(typing (Fn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (ActualClause ,effectful-direct)))
+              '(typing (EFn ((Referents Eventuality)) Content) () ()))
+(check-equal? (synth '() (term (CloseClause (ActualClause ,pure-direct))))
+              '(typing Content () ()))
+(check-equal? (synth '() (term (CloseClause (ActualClause ,effectful-direct))))
+              '(typing Content (effectful-call) ()))
+
 ;; Two-mode typing: definitions and their expansions agree record-for-record.
 (define gq-env
   (term ((P (Fn (Entity) Content))
