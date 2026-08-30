@@ -22,6 +22,8 @@ github_issues: none
 
 ## Evidence
 
+Literal run: <command> @ <exact head SHA> — <N> tests, <result> (required in a review request or completion report; delete otherwise)
+
 ## Questions or objections
 
 ## Requested disposition
