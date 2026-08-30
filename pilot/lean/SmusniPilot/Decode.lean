@@ -27,7 +27,16 @@ partial def decodeTy : SurfaceTerm → Except String Ty
   | .form _ (.unknown "EFn") [parameters, result] =>
       return .function true (← decodeTyParameters parameters) (← decodeTy result)
   | term@(.form _ (.unknown name) arguments) => do
-      if name.toNat?.isSome then pure (.index term.toSExpr.render)
+      if name.toNat?.isSome then
+        match arguments with
+        | [argument] =>
+            pure (.named .typeFormLabel [.index name, ← decodeTy argument])
+        | _ => pure (.index term.toSExpr.render)
+      else if name == "Eventuality" then
+        match arguments with
+        | [argument] =>
+            pure (.named .typeFormLabel [.index name, ← decodeTy argument])
+        | _ => pure (.named .sortEventuality (← arguments.mapM decodeTy))
       else
         let some typeName := typeName? name
           | .error s!"unknown type former {name}"

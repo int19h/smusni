@@ -17,6 +17,7 @@ from build_m1_constructor_matrix import ROOT, build_rows, field, parse_sexp, sha
 DEFINITIONS = ROOT / "tools/smusni-redex/inventory/definitions.sexp"
 SPEC = ROOT / "spec.md"
 SUPPLEMENT = ROOT / "pilot/shared/M2_RANGE_SUPPLEMENT.tsv"
+DEPENDENCY_SUPPLEMENT = ROOT / "pilot/shared/M2_DEPENDENCY_SUPPLEMENT.tsv"
 OUTPUT = ROOT / "pilot/shared/M2_DEFINITION_MANIFEST.json"
 SELECTED_PORT_STATES = {"a0", "ported"}
 EXTRA_IDS = {
@@ -133,6 +134,23 @@ def load_supplements() -> dict[str, Supplement]:
     return rows
 
 
+def load_dependency_supplements() -> dict[str, list[str]]:
+    result: dict[str, list[str]] = {}
+    with DEPENDENCY_SUPPLEMENT.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            definition_id = row["definition_id"]
+            dependency = row["additional_dependency"]
+            ranges = parse_tsv_ranges(row["spec_ranges"])
+            if not ranges or line_digest(ranges) is None:
+                raise ValueError(f"dependency supplement {definition_id} lacks live ranges")
+            if dependency in result.setdefault(definition_id, []):
+                raise ValueError(f"duplicate dependency supplement {definition_id}/{dependency}")
+            result[definition_id].append(dependency)
+    if result != {"D4.6.Close": ["CoRef"]}:
+        raise ValueError(f"unexpected M2 dependency supplements {result!r}")
+    return result
+
+
 def status_value(entry: list[Any]) -> dict[str, str | None]:
     raw = field(entry, "status")
     if isinstance(raw, list):
@@ -167,6 +185,11 @@ def build() -> dict[str, Any]:
         by_id[definition_id] = entry
 
     supplements = load_supplements()
+    dependency_supplements = load_dependency_supplements()
+
+    def dependencies_for(definition_id: str, entry: list[Any]) -> list[str]:
+        return [clean(str(item)) for item in values(entry, "dependencies")] + \
+            dependency_supplements.get(definition_id, [])
     defined_heads = {
         key.split(":", 1)[1]
         for key, row in build_rows().items()
@@ -185,7 +208,7 @@ def build() -> dict[str, Any]:
     while frontier:
         definition_id = frontier.pop()
         entry = by_id[definition_id]
-        for dependency in (clean(str(item)) for item in values(entry, "dependencies")):
+        for dependency in dependencies_for(definition_id, entry):
             if dependency not in defined_heads:
                 continue
             candidates = by_head.get(dependency, [])
@@ -252,7 +275,7 @@ def build() -> dict[str, Any]:
             "selection": selection,
             "status": status,
             "port_state": port_state,
-            "dependencies": [clean(str(item)) for item in values(entry, "dependencies")],
+            "dependencies": dependencies_for(definition_id, entry),
             "cases": cases,
             "domains": domains,
             "selected_domains": selected_domains,
@@ -286,6 +309,19 @@ def build() -> dict[str, Any]:
     if selected_domain_count != 1:
         raise ValueError(f"expected one selected definition domain, found {selected_domain_count}")
 
+    catalog = []
+    selected_set = {row["id"] for row in selected}
+    for definition_id, entry in by_id.items():
+        catalog.append({
+            "id": definition_id,
+            "head": clean(str(field(entry, "head"))),
+            "status": status_value(entry),
+            "port_state": clean(str(field(entry, "port-state"))),
+            "selected": definition_id in selected_set,
+            "reason": clean(str(field(entry, "reason"))),
+        })
+    catalog.sort(key=lambda row: row["id"])
+
     return {
         "schema": "smusni-lean-m2-definition-manifest",
         "version": 1,
@@ -296,6 +332,8 @@ def build() -> dict[str, Any]:
             "spec_sha256": sha256(SPEC),
             "range_supplement": str(SUPPLEMENT.relative_to(ROOT)),
             "range_supplement_sha256": sha256(SUPPLEMENT),
+            "dependency_supplement": str(DEPENDENCY_SUPPLEMENT.relative_to(ROOT)),
+            "dependency_supplement_sha256": sha256(DEPENDENCY_SUPPLEMENT),
         },
         "counts": {
             "definition_port_state": port_selected,
@@ -304,8 +342,10 @@ def build() -> dict[str, Any]:
             "selected_definitions": len(selected),
             "selected_domains": selected_domain_count,
             "selected_clauses": sum(len(row["cases"]) for row in selected),
+            "catalog_definitions": len(catalog),
         },
         "definitions": selected,
+        "catalog": catalog,
     }
 
 

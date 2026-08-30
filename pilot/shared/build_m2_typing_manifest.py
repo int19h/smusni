@@ -4,16 +4,20 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import re
 from pathlib import Path
 from typing import Any
 
-from build_m1_constructor_matrix import ROOT, sha256
+from build_m1_constructor_matrix import ROOT, field, parse_sexp, sha256
 
 
 SOURCE = ROOT / "tools/smusni-redex/port-a0.rkt"
+CORE = ROOT / "tools/smusni-redex/inventory/core.sexp"
+FIXTURES = ROOT / "tools/smusni-redex/inventory/fixtures.sexp"
+SUPPLEMENT = ROOT / "pilot/shared/M2_TYPING_SUPPLEMENT.tsv"
 OUTPUT = ROOT / "pilot/shared/M2_TYPING_MANIFEST.json"
 
 
@@ -26,6 +30,91 @@ def source_digest(lines: list[str], start: int, end: int) -> str:
         f"{number}:{lines[number - 1]}" for number in range(start, end + 1)
     )
     return hashlib.sha256(payload.encode()).hexdigest()
+
+
+def parse_ranges(raw: str) -> list[list[int]]:
+    ranges: list[list[int]] = []
+    for item in raw.split(","):
+        start, stop = item.split("-", 1)
+        ranges.append([int(start), int(stop)])
+    return ranges
+
+
+def range_digest(path: Path, ranges: list[list[int]]) -> str:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    selected: list[str] = []
+    for start, stop in ranges:
+        if start <= 0 or start > stop or stop > len(lines):
+            raise ValueError(f"invalid {path.relative_to(ROOT)} range {start}-{stop}")
+        selected.extend(f"{line}:{lines[line - 1]}" for line in range(start, stop + 1))
+    return hashlib.sha256("\n".join(selected).encode()).hexdigest()
+
+
+def clean(value: object) -> str:
+    raw = str(value)
+    if raw.startswith('"') and raw.endswith('"'):
+        return raw[1:-1]
+    if raw.startswith("|") and raw.endswith("|"):
+        return raw[1:-1]
+    return raw
+
+
+def supplemental_rules() -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    with SUPPLEMENT.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            source_path = row["source_path"].strip()
+            path = ROOT / source_path
+            ranges = parse_ranges(row["source_ranges"])
+            records.append({
+                "id": row["rule_id"],
+                "kind": row["kind"],
+                "subject": row["subject"],
+                "anchor": row["anchor"],
+                "source_path": source_path,
+                "source_ranges": ranges,
+                "source_sha256": range_digest(path, ranges),
+                "conclusion": row["signature"],
+                "reason": row["reason"],
+            })
+    ids = [record["id"] for record in records]
+    if len(ids) != len(set(ids)):
+        raise ValueError("duplicate M2 typing supplement rule")
+    return records
+
+
+def core_constants() -> list[dict[str, str]]:
+    root = parse_sexp(CORE.read_text(encoding="utf-8"))
+    records: list[dict[str, str]] = []
+    for entry in root[2:]:
+        if not isinstance(entry, list) or not entry or entry[0] != "constant":
+            continue
+        if len(entry) != 4:
+            raise ValueError(f"malformed core constant {entry!r}")
+        records.append({
+            "name": clean(entry[1]),
+            "type": clean(entry[2]) if not isinstance(entry[2], list)
+                else "(" + " ".join(clean(item) for item in entry[2]) + ")",
+            "anchor": clean(entry[3]),
+        })
+    return records
+
+
+def lexical_rows() -> list[dict[str, Any]]:
+    root = parse_sexp(FIXTURES.read_text(encoding="utf-8"))
+    records: list[dict[str, Any]] = []
+    for entry in root[2:]:
+        if not isinstance(entry, list) or not entry or entry[0] != "row":
+            continue
+        if len(entry) != 5:
+            raise ValueError(f"malformed lexical fixture row {entry!r}")
+        records.append({
+            "head": clean(entry[1]),
+            "ordinary_arity": int(entry[2]),
+            "event_mode": clean(entry[3]),
+            "provenance": clean(entry[4]),
+        })
+    return records
 
 
 def string_list_block(source: str, name: str) -> list[str]:
@@ -157,10 +246,14 @@ def build() -> dict[str, Any]:
         end_line = start_line + clause.count("\n")
         records.append({
             "id": rule,
+            "kind": "redex-rule",
+            "subject": rule,
             "anchor": anchors[rule],
-            "source_range": [start_line, end_line],
+            "source_path": str(SOURCE.relative_to(ROOT)),
+            "source_ranges": [[start_line, end_line]],
             "source_sha256": source_digest(lines, start_line, end_line),
             "conclusion": conclusion_after_label(clause, rule),
+            "reason": "Generated from the frozen A0/B1 typing judgment.",
         })
 
     grammar = {}
@@ -174,19 +267,37 @@ def build() -> dict[str, Any]:
             "source": " ".join(raw.split()),
         }
 
+    supplements = supplemental_rules()
+    all_records = records + supplements
+    if len({record["id"] for record in all_records}) != len(all_records):
+        raise ValueError("duplicate combined M2 typing rule id")
     return {
         "schema": "smusni-lean-m2-typing-manifest",
-        "version": 1,
-        "source": str(SOURCE.relative_to(ROOT)),
-        "source_sha256": sha256(SOURCE),
+        "version": 2,
+        "sources": {
+            "redex": str(SOURCE.relative_to(ROOT)),
+            "redex_sha256": sha256(SOURCE),
+            "core": str(CORE.relative_to(ROOT)),
+            "core_sha256": sha256(CORE),
+            "fixtures": str(FIXTURES.relative_to(ROOT)),
+            "fixtures_sha256": sha256(FIXTURES),
+            "supplement": str(SUPPLEMENT.relative_to(ROOT)),
+            "supplement_sha256": sha256(SUPPLEMENT),
+        },
         "counts": {
-            "required_rules": len(records),
-            "supported_rules": len(records),
+            "required_redex_rules": len(records),
+            "supplemental_rules": len(supplements),
+            "required_rules": len(all_records),
+            "supported_rules": len(all_records),
             "unsupported_rules": 0,
             "grammar_categories": len(grammar),
+            "core_constants": len(core_constants()),
+            "lexical_rows": len(lexical_rows()),
         },
         "grammar": grammar,
-        "rules": records,
+        "rules": all_records,
+        "constants": core_constants(),
+        "lexical_rows": lexical_rows(),
         "unsupported": [],
     }
 

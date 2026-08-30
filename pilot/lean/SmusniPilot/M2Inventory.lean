@@ -205,6 +205,42 @@ def M2ClauseId.all : List M2ClauseId := [
   .d56SelectSomeAtLeastOne,
 ]
 
+def M2ClauseId.definition : M2ClauseId → M2DefinitionId
+  | .d12ActualClauseActualEvent => .d12ActualClause
+  | .d12AtLeastPositive => .d12AtLeast
+  | .d12AtLeastZero => .d12AtLeast
+  | .d12AtMostNegatedSuccessor => .d12AtMost
+  | .d12CanonicalAggregateAtAggregateAndCompleteGunma => .d12CanonicalAggregateAt
+  | .d12CoRefMutualAmong => .d12CoRef
+  | .d12DistribUniversalMembers => .d12Distrib
+  | .d12EveryMaximalDistribution => .d12Every
+  | .d12ExactlyPositive => .d12Exactly
+  | .d12ExactlyZero => .d12Exactly
+  | .d12FewerThanNegatedAtLeast => .d12FewerThan
+  | .d12GlobalExactlyComprehension => .d12GlobalExactly
+  | .d12GradeRowDirected => .d12Grade
+  | .d12JaiRaiseRaisedRole => .d12JaiRaise
+  | .d12JaiRaiseBareJaiMapping => .d12JaiRaise
+  | .d12MassifyCanonicalSelection => .d12Massify
+  | .d12MaxReferInhabitedMaximalReference => .d12MaxRefer
+  | .d12MoreThanSuccessor => .d12MoreThan
+  | .d12NoNegatedSome => .d12No
+  | .d12OverlapCommonSubreference => .d12Overlap
+  | .d12SomeWitness => .d12Some
+  | .d12TooManyDependentThreshold => .d12TooMany
+  | .d12ZipWithEmpty => .d12ZipWith
+  | .d12ZipWithPairedStep => .d12ZipWith
+  | .d44LetBeta => .d44Let
+  | .d46CloseDirectEventExplicit => .d46Close
+  | .d46CloseDirectEventImplicit => .d46Close
+  | .d46CloseHoldingState => .d46Close
+  | .d46DirectClauseDefaultedEventProperty => .d46DirectClause
+  | .d48CoveredByNoResidue => .d48CoveredBy
+  | .d49CompleteGunmaAtCompletePeerCover => .d49CompleteGunmaAt
+  | .d49GunmaAtBasisToPeerCover => .d49GunmaAt
+  | .d53ReferMemberLiftMemberLift => .d53ReferMemberLift
+  | .d56SelectSomeAtLeastOne => .d56SelectSome
+
 inductive M2TypingRuleId where
   | a0Synth
   | a0Check
@@ -284,6 +320,35 @@ inductive M2TypingRuleId where
   | b1TFewerThanZero
   | b1TFewerThanPositive
   | b1TFewerThanSymbolic
+  | m2TString
+  | m2TSubsort
+  | m2TCoreConstant
+  | m2TLexicalRow
+  | m2TPredTermApply
+  | m2TCombine
+  | m2TMemberOf
+  | m2TForce
+  | m2TLocutionOf
+  | m2TSign
+  | m2TReify
+  | m2TRealizedContent
+  | m2TDropPlace
+  | m2TTeha
+  | m2TAggregate
+  | m2TBasisUnitAt
+  | m2TPeerUnitAt
+  | m2TJaiRoleAdmissible
+  | m2TInRegion
+  | m2TGradeRow
+  | m2TJaiRaiseRow
+  | m2TContextConstants
+  | m2TQuery
+  | m2TLocal
+  | m2TPerformRole
+  | m2TGeneric
+  | m2TContentInterfaces
+  | m2TNumericInterfaces
+  | m2TResidualRow
   deriving Repr, DecidableEq, BEq
 
 def M2TypingRuleId.name : M2TypingRuleId → String
@@ -365,6 +430,35 @@ def M2TypingRuleId.name : M2TypingRuleId → String
   | .b1TFewerThanZero => "B1-T-FewerThan-Zero"
   | .b1TFewerThanPositive => "B1-T-FewerThan-Positive"
   | .b1TFewerThanSymbolic => "B1-T-FewerThan-Symbolic"
+  | .m2TString => "M2-T-String"
+  | .m2TSubsort => "M2-T-Subsort"
+  | .m2TCoreConstant => "M2-T-Core-Constant"
+  | .m2TLexicalRow => "M2-T-Lexical-Row"
+  | .m2TPredTermApply => "M2-T-PredTerm-Apply"
+  | .m2TCombine => "M2-T-Combine"
+  | .m2TMemberOf => "M2-T-MemberOf"
+  | .m2TForce => "M2-T-Force"
+  | .m2TLocutionOf => "M2-T-LocutionOf"
+  | .m2TSign => "M2-T-Sign"
+  | .m2TReify => "M2-T-Reify"
+  | .m2TRealizedContent => "M2-T-RealizedContent"
+  | .m2TDropPlace => "M2-T-DropPlace"
+  | .m2TTeha => "M2-T-Teha"
+  | .m2TAggregate => "M2-T-Aggregate"
+  | .m2TBasisUnitAt => "M2-T-BasisUnitAt"
+  | .m2TPeerUnitAt => "M2-T-PeerUnitAt"
+  | .m2TJaiRoleAdmissible => "M2-T-JaiRoleAdmissible"
+  | .m2TInRegion => "M2-T-InRegion"
+  | .m2TGradeRow => "M2-T-Grade-Row"
+  | .m2TJaiRaiseRow => "M2-T-JaiRaise-Row"
+  | .m2TContextConstants => "M2-T-Context-Constants"
+  | .m2TQuery => "M2-T-Query"
+  | .m2TLocal => "M2-T-Local"
+  | .m2TPerformRole => "M2-T-Perform-Role"
+  | .m2TGeneric => "M2-T-Generic"
+  | .m2TContentInterfaces => "M2-T-Content-Interfaces"
+  | .m2TNumericInterfaces => "M2-T-Numeric-Interfaces"
+  | .m2TResidualRow => "M2-T-Residual-Row"
 
 def M2TypingRuleId.all : List M2TypingRuleId := [
   .a0Synth,
@@ -445,6 +539,35 @@ def M2TypingRuleId.all : List M2TypingRuleId := [
   .b1TFewerThanZero,
   .b1TFewerThanPositive,
   .b1TFewerThanSymbolic,
+  .m2TString,
+  .m2TSubsort,
+  .m2TCoreConstant,
+  .m2TLexicalRow,
+  .m2TPredTermApply,
+  .m2TCombine,
+  .m2TMemberOf,
+  .m2TForce,
+  .m2TLocutionOf,
+  .m2TSign,
+  .m2TReify,
+  .m2TRealizedContent,
+  .m2TDropPlace,
+  .m2TTeha,
+  .m2TAggregate,
+  .m2TBasisUnitAt,
+  .m2TPeerUnitAt,
+  .m2TJaiRoleAdmissible,
+  .m2TInRegion,
+  .m2TGradeRow,
+  .m2TJaiRaiseRow,
+  .m2TContextConstants,
+  .m2TQuery,
+  .m2TLocal,
+  .m2TPerformRole,
+  .m2TGeneric,
+  .m2TContentInterfaces,
+  .m2TNumericInterfaces,
+  .m2TResidualRow,
 ]
 
 inductive M2GrammarCategory where
@@ -802,7 +925,7 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       head := "Close"
       selection := .definitionPortState
       portState := "a0"
-      dependencies := ["CloseClause", "ActualClause", "DirectClause"]
+      dependencies := ["CloseClause", "ActualClause", "DirectClause", "CoRef"]
       clauses := [.d46CloseDirectEventExplicit, .d46CloseDirectEventImplicit, .d46CloseHoldingState]
       selectedDomains := []
       specRanges := [{ start := 699, stop := 713 }]
@@ -899,564 +1022,1392 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
 def m2DefinitionRecords : List M2DefinitionRecord :=
   M2DefinitionId.all.map M2DefinitionId.record
 
+structure M2DefinitionDispositionRecord where
+  id : String
+  head : String
+  status : String
+  issue : Option String
+  portState : String
+  selected : Bool
+  reason : String
+  deriving Repr, DecidableEq, BEq
+
+def m2DefinitionDispositionRecords : List M2DefinitionDispositionRecord := [
+  { id := "D12.ActualClause", head := "ActualClause", status := "executable", issue := none, portState := "none", selected := true, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.Additive", head := "Additive", status := "executable", issue := none, portState := "none", selected := false, reason := "Its substitution schema awaits a typed executable family." },
+  { id := "D12.AtLeast", head := "AtLeast", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports the separate zero and provably-positive witness equations." },
+  { id := "D12.AtMost", head := "AtMost", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports negated successor-strength AtLeast." },
+  { id := "D12.COI-schemas-prose", head := "COI-schemas-prose", status := "not-a-definition", issue := none, portState := "none", selected := false, reason := "This prose introducer points to the following COIExpress schema and is not a separate equation." },
+  { id := "D12.COIExpress", head := "COIExpress", status := "executable", issue := none, portState := "none", selected := false, reason := "The lexicon-parameterized performative schema awaits its executable family." },
+  { id := "D12.CanonicalAggregateAt", head := "CanonicalAggregateAt", status := "executable", issue := none, portState := "none", selected := true, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.CapableClause", head := "CapableClause", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.CoRef", head := "CoRef", status := "executable", issue := none, portState := "none", selected := true, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.DemonstratedClause", head := "DemonstratedClause", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.Distrib", head := "Distrib", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports universal member distribution over a plural reference." },
+  { id := "D12.Enough", head := "Enough", status := "executable", issue := none, portState := "none", selected := false, reason := "Its effectful threshold family has not yet reached the Redex port." },
+  { id := "D12.Every", head := "Every", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports maximal witness import followed by member distribution." },
+  { id := "D12.Exactly", head := "Exactly", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports both the zero and positive witness-set equations." },
+  { id := "D12.Few", head := "Few", status := "executable", issue := none, portState := "none", selected := false, reason := "Its effectful threshold family has not yet reached the Redex port." },
+  { id := "D12.FewerThan", head := "FewerThan", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports negated AtLeast, including the zero boundary." },
+  { id := "D12.GlobalExactly", head := "GlobalExactly", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports the pure comprehension equation alongside the retained legacy path." },
+  { id := "D12.Grade", head := "Grade", status := "executable", issue := none, portState := "none", selected := true, reason := "Its row-polymorphic executable family has not yet reached the Redex port." },
+  { id := "D12.GroundedBy", head := "GroundedBy", status := "executable", issue := none, portState := "none", selected := false, reason := "Its performance family has not yet reached the Redex port." },
+  { id := "D12.Interval", head := "Interval", status := "executable", issue := none, portState := "none", selected := false, reason := "Its endpoint-kind parameterized family has not yet reached the Redex port." },
+  { id := "D12.JaiPromote", head := "JaiPromote", status := "executable", issue := none, portState := "none", selected := false, reason := "Its row-reconstruction schema has not yet reached the Redex port." },
+  { id := "D12.JaiRaise", head := "JaiRaise", status := "executable", issue := none, portState := "none", selected := true, reason := "Its row-reconstruction schema has not yet reached the Redex port." },
+  { id := "D12.JoiClause", head := "JoiClause", status := "executable", issue := none, portState := "none", selected := false, reason := "Its event-construction family has not yet reached the Redex port." },
+  { id := "D12.JoiEvent", head := "JoiEvent", status := "executable", issue := none, portState := "none", selected := false, reason := "Its event-group family has not yet reached the Redex port." },
+  { id := "D12.JoiGroup", head := "JoiGroup", status := "executable", issue := none, portState := "none", selected := false, reason := "Its expected-type-directed family has not yet reached the Redex port." },
+  { id := "D12.JoiPred", head := "JoiPred", status := "executable", issue := none, portState := "none", selected := false, reason := "Its contribution-basis family has not yet reached the Redex port." },
+  { id := "D12.JoiTanru", head := "JoiTanru", status := "executable", issue := none, portState := "none", selected := false, reason := "Its source-ordered link schema has not yet reached the Redex port." },
+  { id := "D12.Many", head := "Many", status := "executable", issue := none, portState := "none", selected := false, reason := "Its effectful threshold family has not yet reached the Redex port." },
+  { id := "D12.Massify", head := "Massify", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports the expected-type-directed canonical aggregate selection." },
+  { id := "D12.MaxRefer", head := "MaxRefer", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports inhabited maximal reference construction with its projective obligation." },
+  { id := "D12.MePred", head := "MePred", status := "executable", issue := none, portState := "none", selected := false, reason := "Its type-directed property expansion has not yet reached the Redex port." },
+  { id := "D12.MemberCover", head := "MemberCover", status := "executable", issue := none, portState := "none", selected := false, reason := "Its positive-MEI helper expansion has not yet reached the Redex port." },
+  { id := "D12.MetricBall", head := "MetricBall", status := "executable", issue := none, portState := "none", selected := false, reason := "Its endpoint-kind parameterized family has not yet reached the Redex port." },
+  { id := "D12.MoreThan", head := "MoreThan", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports successor-strength AtLeast over a general Natural term." },
+  { id := "D12.Most", head := "Most", status := "blocked", issue := some "#66", portState := "none", selected := false, reason := "Its definition needs the separately scoped greater-than operator in issue #66." },
+  { id := "D12.NahiObjection", head := "NahiObjection", status := "executable", issue := none, portState := "none", selected := false, reason := "Its act-occurrence family has not yet reached the Redex port." },
+  { id := "D12.Named", head := "Named", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.No", head := "No", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports generic negation of Some." },
+  { id := "D12.Only", head := "Only", status := "executable", issue := none, portState := "none", selected := false, reason := "Its substitution schema awaits a typed executable family." },
+  { id := "D12.Overlap", head := "Overlap", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports existential common-subreference overlap." },
+  { id := "D12.Realized", head := "Realized", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D12.Reciprocate", head := "Reciprocate", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.RegionComplement", head := "RegionComplement", status := "executable", issue := none, portState := "none", selected := false, reason := "Its region family has not yet reached the Redex port." },
+  { id := "D12.RoiClause", head := "RoiClause", status := "executable", issue := none, portState := "none", selected := false, reason := "Its event-counting family has not yet reached the Redex port." },
+  { id := "D12.Some", head := "Some", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports witness selection and export through SelectSome." },
+  { id := "D12.SpanRegion", head := "SpanRegion", status := "executable", issue := none, portState := "none", selected := false, reason := "Its endpoint-kind parameterized family has not yet reached the Redex port." },
+  { id := "D12.SpeakerDescribes", head := "SpeakerDescribes", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.SpeakerDescribesUnaddressed", head := "SpeakerDescribesUnaddressed", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.TanruLinkConnect", head := "TanruLinkConnect", status := "executable", issue := none, portState := "none", selected := false, reason := "Its source-ordered connective schema has not yet reached the Redex port." },
+  { id := "D12.TooFew", head := "TooFew", status := "executable", issue := none, portState := "none", selected := false, reason := "Its effectful threshold family has not yet reached the Redex port." },
+  { id := "D12.TooMany", head := "TooMany", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports the ordered purpose and dependent threshold expansion." },
+  { id := "D12.UnrealizedClause", head := "UnrealizedClause", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D12.ZipWith", head := "ZipWith", status := "executable", issue := none, portState := "a0", selected := true, reason := "Its settled equal-length recursion awaits A0 while unequal length remains blocked." },
+  { id := "D12.gei", head := "gei", status := "executable", issue := none, portState := "none", selected := false, reason := "Its recursive MEX family has not yet reached the Redex port." },
+  { id := "D12.na'i-objection-prose", head := "na'i-objection-prose", status := "not-a-definition", issue := none, portState := "none", selected := false, reason := "This prose lead-in announces the following NahiObjection equation and is not a separate definition." },
+  { id := "D12.te'a", head := "te'a", status := "executable", issue := none, portState := "none", selected := false, reason := "Its recursive MEX family has not yet reached the Redex port." },
+  { id := "D12.xi", head := "xi", status := "executable", issue := none, portState := "none", selected := false, reason := "Its recursive list-index family has not yet reached the Redex port." },
+  { id := "D4.1.At", head := "At", status := "executable", issue := none, portState := "none", selected := false, reason := "Its row-application family has not yet reached the Redex port." },
+  { id := "D4.1.klama-fill-examples", head := "klama", status := "mapping-schema", issue := none, portState := "none", selected := false, reason := "These two equations illustrate positional fill notation rather than define the klama lexical row." },
+  { id := "D4.4.Let", head := "Let", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports direct Let as immediate pure lambda application." },
+  { id := "D4.6.ClauseAnd", head := "ClauseAnd", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.ClauseIff", head := "ClauseIff", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.ClauseImp", head := "ClauseImp", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.ClauseNot", head := "ClauseNot", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.ClauseOr", head := "ClauseOr", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.ClauseXor", head := "ClauseXor", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
+  { id := "D4.6.Close", head := "Close", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports all three Close equations over an explicit adapter-supplied row declaration." },
+  { id := "D4.6.DirectClause", head := "DirectClause", status := "executable", issue := none, portState := "none", selected := true, reason := "Its row-aware direct-event family has not yet reached the Redex port." },
+  { id := "D4.8.CardBasis", head := "CardBasis", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
+  { id := "D4.8.CoveredBy", head := "CoveredBy", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports the no-residue plural coverage equation." },
+  { id := "D4.9.CompleteGunmaAt", head := "CompleteGunmaAt", status := "executable", issue := none, portState := "none", selected := true, reason := "Its constitution family has not yet reached the Redex port." },
+  { id := "D4.9.ComponentAt", head := "ComponentAt", status := "executable", issue := none, portState := "none", selected := false, reason := "Its constitution family has not yet reached the Redex port." },
+  { id := "D4.9.GunmaAt", head := "GunmaAt", status := "executable", issue := none, portState := "none", selected := true, reason := "Its constitution family has not yet reached the Redex port." },
+  { id := "D4.9.GunmaPredAt", head := "GunmaPredAt", status := "executable", issue := none, portState := "none", selected := false, reason := "Its compatible-predicate constitution family has not yet reached the Redex port." },
+  { id := "D4.9.greater-than", head := ">", status := "blocked", issue := some "#66", portState := "none", selected := false, reason := "The greater-than derived comparison is separately scoped in issue #66." },
+  { id := "D5.1.That", head := "That", status := "metatheory-or-model-law", issue := none, portState := "none", selected := false, reason := "This abbreviation projects the model context ground and is not a closed term rewrite." },
+  { id := "D5.1.This", head := "This", status := "metatheory-or-model-law", issue := none, portState := "none", selected := false, reason := "This abbreviation projects the model context ground and is not a closed term rewrite." },
+  { id := "D5.1.Yonder", head := "Yonder", status := "metatheory-or-model-law", issue := none, portState := "none", selected := false, reason := "This abbreviation projects the model context ground and is not a closed term rewrite." },
+  { id := "D5.3.Refer-member-lift", head := "Refer", status := "executable", issue := none, portState := "none", selected := true, reason := "Its type-directed overload has not yet reached the Redex port." },
+  { id := "D5.6.SelectSome", head := "SelectSome", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports SelectSome as SelectAtLeast one." },
+  { id := "D6.2.Tanru", head := "Tanru", status := "executable", issue := none, portState := "none", selected := false, reason := "Its fills-parameterized expansion is executable but has not yet reached the Redex port." },
+  { id := "D7.4.Utterance-entry", head := "Utterance", status := "mapping-schema", issue := none, portState := "none", selected := false, reason := "This equation defines compact entry notation rather than an ordinary term former." },
+  { id := "D8.2.Answer-contextual", head := "Answer", status := "executable", issue := none, portState := "none", selected := false, reason := "Its query-type-directed overload has not yet reached the Redex port." },
+  { id := "D9.1.Meau0", head := "Meau0", status := "executable", issue := none, portState := "none", selected := false, reason := "Its abstraction bridge family has not yet reached the Redex port." },
+  { id := "D9.2.DuhuRel", head := "DuhuRel", status := "executable", issue := none, portState := "none", selected := false, reason := "Its abstraction-relation family has not yet reached the Redex port." }
+]
+
 structure M2TypingRuleRecord where
   id : M2TypingRuleId
+  kind : String
+  subject : String
   anchor : String
-  sourceRange : SourceRange
+  sourcePath : String
+  sourceRanges : List SourceRange
   sourceDigest : String
   conclusion : String
+  reason : String
   deriving Repr, DecidableEq, BEq
 
 def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
   | .a0Synth => {
       id := .a0Synth
+      kind := "redex-rule"
+      subject := "A0-Synth"
       anchor := "spec §1.6, §3"
-      sourceRange := { start := 1829, stop := 1831 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1829, stop := 1831 }]
       sourceDigest := "40dd4cf4e380a7ebca7e8bf68ca4e225469f25191320ca135c29602abf2bf339"
       conclusion := "(a0-synth Γ t R)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0Check => {
       id := .a0Check
+      kind := "redex-rule"
+      subject := "A0-Check"
       anchor := "spec §1.6, §3"
-      sourceRange := { start := 1836, stop := 1838 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1836, stop := 1838 }]
       sourceDigest := "5453f547aade95407a7e888072570b78ce39d540acf34ac728b624b65d5aadad"
       conclusion := "(a0-check Γ t τ R)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TNatural => {
       id := .a0TNatural
+      kind := "redex-rule"
+      subject := "A0-T-Natural"
       anchor := "spec §3.1"
-      sourceRange := { start := 1038, stop := 1039 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1038, stop := 1039 }]
       sourceDigest := "eb9c649cd91df43382bfe6f2ef5d2ed0b97c5b9fb9af8e021cd266e3b72e82ef"
       conclusion := "(a0-type synth Γ n (typing Natural () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TSpeaker => {
       id := .a0TSpeaker
+      kind := "redex-rule"
+      subject := "A0-T-Speaker"
       anchor := "spec §5.1"
-      sourceRange := { start := 1041, stop := 1042 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1041, stop := 1042 }]
       sourceDigest := "333e4b25f92d3f0acc92adac8e4cc7c6d07e5d55fae1c7fdf1e0618ad2ec28fb"
       conclusion := "(a0-type synth Γ Speaker (typing (Referents Entity) () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TAudience => {
       id := .a0TAudience
+      kind := "redex-rule"
+      subject := "A0-T-Audience"
       anchor := "spec §5.1"
-      sourceRange := { start := 1044, stop := 1045 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1044, stop := 1045 }]
       sourceDigest := "217f5ae7506e5e038ba31a2d84f113873b7d1b3a27c465155505efe50f534942"
       conclusion := "(a0-type synth Γ Audience (typing (Referents Entity) () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TThresholdKind => {
       id := .a0TThresholdKind
+      kind := "redex-rule"
+      subject := "A0-T-ThresholdKind"
       anchor := "spec §6.4"
-      sourceRange := { start := 1047, stop := 1048 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1047, stop := 1048 }]
       sourceDigest := "d11c4ffd8f51adcc59c30dd222e8049b2801fb0d4957793d8ba359982dc2d682"
       conclusion := "(a0-type synth Γ TooManyK (typing ThresholdKind () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TTop => {
       id := .a0TTop
+      kind := "redex-rule"
+      subject := "A0-T-Top"
       anchor := "spec §4.5"
-      sourceRange := { start := 1050, stop := 1051 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1050, stop := 1051 }]
       sourceDigest := "a7fd9bf1ff85bf3a88cae7e398996aa9afb580daa5f66afa00beabc6f432134b"
       conclusion := "(a0-type synth Γ ⊤ (typing Content () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TVariable => {
       id := .a0TVariable
+      kind := "redex-rule"
+      subject := "A0-T-Variable"
       anchor := "spec §4.4"
-      sourceRange := { start := 1053, stop := 1055 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1053, stop := 1055 }]
       sourceDigest := "faddd276342fb6076b794bd29bfee5f50e275c9800198527fa378d93b10c2b11"
       conclusion := "(a0-type synth Γ x (typing τ () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TLambdaPure => {
       id := .a0TLambdaPure
+      kind := "redex-rule"
+      subject := "A0-T-Lambda-Pure"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1057, stop := 1066 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1057, stop := 1066 }]
       sourceDigest := "6a1e314ac3cd6f2f0b90f447430ac8ccde818319425e6d7e777a76dfe9d5a459"
       conclusion := "(a0-type synth Γ (λ ((x τ)) t_body) (typing (Fn (τ) τ_body) () (obligation_scoped ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TLambdaEffectful => {
       id := .a0TLambdaEffectful
+      kind := "redex-rule"
+      subject := "A0-T-Lambda-Effectful"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1068, stop := 1078 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1068, stop := 1078 }]
       sourceDigest := "262950e007af10f924d9c9cfe4bcbb3f96eb64a62ffe89cb339824ba3dd474cc"
       conclusion := "(a0-type synth Γ (λ ((x τ)) t_body) (typing (EFn (τ) τ_body) () (obligation_scoped ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TLambdaMultiPure => {
       id := .a0TLambdaMultiPure
+      kind := "redex-rule"
+      subject := "A0-T-Lambda-Multi-Pure"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1080, stop := 1093 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1080, stop := 1093 }]
       sourceDigest := "fa47ee1cd04923ec9e3c971b17088bbb8ccc9393e263cfd26a10dfd3378670f7"
       conclusion := "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TLambdaMultiEffectful => {
       id := .a0TLambdaMultiEffectful
+      kind := "redex-rule"
+      subject := "A0-T-Lambda-Multi-Effectful"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1095, stop := 1109 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1095, stop := 1109 }]
       sourceDigest := "1bf0b21824adf3b3f24f665cc88159ab6552f2e8d444d737272c35a3fa0a59bf"
       conclusion := "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TLet => {
       id := .a0TLet
+      kind := "redex-rule"
+      subject := "A0-T-Let"
       anchor := "spec §4.4; §12 Let"
-      sourceRange := { start := 1111, stop := 1125 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1111, stop := 1125 }]
       sourceDigest := "1d31494889ba5ecbe9251b5c6b8398c3cb94d09169072de493de24ea88c36c6b"
       conclusion := "(a0-type synth Γ (Let (x τ) t_value t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TBindNest => {
       id := .a0TBindNest
+      kind := "redex-rule"
+      subject := "A0-T-Bind-Nest"
       anchor := "spec §4.4, §5.2"
-      sourceRange := { start := 1127, stop := 1133 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1127, stop := 1133 }]
       sourceDigest := "81e5e177bba17525207fdff7d89f75aa7dec36a12b4e4aec8c198548d44242c6"
       conclusion := "(a0-type synth Γ (Bind (binding_0 binding_1 binding_rest ...) t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TBindReference => {
       id := .a0TBindReference
+      kind := "redex-rule"
+      subject := "A0-T-Bind-Reference"
       anchor := "spec §5.2"
-      sourceRange := { start := 1135, stop := 1143 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1135, stop := 1143 }]
       sourceDigest := "e9a73b4625aa95855f2b7f2d265dabbf34b41ae58b4003ba41c076d431fcbd5d"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TBindPerformanceAct => {
       id := .a0TBindPerformanceAct
+      kind := "redex-rule"
+      subject := "A0-T-Bind-Performance-Act"
       anchor := "spec §5.2, §7.1"
-      sourceRange := { start := 1145, stop := 1159 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1145, stop := 1159 }]
       sourceDigest := "d9b39adf53c870e1af1d2433c5b4f54539dae3d10a4f71df01e2ce706e0a1204"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TBindPerformanceComp => {
       id := .a0TBindPerformanceComp
+      kind := "redex-rule"
+      subject := "A0-T-Bind-Performance-Comp"
       anchor := "spec §5.2, §7.1"
-      sourceRange := { start := 1161, stop := 1176 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1161, stop := 1176 }]
       sourceDigest := "a2d6a983ef825a61881fb83aca33d3487fc54f40a0fd2530968ed93ece313f7a"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TBindPerformanceDiscourse => {
       id := .a0TBindPerformanceDiscourse
+      kind := "redex-rule"
+      subject := "A0-T-Bind-Performance-Discourse"
       anchor := "spec §5.2, §7.1"
-      sourceRange := { start := 1178, stop := 1192 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1178, stop := 1192 }]
       sourceDigest := "a018f94c9076ad5771415765802384ba10f35aa41bbb59e758e6607b1d9f9cfc"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCheckSynth => {
       id := .a0TCheckSynth
+      kind := "redex-rule"
+      subject := "A0-T-Check-Synth"
       anchor := "spec §1.6, §3"
-      sourceRange := { start := 1194, stop := 1199 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1194, stop := 1199 }]
       sourceDigest := "9f7d98af84d383378a10aa874506b96eb9ec98b274b99b9d4a1c19e24b7c64f5"
       conclusion := "(a0-type (check τ_expected) Γ t_actual R_actual)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TContext => {
       id := .a0TContext
+      kind := "redex-rule"
+      subject := "A0-T-Context"
       anchor := "spec §5.3"
-      sourceRange := { start := 1201, stop := 1205 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1201, stop := 1205 }]
       sourceDigest := "278ac9fb1bd918c57d29c31d0a3b8dd6b941ff52941acc0f869e8facc0e894ee"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Context t_argument ...) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TVague => {
       id := .a0TVague
+      kind := "redex-rule"
+      subject := "A0-T-Vague"
       anchor := "spec §6.4–§6.5"
-      sourceRange := { start := 1207, stop := 1211 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1207, stop := 1211 }]
       sourceDigest := "b166b8514c074d043567a8a5710f6878d757b44ca239fcbcb4eab32561a06a3a"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Vague t_property) (typing (RefComp τ) (context) (obligation ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TReferReference => {
       id := .a0TReferReference
+      kind := "redex-rule"
+      subject := "A0-T-Refer-Reference"
       anchor := "spec §5.3"
-      sourceRange := { start := 1213, stop := 1223 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1213, stop := 1223 }]
       sourceDigest := "e0ae54cbc08b6c8f1ed6368c702f33606472718545338c2620654b59488c29e9"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TReferMember => {
       id := .a0TReferMember
+      kind := "redex-rule"
+      subject := "A0-T-Refer-Member"
       anchor := "spec §5.3"
-      sourceRange := { start := 1225, stop := 1233 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1225, stop := 1233 }]
       sourceDigest := "89c802fd966e8c803a7663bb4ac5fbbf8418f72b17a7620a3d869a27c80446f5"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TSelectExactly => {
       id := .a0TSelectExactly
+      kind := "redex-rule"
+      subject := "A0-T-SelectExactly"
       anchor := "spec §5.6"
-      sourceRange := { start := 1235, stop := 1246 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1235, stop := 1246 }]
       sourceDigest := "e66e7de1f92240a3531b1744463b057b681ed2d7e9c2890a494fa88baca22690"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectExactly t_count t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TSelectSome => {
       id := .a0TSelectSome
+      kind := "redex-rule"
+      subject := "A0-T-SelectSome"
       anchor := "spec §5.6"
-      sourceRange := { start := 1248, stop := 1257 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1248, stop := 1257 }]
       sourceDigest := "30c30acd90b4351115534b56ea961a7a9d876685e355190a27c9e99d5f0414f3"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectSome t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TMassify => {
       id := .a0TMassify
+      kind := "redex-rule"
+      subject := "A0-T-Massify"
       anchor := "spec §4.8; §12 Massify"
-      sourceRange := { start := 1295, stop := 1308 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1295, stop := 1308 }]
       sourceDigest := "07de5aaa5ffc21426a131f1fe046fe499c457f14f861b968bdd510e05044cd6b"
       conclusion := "(a0-type (check (RefComp (Referents (Group τ)))) Γ (Massify t_basis t_cover) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TPerform => {
       id := .a0TPerform
+      kind := "redex-rule"
+      subject := "A0-T-Perform"
       anchor := "spec §7.1"
-      sourceRange := { start := 1310, stop := 1315 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1310, stop := 1315 }]
       sourceDigest := "6c1a5aeb46dc774d872a34402b46633e2ef45c0f411a0a48ebea3b3c7301ecf3"
       conclusion := "(a0-type synth Γ (Perform t_act) (typing (PerfComp (ActOccurrence force)) (performance) (obligation ...)))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TExactlyZero => {
       id := .a0TExactlyZero
+      kind := "redex-rule"
+      subject := "A0-T-Exactly-Zero"
       anchor := "spec §4.10; §12 Exactly"
-      sourceRange := { start := 1317, stop := 1326 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1317, stop := 1326 }]
       sourceDigest := "a5d433b531335c17b4f76a1bd2d7d1f9289dbbcce445f4c161c42319900edf36"
       conclusion := "(a0-type synth Γ (Exactly 0 v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TExactlyPositive => {
       id := .a0TExactlyPositive
+      kind := "redex-rule"
+      subject := "A0-T-Exactly-Positive"
       anchor := "spec §4.10; §12 Exactly"
-      sourceRange := { start := 1328, stop := 1338 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1328, stop := 1338 }]
       sourceDigest := "e981ced3f1e762e285d4c52ea5b0613455504ee164afa2e92dabbada3ce525b6"
       conclusion := "(a0-type synth Γ (Exactly t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TNo => {
       id := .a0TNo
+      kind := "redex-rule"
+      subject := "A0-T-No"
       anchor := "spec §4.10; §12 No"
-      sourceRange := { start := 1397, stop := 1404 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1397, stop := 1404 }]
       sourceDigest := "6be7e700b0b5c44478d15b6bce0f434111708835c37cf04a4f99a0c186b369ce"
       conclusion := "(a0-type synth Γ (No v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TMoreThan => {
       id := .a0TMoreThan
+      kind := "redex-rule"
+      subject := "A0-T-MoreThan"
       anchor := "spec §4.10; §12 MoreThan"
-      sourceRange := { start := 1417, stop := 1426 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1417, stop := 1426 }]
       sourceDigest := "8a1ebc75ca23ee3312187098a06375a54427f1a3ce9c6353198c5ff7b78b8d50"
       conclusion := "(a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TGlobalExactly => {
       id := .a0TGlobalExactly
+      kind := "redex-rule"
+      subject := "A0-T-GlobalExactly"
       anchor := "spec §4.10; §12 GlobalExactly"
-      sourceRange := { start := 1460, stop := 1468 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1460, stop := 1468 }]
       sourceDigest := "8a0a4f9878674ac9c077f34365139b53d2aaa91914d58f81f7f90578cb77f93f"
       conclusion := "(a0-type synth Γ (GlobalExactly t_n t_P t_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TTooMany => {
       id := .a0TTooMany
+      kind := "redex-rule"
+      subject := "A0-T-TooMany"
       anchor := "spec §6.4; §12 TooMany"
-      sourceRange := { start := 1470, stop := 1479 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1470, stop := 1479 }]
       sourceDigest := "ada743b2d2adc9de2fceb69fa1d851424a1031cb517a5dd0a5c412a31f825468"
       conclusion := "(a0-type synth Γ (TooMany t_P t_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TAdmissibleThreshold => {
       id := .a0TAdmissibleThreshold
+      kind := "redex-rule"
+      subject := "A0-T-AdmissibleThreshold"
       anchor := "spec §6.4"
-      sourceRange := { start := 1481, stop := 1490 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1481, stop := 1490 }]
       sourceDigest := "f3a4521aeea0f422fb6835981a70ad2558cea8e910e8f4603f9cd70a32881e1a"
       conclusion := "(a0-type synth Γ (AdmissibleThreshold t_kind t_P t_purpose) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCanonicalAggregateAt => {
       id := .a0TCanonicalAggregateAt
+      kind := "redex-rule"
+      subject := "A0-T-CanonicalAggregateAt"
       anchor := "spec §4.8"
-      sourceRange := { start := 1492, stop := 1500 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1492, stop := 1500 }]
       sourceDigest := "f02589979ee46a9d9d219e86fd3e9fc9459e223cb7e8ba66c26bbf52e0a8e141"
       conclusion := "(a0-type synth Γ (CanonicalAggregateAt t_basis t_group t_cover) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TSetOf => {
       id := .a0TSetOf
+      kind := "redex-rule"
+      subject := "A0-T-SetOf"
       anchor := "spec §4.9"
-      sourceRange := { start := 1502, stop := 1506 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1502, stop := 1506 }]
       sourceDigest := "73548af40a02b7dbdd37e9360d92ecbaf3aa832ab229152c6a9d8ecd63c6cadb"
       conclusion := "(a0-type synth Γ (SetOf t_P) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCard => {
       id := .a0TCard
+      kind := "redex-rule"
+      subject := "A0-T-Card"
       anchor := "spec §4.9"
-      sourceRange := { start := 1508, stop := 1514 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1508, stop := 1514 }]
       sourceDigest := "89e3abe80ee4c11bc75f2f785925d8724b4e89230a5b64e246ba506effa68c85"
       conclusion := "(a0-type synth Γ (Card t_set) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TEquality => {
       id := .a0TEquality
+      kind := "redex-rule"
+      subject := "A0-T-Equality"
       anchor := "spec §4.5"
-      sourceRange := { start := 1516, stop := 1528 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1516, stop := 1528 }]
       sourceDigest := "3991b0c7916a1c2c44409c003231096cb6c6e31c68323c16230f144beaa0b36a"
       conclusion := "(a0-type synth Γ (= t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TAnd => {
       id := .a0TAnd
+      kind := "redex-rule"
+      subject := "A0-T-And"
       anchor := "spec §4.5"
-      sourceRange := { start := 1540, stop := 1544 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1540, stop := 1544 }]
       sourceDigest := "ebf5f4732973f26b370cbf106e1395e6839b0d91a73135d1da68b83bf91872de"
       conclusion := "(a0-type synth Γ (∧ t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCoRef => {
       id := .a0TCoRef
+      kind := "redex-rule"
+      subject := "A0-T-CoRef"
       anchor := "spec §4.5"
-      sourceRange := { start := 1620, stop := 1624 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1620, stop := 1624 }]
       sourceDigest := "5f7ca35b31d07a0f65c5c54d9ac645b77790350d37c416aa9070bee654417c0d"
       conclusion := "(a0-type synth Γ (CoRef t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TListCheck => {
       id := .a0TListCheck
+      kind := "redex-rule"
+      subject := "A0-T-List-Check"
       anchor := "spec §4.9"
-      sourceRange := { start := 1664, stop := 1667 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1664, stop := 1667 }]
       sourceDigest := "5fb37a0a07d7fd8f11705a7053702b50432e23421cf22d243688c658319c5e53"
       conclusion := "(a0-type (check (List τ)) Γ (List t_item ...) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TZipWithPure => {
       id := .a0TZipWithPure
+      kind := "redex-rule"
+      subject := "A0-T-ZipWith-Pure"
       anchor := "spec §4.9; §12 ZipWith"
-      sourceRange := { start := 1669, stop := 1681 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1669, stop := 1681 }]
       sourceDigest := "52d4e31ec1229236315294e3e8e431fa7b2d0e1faec3a680d1841bacf8818341"
       conclusion := "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TZipWithEmptyEffectful => {
       id := .a0TZipWithEmptyEffectful
+      kind := "redex-rule"
+      subject := "A0-T-ZipWith-Empty-Effectful"
       anchor := "spec §4.9; §12 ZipWith empty"
-      sourceRange := { start := 1683, stop := 1692 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1683, stop := 1692 }]
       sourceDigest := "516bbe2b4a35e85689f6b9772904cd87ac2e9643eb2b58736f5447f4cc34385c"
       conclusion := "(a0-type synth Γ (ZipWith v_f (List) (List)) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TZipWithEffectful => {
       id := .a0TZipWithEffectful
+      kind := "redex-rule"
+      subject := "A0-T-ZipWith-Effectful"
       anchor := "spec §4.9; §12 ZipWith"
-      sourceRange := { start := 1694, stop := 1709 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1694, stop := 1709 }]
       sourceDigest := "e451c9266808e1d928f1237ffbc4473e5a3d9348af91d113a5bbf7b3852cb27c"
       conclusion := "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TStateClause => {
       id := .a0TStateClause
+      kind := "redex-rule"
+      subject := "A0-T-StateClause"
       anchor := "spec §4.6"
-      sourceRange := { start := 1711, stop := 1714 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1711, stop := 1714 }]
       sourceDigest := "176d484b48bfa17875d7bd9cad5fe699da383a367c5260c1052f06c16da2308f"
       conclusion := "(a0-type synth Γ (StateClause t_content) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TDirectClausePure => {
       id := .a0TDirectClausePure
+      kind := "redex-rule"
+      subject := "A0-T-DirectClause-Pure"
       anchor := "spec §4.6"
-      sourceRange := { start := 1716, stop := 1726 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1716, stop := 1726 }]
       sourceDigest := "de8c6d1726e995b8c6b092b826752e7f793b530f803e1e71d639d603030ffe92"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TDirectClauseEffectful => {
       id := .a0TDirectClauseEffectful
+      kind := "redex-rule"
+      subject := "A0-T-DirectClause-Effectful"
       anchor := "spec §4.6"
-      sourceRange := { start := 1728, stop := 1738 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1728, stop := 1738 }]
       sourceDigest := "5d2a99eadfa0e997b7c2527882fa6dfa67dc5bd84223ad0988f6576727666f79"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TActualClauseState => {
       id := .a0TActualClauseState
+      kind := "redex-rule"
+      subject := "A0-T-ActualClause-State"
       anchor := "spec §4.6"
-      sourceRange := { start := 1740, stop := 1748 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1740, stop := 1748 }]
       sourceDigest := "c5da08f7037872b42e257b6edd0bd85c2642e3bffcaafa4b8ceadbb8d13ac11f"
       conclusion := "(a0-type synth Γ (ActualClause t_clause) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TActualClauseEventPure => {
       id := .a0TActualClauseEventPure
+      kind := "redex-rule"
+      subject := "A0-T-ActualClause-Event-Pure"
       anchor := "spec §4.6"
-      sourceRange := { start := 1750, stop := 1755 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1750, stop := 1755 }]
       sourceDigest := "a1280af17d3f68432c357c450ee10c058c1aa18efa9157ed9754b25b290cb562"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TActualClauseEventEffectful => {
       id := .a0TActualClauseEventEffectful
+      kind := "redex-rule"
+      subject := "A0-T-ActualClause-Event-Effectful"
       anchor := "spec §4.6"
-      sourceRange := { start := 1757, stop := 1762 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1757, stop := 1762 }]
       sourceDigest := "cdd7b0dd8a2cddb668a2d2faad9a47b7d86e0467403fa0978afd395eba25f5ac"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCloseClause => {
       id := .a0TCloseClause
+      kind := "redex-rule"
+      subject := "A0-T-CloseClause"
       anchor := "spec §4.6"
-      sourceRange := { start := 1764, stop := 1767 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1764, stop := 1767 }]
       sourceDigest := "e511dbbc050ab0ec631ebe19450c2743471d1d9728c09870922c1cba769bf8f0"
       conclusion := "(a0-type synth Γ (CloseClause t_clause) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TCloseWith => {
       id := .a0TCloseWith
+      kind := "redex-rule"
+      subject := "A0-T-CloseWith"
       anchor := "spec §4.6"
-      sourceRange := { start := 1769, stop := 1782 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1769, stop := 1782 }]
       sourceDigest := "6a414c74b72afba0e461081297f0e858d80c62f78fec4f9567307dcfc682b32a"
       conclusion := "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TApplyClauseContent => {
       id := .a0TApplyClauseContent
+      kind := "redex-rule"
+      subject := "A0-T-Apply-ClauseContent"
       anchor := "spec §3.4, §4.6"
-      sourceRange := { start := 1784, stop := 1796 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1784, stop := 1796 }]
       sourceDigest := "de13250bfb83e59d2194452726b94f3b31403db058c26de28662be16f0e2e7bb"
       conclusion := "(a0-type synth Γ (t_function t_argument) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TApplyPure => {
       id := .a0TApplyPure
+      kind := "redex-rule"
+      subject := "A0-T-Apply-Pure"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1798, stop := 1810 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1798, stop := 1810 }]
       sourceDigest := "5f103df9cb0041abb31b4b44f7481da3136b20c957c539eb722dece6abed4560"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .a0TApplyEffectful => {
       id := .a0TApplyEffectful
+      kind := "redex-rule"
+      subject := "A0-T-Apply-Effectful"
       anchor := "spec §3.3, §4.4"
-      sourceRange := { start := 1812, stop := 1824 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1812, stop := 1824 }]
       sourceDigest := "5d6ccd91e24ce471c9dff9a68c0f87f2d87057baf3bda7c8302a5a336f0d010e"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TSelectAtLeast => {
       id := .b1TSelectAtLeast
+      kind := "redex-rule"
+      subject := "B1-T-SelectAtLeast"
       anchor := "spec §5.6; §12 selection floor"
-      sourceRange := { start := 1259, stop := 1270 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1259, stop := 1270 }]
       sourceDigest := "8080c4ffc1cbbbbf25e37bee08b9c76eddb0553e8db36f6b787c372eea30e9d9"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectAtLeast t_count t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TSelectAllBut => {
       id := .b1TSelectAllBut
+      kind := "redex-rule"
+      subject := "B1-T-SelectAllBut"
       anchor := "spec §5.6; §12 SelectAllBut"
-      sourceRange := { start := 1272, stop := 1282 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1272, stop := 1282 }]
       sourceDigest := "73b2a78bf588309d4aa99eaa1bc1a46dea949389d35430f282766e0896dab771"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectAllBut t_count t_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TMaxRefer => {
       id := .b1TMaxRefer
+      kind := "redex-rule"
+      subject := "B1-T-MaxRefer"
       anchor := "spec §5.3; §12 MaxRefer"
-      sourceRange := { start := 1284, stop := 1293 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1284, stop := 1293 }]
       sourceDigest := "010982ba33e40f17badaae1e813ca56e0e6c2ab064cb6aab7aa8e0b069656a7e"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TImplication => {
       id := .b1TImplication
+      kind := "redex-rule"
+      subject := "B1-T-Implication"
       anchor := "spec §4.5"
-      sourceRange := { start := 1546, stop := 1550 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1546, stop := 1550 }]
       sourceDigest := "2ff77c16bc789d5d7f35f169cddad194745ba4aa8c8050041d25e16d6f6477c0"
       conclusion := "(a0-type synth Γ (→ t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TNegation => {
       id := .b1TNegation
+      kind := "redex-rule"
+      subject := "B1-T-Negation"
       anchor := "spec §4.5, §5.4"
-      sourceRange := { start := 1552, stop := 1555 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1552, stop := 1555 }]
       sourceDigest := "fab4f6bc61eb0bd0538b4ab63f2889f1e5efe90e858d13fbb89bd1e2a4588eb2"
       conclusion := "(a0-type synth Γ (¬ t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TForall => {
       id := .b1TForall
+      kind := "redex-rule"
+      subject := "B1-T-Forall"
       anchor := "spec §4.5"
-      sourceRange := { start := 1557, stop := 1572 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1557, stop := 1572 }]
       sourceDigest := "f8818c60aaa78a1aad8c509e8194628c68ec4c8c271723e01be65777535e8591"
       conclusion := "(a0-type synth Γ (∀ v_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TExists => {
       id := .b1TExists
+      kind := "redex-rule"
+      subject := "B1-T-Exists"
       anchor := "spec §4.5"
-      sourceRange := { start := 1574, stop := 1589 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1574, stop := 1589 }]
       sourceDigest := "6e99e8921af6ab06d9c7304e533846d083eafaa49fc7483dcd98d0f1222a5026"
       conclusion := "(a0-type synth Γ (∃ v_property) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAmong => {
       id := .b1TAmong
+      kind := "redex-rule"
+      subject := "B1-T-Among"
       anchor := "spec §4.8"
-      sourceRange := { start := 1591, stop := 1599 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1591, stop := 1599 }]
       sourceDigest := "f28f3c5727bced00c4c0d9d429ccc75ecb7a20c38188ed96df1b7fbe093ac260"
       conclusion := "(a0-type synth Γ (Among t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TPresupposeSynth => {
       id := .b1TPresupposeSynth
+      kind := "redex-rule"
+      subject := "B1-T-Presuppose-Synth"
       anchor := "spec §5.5"
-      sourceRange := { start := 1601, stop := 1608 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1601, stop := 1608 }]
       sourceDigest := "9f0c0ddccbed4305bd0ddeffa2c1fa58260be8af18ef7de8df98bf73a4a7f9ee"
       conclusion := "(a0-type synth Γ (Presuppose t_condition t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TPresupposeReference => {
       id := .b1TPresupposeReference
+      kind := "redex-rule"
+      subject := "B1-T-Presuppose-Reference"
       anchor := "spec §5.5"
-      sourceRange := { start := 1610, stop := 1618 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1610, stop := 1618 }]
       sourceDigest := "76fc9f631f81ac6a387ed9964b0625ef1a18f0a28b221f196b3021d94eb579f8"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Presuppose t_condition t_body) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TDistrib => {
       id := .b1TDistrib
+      kind := "redex-rule"
+      subject := "B1-T-Distrib"
       anchor := "spec §4.8; §12 Distrib"
-      sourceRange := { start := 1626, stop := 1640 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1626, stop := 1640 }]
       sourceDigest := "f7e4fc3091908743e8a722a9a5ccdb2f2fde59c647ad47a621eda7453b3caa11"
       conclusion := "(a0-type synth Γ (Distrib v_Q t_reference) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TCoveredBy => {
       id := .b1TCoveredBy
+      kind := "redex-rule"
+      subject := "B1-T-CoveredBy"
       anchor := "spec §4.8"
-      sourceRange := { start := 1642, stop := 1652 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1642, stop := 1652 }]
       sourceDigest := "8834ce5c15c546d6b61a239f5697d7e3e16755ed79d315c7fc175e887c1c677b"
       conclusion := "(a0-type synth Γ (CoveredBy v_P t_reference) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TOverlap => {
       id := .b1TOverlap
+      kind := "redex-rule"
+      subject := "B1-T-Overlap"
       anchor := "spec §4.8; §12 Overlap"
-      sourceRange := { start := 1654, stop := 1662 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1654, stop := 1662 }]
       sourceDigest := "8503cf7645c1a1c1725e92236baef13b9721ed512362f4f1f120830880699386"
       conclusion := "(a0-type synth Γ (Overlap t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAddition => {
       id := .b1TAddition
+      kind := "redex-rule"
+      subject := "B1-T-Addition"
       anchor := "spec §4.9"
-      sourceRange := { start := 1530, stop := 1538 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1530, stop := 1538 }]
       sourceDigest := "46e44db9225e7bd5340232ebc5dcb7873dac4ea307fd9a25cfe8c9d348decb54"
       conclusion := "(a0-type synth Γ (+ t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAtLeastZero => {
       id := .b1TAtLeastZero
+      kind := "redex-rule"
+      subject := "B1-T-AtLeast-Zero"
       anchor := "spec §4.10; §12 AtLeast zero"
-      sourceRange := { start := 1340, stop := 1343 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1340, stop := 1343 }]
       sourceDigest := "71b39a0487475847f92aca4e1b8b6d8cd8ec8bc7dba9cf8188b054e9a642e7e8"
       conclusion := "(a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAtLeastPositive => {
       id := .b1TAtLeastPositive
+      kind := "redex-rule"
+      subject := "B1-T-AtLeast-Positive"
       anchor := "spec §4.10; §12 AtLeast"
-      sourceRange := { start := 1345, stop := 1355 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1345, stop := 1355 }]
       sourceDigest := "2363af25663fef06948dd7f7808051eb5f836acee391d2e73167c59592558b1f"
       conclusion := "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAtLeastSymbolic => {
       id := .b1TAtLeastSymbolic
+      kind := "redex-rule"
+      subject := "B1-T-AtLeast-Symbolic"
       anchor := "spec §4.10; §12 AtLeast totality"
-      sourceRange := { start := 1357, stop := 1370 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1357, stop := 1370 }]
       sourceDigest := "273e3153f6be5d403fd0e706bf1f04c26a49f6e8bfe710b86092bd06889bdbf2"
       conclusion := "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TSome => {
       id := .b1TSome
+      kind := "redex-rule"
+      subject := "B1-T-Some"
       anchor := "spec §4.10; §12 Some"
-      sourceRange := { start := 1372, stop := 1379 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1372, stop := 1379 }]
       sourceDigest := "3466ecc262a2d68cc08997529b4b324fa1e0fdcabe4d09a0320bb69e8b8be81c"
       conclusion := "(a0-type synth Γ (Some v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TEvery => {
       id := .b1TEvery
+      kind := "redex-rule"
+      subject := "B1-T-Every"
       anchor := "spec §4.10; §12 Every"
-      sourceRange := { start := 1381, stop := 1395 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1381, stop := 1395 }]
       sourceDigest := "5856412515792ea8e756d1819441dfe6501478f9d41cd77b3c8a256e5fd76a2c"
       conclusion := "(a0-type synth Γ (Every v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TAtMost => {
       id := .b1TAtMost
+      kind := "redex-rule"
+      subject := "B1-T-AtMost"
       anchor := "spec §4.10; §12 AtMost"
-      sourceRange := { start := 1406, stop := 1415 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1406, stop := 1415 }]
       sourceDigest := "288f1acdf35df2258e1c10cd653456d1eabc911db9e3a8c60fea51d82dd37f46"
       conclusion := "(a0-type synth Γ (AtMost t_n v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TFewerThanZero => {
       id := .b1TFewerThanZero
+      kind := "redex-rule"
+      subject := "B1-T-FewerThan-Zero"
       anchor := "spec §4.10; §12 FewerThan zero"
-      sourceRange := { start := 1428, stop := 1431 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1428, stop := 1431 }]
       sourceDigest := "9de685c6611e560dd78e96aa26091eefddb81c9778181cea1fd9601328d2eddb"
       conclusion := "(a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TFewerThanPositive => {
       id := .b1TFewerThanPositive
+      kind := "redex-rule"
+      subject := "B1-T-FewerThan-Positive"
       anchor := "spec §4.10; §12 FewerThan"
-      sourceRange := { start := 1433, stop := 1443 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1433, stop := 1443 }]
       sourceDigest := "c42276378bf7c0e1ff9c500b008c6941f10912175f5220020faf281209b0ff58"
       conclusion := "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .b1TFewerThanSymbolic => {
       id := .b1TFewerThanSymbolic
+      kind := "redex-rule"
+      subject := "B1-T-FewerThan-Symbolic"
       anchor := "spec §4.10; §12 FewerThan totality"
-      sourceRange := { start := 1445, stop := 1458 }
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1445, stop := 1458 }]
       sourceDigest := "e9e529b42363d72baf525f99991766e56847bc9311a700aecffd1d2613596478"
       conclusion := "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
+    }
+  | .m2TString => {
+      id := .m2TString
+      kind := "literal"
+      subject := "Text"
+      anchor := "spec §2; §3.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 263, stop := 264 }]
+      sourceDigest := "1ed6abda05e1215caf7b8885b3132350bc11d6a2794d1d40115215789ca374af"
+      conclusion := "Text literal -> Text"
+      reason := "The Redex A0 slice omits Text literals, but the all-S1 primitive cohort contains sign constructors over Text."
+    }
+  | .m2TSubsort => {
+      id := .m2TSubsort
+      kind := "compatibility"
+      subject := "first-order hierarchy"
+      anchor := "spec §3.1–§3.2"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 300, stop := 360 }]
+      sourceDigest := "0b2eb1c9febfbdff80ce96e65b124d380cc85080ef239491673ebddec0aa35cd"
+      conclusion := "covariant declared subsorting plus singleton Referents lift"
+      reason := "All-S1 typing must consume the live sort hierarchy instead of the numeric-only A0 compatibility fragment."
+    }
+  | .m2TCoreConstant => {
+      id := .m2TCoreConstant
+      kind := "constant"
+      subject := "core inventory"
+      anchor := "spec anchors embedded in core.sexp"
+      sourcePath := "tools/smusni-redex/inventory/core.sexp"
+      sourceRanges := [{ start := 79, stop := 99 }]
+      sourceDigest := "b0a85df28ab305d66fd17a0b3a9a5bd29b538250c82385f43e0cabc518312122"
+      conclusion := "declared constant -> declared type"
+      reason := "The all-S1 primitive cohort reaches CurrentToken and the projective others constants in addition to A0's Speaker/Audience/TooManyK."
+    }
+  | .m2TLexicalRow => {
+      id := .m2TLexicalRow
+      kind := "row"
+      subject := "fixture lexical rows"
+      anchor := "spec §3.3; pilot fixture #12"
+      sourcePath := "tools/smusni-redex/inventory/fixtures.sexp"
+      sourceRanges := [{ start := 1, stop := 55 }]
+      sourceDigest := "7d386d0453457d359061d94866353cbc71d81b0d2aa308ad6638e57da2ee6624"
+      conclusion := "row head plus arity/event mode -> typed residual PredTerm"
+      reason := "The frozen corpus supplies lexical heads through the fixture; its row arity and event mode are consumed explicitly and remain pilot-only pending #12."
+    }
+  | .m2TPredTermApply => {
+      id := .m2TPredTermApply
+      kind := "application"
+      subject := "PredTerm"
+      anchor := "spec §3.3"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 369, stop := 390 }]
+      sourceDigest := "992b3c7a02972ae9ccb52c4d3c1b5a020e64d79cd2dcc98576f12770d17f8ba8"
+      conclusion := "fill typed residual row; exhausted row -> Content"
+      reason := "Primitive cases apply bound and lexical PredTerms, including labelled Eventuality fills."
+    }
+  | .m2TCombine => {
+      id := .m2TCombine
+      kind := "primitive"
+      subject := "Combine"
+      anchor := "spec §3.2; §4.8"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 352, stop := 362 }, { start := 785, stop := 793 }]
+      sourceDigest := "07c64e8ba756233833fe8616146ba240e6c36cc51ba46e4cce78174e97bb8262"
+      conclusion := "Referents<T> x Referents<U> -> Referents<join(T,U)>"
+      reason := "The primitive baseline contains plural joins and singleton lifts."
+    }
+  | .m2TMemberOf => {
+      id := .m2TMemberOf
+      kind := "primitive"
+      subject := "membership"
+      anchor := "spec §4.9"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 856, stop := 875 }]
+      sourceDigest := "e3f5048fb7ff69129c31f5ed9648feb0bf08b67c2550769c56a8d42f80d213dc"
+      conclusion := "T x Set<T> -> Content"
+      reason := "The primitive baseline contains set membership."
+    }
+  | .m2TForce => {
+      id := .m2TForce
+      kind := "primitive"
+      subject := "Assert/Mention/Do"
+      anchor := "spec §7.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1971, stop := 1990 }]
+      sourceDigest := "57b87684630e4e808f45c74c8492a9640df84122cbd6722c27aa495438c8cd24"
+      conclusion := "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse"
+      reason := "The primitive baseline exercises inert act construction and discourse sequencing."
+    }
+  | .m2TLocutionOf => {
+      id := .m2TLocutionOf
+      kind := "primitive"
+      subject := "LocutionOf"
+      anchor := "spec §7.4"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 2122, stop := 2155 }]
+      sourceDigest := "df4916e4d586ca58154fdafc58209e14818f161c67ed75650d541884330bd70e"
+      conclusion := "Referents<UtteranceToken> x Referents<Locution> -> Content"
+      reason := "Three primitive gates discriminate the two argument types."
+    }
+  | .m2TSign => {
+      id := .m2TSign
+      kind := "primitive"
+      subject := "sign constructors"
+      anchor := "spec §7.5"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 2203, stop := 2218 }]
+      sourceDigest := "11e8badf34d74bc549e7dc18ee085f421b2950c789ac3c5eb37c3a647ebfdf31"
+      conclusion := "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>"
+      reason := "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
+    }
+  | .m2TReify => {
+      id := .m2TReify
+      kind := "primitive"
+      subject := "Reify"
+      anchor := "spec §9.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 2420, stop := 2439 }]
+      sourceDigest := "0d3bf83133c00f773e2c9151216d9587cdf590dfcb4f907e9f211bab5c0f54d9"
+      conclusion := "Content -> Proposition"
+      reason := "Reification is inert and must not inherit the operand effects."
+    }
+  | .m2TRealizedContent => {
+      id := .m2TRealizedContent
+      kind := "primitive"
+      subject := "RealizedContent"
+      anchor := "spec §7.4"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 2141, stop := 2174 }]
+      sourceDigest := "2397103ac7163a0eb28f239ddd26e1bda91ce6420568188880fea9ec6d3018a4"
+      conclusion := "Referents<UtteranceToken> -> Content with projective definedness"
+      reason := "The primitive baseline contains the token-to-captured-content projection."
+    }
+  | .m2TDropPlace => {
+      id := .m2TDropPlace
+      kind := "primitive"
+      subject := "DropPlace"
+      anchor := "spec §4.3"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 592, stop := 599 }]
+      sourceDigest := "db78b5053e00ff9bd548d9bd594de12602df709bc6b35b341bea93f877c28a30"
+      conclusion := "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>"
+      reason := "The primitive baseline contains one valid row deletion gate."
+    }
+  | .m2TTeha => {
+      id := .m2TTeha
+      kind := "primitive"
+      subject := "te'a"
+      anchor := "spec §12 MEX"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 4176, stop := 4182 }]
+      sourceDigest := "fdd23b858f9da2f7d8b456c4525855a14f64cd6a9c4b6c88dfeacd7ee1431369"
+      conclusion := "Number x Natural -> Number"
+      reason := "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
+    }
+  | .m2TAggregate => {
+      id := .m2TAggregate
+      kind := "primitive"
+      subject := "Aggregate"
+      anchor := "spec §4.9"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 888, stop := 927 }, { start := 1007, stop := 1025 }]
+      sourceDigest := "4677b6ed21ea0c7186d2af4e1d43be29e9b44b8b573e1c4df42c97603d75ccd7"
+      conclusion := "DecompositionBasis<Group<T>,T> x Group<T> -> Content"
+      reason := "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
+    }
+  | .m2TBasisUnitAt => {
+      id := .m2TBasisUnitAt
+      kind := "primitive"
+      subject := "BasisUnitAt"
+      anchor := "spec §4.9"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 888, stop := 927 }]
+      sourceDigest := "2a69fb741c139d5c7a668863e4a552642cb9ffe62b2a1ac2736e530d1d7a8f62"
+      conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content"
+      reason := "Recursive expansion of GunmaAt reaches the basis interface."
+    }
+  | .m2TPeerUnitAt => {
+      id := .m2TPeerUnitAt
+      kind := "primitive"
+      subject := "PeerUnitAt"
+      anchor := "spec §4.9"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 888, stop := 932 }]
+      sourceDigest := "68f9ad85ebb617eb7649340dd2bf73033e0daddc300311760a7495c2e2da4e9f"
+      conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content"
+      reason := "Recursive expansion of GunmaAt reaches the peer interface."
+    }
+  | .m2TJaiRoleAdmissible => {
+      id := .m2TJaiRoleAdmissible
+      kind := "primitive"
+      subject := "JaiRoleAdmissible"
+      anchor := "spec §12 bare jai"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 3769, stop := 3808 }]
+      sourceDigest := "4dbcb6cd346b2562013e9e60486a9ae2bb0b7a2cac946fcfea54f0c7e223b0f6"
+      conclusion := "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content"
+      reason := "The JaiRaise mapping's constrained Context must be typed and pure."
+    }
+  | .m2TInRegion => {
+      id := .m2TInRegion
+      kind := "lexical-interface"
+      subject := "InRegion"
+      anchor := "spec §6.4"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 3488, stop := 3509 }]
+      sourceDigest := "0a2788e3edebaf607049c15b32ede522fc2979e4f6af533fe8d019d0f000918f"
+      conclusion := "Amount x Region<Scale> -> Content"
+      reason := "The pure row-directed Grade template reaches this declared interface."
+    }
+  | .m2TGradeRow => {
+      id := .m2TGradeRow
+      kind := "schema"
+      subject := "Grade"
+      anchor := "spec §6.4"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 3488, stop := 3509 }]
+      sourceDigest := "0a2788e3edebaf607049c15b32ede522fc2979e4f6af533fe8d019d0f000918f"
+      conclusion := "row metadata -> pure PredTerm<row>"
+      reason := "The schema consumes its relation's declared degree projection, scale, and region without a site."
+    }
+  | .m2TJaiRaiseRow => {
+      id := .m2TJaiRaiseRow
+      kind := "schema"
+      subject := "JaiRaise"
+      anchor := "spec §12 bare jai"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 3769, stop := 3808 }]
+      sourceDigest := "4dbcb6cd346b2562013e9e60486a9ae2bb0b7a2cac946fcfea54f0c7e223b0f6"
+      conclusion := "row remapping plus role -> pure PredTerm<raised-row>"
+      reason := "The schema consumes row metadata rather than inspecting predicate syntax."
+    }
+  | .m2TContextConstants => {
+      id := .m2TContextConstants
+      kind := "constant"
+      subject := "context and index constants"
+      anchor := "spec §5.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1317, stop := 1359 }]
+      sourceDigest := "56877dc9c3dcde9ff68421c0e4631799e64f827200cfb5cb5ed312a6be224f91"
+      conclusion := "declared utterance-context projection -> declared type"
+      reason := "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
+    }
+  | .m2TQuery => {
+      id := .m2TQuery
+      kind := "primitive"
+      subject := "Polar/OpenQ/Ask"
+      anchor := "spec §7.1; §8"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1975, stop := 1990 }, { start := 2330, stop := 2418 }]
+      sourceDigest := "6fe53ac92d2c7cf8b3f178a2b3fa9184f3c3d4ab5c05e46b012787a2a12fe425"
+      conclusion := "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>"
+      reason := "Selected Close cases occur beneath question constructors."
+    }
+  | .m2TLocal => {
+      id := .m2TLocal
+      kind := "primitive"
+      subject := "Local"
+      anchor := "spec §5.2"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1411, stop := 1429 }]
+      sourceDigest := "2d0ef2086235617f9ce11b6525ab9f10eb1e2d8183dbdea593c480041d10f0d9"
+      conclusion := "RefComp<A> -> RefComp<A> under expected mode"
+      reason := "Collection and performance specimens use the accessibility delimiter."
+    }
+  | .m2TPerformRole => {
+      id := .m2TPerformRole
+      kind := "primitive"
+      subject := "Perform"
+      anchor := "spec §7.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1984, stop := 1995 }]
+      sourceDigest := "bb47ec9084a47ad471faefa2cf0c4d7da18efbfe841c47d7d5f4ad3e30b89220"
+      conclusion := "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>"
+      reason := "Selected discourse specimens spell the role explicitly."
+    }
+  | .m2TGeneric => {
+      id := .m2TGeneric
+      kind := "primitive"
+      subject := "Generic"
+      anchor := "spec §5.8"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 1690, stop := 1726 }]
+      sourceDigest := "a8ffc7f9f0412c9857fcc8d8c16c5bf989f0f8991f9ec1721ce3a537c747367f"
+      conclusion := "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content"
+      reason := "Selected cases wrap supported Close expansions under generic quantification."
+    }
+  | .m2TContentInterfaces => {
+      id := .m2TContentInterfaces
+      kind := "primitive"
+      subject := "Named/Holds/display relations"
+      anchor := "spec §7.4–§7.6; §9.1"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 2203, stop := 2228 }, { start := 2420, stop := 2439 }]
+      sourceDigest := "de1592acfe288040b7586e7587a15769ab8f45b08b0b38723ae40115b34eef57"
+      conclusion := "typed interface arguments -> Content"
+      reason := "Selected cases use the declared content-level interface relations around the expansion slice."
+    }
+  | .m2TNumericInterfaces => {
+      id := .m2TNumericInterfaces
+      kind := "primitive"
+      subject := "subtraction/AmountValue/abstraction rows"
+      anchor := "spec §4.9; §9.2"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 856, stop := 881 }, { start := 2505, stop := 2535 }]
+      sourceDigest := "d57a4f2082aeb04d3b58e58ec18f434098fedbcda9280cc047b974bdf3b995a3"
+      conclusion := "Number operations and typed abstraction relation rows"
+      reason := "Selected cases embed Close under the numeric abstraction interfaces."
+    }
+  | .m2TResidualRow => {
+      id := .m2TResidualRow
+      kind := "row"
+      subject := "bound and derived PredTerm rows"
+      anchor := "spec §3.3"
+      sourcePath := "spec.md"
+      sourceRanges := [{ start := 369, stop := 420 }]
+      sourceDigest := "4c7eeed870ba537128a60e9e4911a50429426e492fcd608b126b7a630bf084b7"
+      conclusion := "row-directed partial filling preserves the residual PredTerm row"
+      reason := "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
     }
 
 def m2TypingRuleRecords : List M2TypingRuleRecord :=
   M2TypingRuleId.all.map M2TypingRuleId.record
+
+structure M2CoreConstantRecord where
+  name : String
+  typeSource : String
+  anchor : String
+  deriving Repr, DecidableEq, BEq
+
+def m2CoreConstantRecords : List M2CoreConstantRecord := [
+  { name := "Speaker", typeSource := "(Referents Entity)", anchor := "spec §5.1" },
+  { name := "Audience", typeSource := "(Referents Entity)", anchor := "spec §5.1" },
+  { name := "MiAOthers", typeSource := "(Referents Entity)", anchor := "spec §5.1, P40" },
+  { name := "MaAOthers", typeSource := "(Referents Entity)", anchor := "spec §5.1, P40" },
+  { name := "DoOOthers", typeSource := "(Referents Entity)", anchor := "spec §5.1, P40" },
+  { name := "This", typeSource := "(Referents Entity)", anchor := "spec §5.1" },
+  { name := "That", typeSource := "(Referents Entity)", anchor := "spec §5.1" },
+  { name := "Yonder", typeSource := "(Referents Entity)", anchor := "spec §5.1" },
+  { name := "Now", typeSource := "(Referents Time)", anchor := "spec §5.1" },
+  { name := "CurrentToken", typeSource := "(Referents UtteranceToken)", anchor := "spec §5.1" },
+  { name := "Host", typeSource := "OccurrenceRole", anchor := "spec §7.1" },
+  { name := "AttachedDisplay", typeSource := "OccurrenceRole", anchor := "spec §7.1" },
+  { name := "AttachedAddress", typeSource := "OccurrenceRole", anchor := "spec §7.1" },
+  { name := "Typical", typeSource := "GenericMode", anchor := "spec §5.8" },
+  { name := "OtherThan", typeSource := "ScalarMode", anchor := "spec §6.3" },
+  { name := "Moderate", typeSource := "Intensity", anchor := "spec §7.6" },
+  { name := "Intense", typeSource := "Intensity", anchor := "spec §7.6" },
+  { name := "Observation", typeSource := "Epistemology", anchor := "spec §7.6" },
+  { name := "Hearsay", typeSource := "Epistemology", anchor := "spec §7.6" },
+  { name := "TooManyK", typeSource := "ThresholdKind", anchor := "spec §6.4" },
+  { name := "ManyK", typeSource := "ThresholdKind", anchor := "spec §6.4" }
+]
+
+inductive M2LexicalEventMode where
+  | holdingState
+  | directEvent
+  deriving Repr, DecidableEq, BEq
+
+structure M2LexicalRowRecord where
+  head : String
+  ordinaryArity : Nat
+  eventMode : M2LexicalEventMode
+  provenance : String
+  deriving Repr, DecidableEq, BEq
+
+def m2LexicalRowRecords : List M2LexicalRowRecord := [
+  { head := "bajra", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row: surface/limbs/gait (jbovlaste); pending #12" },
+  { head := "balvi", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture binary tense-facet projection; pending #12" },
+  { head := "barda", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "batci", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "bevri", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "blabi", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "cabna", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture binary tense-facet projection; pending #12" },
+  { head := "cadzu", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "cinri", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "citka", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "cukta", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture unary description-head projection; pending #12" },
+  { head := "cusku", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "darxi", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "datka", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "djica", ordinaryArity := 3, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "dansu", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "djuno", ordinaryArity := 4, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "fasnu", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "flulimna", ordinaryArity := 1, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "gerku", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "jbena", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "jbopre", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "jinvi", ordinaryArity := 4, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "jmaji", ordinaryArity := 1, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "klama", ordinaryArity := 5, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "melbi", ordinaryArity := 2, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "mlatu", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "morsi", ordinaryArity := 1, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "nelci", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "pendo", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "pilno", ordinaryArity := 3, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "pipno", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "ponse", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "prami", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "prenu", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "remna", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "purci", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "rinka", ordinaryArity := 3, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "sanga", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "selcmi", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "sipna", ordinaryArity := 1, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "skicu", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "srana", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "stali", ordinaryArity := 1, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "sutra", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "tatpi", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "tavla", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "valsi", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "xasli", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
+  { head := "zdani", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" }
+]
 
 structure M2GrammarRecord where
   category : M2GrammarCategory
