@@ -43,7 +43,11 @@ ln -s <external-mail-root> mail
 ```
 
 The helper refuses a missing, broken, or real-directory `mail` path so it
-cannot silently create a private worktree spool.
+cannot silently create a private worktree spool. It ignores any worktree-local
+`mail` entry in favor of the primary checkout's link and refuses tracked
+absolute spool paths. The supported layout is a normal primary checkout with a
+`.git` common directory; bare-repository and separate-Git-directory layouts
+fail explicitly rather than guessing a mailbox location.
 
 ## Parking a terminal session on its inbox
 

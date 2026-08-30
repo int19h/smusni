@@ -74,6 +74,11 @@ def parse_session(name: str) -> tuple[str, int, int] | None:
 
 def primary_checkout_root(root: Path) -> Path | None:
     """Return the primary checkout that owns a linked worktree's common Git dir."""
+    git_marker = root / ".git"
+    if git_marker.is_dir():
+        return root
+    if not git_marker.exists() and not git_marker.is_symlink():
+        return None
     try:
         result = subprocess.run(
             ["git", "-C", str(root), "rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -81,11 +86,19 @@ def primary_checkout_root(root: Path) -> Path | None:
             text=True,
             check=True,
         )
-    except (OSError, subprocess.CalledProcessError):
-        return None
+    except OSError as exc:
+        raise ExchangeError(EXIT_USAGE, f"cannot resolve primary checkout with git: {exc}") from exc
+    except subprocess.CalledProcessError as exc:
+        detail = exc.stderr.strip() or f"git exited {exc.returncode}"
+        raise ExchangeError(EXIT_USAGE, f"cannot resolve primary checkout with git: {detail}") from exc
     common = Path(result.stdout.strip())
-    if common.name != ".git" or not common.is_absolute():
-        return None
+    if not common.is_absolute():
+        raise ExchangeError(EXIT_USAGE, f"git returned a non-absolute common directory: {common}")
+    if common.name != ".git":
+        raise ExchangeError(
+            EXIT_USAGE,
+            f"unsupported Git common directory {common}: relative mail requires a primary checkout with .git",
+        )
     return common.parent
 
 
@@ -93,7 +106,10 @@ def resolve_spool_path(root: Path, configured: str) -> Path:
     """Resolve relative mail through this checkout or its primary checkout."""
     path = Path(configured)
     if path.is_absolute():
-        return path
+        raise ExchangeError(
+            EXIT_USAGE,
+            "tracked spool paths must be logical relative paths; configure the external target through the ignored symlink",
+        )
     primary = primary_checkout_root(root)
     if primary is not None and primary != root:
         return primary / path
@@ -1017,8 +1033,8 @@ def spool_display_path(reg: Registry, path: Path) -> str:
     """Return a checkout-independent logical path for one spool file."""
     try:
         relative = path.relative_to(reg.spool)
-    except ValueError:
-        return str(path)
+    except ValueError as exc:
+        raise ExchangeError(EXIT_VALIDATION, f"spool file is outside configured mail root: {path}") from exc
     return str(Path("mail") / relative)
 
 

@@ -28,7 +28,12 @@ ln -s <external-mail-root> mail
 
 The helper refuses a missing, broken, or real-directory relative spool rather
 than silently creating mutable mail inside a checkout. The `mail` path is
-ignored and never committed.
+ignored and never committed. A worktree-local `mail` entry is deliberately
+ignored in favor of the primary checkout's link. Tracked absolute spool paths
+are refused; the machine-local target belongs only in the symlink. This layout
+requires a normal primary checkout whose common Git directory is `.git`;
+bare-repository or separate-Git-directory layouts fail with an explicit error
+instead of falling back to worktree-local mail.
 
 ## Models, sessions, generations
 

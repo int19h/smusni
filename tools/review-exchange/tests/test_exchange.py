@@ -207,14 +207,26 @@ class ExchangeTest(unittest.TestCase):
 
     def test_spool_path_resolution_supports_worktrees_and_external_mail(self):
         self.assertEqual(EXCHANGE.resolve_spool_path(self.tmp, "mail"), self.tmp / "mail")
-        absolute = self.tmp / "outside" / "smusni"
-        self.assertEqual(EXCHANGE.resolve_spool_path(self.tmp, str(absolute)), absolute)
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "logical relative paths"):
+            EXCHANGE.resolve_spool_path(self.tmp, str(self.tmp / "outside" / "smusni"))
         linked = self.tmp / "linked"
         primary = self.tmp / "primary"
         (linked / "mail").mkdir(parents=True)  # a stray worktree-local spool loses
         (primary / "mail").mkdir(parents=True)
         with mock.patch.object(EXCHANGE, "primary_checkout_root", return_value=primary):
             self.assertEqual(EXCHANGE.resolve_spool_path(linked, "mail"), primary / "mail")
+
+    def test_primary_checkout_resolution_failures_are_explicit(self):
+        linked = self.tmp / "linked-resolution"
+        linked.mkdir()
+        (linked / ".git").write_text("gitdir: elsewhere")
+        with mock.patch.object(EXCHANGE.subprocess, "run", side_effect=FileNotFoundError("git missing")):
+            with self.assertRaisesRegex(EXCHANGE.ExchangeError, "cannot resolve primary checkout with git"):
+                EXCHANGE.primary_checkout_root(linked)
+        bare = EXCHANGE.subprocess.CompletedProcess([], 0, stdout="/srv/smusni.git\n", stderr="")
+        with mock.patch.object(EXCHANGE.subprocess, "run", return_value=bare):
+            with self.assertRaisesRegex(EXCHANGE.ExchangeError, "unsupported Git common directory"):
+                EXCHANGE.primary_checkout_root(linked)
 
     def test_registry_refuses_missing_real_or_broken_relative_spool(self):
         self.spool.unlink()
@@ -227,6 +239,10 @@ class ExchangeTest(unittest.TestCase):
         self.spool.symlink_to(self.tmp / "missing", target_is_directory=True)
         with self.assertRaisesRegex(EXCHANGE.ExchangeError, "broken or not a directory"):
             self.registry()
+
+    def test_snapshot_refuses_paths_outside_the_mail_root(self):
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "outside configured mail root"):
+            EXCHANGE.spool_display_path(self.registry(), self.tmp / "elsewhere" / "message.md")
 
     def test_join_assigns_generation_ids_and_increments(self):
         self.assertEqual(self.join("fable"), "fable_1")
