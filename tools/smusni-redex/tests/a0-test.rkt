@@ -99,6 +99,17 @@
                      (flatten event-close))
               3)
 (check-not-false (member 'DirectClause (flatten event-close)))
+(check-true
+ (alpha-equivalent?
+  SmusniA0 event-close
+  '(CloseClause
+    (ActualClause
+     (DirectClause
+      (λ (($event (Referents Eventuality)))
+        (Bind (($place2 (Referents Entity) (Context))
+               ($place3 (Referents Entity) (Context))
+               ($place4 (Referents Entity) (Context)))
+          (bajra Speaker $place2 $place3 $place4 $event))))))))
 
 (define explicit-event-close
   (term (a0-expand-close
@@ -107,17 +118,17 @@
 (check-true
  (alpha-equivalent?
   SmusniA0 explicit-event-close
-  '(Bind (($place2 (Referents Entity) (Context))
-          ($place3 (Referents Entity) (Context))
-          ($place4 (Referents Entity) (Context)))
-     (CloseClause
-      (λ (($clause-event (Referents Eventuality)))
-        (∧ (CoRef $clause-event $shared-event)
-           ((ActualClause
-             (DirectClause
-              (λ (($lexical-event (Referents Eventuality)))
-                (bajra Speaker $place2 $place3 $place4 $lexical-event))))
-            $shared-event)))))))
+  '(CloseClause
+    (λ (($clause-event (Referents Eventuality)))
+      (∧ (CoRef $clause-event $shared-event)
+         ((ActualClause
+           (DirectClause
+            (λ (($lexical-event (Referents Eventuality)))
+              (Bind (($place2 (Referents Entity) (Context))
+                     ($place3 (Referents Entity) (Context))
+                     ($place4 (Referents Entity) (Context)))
+                (bajra Speaker $place2 $place3 $place4 $lexical-event)))))
+          $shared-event))))))
 (check-exn
  exn:fail?
  (lambda ()
@@ -225,7 +236,7 @@
         (term (CloseWith
                (row bajra 4 direct-event (1 2 3 4))
                ((1 Speaker) (Eventuality $shared-event)))))
- '(typing Content (context) ()))
+ '(typing Content (effectful-call) ()))
 (define full-explicit-event-close
   (term (a0-expand-close
          (row bajra 4 direct-event (1 2 3 4))
