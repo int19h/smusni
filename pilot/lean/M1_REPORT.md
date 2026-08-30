@@ -1,20 +1,23 @@
 # Lean milestone 1 report — term, interchange, binders
 
-## Outcome — PARTIAL / Gate-C FAIL
+## Outcome — PASS
 
-M1 is partially implemented on the pinned Lean 4.33.1 / Lake 5.0.0 toolchain. It builds
+M1 is implemented on the pinned Lean 4.33.1 / Lake 5.0.0 toolchain. It builds
 one primitive-only, well-scoped `CoreTerm` representation; a distinct
 non-denoting `SurfaceTerm`; generic and typed S-expression transport; semantic
 site tables plus nonsemantic source maps; and complete runtime ingestion of the
-pinned S1 inputs. No `sorry`, axiom, corpus literal table, `Lean.Expr`
+pinned S1 inputs. No `sorry`, project axiom, corpus literal table, `Lean.Expr`
 whitelist, intrinsic type/effect index, or §12 constructor is present.
 
-The remaining M1 closure deliverable is **not proved**: rename/substitute do
-not derive `validateWithUses = ok` for their candidate output. Certified
-transforms therefore run the raw checker before returning a strong
-`ValidatedBundle`; runtime validation is the evidence. The five graph/closure
-proof obligations are recorded on #19 as Gate-C failure evidence. This report
-does not call M1 PASS.
+The M1 validity and binding closure deliverable is proved by construction.
+`BundleCoherence` ties every actual `Context`/`Vague` occurrence to one typed
+row whose bound/free profile is exactly the support derived from that
+occurrence's term operands; table identities are unique and every row is
+covered by an occurrence. Certified rename/substitute transform the term,
+rebuild rows from the transformed occurrences, reconcile RR metadata, and
+construct the output coherence object directly. They do not call the raw
+checker and their only refusal carries a witnessed inconsistent-sharing
+collision.
 
 This is derived pilot evidence. It neither selects Lean nor transfers semantic
 authority, and it implements no M2 elaboration or typing.
@@ -71,44 +74,51 @@ generic lexical predication.
 `Term n` uses `Fin n` for bound variables, so an ill-scoped bound variable is
 unrepresentable. Free/RR identities are explicit `FreeId`s. A `SiteId` is the
 structural triple `(document identity, occurrence ordinal, expansion role)`;
-`Term` stores only that identity at a site occurrence. The authoritative
-sidecar entry carries role, serialized scoped dependency profile, and RR
-linkage; `Site n` remains the scoped algebraic form used to state and prove
-dependency transformations. The decoder assigns written sites and sidecar
-entries together in deterministic traversal/source order, never from byte
-offsets.
+`Term` stores that identity and the dependency operands at a site occurrence.
+The sidecar is authoritative for identity, role, and RR linkage. Its serialized
+bound/free profile is a checked support summary derived from the occurrence's
+actual operands; it is not an independent dependency tuple. Nested sites are
+separate binder-sensitive term occurrences, including sites in suspended λ
+bodies. The decoder assigns written sites and sidecar entries together in
+deterministic traversal/source order, never from byte offsets.
 
-Binding infrastructure is 1,627 lines including scoped data/core and validated
-bundle operations, or 1,352 lines for operations and proofs alone:
+Binding infrastructure is 1,773 lines including core/binding data and
+validated bundle operations, or 1,403 lines for binding laws and bundle
+operations/proofs alone:
 
 - renaming, lifted renaming, weakening;
 - capture-avoiding substitution and lifted substitution;
-- capture-avoiding lowering of dependency-profile references across binders;
+- binder-sensitive bound/free support analysis for dependency operands;
 - identity renaming/substitution;
 - renaming composition;
 - renaming followed by substitution;
 - substitution followed by renaming commutes with renaming every replacement;
 - substitution composition;
-- bundle-level renaming, weakening, and substitution that transform the
-  authoritative dependency table at each occurrence's lifted scope;
+- binder-sensitive `SiteOccurrence` traversal carrying each occurrence's
+  derived operand support;
 - proof-carrying `RenamedBundle`/`SubstitutedBundle` transformation results:
-  each carries exact term equality and typed-candidate reconciliation, then
-  obtains its strong output `ValidatedBundle` through the fallible raw checker;
-- total typed site transforms defined directly through `Site.rename`,
-  `Site.substitute`, `Renaming.liftN`, and `Substitution.liftN`, with kernel
-  laws for dependency commutation, typed serialization round trip, and
-  serialized table-entry identity preservation; `liftN_shiftN` proves that a
-  replacement inserted below binders is renamed by the same typed shift used
-  for its authoritative site table;
-- dependency-list and site transformation compatibility;
+  each carries exact term equality, an output `ValidatedBundle` over the exact
+  certified bundle, and no fallible output-validation step;
+- general occurrence provenance through rename and substitution, including
+  replacement terms inserted under arbitrarily many binders;
+- per-occurrence row derivation from the transformed term, with RR metadata
+  inherited through a reconciled identity table and bound/free support derived
+  anew from the output operands;
+- proof-bearing reconciliation: unique identities, every candidate represented,
+  every row candidate-derived, and the sole error an identity plus two unequal
+  entries;
 - renaming preserves the complete site-ID list;
 - substitution preserves every pre-existing site ID;
-- site-profile renaming/substitution never changes the site identity;
 - source binder spellings erase to equal core terms.
 
 All are kernel theorems in `BindingLaws.lean`/`Examples.lean`; none is assumed.
-The examples additionally prove bound dependency substitution changes
-`bound 0` into the replacement's free identity, while retaining the site ID.
+`#print axioms` for raw coherence construction, occurrence-table coherence,
+substitution occurrence provenance, and both certified operations reports only
+Lean's standard `propext`, `Classical.choice`, and `Quot.sound`; the pilot adds
+no axiom.
+The examples additionally prove operand substitution retains distinct values
+(7 versus 8), preserves a nested site's own binder scope inside a λ operand,
+and retains bound support for an outer variable captured by a λ.
 
 Site discriminators pass:
 
@@ -127,8 +137,9 @@ shape. Defined forms have no denotation and cannot decode as core.
 The versioned bundle contains:
 
 - the term datum;
-- a semantic site table (identity, role, scoped dependencies serialized by
-  de Bruijn number, and RR linkage to the actual typed fixture path or `none`);
+- a semantic site table (identity, role, operand-derived bound/free support
+  serialized by de Bruijn number, and RR linkage to the actual typed fixture
+  path or `none`);
   and
 - a nonsemantic source map (binder spellings, structural position/source
   ordinal, and source order; optional physical line/column fields).
@@ -138,34 +149,28 @@ every internal bundle through an independent typed structured transport AST.
 The textual S-expression reader is the untrusted byte boundary; runtime gates
 check `encode(decode(encode(b))) = encode(b)` for the example bundle, every 50
 already-primitive S1 payloads, and 303 programmatically generated core terms.
-The core term encoding contains only site-ID references. Bundle validation
-requires exactly one sidecar entry for every referenced identity, rejects
-missing, extra, duplicate, role-conflicting, and out-of-scope entries, and
-rejects site-valued dependencies that do not resolve through that same table.
-Term occurrences are roots of a reachable sidecar graph: a `.site B`
-dependency makes `B` reachable even without a `B` term node and propagates the
-referencing occurrence's scope for `B`'s typed dependency check; only entries
-unreachable from both term roots and dependency edges are extra.
-At every occurrence it invokes the exact `SiteEntry.toSite use.scope` typed
-deserializer used by bundle binding; `siteEntryToSite_ofSite` proves the typed
-serialization round trip, and `validateSiteUse_deserializes` proves that every
-successful per-occurrence validation has a matching entry and typed `Site`.
-`Bundle.checked` also stores the complete reachable-use list plus a
-scope-indexed typed closure whose coverage equation is part of the value.
-Validated operations consume that closure and total typed substitution-use
-collectors to build a certified candidate result, then call the raw checker to
-establish output coherence. Public failures distinguish
-`inconsistentSharing` (an actual SiteId and two unequal candidates) from
-`outputValidationFailure` (the checker diagnostic); no blanket mapping is
-used. Dependency-only site entries
-are ordinary reachable graph nodes, not conflicts; the conflict is reserved for
-colliding identities or one shared identity requiring inconsistent transformed
-entries at distinct occurrence depths. Raw byte/bundle
-input may fail schema or coherence validation before it becomes a strong
-`ValidatedBundle` carrying `usesValid` and `valid`. Runtime output checking is
-the current coherence evidence, not a proof of closure. Validation is run
-after both source decoding and text decoding. Each primitive S1 case also
-passes a term-only source-to-core-to-canonical round trip.
+The core term encoding contains site IDs at actual term occurrences. Bundle
+validation traverses those occurrences at their binder-sensitive scopes,
+requires exactly one row per identity with matching role, invokes
+`SiteEntry.toSite occurrence.scope`, and requires the row profile to equal the
+bound/free support derived from that occurrence's operands. It rejects
+missing, extra, duplicate, role-conflicting, out-of-scope, sidecar-only, and
+profile-disagreeing rows. A site inside a dependency operand—including inside
+a suspended λ—is validated as its own term occurrence at its own scope; it is
+not flattened to a same-scope graph edge or placed in the semantic profile.
+
+`Bundle.checked` retains the resulting `BundleCoherence`: unique deduplicated
+uses, complete occurrence coverage, typed per-use witnesses, exact
+occurrence/profile agreement, unique row identities, and actual-occurrence
+coverage for every row. Raw input may fail before constructing that object.
+Certified rename/substitute never re-run the raw validator: they transform the
+term, derive typed rows from the output occurrences, inherit only RR linkage
+through a reconciled metadata pool, reconcile the full derived rows, and
+construct output coherence directly. The sole public error is
+`inconsistentSharing`, carrying the SiteId, both candidate rows, and a proof
+that they differ. Validation still runs after source and text decoding. Each
+primitive S1 case also passes a term-only source-to-core-to-canonical round
+trip.
 Source maps do not enter `Term` or `TermDatum` equality. The generic
 S-expression canonical round trip is checked on all 337 S1 terms.
 
@@ -216,7 +221,8 @@ forms, rejection of structural operators through the first-order constructor,
 variadic/labelled applications, missing/consecutive label values, preservation
 of a nullary call as `apply f []`, and empty/multiple/nested `Fn`/`EFn`
 parameter lists. Bundle mutations additionally exercise scope-aware weakening
-and substitution of the term and authoritative site table together.
+and substitution of dependency operands, occurrence-derived profiles, and RR
+metadata together.
 
 The strict reader exposed 28 RR files with an extra trailing `)`. The existing
 Racket loader read only one datum and ignored trailing bytes. This branch
@@ -235,22 +241,25 @@ defined-payload-variable-cases=232 generated-roundtrips=303
 
 ## Timing
 
-- clean M1 build after `lake clean`: 9.39 s wall, 29.71 s user, 4.05 s system,
-  1,700,108 KiB maximum RSS;
-- warm S1 + local/generated gate run: 0.34 s wall, 0.10 s user, 0.16 s system,
-  135,408 KiB maximum RSS.
+- clean M1 build after `lake clean`: 14.18 s wall, 53.27 s user, 7.39 s
+  system, 1,706,124 KiB maximum RSS;
+- warm S1 + local/generated gate run: 0.77 s wall, 0.34 s user, 0.24 s
+  system, 135,492 KiB maximum RSS.
 
 Build time is not reported as runtime.
 
 ## C-spike disposition
 
-The bounded C spike attempted to make the typed closure builder itself the
-validity invariant (`9fc5243..2a2f640`). Exact review showed that the private
-closure still lacked proofs connecting output term roots, propagated
-dependency edges, reconciled rows, and the executable validator. Gate-C
-evidence on #19 enumerates those obligations. The automatic B fallback is
-therefore active in this head: strong checked output, explicit validation
-failure, and a PARTIAL result. No extension of the spike was taken.
+The bounded C spike first exposed that same-scope `.site` graph propagation
+made validated substitution false for a λ operand with a nested site. A second
+discriminator showed that sidecar-only profiles erased dependency values
+entirely (`A[7]` and `A[8]` serialized identically). The adopted repair follows
+the normative `(Context P deps…)` shape: dependency values stay as term
+operands; the sidecar profile is their bound/free support summary; latent sites
+remain term occurrences. The implementation deletes the fuel graph, graph
+universe, same-scope edges, raw duplicate binding API, and output validation
+failure. Both certified operations now close over `BundleCoherence` by
+construction. Gate C therefore passes.
 
 ## Explicit limits / not yet general
 
@@ -269,15 +278,18 @@ failure, and a PARTIAL result. No extension of the spike was taken.
   application node with an ordered list of positional/labelled fills, so no
   source arity or label structure is lost before M2 typing.
 - Expansion-introduced sites, including L5.29 scale/cutoff sites, are M2 work.
-- **Gate-C FAIL:** M1 lacks the theorem that renamed/substituted roots and
-  transitive `.site` edges exactly cover the reconciled output table and hence
-  imply `validateWithUses = ok` / `validate = ok`. M2 may use only the checked
-  API and must not treat runtime validation as proof. This theorem remains a
-  named blocker for full-migration parity and any authority transfer.
-- Raw `Bundle.rename`/`substitute` are non-semantic boundary conveniences that
-  retain String diagnostics and duplicate parts of the validated path; the
-  validated certified operations are the semantic M1 API. Remove the raw
-  duplicates when M2 no longer needs boundary diagnostics.
+- M1 proves structural scope/profile agreement. M2 must still prove that
+  dependency operands are values of the declared types and that any
+  admissibility constraint is typed and pure; structural agreement is not
+  semantic type checking.
+- `SerializedDependency.site` remains decodable for interchange compatibility
+  and provenance experiments, but the M1 semantic profile analysis never
+  emits it and profile agreement rejects it in `SiteEntry.dependencies`.
+  Nested sites are represented only by their term occurrences.
+- Supported RR site dependencies are already emitted by the current lowering
+  as `Context`/`Vague` operands. Outer-binder dependencies remain an explicit
+  `no-lowering` gap. A generalized adoption gate comparing RR declarations
+  against emitted operand support is lowering work beyond M1.
 - Text parsing and file hashing remain outside the Lean kernel; the typed
   structured round-trip theorem and runtime corpus gates make that boundary
   explicit rather than pretending bytes are proved.
