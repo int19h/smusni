@@ -22,7 +22,7 @@ import web as exchange_web  # noqa: E402
 
 REGISTRY = """
 protocol = "smusni-review-mail/v3"
-spool = "review/exchange"
+spool = "mail"
 generation = 2
 [models.codex]
 active = true
@@ -35,6 +35,12 @@ active = true
 display_name = "Fable"
 client = "claude"
 model = "fable"
+broadcast_recipient = true
+[models.grok]
+active = true
+display_name = "Grok 4.6"
+client = "grok"
+model = "grok-4.6"
 broadcast_recipient = true
 [models.human]
 active = true
@@ -138,7 +144,10 @@ class WebReaderTest(unittest.TestCase):
         control = self.tmp / "tools" / "review-exchange"
         control.mkdir(parents=True)
         (control / "participants.toml").write_text(REGISTRY)
-        spool = self.tmp / "review" / "exchange"
+        external = self.tmp / "external-mail"
+        external.mkdir()
+        spool = self.tmp / "mail"
+        spool.symlink_to(external, target_is_directory=True)
         (spool / "sessions").mkdir(parents=True)
         (spool / "sessions" / "fable_2.md").write_text(FABLE_SESSION)
         (spool / "sessions" / "codex_2.md").write_text(CODEX_SESSION)
@@ -156,11 +165,13 @@ class WebReaderTest(unittest.TestCase):
         self.assertTrue(data["healthy"])
         self.assertEqual(data["stats"]["threads"], 1)
         self.assertEqual(data["stats"]["messages"], 2)
+        self.assertIn("grok", {model["id"] for model in data["models"]})
         thread = data["threads"][0]
         self.assertEqual(thread["id"], ROOT_ID)
         self.assertEqual(thread["title"], "Reader proposal")
         self.assertEqual(thread["message_ids"], [ROOT_ID, REPLY_ID])
         by_id = {message["id"]: message for message in data["messages"]}
+        self.assertEqual(by_id[ROOT_ID]["path"], f"mail/messages/{ROOT_ID}.md")
         self.assertEqual(by_id[REPLY_ID]["root_id"], ROOT_ID)
         self.assertEqual(by_id[REPLY_ID]["depth"], 1)
         self.assertEqual(by_id[ROOT_ID]["superseded_by"], [REPLY_ID])
@@ -169,7 +180,7 @@ class WebReaderTest(unittest.TestCase):
         self.assertFalse(by_id[REPLY_ID]["ack_required"])
 
     def test_snapshot_reports_invalid_files_without_including_them(self):
-        bad = self.tmp / "review" / "exchange" / "messages" / "bad.md"
+        bad = self.tmp / "mail" / "messages" / "bad.md"
         bad.write_text("not front matter")
         data = self.snapshot()
         self.assertFalse(data["healthy"])

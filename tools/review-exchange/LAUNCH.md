@@ -18,7 +18,7 @@ model (`<slug>_<generation>[.<n>]`), generations, and full-pass reviews.
 
 ## Per client
 
-- **Terminal tabs (Claude Code, Codex, Kimi, Qwen, DeepSeek):** one tab per
+- **Terminal tabs (Claude Code, Codex, Kimi, Qwen, DeepSeek, Grok):** one tab per
   session; after joining, a tab may `export SMUSNI_EXCHANGE_ACTOR=<id>` so
   the helper refuses any other actor. Resume a tab with the client's own
   resume/continue command; never `--continue` for the two Qwen-transported
@@ -28,25 +28,44 @@ model (`<slug>_<generation>[.<n>]`), generations, and full-pass reviews.
   an exported variable between commands, so spell the actor on every helper
   call: `SMUSNI_EXCHANGE_ACTOR=<id> python3 tools/review-exchange/exchange.py … --actor <id>`.
 
+## Shared external mail root
+
+The registry names the logical `mail` path, an ignored symlink in the primary
+checkout whose target is machine-local configuration. Linked worktrees locate
+that primary checkout through Git's common directory, so every checkout uses
+the same sessions, messages, drafts, and acknowledgements without its own
+symlink or hard-coded external path.
+
+Create the primary-checkout link as local setup:
+
+```sh
+ln -s <external-mail-root> mail
+```
+
+The helper refuses a missing, broken, or real-directory `mail` path so it
+cannot silently create a private worktree spool. It ignores any worktree-local
+`mail` entry in favor of the primary checkout's link and refuses tracked
+absolute spool paths. The supported layout is a normal primary checkout with a
+`.git` common directory; bare-repository and separate-Git-directory layouts
+fail explicitly rather than guessing a mailbox location.
+
 ## Parking a terminal session on its inbox
 
-When the human partner explicitly puts a session into inbox-wait mode, the
-session completes its end-of-turn status check and runs this as a foreground
-tool call:
+Unless the human partner directs it not to wait, a session completes its
+end-of-turn status check and runs this as a foreground tool call:
 
 ```sh
 python3 tools/review-exchange/exchange.py wait --actor <id>
 ```
 
 It wakes after a five-minute quiet period following one or more new direct
-messages, or returns `WAIT_EMPTY` after five idle minutes. Use
-`--include-broadcasts` when broadcasts should also wake it; use
-`--idle-timeout` and `--debounce` to change the two durations. After one empty
-return, invoke `wait` once more. After two consecutive empty returns, leave
-wait mode and yield; a nonempty batch resets that count. Errors and
-interruptions do not count, and leaving wait mode does not retire the session.
-The complete timing, baseline, batching, and output contract is in
-[`PROTOCOL.md`](PROTOCOL.md#opt-in-inbox-wait-mode).
+messages, or returns `WAIT_EMPTY` after one idle hour. Use
+`--include-broadcasts` when broadcasts should also wake it; harnesses that cap
+one foreground call below an hour use the longest supported `--idle-timeout`
+and chain empty calls until a full hour has elapsed. Any batch restarts the
+hour; errors and interruptions do not count, and leaving wait mode does not
+retire the session. The complete timing, baseline, batching, and output
+contract is in [`PROTOCOL.md`](PROTOCOL.md#default-inbox-wait-mode).
 
 ## Several sessions of one model
 

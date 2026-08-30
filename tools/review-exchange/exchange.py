@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Multi-model review exchange helper (protocol smusni-review-mail/v3).
 
-Tracked control plane for the ignored message spool under review/exchange/.
-Models come from participants.toml; sessions register themselves in the
-spool; nothing here hard-codes a participant.
+Tracked control plane for the external message spool exposed through the
+ignored repository-local ``mail`` symlink. Models come from participants.toml;
+sessions register themselves in the spool, and nothing here hard-codes a
+participant or machine-local mail path.
 
 Actors are sessions: `<model>_<generation>[.<n>]` (the first Fable session of
 generation 1 is `fable_1`, a second concurrent one `fable_1.1`), plus the
@@ -34,6 +35,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 import time
 import tomllib
@@ -70,6 +72,50 @@ def parse_session(name: str) -> tuple[str, int, int] | None:
     return m.group(1), int(m.group(2)), int(m.group(3) or 0)
 
 
+def primary_checkout_root(root: Path) -> Path | None:
+    """Return the primary checkout that owns a linked worktree's common Git dir."""
+    git_marker = root / ".git"
+    if git_marker.is_dir():
+        return root
+    if not git_marker.exists() and not git_marker.is_symlink():
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except OSError as exc:
+        raise ExchangeError(EXIT_USAGE, f"cannot resolve primary checkout with git: {exc}") from exc
+    except subprocess.CalledProcessError as exc:
+        detail = exc.stderr.strip() or f"git exited {exc.returncode}"
+        raise ExchangeError(EXIT_USAGE, f"cannot resolve primary checkout with git: {detail}") from exc
+    common = Path(result.stdout.strip())
+    if not common.is_absolute():
+        raise ExchangeError(EXIT_USAGE, f"git returned a non-absolute common directory: {common}")
+    if common.name != ".git":
+        raise ExchangeError(
+            EXIT_USAGE,
+            f"unsupported Git common directory {common}: relative mail requires a primary checkout with .git",
+        )
+    return common.parent
+
+
+def resolve_spool_path(root: Path, configured: str) -> Path:
+    """Resolve relative mail through this checkout or its primary checkout."""
+    path = Path(configured)
+    if path.is_absolute():
+        raise ExchangeError(
+            EXIT_USAGE,
+            "tracked spool paths must be logical relative paths; configure the external target through the ignored symlink",
+        )
+    primary = primary_checkout_root(root)
+    if primary is not None and primary != root:
+        return primary / path
+    return root / path
+
+
 # ----------------------------------------------------------------- registry
 
 
@@ -83,7 +129,17 @@ class Registry:
             raise ExchangeError(EXIT_USAGE, f"registry not found: {path}")
         data = tomllib.loads(path.read_text())
         self.protocol = data.get("protocol", V3)
-        self.spool = root / data.get("spool", "review/exchange")
+        configured_spool = str(data.get("spool", "mail"))
+        self.spool = resolve_spool_path(root, configured_spool)
+        if not Path(configured_spool).is_absolute():
+            if not self.spool.is_symlink():
+                raise ExchangeError(
+                    EXIT_USAGE,
+                    f"relative spool path {configured_spool!r} must be an ignored symlink "
+                    "in the primary checkout",
+                )
+            if not self.spool.is_dir():
+                raise ExchangeError(EXIT_USAGE, f"spool symlink is broken or not a directory: {self.spool}")
         self.generation = int(data.get("generation", 1))
         if self.generation < 1:
             raise ExchangeError(EXIT_USAGE, "generation must be a positive integer")
@@ -137,7 +193,7 @@ class Session:
 
 
 class Sessions:
-    """The spool's session registry: review/exchange/sessions/<id>.md."""
+    """The external spool's session registry: sessions/<id>.md."""
 
     def __init__(self, reg: Registry):
         self.reg = reg
@@ -973,6 +1029,15 @@ def _message_excerpt(message: Message, limit: int = 180) -> str:
     return excerpt if len(excerpt) <= limit else excerpt[:limit - 1].rstrip() + "…"
 
 
+def spool_display_path(reg: Registry, path: Path) -> str:
+    """Return a checkout-independent logical path for one spool file."""
+    try:
+        relative = path.relative_to(reg.spool)
+    except ValueError as exc:
+        raise ExchangeError(EXIT_VALIDATION, f"spool file is outside configured mail root: {path}") from exc
+    return str(Path("mail") / relative)
+
+
 def build_snapshot(reg: Registry) -> dict:
     """Return the validated, read-only exchange view consumed by web clients.
 
@@ -1062,7 +1127,7 @@ def build_snapshot(reg: Registry) -> dict:
             "body": message.body.strip(),
             "root_id": root_id,
             "depth": depth,
-            "path": str(message.path.relative_to(reg.root)),
+            "path": spool_display_path(reg, message.path),
         })
 
     thread_groups: dict[str, list[dict]] = {}

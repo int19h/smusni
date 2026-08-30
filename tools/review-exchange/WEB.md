@@ -3,7 +3,8 @@
 The Field Desk is a local, read-only web client for browsing the review
 exchange as conversations rather than mailbox files. It uses the same
 registry, parser, legacy-compatibility rules, acknowledgement accounting, and
-validation path as `exchange.py`.
+validation path as `exchange.py`, reading the shared external spool exposed by
+the ignored repository-local `mail` symlink.
 
 ## Run it
 

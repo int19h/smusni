@@ -128,19 +128,21 @@ coherent-baseline backlog and its dependencies.
 ## Multi-model review collaboration
 
 Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max,
-DeepSeek V4 Pro, and Gemini — review this repository as peers working with the
-human partner; no model's proposal becomes consensus merely because it was
-written. The ignored spool under `review/exchange/` replaces copy/paste
-between sessions. The tracked protocol, model registry, helper, templates,
-and tests live under `tools/review-exchange/`; read `PROTOCOL.md` there before
-using the exchange.
+DeepSeek V4 Pro, Grok 4.6, and Gemini — review this repository as peers working
+with the human partner; no model's proposal becomes consensus merely because
+it was written. The external spool exposed through the ignored
+repository-local `mail` symlink replaces copy/paste between sessions; the
+symlink target is machine-local configuration and is never tracked. The
+tracked protocol, model registry, helper, templates, and tests live under
+`tools/review-exchange/`; read `PROTOCOL.md` there before using the exchange.
 
 **Bootstrapping.** A new session needs no launch prompt. At its first turn:
 identify your model slug by self-inspection (Claude → `fable`, OpenAI Codex →
-`codex`, Kimi → `kimi`, Qwen → `qwen`, DeepSeek → `deepseek`, Gemini/Antigravity
-→ `gemini`); run `python3 tools/review-exchange/exchange.py join --model
-<slug>` and use the printed session id (`fable_1`, `codex_1.1`, …) as your
-actor from then on; run `status --actor <id>`; act on messages addressed
+`codex`, Kimi → `kimi`, Qwen → `qwen`, DeepSeek → `deepseek`, Grok → `grok`,
+Gemini/Antigravity → `gemini`); run `python3
+tools/review-exchange/exchange.py join --model <slug>` and use the printed
+session id (`fable_1`, `codex_1.1`, …) as your actor from then on; run
+`status --actor <id>`; act on messages addressed
 **directly** to you (broadcasts are context), else on the prompt you were
 given, else on the work queued for your model in the tracker — and say which.
 

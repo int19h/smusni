@@ -6,7 +6,10 @@
 # never a code change.
 
 protocol = "smusni-review-mail/v3"
-spool = "review/exchange"
+# Mutable mail lives outside every checkout. `mail` is an ignored symlink in
+# the primary checkout; linked worktrees find that same symlink through Git's
+# common directory rather than creating their own mailbox.
+spool = "mail"
 # The current session generation. Whoever calls a full-pass review of the
 # documents bumps this (a commit) before the fresh sessions are started; a
 # session joining afterwards becomes <model>_<generation>[.<n>].
@@ -48,6 +51,15 @@ active = true
 display_name = "DeepSeek V4 Pro"
 client = "qwen"
 model = "deepseek-v4-pro"
+broadcast_recipient = true
+
+# Grok is an active peer and broadcast recipient. This does not add it to the
+# separately adjudicated Fable/Codex/Kimi regular review rotation.
+[models.grok]
+active = true
+display_name = "Grok 4.6"
+client = "grok"
+model = "grok-4.6"
 broadcast_recipient = true
 
 # Gemini runs inside Google Antigravity; the workspace rule
