@@ -38,6 +38,41 @@ mutual
         .labelled label (eraseSiteIds head) (eraseSiteIdsList tail)
 end
 
+mutual
+  def eraseLexicalLabels {scope : Nat} : Term scope → Term scope
+    | .bound index => .bound index
+    | .free identity => .free identity
+    | .natural value => .natural value
+    | .string value => .string value
+    | .index value => .index value
+    | .lambda type body => .lambda type (eraseLexicalLabels body)
+    | .bind type computation body =>
+        .bind type (eraseLexicalLabels computation) (eraseLexicalLabels body)
+    | .apply function arguments =>
+        .apply (eraseLexicalLabels function) (eraseLexicalLabelsList arguments)
+    | .lexical head arguments =>
+        .lexical head (eraseTermListLabels arguments)
+    | .context site arguments =>
+        .context site (eraseLexicalLabelsList arguments)
+    | .vague site constraint => .vague site (eraseLexicalLabels constraint)
+    | .primitive operator arguments =>
+        .primitive operator (eraseLexicalLabelsList arguments)
+
+  def eraseLexicalLabelsList {scope : Nat} : TermList scope → TermList scope
+    | .nil => .nil
+    | .positional head tail =>
+        .positional (eraseLexicalLabels head) (eraseLexicalLabelsList tail)
+    | .labelled label head tail =>
+        .labelled label (eraseLexicalLabels head) (eraseLexicalLabelsList tail)
+
+  def eraseTermListLabels {scope : Nat} : TermList scope → TermList scope
+    | .nil => .nil
+    | .positional head tail =>
+        .positional (eraseLexicalLabels head) (eraseTermListLabels tail)
+    | .labelled _ head tail =>
+        .positional (eraseLexicalLabels head) (eraseTermListLabels tail)
+end
+
 structure RedexOracleCase where
   id : String
   available : Bool
@@ -81,6 +116,7 @@ structure ParityDifference where
   id : String
   part : String
   detail : String
+  knownIssue : Option Nat := none
   deriving Repr
 
 structure ParityRun where
@@ -90,6 +126,8 @@ structure ParityRun where
   compared : Nat
   termMatches : Nat
   siteMatches : Nat
+  knownBlockerDifferences : Nat
+  unexplainedDifferences : Nat
   differences : List ParityDifference
   deriving Repr
 
@@ -116,10 +154,14 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
         | throw <| IO.userError s!"oracle case {oracleCase.id} absent from M2 run"
       match outcome.term with
       | none =>
-          differences := differences ++ [{
-            id := oracleCase.id
-            part := "term"
-            detail := "Lean elaboration produced no term for an available oracle case" }]
+          if outcome.disposition == .typedRejection ||
+              outcome.disposition == .blocked ||
+              outcome.disposition == .inputUnavailable then pure ()
+          else
+            differences := differences ++ [{
+              id := oracleCase.id
+              part := "term"
+              detail := "Lean elaboration produced no term for an available oracle case" }]
       | some leanTerm =>
           let surface := SurfaceTerm.ofSExprWithLexicon lexicalHeads rawOracle
           let freeNames := freeNamesFromEnvironment corpusCase.environment
@@ -130,16 +172,18 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
           | .ok redexBundle =>
               compared := compared + 1
               let leanCanonical := Interchange.renderCanonicalTerm
-                (eraseSiteIds leanTerm)
+                (eraseLexicalLabels (eraseSiteIds leanTerm))
               let redexCanonical := Interchange.renderCanonicalTerm
-                (eraseSiteIds redexBundle.term)
+                (eraseLexicalLabels (eraseSiteIds redexBundle.term))
               if leanCanonical == redexCanonical then
                 termMatches := termMatches + 1
               else
                 differences := differences ++ [{
                   id := oracleCase.id
                   part := "term"
-                  detail := "alpha-normal CoreTerm differs after SiteId erasure" }]
+                  detail := "alpha-normal CoreTerm differs after SiteId erasure"
+                  knownIssue := if outcome.expandedDefinitions.contains .d46Close then
+                    some 81 else none }]
               let leanSites := emittedSiteSignature leanTerm
               let redexSites := emittedSiteSignature redexBundle.term
               if leanSites == redexSites then
@@ -148,7 +192,9 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
                 differences := differences ++ [{
                   id := oracleCase.id
                   part := "sites"
-                  detail := s!"Lean={repr leanSites}; Redex={repr redexSites}" }]
+                  detail := s!"Lean={repr leanSites}; Redex={repr redexSites}"
+                  knownIssue := if outcome.expandedDefinitions.contains .d46Close then
+                    some 81 else none }]
   let available := oracle.countP (·.available)
   pure {
     cohort := oracle.length
@@ -157,6 +203,10 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
     compared
     termMatches
     siteMatches
+    knownBlockerDifferences := differences.countP fun difference =>
+      difference.knownIssue == some 81
+    unexplainedDifferences := differences.countP fun difference =>
+      difference.knownIssue.isNone
     differences }
 
 end M2

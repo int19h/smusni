@@ -82,6 +82,17 @@
                          (∧ (Among ,unit ,peer) (Among ,peer ,unit)))))))))]
     [_ (error 'm2-oracle "cannot infer CompleteGunmaAt basis type for ~e" basis)]))
 
+(define (instantiate-plural-dependencies datum type)
+  (match datum
+    [`(Distrib ,property ,reference)
+     (instantiate-plural-dependencies
+      (term (b1-expand-distrib ,type ,property ,reference)) type)]
+    [`(Overlap ,first ,second)
+     (instantiate-plural-dependencies
+      (term (b1-expand-overlap ,type ,first ,second)) type)]
+    [(? list?) (map (lambda (child) (instantiate-plural-dependencies child type)) datum)]
+    [_ datum]))
+
 (define (expand-term datum environment)
   (define (again value [env environment]) (expand-term value env))
   (match datum
@@ -152,7 +163,8 @@
      (define type (or (member-type property environment)
                       (reference-member reference environment)))
      (unless type (error 'm2-oracle "CoveredBy member type unavailable"))
-     (again (term (b1-expand-covered-by ,type ,property ,reference)))]
+     (again (instantiate-plural-dependencies
+             (term (b1-expand-covered-by ,type ,property ,reference)) type))]
     [`(SelectSome ,property)
      (define type (member-type property environment))
      (unless type (error 'm2-oracle "SelectSome member type unavailable"))
@@ -181,6 +193,8 @@
      (if (equal? output `(a0-expand-close ,row ,fills))
          (error 'm2-oracle "Close row domain unavailable")
          (again output))]
+    [`(Close ,_)
+     (error 'm2-oracle "Close has no adapter-supplied lexical row declaration")]
     [`(DirectClause ,property) (again property)]
     [`(ActualClause ,clause) (again (actual-clause clause))]
     [`(CoRef ,first ,second)

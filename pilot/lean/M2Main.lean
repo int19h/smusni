@@ -19,10 +19,12 @@ def main : IO Unit := do
     s!"M2 parity cohort={parity.cohort} available={parity.oracleAvailable} " ++
     s!"unavailable={parity.oracleUnavailable} compared={parity.compared} " ++
     s!"term-matches={parity.termMatches} site-matches={parity.siteMatches} " ++
-    s!"differences={parity.differences.length}"
+    s!"differences={parity.differences.length} known-81={parity.knownBlockerDifferences} " ++
+    s!"unexplained={parity.unexplainedDifferences}"
   for difference in parity.differences do
     IO.println <| s!"M2 parity-difference {difference.id} " ++
-      s!"part={difference.part} detail={difference.detail}"
+      s!"part={difference.part} issue={repr difference.knownIssue} " ++
+      s!"detail={difference.detail}"
   for outcome in cases.outcomes do
     if outcome.originalTag == "primitive-core" &&
         outcome.disposition != .typedUnchanged then

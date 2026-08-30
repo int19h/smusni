@@ -274,12 +274,8 @@
                (∧ ((λ (($event :: (Referents Eventuality))) (jmaji $w $event)) $actual_event) (fasnu $actual_event)))))
           $w1))))))
   (case (id "25087496e92097ae61f36b808ff5f741839aa26b")
-    (status available)
-    (term
-     (Bind
-      ($r :: (PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity)))))
-      (Context)
-      (Assert (Close ($r Speaker Audience))))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "258b2f3c9ce1b2f40ce28b1d99b981a3b7eed627")
     (status unavailable)
     (reason
@@ -540,12 +536,8 @@
             ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
             (fasnu $actual_event)))))))))
   (case (id "4042ee2afc837aa8bea2a718993dd4ed719ad42d")
-    (status available)
-    (term
-     (Bind
-      ($r :: (PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity)))))
-      (Context)
-      (Mention (Close ($r Speaker Audience))))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "411ad460c5065d3e54df4217a226516cb9b7e4ea")
     (status unavailable)
     (reason
@@ -958,35 +950,8 @@
         Speaker)
        (∧)))))
   (case (id "5fb2cbaf51ee51ea8e04140f1410110e6f30ccbf")
-    (status available)
-    (term
-     (Bind
-      ($kind :: (Referents Eventuality))
-      (Refer (λ (($k :: (Referents Eventuality))) (fasnu $k)))
-      (Bind
-       ($a :: (Referents AbstractNature))
-       (Refer
-        (λ (($x :: (Referents AbstractNature)))
-          (Close
-           ((SuhuRel
-             (Bind
-              ($ctx2 :: (Referents Entity))
-              (Context)
-              ($ctx3 :: (Referents Entity))
-              (Context)
-              ($ctx4 :: (Referents Entity))
-              (Context)
-              ($ctx5 :: (Referents Entity))
-              (Context)
-              (CloseClause
-               (λ (($actual_event :: (Referents Eventuality)))
-                 (∧
-                  ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event))
-                   $actual_event)
-                  (fasnu $actual_event))))))
-            $x
-            $kind))))
-       (Mention $a)))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "5feeebff2d1f37decc454689cbde025cfd011b4a")
     (status available)
     (term
@@ -2004,31 +1969,8 @@
              ((λ (($event :: (Referents Eventuality))) (klama $ctx1 $x $ctx3 $ctx4 $ctx5 $event)) $actual_event)
              (fasnu $actual_event)))))))))
   (case (id "b4f5a39f1b309245b2d50930cb69faed4a7b4716")
-    (status available)
-    (term
-     (Bind
-      ($a :: (Referents Amount))
-      (Refer
-       (λ (($x :: (Referents Amount)))
-         (Close
-          ((NiRel
-            (Bind
-             ($ctx2 :: (Referents Entity))
-             (Context)
-             ($ctx3 :: (Referents Entity))
-             (Context)
-             ($ctx4 :: (Referents Entity))
-             (Context)
-             ($ctx5 :: (Referents Entity))
-             (Context)
-             (CloseClause
-              (λ (($actual_event :: (Referents Eventuality)))
-                (∧
-                 ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event))
-                  $actual_event)
-                 (fasnu $actual_event))))))
-           $x))))
-      (Mention $a))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "b92059ed2600b14c09f0cbb9515567e36d32a11b")
     (status available)
     (term
@@ -2180,8 +2122,8 @@
             $w2)))
         $w2)))))
   (case (id "c3ef43fc929c9a2356838ee5d5de4bea0a7d5b0d")
-    (status available)
-    (term (λ (($p :: (PredTerm (RowOf zzzz)))) (Close $p))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "c3f807759c2a4b21cc592b0ff7b4858dbd44f1a8")
     (status unavailable)
     (reason
@@ -2358,7 +2300,7 @@
     (term
      (λ (($p :: (Fn (Eventuality) Content)) ($r :: (Referents Entity)))
        (∧
-        (∀ (λ (($member :: Entity)) (→ (Among $member $r) ($p $member))))
+        (∀ (λ (($member :: Eventuality)) (→ (Among $member $r) ($p $member))))
         (∀
          (λ (($subreference :: (Referents Eventuality)))
            (→
@@ -2553,18 +2495,8 @@
             (∧ ((StateClause (gerku Speaker)) $actual_event) (fasnu $actual_event)))))))
       (Mention $o))))
   (case (id "e72922e2754b6fbae2733c861813fd899a07eb3a")
-    (status available)
-    (term
-     (Express
-      (Close
-       (Desire
-        Speaker
-        (Reify
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (sipna Speaker $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+    (status unavailable)
+    (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
   (case (id "e97a3f27befc567d541ac57e93d47c88db3e5370")
     (status available)
     (term ((λ (($a :: (Act Assertion))) (Mention $a)) (Mention Speaker))))
