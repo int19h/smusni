@@ -11,3 +11,4 @@ import SmusniPilot.InterchangeLaws
 import SmusniPilot.BundleBinding
 import SmusniPilot.S1
 import SmusniPilot.Examples
+import SmusniPilot.M2Inventory

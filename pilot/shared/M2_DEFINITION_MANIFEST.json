@@ -1,0 +1,1006 @@
+{
+  "schema": "smusni-lean-m2-definition-manifest",
+  "version": 1,
+  "sources": {
+    "definitions": "tools/smusni-redex/inventory/definitions.sexp",
+    "definitions_sha256": "91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc",
+    "spec": "spec.md",
+    "spec_sha256": "19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4",
+    "range_supplement": "pilot/shared/M2_RANGE_SUPPLEMENT.tsv",
+    "range_supplement_sha256": "139688ab798c8fb814acd4f22c6fda31d45ff5b29333b555a8c188dfcb2add72"
+  },
+  "counts": {
+    "definition_port_state": 19,
+    "plan_v2_extra": 3,
+    "selected_definitions": 22,
+    "selected_domains": 1,
+    "selected_clauses": 28
+  },
+  "definitions": [
+    {
+      "id": "D12.AtLeast",
+      "head": "AtLeast",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "Bind",
+        "SelectAtLeast"
+      ],
+      "cases": [
+        "positive",
+        "zero"
+      ],
+      "domains": [
+        {
+          "name": "symbolic-natural",
+          "status": "executable",
+          "port_state": "none",
+          "reason": "Direct typing is total, but the two-equation metafunction cannot choose zero or positive before a symbolic Natural is instantiated."
+        }
+      ],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "20b1e099b421adcd9eecc03a37f1a2479c4a1083",
+        "ranges": [
+          [
+            3405,
+            3405
+          ],
+          [
+            3422,
+            3429
+          ]
+        ],
+        "range_sha256": "cad25d744a9f26b2788d2b5b352cf4a92f64ccff9df521654f415fd6b5418a44"
+      },
+      "equation": {
+        "ledger_sha1": "c93d0dce9d9243eceeabd8b2a5d159279e3adcbe",
+        "ranges": [
+          [
+            3405,
+            3405
+          ],
+          [
+            3429,
+            3429
+          ]
+        ],
+        "range_sha256": "678a2e02001dc873fed97c71ce33ab6267dfe0c47cc3045d0b72d3978d67ce99"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.AtMost",
+      "head": "AtMost",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "¬",
+        "AtLeast",
+        "+"
+      ],
+      "cases": [
+        "negated-successor"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "dfe99ff1052e003fad9450683cd6c456a44c99d1",
+        "ranges": [
+          [
+            3413,
+            3413
+          ]
+        ],
+        "range_sha256": "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
+      },
+      "equation": {
+        "ledger_sha1": "dfe99ff1052e003fad9450683cd6c456a44c99d1",
+        "ranges": [
+          [
+            3413,
+            3413
+          ]
+        ],
+        "range_sha256": "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Distrib",
+      "head": "Distrib",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∀",
+        "λ",
+        "→",
+        "Among"
+      ],
+      "cases": [
+        "universal-members"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "1795c4787baaf5964a8bff48b1bb2705a165bc44",
+        "ranges": [
+          [
+            3417,
+            3419
+          ]
+        ],
+        "range_sha256": "05fc1e6d340ee2201ea74c61bfbc97c4d0e7d33b6df12fdbf7a4ba2089e01506"
+      },
+      "equation": {
+        "ledger_sha1": "1d9bc7c360263f8d15eec5ffce16ac9578b60278",
+        "ranges": [
+          [
+            3417,
+            3417
+          ]
+        ],
+        "range_sha256": "7fb9ae1f51b7db97f144fd37539d0987e732c31e0dfe0df9d83e7e316672a7d4"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Every",
+      "head": "Every",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "Bind",
+        "MaxRefer",
+        "Distrib"
+      ],
+      "cases": [
+        "maximal-distribution"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "b0ee1faf419372cef5e59fd9f3b9e4258095d98a",
+        "ranges": [
+          [
+            3407,
+            3411
+          ]
+        ],
+        "range_sha256": "2d405cfde7bc52a9e889716bfaf001e194a0cc8eb24aa35476dcfbb0de901e35"
+      },
+      "equation": {
+        "ledger_sha1": "f18645615f00f5210f09bc6a2f70ed7e9a372620",
+        "ranges": [
+          [
+            3407,
+            3408
+          ]
+        ],
+        "range_sha256": "3e2a76a2e6860795c27e59225d45bb585dc17dec291463e95fd4c3c8e4f2c78a"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Exactly",
+      "head": "Exactly",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "Bind",
+        "SelectExactly",
+        "No"
+      ],
+      "cases": [
+        "positive",
+        "zero"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "bb45dd616e7461e16cbf8b2dce69b0e216f3c66f",
+        "ranges": [
+          [
+            3404,
+            3404
+          ],
+          [
+            3422,
+            3430
+          ]
+        ],
+        "range_sha256": "1230d6330f6a1ae3b93503aaf55ad590393e50cfdb717b9945d982fecd834c48"
+      },
+      "equation": {
+        "ledger_sha1": "ed2e3ff438b724f748de2b4ad65060faabb1e872",
+        "ranges": [
+          [
+            3404,
+            3404
+          ],
+          [
+            3430,
+            3430
+          ]
+        ],
+        "range_sha256": "0a6c858f8095b47b2683d608b94492814376d50822381f32f2ee8c43624e7613"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.FewerThan",
+      "head": "FewerThan",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "¬",
+        "AtLeast"
+      ],
+      "cases": [
+        "negated-at-least"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "92546d8f7488e601322b4631aefe4b15d1bd42ae",
+        "ranges": [
+          [
+            3415,
+            3415
+          ]
+        ],
+        "range_sha256": "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
+      },
+      "equation": {
+        "ledger_sha1": "92546d8f7488e601322b4631aefe4b15d1bd42ae",
+        "ranges": [
+          [
+            3415,
+            3415
+          ]
+        ],
+        "range_sha256": "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.GlobalExactly",
+      "head": "GlobalExactly",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "=",
+        "Card",
+        "SetOf",
+        "λ",
+        "∧"
+      ],
+      "cases": [
+        "comprehension"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "f6515b638e3a3ef07f389ae77df31393cbf62c7c",
+        "ranges": [
+          [
+            3416,
+            3416
+          ]
+        ],
+        "range_sha256": "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
+      },
+      "equation": {
+        "ledger_sha1": "f6515b638e3a3ef07f389ae77df31393cbf62c7c",
+        "ranges": [
+          [
+            3416,
+            3416
+          ]
+        ],
+        "range_sha256": "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Grade",
+      "head": "Grade",
+      "selection": "plan-v2-extra",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "InRegion"
+      ],
+      "cases": [
+        "row-directed"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            1901,
+            1917
+          ],
+          [
+            3488,
+            3509
+          ]
+        ],
+        "range_sha256": "3cf2dcc1f2468b7c33a14905b818154402e2da4d0c692ba1d9b0b3a1767203de"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3504,
+            3505
+          ]
+        ],
+        "range_sha256": "ba9e522eaf9f56cd6632f2137ba9398d29d00b1b8b023d0fbc7850daeef1635a"
+      },
+      "supplement": {
+        "kind": "schema",
+        "reason": "Grade is a pure row-directed schema in section 6.4 and its library equation, not the L5.29 site-introducing lowering."
+      }
+    },
+    {
+      "id": "D12.JaiRaise",
+      "head": "JaiRaise",
+      "selection": "plan-v2-extra",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "PredTerm",
+        "JaiRoleAdmissible"
+      ],
+      "cases": [
+        "raised-role",
+        "bare-jai-mapping"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3316,
+            3321
+          ],
+          [
+            3769,
+            3808
+          ]
+        ],
+        "range_sha256": "57f43c30afdac7265c66a455499629e382b5d2b3044c78f800174863d1268b76"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            3785,
+            3788
+          ],
+          [
+            3795,
+            3802
+          ]
+        ],
+        "range_sha256": "2330e0c3595d2a794df9d999a4cd5a40461f2a315a577874cd0e8bf108f1803f"
+      },
+      "supplement": {
+        "kind": "schema-mapping",
+        "reason": "JaiRaise has a pure row-reconstruction equation plus the bare-jai Context-binding mapping."
+      }
+    },
+    {
+      "id": "D12.Massify",
+      "head": "Massify",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "SelectExactly",
+        "λ",
+        "CanonicalAggregateAt"
+      ],
+      "cases": [
+        "canonical-selection"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "ba3854dcca84f6df53b1688c039ea9b83114d7ba",
+        "ranges": [
+          [
+            3565,
+            3567
+          ]
+        ],
+        "range_sha256": "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
+      },
+      "equation": {
+        "ledger_sha1": "ba3854dcca84f6df53b1688c039ea9b83114d7ba",
+        "ranges": [
+          [
+            3565,
+            3567
+          ]
+        ],
+        "range_sha256": "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.MaxRefer",
+      "head": "MaxRefer",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "Presuppose",
+        "∃",
+        "Refer",
+        "λ",
+        "∧",
+        "CoveredBy",
+        "∀",
+        "→",
+        "Among"
+      ],
+      "cases": [
+        "inhabited-maximal-reference"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "95e376fb51889cf09c3d76996eefe1b22911fad8",
+        "ranges": [
+          [
+            3650,
+            3661
+          ]
+        ],
+        "range_sha256": "a1dcc212677ff270f90b1f551996305450fff289faaccc631a0733f9dc4ba1df"
+      },
+      "equation": {
+        "ledger_sha1": "b363621f6d435cdb5ea974cea9c940473612b199",
+        "ranges": [
+          [
+            3650,
+            3654
+          ]
+        ],
+        "range_sha256": "938b551803291b47dedba24085ba223d908f3d54d26ee7d5a1f7a473c6360713"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.MoreThan",
+      "head": "MoreThan",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "AtLeast",
+        "+"
+      ],
+      "cases": [
+        "successor"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "4147cd0cc804ffa7268c72942af65ecf8ebdef03",
+        "ranges": [
+          [
+            3414,
+            3414
+          ]
+        ],
+        "range_sha256": "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
+      },
+      "equation": {
+        "ledger_sha1": "4147cd0cc804ffa7268c72942af65ecf8ebdef03",
+        "ranges": [
+          [
+            3414,
+            3414
+          ]
+        ],
+        "range_sha256": "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.No",
+      "head": "No",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "¬",
+        "Some"
+      ],
+      "cases": [
+        "negated-some"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "32e9f28d8e8a18ec3bf9493655819543cb9a65e7",
+        "ranges": [
+          [
+            3412,
+            3412
+          ]
+        ],
+        "range_sha256": "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
+      },
+      "equation": {
+        "ledger_sha1": "32e9f28d8e8a18ec3bf9493655819543cb9a65e7",
+        "ranges": [
+          [
+            3412,
+            3412
+          ]
+        ],
+        "range_sha256": "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Overlap",
+      "head": "Overlap",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∃",
+        "λ",
+        "∧",
+        "Among"
+      ],
+      "cases": [
+        "common-subreference"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "985eab3a816f8583b31b3290613a45c278215adc",
+        "ranges": [
+          [
+            3605,
+            3605
+          ]
+        ],
+        "range_sha256": "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
+      },
+      "equation": {
+        "ledger_sha1": "985eab3a816f8583b31b3290613a45c278215adc",
+        "ranges": [
+          [
+            3605,
+            3605
+          ]
+        ],
+        "range_sha256": "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Some",
+      "head": "Some",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "Bind",
+        "SelectSome"
+      ],
+      "cases": [
+        "witness"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "ac3d3e1ca35d6741c60e4c023fd136c46ee0959f",
+        "ranges": [
+          [
+            3406,
+            3406
+          ]
+        ],
+        "range_sha256": "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
+      },
+      "equation": {
+        "ledger_sha1": "ac3d3e1ca35d6741c60e4c023fd136c46ee0959f",
+        "ranges": [
+          [
+            3406,
+            3406
+          ]
+        ],
+        "range_sha256": "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.TooMany",
+      "head": "TooMany",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "Bind",
+        "Context",
+        "Vague",
+        "AdmissibleThreshold",
+        "MoreThan"
+      ],
+      "cases": [
+        "dependent-threshold"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "7678eae3b6f1ecd07cb179c402e1b95cbfe45175",
+        "ranges": [
+          [
+            3477,
+            3479
+          ]
+        ],
+        "range_sha256": "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
+      },
+      "equation": {
+        "ledger_sha1": "7678eae3b6f1ecd07cb179c402e1b95cbfe45175",
+        "ranges": [
+          [
+            3477,
+            3479
+          ]
+        ],
+        "range_sha256": "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.ZipWith",
+      "head": "ZipWith",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "∧",
+        "List"
+      ],
+      "cases": [
+        "empty",
+        "paired-step"
+      ],
+      "domains": [
+        {
+          "name": "equal-length",
+          "status": "executable",
+          "port_state": "a0",
+          "reason": "A0 ports the settled base and paired recursive equations."
+        },
+        {
+          "name": "unequal-length",
+          "status": "['blocked', '\"#41\"']",
+          "port_state": "none",
+          "reason": "Unequal-list behavior is human-partner-open in issue #41 item 6."
+        }
+      ],
+      "selected_domains": [
+        {
+          "name": "equal-length",
+          "status": "executable",
+          "port_state": "a0",
+          "reason": "A0 ports the settled base and paired recursive equations."
+        }
+      ],
+      "spec": {
+        "ledger_sha1": "6f8a3495d09386006bfd112eed76082d1178a300",
+        "ranges": [
+          [
+            3622,
+            3628
+          ]
+        ],
+        "range_sha256": "2582167bdebae0b1a0da94a78d5ad356a9e74baa4da9ef5a3ab586f082360e28"
+      },
+      "equation": {
+        "ledger_sha1": "dadaca9429330518fbe548103617a553df31e001",
+        "ranges": [
+          [
+            3626,
+            3628
+          ]
+        ],
+        "range_sha256": "a5f3ab596f8a016c989b3015ae4da31c8f93253f2a192273b80fef204912c937"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D4.4.Let",
+      "head": "Let",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "λ"
+      ],
+      "cases": [
+        "beta"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "f28dcd08c220e46b1e31801409157282d70d7680",
+        "ranges": [
+          [
+            613,
+            615
+          ]
+        ],
+        "range_sha256": "05ef09f9d3e14436471ebbfb26eb4d37d0bce8fe0ade7576b3bcd75082ee10a2"
+      },
+      "equation": {
+        "ledger_sha1": "cd475aba1b2351cc285df67e093358f82055aff6",
+        "ranges": [
+          [
+            615,
+            615
+          ]
+        ],
+        "range_sha256": "1d05667b2a11b54d987a23c68a9a1fc4d757f0ae5ac6346e65f8e42966f5101d"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D4.6.Close",
+      "head": "Close",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "a0",
+      "dependencies": [
+        "CloseClause",
+        "ActualClause",
+        "DirectClause"
+      ],
+      "cases": [
+        "direct-event-explicit",
+        "direct-event-implicit",
+        "holding-state"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "479e81d19d4915cafff69e9deadd7d40c8b16d7a",
+        "ranges": [
+          [
+            699,
+            713
+          ]
+        ],
+        "range_sha256": "925d6b638fe27aa1a1e06bff5bc2b75392c505a9596023bc8a17f77310d17476"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            703,
+            704
+          ],
+          [
+            706,
+            709
+          ],
+          [
+            711,
+            712
+          ]
+        ],
+        "range_sha256": "1a5024f1978bfc8fc6866a776468db34eb74ea609468759e204504b89c6fd9c6"
+      },
+      "supplement": {
+        "kind": "definition",
+        "reason": "The ledger records the section span but lacks equation-case ranges for the three type-directed Close clauses."
+      }
+    },
+    {
+      "id": "D4.8.CoveredBy",
+      "head": "CoveredBy",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∧",
+        "Distrib",
+        "∀",
+        "λ",
+        "→",
+        "Among",
+        "∃",
+        "Overlap"
+      ],
+      "cases": [
+        "no-residue"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "151a19d670e9d6374eae4178f418d72591a9d097",
+        "ranges": [
+          [
+            808,
+            817
+          ]
+        ],
+        "range_sha256": "d274dd5d6df6cbe272866c81f5ff9552e648b52845f0902c55be66c9b10a5d86"
+      },
+      "equation": {
+        "ledger_sha1": "90142eae284856a8b91eec869c0a272d5faef32b",
+        "ranges": [
+          [
+            812,
+            817
+          ]
+        ],
+        "range_sha256": "119fa557a7a1fa02505e4a4852ed971dc1c77647ecd8bb4db3316a319730a0ce"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D5.3.Refer-member-lift",
+      "head": "Refer",
+      "selection": "plan-v2-extra",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "none",
+      "dependencies": [
+        "CoveredBy"
+      ],
+      "cases": [
+        "member-lift"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            1452,
+            1466
+          ]
+        ],
+        "range_sha256": "9892b13a0fd9b39beaebcf098ad2ca6c45a124030c1f773ab50f8c057b28105f"
+      },
+      "equation": {
+        "ledger_sha1": "none",
+        "ranges": [
+          [
+            1454,
+            1455
+          ]
+        ],
+        "range_sha256": "5e8deb7adaccc5cee07a08ca2c3f66ef728a9b3151091c051b3162224f7c8d76"
+      },
+      "supplement": {
+        "kind": "domain-overload",
+        "reason": "The member-property overload is a purity-demanding defined lift while reference-level Refer remains primitive."
+      }
+    },
+    {
+      "id": "D5.6.SelectSome",
+      "head": "SelectSome",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "SelectAtLeast"
+      ],
+      "cases": [
+        "at-least-one"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "0c89fe3d44d03d0f8b8c1b9898cf2e1e3e37eec9",
+        "ranges": [
+          [
+            1563,
+            1566
+          ]
+        ],
+        "range_sha256": "9b1b8b5abe9405f056667e083929a3d2933d2f4d9bafdaa9cf27db2eba51456c"
+      },
+      "equation": {
+        "ledger_sha1": "2421413a8b8dba2d541068b80e5235ba71e5f0dd",
+        "ranges": [
+          [
+            1566,
+            1566
+          ]
+        ],
+        "range_sha256": "5ed705e778744900b30a691d7ece68d344ed55fc318f9eb8ecd10f45cdbd7a21"
+      },
+      "supplement": null
+    }
+  ]
+}

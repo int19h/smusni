@@ -1,0 +1,853 @@
+{
+  "schema": "smusni-lean-m2-typing-manifest",
+  "version": 1,
+  "source": "tools/smusni-redex/port-a0.rkt",
+  "source_sha256": "5966ff2403b4c37dd5b02ddffab33db15d2ded73f2cf0441602c2ac377d9534f",
+  "counts": {
+    "required_rules": 78,
+    "supported_rules": 78,
+    "unsupported_rules": 0,
+    "grammar_categories": 7
+  },
+  "grammar": {
+    "τ": {
+      "source_range": [
+        66,
+        72
+      ],
+      "source_sha256": "ddd5841444bed59674aab9de564f4a346a674cb6f30365246adfee62ae445bbe",
+      "source": "[τ Entity Eventuality Number Natural Cardinal Content ClauseContent Discourse ThresholdKind (Referents τ) (Group τ) (List τ) (Set τ) (DecompositionBasis τ τ) (Act force) (ActOccurrence force) (Fn (τ ...) τ) (EFn (τ ...) τ) (RefComp τ) (PerfComp τ)]"
+    },
+    "direction": {
+      "source_range": [
+        73,
+        73
+      ],
+      "source_sha256": "eb5ec310fab7e1459145cab7d8e95aa8fa6cfae2ce8982aa478725424f6dd55b",
+      "source": "[direction synth (check τ)]"
+    },
+    "R": {
+      "source_range": [
+        75,
+        75
+      ],
+      "source_sha256": "e9cc470d4fb06e2c0c6ec7ced8f6692ead4f0d4433c02abba7556104fa11af69",
+      "source": "[R (typing τ (effect ...) (obligation ...))]"
+    },
+    "t": {
+      "source_range": [
+        81,
+        133
+      ],
+      "source_sha256": "b98defc81b5bded0c2151eb52ec085ab1382d07337db2d5510659657fcaa06f1",
+      "source": "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
+    },
+    "ρdecl": {
+      "source_range": [
+        134,
+        134
+      ],
+      "source_sha256": "53368971f7f0abc60f5107f981b6cf1e92d82b6eec8e9fc2d86bb8cbe26b6ba8",
+      "source": "[ρdecl (row variable-not-otherwise-mentioned n event-mode (label ...))]"
+    },
+    "dep": {
+      "source_range": [
+        140,
+        140
+      ],
+      "source_sha256": "2a1dac01c6d9a2d75f8fe1bfe837364b5b522f108db0f8246b89044f1153b5e9",
+      "source": "[dep (site site-id) (outer x τ) (member)]"
+    },
+    "role": {
+      "source_range": [
+        141,
+        141
+      ],
+      "source_sha256": "71783de21e76648de58b32e193eb0f3cccf54207846901559657fe2dd6de2367",
+      "source": "[role (context t ...) (vague t)]"
+    }
+  },
+  "rules": [
+    {
+      "id": "A0-Synth",
+      "anchor": "spec §1.6, §3",
+      "source_range": [
+        1829,
+        1831
+      ],
+      "source_sha256": "40dd4cf4e380a7ebca7e8bf68ca4e225469f25191320ca135c29602abf2bf339",
+      "conclusion": "(a0-synth Γ t R)"
+    },
+    {
+      "id": "A0-Check",
+      "anchor": "spec §1.6, §3",
+      "source_range": [
+        1836,
+        1838
+      ],
+      "source_sha256": "5453f547aade95407a7e888072570b78ce39d540acf34ac728b624b65d5aadad",
+      "conclusion": "(a0-check Γ t τ R)"
+    },
+    {
+      "id": "A0-T-Natural",
+      "anchor": "spec §3.1",
+      "source_range": [
+        1038,
+        1039
+      ],
+      "source_sha256": "eb9c649cd91df43382bfe6f2ef5d2ed0b97c5b9fb9af8e021cd266e3b72e82ef",
+      "conclusion": "(a0-type synth Γ n (typing Natural () ()))"
+    },
+    {
+      "id": "A0-T-Speaker",
+      "anchor": "spec §5.1",
+      "source_range": [
+        1041,
+        1042
+      ],
+      "source_sha256": "333e4b25f92d3f0acc92adac8e4cc7c6d07e5d55fae1c7fdf1e0618ad2ec28fb",
+      "conclusion": "(a0-type synth Γ Speaker (typing (Referents Entity) () ()))"
+    },
+    {
+      "id": "A0-T-Audience",
+      "anchor": "spec §5.1",
+      "source_range": [
+        1044,
+        1045
+      ],
+      "source_sha256": "217f5ae7506e5e038ba31a2d84f113873b7d1b3a27c465155505efe50f534942",
+      "conclusion": "(a0-type synth Γ Audience (typing (Referents Entity) () ()))"
+    },
+    {
+      "id": "A0-T-ThresholdKind",
+      "anchor": "spec §6.4",
+      "source_range": [
+        1047,
+        1048
+      ],
+      "source_sha256": "d11c4ffd8f51adcc59c30dd222e8049b2801fb0d4957793d8ba359982dc2d682",
+      "conclusion": "(a0-type synth Γ TooManyK (typing ThresholdKind () ()))"
+    },
+    {
+      "id": "A0-T-Top",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1050,
+        1051
+      ],
+      "source_sha256": "a7fd9bf1ff85bf3a88cae7e398996aa9afb580daa5f66afa00beabc6f432134b",
+      "conclusion": "(a0-type synth Γ ⊤ (typing Content () ()))"
+    },
+    {
+      "id": "A0-T-Variable",
+      "anchor": "spec §4.4",
+      "source_range": [
+        1053,
+        1055
+      ],
+      "source_sha256": "faddd276342fb6076b794bd29bfee5f50e275c9800198527fa378d93b10c2b11",
+      "conclusion": "(a0-type synth Γ x (typing τ () ()))"
+    },
+    {
+      "id": "A0-T-Lambda-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1057,
+        1066
+      ],
+      "source_sha256": "6a1e314ac3cd6f2f0b90f447430ac8ccde818319425e6d7e777a76dfe9d5a459",
+      "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (Fn (τ) τ_body) () (obligation_scoped ...)))"
+    },
+    {
+      "id": "A0-T-Lambda-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1068,
+        1078
+      ],
+      "source_sha256": "262950e007af10f924d9c9cfe4bcbb3f96eb64a62ffe89cb339824ba3dd474cc",
+      "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (EFn (τ) τ_body) () (obligation_scoped ...)))"
+    },
+    {
+      "id": "A0-T-Lambda-Multi-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1080,
+        1093
+      ],
+      "source_sha256": "fa47ee1cd04923ec9e3c971b17088bbb8ccc9393e263cfd26a10dfd3378670f7",
+      "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
+    },
+    {
+      "id": "A0-T-Lambda-Multi-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1095,
+        1109
+      ],
+      "source_sha256": "1bf0b21824adf3b3f24f665cc88159ab6552f2e8d444d737272c35a3fa0a59bf",
+      "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
+    },
+    {
+      "id": "A0-T-Let",
+      "anchor": "spec §4.4; §12 Let",
+      "source_range": [
+        1111,
+        1125
+      ],
+      "source_sha256": "1d31494889ba5ecbe9251b5c6b8398c3cb94d09169072de493de24ea88c36c6b",
+      "conclusion": "(a0-type synth Γ (Let (x τ) t_value t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Bind-Nest",
+      "anchor": "spec §4.4, §5.2",
+      "source_range": [
+        1127,
+        1133
+      ],
+      "source_sha256": "81e5e177bba17525207fdff7d89f75aa7dec36a12b4e4aec8c198548d44242c6",
+      "conclusion": "(a0-type synth Γ (Bind (binding_0 binding_1 binding_rest ...) t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Bind-Reference",
+      "anchor": "spec §5.2",
+      "source_range": [
+        1135,
+        1143
+      ],
+      "source_sha256": "e9a73b4625aa95855f2b7f2d265dabbf34b41ae58b4003ba41c076d431fcbd5d",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Bind-Performance-Act",
+      "anchor": "spec §5.2, §7.1",
+      "source_range": [
+        1145,
+        1159
+      ],
+      "source_sha256": "d9b39adf53c870e1af1d2433c5b4f54539dae3d10a4f71df01e2ce706e0a1204",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Bind-Performance-Comp",
+      "anchor": "spec §5.2, §7.1",
+      "source_range": [
+        1161,
+        1176
+      ],
+      "source_sha256": "a2d6a983ef825a61881fb83aca33d3487fc54f40a0fd2530968ed93ece313f7a",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Bind-Performance-Discourse",
+      "anchor": "spec §5.2, §7.1",
+      "source_range": [
+        1178,
+        1192
+      ],
+      "source_sha256": "a018f94c9076ad5771415765802384ba10f35aa41bbb59e758e6607b1d9f9cfc",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
+    },
+    {
+      "id": "A0-T-Check-Synth",
+      "anchor": "spec §1.6, §3",
+      "source_range": [
+        1194,
+        1199
+      ],
+      "source_sha256": "9f7d98af84d383378a10aa874506b96eb9ec98b274b99b9d4a1c19e24b7c64f5",
+      "conclusion": "(a0-type (check τ_expected) Γ t_actual R_actual)"
+    },
+    {
+      "id": "A0-T-Context",
+      "anchor": "spec §5.3",
+      "source_range": [
+        1201,
+        1205
+      ],
+      "source_sha256": "278ac9fb1bd918c57d29c31d0a3b8dd6b941ff52941acc0f869e8facc0e894ee",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Context t_argument ...) R_out)"
+    },
+    {
+      "id": "A0-T-Vague",
+      "anchor": "spec §6.4–§6.5",
+      "source_range": [
+        1207,
+        1211
+      ],
+      "source_sha256": "b166b8514c074d043567a8a5710f6878d757b44ca239fcbcb4eab32561a06a3a",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Vague t_property) (typing (RefComp τ) (context) (obligation ...)))"
+    },
+    {
+      "id": "A0-T-Refer-Reference",
+      "anchor": "spec §5.3",
+      "source_range": [
+        1213,
+        1223
+      ],
+      "source_sha256": "e0ae54cbc08b6c8f1ed6368c702f33606472718545338c2620654b59488c29e9",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
+    },
+    {
+      "id": "A0-T-Refer-Member",
+      "anchor": "spec §5.3",
+      "source_range": [
+        1225,
+        1233
+      ],
+      "source_sha256": "89c802fd966e8c803a7663bb4ac5fbbf8418f72b17a7620a3d869a27c80446f5",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
+    },
+    {
+      "id": "A0-T-SelectExactly",
+      "anchor": "spec §5.6",
+      "source_range": [
+        1235,
+        1246
+      ],
+      "source_sha256": "e66e7de1f92240a3531b1744463b057b681ed2d7e9c2890a494fa88baca22690",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectExactly t_count t_property) R_out)"
+    },
+    {
+      "id": "A0-T-SelectSome",
+      "anchor": "spec §5.6",
+      "source_range": [
+        1248,
+        1257
+      ],
+      "source_sha256": "30c30acd90b4351115534b56ea961a7a9d876685e355190a27c9e99d5f0414f3",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectSome t_property) R_out)"
+    },
+    {
+      "id": "A0-T-Massify",
+      "anchor": "spec §4.8; §12 Massify",
+      "source_range": [
+        1295,
+        1308
+      ],
+      "source_sha256": "07de5aaa5ffc21426a131f1fe046fe499c457f14f861b968bdd510e05044cd6b",
+      "conclusion": "(a0-type (check (RefComp (Referents (Group τ)))) Γ (Massify t_basis t_cover) R_out)"
+    },
+    {
+      "id": "A0-T-Perform",
+      "anchor": "spec §7.1",
+      "source_range": [
+        1310,
+        1315
+      ],
+      "source_sha256": "6c1a5aeb46dc774d872a34402b46633e2ef45c0f411a0a48ebea3b3c7301ecf3",
+      "conclusion": "(a0-type synth Γ (Perform t_act) (typing (PerfComp (ActOccurrence force)) (performance) (obligation ...)))"
+    },
+    {
+      "id": "A0-T-Exactly-Zero",
+      "anchor": "spec §4.10; §12 Exactly",
+      "source_range": [
+        1317,
+        1326
+      ],
+      "source_sha256": "a5d433b531335c17b4f76a1bd2d7d1f9289dbbcce445f4c161c42319900edf36",
+      "conclusion": "(a0-type synth Γ (Exactly 0 v_P v_Q) R_out)"
+    },
+    {
+      "id": "A0-T-Exactly-Positive",
+      "anchor": "spec §4.10; §12 Exactly",
+      "source_range": [
+        1328,
+        1338
+      ],
+      "source_sha256": "e981ced3f1e762e285d4c52ea5b0613455504ee164afa2e92dabbada3ce525b6",
+      "conclusion": "(a0-type synth Γ (Exactly t_count v_P v_Q) R_out)"
+    },
+    {
+      "id": "A0-T-No",
+      "anchor": "spec §4.10; §12 No",
+      "source_range": [
+        1397,
+        1404
+      ],
+      "source_sha256": "6be7e700b0b5c44478d15b6bce0f434111708835c37cf04a4f99a0c186b369ce",
+      "conclusion": "(a0-type synth Γ (No v_P v_Q) R_out)"
+    },
+    {
+      "id": "A0-T-MoreThan",
+      "anchor": "spec §4.10; §12 MoreThan",
+      "source_range": [
+        1417,
+        1426
+      ],
+      "source_sha256": "8a1ebc75ca23ee3312187098a06375a54427f1a3ce9c6353198c5ff7b78b8d50",
+      "conclusion": "(a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)"
+    },
+    {
+      "id": "A0-T-GlobalExactly",
+      "anchor": "spec §4.10; §12 GlobalExactly",
+      "source_range": [
+        1460,
+        1468
+      ],
+      "source_sha256": "8a0a4f9878674ac9c077f34365139b53d2aaa91914d58f81f7f90578cb77f93f",
+      "conclusion": "(a0-type synth Γ (GlobalExactly t_n t_P t_Q) R_out)"
+    },
+    {
+      "id": "A0-T-TooMany",
+      "anchor": "spec §6.4; §12 TooMany",
+      "source_range": [
+        1470,
+        1479
+      ],
+      "source_sha256": "ada743b2d2adc9de2fceb69fa1d851424a1031cb517a5dd0a5c412a31f825468",
+      "conclusion": "(a0-type synth Γ (TooMany t_P t_Q) R_out)"
+    },
+    {
+      "id": "A0-T-AdmissibleThreshold",
+      "anchor": "spec §6.4",
+      "source_range": [
+        1481,
+        1490
+      ],
+      "source_sha256": "f3a4521aeea0f422fb6835981a70ad2558cea8e910e8f4603f9cd70a32881e1a",
+      "conclusion": "(a0-type synth Γ (AdmissibleThreshold t_kind t_P t_purpose) R_out)"
+    },
+    {
+      "id": "A0-T-CanonicalAggregateAt",
+      "anchor": "spec §4.8",
+      "source_range": [
+        1492,
+        1500
+      ],
+      "source_sha256": "f02589979ee46a9d9d219e86fd3e9fc9459e223cb7e8ba66c26bbf52e0a8e141",
+      "conclusion": "(a0-type synth Γ (CanonicalAggregateAt t_basis t_group t_cover) R_out)"
+    },
+    {
+      "id": "A0-T-SetOf",
+      "anchor": "spec §4.9",
+      "source_range": [
+        1502,
+        1506
+      ],
+      "source_sha256": "73548af40a02b7dbdd37e9360d92ecbaf3aa832ab229152c6a9d8ecd63c6cadb",
+      "conclusion": "(a0-type synth Γ (SetOf t_P) R_out)"
+    },
+    {
+      "id": "A0-T-Card",
+      "anchor": "spec §4.9",
+      "source_range": [
+        1508,
+        1514
+      ],
+      "source_sha256": "89e3abe80ee4c11bc75f2f785925d8724b4e89230a5b64e246ba506effa68c85",
+      "conclusion": "(a0-type synth Γ (Card t_set) R_out)"
+    },
+    {
+      "id": "A0-T-Equality",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1516,
+        1528
+      ],
+      "source_sha256": "3991b0c7916a1c2c44409c003231096cb6c6e31c68323c16230f144beaa0b36a",
+      "conclusion": "(a0-type synth Γ (= t_left t_right) R_out)"
+    },
+    {
+      "id": "A0-T-And",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1540,
+        1544
+      ],
+      "source_sha256": "ebf5f4732973f26b370cbf106e1395e6839b0d91a73135d1da68b83bf91872de",
+      "conclusion": "(a0-type synth Γ (∧ t_left t_right) R_out)"
+    },
+    {
+      "id": "A0-T-CoRef",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1620,
+        1624
+      ],
+      "source_sha256": "5f7ca35b31d07a0f65c5c54d9ac645b77790350d37c416aa9070bee654417c0d",
+      "conclusion": "(a0-type synth Γ (CoRef t_left t_right) R_out)"
+    },
+    {
+      "id": "A0-T-List-Check",
+      "anchor": "spec §4.9",
+      "source_range": [
+        1664,
+        1667
+      ],
+      "source_sha256": "5fb37a0a07d7fd8f11705a7053702b50432e23421cf22d243688c658319c5e53",
+      "conclusion": "(a0-type (check (List τ)) Γ (List t_item ...) R_out)"
+    },
+    {
+      "id": "A0-T-ZipWith-Pure",
+      "anchor": "spec §4.9; §12 ZipWith",
+      "source_range": [
+        1669,
+        1681
+      ],
+      "source_sha256": "52d4e31ec1229236315294e3e8e431fa7b2d0e1faec3a680d1841bacf8818341",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
+    },
+    {
+      "id": "A0-T-ZipWith-Empty-Effectful",
+      "anchor": "spec §4.9; §12 ZipWith empty",
+      "source_range": [
+        1683,
+        1692
+      ],
+      "source_sha256": "516bbe2b4a35e85689f6b9772904cd87ac2e9643eb2b58736f5447f4cc34385c",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f (List) (List)) R_out)"
+    },
+    {
+      "id": "A0-T-ZipWith-Effectful",
+      "anchor": "spec §4.9; §12 ZipWith",
+      "source_range": [
+        1694,
+        1709
+      ],
+      "source_sha256": "e451c9266808e1d928f1237ffbc4473e5a3d9348af91d113a5bbf7b3852cb27c",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
+    },
+    {
+      "id": "A0-T-StateClause",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1711,
+        1714
+      ],
+      "source_sha256": "176d484b48bfa17875d7bd9cad5fe699da383a367c5260c1052f06c16da2308f",
+      "conclusion": "(a0-type synth Γ (StateClause t_content) R_out)"
+    },
+    {
+      "id": "A0-T-DirectClause-Pure",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1716,
+        1726
+      ],
+      "source_sha256": "de8c6d1726e995b8c6b092b826752e7f793b530f803e1e71d639d603030ffe92",
+      "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)"
+    },
+    {
+      "id": "A0-T-DirectClause-Effectful",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1728,
+        1738
+      ],
+      "source_sha256": "5d2a99eadfa0e997b7c2527882fa6dfa67dc5bd84223ad0988f6576727666f79",
+      "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)"
+    },
+    {
+      "id": "A0-T-ActualClause-State",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1740,
+        1748
+      ],
+      "source_sha256": "c5da08f7037872b42e257b6edd0bd85c2642e3bffcaafa4b8ceadbb8d13ac11f",
+      "conclusion": "(a0-type synth Γ (ActualClause t_clause) R_out)"
+    },
+    {
+      "id": "A0-T-ActualClause-Event-Pure",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1750,
+        1755
+      ],
+      "source_sha256": "a1280af17d3f68432c357c450ee10c058c1aa18efa9157ed9754b25b290cb562",
+      "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)"
+    },
+    {
+      "id": "A0-T-ActualClause-Event-Effectful",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1757,
+        1762
+      ],
+      "source_sha256": "cdd7b0dd8a2cddb668a2d2faad9a47b7d86e0467403fa0978afd395eba25f5ac",
+      "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)"
+    },
+    {
+      "id": "A0-T-CloseClause",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1764,
+        1767
+      ],
+      "source_sha256": "e511dbbc050ab0ec631ebe19450c2743471d1d9728c09870922c1cba769bf8f0",
+      "conclusion": "(a0-type synth Γ (CloseClause t_clause) R_out)"
+    },
+    {
+      "id": "A0-T-CloseWith",
+      "anchor": "spec §4.6",
+      "source_range": [
+        1769,
+        1782
+      ],
+      "source_sha256": "6a414c74b72afba0e461081297f0e858d80c62f78fec4f9567307dcfc682b32a",
+      "conclusion": "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)"
+    },
+    {
+      "id": "A0-T-Apply-ClauseContent",
+      "anchor": "spec §3.4, §4.6",
+      "source_range": [
+        1784,
+        1796
+      ],
+      "source_sha256": "de13250bfb83e59d2194452726b94f3b31403db058c26de28662be16f0e2e7bb",
+      "conclusion": "(a0-type synth Γ (t_function t_argument) R_out)"
+    },
+    {
+      "id": "A0-T-Apply-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1798,
+        1810
+      ],
+      "source_sha256": "5f103df9cb0041abb31b4b44f7481da3136b20c957c539eb722dece6abed4560",
+      "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)"
+    },
+    {
+      "id": "A0-T-Apply-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_range": [
+        1812,
+        1824
+      ],
+      "source_sha256": "5d6ccd91e24ce471c9dff9a68c0f87f2d87057baf3bda7c8302a5a336f0d010e",
+      "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)"
+    },
+    {
+      "id": "B1-T-SelectAtLeast",
+      "anchor": "spec §5.6; §12 selection floor",
+      "source_range": [
+        1259,
+        1270
+      ],
+      "source_sha256": "8080c4ffc1cbbbbf25e37bee08b9c76eddb0553e8db36f6b787c372eea30e9d9",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAtLeast t_count t_property) R_out)"
+    },
+    {
+      "id": "B1-T-SelectAllBut",
+      "anchor": "spec §5.6; §12 SelectAllBut",
+      "source_range": [
+        1272,
+        1282
+      ],
+      "source_sha256": "73b2a78bf588309d4aa99eaa1bc1a46dea949389d35430f282766e0896dab771",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAllBut t_count t_property) R_out)"
+    },
+    {
+      "id": "B1-T-MaxRefer",
+      "anchor": "spec §5.3; §12 MaxRefer",
+      "source_range": [
+        1284,
+        1293
+      ],
+      "source_sha256": "010982ba33e40f17badaae1e813ca56e0e6c2ab064cb6aab7aa8e0b069656a7e",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)"
+    },
+    {
+      "id": "B1-T-Implication",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1546,
+        1550
+      ],
+      "source_sha256": "2ff77c16bc789d5d7f35f169cddad194745ba4aa8c8050041d25e16d6f6477c0",
+      "conclusion": "(a0-type synth Γ (→ t_left t_right) R_out)"
+    },
+    {
+      "id": "B1-T-Negation",
+      "anchor": "spec §4.5, §5.4",
+      "source_range": [
+        1552,
+        1555
+      ],
+      "source_sha256": "fab4f6bc61eb0bd0538b4ab63f2889f1e5efe90e858d13fbb89bd1e2a4588eb2",
+      "conclusion": "(a0-type synth Γ (¬ t_body) R_out)"
+    },
+    {
+      "id": "B1-T-Forall",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1557,
+        1572
+      ],
+      "source_sha256": "f8818c60aaa78a1aad8c509e8194628c68ec4c8c271723e01be65777535e8591",
+      "conclusion": "(a0-type synth Γ (∀ v_property) R_out)"
+    },
+    {
+      "id": "B1-T-Exists",
+      "anchor": "spec §4.5",
+      "source_range": [
+        1574,
+        1589
+      ],
+      "source_sha256": "6e99e8921af6ab06d9c7304e533846d083eafaa49fc7483dcd98d0f1222a5026",
+      "conclusion": "(a0-type synth Γ (∃ v_property) R_out)"
+    },
+    {
+      "id": "B1-T-Among",
+      "anchor": "spec §4.8",
+      "source_range": [
+        1591,
+        1599
+      ],
+      "source_sha256": "f28f3c5727bced00c4c0d9d429ccc75ecb7a20c38188ed96df1b7fbe093ac260",
+      "conclusion": "(a0-type synth Γ (Among t_left t_right) R_out)"
+    },
+    {
+      "id": "B1-T-Presuppose-Synth",
+      "anchor": "spec §5.5",
+      "source_range": [
+        1601,
+        1608
+      ],
+      "source_sha256": "9f0c0ddccbed4305bd0ddeffa2c1fa58260be8af18ef7de8df98bf73a4a7f9ee",
+      "conclusion": "(a0-type synth Γ (Presuppose t_condition t_body) R_out)"
+    },
+    {
+      "id": "B1-T-Presuppose-Reference",
+      "anchor": "spec §5.5",
+      "source_range": [
+        1610,
+        1618
+      ],
+      "source_sha256": "76fc9f631f81ac6a387ed9964b0625ef1a18f0a28b221f196b3021d94eb579f8",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Presuppose t_condition t_body) R_out)"
+    },
+    {
+      "id": "B1-T-Distrib",
+      "anchor": "spec §4.8; §12 Distrib",
+      "source_range": [
+        1626,
+        1640
+      ],
+      "source_sha256": "f7e4fc3091908743e8a722a9a5ccdb2f2fde59c647ad47a621eda7453b3caa11",
+      "conclusion": "(a0-type synth Γ (Distrib v_Q t_reference) R_out)"
+    },
+    {
+      "id": "B1-T-CoveredBy",
+      "anchor": "spec §4.8",
+      "source_range": [
+        1642,
+        1652
+      ],
+      "source_sha256": "8834ce5c15c546d6b61a239f5697d7e3e16755ed79d315c7fc175e887c1c677b",
+      "conclusion": "(a0-type synth Γ (CoveredBy v_P t_reference) R_out)"
+    },
+    {
+      "id": "B1-T-Overlap",
+      "anchor": "spec §4.8; §12 Overlap",
+      "source_range": [
+        1654,
+        1662
+      ],
+      "source_sha256": "8503cf7645c1a1c1725e92236baef13b9721ed512362f4f1f120830880699386",
+      "conclusion": "(a0-type synth Γ (Overlap t_left t_right) R_out)"
+    },
+    {
+      "id": "B1-T-Addition",
+      "anchor": "spec §4.9",
+      "source_range": [
+        1530,
+        1538
+      ],
+      "source_sha256": "46e44db9225e7bd5340232ebc5dcb7873dac4ea307fd9a25cfe8c9d348decb54",
+      "conclusion": "(a0-type synth Γ (+ t_left t_right) R_out)"
+    },
+    {
+      "id": "B1-T-AtLeast-Zero",
+      "anchor": "spec §4.10; §12 AtLeast zero",
+      "source_range": [
+        1340,
+        1343
+      ],
+      "source_sha256": "71b39a0487475847f92aca4e1b8b6d8cd8ec8bc7dba9cf8188b054e9a642e7e8",
+      "conclusion": "(a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))"
+    },
+    {
+      "id": "B1-T-AtLeast-Positive",
+      "anchor": "spec §4.10; §12 AtLeast",
+      "source_range": [
+        1345,
+        1355
+      ],
+      "source_sha256": "2363af25663fef06948dd7f7808051eb5f836acee391d2e73167c59592558b1f",
+      "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-AtLeast-Symbolic",
+      "anchor": "spec §4.10; §12 AtLeast totality",
+      "source_range": [
+        1357,
+        1370
+      ],
+      "source_sha256": "273e3153f6be5d403fd0e706bf1f04c26a49f6e8bfe710b86092bd06889bdbf2",
+      "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-Some",
+      "anchor": "spec §4.10; §12 Some",
+      "source_range": [
+        1372,
+        1379
+      ],
+      "source_sha256": "3466ecc262a2d68cc08997529b4b324fa1e0fdcabe4d09a0320bb69e8b8be81c",
+      "conclusion": "(a0-type synth Γ (Some v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-Every",
+      "anchor": "spec §4.10; §12 Every",
+      "source_range": [
+        1381,
+        1395
+      ],
+      "source_sha256": "5856412515792ea8e756d1819441dfe6501478f9d41cd77b3c8a256e5fd76a2c",
+      "conclusion": "(a0-type synth Γ (Every v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-AtMost",
+      "anchor": "spec §4.10; §12 AtMost",
+      "source_range": [
+        1406,
+        1415
+      ],
+      "source_sha256": "288f1acdf35df2258e1c10cd653456d1eabc911db9e3a8c60fea51d82dd37f46",
+      "conclusion": "(a0-type synth Γ (AtMost t_n v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-FewerThan-Zero",
+      "anchor": "spec §4.10; §12 FewerThan zero",
+      "source_range": [
+        1428,
+        1431
+      ],
+      "source_sha256": "9de685c6611e560dd78e96aa26091eefddb81c9778181cea1fd9601328d2eddb",
+      "conclusion": "(a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))"
+    },
+    {
+      "id": "B1-T-FewerThan-Positive",
+      "anchor": "spec §4.10; §12 FewerThan",
+      "source_range": [
+        1433,
+        1443
+      ],
+      "source_sha256": "c42276378bf7c0e1ff9c500b008c6941f10912175f5220020faf281209b0ff58",
+      "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
+    },
+    {
+      "id": "B1-T-FewerThan-Symbolic",
+      "anchor": "spec §4.10; §12 FewerThan totality",
+      "source_range": [
+        1445,
+        1458
+      ],
+      "source_sha256": "e9e529b42363d72baf525f99991766e56847bc9311a700aecffd1d2613596478",
+      "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
+    }
+  ],
+  "unsupported": []
+}

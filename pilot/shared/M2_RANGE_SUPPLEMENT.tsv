@@ -1,0 +1,6 @@
+definition_id	head	kind	spec_ranges	equation_ranges	case_names	reason
+D4.6.Close	Close	definition	699-713	703-704,706-709,711-712	holding-state,direct-event-implicit,direct-event-explicit	The ledger records the section span but lacks equation-case ranges for the three type-directed Close clauses.
+D12.Grade	Grade	schema	1901-1917,3488-3509	3504-3505	row-directed	Grade is a pure row-directed schema in section 6.4 and its library equation, not the L5.29 site-introducing lowering.
+D5.3.Refer-member-lift	Refer	domain-overload	1452-1466	1454-1455	member-lift	The member-property overload is a purity-demanding defined lift while reference-level Refer remains primitive.
+D12.JaiPromote	JaiPromote	schema	3314-3315,3755-3767	3760-3762	tagged-role	Tagged jai is a row-reconstruction schema with its equation in the library.
+D12.JaiRaise	JaiRaise	schema-mapping	3316-3321,3769-3808	3785-3788,3795-3802	raised-role,bare-jai-mapping	JaiRaise has a pure row-reconstruction equation plus the bare-jai Context-binding mapping.
