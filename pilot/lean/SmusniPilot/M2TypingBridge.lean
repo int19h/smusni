@@ -71,6 +71,35 @@ private def PrimitiveCompleteMotive {scope : Nat}
   ∃ result, synthPrimitive environment operator arguments = .ok result ∧
     result.observation = observation
 
+private theorem expected_only_synth_fails {scope : Nat}
+    (environment : Environment scope) {term : Term scope}
+    (form : ExpectedOnlySynthesisForm term) :
+    ∃ error, synth environment term = .error error := by
+  cases form with
+  | context site arguments =>
+      exact ⟨{ code := "expected-type", detail :=
+        "Context requires an expected RefComp type" }, by
+        simp [synth.eq_10, failure]⟩
+  | vague site constraint =>
+      exact ⟨{ code := "expected-type", detail :=
+        "Vague requires an expected RefComp type" }, by
+        simp [synth.eq_11, failure]⟩
+  | refer arguments =>
+      exact ⟨{ code := "expected-type", detail :=
+        s!"{FirstOrderPrimitive.refer.name} requires an expected RefComp type" }, by
+        simp [synth.eq_12, synthPrimitive, failure]⟩
+  | «local» arguments =>
+      exact ⟨{ code := "expected-type", detail :=
+        s!"{FirstOrderPrimitive.local.name} requires an expected RefComp type" }, by
+        simp [synth.eq_12, synthPrimitive, failure]⟩
+  | list arguments =>
+      exact ⟨{ code := "expected-type", detail :=
+        "List literals require an expected List<T>" }, by
+        simp [synth.eq_12, synthPrimitive, failure]⟩
+  | select operator arguments selected =>
+      rcases selected with rfl | rfl | rfl <;>
+        simp [synth.eq_12, synthPrimitive, failure]
+
 set_option maxHeartbeats 300000 in
 theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     {term : Term scope} {observation : TypingObservation}
@@ -343,6 +372,33 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
       simp [expectedCheckClause_local_raw, bodySuccess, result]
     · rw [observation_withRule, observation_mergeResults]
       simp [mergeObservations, TypingResult.observation]
+  case presupposeReference environment condition body inner conditionObservation
+      bodyObservation conditionTyping bodyTyping expectedOnly conditionIH bodyIH =>
+    simp only [CheckCompleteMotive] at conditionIH bodyIH ⊢
+    rcases conditionIH with ⟨conditionResult, conditionSuccess, conditionAgreement⟩
+    rcases bodyIH with ⟨bodyResult, bodySuccess, bodyAgreement⟩
+    cases conditionAgreement
+    cases bodyAgreement
+    rcases expected_only_synth_fails environment expectedOnly with
+      ⟨bodyError, bodySynthesisFailure⟩
+    have outerSynthesisFailure : synth environment
+        (.primitive .presuppose (judgmentTermList [condition, body])) =
+        .error bodyError := by
+      simp [synth.eq_12, synthPrimitive, synthPresuppose, judgmentTermList,
+        conditionSuccess, bodySynthesisFailure]
+      rfl
+    let result := (mergeResults (Ty.refComp inner) [conditionResult, bodyResult]
+      [.projective] [.presuppose "condition" (Ty.refComp inner)]
+      .b1TPresupposeReference).withRule .a0Check
+    refine ⟨result, ?_, ?_⟩
+    · rw [check.eq_1, outerSynthesisFailure]
+      simp only
+      simp only [judgmentTermList]
+      rw [checkExpected.eq_4]
+      simp [expectedCheckClause_presuppose, checkPresupposeReference,
+        judgmentTermList, conditionSuccess, bodySuccess, result]
+    · rw [observation_withRule, observation_mergeResults]
+      rfl
   case list environment arguments itemType observations itemsTyping itemsIH =>
     simp only [CheckArgumentsCompleteMotive] at itemsIH
     simp only [CheckCompleteMotive]
@@ -617,6 +673,380 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
       positionalOperands, judgmentTermList,
       firstSuccess, secondSuccess, mergeResults, TypingResult.observation,
       TypingResult.withRule, mergeObservations, failure]
+  case quantify environment operator property propertyObservation effectful parameters
+      selected propertyTyping propertyType nonempty domains propertyIH =>
+    simp only [SynthCompleteMotive] at propertyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases propertyIH with ⟨propertyResult, propertySuccess, propertyAgreement⟩
+    cases propertyAgreement
+    have propertyTypeRaw : propertyResult.type =
+        .function effectful parameters Ty.content := propertyType
+    have domainsEvery : ∀ type ∈ parameters,
+        Ty.quantifierDomain type = true := by
+      simpa [List.all_eq_true] using domains
+    have noBadDomain : ¬∃ type, type ∈ parameters ∧
+        Ty.quantifierDomain type = false := by
+      rintro ⟨type, member, bad⟩
+      have good := domainsEvery type member
+      rw [bad] at good
+      contradiction
+    rcases selected with rfl | rfl <;>
+      simp [synthPrimitive, synthPrimitive.quantify, judgmentTermList,
+        propertySuccess, propertyTypeRaw, nonempty, domains, noBadDomain,
+        Ty.beq_self,
+        List.all_eq_true,
+        mergeResults, mergeObservations, TypingResult.observation,
+        TypingResult.withRule, failure]
+  case setOf environment property propertyObservation inner propertyTyping
+      propertyType pure propertyIH =>
+    simp only [SynthCompleteMotive] at propertyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases propertyIH with ⟨propertyResult, propertySuccess, propertyAgreement⟩
+    cases propertyAgreement
+    have propertyTypeRaw : propertyResult.type = Ty.pureFn [inner] Ty.content :=
+      propertyType
+    have pureRaw : propertyResult.effects = [] := pure
+    simp [synthPrimitive, judgmentTermList, propertySuccess, propertyTypeRaw,
+      pureRaw, oneArgumentFunction, isPure, mergeResults, mergeObservations,
+      TypingResult.observation, TypingResult.withRule, Ty.pureFn, Ty.content,
+      Ty.named0, instBEqTy, Ty.beq, Ty.listBeq, failure]
+  case card environment setTerm setObservation inner setTyping setType setIH =>
+    simp only [SynthCompleteMotive] at setIH
+    simp only [PrimitiveCompleteMotive]
+    rcases setIH with ⟨setResult, setSuccess, setAgreement⟩
+    cases setAgreement
+    have setTypeRaw : setResult.type = Ty.set inner := setType
+    simp [synthPrimitive, judgmentTermList, setSuccess, setTypeRaw, Ty.set,
+      Ty.asUnary, mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case admissibleThreshold environment kind property purpose kindObservation
+      propertyObservation purposeObservation inner kindTyping propertyTyping
+      propertyType pure purposeTyping kindIH propertyIH purposeIH =>
+    simp only [CheckCompleteMotive] at kindIH purposeIH
+    simp only [SynthCompleteMotive] at propertyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases kindIH with ⟨kindResult, kindSuccess, kindAgreement⟩
+    rcases propertyIH with ⟨propertyResult, propertySuccess, propertyAgreement⟩
+    rcases purposeIH with ⟨purposeResult, purposeSuccess, purposeAgreement⟩
+    cases kindAgreement
+    cases propertyAgreement
+    cases purposeAgreement
+    have propertyTypeRaw : propertyResult.type = Ty.pureFn [inner] Ty.content :=
+      propertyType
+    have pureRaw : propertyResult.effects = [] := pure
+    simp [synthPrimitive, synthAdmissibleThreshold, judgmentTermList,
+      kindSuccess, propertySuccess, purposeSuccess, propertyTypeRaw, pureRaw,
+      oneArgumentFunction, isPure, mergeResults, mergeObservations,
+      TypingResult.observation, TypingResult.withRule, Ty.pureFn, Ty.content,
+      Ty.named0, instBEqTy, Ty.beq, Ty.listBeq, failure]
+  case closeClause environment clause clauseObservation clauseTyping latentEffect
+      latentEquation clauseIH =>
+    simp only [CheckCompleteMotive] at clauseIH
+    simp only [PrimitiveCompleteMotive]
+    rcases clauseIH with ⟨clauseResult, clauseSuccess, clauseAgreement⟩
+    cases clauseAgreement
+    rw [latentEquation]
+    simp [synthPrimitive, judgmentTermList, clauseSuccess, mergeResults,
+      mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
+    rfl
+  case aggregate environment basis group basisObservation groupObservation whole
+      component inner basisTyping basisType wholeType firstCompatible
+      secondCompatible groupTyping basisIH groupIH =>
+    simp only [SynthCompleteMotive] at basisIH
+    simp only [CheckCompleteMotive] at groupIH
+    simp only [PrimitiveCompleteMotive]
+    rcases basisIH with ⟨basisResult, basisSuccess, basisAgreement⟩
+    rcases groupIH with ⟨groupResult, groupSuccess, groupAgreement⟩
+    cases basisAgreement
+    cases groupAgreement
+    have basisTypeRaw : basisResult.type =
+        Ty.decompositionBasis whole component := basisType
+    have groupSuccessRaw : check environment group
+        (Ty.named .typeFormGroup [component]) = .ok groupResult := by
+      simpa [Ty.group] using groupSuccess
+    simp [synthPrimitive, synthAggregate, judgmentTermList, basisSuccess,
+      groupSuccessRaw, basisTypeRaw, wholeType, firstCompatible, secondCompatible,
+      Ty.decompositionBasis, Ty.asBinary, Ty.group, Ty.asUnary,
+      mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case basisUnitAt environment basis unit cover basisObservation unitObservation
+      coverObservation whole component basisTyping basisType unitTyping coverTyping
+      basisIH unitIH coverIH =>
+    simp only [SynthCompleteMotive] at basisIH
+    simp only [CheckCompleteMotive] at unitIH coverIH
+    simp only [PrimitiveCompleteMotive]
+    rcases basisIH with ⟨basisResult, basisSuccess, basisAgreement⟩
+    rcases unitIH with ⟨unitResult, unitSuccess, unitAgreement⟩
+    rcases coverIH with ⟨coverResult, coverSuccess, coverAgreement⟩
+    cases basisAgreement
+    cases unitAgreement
+    cases coverAgreement
+    have basisTypeRaw : basisResult.type =
+        Ty.decompositionBasis whole component := basisType
+    simp [synthPrimitive, synthBasisUnitAt, judgmentTermList, basisSuccess,
+      unitSuccess, coverSuccess, basisTypeRaw, Ty.decompositionBasis, Ty.asBinary,
+      mergeResults, mergeObservations,
+      TypingResult.observation, TypingResult.withRule, failure]
+  case peerUnitAt environment basis unit wholeTerm basisObservation unitObservation
+      wholeObservation whole component basisTyping basisType unitTyping wholeTyping
+      basisIH unitIH wholeIH =>
+    simp only [SynthCompleteMotive] at basisIH
+    simp only [CheckCompleteMotive] at unitIH wholeIH
+    simp only [PrimitiveCompleteMotive]
+    rcases basisIH with ⟨basisResult, basisSuccess, basisAgreement⟩
+    rcases unitIH with ⟨unitResult, unitSuccess, unitAgreement⟩
+    rcases wholeIH with ⟨wholeResult, wholeSuccess, wholeAgreement⟩
+    cases basisAgreement
+    cases unitAgreement
+    cases wholeAgreement
+    have basisTypeRaw : basisResult.type =
+        Ty.decompositionBasis whole component := basisType
+    simp [synthPrimitive, synthPeerUnitAt, judgmentTermList, basisSuccess,
+      unitSuccess, wholeSuccess, basisTypeRaw, Ty.decompositionBasis, Ty.asBinary,
+      mergeResults, mergeObservations,
+      TypingResult.observation, TypingResult.withRule, failure]
+  case forceContent environment operator content force contentObservation selected
+      contentTyping contentIH =>
+    simp only [CheckCompleteMotive] at contentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    cases contentAgreement
+    rcases selected with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      simp [synthPrimitive, judgmentTermList, contentSuccess,
+        TypingResult.observation, failure]
+  case mention environment value valueObservation valueTyping valueIH =>
+    simp only [SynthCompleteMotive] at valueIH
+    simp only [PrimitiveCompleteMotive]
+    rcases valueIH with ⟨valueResult, valueSuccess, valueAgreement⟩
+    cases valueAgreement
+    simp [synthPrimitive, judgmentTermList, valueSuccess,
+      TypingResult.observation, failure]
+  case discourse environment arguments observations argumentsTyping admissible
+      argumentsIH =>
+    simp only [SynthArgumentsCompleteMotive] at argumentsIH
+    simp only [PrimitiveCompleteMotive]
+    rcases argumentsIH with ⟨results, argumentsSuccess, resultsAgreement⟩
+    cases resultsAgreement
+    have admissibleRaw : results.all (fun result =>
+        result.type == Ty.discourse ||
+          (Ty.asUnary result.type .typeFormAct).isSome ||
+          (Ty.asUnary result.type .typeFormPerfComp).isSome) = true := by
+      simpa [TypingResult.observation] using admissible
+    have admissibleEvery : ∀ result ∈ results,
+        (result.type == Ty.discourse ||
+          (Ty.asUnary result.type .typeFormAct).isSome ||
+          (Ty.asUnary result.type .typeFormPerfComp).isSome) = true := by
+      simpa [List.all_eq_true] using admissibleRaw
+    have noBad : ¬∃ result, result ∈ results ∧
+        ((result.type == Ty.discourse) = false ∧
+          Ty.asUnary result.type .typeFormAct = none) ∧
+          Ty.asUnary result.type .typeFormPerfComp = none := by
+      rintro ⟨result, member, bad, performanceNone⟩
+      have discourseFalse := bad.1
+      have actNone := bad.2
+      have good := admissibleEvery result member
+      simp [discourseFalse, actNone, performanceNone] at good
+    simp [synthPrimitive, argumentsSuccess, admissibleRaw, noBad, mergeResults,
+      mergeObservations, TypingResult.observation, TypingResult.withRule,
+      List.flatMap_map, failure]
+  case combine environment first second firstObservation secondObservation firstInner
+      secondInner common firstTyping secondTyping firstReference secondReference
+      commonType firstIH secondIH =>
+    simp only [SynthCompleteMotive] at firstIH secondIH
+    simp only [PrimitiveCompleteMotive]
+    rcases firstIH with ⟨firstResult, firstSuccess, firstAgreement⟩
+    rcases secondIH with ⟨secondResult, secondSuccess, secondAgreement⟩
+    cases firstAgreement
+    cases secondAgreement
+    have firstReferenceRaw : Ty.referenceInner firstResult.type = some firstInner :=
+      firstReference
+    have secondReferenceRaw : Ty.referenceInner secondResult.type = some secondInner :=
+      secondReference
+    rcases commonType with ⟨compatible, rfl⟩ | ⟨incompatible, reverse, rfl⟩
+    ·
+      simp [synthPrimitive, judgmentTermList, firstSuccess, secondSuccess,
+        firstReferenceRaw, secondReferenceRaw, compatible,
+        mergeResults, mergeObservations, TypingResult.observation,
+        TypingResult.withRule, failure]
+    ·
+      simp [synthPrimitive, judgmentTermList, firstSuccess, secondSuccess,
+        firstReferenceRaw, secondReferenceRaw, incompatible, reverse,
+        mergeResults, mergeObservations, TypingResult.observation,
+        TypingResult.withRule, failure]
+  case locutionOf environment token locution tokenObservation locutionObservation
+      tokenTyping locutionTyping tokenIH locutionIH =>
+    simp only [CheckCompleteMotive] at tokenIH locutionIH
+    simp only [PrimitiveCompleteMotive]
+    rcases tokenIH with ⟨tokenResult, tokenSuccess, tokenAgreement⟩
+    rcases locutionIH with ⟨locutionResult, locutionSuccess, locutionAgreement⟩
+    cases tokenAgreement
+    cases locutionAgreement
+    simp [synthPrimitive, judgmentTermList, tokenSuccess, locutionSuccess,
+      mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case sign environment operator text kind textObservation selected textTyping textIH =>
+    simp only [CheckCompleteMotive] at textIH
+    simp only [PrimitiveCompleteMotive]
+    rcases textIH with ⟨textResult, textSuccess, textAgreement⟩
+    cases textAgreement
+    rcases selected with ⟨rfl, rfl⟩ | selected
+    · simp [synthPrimitive, synthPrimitive.signConstructor, judgmentTermList,
+        textSuccess, mergeResults, mergeObservations, TypingResult.observation,
+        TypingResult.withRule, failure]
+    · rcases selected with ⟨rfl, rfl⟩ | selected
+      · simp [synthPrimitive, synthPrimitive.signConstructor, judgmentTermList,
+          textSuccess, mergeResults, mergeObservations, TypingResult.observation,
+          TypingResult.withRule, failure]
+      · rcases selected with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+          simp [synthPrimitive, synthPrimitive.signConstructor, judgmentTermList,
+            textSuccess, mergeResults, mergeObservations, TypingResult.observation,
+            TypingResult.withRule, failure]
+  case sentenceSign environment content contentObservation contentTyping contentIH =>
+    simp only [CheckCompleteMotive] at contentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    cases contentAgreement
+    simp [synthPrimitive, judgmentTermList, contentSuccess,
+      TypingResult.observation, failure]
+  case reify environment content contentObservation contentTyping contentIH =>
+    simp only [CheckCompleteMotive] at contentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    cases contentAgreement
+    simp [synthPrimitive, judgmentTermList, contentSuccess,
+      TypingResult.observation, failure]
+  case realizedContent environment token tokenObservation tokenTyping tokenIH =>
+    simp only [CheckCompleteMotive] at tokenIH
+    simp only [PrimitiveCompleteMotive]
+    rcases tokenIH with ⟨tokenResult, tokenSuccess, tokenAgreement⟩
+    cases tokenAgreement
+    simp [synthPrimitive, judgmentTermList, tokenSuccess, mergeResults,
+      mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
+  case teha environment base exponent baseObservation exponentObservation baseTyping
+      exponentTyping baseIH exponentIH =>
+    simp only [CheckCompleteMotive] at baseIH exponentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases baseIH with ⟨baseResult, baseSuccess, baseAgreement⟩
+    rcases exponentIH with ⟨exponentResult, exponentSuccess, exponentAgreement⟩
+    cases baseAgreement
+    cases exponentAgreement
+    simp [synthPrimitive, judgmentTermList, baseSuccess, exponentSuccess,
+      mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case polar environment content contentObservation contentTyping contentIH =>
+    simp only [CheckCompleteMotive] at contentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    cases contentAgreement
+    simp [synthPrimitive, judgmentTermList, contentSuccess, mergeResults,
+      mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
+  case openQ environment property propertyObservation effectful answer propertyTyping
+      propertyType propertyIH =>
+    simp only [SynthCompleteMotive] at propertyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases propertyIH with ⟨propertyResult, propertySuccess, propertyAgreement⟩
+    cases propertyAgreement
+    have propertyTypeRaw : propertyResult.type =
+        .function effectful [answer] Ty.content := propertyType
+    simp [synthPrimitive, judgmentTermList, propertySuccess, propertyTypeRaw,
+      Ty.beq_self, mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case ask environment query queryObservation answer queryTyping queryType queryIH =>
+    simp only [SynthCompleteMotive] at queryIH
+    simp only [PrimitiveCompleteMotive]
+    rcases queryIH with ⟨queryResult, querySuccess, queryAgreement⟩
+    cases queryAgreement
+    have queryTypeRaw : queryResult.type = Ty.query answer := queryType
+    simp [synthPrimitive, judgmentTermList, querySuccess, queryTypeRaw,
+      Ty.query, Ty.asUnary, TypingResult.observation, failure]
+  case generic environment mode property nuclear modeObservation propertyObservation
+      nuclearObservation inner modeTyping propertyTyping propertyType pure
+      nuclearTyping modeIH propertyIH nuclearIH =>
+    simp only [CheckCompleteMotive] at modeIH nuclearIH
+    simp only [SynthCompleteMotive] at propertyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases modeIH with ⟨modeResult, modeSuccess, modeAgreement⟩
+    rcases propertyIH with ⟨propertyResult, propertySuccess, propertyAgreement⟩
+    rcases nuclearIH with ⟨nuclearResult, nuclearSuccess, nuclearAgreement⟩
+    cases modeAgreement
+    cases propertyAgreement
+    cases nuclearAgreement
+    have propertyTypeRaw : propertyResult.type = Ty.pureFn [inner] Ty.content :=
+      propertyType
+    have pureRaw : propertyResult.effects = [] := pure
+    have nuclearSuccessRaw : check environment nuclear
+        (Ty.function true [inner] (.named .typeContent [])) = .ok nuclearResult := by
+      simpa [Ty.effectfulFn, Ty.content, Ty.named0] using nuclearSuccess
+    simp [synthPrimitive, judgmentTermList, modeSuccess, propertySuccess,
+      nuclearSuccessRaw, propertyTypeRaw, pureRaw, oneArgumentFunction, isPure,
+      Ty.pureFn, Ty.content, Ty.named0, Ty.effectfulFn, instBEqTy, Ty.beq,
+      Ty.listBeq, mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+    rfl
+  case contentInterface environment operator arguments observations argumentsTyping
+      selected argumentsIH =>
+    simp only [SynthArgumentsCompleteMotive] at argumentsIH
+    simp only [PrimitiveCompleteMotive]
+    rcases argumentsIH with ⟨results, argumentsSuccess, resultsAgreement⟩
+    cases resultsAgreement
+    rcases selected with ⟨rfl, length⟩ | ⟨selected, nonempty⟩
+    · have lengthRaw : results.length = 2 := by simpa using length
+      simp [synthPrimitive, synthPrimitive.contentInterface, argumentsSuccess,
+        lengthRaw, mergeResults, mergeObservations, TypingResult.observation,
+        TypingResult.withRule, List.flatMap_map, failure]
+    · have nonemptyRaw : results ≠ [] := by
+        intro empty
+        apply nonempty
+        simp [empty]
+      rcases selected with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+        simp [synthPrimitive, synthPrimitive.contentInterface, argumentsSuccess,
+          nonemptyRaw, mergeResults, mergeObservations, TypingResult.observation,
+          TypingResult.withRule, List.flatMap_map, failure]
+  case holds environment proposition propositionObservation propositionTyping
+      propositionIH =>
+    simp only [CheckCompleteMotive] at propositionIH
+    simp only [PrimitiveCompleteMotive]
+    rcases propositionIH with ⟨result, success, agreement⟩
+    cases agreement
+    simp [synthPrimitive, judgmentTermList, success, mergeResults,
+      mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
+  case supplement environment anchor side body anchorObservation sideObservation
+      bodyObservation anchorTyping sideTyping bodyTyping anchorIH sideIH bodyIH =>
+    simp only [SynthCompleteMotive] at anchorIH
+    simp only [CheckCompleteMotive] at sideIH bodyIH
+    simp only [PrimitiveCompleteMotive]
+    rcases anchorIH with ⟨anchorResult, anchorSuccess, anchorAgreement⟩
+    rcases sideIH with ⟨sideResult, sideSuccess, sideAgreement⟩
+    rcases bodyIH with ⟨bodyResult, bodySuccess, bodyAgreement⟩
+    cases anchorAgreement
+    cases sideAgreement
+    cases bodyAgreement
+    simp [synthPrimitive, judgmentTermList, anchorSuccess, sideSuccess, bodySuccess,
+      mergeResults, mergeObservations, TypingResult.observation,
+      TypingResult.withRule, failure]
+  case dropPlace environment relation label relationObservation row labelType
+      relationTyping relationType labelTyping shape relationIH =>
+    simp only [SynthCompleteMotive] at relationIH
+    simp only [PrimitiveCompleteMotive]
+    rcases relationIH with ⟨relationResult, relationSuccess, relationAgreement⟩
+    cases relationAgreement
+    have relationTypeRaw : relationResult.type = Ty.predTerm row := relationType
+    rcases labelTyping with ⟨value, rfl, positive, rfl⟩ | ⟨rfl, rfl⟩
+    · have shapeRaw :
+          (rowShape (Ty.rowMinus row (Ty.index value.repr))).isSome = true := by
+        simpa using shape
+      cases rowResult : rowShape (Ty.rowMinus row (Ty.index value.repr)) with
+      | none => simp [rowResult] at shapeRaw
+      | some rowValue =>
+          simp [synthPrimitive, judgmentTermList, relationSuccess, relationTypeRaw,
+            positive, rowResult, Ty.predTerm, Ty.asUnary, mergeResults,
+            mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
+    · cases rowResult : rowShape (Ty.rowMinus row (Ty.index "Eventuality")) with
+      | none => simp [rowResult] at shape
+      | some rowValue =>
+          simp [synthPrimitive, judgmentTermList, relationSuccess, relationTypeRaw,
+            rowResult, Ty.predTerm, Ty.asUnary, mergeResults,
+            mergeObservations, TypingResult.observation, TypingResult.withRule, failure]
   next environment =>
     simp only [SynthArgumentsCompleteMotive]
     exact ⟨[], synthPositionalList.eq_1 environment, rfl⟩
@@ -736,6 +1166,9 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     · simp [headAgreement, tailAgreement]
   all_goals trivial
 
+/- This companion extractor is deliberately proof-shape-sensitive: changing
+the mutual induction must fail this module at build time rather than silently
+creating a second checking proof path. The produced term is kernel-checked. -/
 open Lean Meta Elab Tactic in
 elab "exact_check_companion " typingSyntax:term : tactic => do
   withMainContext do

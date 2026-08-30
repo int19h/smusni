@@ -90,9 +90,15 @@ def operandSiteOrigins {scope : Nat} (origins : BinderSiteOrigins scope)
     | .free _ => []
   |>.eraseDups
 
+structure RRActualSite where
+  identity : SiteId
+  role : SiteRole
+  dependencies : List SiteId
+  deriving Repr, BEq
+
 mutual
   def rrDependencyGraphTerm {scope : Nat} (origins : BinderSiteOrigins scope) :
-      Term scope → List (SiteId × List SiteId)
+      Term scope → List RRActualSite
     | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body =>
         rrDependencyGraphTerm (origins.extend []) body
@@ -105,30 +111,79 @@ mutual
     | .lexical _ arguments | .primitive _ arguments =>
         rrDependencyGraphList origins arguments
     | .context site arguments =>
-        (site, operandSiteOrigins origins arguments.dependencies) ::
+        { identity := site
+          role := .context
+          dependencies := operandSiteOrigins origins arguments.dependencies } ::
           rrDependencyGraphList origins arguments
     | .vague site constraint =>
-        (site, operandSiteOrigins origins constraint.dependencies) ::
+        { identity := site
+          role := .vague
+          dependencies := operandSiteOrigins origins constraint.dependencies } ::
           rrDependencyGraphTerm origins constraint
 
   def rrDependencyGraphList {scope : Nat}
       (origins : BinderSiteOrigins scope) :
-      TermList scope → List (SiteId × List SiteId)
+      TermList scope → List RRActualSite
     | .nil => []
     | .positional head tail | .labelled _ head tail =>
         rrDependencyGraphTerm origins head ++ rrDependencyGraphList origins tail
 end
 
+def emittedRRRole (identity : SiteId) : String :=
+  let role := identity.expansionRole.splitOn "/" |>.getLast?.getD
+    identity.expansionRole
+  if role == "purpose-context" then "purpose"
+  else if role == "threshold-vague" then "threshold"
+  else if role.startsWith "default-" then "omit"
+  else role
+
+structure RRDependencyComparison where
+  declaredRoles : Nat
+  matchedRoles : Nat
+  dependencyAgreements : Nat
+  dependencyMismatches : Nat
+  missingDeclaredRoles : List String
+  undeclaredEmittedOrigins : List String
+  deriving Repr, BEq
+
+def declaredRRKind (role : String) : SiteRole :=
+  if role == "threshold" || role == "cutoff" then .vague else .context
+
+def rrDependencyComparison (declared : List RRDeclaredSite)
+    (actual : List RRActualSite) : RRDependencyComparison :=
+  let step := fun
+      (state : List RRActualSite × List (RRDeclaredSite × RRActualSite) ×
+        List String) declaration =>
+    let remaining := state.1
+    let exact := remaining.find? fun emitted =>
+      emittedRRRole emitted.identity == declaration.role
+    let candidate := exact.orElse fun _ => remaining.find? fun emitted =>
+      emitted.role == declaredRRKind declaration.role
+    match candidate with
+    | some emitted =>
+        (remaining.erase emitted, state.2.1 ++ [(declaration, emitted)], state.2.2)
+    | none => (remaining, state.2.1, state.2.2 ++ [declaration.role])
+  let (remaining, matched, missing) := declared.foldl step (actual, [], [])
+  let dependencyRoles := fun (emitted : RRActualSite) =>
+    emitted.dependencies.map fun dependency =>
+      (matched.find? fun pair => pair.2.identity == dependency).map
+        (fun pair => pair.1.role) |>.getD (emittedRRRole dependency)
+  {
+    declaredRoles := declared.length
+    matchedRoles := matched.length
+    dependencyAgreements := matched.countP fun pair =>
+      pair.1.dependencies == dependencyRoles pair.2
+    dependencyMismatches := matched.countP fun pair =>
+      pair.1.dependencies != dependencyRoles pair.2
+    missingDeclaredRoles := missing
+    undeclaredEmittedOrigins := remaining.map fun emitted =>
+      emitted.identity.expansionRole }
+
 def rrDependencyAgreement (declared : List RRDeclaredSite)
-    (actual : List (SiteId × List SiteId)) : Bool :=
-  if declared.length != actual.length then false
-  else
-    let pairs := declared.zip actual
-    pairs.all fun pair =>
-      let actualRoles := pair.2.2.mapM fun identity =>
-        pairs.findSome? fun candidate =>
-          if candidate.2.1 == identity then some candidate.1.role else none
-      actualRoles == some pair.1.dependencies
+    (actual : List RRActualSite) : Bool :=
+  let comparison := rrDependencyComparison declared actual
+  comparison.matchedRoles == comparison.declaredRoles &&
+    comparison.dependencyMismatches == 0
 
 structure RRCaseAudit where
   id : String
@@ -136,6 +191,11 @@ structure RRCaseAudit where
   caseIndex : Nat
   declaredSites : Nat
   operandSites : Nat
+  matchedRoles : Nat
+  dependencyAgreements : Nat
+  dependencyMismatches : Nat
+  missingDeclaredRoles : List String
+  undeclaredEmittedOrigins : List String
   comparable : Bool
   agreement : Bool
   deriving Repr
@@ -145,6 +205,10 @@ structure RRAuditRun where
   linkedCases : Nat
   declaredSites : Nat
   operandSites : Nat
+  matchedRoles : Nat
+  dependencyAgreements : Nat
+  dependencyMismatches : Nat
+  undeclaredEmittedSites : Nat
   comparableCases : Nat
   agreementCases : Nat
   mismatchCases : Nat
@@ -190,43 +254,80 @@ def runM2RRAudit (root : String) (caseRun : CaseRun) : IO RRAuditRun := do
               caseIndex
               declaredSites := fixtureCase.sites.length
               operandSites := 0
+              matchedRoles := 0
+              dependencyAgreements := 0
+              dependencyMismatches := 0
+              missingDeclaredRoles := fixtureCase.sites.map (·.role)
+              undeclaredEmittedOrigins := []
               comparable := false
               agreement := false }]
         | some term =>
             let graph := rrDependencyGraphTerm BinderSiteOrigins.empty term
+            let comparison := rrDependencyComparison fixtureCase.sites graph
             audits := audits ++ [{
               id := record.id
               fixture := fixturePath
               caseIndex
               declaredSites := fixtureCase.sites.length
               operandSites := graph.length
+              matchedRoles := comparison.matchedRoles
+              dependencyAgreements := comparison.dependencyAgreements
+              dependencyMismatches := comparison.dependencyMismatches
+              missingDeclaredRoles := comparison.missingDeclaredRoles
+              undeclaredEmittedOrigins := comparison.undeclaredEmittedOrigins
               comparable := true
-              agreement := rrDependencyAgreement fixtureCase.sites graph }]
+              agreement := comparison.matchedRoles == comparison.declaredRoles &&
+                comparison.dependencyMismatches == 0 }]
   pure {
     fixturesRead := fixtures.length
     linkedCases := audits.length
     declaredSites := audits.foldl (fun count audit => count + audit.declaredSites) 0
     operandSites := audits.foldl (fun count audit => count + audit.operandSites) 0
+    matchedRoles := audits.foldl (fun count audit => count + audit.matchedRoles) 0
+    dependencyAgreements := audits.foldl
+      (fun count audit => count + audit.dependencyAgreements) 0
+    dependencyMismatches := audits.foldl
+      (fun count audit => count + audit.dependencyMismatches) 0
+    undeclaredEmittedSites := audits.foldl
+      (fun count audit => count + audit.undeclaredEmittedOrigins.length) 0
     comparableCases := audits.countP (·.comparable)
-    agreementCases := audits.countP fun audit => audit.comparable && audit.agreement
-    mismatchCases := audits.countP fun audit => audit.comparable && !audit.agreement
+    agreementCases := audits.countP fun audit => audit.comparable &&
+      audit.declaredSites > 0 && audit.agreement
+    mismatchCases := audits.countP fun audit => audit.comparable &&
+      audit.declaredSites > 0 && !audit.agreement
     unavailableCases := audits.countP fun audit => !audit.comparable
     cases := audits }
 
 def runM2RRAuditMutationGates : IO Unit := do
   let first : SiteId := {
-    document := "rr-mutation", occurrence := 0, expansionRole := "first" }
+    document := "rr-mutation", occurrence := 0,
+    expansionRole := "D12.TooMany/0/purpose-context" }
   let second : SiteId := {
-    document := "rr-mutation", occurrence := 1, expansionRole := "second" }
+    document := "rr-mutation", occurrence := 1,
+    expansionRole := "D12.TooMany/1/threshold-vague" }
   let declared : List RRDeclaredSite := [
     { role := "purpose", spelling := "probe", dependencies := [] },
     { role := "threshold", spelling := "probe", dependencies := ["purpose"] }]
-  let actual := [(first, []), (second, [first])]
+  let actual : List RRActualSite := [
+    { identity := first, role := .context, dependencies := [] },
+    { identity := second, role := .vague, dependencies := [first] }]
   if !rrDependencyAgreement declared actual then
     throw <| IO.userError "RR dependency audit rejected its control graph"
+  let control := rrDependencyComparison declared actual
+  if control.matchedRoles != 2 || control.dependencyAgreements != 2 ||
+      !control.undeclaredEmittedOrigins.isEmpty then
+    throw <| IO.userError "RR role-matching control did not cover both declarations"
   let mutated := [declared[0]!, { declared[1]! with dependencies := [] }]
   if rrDependencyAgreement mutated actual then
     throw <| IO.userError "RR dependency mutation did not fail the audit"
+  let extra : SiteId := {
+    document := "rr-mutation", occurrence := 2,
+    expansionRole := "D4.6.Close/0/default-:2" }
+  let withExtra := actual ++ [{ identity := extra, role := .context, dependencies := [] }]
+  let extraComparison := rrDependencyComparison declared withExtra
+  if extraComparison.matchedRoles != 2 ||
+      extraComparison.undeclaredEmittedOrigins != [extra.expansionRole] then
+    throw <| IO.userError "RR audit did not isolate an undeclared emitted site"
 
 end M2
 end SmusniPilot

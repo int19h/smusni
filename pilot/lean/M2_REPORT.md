@@ -97,9 +97,13 @@ argument judgments, and primitive rule classes contain no fuel, search order,
 or stored executable equality. The supported rule IDs are selected from the
 generated 107-rule manifest; every other manifest record is returned by
 `unsupportedTypingRuleRecords` rather than silently defaulted.
-The present proved relation slice covers 33 generated rule records and lists
-74 exclusions; this is a theorem-domain statement, not a claim that the
-executable checker implements only those 33 records.
+The proved relation slice covers 58 generated rule records and lists 49
+exclusions. Measured in each case's actual environment, all 31 available
+unchanged-input typings and all 153 successful output typings have traces
+wholly inside that theorem domain. No excluded ID occurs in a successful S1
+output trace. The gate emits every remaining excluded ID individually with the
+reason “not observed in a successful S1 output trace”; those records remain
+outside the full 107-rule manifest, but not outside the measured S1 slice.
 
 `M2TypingBridge.lean` proves relation-to-executable completeness by one mutual
 constructor induction. The checking companion is generated from that exact
@@ -117,13 +121,21 @@ failure, purity, computation category, and the five-effect bound.
 judgments (`PurePropertyJudgment`, `ReferenceMemberJudgment`, and
 `DecompositionBasisJudgment`), not calls to `synth`. `TemplateEquation` remains
 Prop-valued and existential over derivations. The proved interface has both
-directions on the supported core dispatcher domain
-(`dispatch_sound_against_template` and `declarative_dispatch_complete`) and
+directions where the relation is inhabited (the domain premise is
+`∃ expectedPayload, TemplateEquation ...`) via
+`dispatch_sound_against_template` and `declarative_dispatch_complete`, and
 relation functionality without dispatcher-success assumptions.
-`SupplementalTemplateEquation` covers the Let, Refer-member-lift, Grade, and
-JaiRaise leaves. The recursive surface decoder/state allocator is explicitly
-outside the converse theorem: its template leaves are related, but the report
-does not promote decoding/control-flow equivalence to a semantic theorem.
+`SupplementalTemplateEquation` covers typed Let and Refer-member-lift leaves.
+Grade and JaiRaise were removed from the coverage claim: their synthetic
+`GradePlan`/`JaiRaisePlan` values still exercise executable templates, but no
+independent judgment validates those plans. The recursive surface decoder/state
+allocator is likewise outside the converse theorem.
+
+Three `TemplateEquation` families still carry executable-equality premises:
+`close`/`directClause` use `typedClosePlan` (and `expandClose` for Close), and
+`zipWith` uses `termAsList`/`expandZipWith`. The other 22 constructors use
+typing judgments for semantic side conditions. This is a declared proof gap,
+not covered by the sentence above.
 
 The hand-authored template RHSs in `M2Templates.lean` are the declarative
 content transcribed clause by clause from the generated manifest ranges; the
@@ -155,10 +167,38 @@ occurrence/table/profile coherence is proved. The version-1 serialized `site`
 dependency tag remains decodable but is rejected as a semantic profile;
 internal `Dependency.site` is absent.
 
-The RR adoption audit decodes all 29 pinned RR fixtures: 32 linked cases,
-13 declared sites, 26 operand sites, 16 comparable cases (8 agreement and
-8 mismatch), and 16 unavailable cases. These report-only results are not the
-former 135/0 self-consistency claim.
+The RR adoption audit decodes all 29 pinned RR fixtures and matches declarations
+to emitted sites by declared semantic role/site kind rather than list position.
+Across 32 linked cases it sees 13 declared roles and 26 emitted operand sites:
+6 declared roles match, all 6 matched dependency lists agree, 7 declarations
+remain unmatched, and 20 emitted sites are undeclared (principally
+expansion-introduced `Close/default-*` sites). Three cases with declarations
+have all roles matched; 16 cases have an emitted term and 16 are unavailable.
+The gate prints a per-case table with matched roles, dependency results,
+missing declarations, and undeclared emitted origins. These report-only
+results replace both the former 135/0 self-consistency claim and the uninformative
+8/8 length comparison.
+
+Non-zero per-case RR results (the gate also prints all 19 zero rows):
+
+| case | fixture | declared/matched/dep-ok | missing roles | undeclared emitted origins |
+| --- | --- | --- | --- | --- |
+| `1089e6` | `samples-023#1` | 0/0/0 | — | `Close/default-:2,:3,:4,:5` |
+| `250874` | `samples-063#3` | 1/1/1 | — | — |
+| `29cfac` | `samples-027#1` | 1/0/0 | `group-basis` | — |
+| `302aef` | `samples-071#1` | 0/0/0 | — | `Close/default-:3` |
+| `3979ff` | `samples-058#1` | 1/0/0 | `tanru-link` | — |
+| `3e12ed` | `samples-063#1` | 2/0/0 | `scale`, `cutoff` | — |
+| `411d8a` | `samples-034#1` | 1/0/0 | `group-basis` | — |
+| `428f27` | `samples-072#1` | 0/0/0 | — | `Close/default-:3` |
+| `433ec3` | `samples-048#1` | 1/0/0 | `threshold` | — |
+| `519c65` | `samples-001#1` | 0/0/0 | — | `Close/default-:2,:3,:4,:5` |
+| `5f5b05` | `spec-019#1` | 0/0/0 | — | two `Close/default-:3` occurrences |
+| `7668b7` | `samples-036#1` | 0/0/0 | — | `Close/default-:2` |
+| `a2dc10` | `samples-059#1` | 1/0/0 | `contrast-domain` | — |
+| `ae0905` | `samples-063#2` | 2/2/2 | — | `Close/default-:2,:3,:4,:5` |
+| `c27acb` | `spec-009#1` | 0/0/0 | — | `Close/default-:2,:3,:4` |
+| `ec2d5f` | `spec-010#1` | 3/3/3 | — | — |
 
 ## Parity result
 
@@ -208,5 +248,8 @@ On this VM after `lake clean`:
 - The 42 oracle-unavailable parity cases retain the explicit reasons above.
 - The converse relation theorem covers `dispatchDefinition`; recursive surface
   decoding/state allocation has a deliberately narrower claim, with explicit
-  Let/Refer-member/Grade/JaiRaise template-leaf relations only.
+  typed Let/Refer-member template-leaf relations only.
+- The measured S1 theorem domain covers 31/31 available input typings and
+  153/153 successful output typings. The other 49 manifest rules remain
+  explicit, individually reported non-S1 exclusions.
 - Final exact-head reviewer dispositions are not yet recorded here.

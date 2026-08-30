@@ -730,7 +730,15 @@ structure CaseOutcome where
   error : Option TypingError := none
   rrDeclarations : Nat := 0
   rrAgreement : Bool := true
+  inputTypingAvailable : Bool := false
+  inputTraceSupported : Bool := false
+  outputTypingAvailable : Bool := false
+  outputTraceSupported : Bool := false
+  excludedTraceRules : List M2TypingRuleId := []
   deriving Repr
+
+def typingTraceSupported (result : TypingResult) : Bool :=
+  result.trace.all typingRuleImplemented
 
 def classifyUnselected (record : CorpusCase) (tag : String)
     (unselected : List M2DefinitionDispositionRecord) : Option CaseOutcome :=
@@ -810,6 +818,8 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
             rrDeclarations := rrCount
             rrAgreement := rrAgrees }
       | .ok typed =>
+          let traceSupported := typingTraceSupported typed
+          let inputAvailable := state.core.definitions.isEmpty
           return {
             id := record.id
             originalTag := manifestCase.tag
@@ -823,7 +833,13 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
             clauses := state.core.clauses
             term := some term
             rrDeclarations := rrCount
-            rrAgreement := rrAgrees }
+            rrAgreement := rrAgrees
+            inputTypingAvailable := inputAvailable
+            inputTraceSupported := inputAvailable && traceSupported
+            outputTypingAvailable := true
+            outputTraceSupported := traceSupported
+            excludedTraceRules := (typed.trace.filter fun rule =>
+              !typingRuleImplemented rule).eraseDups }
 
 structure CaseRun where
   outcomes : List CaseOutcome
@@ -836,6 +852,11 @@ structure CaseRun where
   outOfSlice : Nat
   rrDeclarations : Nat
   rrMismatchCases : Nat
+  inputTypingsAvailable : Nat
+  inputTypingsSupported : Nat
+  outputTypingsAvailable : Nat
+  outputTypingsSupported : Nat
+  excludedTraceRules : List M2TypingRuleId
   deriving Repr
 
 def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
@@ -855,7 +876,12 @@ def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
   rrDeclarations := outcomes.foldl (fun count outcome =>
     count + outcome.rrDeclarations) 0
   rrMismatchCases := outcomes.countP fun outcome =>
-    outcome.rrDeclarations > 0 && !outcome.rrAgreement }
+    outcome.rrDeclarations > 0 && !outcome.rrAgreement
+  inputTypingsAvailable := outcomes.countP (·.inputTypingAvailable)
+  inputTypingsSupported := outcomes.countP (·.inputTraceSupported)
+  outputTypingsAvailable := outcomes.countP (·.outputTypingAvailable)
+  outputTypingsSupported := outcomes.countP (·.outputTraceSupported)
+  excludedTraceRules := outcomes.flatMap (·.excludedTraceRules) |>.eraseDups }
 
 def runM2Cases (root : String) : IO CaseRun := do
   let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")

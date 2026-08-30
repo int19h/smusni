@@ -297,8 +297,6 @@ theorem template_output_functional {scope : Nat} (environment : Environment scop
 inductive SupplementalTemplateInput (scope : Nat) where
   | letTerm (binderType : Ty) (value : Term scope) (body : Term (scope + 1))
   | referMember (property : Term scope)
-  | grade (plan : GradePlan scope)
-  | jaiRaise (plan : JaiRaisePlan scope)
 
 inductive SupplementalTemplateEquation {scope : Nat}
     (environment : Environment scope) :
@@ -313,11 +311,6 @@ inductive SupplementalTemplateEquation {scope : Nat}
       (propertyTyping : PurePropertyJudgment environment property memberType) :
       SupplementalTemplateEquation environment (.referMember property)
         (expandReferMember memberType property).payload
-  | grade (plan : GradePlan scope) :
-      SupplementalTemplateEquation environment (.grade plan) (expandGrade plan).payload
-  | jaiRaise (plan : JaiRaisePlan scope) :
-      SupplementalTemplateEquation environment (.jaiRaise plan)
-        (expandJaiRaise plan).payload
 
 theorem supplemental_template_functional {scope : Nat}
     (environment : Environment scope) (input : SupplementalTemplateInput scope)
@@ -331,8 +324,8 @@ theorem supplemental_template_functional {scope : Nat}
 
 /- The current converse theorem covers the core definition dispatcher.  The
 recursive surface decoder/state allocator remains an explicitly narrower
-domain; supplemental equations cover its Let, Refer-member, Grade, and
-JaiRaise semantic template leaves without claiming a converse for decoding. -/
+domain; supplemental equations cover its typed Let and Refer-member leaves.
+Grade/JaiRaise plan validation and a converse for decoding are not claimed. -/
 
 theorem dispatch_output_functional {scope : Nat} (environment : Environment scope)
     (key : ExpansionKey) (definition : M2DefinitionId)

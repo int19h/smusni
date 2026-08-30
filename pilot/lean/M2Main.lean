@@ -21,19 +21,28 @@ def main : IO Unit := do
     s!"expanded={cases.typeDirectedExpansion} rejected={cases.typedRejection} " ++
     s!"pending-m3={cases.pendingMilestone3} blocked={cases.blocked} " ++
     s!"input-unavailable={cases.inputUnavailable} out-of-slice={cases.outOfSlice} " ++
+    s!"input-typing={cases.inputTypingsSupported}/{cases.inputTypingsAvailable} " ++
+    s!"output-typing={cases.outputTypingsSupported}/{cases.outputTypingsAvailable} " ++
     s!"derived-site-entries={cases.rrDeclarations} " ++
     s!"derived-profile-mismatch-cases={cases.rrMismatchCases}"
   IO.println <|
     s!"M2 RR-adoption fixtures={rrAudit.fixturesRead} linked-cases={rrAudit.linkedCases} " ++
     s!"declared-sites={rrAudit.declaredSites} operand-sites={rrAudit.operandSites} " ++
+    s!"matched-roles={rrAudit.matchedRoles} " ++
+    s!"dependency-agreements={rrAudit.dependencyAgreements} " ++
+    s!"dependency-mismatches={rrAudit.dependencyMismatches} " ++
+    s!"undeclared-emitted={rrAudit.undeclaredEmittedSites} " ++
     s!"comparable={rrAudit.comparableCases} agreement={rrAudit.agreementCases} " ++
     s!"mismatch={rrAudit.mismatchCases} unavailable={rrAudit.unavailableCases}"
   for audit in rrAudit.cases do
-    if audit.declaredSites > 0 && (!audit.comparable || !audit.agreement) then
-      IO.println <| s!"M2 RR-adoption-difference {audit.id} " ++
-        s!"fixture={audit.fixture} case={audit.caseIndex} " ++
-        s!"declared={audit.declaredSites} operand={audit.operandSites} " ++
-        s!"comparable={audit.comparable}"
+    IO.println <| s!"M2 RR-adoption-case {audit.id} " ++
+      s!"fixture={audit.fixture} case={audit.caseIndex} " ++
+      s!"declared={audit.declaredSites} matched={audit.matchedRoles} " ++
+      s!"dependency-agree={audit.dependencyAgreements} " ++
+      s!"dependency-mismatch={audit.dependencyMismatches} " ++
+      s!"missing={repr audit.missingDeclaredRoles} " ++
+      s!"undeclared={repr audit.undeclaredEmittedOrigins} " ++
+      s!"comparable={audit.comparable}"
   IO.println <|
     s!"M2 parity cohort={parity.cohort} available={parity.oracleAvailable} " ++
     s!"unavailable={parity.oracleUnavailable} compared={parity.compared} " ++
@@ -55,6 +64,15 @@ def main : IO Unit := do
     let count := cases.outcomes.countP fun outcome =>
       outcome.disposition == .typedRejection && outcome.decidingRule == rule
     IO.println s!"M2 rejection-rule {rule} count={count}"
+  for record in M2.unsupportedTypingRuleRecords do
+    let observed := cases.excludedTraceRules.contains record.id
+    let count := cases.outcomes.countP fun outcome =>
+      outcome.excludedTraceRules.contains record.id
+    let reason := if observed then
+      "observed in a successful S1 output trace; relational clause pending"
+    else "not observed in a successful S1 output trace"
+    IO.println <| s!"M2 relation-exclusion {record.id.name} " ++
+      s!"observed={observed} cases={count} reason={reason}"
   for outcome in cases.outcomes do
     if ["definition-property", "definition-basis"].contains
         outcome.decidingRule then
