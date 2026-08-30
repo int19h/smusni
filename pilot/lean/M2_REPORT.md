@@ -213,6 +213,20 @@ Non-zero per-case RR results (the gate also prints all 19 zero rows):
 | `c27acb` | `spec-009#1` | 0/0/0 | — | `Close/default-:2,:3,:4` |
 | `ec2d5f` | `spec-010#1` | 3/3/3 | — | — |
 
+Causes for every unmatched declared role (also printed in the gate):
+
+- `group-basis` in `29cfac`/`samples-027#1` and
+  `411d8a`/`samples-034#1`: no M2 term is emitted because the cases are
+  `outOfSlice` at M1 structural/offending-head provenance.
+- `tanru-link` in `3979ff`/`samples-058#1`: no M2 term is emitted because
+  `D6.2.Tanru` is pending M3; its fills-parameterized expansion has not reached
+  the Redex port.
+- `scale` and `cutoff` in `3e12ed`/`samples-063#1`, and `contrast-domain` in
+  `a2dc10`/`samples-059#1`: no M2 term is emitted because unselected `D5.1.That`
+  is a metatheory/model-law out-of-slice head.
+- `threshold` in `433ec3`/`samples-048#1`: no M2 term is emitted because the
+  selected definition domain is blocked (`definition-domain`).
+
 ## Parity result
 
 The gate compares (1) alpha-normal CoreTerms after SiteId erasure and lexical

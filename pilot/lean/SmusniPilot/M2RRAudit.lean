@@ -129,14 +129,6 @@ mutual
         rrDependencyGraphTerm origins head ++ rrDependencyGraphList origins tail
 end
 
-def emittedRRRole (identity : SiteId) : String :=
-  let role := identity.expansionRole.splitOn "/" |>.getLast?.getD
-    identity.expansionRole
-  if role == "purpose-context" then "purpose"
-  else if role == "threshold-vague" then "threshold"
-  else if role.startsWith "default-" then "omit"
-  else role
-
 structure RRDependencyComparison where
   declaredRoles : Nat
   matchedRoles : Nat
@@ -205,6 +197,7 @@ structure RRCaseAudit where
   dependencyMismatches : Nat
   missingDeclaredRoles : List String
   undeclaredEmittedOrigins : List String
+  unavailableCause : Option String
   comparable : Bool
   agreement : Bool
   deriving Repr
@@ -268,6 +261,8 @@ def runM2RRAudit (root : String) (caseRun : CaseRun) : IO RRAuditRun := do
               dependencyMismatches := 0
               missingDeclaredRoles := fixtureCase.sites.map (·.role)
               undeclaredEmittedOrigins := []
+              unavailableCause := some <|
+                s!"{repr outcome.disposition}:{outcome.decidingRule}"
               comparable := false
               agreement := false }]
         | some term =>
@@ -284,6 +279,8 @@ def runM2RRAudit (root : String) (caseRun : CaseRun) : IO RRAuditRun := do
               dependencyMismatches := comparison.dependencyMismatches
               missingDeclaredRoles := comparison.missingDeclaredRoles
               undeclaredEmittedOrigins := comparison.undeclaredEmittedOrigins
+              unavailableCause := if comparison.missingDeclaredRoles.isEmpty then none
+                else some "emitted term has no preserving structural embedding"
               comparable := true
               agreement := comparison.matchedRoles == comparison.declaredRoles &&
                 comparison.dependencyMismatches == 0 }]

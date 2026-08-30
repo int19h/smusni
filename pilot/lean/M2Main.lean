@@ -10,6 +10,8 @@ def main : IO Unit := do
   M2.runM2ParityMutationGates
   M2.runM2RRAuditMutationGates
   let cases ← M2.runM2Cases "../.."
+  IO.ofExcept cases.validateTypingCoverage
+  IO.ofExcept cases.validateTypingCoverageMutation
   let parity ← M2.runM2Parity "../.." cases
   let rrAudit ← M2.runM2RRAudit "../.." cases
   IO.println <|
@@ -42,6 +44,7 @@ def main : IO Unit := do
       s!"dependency-mismatch={audit.dependencyMismatches} " ++
       s!"missing={repr audit.missingDeclaredRoles} " ++
       s!"undeclared={repr audit.undeclaredEmittedOrigins} " ++
+      s!"cause={repr audit.unavailableCause} " ++
       s!"comparable={audit.comparable}"
   IO.println <|
     s!"M2 parity cohort={parity.cohort} available={parity.oracleAvailable} " ++

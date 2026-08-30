@@ -735,6 +735,7 @@ structure CaseOutcome where
   inputTraceSupported : Bool := false
   outputTypingAvailable : Bool := false
   outputTraceSupported : Bool := false
+  typingTrace : List M2TypingRuleId := []
   excludedTraceRules : List M2TypingRuleId := []
   deriving Repr
 
@@ -839,6 +840,7 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
             inputTraceSupported := inputAvailable && traceSupported
             outputTypingAvailable := true
             outputTraceSupported := traceSupported
+            typingTrace := typed.trace
             excludedTraceRules := (typed.trace.filter fun rule =>
               !typingRuleImplemented rule).eraseDups }
 
@@ -883,6 +885,28 @@ def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
   outputTypingsAvailable := outcomes.countP (·.outputTypingAvailable)
   outputTypingsSupported := outcomes.countP (·.outputTraceSupported)
   excludedTraceRules := outcomes.flatMap (·.excludedTraceRules) |>.eraseDups }
+
+def CaseRun.validateTypingCoverageWith (run : CaseRun)
+    (implemented : M2TypingRuleId → Bool) : Except String Unit := do
+  let badInputs := run.outcomes.filter fun outcome =>
+    outcome.inputTypingAvailable && !outcome.typingTrace.all implemented
+  let badOutputs := run.outcomes.filter fun outcome =>
+    outcome.outputTypingAvailable && !outcome.typingTrace.all implemented
+  let observedExcluded := (run.outcomes.flatMap fun outcome =>
+    outcome.typingTrace.filter fun rule => !implemented rule).eraseDups
+  if !badInputs.isEmpty || !badOutputs.isEmpty || !observedExcluded.isEmpty then
+    throw <| s!"typing relation coverage failed: inputs={badInputs.length} " ++
+      s!"outputs={badOutputs.length} excluded={repr observedExcluded}"
+  else pure ()
+
+def CaseRun.validateTypingCoverage (run : CaseRun) : Except String Unit :=
+  run.validateTypingCoverageWith typingRuleImplemented
+
+def CaseRun.validateTypingCoverageMutation (run : CaseRun) : Except String Unit :=
+  let mutated := fun rule => typingRuleImplemented rule && rule != .a0TSetOf
+  if (run.validateTypingCoverageWith mutated).isOk then
+    throw "typing relation coverage mutation did not fail"
+  else pure ()
 
 def runM2Cases (root : String) : IO CaseRun := do
   let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")
