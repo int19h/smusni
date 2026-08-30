@@ -119,15 +119,28 @@ structure DeclarativeElaboration {scope : Nat} (environment : Environment scope)
     (show Expansion scope from { term := payload.term, clauses := payload.clauses }).validate
       definition = .ok ()
   typing : ∃ result, synth environment payload.term = .ok result
-  executable : dispatchDefinition environment key definition arguments = .ok payload
+
+@[simp] theorem except_pure_eq_ok {error value : Type} (item : value) :
+    (pure item : Except error value) = .ok item := rfl
+
+@[simp] theorem except_ok_bind {error first second : Type}
+    (item : first) (next : first → Except error second) :
+    ((Except.ok item : Except error first) >>= next) = next item := rfl
 
 theorem declarative_dispatch_complete {scope : Nat}
     (environment : Environment scope) (key : ExpansionKey)
     (definition : M2DefinitionId) (arguments : List (Term scope))
     (payload : ExpansionPayload scope)
     (derivation : DeclarativeElaboration environment key definition arguments payload) :
-    dispatchDefinition environment key definition arguments = .ok payload :=
-  derivation.executable
+    dispatchDefinition environment key definition arguments = .ok payload := by
+  rcases derivation with ⟨equation, certificate, _typing⟩
+  cases equation <;>
+    simp only [dispatchDefinition] <;>
+    simp only [except_pure_eq_ok, except_ok_bind] <;>
+    simp_all [executableCount, isZeroTerm] <;>
+    try rw [certificate] <;>
+    try rfl
+  all_goals intros <;> simp_all
 
 theorem declarative_sound {scope : Nat} (environment : Environment scope)
     (key : ExpansionKey) (definition : M2DefinitionId)
