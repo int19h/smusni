@@ -194,10 +194,9 @@ def runLocalGates : IO Unit := do
           dependencies := [.site selfLoopId] }
       ]
       sourceMap := [] }
-  let selfLoopClosure ← IO.ofExcept <|
-    Interchange.buildTypedClosureUses selfLoopBundle
-  if selfLoopClosure.length != 1 then
-    throw <| IO.userError "typed closure duplicated a self-dependent site"
+  if selfLoopBundle.validate.isOk then
+    throw <| IO.userError
+      "sidecar-only self dependency was accepted without a term operand"
 
   let boundSiteId : SiteId :=
     { document := "bundle-binding"
@@ -236,6 +235,15 @@ def runLocalGates : IO Unit := do
       "bundle substitution did not transform term and sidecar together"
   if !substituted.bundle.validate.isOk then
     throw <| IO.userError "bundle substitution did not preserve validation"
+  let replacementEight : Interchange.Bundle 0 :=
+    { version := 1, term := .natural 8, sites := [], sourceMap := [] }
+  let checkedReplacementEight ← IO.ofExcept replacementEight.checked
+  let substitutedEightBundle ← IO.ofBundleBinding <|
+    checkedBound.substitute fun _ => checkedReplacementEight
+  if Interchange.renderCanonicalTerm substituted.bundle.term ==
+      Interchange.renderCanonicalTerm substitutedEightBundle.bundle.term then
+    throw <| IO.userError
+      "dependency operand substitution erased the 7/8 value distinction"
 
   let insertedSiteId : SiteId :=
     { document := "inserted-bundle"
@@ -287,6 +295,58 @@ def runLocalGates : IO Unit := do
       ]
       sourceMap := [] }
   let checkedNested ← IO.ofExcept nestedReplacement.checked
+  let lambdaOperandBundle ← IO.ofBundleBinding <|
+    checkedBound.substitute fun _ => checkedNested
+  let lambdaOperand := lambdaOperandBundle.validated
+  let lambdaRoot := lambdaOperand.bundle.sites.find? fun entry =>
+    entry.identity == boundSiteId
+  let lambdaNested := lambdaOperand.bundle.sites.find? fun entry =>
+    entry.identity == nestedSiteId
+  match lambdaOperand.bundle.term, lambdaRoot, lambdaNested with
+  | .context _ (.positional
+        (.lambda _ (.context _ (.positional (.bound index) .nil))) .nil),
+      some { dependencies := [], .. },
+      some { dependencies := [.bound dependency], .. } =>
+      if index.val != 0 || dependency != 0 then
+        throw <| IO.userError
+          "lambda operand lost its binder-sensitive nested profile"
+  | _, _, _ => throw <| IO.userError <|
+      "lambda operand was flattened into an outer-scope site dependency"
+  if !lambdaOperand.bundle.validate.isOk then
+    throw <| IO.userError "lambda operand substitution lost coherence"
+  let capturedOuterId : SiteId :=
+    { document := "captured-outer"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let capturedOuterSource : Interchange.Bundle 2 :=
+    { version := 1
+      term := .context capturedOuterId (.positional (.bound 0) .nil)
+      sites := [
+        { identity := capturedOuterId
+          role := .context
+          dependencies := [.bound 0] }
+      ]
+      sourceMap := [] }
+  let capturedLambda : Interchange.Bundle 1 :=
+    { version := 1
+      term := .lambda entityTy (.bound 1)
+      sites := []
+      sourceMap := [] }
+  let capturedFallback : Interchange.Bundle 1 :=
+    { version := 1, term := .natural 0, sites := [], sourceMap := [] }
+  let checkedCapturedSource ← IO.ofExcept capturedOuterSource.checked
+  let checkedCapturedLambda ← IO.ofExcept capturedLambda.checked
+  let checkedCapturedFallback ← IO.ofExcept capturedFallback.checked
+  let capturedResultBundle ← IO.ofBundleBinding <|
+    checkedCapturedSource.substitute fun index =>
+      if index.val == 0 then checkedCapturedLambda else checkedCapturedFallback
+  match capturedResultBundle.bundle.term, capturedResultBundle.bundle.sites with
+  | .context _ (.positional (.lambda _ (.bound index)) .nil),
+      [{ dependencies := [.bound dependency], .. }] =>
+      if index.val != 1 || dependency != 0 then
+        throw <| IO.userError
+          "lambda operand did not retain its captured outer dependency"
+  | _, _ => throw <| IO.userError "captured lambda profile was not derived from the operand"
   let nestedResultBundle ← IO.ofBundleBinding <|
     checkedUnderBinder.substitute fun _ => checkedNested
   let nestedResult := nestedResultBundle.validated
@@ -311,8 +371,10 @@ def runLocalGates : IO Unit := do
   let sharedDepthBundle : Interchange.Bundle 1 :=
     { version := 1
       term := .primitive .and <|
-        .positional (.context sharedDepthId .nil) <|
-        .positional (.lambda entityTy (.context sharedDepthId .nil)) .nil
+        .positional
+          (.context sharedDepthId (.positional (.bound 0) .nil)) <|
+        .positional (.lambda entityTy <|
+          .context sharedDepthId (.positional (.bound 0) .nil)) .nil
       sites := [
         { identity := sharedDepthId
           role := .context
@@ -328,10 +390,6 @@ def runLocalGates : IO Unit := do
     { document := "dependency-root"
       occurrence := 0
       expansionRole := "written-context" }
-  let dependencyLeafId : SiteId :=
-    { document := "dependency-leaf"
-      occurrence := 0
-      expansionRole := "written-context" }
   let dependencyOnlySource : Interchange.Bundle 1 :=
     { version := 1
       term := .context dependencyRootId .nil
@@ -341,34 +399,9 @@ def runLocalGates : IO Unit := do
           dependencies := [.bound 0] }
       ]
       sourceMap := [] }
-  let dependencyOnlyReplacement : Interchange.Bundle 0 :=
-    { version := 1
-      term := .context dependencyLeafId .nil
-      sites := [
-        { identity := dependencyLeafId
-          role := .context
-          dependencies := [] }
-      ]
-      sourceMap := [] }
-  let checkedDependencySource ← IO.ofExcept dependencyOnlySource.checked
-  let checkedDependencyReplacement ←
-    IO.ofExcept dependencyOnlyReplacement.checked
-  let dependencyOnlyResultBundle ← IO.ofBundleBinding <|
-    checkedDependencySource.substitute fun _ => checkedDependencyReplacement
-  let dependencyOnlyResult := dependencyOnlyResultBundle.validated
-  let rootEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
-    entry.identity == dependencyRootId
-  let leafEntry := dependencyOnlyResult.bundle.sites.find? fun entry =>
-    entry.identity == dependencyLeafId
-  match rootEntry, leafEntry with
-  | some { dependencies := [.site target], .. },
-      some { dependencies := [], .. } =>
-      if target != dependencyLeafId then
-        throw <| IO.userError "dependency-only site edge was rekeyed"
-  | _, _ => throw <| IO.userError <|
-      "dependency-only reachable site was rejected or lost"
-  if !dependencyOnlyResult.bundle.validate.isOk then
-    throw <| IO.userError "dependency-only reachable site did not validate"
+  if dependencyOnlySource.validate.isOk then
+    throw <| IO.userError
+      "sidecar-only dependency was accepted without a term operand"
   let alphaX := SurfaceTerm.ofSExpr
     (← IO.ofExcept (SExpr.parse "(λ ($x :: Entity) $x)"))
   let alphaY := SurfaceTerm.ofSExpr

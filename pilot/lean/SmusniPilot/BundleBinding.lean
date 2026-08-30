@@ -4,144 +4,23 @@ import SmusniPilot.BindingLaws
 namespace SmusniPilot
 namespace Interchange
 
-theorem SerializedDependency.ofDependency_of_toDependency {scope : Nat}
-    (raw : SerializedDependency) (dependency : Dependency scope)
-    (success : raw.toDependency scope = .ok dependency) :
-    SerializedDependency.ofDependency dependency = raw := by
-  cases raw <;> cases dependency
-  all_goals simp_all [SerializedDependency.toDependency,
-    SerializedDependency.ofDependency, pure, Except.pure]
-  all_goals split at success <;> simp_all <;> try { cases success; rfl }
 
-theorem serializedDependencies_of_mapM_toDependency {scope : Nat}
-    (raw : List SerializedDependency) (dependencies : List (Dependency scope))
-    (success : raw.mapM (SerializedDependency.toDependency scope) =
-      .ok dependencies) :
-    dependencies.map SerializedDependency.ofDependency = raw := by
-  induction raw generalizing dependencies with
-  | nil =>
-      simp only [List.mapM_nil, pure, Except.pure,
-        Except.ok.injEq] at success
-      subst dependencies
-      rfl
-  | cons head rest ih =>
-      simp only [List.mapM_cons] at success
-      cases headResult : head.toDependency scope with
-      | error message =>
-          simp [headResult, bind, Except.bind] at success
-      | ok dependency =>
-          rw [headResult] at success
-          cases restResult : rest.mapM
-              (SerializedDependency.toDependency scope) with
-          | error message =>
-              simp [restResult, bind, Except.bind] at success
-          | ok tail =>
-              rw [restResult] at success
-              cases success
-              simp [SerializedDependency.ofDependency_of_toDependency
-                head dependency headResult, ih tail restResult]
-
-theorem SiteEntry.toSite_serialized_dependencies {scope : Nat}
-    (entry : SiteEntry) (site : Site scope)
-    (success : entry.toSite scope = .ok site) :
-    site.dependencies.map SerializedDependency.ofDependency =
-      entry.dependencies := by
-  unfold SiteEntry.toSite at success
-  cases decoded : entry.dependencies.mapM
-      (SerializedDependency.toDependency scope) with
-  | error message =>
-      simp [decoded, Functor.map, Except.map] at success
-  | ok dependencies =>
-      rw [decoded] at success
-      cases success
-      exact serializedDependencies_of_mapM_toDependency
-        entry.dependencies dependencies decoded
-
-theorem siteEntryToSite_reindex {source target : Nat}
-    (equal : source = target) (entry : SiteEntry) (site : Site source)
-    (typed : SiteEntry.toSite source entry = .ok site) :
-    SiteEntry.toSite target entry = .ok (equal ▸ site) := by
-  cases equal
-  exact typed
-
-theorem Site.cast_preserves_serialized_dependencies {source target : Nat}
-    (equal : source = target) (site : Site source) :
-    (equal ▸ site).dependencies.map SerializedDependency.ofDependency =
-      site.dependencies.map SerializedDependency.ofDependency := by
-  cases equal
-  rfl
-
-theorem Site.cast_preserves_identity {source target : Nat}
-    (equal : source = target) (site : Site source) :
-    (equal ▸ site).identity = site.identity := by
-  cases equal
-  rfl
-
-theorem Site.cast_preserves_role {source target : Nat}
-    (equal : source = target) (site : Site source) :
-    (equal ▸ site).role = site.role := by
-  cases equal
-  rfl
-
-structure ScopedSiteUse (scope : Nat) (raw : SiteUse) where
-  depth : Nat
-  scopeEq : raw.scope = scope + depth
-  entry : SiteEntry
-  entryIdentity : entry.identity = raw.identity
-  entryRole : entry.role = raw.role
-  site : Site (scope + depth)
-  siteIdentity : site.identity = entry.identity
-  siteRole : site.role = entry.role
-  typed : SiteEntry.toSite (scope + depth) entry = .ok site
-  serializedDependencies :
-    site.dependencies.map SerializedDependency.ofDependency =
-      entry.dependencies
-
-structure ScopedSiteClosure (scope : Nat) (uses : List SiteUse) where
-  entries : List (Sigma fun raw => ScopedSiteUse scope raw)
-  coverage : entries.map Sigma.fst = uses
-
-def buildScopedSiteUse {scope : Nat} (bundle : Bundle scope) (raw : SiteUse) :
-    Except String (ScopedSiteUse scope raw) := do
-  if below : scope <= raw.scope then
-    let depth := raw.scope - scope
-    have scopeEq : raw.scope = scope + depth := by omega
-    match lookup : bundle.sites.find? (fun candidate =>
-        candidate.identity == raw.identity) with
-    | none => .error s!"missing site sidecar entry: {repr raw.identity}"
-    | some entry =>
-        if identityMatches : entry.identity = raw.identity then
-          if roleMatches : entry.role = raw.role then
-            match deserialized : SiteEntry.toSite (scope + depth) entry with
-            | .error message => .error message
-            | .ok site => pure {
-                depth := depth
-                scopeEq := scopeEq
-                entry := entry
-                entryIdentity := identityMatches
-                entryRole := roleMatches
-                site := site
-                siteIdentity := SiteEntry.toSite_preserves_identity
-                  entry site deserialized
-                siteRole := SiteEntry.toSite_preserves_role
-                  entry site deserialized
-                typed := deserialized
-                serializedDependencies :=
-                  SiteEntry.toSite_serialized_dependencies
-                    entry site deserialized }
-          else .error s!"site role conflicts with occurrence: {repr raw.identity}"
-        else .error s!"site lookup identity mismatch: {repr raw.identity}"
-  else .error s!"site occurrence scope {raw.scope} is below {scope}"
-
-def buildScopedSiteClosure {scope : Nat} (bundle : Bundle scope) :
-    (uses : List SiteUse) → Except String (ScopedSiteClosure scope uses)
-  | [] => pure { entries := [], coverage := rfl }
-  | use :: rest => do
-      let first ← buildScopedSiteUse bundle use
-      let remaining ← buildScopedSiteClosure bundle rest
-      pure {
-        entries := ⟨use, first⟩ :: remaining.entries
-        coverage := by simp [remaining.coverage] }
+theorem Term.siteOccurrence_support_typed {scope : Nat} (term : Term scope)
+    (occurrence : SiteOccurrence)
+    (present : occurrence ∈ term.siteOccurrences) :
+    ∃ dependencies : List (Dependency occurrence.use.scope),
+      occurrence.support =
+        dependencies.map SerializedDependency.ofDependency := by
+  revert occurrence
+  induction term using Term.rec
+    (motive_2 := fun scope terms => ∀ occurrence,
+      occurrence ∈ terms.siteOccurrences →
+        ∃ dependencies : List (Dependency occurrence.use.scope),
+          occurrence.support =
+            dependencies.map SerializedDependency.ofDependency) <;>
+    intros <;>
+    simp_all [Term.siteOccurrences, TermList.siteOccurrences] <;>
+    grind
 
 structure TypedSubstitutionUse (source : Nat) where
   index : Fin source
@@ -204,20 +83,6 @@ theorem Fin.eq_shiftN_of_depth_le {source depth : Nat}
   simp [outer]
   omega
 
-def dependencyTypedSubstitutionUse {source depth : Nat} :
-    Dependency (source + depth) → Option (TypedSubstitutionUse source)
-  | .bound index =>
-      if isLocal : index.val < depth then none
-      else
-        have outer : index.val - depth < source := by omega
-        some { index := ⟨index.val - depth, outer⟩, depth }
-  | .free _ | .site _ => none
-
-def ScopedSiteUse.typedSubstitutionUses {source : Nat}
-    {raw : SiteUse} (use : ScopedSiteUse source raw) :
-    List (TypedSubstitutionUse source) :=
-  use.site.dependencies.filterMap dependencyTypedSubstitutionUse
-
 structure ValidatedBundle (scope : Nat) where
   private mk ::
   bundle : Bundle scope
@@ -279,80 +144,6 @@ theorem bundleSubstitutionAt_nonlocal {scope source target : Nat}
   simp
   omega
 
-def scopedUseOfCoherence {scope : Nat} {bundle : Bundle scope}
-    (coherence : BundleCoherence bundle) (raw : SiteUse)
-    (present : raw ∈ coherence.uses) : ScopedSiteUse scope raw :=
-  let depth := raw.scope - scope
-  have scopeEq : raw.scope = scope + depth := by
-    have bound := coherence.scopeBound raw present
-    omega
-  let sourceWitness := coherence.witness raw present
-  let site : Site (scope + depth) := scopeEq ▸ sourceWitness.site
-  {
-    depth
-    scopeEq
-    entry := sourceWitness.entry
-    entryIdentity := sourceWitness.entryIdentity
-    entryRole := sourceWitness.entryRole
-    site
-    siteIdentity := by
-      have sourceIdentity := SiteEntry.toSite_preserves_identity
-        sourceWitness.entry sourceWitness.site sourceWitness.typed
-      exact (Site.cast_preserves_identity scopeEq sourceWitness.site).trans
-        sourceIdentity
-    siteRole := by
-      have sourceRole := SiteEntry.toSite_preserves_role
-        sourceWitness.entry sourceWitness.site sourceWitness.typed
-      exact (Site.cast_preserves_role scopeEq sourceWitness.site).trans
-        sourceRole
-    typed := siteEntryToSite_reindex scopeEq sourceWitness.entry
-      sourceWitness.site sourceWitness.typed
-    serializedDependencies := by
-      calc
-        site.dependencies.map SerializedDependency.ofDependency =
-            sourceWitness.site.dependencies.map
-              SerializedDependency.ofDependency :=
-          Site.cast_preserves_serialized_dependencies scopeEq sourceWitness.site
-        _ = sourceWitness.entry.dependencies :=
-          SiteEntry.toSite_serialized_dependencies sourceWitness.entry
-            sourceWitness.site sourceWitness.typed }
-
-def scopedSiteUseOfCoherence {scope : Nat} {bundle : Bundle scope}
-    (coherence : BundleCoherence bundle)
-    (attached : {raw // raw ∈ coherence.uses}) :
-    Sigma fun raw => ScopedSiteUse scope raw :=
-  ⟨attached.val,
-    scopedUseOfCoherence coherence attached.val attached.property⟩
-
-def scopedSiteClosureOfCoherence {scope : Nat} {bundle : Bundle scope}
-    (coherence : BundleCoherence bundle) :
-    ScopedSiteClosure scope coherence.uses := {
-  entries := coherence.uses.attach.map
-    (scopedSiteUseOfCoherence coherence)
-  coverage := by
-    simp [List.map_map, Function.comp_def, scopedSiteUseOfCoherence] }
-
-theorem scopedSiteUseOfCoherence_mem {scope : Nat} {bundle : Bundle scope}
-    (coherence : BundleCoherence bundle) (raw : SiteUse)
-    (present : raw ∈ coherence.uses) :
-    scopedSiteUseOfCoherence coherence ⟨raw, present⟩ ∈
-      (scopedSiteClosureOfCoherence coherence).entries := by
-  apply List.mem_map.mpr
-  exact ⟨⟨raw, present⟩, by simp, rfl⟩
-
-def ValidatedBundle.closure {scope : Nat} (bundle : ValidatedBundle scope) :
-    ScopedSiteClosure scope bundle.coherence.uses :=
-  scopedSiteClosureOfCoherence bundle.coherence
-
-theorem ValidatedBundle.closure_entry_origin {scope : Nat}
-    (bundle : ValidatedBundle scope)
-    (entry : Sigma fun raw => ScopedSiteUse scope raw)
-    (present : entry ∈ bundle.closure.entries) :
-    ∃ attached : {raw // raw ∈ bundle.coherence.uses},
-      scopedSiteUseOfCoherence bundle.coherence attached = entry := by
-  rcases List.mem_map.mp present with ⟨attached, _attachedPresent, equal⟩
-  exact ⟨attached, equal⟩
-
 structure SiteEntryConflict where
   identity : SiteId
   first : SiteEntry
@@ -361,14 +152,11 @@ structure SiteEntryConflict where
 
 inductive BundleBindingConflict where
   | inconsistentSharing (witness : SiteEntryConflict)
-  | outputValidationFailure (detail : String)
 
 def BundleBindingConflict.message : BundleBindingConflict → String
   | .inconsistentSharing witness =>
       s!"bundle-binding inconsistent-sharing conflict at {repr witness.identity}: " ++
         s!"{repr witness.first} versus {repr witness.second}"
-  | .outputValidationFailure detail =>
-      "bundle-binding output validation failure: " ++ detail
 
 theorem BundleBindingConflict.inconsistent_has_unequal_candidates
     (witness : SiteEntryConflict) : witness.first ≠ witness.second :=
@@ -379,6 +167,18 @@ def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
   match bundle.buildCoherence with
   | .ok coherence => .ok { bundle, coherence }
   | .error message => .error message
+
+theorem Bundle.checked_bundle {scope : Nat} (bundle : Bundle scope)
+    (validated : ValidatedBundle scope)
+    (success : bundle.checked = .ok validated) :
+    validated.bundle = bundle := by
+  unfold Bundle.checked at success
+  cases coherenceResult : bundle.buildCoherence with
+  | error message => simp [coherenceResult] at success
+  | ok coherence =>
+      rw [coherenceResult] at success
+      cases success
+      rfl
 
 @[simp] theorem toDependency_ofDependency {scope : Nat}
     (dependency : Dependency scope) :
@@ -414,164 +214,6 @@ def Bundle.checked {scope : Nat} (bundle : Bundle scope) :
       unfold SiteEntry.toSite SiteEntry.ofSite
       rw [mapM_toDependency_ofDependency]
       rfl
-
-def renameTypedSite {source target : Nat} (depth : Nat)
-    (ρ : Renaming source target) (site : Site (source + depth)) :
-    Site (target + depth) :=
-  site.rename (Renaming.liftN ρ depth)
-
-def substituteTypedSite {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target)
-    (site : Site (source + depth)) : Site (target + depth) :=
-  site.substitute <| Substitution.liftN
-    (fun index => (σ index).bundle.term) depth
-
-def shiftTypedSite {scope : Nat} (depth : Nat) (site : Site scope) :
-    Site (scope + depth) :=
-  site.rename (Renaming.shiftN depth)
-
-@[simp] theorem renameTypedSite_preserves_identity {source target : Nat}
-    (depth : Nat) (ρ : Renaming source target)
-    (site : Site (source + depth)) :
-    (renameTypedSite depth ρ site).identity = site.identity := rfl
-
-@[simp] theorem substituteTypedSite_preserves_identity {source target : Nat}
-    (depth : Nat) (σ : Fin source → ValidatedBundle target)
-    (site : Site (source + depth)) :
-    (substituteTypedSite depth σ site).identity = site.identity := rfl
-
-@[simp] theorem shiftTypedSite_preserves_identity {scope : Nat}
-    (depth : Nat) (site : Site scope) :
-    (shiftTypedSite depth site).identity = site.identity := rfl
-
-theorem renameTypedSite_dependencies {source target : Nat} (depth : Nat)
-    (ρ : Renaming source target) (site : Site (source + depth)) :
-    (renameTypedSite depth ρ site).dependencies =
-      site.dependencies.map (Dependency.rename (Renaming.liftN ρ depth)) :=
-  rfl
-
-theorem site_mem_of_mem_renameTypedSite_serialized {source target : Nat}
-    (depth : Nat) (ρ : Renaming source target)
-    (site : Site (source + depth)) (identity : SiteId)
-    (present : .site identity ∈
-      (renameTypedSite depth ρ site).dependencies.map
-        SerializedDependency.ofDependency) :
-    .site identity ∈
-      site.dependencies.map SerializedDependency.ofDependency := by
-  simp only [renameTypedSite_dependencies, List.map_map, List.mem_map] at present
-  rcases present with ⟨dependency, dependencyPresent, serializedEq⟩
-  cases dependency with
-  | bound index => simp [Dependency.rename,
-      SerializedDependency.ofDependency] at serializedEq
-  | free freeIdentity => simp [Dependency.rename,
-      SerializedDependency.ofDependency] at serializedEq
-  | site siteIdentity =>
-      cases serializedEq
-      exact List.mem_map.mpr
-        ⟨.site identity, dependencyPresent, rfl⟩
-
-theorem substituteTypedSite_dependencies {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target)
-    (site : Site (source + depth)) :
-    (substituteTypedSite depth σ site).dependencies =
-      site.dependencies.flatMap (Dependency.substitute
-        (Substitution.liftN (fun index => (σ index).bundle.term) depth)) :=
-  rfl
-
-theorem shiftTypedSite_dependencies {scope : Nat} (depth : Nat)
-    (site : Site scope) :
-    (shiftTypedSite depth site).dependencies =
-      site.dependencies.map (Dependency.rename (Renaming.shiftN depth)) :=
-  rfl
-
-@[simp] theorem serializedRenameTypedSite_preserves_identity
-    {source target : Nat} (depth : Nat) (ρ : Renaming source target)
-    (site : Site (source + depth)) :
-    (SiteEntry.ofSite (renameTypedSite depth ρ site)).identity =
-      site.identity := rfl
-
-@[simp] theorem serializedSubstituteTypedSite_preserves_identity
-    {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target)
-    (site : Site (source + depth)) :
-    (SiteEntry.ofSite (substituteTypedSite depth σ site)).identity =
-      site.identity := rfl
-
-def renameScopedSiteCandidate {source target : Nat}
-    (ρ : Renaming source target) :
-    (entry : Sigma fun raw => ScopedSiteUse source raw) → SiteEntry
-  | ⟨_, use⟩ => SiteEntry.ofSite (renameTypedSite use.depth ρ use.site)
-
-def substituteScopedSiteCandidate {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    (entry : Sigma fun raw => ScopedSiteUse source raw) → SiteEntry
-  | ⟨_, use⟩ =>
-      SiteEntry.ofSite (substituteTypedSite use.depth σ use.site)
-
-def renameScopedSiteUse {source target : Nat} (ρ : Renaming source target) :
-    (entry : Sigma fun raw => ScopedSiteUse source raw) →
-      Sigma fun raw => ScopedSiteUse target raw
-  | ⟨raw, use⟩ =>
-      let site := renameTypedSite use.depth ρ use.site
-      let tableEntry := SiteEntry.ofSite site
-      let outputRaw : SiteUse := {
-        identity := raw.identity
-        role := raw.role
-        scope := target + use.depth }
-      ⟨outputRaw, {
-        depth := use.depth
-        scopeEq := rfl
-        entry := tableEntry
-        entryIdentity := by
-          calc
-            tableEntry.identity = site.identity := rfl
-            _ = use.site.identity := rfl
-            _ = use.entry.identity := use.siteIdentity
-            _ = raw.identity := use.entryIdentity
-        entryRole := by
-          calc
-            tableEntry.role = site.role := rfl
-            _ = use.site.role := rfl
-            _ = use.entry.role := use.siteRole
-            _ = raw.role := use.entryRole
-        site := site
-        siteIdentity := rfl
-        siteRole := rfl
-        typed := siteEntryToSite_ofSite site
-        serializedDependencies := rfl }⟩
-
-def substituteScopedSiteUse {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    (entry : Sigma fun raw => ScopedSiteUse source raw) →
-      Sigma fun raw => ScopedSiteUse target raw
-  | ⟨raw, use⟩ =>
-      let site := substituteTypedSite use.depth σ use.site
-      let tableEntry := SiteEntry.ofSite site
-      let outputRaw : SiteUse := {
-        identity := raw.identity
-        role := raw.role
-        scope := target + use.depth }
-      ⟨outputRaw, {
-        depth := use.depth
-        scopeEq := rfl
-        entry := tableEntry
-        entryIdentity := by
-          calc
-            tableEntry.identity = site.identity := rfl
-            _ = use.site.identity := rfl
-            _ = use.entry.identity := use.siteIdentity
-            _ = raw.identity := use.entryIdentity
-        entryRole := by
-          calc
-            tableEntry.role = site.role := rfl
-            _ = use.site.role := rfl
-            _ = use.entry.role := use.siteRole
-            _ = raw.role := use.entryRole
-        site := site
-        siteIdentity := rfl
-        siteRole := rfl
-        typed := siteEntryToSite_ofSite site
-        serializedDependencies := rfl }⟩
 
 def SiteUse.Rebased (source target : Nat) (input output : SiteUse) : Prop :=
   input.identity = output.identity ∧
@@ -733,102 +375,6 @@ theorem Term.siteUses_substitute_corresponds {source target : Nat}
   rw [substitutionEq]
   exact present
 
-def scopedSiteEntryCandidates {scope : Nat}
-    (entries : List (Sigma fun raw => ScopedSiteUse scope raw)) :
-    List SiteEntry :=
-  entries.map fun entry => entry.snd.entry
-
-@[simp] theorem scopedSiteEntryCandidates_rename {source target : Nat}
-    (ρ : Renaming source target)
-    (entries : List (Sigma fun raw => ScopedSiteUse source raw)) :
-    scopedSiteEntryCandidates (entries.map (renameScopedSiteUse ρ)) =
-      entries.map (renameScopedSiteCandidate ρ) := by
-  induction entries with
-  | nil => rfl
-  | cons head rest ih =>
-      rcases head with ⟨raw, use⟩
-      simp [scopedSiteEntryCandidates, renameScopedSiteUse,
-        renameScopedSiteCandidate]
-
-def scopedUseFromEntries {scope : Nat} :
-    (entries : List (Sigma fun raw => ScopedSiteUse scope raw)) →
-    (raw : SiteUse) → raw ∈ entries.map Sigma.fst → ScopedSiteUse scope raw
-  | [], raw, present => by simp at present
-  | ⟨candidate, witness⟩ :: rest, raw, present =>
-      if same : candidate = raw then
-        same ▸ witness
-      else
-        scopedUseFromEntries rest raw (by
-          simp only [List.map_cons, List.mem_cons] at present
-          rcases present with equal | later
-          · exact False.elim (same equal.symm)
-          · exact later)
-
-theorem scopedUseFromEntries_mem {scope : Nat}
-    (entries : List (Sigma fun raw => ScopedSiteUse scope raw))
-    (raw : SiteUse) (present : raw ∈ entries.map Sigma.fst) :
-    (⟨raw, scopedUseFromEntries entries raw present⟩ :
-      Sigma fun raw => ScopedSiteUse scope raw) ∈ entries := by
-  induction entries with
-  | nil => simp at present
-  | cons head rest ih =>
-      rcases head with ⟨candidate, witness⟩
-      simp only [List.map_cons, List.mem_cons] at present
-      simp only [scopedUseFromEntries]
-      split
-      · next same =>
-          subst candidate
-          exact List.mem_cons_self
-      · next different =>
-          apply List.mem_cons_of_mem
-          apply ih
-
-theorem siteEntryToSite_cast {source target : Nat}
-    (equal : source = target) (entry : SiteEntry) (site : Site target)
-    (typed : SiteEntry.toSite target entry = .ok site) :
-    SiteEntry.toSite source entry = .ok (equal.symm ▸ site) := by
-  cases equal
-  exact typed
-
-def ScopedSiteUse.toTypedWitness {scope : Nat} {bundle : Bundle scope}
-    {raw : SiteUse} (use : ScopedSiteUse scope raw)
-    (entryInTable : use.entry ∈ bundle.sites) :
-    TypedSiteUseWitness bundle raw :=
-  let site : Site raw.scope := use.scopeEq.symm ▸ use.site
-  {
-    entry := use.entry
-    entryInTable
-    entryIdentity := use.entryIdentity
-    entryRole := use.entryRole
-    site
-    typed := siteEntryToSite_cast use.scopeEq use.entry use.site use.typed }
-
-theorem scopedUseFromEntries_entry_mem_candidates {scope : Nat}
-    (entries : List (Sigma fun raw => ScopedSiteUse scope raw))
-    (raw : SiteUse) (present : raw ∈ entries.map Sigma.fst) :
-    (scopedUseFromEntries entries raw present).entry ∈
-      scopedSiteEntryCandidates entries := by
-  apply List.mem_map.mpr
-  exact ⟨⟨raw, scopedUseFromEntries entries raw present⟩,
-    scopedUseFromEntries_mem entries raw present, rfl⟩
-
-theorem renameScopedSiteCandidate_preserves_identity {source target : Nat}
-    (ρ : Renaming source target)
-    (entry : Sigma fun raw => ScopedSiteUse source raw) :
-    (renameScopedSiteCandidate ρ entry).identity = entry.snd.entry.identity := by
-  cases entry with
-  | mk raw use =>
-      exact use.siteIdentity
-
-theorem substituteScopedSiteCandidate_preserves_identity {source target : Nat}
-    (σ : Fin source → ValidatedBundle target)
-    (entry : Sigma fun raw => ScopedSiteUse source raw) :
-    (substituteScopedSiteCandidate σ entry).identity =
-      entry.snd.entry.identity := by
-  cases entry with
-  | mk raw use =>
-      exact use.siteIdentity
-
 structure ReconciledSiteTable (candidates : List SiteEntry) where
   entries : List SiteEntry
   identitiesUnique : (entries.map fun entry => entry.identity).Nodup
@@ -860,6 +406,265 @@ theorem siteEntry_eq_of_identity_nodup (entries : List SiteEntry)
           apply headFresh
           exact List.mem_map.mpr ⟨first, firstRest, identityEq⟩
         · exact ih restUnique firstRest secondRest
+
+def clearSiteProfile (entry : SiteEntry) : SiteEntry :=
+  { entry with dependencies := [] }
+
+structure TypedOccurrenceEntry (occurrence : SiteOccurrence) where
+  entry : SiteEntry
+  entryIdentity : entry.identity = occurrence.use.identity
+  entryRole : entry.role = occurrence.use.role
+  profile : entry.dependencies = occurrence.support
+  site : Site occurrence.use.scope
+  typed : SiteEntry.toSite occurrence.use.scope entry = .ok site
+
+def rrLinkFromMetadata (metadata : List SiteEntry) (occurrence : SiteOccurrence)
+    (covered : ∃ entry, entry ∈ metadata ∧
+      entry.identity = occurrence.use.identity) : Option String :=
+  match lookup : metadata.find? (fun entry =>
+      entry.identity == occurrence.use.identity) with
+  | some entry => entry.rrLink
+  | none => False.elim (by
+      rcases covered with ⟨entry, entryPresent, identityEq⟩
+      have noMatch := (List.find?_eq_none.mp lookup) entry entryPresent
+      apply noMatch
+      simpa using identityEq)
+
+def occurrenceEntryFromMetadata (metadata : List SiteEntry)
+    (occurrence : SiteOccurrence)
+    (covered : ∃ entry, entry ∈ metadata ∧
+      entry.identity = occurrence.use.identity) : SiteEntry := {
+  identity := occurrence.use.identity
+  role := occurrence.use.role
+  dependencies := occurrence.support
+  rrLink := rrLinkFromMetadata metadata occurrence covered }
+
+def typedOccurrenceEntryFromMetadata (metadata : List SiteEntry)
+    (occurrence : SiteOccurrence)
+    (covered : ∃ entry, entry ∈ metadata ∧
+      entry.identity = occurrence.use.identity)
+    (supportTyped : ∃ dependencies : List (Dependency occurrence.use.scope),
+      occurrence.support =
+        dependencies.map SerializedDependency.ofDependency) :
+    TypedOccurrenceEntry occurrence := by
+  let entry := occurrenceEntryFromMetadata metadata occurrence covered
+  have success : ∃ site, SiteEntry.toSite occurrence.use.scope entry =
+      .ok site := by
+    rcases supportTyped with ⟨dependencies, supportEq⟩
+    let site : Site occurrence.use.scope := {
+      identity := occurrence.use.identity
+      role := occurrence.use.role
+      dependencies
+      rrLink := entry.rrLink }
+    refine ⟨site, ?_⟩
+    unfold SiteEntry.toSite
+    change (do
+      let decoded ← occurrence.support.mapM
+        (SerializedDependency.toDependency occurrence.use.scope)
+      pure ({
+        identity := occurrence.use.identity
+        role := occurrence.use.role
+        dependencies := decoded
+        rrLink := entry.rrLink } : Site occurrence.use.scope)) = .ok site
+    rw [supportEq, mapM_toDependency_ofDependency]
+    rfl
+  exact match typed : SiteEntry.toSite occurrence.use.scope entry with
+  | .error message => False.elim (by
+      rcases success with ⟨site, success⟩
+      rw [typed] at success
+      contradiction)
+  | .ok site => {
+      entry
+      entryIdentity := rfl
+      entryRole := rfl
+      profile := rfl
+      site
+      typed }
+
+structure TypedOccurrenceTable {scope : Nat} (term : Term scope) where
+  entries : List (Sigma fun occurrence => TypedOccurrenceEntry occurrence)
+  coverage : entries.map Sigma.fst = term.siteOccurrences
+
+def typedOccurrenceOfTerm {scope : Nat} (term : Term scope)
+    (metadata : List SiteEntry)
+    (metadataCoverage : ∀ occurrence, occurrence ∈ term.siteOccurrences →
+      ∃ entry, entry ∈ metadata ∧
+        entry.identity = occurrence.use.identity)
+    (attached : {occurrence // occurrence ∈ term.siteOccurrences}) :
+    Sigma fun occurrence => TypedOccurrenceEntry occurrence :=
+  ⟨attached.val, typedOccurrenceEntryFromMetadata metadata attached.val
+    (metadataCoverage attached.val attached.property)
+    (Term.siteOccurrence_support_typed term attached.val attached.property)⟩
+
+def typedOccurrenceTable {scope : Nat} (term : Term scope)
+    (metadata : List SiteEntry)
+    (metadataCoverage : ∀ occurrence, occurrence ∈ term.siteOccurrences →
+      ∃ entry, entry ∈ metadata ∧
+        entry.identity = occurrence.use.identity) :
+    TypedOccurrenceTable term := {
+  entries := term.siteOccurrences.attach.map
+    (typedOccurrenceOfTerm term metadata metadataCoverage)
+  coverage := by
+    simp [List.map_map, Function.comp_def, typedOccurrenceOfTerm] }
+
+def typedOccurrenceCandidates {scope : Nat} {term : Term scope}
+    (occurrences : TypedOccurrenceTable term) : List SiteEntry :=
+  occurrences.entries.map fun entry => entry.snd.entry
+
+def typedOccurrenceFromEntries :
+    (entries : List (Sigma fun occurrence => TypedOccurrenceEntry occurrence)) →
+    (occurrence : SiteOccurrence) → occurrence ∈ entries.map Sigma.fst →
+      TypedOccurrenceEntry occurrence
+  | [], occurrence, present => by simp at present
+  | ⟨candidate, typed⟩ :: rest, occurrence, present =>
+      if same : candidate = occurrence then
+        same ▸ typed
+      else
+        typedOccurrenceFromEntries rest occurrence (by
+          simp only [List.map_cons, List.mem_cons] at present
+          rcases present with equal | later
+          · exact False.elim (same equal.symm)
+          · exact later)
+
+theorem typedOccurrenceFromEntries_mem
+    (entries : List (Sigma fun occurrence => TypedOccurrenceEntry occurrence))
+    (occurrence : SiteOccurrence)
+    (present : occurrence ∈ entries.map Sigma.fst) :
+    (⟨occurrence, typedOccurrenceFromEntries entries occurrence present⟩ :
+      Sigma fun occurrence => TypedOccurrenceEntry occurrence) ∈ entries := by
+  induction entries with
+  | nil => simp at present
+  | cons head rest ih =>
+      rcases head with ⟨candidate, typed⟩
+      simp only [List.map_cons, List.mem_cons] at present
+      simp only [typedOccurrenceFromEntries]
+      split
+      · next same =>
+          subst candidate
+          exact List.mem_cons_self
+      · next different =>
+          apply List.mem_cons_of_mem
+          exact ih _
+
+structure OccurrenceForUse (occurrences : List SiteOccurrence)
+    (use : SiteUse) where
+  occurrence : SiteOccurrence
+  present : occurrence ∈ occurrences
+  useEq : occurrence.use = use
+
+def occurrenceForUse : (occurrences : List SiteOccurrence) →
+    (use : SiteUse) → use ∈ occurrences.map SiteOccurrence.use →
+      OccurrenceForUse occurrences use
+  | [], use, present => by simp at present
+  | occurrence :: rest, use, present =>
+      if same : occurrence.use = use then {
+        occurrence
+        present := List.mem_cons_self
+        useEq := same }
+      else
+        let selected := occurrenceForUse rest use (by
+          simp only [List.map_cons, List.mem_cons] at present
+          rcases present with equal | later
+          · exact False.elim (same equal.symm)
+          · exact later)
+        { selected with present := List.mem_cons_of_mem _ selected.present }
+
+def TypedOccurrenceEntry.toTypedSiteUseWitness {scope : Nat}
+    {bundle : Bundle scope} {occurrence : SiteOccurrence}
+    (typed : TypedOccurrenceEntry occurrence)
+    (entryInTable : typed.entry ∈ bundle.sites) :
+    TypedSiteUseWitness bundle occurrence.use := {
+  entry := typed.entry
+  entryInTable
+  entryIdentity := typed.entryIdentity
+  entryRole := typed.entryRole
+  site := typed.site
+  typed := typed.typed }
+
+def coherenceFromOccurrenceTable {scope : Nat}
+    (version : Nat) (term : Term scope) (sourceMap : List SourceNote)
+    (occurrences : TypedOccurrenceTable term)
+    (table : ReconciledSiteTable (typedOccurrenceCandidates occurrences)) :
+    BundleCoherence ({ version, term, sites := table.entries, sourceMap } :
+      Bundle scope) := by
+  let outputBundle : Bundle scope :=
+    { version, term, sites := table.entries, sourceMap }
+  let uses := dedupSiteUses term.siteUses
+  let witnessFor : ∀ use, use ∈ uses →
+      TypedSiteUseWitness outputBundle use := fun use present =>
+    let rootPresent := (mem_dedupSiteUses use _).mp present
+    let occurrencePresent : use ∈ term.siteOccurrences.map
+        SiteOccurrence.use := by
+      simpa using rootPresent
+    let selectedOccurrence := occurrenceForUse term.siteOccurrences use
+      occurrencePresent
+    let typedPresent : selectedOccurrence.occurrence ∈
+        occurrences.entries.map Sigma.fst := by
+      rw [occurrences.coverage]
+      exact selectedOccurrence.present
+    let selected := typedOccurrenceFromEntries occurrences.entries
+      selectedOccurrence.occurrence typedPresent
+    let entryInTable := table.candidatesCovered selected.entry <|
+      List.mem_map.mpr
+        ⟨⟨selectedOccurrence.occurrence, selected⟩,
+          typedOccurrenceFromEntries_mem occurrences.entries
+            selectedOccurrence.occurrence typedPresent, rfl⟩
+    selectedOccurrence.useEq ▸
+      selected.toTypedSiteUseWitness entryInTable
+  refine {
+    uses
+    usesUnique := nodup_dedupSiteUses _
+    rootsCovered := by
+      intro use present
+      exact (mem_dedupSiteUses use _).mpr present
+    scopeBound := by
+      intro use present
+      exact Term.scope_le_of_mem_siteUses term use <|
+        (mem_dedupSiteUses use _).mp present
+    witness := witnessFor
+    profileAgreement := ?_
+    tableUnique := table.identitiesUnique
+    tableCovered := ?_ }
+  · intro occurrence occurrencePresent
+    have rootPresent : occurrence.use ∈ term.siteUses := by
+      rw [← term.siteOccurrences_uses]
+      exact List.mem_map.mpr ⟨occurrence, occurrencePresent, rfl⟩
+    let present := (mem_dedupSiteUses occurrence.use _).mpr rootPresent
+    refine ⟨present, ?_⟩
+    have typedPresent : occurrence ∈ occurrences.entries.map Sigma.fst := by
+      rw [occurrences.coverage]
+      exact occurrencePresent
+    let selected := typedOccurrenceFromEntries occurrences.entries occurrence
+      typedPresent
+    have selectedInTable : selected.entry ∈ table.entries :=
+      table.candidatesCovered selected.entry <| List.mem_map.mpr
+        ⟨⟨occurrence, selected⟩,
+          typedOccurrenceFromEntries_mem occurrences.entries occurrence
+            typedPresent, rfl⟩
+    let chosen := witnessFor occurrence.use present
+    have identityEq : chosen.entry.identity = selected.entry.identity := by
+      calc
+        chosen.entry.identity = occurrence.use.identity := chosen.entryIdentity
+        _ = selected.entry.identity := selected.entryIdentity.symm
+    have entryEq := siteEntry_eq_of_identity_nodup table.entries
+      table.identitiesUnique chosen.entry selected.entry chosen.entryInTable
+      selectedInTable identityEq
+    change chosen.entry.dependencies = occurrence.support
+    rw [entryEq]
+    exact selected.profile
+  · intro entry entryPresent
+    have candidatePresent := table.entriesCovered entry entryPresent
+    simp only [typedOccurrenceCandidates, List.mem_map] at candidatePresent
+    rcases candidatePresent with
+      ⟨⟨occurrence, typed⟩, typedPresent, entryEq⟩
+    have occurrencePresent : occurrence ∈ term.siteOccurrences := by
+      rw [← occurrences.coverage]
+      exact List.mem_map.mpr ⟨⟨occurrence, typed⟩, typedPresent, rfl⟩
+    refine ⟨occurrence, occurrencePresent, ?_⟩
+    calc
+      occurrence.use.identity = typed.entry.identity :=
+        typed.entryIdentity.symm
+      _ = entry.identity := congrArg SiteEntry.identity entryEq
 
 def reconcileSiteTable : (candidates : List SiteEntry) →
     Except BundleBindingConflict (ReconciledSiteTable candidates)
@@ -921,297 +726,96 @@ def reconcileSiteTable : (candidates : List SiteEntry) →
                 second := candidate
                 unequal := same })
 
-def reconcileSiteEntries (candidates : List SiteEntry) :
-    Except BundleBindingConflict (List SiteEntry) :=
-  (reconcileSiteTable candidates).map ReconciledSiteTable.entries
+def renameMetadata {source : Nat} (bundle : ValidatedBundle source) :
+    List SiteEntry :=
+  bundle.bundle.sites.map clearSiteProfile
 
-def coherenceFromScopedEntries {scope : Nat}
-    (version : Nat) (term : Term scope) (sourceMap : List SourceNote)
-    (entries : List (Sigma fun raw => ScopedSiteUse scope raw))
-    (table : ReconciledSiteTable (scopedSiteEntryCandidates entries))
-    (rootsCovered : ∀ raw, raw ∈ term.siteUses →
-      raw ∈ dedupSiteUses (entries.map Sigma.fst))
-    (entriesAreRoots : ∀ entry, entry ∈ entries →
-      entry.fst ∈ term.siteUses)
-    (profileCandidates : ∀ occurrence,
-      occurrence ∈ term.siteOccurrences →
-        ∃ entry, entry ∈ entries ∧ entry.fst = occurrence.use ∧
-          entry.snd.entry.dependencies = occurrence.support) :
-    BundleCoherence ({ version, term, sites := table.entries, sourceMap } :
-      Bundle scope) := by
-  let outputBundle : Bundle scope :=
-    { version, term, sites := table.entries, sourceMap }
-  let uses := dedupSiteUses (entries.map Sigma.fst)
-  let witnessFor : ∀ raw, raw ∈ uses →
-      TypedSiteUseWitness outputBundle raw := fun raw present =>
-    let rawPresent := (mem_dedupSiteUses raw _).mp present
-    let selected := scopedUseFromEntries entries raw rawPresent
-    selected.toTypedWitness <| table.candidatesCovered selected.entry <|
-      scopedUseFromEntries_entry_mem_candidates entries raw rawPresent
-  refine {
-    uses := uses
-    usesUnique := nodup_dedupSiteUses _
-    rootsCovered := rootsCovered
-    scopeBound := by
-      intro raw present
-      let rawPresent := (mem_dedupSiteUses raw _).mp present
-      let selected := scopedUseFromEntries entries raw rawPresent
-      have scopeEq := selected.scopeEq
-      omega
-    witness := witnessFor
-    profileAgreement := ?_
-    tableUnique := table.identitiesUnique
-    tableCovered := ?_ }
-  · intro occurrence occurrencePresent
-    have occurrenceRoot : occurrence.use ∈ term.siteUses := by
-      rw [← term.siteOccurrences_uses]
-      exact List.mem_map.mpr
-        ⟨occurrence, occurrencePresent, rfl⟩
-    let present := rootsCovered occurrence.use occurrenceRoot
-    refine ⟨present, ?_⟩
-    let rawPresent := (mem_dedupSiteUses occurrence.use _).mp present
-    let selected := scopedUseFromEntries entries occurrence.use rawPresent
-    obtain ⟨profileEntry, profileEntryPresent, profileRawEq,
-        profileEq⟩ := profileCandidates occurrence occurrencePresent
-    have selectedCandidate : selected.entry ∈ table.entries :=
-      table.candidatesCovered selected.entry <|
-        scopedUseFromEntries_entry_mem_candidates entries occurrence.use
-          rawPresent
-    have profileCandidate : profileEntry.snd.entry ∈ table.entries :=
-      table.candidatesCovered profileEntry.snd.entry <|
-        List.mem_map.mpr ⟨profileEntry, profileEntryPresent, rfl⟩
-    have identityEq : selected.entry.identity =
-        profileEntry.snd.entry.identity := by
-      calc
-        selected.entry.identity = occurrence.use.identity :=
-          selected.entryIdentity
-        _ = profileEntry.fst.identity :=
-          congrArg SiteUse.identity profileRawEq.symm
-        _ = profileEntry.snd.entry.identity :=
-          profileEntry.snd.entryIdentity.symm
-    have entryEq := siteEntry_eq_of_identity_nodup table.entries
-      table.identitiesUnique selected.entry profileEntry.snd.entry
-      selectedCandidate profileCandidate identityEq
-    change selected.entry.dependencies = occurrence.support
-    rw [entryEq]
-    exact profileEq
-  · intro entry entryPresent
-    have fromCandidate := table.entriesCovered entry entryPresent
-    simp only [scopedSiteEntryCandidates, List.mem_map] at fromCandidate
-    rcases fromCandidate with ⟨⟨raw, selected⟩, selectedPresent, entryEq⟩
-    have rawRoot := entriesAreRoots ⟨raw, selected⟩ selectedPresent
-    rw [← term.siteOccurrences_uses] at rawRoot
-    rcases List.mem_map.mp rawRoot with
-      ⟨occurrence, occurrencePresent, occurrenceEq⟩
-    refine ⟨occurrence, occurrencePresent, ?_⟩
-    calc
-      occurrence.use.identity = raw.identity :=
-        congrArg SiteUse.identity occurrenceEq
-      _ = selected.entry.identity := selected.entryIdentity.symm
-      _ = entry.identity := congrArg SiteEntry.identity entryEq
-
-theorem renameScopedEntries_rootsCovered {source target : Nat}
+theorem renamedOccurrence_metadataCovered {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target)
-    (output : SiteUse)
-    (present : output ∈ (bundle.bundle.term.rename ρ).siteUses) :
-    output ∈ dedupSiteUses
-      ((bundle.closure.entries.map (renameScopedSiteUse ρ)).map Sigma.fst) := by
+    (occurrence : SiteOccurrence)
+    (present : occurrence ∈
+      (bundle.bundle.term.rename ρ).siteOccurrences) :
+    ∃ entry, entry ∈ renameMetadata bundle ∧
+      entry.identity = occurrence.use.identity := by
+  have outputRoot : occurrence.use ∈
+      (bundle.bundle.term.rename ρ).siteUses := by
+    rw [← (bundle.bundle.term.rename ρ).siteOccurrences_uses]
+    exact List.mem_map.mpr ⟨occurrence, present, rfl⟩
   obtain ⟨input, inputRoot, rebased⟩ :=
-    Term.siteUses_rename_corresponds ρ bundle.bundle.term output present
-  have inputUse : input ∈ bundle.coherence.uses :=
-    bundle.coherence.rootsCovered input inputRoot
-  let selectedEntry := scopedSiteUseOfCoherence bundle.coherence
-    ⟨input, inputUse⟩
-  let selected := selectedEntry.snd
-  have selectedPresent :
-      (⟨input, selected⟩ : Sigma fun raw => ScopedSiteUse source raw) ∈
-        bundle.closure.entries :=
-    scopedSiteUseOfCoherence_mem bundle.coherence input inputUse
-  let transformed := renameScopedSiteUse ρ
-    (⟨input, selected⟩ : Sigma fun raw => ScopedSiteUse source raw)
-  have rawEq : transformed.fst = output := by
-    apply SiteUse.eq_of_components
-    · exact rebased.1
-    · exact rebased.2.1
-    · dsimp [transformed, renameScopedSiteUse]
-      have inputScope := selected.scopeEq
-      have scopeRelation := rebased.2.2
-      change input.scope = source + selected.depth at inputScope
-      change output.scope + source = input.scope + target at scopeRelation
-      omega
-  apply (mem_dedupSiteUses output _).mpr
-  apply List.mem_map.mpr
-  refine ⟨transformed, ?_, rawEq⟩
-  apply List.mem_map.mpr
-  exact ⟨⟨input, selected⟩, selectedPresent, rfl⟩
+    Term.siteUses_rename_corresponds ρ bundle.bundle.term occurrence.use
+      outputRoot
+  have inputUse := bundle.coherence.rootsCovered input inputRoot
+  let sourceEntry := (bundle.coherence.witness input inputUse).entry
+  let metadataEntry := clearSiteProfile sourceEntry
+  refine ⟨metadataEntry, ?_, ?_⟩
+  · exact List.mem_map.mpr
+      ⟨sourceEntry, (bundle.coherence.witness input inputUse).entryInTable,
+        rfl⟩
+  · calc
+      metadataEntry.identity = sourceEntry.identity := rfl
+      _ = input.identity :=
+        (bundle.coherence.witness input inputUse).entryIdentity
+      _ = occurrence.use.identity := rebased.1
 
-def scopedSidecarSubstitutionUses {source : Nat}
-    (bundle : ValidatedBundle source) : List (TypedSubstitutionUse source) :=
-  bundle.closure.entries.flatMap fun entry =>
-    match entry with
-    | ⟨_, use⟩ => use.typedSubstitutionUses
-
-def replacementScopedSiteCandidates {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    List (TypedSubstitutionUse source) → List SiteEntry
-  | [] => []
-  | use :: rest =>
-      let replacement := σ use.index
-      let shifted := replacement.closure.entries.map fun entry =>
-        match entry with
-        | ⟨_, siteUse⟩ => SiteEntry.ofSite <|
-            renameTypedSite siteUse.depth
-              (Renaming.shiftN (scope := target) use.depth) siteUse.site
-      shifted ++ replacementScopedSiteCandidates σ rest
-
-def insertReplacementScopedSiteUse {target : Nat} (insertionDepth : Nat) :
-    (entry : Sigma fun raw => ScopedSiteUse target raw) →
-      Sigma fun raw => ScopedSiteUse target raw
-  | ⟨raw, use⟩ =>
-      let site := renameTypedSite use.depth
-        (Renaming.shiftN (scope := target) insertionDepth) use.site
-      have scopeAssoc : target + insertionDepth + use.depth =
-          target + (insertionDepth + use.depth) := by omega
-      let shiftedSite : Site (target + (insertionDepth + use.depth)) :=
-        scopeAssoc ▸ site
-      let tableEntry := SiteEntry.ofSite shiftedSite
-      let outputRaw : SiteUse := {
-        identity := raw.identity
-        role := raw.role
-        scope := target + (insertionDepth + use.depth) }
-      ⟨outputRaw, {
-        depth := insertionDepth + use.depth
-        scopeEq := rfl
-        entry := tableEntry
-        entryIdentity := by
-          calc
-            tableEntry.identity = shiftedSite.identity := rfl
-            _ = site.identity := Site.cast_preserves_identity scopeAssoc site
-            _ = use.site.identity := rfl
-            _ = use.entry.identity := use.siteIdentity
-            _ = raw.identity := use.entryIdentity
-        entryRole := by
-          calc
-            tableEntry.role = shiftedSite.role := rfl
-            _ = site.role := Site.cast_preserves_role scopeAssoc site
-            _ = use.site.role := rfl
-            _ = use.entry.role := use.siteRole
-            _ = raw.role := use.entryRole
-        site := shiftedSite
-        siteIdentity := rfl
-        siteRole := rfl
-        typed := siteEntryToSite_ofSite shiftedSite
-        serializedDependencies := rfl }⟩
-
-def replacementScopedSiteUses {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    List (TypedSubstitutionUse source) →
-      List (Sigma fun raw => ScopedSiteUse target raw)
-  | [] => []
-  | use :: rest =>
-      let shifted := (σ use.index).closure.entries.map
-        (insertReplacementScopedSiteUse use.depth)
-      shifted ++ replacementScopedSiteUses σ rest
-
-def substitutionUses {source : Nat} (bundle : ValidatedBundle source) :
-    List (TypedSubstitutionUse source) :=
-  typedTermSubstitutionUses bundle.bundle.term ++
-    scopedSidecarSubstitutionUses bundle
-
-def substitutedScopedEntries {source target : Nat}
+def substitutionMetadata {source target : Nat}
     (bundle : ValidatedBundle source)
-    (σ : Fin source → ValidatedBundle target) :
-    List (Sigma fun raw => ScopedSiteUse target raw) :=
-  bundle.closure.entries.map (substituteScopedSiteUse σ) ++
-    replacementScopedSiteUses σ (substitutionUses bundle)
+    (σ : Fin source → ValidatedBundle target) : List SiteEntry :=
+  bundle.bundle.sites.map clearSiteProfile ++
+    (typedTermSubstitutionUses bundle.bundle.term).flatMap fun use =>
+      (σ use.index).bundle.sites.map clearSiteProfile
 
-theorem insertReplacement_mem_replacementScopedSiteUses
-    {source target : Nat} (σ : Fin source → ValidatedBundle target)
-    (uses : List (TypedSubstitutionUse source))
-    (use : TypedSubstitutionUse source) (usePresent : use ∈ uses)
-    (entry : Sigma fun raw => ScopedSiteUse target raw)
-    (entryPresent : entry ∈ (σ use.index).closure.entries) :
-    insertReplacementScopedSiteUse use.depth entry ∈
-      replacementScopedSiteUses σ uses := by
-  induction uses with
-  | nil => simp at usePresent
-  | cons head rest ih =>
-      simp only [List.mem_cons] at usePresent
-      rcases usePresent with isHead | inRest
-      · subst use
-        simp only [replacementScopedSiteUses, List.mem_append]
-        exact Or.inl (List.mem_map.mpr ⟨entry, entryPresent, rfl⟩)
-      · simp only [replacementScopedSiteUses, List.mem_append]
-        exact Or.inr (ih inRest)
-
-theorem substitutedScopedEntries_rootsCovered {source target : Nat}
+theorem substitutedOccurrence_metadataCovered {source target : Nat}
     (bundle : ValidatedBundle source)
-    (σ : Fin source → ValidatedBundle target) (output : SiteUse)
-    (present : output ∈
+    (σ : Fin source → ValidatedBundle target)
+    (occurrence : SiteOccurrence)
+    (present : occurrence ∈
       (bundle.bundle.term.substitute
-        (fun index => (σ index).bundle.term)).siteUses) :
-    output ∈ dedupSiteUses
-      ((substitutedScopedEntries bundle σ).map Sigma.fst) := by
-  rcases Term.siteUses_substitute_corresponds bundle.bundle.term σ output
-      present with original | replacementCase
+        (fun index => (σ index).bundle.term)).siteOccurrences) :
+    ∃ entry, entry ∈ substitutionMetadata bundle σ ∧
+      entry.identity = occurrence.use.identity := by
+  have outputRoot : occurrence.use ∈
+      (bundle.bundle.term.substitute
+        (fun index => (σ index).bundle.term)).siteUses := by
+    rw [← (bundle.bundle.term.substitute
+      (fun index => (σ index).bundle.term)).siteOccurrences_uses]
+    exact List.mem_map.mpr ⟨occurrence, present, rfl⟩
+  rcases Term.siteUses_substitute_corresponds bundle.bundle.term σ
+      occurrence.use outputRoot with original | replacementCase
   · rcases original with ⟨input, inputRoot, rebased⟩
     have inputUse := bundle.coherence.rootsCovered input inputRoot
-    let selected := scopedUseOfCoherence bundle.coherence input inputUse
-    let inputEntry : Sigma fun raw => ScopedSiteUse source raw :=
-      ⟨input, selected⟩
-    have inputEntryPresent : inputEntry ∈ bundle.closure.entries :=
-      scopedSiteUseOfCoherence_mem bundle.coherence input inputUse
-    let transformed := substituteScopedSiteUse σ inputEntry
-    have rawEq : transformed.fst = output := by
-      apply SiteUse.eq_of_components
-      · exact rebased.1
-      · exact rebased.2.1
-      · dsimp [transformed, inputEntry, substituteScopedSiteUse]
-        have inputScope := selected.scopeEq
-        have scopeRelation := rebased.2.2
-        change input.scope = source + selected.depth at inputScope
-        change output.scope + source = input.scope + target at scopeRelation
-        omega
-    apply (mem_dedupSiteUses output _).mpr
-    apply List.mem_map.mpr
-    refine ⟨transformed, ?_, rawEq⟩
-    simp only [substitutedScopedEntries, List.mem_append, List.mem_map]
-    exact Or.inl ⟨inputEntry, inputEntryPresent, rfl⟩
+    let sourceEntry := (bundle.coherence.witness input inputUse).entry
+    let metadataEntry := clearSiteProfile sourceEntry
+    refine ⟨metadataEntry, ?_, ?_⟩
+    · apply List.mem_append_left
+      exact List.mem_map.mpr
+        ⟨sourceEntry, (bundle.coherence.witness input inputUse).entryInTable,
+          rfl⟩
+    · calc
+        metadataEntry.identity = sourceEntry.identity := rfl
+        _ = input.identity :=
+          (bundle.coherence.witness input inputUse).entryIdentity
+        _ = occurrence.use.identity := rebased.1
   · rcases replacementCase with
-      ⟨use, termUsePresent, replacement, replacementRoot, rebased⟩
+      ⟨use, usePresent, replacement, replacementRoot, rebased⟩
     have replacementUse :=
       (σ use.index).coherence.rootsCovered replacement replacementRoot
-    let replacementEntry := scopedSiteUseOfCoherence
-      (σ use.index).coherence ⟨replacement, replacementUse⟩
-    have replacementEntryPresent :
-        replacementEntry ∈ (σ use.index).closure.entries :=
-      scopedSiteUseOfCoherence_mem (σ use.index).coherence replacement
-        replacementUse
-    let inserted := insertReplacementScopedSiteUse use.depth replacementEntry
-    have usePresent : use ∈ substitutionUses bundle := by
-      apply List.mem_append_left
-      exact termUsePresent
-    have insertedPresent : inserted ∈
-        replacementScopedSiteUses σ (substitutionUses bundle) :=
-      insertReplacement_mem_replacementScopedSiteUses σ
-        (substitutionUses bundle) use usePresent replacementEntry
-        replacementEntryPresent
-    have rawEq : inserted.fst = output := by
-      apply SiteUse.eq_of_components
-      · exact rebased.1
-      · exact rebased.2.1
-      · dsimp [inserted, insertReplacementScopedSiteUse]
-        have replacementScope := replacementEntry.snd.scopeEq
-        have scopeRelation := rebased.2.2
-        change replacement.scope = target + replacementEntry.snd.depth at replacementScope
-        change output.scope + target =
-          replacement.scope + (target + use.depth) at scopeRelation
-        omega
-    apply (mem_dedupSiteUses output _).mpr
-    apply List.mem_map.mpr
-    refine ⟨inserted, ?_, rawEq⟩
-    simp only [substitutedScopedEntries, List.mem_append]
-    exact Or.inr insertedPresent
+    let sourceEntry :=
+      ((σ use.index).coherence.witness replacement replacementUse).entry
+    let metadataEntry := clearSiteProfile sourceEntry
+    refine ⟨metadataEntry, ?_, ?_⟩
+    · apply List.mem_append_right
+      simp only [List.mem_flatMap]
+      refine ⟨use, usePresent, ?_⟩
+      exact List.mem_map.mpr
+        ⟨sourceEntry,
+          ((σ use.index).coherence.witness replacement
+            replacementUse).entryInTable, rfl⟩
+    · calc
+        metadataEntry.identity = sourceEntry.identity := rfl
+        _ = replacement.identity :=
+          ((σ use.index).coherence.witness replacement
+            replacementUse).entryIdentity
+        _ = occurrence.use.identity := rebased.1
 
 def replacementSourceNotesForUses {source target : Nat}
     (σ : Fin source → ValidatedBundle target) :
@@ -1224,26 +828,17 @@ structure RenamedBundle {source target : Nat} (input : ValidatedBundle source)
     (ρ : Renaming source target) where
   certified : Bundle target
   validated : ValidatedBundle target
+  validatedBundleEq : validated.bundle = certified
   termEq : certified.term = input.bundle.term.rename ρ
-  sitesAreTypedCandidates :
-    reconcileSiteEntries
-      (input.closure.entries.map (renameScopedSiteCandidate ρ)) =
-        .ok certified.sites
 
 structure SubstitutedBundle {source target : Nat}
     (input : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) where
   certified : Bundle target
   validated : ValidatedBundle target
+  validatedBundleEq : validated.bundle = certified
   termEq : certified.term = input.bundle.term.substitute
     (fun index => (σ index).bundle.term)
-  sitesAreTypedCandidates :
-    let uses := typedTermSubstitutionUses input.bundle.term ++
-      scopedSidecarSubstitutionUses input
-    let original := input.closure.entries.map (substituteScopedSiteCandidate σ)
-    let replacements := replacementScopedSiteCandidates σ uses
-    reconcileSiteEntries
-      (original ++ replacements) = .ok certified.sites
 
 def RenamedBundle.bundle {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
@@ -1256,224 +851,70 @@ def SubstitutedBundle.bundle {source target : Nat}
     (result : SubstitutedBundle input σ) : Bundle target :=
   result.certified
 
-def shiftSiteEntry {scope : Nat} (depth : Nat) (entry : SiteEntry) :
-    Except String SiteEntry := do
-  let site ← SiteEntry.toSite scope entry
-  pure <| SiteEntry.ofSite (shiftTypedSite depth site)
-
-def renameSiteEntry {source target : Nat} (depth : Nat)
-    (ρ : Renaming source target) (entry : SiteEntry) :
-    Except String SiteEntry := do
-  let site ← SiteEntry.toSite (source + depth) entry
-  pure <| SiteEntry.ofSite (renameTypedSite depth ρ site)
-
-def substituteSiteEntry {source target : Nat} (depth : Nat)
-    (σ : Fin source → ValidatedBundle target) (entry : SiteEntry) :
-    Except String SiteEntry := do
-  let site ← SiteEntry.toSite (source + depth) entry
-  pure <| SiteEntry.ofSite (substituteTypedSite depth σ site)
-
-def siteUseDepth (outerScope : Nat) (use : SiteUse) : Except String Nat := do
-  if outerScope <= use.scope then pure (use.scope - outerScope)
-  else .error s!"site occurrence scope {use.scope} is below {outerScope}"
-
-def renameEntryForUse {source target : Nat} (ρ : Renaming source target)
-    (use : SiteUse) (entry : SiteEntry) : Except String SiteEntry := do
-  let depth ← siteUseDepth source use
-  renameSiteEntry depth ρ entry
-
-def substituteEntryForUse {source target : Nat}
-    (σ : Fin source → ValidatedBundle target)
-    (use : SiteUse) (entry : SiteEntry) : Except String SiteEntry := do
-  let depth ← siteUseDepth source use
-  substituteSiteEntry depth σ entry
-
-def consistentCandidate (identity : SiteId) :
-    List SiteEntry → Except String SiteEntry
-  | [] => .error s!"site table entry has no term occurrence: {repr identity}"
-  | first :: rest =>
-      if rest.any fun candidate => candidate != first then
-        .error s!"shared site transforms inconsistently: {repr identity}"
-      else pure first
-
-def renameSiteTable {source target : Nat} (ρ : Renaming source target)
-    (uses : List SiteUse) : List SiteEntry → Except String (List SiteEntry)
-  | [] => pure []
-  | entry :: rest => do
-      let relevant := uses.filter fun use => use.identity == entry.identity
-      let candidates ← relevant.mapM fun use =>
-        renameEntryForUse ρ use entry
-      let transformed ← consistentCandidate entry.identity candidates
-      pure (transformed :: (← renameSiteTable ρ uses rest))
-
-def substituteSiteTable {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) (uses : List SiteUse) :
-    List SiteEntry → Except String (List SiteEntry)
-  | [] => pure []
-  | entry :: rest => do
-      let relevant := uses.filter fun use => use.identity == entry.identity
-      let candidates ← relevant.mapM fun use =>
-        substituteEntryForUse σ use entry
-      let transformed ← consistentCandidate entry.identity candidates
-      pure (transformed :: (← substituteSiteTable σ uses rest))
-
-def replacementSiteEntries {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    List (Nat × Nat) → Except String (List SiteEntry)
-  | [] => pure []
-  | (rawIndex, depth) :: rest => do
-      if inBounds : rawIndex < source then
-        let replacementValidated := σ ⟨rawIndex, inBounds⟩
-        let replacement := replacementValidated.bundle
-        let replacementUses := replacementValidated.uses
-        let shifted ← renameSiteTable
-          (source := target) (target := target + depth)
-          (Renaming.shiftN (scope := target) depth)
-          replacementUses replacement.sites
-        pure (shifted ++ (← replacementSiteEntries σ rest))
-      else .error s!"substitution use {rawIndex} is outside source scope"
-
-def replacementSourceNotes {source target : Nat}
-    (σ : Fin source → ValidatedBundle target) :
-    List (Nat × Nat) → Except String (List SourceNote)
-  | [] => pure []
-  | (rawIndex, _depth) :: rest => do
-      if inBounds : rawIndex < source then
-        pure ((σ ⟨rawIndex, inBounds⟩).bundle.sourceMap ++
-          (← replacementSourceNotes σ rest))
-      else .error s!"substitution use {rawIndex} is outside source scope"
-
-def dependencySubstitutionUse (source depth : Nat) :
-    SerializedDependency → Except String (Option (Nat × Nat))
-  | .bound index =>
-      if index < depth then pure none
-      else
-        let outerIndex := index - depth
-        if outerIndex < source then pure (some (outerIndex, depth))
-        else .error s!"bound dependency {index} is outside lifted source scope"
-  | .free _ | .site _ => pure none
-
-def entrySubstitutionUses (source depth : Nat) (entry : SiteEntry) :
-    Except String (List (Nat × Nat)) := do
-  let uses ← entry.dependencies.mapM (dependencySubstitutionUse source depth)
-  pure (uses.filterMap id)
-
-def sidecarSubstitutionUses (source : Nat) (uses : List SiteUse) :
-    List SiteEntry → Except String (List (Nat × Nat))
-  | [] => pure []
-  | entry :: rest => do
-      let relevant := uses.filter fun use => use.identity == entry.identity
-      let nested ← relevant.mapM fun use => do
-        let depth ← siteUseDepth source use
-        entrySubstitutionUses source depth entry
-      pure (nested.flatten ++ (← sidecarSubstitutionUses source uses rest))
-
-def insertSiteEntry (entries : List SiteEntry) (candidate : SiteEntry) :
-    Except String (List SiteEntry) :=
-  match entries.find? fun entry => entry.identity == candidate.identity with
-  | none => pure (entries ++ [candidate])
-  | some existing =>
-      if existing == candidate then pure entries
-      else .error s!"site table merge conflict: {repr candidate.identity}"
-
-def mergeSiteEntries (candidates : List SiteEntry) :
-    Except String (List SiteEntry) :=
-  candidates.foldlM insertSiteEntry []
-
-def Bundle.renameWithUses {source target : Nat} (bundle : Bundle source)
-    (uses : List SiteUse) (ρ : Renaming source target) :
-    Except String (ValidatedBundle target) := do
-  let sites ← renameSiteTable ρ uses bundle.sites
-  let result : Bundle target :=
-    { version := bundle.version
-      term := bundle.term.rename ρ
-      sites
-      sourceMap := bundle.sourceMap }
-  result.checked
-
-def Bundle.rename {source target : Nat} (bundle : Bundle source)
-    (ρ : Renaming source target) : Except String (ValidatedBundle target) := do
-  let uses ← bundle.validateWithUses
-  bundle.renameWithUses uses ρ
-
 def ValidatedBundle.rename {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target) :
     Except BundleBindingConflict (RenamedBundle bundle ρ) :=
-  let candidates := bundle.closure.entries.map (renameScopedSiteCandidate ρ)
-  match evidence : reconcileSiteEntries candidates with
+  let term := bundle.bundle.term.rename ρ
+  let metadata := renameMetadata bundle
+  let occurrences := typedOccurrenceTable term metadata
+    (renamedOccurrence_metadataCovered bundle ρ)
+  let candidates := typedOccurrenceCandidates occurrences
+  match reconcileSiteTable candidates with
   | .error conflict => .error conflict
-  | .ok sites =>
+  | .ok table =>
       let outputBundle : Bundle target := {
         version := bundle.bundle.version
-        term := bundle.bundle.term.rename ρ
-        sites
+        term
+        sites := table.entries
         sourceMap := bundle.bundle.sourceMap }
-      match outputBundle.checked with
-      | .error detail => .error (.outputValidationFailure detail)
-      | .ok validated => .ok {
-          certified := outputBundle
-          validated := validated
-          termEq := rfl
-          sitesAreTypedCandidates := evidence }
-
-def Bundle.weaken {scope : Nat} (bundle : Bundle scope) :
-    Except String (ValidatedBundle (scope + 1)) :=
-  bundle.rename Fin.succ
+      let outputCoherence : BundleCoherence outputBundle :=
+        coherenceFromOccurrenceTable bundle.bundle.version term
+          bundle.bundle.sourceMap occurrences table
+      let validated : ValidatedBundle target := {
+        bundle := outputBundle
+        coherence := outputCoherence }
+      .ok {
+        certified := outputBundle
+        validated
+        validatedBundleEq := rfl
+        termEq := rfl }
 
 def ValidatedBundle.weaken {scope : Nat} (bundle : ValidatedBundle scope) :
     Except BundleBindingConflict (RenamedBundle bundle Fin.succ) :=
   bundle.rename Fin.succ
 
-def Bundle.substituteWithUses {source target : Nat} (bundle : Bundle source)
-    (uses : List SiteUse) (σ : Fin source → ValidatedBundle target) :
-    Except String (ValidatedBundle target) := do
-  let originalSites ← substituteSiteTable σ uses bundle.sites
-  let sidecarUses ← sidecarSubstitutionUses source uses bundle.sites
-  let replacementSites ← replacementSiteEntries σ
-    (bundle.term.substitutionUses ++ sidecarUses)
-  let sites ← mergeSiteEntries (originalSites ++ replacementSites)
-  let replacementNotes ← replacementSourceNotes σ
-    (bundle.term.substitutionUses ++ sidecarUses)
-  let result : Bundle target :=
-    { version := bundle.version
-      term := bundle.term.substitute fun index => (σ index).bundle.term
-      sites
-      sourceMap := bundle.sourceMap ++ replacementNotes }
-  result.checked
-
-def Bundle.substitute {source target : Nat} (bundle : Bundle source)
-    (σ : Fin source → ValidatedBundle target) :
-    Except String (ValidatedBundle target) := do
-  let uses ← bundle.validateWithUses
-  bundle.substituteWithUses uses σ
-
 def ValidatedBundle.substitute {source target : Nat}
     (bundle : ValidatedBundle source)
     (σ : Fin source → ValidatedBundle target) :
     Except BundleBindingConflict (SubstitutedBundle bundle σ) :=
-  let uses := typedTermSubstitutionUses bundle.bundle.term ++
-    scopedSidecarSubstitutionUses bundle
-  let originalCandidates := bundle.closure.entries.map
-    (substituteScopedSiteCandidate σ)
-  let replacementCandidates := replacementScopedSiteCandidates σ uses
-  let candidates := originalCandidates ++ replacementCandidates
-  match evidence : reconcileSiteEntries
-      candidates with
+  let term := bundle.bundle.term.substitute
+    (fun index => (σ index).bundle.term)
+  let metadata := substitutionMetadata bundle σ
+  let occurrences := typedOccurrenceTable term metadata
+    (substitutedOccurrence_metadataCovered bundle σ)
+  let candidates := typedOccurrenceCandidates occurrences
+  match reconcileSiteTable candidates with
   | .error conflict => .error conflict
-  | .ok sites =>
+  | .ok table =>
+      let uses := typedTermSubstitutionUses bundle.bundle.term
       let outputBundle : Bundle target := {
         version := bundle.bundle.version
-        term := bundle.bundle.term.substitute fun index => (σ index).bundle.term
-        sites
+        term
+        sites := table.entries
         sourceMap := bundle.bundle.sourceMap ++
           replacementSourceNotesForUses σ uses }
-      match outputBundle.checked with
-      | .error detail => .error (.outputValidationFailure detail)
-      | .ok validated => .ok {
-          certified := outputBundle
-          validated := validated
-          termEq := rfl
-          sitesAreTypedCandidates := evidence }
+      let outputCoherence : BundleCoherence outputBundle :=
+        coherenceFromOccurrenceTable bundle.bundle.version term
+          (bundle.bundle.sourceMap ++ replacementSourceNotesForUses σ uses)
+          occurrences table
+      let validated : ValidatedBundle target := {
+        bundle := outputBundle
+        coherence := outputCoherence }
+      .ok {
+        certified := outputBundle
+        validated
+        validatedBundleEq := rfl
+        termEq := rfl }
 
 theorem RenamedBundle.site_ids {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
