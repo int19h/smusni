@@ -61,7 +61,7 @@ function actorColor(actor) {
 
 function actorInitials(actor) {
   const model = actorModel(actor);
-  const known = { codex: "CX", fable: "FB", kimi: "KM", qwen: "QW", deepseek: "DS", gemini: "GM", human: "HU", owner: "HU" };
+  const known = { codex: "CX", fable: "FB", kimi: "KM", qwen: "QW", deepseek: "DS", grok: "GR", gemini: "GM", human: "HU", owner: "HU" };
   return known[model] || model.slice(0, 2).toUpperCase();
 }
 

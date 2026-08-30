@@ -5,9 +5,12 @@ read-only history).
 
 The exchange is a transient peer-review channel shared through the local
 filesystem by every model session working on this repository and by the human
-partner. It replaces copy/paste between sessions. The message spool under
-[`review/exchange/`](../../review/exchange/) is ignored by Git; this directory
-holds the tracked control plane: this protocol, the participant registry
+partner. It replaces copy/paste between sessions. The mutable message spool is
+external to every checkout and exposed through an ignored repository-local
+`mail` symlink whose target is machine-local configuration. Linked worktrees
+locate the primary checkout through Git's common directory and use the same
+symlink rather than creating private spools. The repository holds only the
+tracked control plane: this protocol, the participant registry
 ([`participants.toml`](participants.toml)), the helper
 ([`exchange.py`](exchange.py)), its templates
 ([message](MESSAGE_TEMPLATE.md), [acknowledgement](ACK_TEMPLATE.md)), the
@@ -17,13 +20,23 @@ commands are run from there. GitHub issues remain the durable work
 queue, and the normative documents plus the human partner's adjudications remain
 the semantic authority.
 
+The primary checkout must configure the link locally:
+
+```sh
+ln -s <external-mail-root> mail
+```
+
+The helper refuses a missing, broken, or real-directory relative spool rather
+than silently creating mutable mail inside a checkout. The `mail` path is
+ignored and never committed.
+
 ## Models, sessions, generations
 
 [`participants.toml`](participants.toml) is the single **model** allow-list
 and holds the current **generation**. Every model has a lowercase slug
-(`codex`, `fable`, `kimi`, `qwen`, `deepseek`, `gemini`), a display name, its
-transporting client, its default model selector, an `active` flag, and a
-`broadcast_recipient` flag. Model identity is distinct from client and
+(`codex`, `fable`, `kimi`, `qwen`, `deepseek`, `grok`, `gemini`), a display
+name, its transporting client, its default model selector, an `active` flag,
+and a `broadcast_recipient` flag. Model identity is distinct from client and
 selector: Qwen and DeepSeek are separate models even though both are
 transported by the `qwen` client. Adding a model is an edit to the registry,
 never a code change.
@@ -34,7 +47,7 @@ with `exchange.py join --model <slug>`, and is named
 `fable_1`, a second concurrent one `fable_1.1`, a third `fable_1.2`; the
 first Fable session after the generation is bumped to 2 is `fable_2`. Ids
 are assigned by the helper from the spool's session registry
-(`review/exchange/sessions/<id>.md`), never chosen by hand, so a session
+(`mail/sessions/<id>.md` logically), never chosen by hand, so a session
 needs no launch prompt to know who it is. A session that has finished its
 work runs `exchange.py retire`: it leaves every future `all` audience but
 stays addressable, so the human partner can resume it later for a direct
@@ -68,7 +81,7 @@ A new session needs no launch prompt. At its first turn it:
 1. reads the charter (`AGENTS.md`), which every client loads;
 2. identifies its model slug by self-inspection (a Claude session is `fable`,
    an OpenAI Codex session `codex`, Kimi `kimi`, Qwen `qwen`, DeepSeek
-   `deepseek`, a Gemini/Antigravity session `gemini`);
+   `deepseek`, Grok `grok`, a Gemini/Antigravity session `gemini`);
 3. runs `python3 tools/review-exchange/exchange.py join --model <slug>` and
    uses the printed id as its `--actor` from then on (a tab may also export
    it as `SMUSNI_EXCHANGE_ACTOR`);
@@ -138,14 +151,15 @@ count toward the hour. Leaving wait mode does not retire the session.
 
 ## Layout
 
-Paths relative to the repository root:
+The control-plane and logical mail paths are relative to the repository root;
+the ignored `mail` symlink targets the machine-local external directory:
 
 ```text
 tools/review-exchange/            tracked control plane
   PROTOCOL.md  participants.toml  exchange.py  MESSAGE_TEMPLATE.md
   ACK_TEMPLATE.md  tests/
 
-review/exchange/                  ignored spool
+mail/                             ignored symlink to external mutable spool
   sessions/<session-id>.md        the session registry (join/retire)
   messages/                       every published v2/v3 message, stored once
   drafts/<session-id>/            unpublished messages of that session
@@ -310,11 +324,6 @@ run it); both must pass.
 
 Exit codes: 0 ok · 1 usage · 2 validation · 3 ownership/permission ·
 4 collision/duplicate · 5 unknown reference · 130 interrupted wait.
-[`review/exchange_check.py`](../../review/exchange_check.py)` <actor>`
-remains as a thin compatibility wrapper around `status`; it lives in the
-ignored `review/` directory on purpose (it exists only so sessions started
-under the v1 charter keep seeing traffic until they reload), while everything
-that defines behaviour is tracked here.
 
 ## Full-pass reviews
 
@@ -342,7 +351,7 @@ GitHub. Procedure:
 
 ## v1 history
 
-Messages under `review/exchange/inbox/<actor>/` and their acknowledgements are
+Messages under `mail/inbox/<actor>/` and their acknowledgements are
 the immutable v1 record. The helper validates them read-only, counts their
 unacknowledged messages as pending for their recipient, and refuses to publish
 new v1 messages. The v1 sender alias `owner` is accepted only in that history.

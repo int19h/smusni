@@ -22,7 +22,7 @@ MODULE_SPEC.loader.exec_module(EXCHANGE)
 
 REGISTRY = """
 protocol = "smusni-review-mail/v3"
-spool = "review/exchange"
+spool = "mail"
 generation = 1
 [models.codex]
 active = true
@@ -41,6 +41,12 @@ active = true
 display_name = "Kimi"
 client = "kimi"
 model = "m3"
+broadcast_recipient = true
+[models.grok]
+active = true
+display_name = "Grok 4.6"
+client = "grok"
+model = "grok-4.6"
 broadcast_recipient = true
 [models.inactive]
 active = false
@@ -139,8 +145,10 @@ class ExchangeTest(unittest.TestCase):
         for name in ("MESSAGE_TEMPLATE.md", "ACK_TEMPLATE.md"):
             (self.tmp / "tools" / "review-exchange" / name).write_text((HERE.parent / name).read_text())
         (self.tmp / "tools" / "review-exchange" / "exchange.py").write_text(TOOL.read_text())
-        self.spool = self.tmp / "review" / "exchange"
-        self.spool.mkdir(parents=True)
+        self.external_spool = self.tmp / "external-mail"
+        self.external_spool.mkdir()
+        self.spool = self.tmp / "mail"
+        self.spool.symlink_to(self.external_spool, target_is_directory=True)
 
     def run_tool(self, *args, env=None, expect=0):
         e = dict(os.environ)
@@ -197,13 +205,39 @@ class ExchangeTest(unittest.TestCase):
 
     # ---- sessions
 
+    def test_spool_path_resolution_supports_worktrees_and_external_mail(self):
+        self.assertEqual(EXCHANGE.resolve_spool_path(self.tmp, "mail"), self.tmp / "mail")
+        absolute = self.tmp / "outside" / "smusni"
+        self.assertEqual(EXCHANGE.resolve_spool_path(self.tmp, str(absolute)), absolute)
+        linked = self.tmp / "linked"
+        primary = self.tmp / "primary"
+        (linked / "mail").mkdir(parents=True)  # a stray worktree-local spool loses
+        (primary / "mail").mkdir(parents=True)
+        with mock.patch.object(EXCHANGE, "primary_checkout_root", return_value=primary):
+            self.assertEqual(EXCHANGE.resolve_spool_path(linked, "mail"), primary / "mail")
+
+    def test_registry_refuses_missing_real_or_broken_relative_spool(self):
+        self.spool.unlink()
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "must be an ignored symlink"):
+            self.registry()
+        self.spool.mkdir()
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "must be an ignored symlink"):
+            self.registry()
+        self.spool.rmdir()
+        self.spool.symlink_to(self.tmp / "missing", target_is_directory=True)
+        with self.assertRaisesRegex(EXCHANGE.ExchangeError, "broken or not a directory"):
+            self.registry()
+
     def test_join_assigns_generation_ids_and_increments(self):
         self.assertEqual(self.join("fable"), "fable_1")
         self.assertEqual(self.join("fable"), "fable_1.1")
         self.assertEqual(self.join("fable"), "fable_1.2")
         self.assertEqual(self.join("codex"), "codex_1")
+        self.assertEqual(self.join("grok"), "grok_1")
         out = self.run_tool("sessions").stdout
         self.assertIn("fable_1.2 model=fable", out)
+        self.assertIn("grok_1 model=grok client=grok", out)
+        self.assertIn("model_name: grok-4.6", (self.spool / "sessions" / "grok_1.md").read_text())
         self.assertIn("generation=1", out)
 
     def test_join_refuses_fixed_inactive_and_unknown_models(self):
@@ -255,14 +289,15 @@ class ExchangeTest(unittest.TestCase):
         self.run_tool("ack", "--actor", f1, mid, "--disposition", "not mine", expect=3)
 
     def test_broadcast_excludes_sender_inactive_model_and_unjoined(self):
-        f1, c1 = self.join("fable"), self.join("codex")
+        f1, c1, g1 = self.join("fable"), self.join("codex"), self.join("grok")
         d = self.new(f1, "all")
         self.fill(d)
         pub = self.run_tool("publish", "--actor", f1, d).stdout.strip()
         head = Path(pub).read_text().split("\n---\n")[0]
-        self.assertIn("to: codex_1\n", head)
+        self.assertIn("to: codex_1,grok_1\n", head)
         self.assertIn("audience: all", head)
         self.assertNotIn("fable_1", head.split("to:")[1].split("\n")[0])
+        self.assertIn("pending_for_grok_1=1", self.run_tool("status", "--actor", g1).stdout)
 
     def test_broadcast_with_no_active_sessions_is_refused(self):
         f1 = self.join("fable")
