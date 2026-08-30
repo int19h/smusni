@@ -3,7 +3,7 @@
   "version": 2,
   "sources": {
     "redex": "tools/smusni-redex/port-a0.rkt",
-    "redex_sha256": "5966ff2403b4c37dd5b02ddffab33db15d2ded73f2cf0441602c2ac377d9534f",
+    "redex_sha256": "4c22c288b884c9f08045a204c660c48f9a0fa4183a3b87271dbf0e66d1d0b6cb",
     "core": "tools/smusni-redex/inventory/core.sexp",
     "core_sha256": "49febf9b1b0ea5fea795302cd89ca7e71eaa1fcc73a5310d725741b6d05c1150",
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
@@ -88,11 +88,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1829,
-          1831
+          1837,
+          1839
         ]
       ],
-      "source_sha256": "40dd4cf4e380a7ebca7e8bf68ca4e225469f25191320ca135c29602abf2bf339",
+      "source_sha256": "79fb7f48c2fcfd065aa03bf25db94c8d828986b312cb40edcf7a9206f11482d4",
       "conclusion": "(a0-synth Γ t R)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -104,11 +104,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1836,
-          1838
+          1844,
+          1846
         ]
       ],
-      "source_sha256": "5453f547aade95407a7e888072570b78ce39d540acf34ac728b624b65d5aadad",
+      "source_sha256": "19597c81fcb4f3b70d16ff73771cfa3bbe1147ed934a49853f3e09f3eec1cf92",
       "conclusion": "(a0-check Γ t τ R)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -812,7 +812,7 @@
           1726
         ]
       ],
-      "source_sha256": "de8c6d1726e995b8c6b092b826752e7f793b530f803e1e71d639d603030ffe92",
+      "source_sha256": "8583c33302800373b76acdaf8b07b5c3812f554157b95fe00f3fddad199c38fc",
       "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -828,7 +828,7 @@
           1738
         ]
       ],
-      "source_sha256": "5d2a99eadfa0e997b7c2527882fa6dfa67dc5bd84223ad0988f6576727666f79",
+      "source_sha256": "ab340d873d48af5bbb20ac2a3c51d4e06b382dbf5d56015e7b212f0306187c75",
       "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -857,10 +857,10 @@
       "source_ranges": [
         [
           1750,
-          1755
+          1757
         ]
       ],
-      "source_sha256": "a1280af17d3f68432c357c450ee10c058c1aa18efa9157ed9754b25b290cb562",
+      "source_sha256": "18ef83fbef82e2ca52a5b12625dc35fb2736c313783ece9cf1522d3a4cbb22a5",
       "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -872,11 +872,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1757,
-          1762
+          1759,
+          1766
         ]
       ],
-      "source_sha256": "cdd7b0dd8a2cddb668a2d2faad9a47b7d86e0467403fa0978afd395eba25f5ac",
+      "source_sha256": "212373aef05a92f7ed0a417f6c3e0b83b9f6ec7dbb6e43a10416f4bbd52671cb",
       "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -888,11 +888,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1764,
-          1767
+          1768,
+          1775
         ]
       ],
-      "source_sha256": "e511dbbc050ab0ec631ebe19450c2743471d1d9728c09870922c1cba769bf8f0",
+      "source_sha256": "bb0c1debe8d1547f60e9d2373768edc32c43b6ad2877dc8daffc98f841bcc857",
       "conclusion": "(a0-type synth Γ (CloseClause t_clause) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -904,11 +904,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1769,
-          1782
+          1777,
+          1790
         ]
       ],
-      "source_sha256": "6a414c74b72afba0e461081297f0e858d80c62f78fec4f9567307dcfc682b32a",
+      "source_sha256": "d80e58edb54c0cb1412da99830f978d52247025086f7c044671bc758f1a945fd",
       "conclusion": "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -920,11 +920,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1784,
-          1796
+          1792,
+          1804
         ]
       ],
-      "source_sha256": "de13250bfb83e59d2194452726b94f3b31403db058c26de28662be16f0e2e7bb",
+      "source_sha256": "f8ae123d2c858c83d86dc1d4692a86352bd5c2340de3efebe29e272cf57002a0",
       "conclusion": "(a0-type synth Γ (t_function t_argument) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -936,11 +936,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1798,
-          1810
+          1806,
+          1818
         ]
       ],
-      "source_sha256": "5f103df9cb0041abb31b4b44f7481da3136b20c957c539eb722dece6abed4560",
+      "source_sha256": "9d059f4fa93a5b58d1e289d4e64e37b95a1d2a39d780a3af9b31236afa739fe6",
       "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -952,11 +952,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1812,
-          1824
+          1820,
+          1832
         ]
       ],
-      "source_sha256": "5d6ccd91e24ce471c9dff9a68c0f87f2d87057baf3bda7c8302a5a336f0d010e",
+      "source_sha256": "5226cbca5dd15635c8ae31dccefe1974b43fbbfa30edd8542363656ced9ef364",
       "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },

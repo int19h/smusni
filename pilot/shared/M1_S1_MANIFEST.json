@@ -8600,7 +8600,7 @@
   },
   "schema": "smusni-pilot-s1",
   "sources": {
-    "constructor_matrix_sha256": "7fbe73026ce52e53f000d46d9a0c67b426285889f09cad4a2338baa23ed9648d",
+    "constructor_matrix_sha256": "dc85cef1d793c91dfc32b3396a3ae2364ea8069649d4d26314dbc3c5f255d778",
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
     "fixtures_sha256": "67fc96ea02b1d8a6f40b9933983ca7785d69a88da5712b2db29baf9dc21ddb98",
     "inventory_hashes": [
@@ -8608,7 +8608,7 @@
       "b17425cef314392641e64df823b08b90ac382fff"
     ],
     "port_corpus": "tools/smusni-redex/inventory/port-corpus.sexp",
-    "port_corpus_sha256": "9247f2891b02603869efd128f23b6c0fbc6422b64a06197573dfb8c7420c9ae4",
+    "port_corpus_sha256": "805d2b658050af16ac8fcc58265c5484b72b84c97b633e5258e8d841c28c17d3",
     "rr_syntax_normalization": "28 fixtures remove one ignored trailing ')' relative to base_head"
   },
   "typed_records": [

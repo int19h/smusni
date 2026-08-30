@@ -1,7 +1,7 @@
 # base_head	892a7040d4f3786be42635089b6aac7743ba6b74
 # core_sha256	49febf9b1b0ea5fea795302cd89ca7e71eaa1fcc73a5310d725741b6d05c1150
 # definitions_sha256	91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc
-# a0_sha256	5966ff2403b4c37dd5b02ddffab33db15d2ded73f2cf0441602c2ac377d9534f
+# a0_sha256	4c22c288b884c9f08045a204c660c48f9a0fa4183a3b87271dbf0e66d1d0b6cb
 # spec_sha256	19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4
 head	disposition	sources	evidence
 family:Select	gap-prose-only	spec-appendix	primitive family label; concrete Select constructors are separate

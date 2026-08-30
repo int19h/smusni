@@ -52,6 +52,13 @@
 (define (extend-lambda environment binders)
   (append binders environment))
 
+(define (contains-member-refer? datum)
+  (match datum
+    [`(Refer (λ ((,_ ,type)) ,_))
+     (not (match type [`(Referents ,_) #t] [_ #f]))]
+    [(? list?) (ormap contains-member-refer? datum)]
+    [_ #f]))
+
 (define (actual-clause clause)
   (define event (variable-not-in clause '$actual_event))
   `(λ ((,event (Referents Eventuality)))
@@ -234,6 +241,9 @@
                             (reason ,(exn-message exception))))])
     (define environment (port-environment (port-case-env item)))
     (define input (legacy-datum->a0 (port-case-term item)))
+    (when (contains-member-refer? input)
+      (error 'm2-oracle
+             "Refer-member-lift has ledger port-state none; term oracle unavailable"))
     (define output (a0->surface (expand-term input environment)))
     `(case (id ,(port-case-id item)) (status available) (term ,output))))
 

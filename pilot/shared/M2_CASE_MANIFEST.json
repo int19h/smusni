@@ -3,7 +3,7 @@
   "version": 1,
   "sources": {
     "s1": "pilot/shared/M1_S1_MANIFEST.json",
-    "s1_sha256": "90d1f0f10e4d7f07b79a78031354cf7f36416643bd9fb91d1cedc9ddb972f529",
+    "s1_sha256": "110315b78117fa74682d9900357d6b5bb5568a6792dc9f94dd862e6a5247e3d7",
     "definitions": "pilot/shared/M2_DEFINITION_MANIFEST.json",
     "definitions_sha256": "f6809de8dd51f84429033ec80d9ea369cbb6e3034e73ace3308fad60e55f77a4"
   },

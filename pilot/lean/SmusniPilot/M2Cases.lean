@@ -707,6 +707,16 @@ mutual
         pure (.bind binder.type computation body, state)
 end
 
+def caseRRDeclarations (metadata : List SiteEntry) : List SiteEntry :=
+  metadata.filter fun entry => entry.rrLink.isSome
+
+def caseRRDeclarationAgreement {scope : Nat} (term : Term scope)
+    (metadata : List SiteEntry) : Bool :=
+  (caseRRDeclarations metadata).all fun entry =>
+    term.siteOccurrences.any fun occurrence =>
+      occurrence.use.identity == entry.identity &&
+        occurrence.use.role == entry.role && occurrence.support == entry.dependencies
+
 structure CaseOutcome where
   id : String
   originalTag : String
@@ -718,6 +728,8 @@ structure CaseOutcome where
   clauses : List M2ClauseId := []
   term : Option (Term 0) := none
   error : Option TypingError := none
+  rrDeclarations : Nat := 0
+  rrAgreement : Bool := true
   deriving Repr
 
 def classifyUnselected (record : CorpusCase) (tag : String)
@@ -782,6 +794,8 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
           term.siteIds.contains entry.identity
         sourceMap := state.decode.sourceNotes.map Interchange.SourceNote.ofDecodeNote }
       let _ ← rebuilt.checked
+      let rrCount := caseRRDeclarations rebuilt.sites |>.length
+      let rrAgrees := caseRRDeclarationAgreement term rebuilt.sites
       match synth environment term with
       | .error error =>
           return {
@@ -792,7 +806,9 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
             expandedDefinitions := state.core.definitions
             clauses := state.core.clauses
             term := some term
-            error := some error }
+            error := some error
+            rrDeclarations := rrCount
+            rrAgreement := rrAgrees }
       | .ok typed =>
           return {
             id := record.id
@@ -805,7 +821,9 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
             effects := typed.effects
             expandedDefinitions := state.core.definitions
             clauses := state.core.clauses
-            term := some term }
+            term := some term
+            rrDeclarations := rrCount
+            rrAgreement := rrAgrees }
 
 structure CaseRun where
   outcomes : List CaseOutcome
@@ -816,6 +834,8 @@ structure CaseRun where
   blocked : Nat
   inputUnavailable : Nat
   outOfSlice : Nat
+  rrDeclarations : Nat
+  rrMismatchCases : Nat
   deriving Repr
 
 def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
@@ -831,7 +851,11 @@ def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
   blocked := outcomes.countP fun outcome => outcome.disposition == .blocked
   inputUnavailable := outcomes.countP fun outcome =>
     outcome.disposition == .inputUnavailable
-  outOfSlice := outcomes.countP fun outcome => outcome.disposition == .outOfSlice }
+  outOfSlice := outcomes.countP fun outcome => outcome.disposition == .outOfSlice
+  rrDeclarations := outcomes.foldl (fun count outcome =>
+    count + outcome.rrDeclarations) 0
+  rrMismatchCases := outcomes.countP fun outcome =>
+    outcome.rrDeclarations > 0 && !outcome.rrAgreement }
 
 def runM2Cases (root : String) : IO CaseRun := do
   let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")

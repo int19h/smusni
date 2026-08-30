@@ -1,7 +1,7 @@
 # Lean pilot milestone 2 report
 
-Status: **implementation in progress; parity blocked by #81 until PR #82 is
-merged and the oracle is regenerated.** This file is not a PASS report yet.
+Status: **candidate gates pass; exact-head review pending.** PR #82 fixed the
+Redex oracle defect in #81 and is included through main merge `dc6eaee`.
 
 ## Mechanism
 
@@ -42,10 +42,15 @@ hand-authored data on the path is:
   residual pending, 31 out-of-slice. The 160 is computed as pending-M2 cases
   with a nonempty defined-head set wholly contained in the generated 19-head
   a0/ported set.
-- `M2_REDEX_ORACLE.sexp`: generated from the frozen A0/B1 definition
-  metafunctions. Before #81 correction it contains 120 honest term targets and
-  40 explicit oracle-unavailable dispositions; no unavailable target is called
-  exact.
+- `M2_REDEX_ORACLE.sexp`: generated from the corrected frozen A0/B1 definition
+  metafunctions. It contains 119 honest term targets and 41 explicit
+  oracle-unavailable dispositions; no unavailable target is called exact.
+
+The PR #82 typing regeneration changes five semantic rule bodies:
+`A0-T-DirectClause-{Pure,Effectful}` and
+`A0-T-ActualClause-Event-{Pure,Effectful}` preserve `Fn`/`EFn`, while
+`A0-T-CloseClause` exposes the conservative EFn call. `A0-T-CloseWith` and
+the apply/synth/check records move only because their source ranges shifted.
 
 All generators run in check mode from `check-m2.sh` and fail on stale output.
 
@@ -67,8 +72,7 @@ not carry its row reconstruction metadata. `RowOf zzzz` is instead the named
 
 ## Current all-S1 result
 
-At pushed M2 head `ce1cd7c` plus the uncommitted Close-effect alignment with PR
-#82:
+At the rebased review candidate:
 
 - typed unchanged: 31;
 - successful type-directed expansion: 122;
@@ -127,22 +131,53 @@ occurrence/table/profile coherence is proved. The version-1 serialized `site`
 dependency tag remains decodable but is rejected as a semantic profile;
 internal `Dependency.site` is absent.
 
-## Parity status
+The RR adoption audit covers 135 RR-linked site declarations in elaborated
+terms and finds zero declaration/emitted-site profile mismatch cases.
+
+## Parity result
 
 The gate compares (1) alpha-normal CoreTerms after SiteId erasure and lexical
 row-label normalization, and (2) ordered `(site kind, binder scope,
-dependency support)` signatures. Before Redex correction, the 160 cohort had
-120 oracle targets, 119 comparable Lean terms, 54 term matches, 55 site
-matches, and 129 differences. All 129 were mechanically attributed to #81;
-unexplained differences were zero. The cause is Redex's stale outer placement
-of `Close` default binds, versus live §4.6's placement inside the event
-property. PR #82 corrects Redex; this report will replace these blocked counts
-with the regenerated exact result after merge.
+dependency support)` signatures. After PR #82 correction and regeneration:
 
-## Limits still to close
+- generated cohort: 160;
+- honest Redex term targets: 119;
+- explicit oracle-unavailable: 41;
+- comparable successful Lean terms: 118;
+- term matches: 118;
+- site-signature matches: 118;
+- differences: 0.
 
-- Merge/rebase PR #82 and rerun the full parity cohort.
-- Record final plan-extra oracle availability/type-only results.
-- Record the RR declaration/emitted-site adoption audit counts.
-- Record literal build/run timing and final exact-head reviewer dispositions.
-- Request exact-head review only after the above gates are green.
+The one available target not compared is `731809...`, a deliberate
+`CoveredBy` purity rejection with no successful Lean output. The 41 unavailable
+targets are 33 Redex definition/domain exclusions, 6 missing `Close` row
+adapter inputs, 1 `Refer-member-lift` (`port-state none`), and 1 unavailable
+typed Massify basis. These are dispositions, not waivers.
+
+The three corpus extras remain separate: the two Grade cases (`3e12...`,
+`71ab...`) also contain unselected model-context `That`, so they do not acquire
+an exact Grade oracle merely because the pure explicit-row synthetic gate
+passes; the positive Jai case (`9ef0...`) is the sole `input-unavailable` case
+because S1 lacks row reconstruction metadata. Synthetic Grade, JaiRaise,
+bare-jai, TooMany, and unseen Refer/row gates pass. Grade/Jai/Refer term
+expansion is never called exact where the ledger has `port-state none`.
+
+## Timing
+
+On this VM after `lake clean`:
+
+- `lake build m2`: 21.04 s wall, 1,712,684 KiB maximum RSS;
+- `lake exe m2`: 0.29 s wall, 129,228 KiB maximum RSS;
+- full `check-m2.sh` including generators/oracle/build/run: 9.85 s wall in
+  the recorded incremental run (338,584 KiB maximum RSS).
+
+## Explicit limits
+
+- Only the manifest-selected definition/domain slice is complete. Symbolic
+  `AtLeast`/`Exactly` expansion and unequal-length `ZipWith` remain their
+  recorded blocked/unselected domains; pending-M3 heads are not in the
+  completeness claim.
+- Fixture lexical rows remain pilot-only pending #12; place-row shape and
+  event mode are consumed, and missing named rows fail closed.
+- The 41 oracle-unavailable parity cases retain the explicit reasons above.
+- Final exact-head reviewer dispositions are not yet recorded here.

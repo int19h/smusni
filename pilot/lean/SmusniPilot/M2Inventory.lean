@@ -1139,8 +1139,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-Synth"
       anchor := "spec §1.6, §3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1829, stop := 1831 }]
-      sourceDigest := "40dd4cf4e380a7ebca7e8bf68ca4e225469f25191320ca135c29602abf2bf339"
+      sourceRanges := [{ start := 1837, stop := 1839 }]
+      sourceDigest := "79fb7f48c2fcfd065aa03bf25db94c8d828986b312cb40edcf7a9206f11482d4"
       conclusion := "(a0-synth Γ t R)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1150,8 +1150,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-Check"
       anchor := "spec §1.6, §3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1836, stop := 1838 }]
-      sourceDigest := "5453f547aade95407a7e888072570b78ce39d540acf34ac728b624b65d5aadad"
+      sourceRanges := [{ start := 1844, stop := 1846 }]
+      sourceDigest := "19597c81fcb4f3b70d16ff73771cfa3bbe1147ed934a49853f3e09f3eec1cf92"
       conclusion := "(a0-check Γ t τ R)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1635,7 +1635,7 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
       sourceRanges := [{ start := 1716, stop := 1726 }]
-      sourceDigest := "de8c6d1726e995b8c6b092b826752e7f793b530f803e1e71d639d603030ffe92"
+      sourceDigest := "8583c33302800373b76acdaf8b07b5c3812f554157b95fe00f3fddad199c38fc"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1646,7 +1646,7 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
       sourceRanges := [{ start := 1728, stop := 1738 }]
-      sourceDigest := "5d2a99eadfa0e997b7c2527882fa6dfa67dc5bd84223ad0988f6576727666f79"
+      sourceDigest := "ab340d873d48af5bbb20ac2a3c51d4e06b382dbf5d56015e7b212f0306187c75"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1667,8 +1667,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ActualClause-Event-Pure"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1750, stop := 1755 }]
-      sourceDigest := "a1280af17d3f68432c357c450ee10c058c1aa18efa9157ed9754b25b290cb562"
+      sourceRanges := [{ start := 1750, stop := 1757 }]
+      sourceDigest := "18ef83fbef82e2ca52a5b12625dc35fb2736c313783ece9cf1522d3a4cbb22a5"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1678,8 +1678,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ActualClause-Event-Effectful"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1757, stop := 1762 }]
-      sourceDigest := "cdd7b0dd8a2cddb668a2d2faad9a47b7d86e0467403fa0978afd395eba25f5ac"
+      sourceRanges := [{ start := 1759, stop := 1766 }]
+      sourceDigest := "212373aef05a92f7ed0a417f6c3e0b83b9f6ec7dbb6e43a10416f4bbd52671cb"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1689,8 +1689,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CloseClause"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1764, stop := 1767 }]
-      sourceDigest := "e511dbbc050ab0ec631ebe19450c2743471d1d9728c09870922c1cba769bf8f0"
+      sourceRanges := [{ start := 1768, stop := 1775 }]
+      sourceDigest := "bb0c1debe8d1547f60e9d2373768edc32c43b6ad2877dc8daffc98f841bcc857"
       conclusion := "(a0-type synth Γ (CloseClause t_clause) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1700,8 +1700,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CloseWith"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1769, stop := 1782 }]
-      sourceDigest := "6a414c74b72afba0e461081297f0e858d80c62f78fec4f9567307dcfc682b32a"
+      sourceRanges := [{ start := 1777, stop := 1790 }]
+      sourceDigest := "d80e58edb54c0cb1412da99830f978d52247025086f7c044671bc758f1a945fd"
       conclusion := "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1711,8 +1711,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-ClauseContent"
       anchor := "spec §3.4, §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1784, stop := 1796 }]
-      sourceDigest := "de13250bfb83e59d2194452726b94f3b31403db058c26de28662be16f0e2e7bb"
+      sourceRanges := [{ start := 1792, stop := 1804 }]
+      sourceDigest := "f8ae123d2c858c83d86dc1d4692a86352bd5c2340de3efebe29e272cf57002a0"
       conclusion := "(a0-type synth Γ (t_function t_argument) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1722,8 +1722,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-Pure"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1798, stop := 1810 }]
-      sourceDigest := "5f103df9cb0041abb31b4b44f7481da3136b20c957c539eb722dece6abed4560"
+      sourceRanges := [{ start := 1806, stop := 1818 }]
+      sourceDigest := "9d059f4fa93a5b58d1e289d4e64e37b95a1d2a39d780a3af9b31236afa739fe6"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1733,8 +1733,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-Effectful"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1812, stop := 1824 }]
-      sourceDigest := "5d6ccd91e24ce471c9dff9a68c0f87f2d87057baf3bda7c8302a5a336f0d010e"
+      sourceRanges := [{ start := 1820, stop := 1832 }]
+      sourceDigest := "5226cbca5dd15635c8ae31dccefe1974b43fbbfa30edd8542363656ced9ef364"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -2467,6 +2467,6 @@ def m2DefinitionManifestDigest : String :=
   "91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc"
 
 def m2TypingManifestDigest : String :=
-  "5966ff2403b4c37dd5b02ddffab33db15d2ded73f2cf0441602c2ac377d9534f"
+  "4c22c288b884c9f08045a204c660c48f9a0fa4183a3b87271dbf0e66d1d0b6cb"
 
 end SmusniPilot

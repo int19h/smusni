@@ -14,7 +14,8 @@ def main : IO Unit := do
     s!"all-s1={cases.outcomes.length} unchanged={cases.typedUnchanged} " ++
     s!"expanded={cases.typeDirectedExpansion} rejected={cases.typedRejection} " ++
     s!"pending-m3={cases.pendingMilestone3} blocked={cases.blocked} " ++
-    s!"input-unavailable={cases.inputUnavailable} out-of-slice={cases.outOfSlice}"
+    s!"input-unavailable={cases.inputUnavailable} out-of-slice={cases.outOfSlice} " ++
+    s!"rr-declarations={cases.rrDeclarations} rr-mismatch-cases={cases.rrMismatchCases}"
   IO.println <|
     s!"M2 parity cohort={parity.cohort} available={parity.oracleAvailable} " ++
     s!"unavailable={parity.oracleUnavailable} compared={parity.compared} " ++

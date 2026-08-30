@@ -7,45 +7,45 @@
     (term
      (Ask
       (Polar
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "04cdfd2f45e14a4ad9d525b9aa39518337dfe160")
     (status available)
     (term
      (∧
       ((λ (($left :: (Referents Entity)) ($right :: (Referents Entity)))
-         (Bind
-          ($ctx3 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (tavla $left $right $ctx3 $event)) $actual_event)
-              (fasnu $actual_event))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $left $right $ctx3 $event)))
+              $actual_event)
+             (fasnu $actual_event)))))
        Speaker
        Audience)
       (∧
        ((λ (($left :: (Referents Entity)) ($right :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla $left $right $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $left $right $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         Audience
         Speaker)
        (∧)))))
@@ -56,18 +56,20 @@
       ($w :: (Referents Entity))
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
       (Mention
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (bajra $w $ctx2 $ctx3 $ctx4 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               (bajra $w $ctx2 $ctx3 $ctx4 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "08f992b5f049f24666cf4ace53d35d90dea91c37")
     (status available)
     (term
@@ -75,20 +77,22 @@
       (Bind
        ($x :: Entity)
        (Context)
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama $x $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama $x $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "0aca32fd93634be168dabf02d8e7156122b58fc3")
     (status unavailable)
     (reason
@@ -127,14 +131,13 @@
                ($w1 :: (Referents Entity))
                (SelectAtLeast 1 (λ (($x :: Entity)) (mlatu $x)))
                ((λ (($w :: (Referents Entity)))
-                  (Bind
-                   ($ctx3 :: (Referents Entity))
-                   (Context)
-                   (CloseClause
-                    (λ (($actual_event :: (Referents Eventuality)))
-                      (∧
-                       ((λ (($event :: (Referents Eventuality))) (tavla $x $w $ctx3 $event)) $actual_event)
-                       (fasnu $actual_event))))))
+                  (CloseClause
+                   (λ (($actual_event :: (Referents Eventuality)))
+                     (∧
+                      ((λ (($event :: (Referents Eventuality)))
+                         (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $x $w $ctx3 $event)))
+                       $actual_event)
+                      (fasnu $actual_event)))))
                 $w1)))
             $member))))))))
   (case (id "0c9cfd6de375ffa1d4fff442d727306600ec85f1")
@@ -172,20 +175,22 @@
       ($alis :: (Referents Entity))
       (Refer (λ (($x :: (Referents Entity))) (Named "alis" $x)))
       (Assert
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama $alis $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama $alis $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "10f71e5c385cb2118c01d8439fe7d8991a7db15a")
     (status available)
     (term
@@ -197,21 +202,22 @@
        (Refer
         (λ (($a :: (Referents Amount)))
           ((NiRel
-            (Bind
-             ($ctx2 :: (Referents Entity))
-             (Context)
-             ($ctx3 :: (Referents Entity))
-             (Context)
-             ($ctx4 :: (Referents Entity))
-             (Context)
-             ($ctx5 :: (Referents Entity))
-             (Context)
-             (CloseClause
-              (λ (($actual_event :: (Referents Eventuality)))
-                (∧
-                 ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event))
-                  $actual_event)
-                 (fasnu $actual_event))))))
+            (CloseClause
+             (λ (($actual_event :: (Referents Eventuality)))
+               (∧
+                ((λ (($event :: (Referents Eventuality)))
+                   (Bind
+                    ($ctx2 :: (Referents Entity))
+                    (Context)
+                    ($ctx3 :: (Referents Entity))
+                    (Context)
+                    ($ctx4 :: (Referents Entity))
+                    (Context)
+                    ($ctx5 :: (Referents Entity))
+                    (Context)
+                    (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+                 $actual_event)
+                (fasnu $actual_event)))))
            $a
            $scale)))
        (Mention (− 1 (AmountValue $amt $scale)))))))
@@ -287,14 +293,13 @@
       ($r :: (Referents Entity))
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla Speaker $r $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $r $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "27f27c1038df83b40e16a919fdaf24b405d04b04")
     (status available)
     (term
@@ -378,14 +383,13 @@
       ($r :: (Referents Entity))
       (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla Speaker $r $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $r $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "2dfd6a966b56f57fcae90ce8b9fc26926509c8cb")
     (status available)
     (term
@@ -396,14 +400,13 @@
        ($r1 :: (Referents Entity))
        (Refer (λ (($named :: (Referents Entity))) (Named "alis" $named)))
        (Assert
-        (Bind
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (tavla $r $r1 $ctx3 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $r1 $ctx3 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "2fcf22efb7f6212bf8ca744449fafda776c6f1c5")
     (status available)
     (term
@@ -450,14 +453,13 @@
            (→
             (Among $member $w)
             ((λ (($dog :: Entity))
-               (Bind
-                ($ctx3 :: (Referents Entity))
-                (Context)
-                (CloseClause
-                 (λ (($actual_event :: (Referents Eventuality)))
-                   (∧
-                    ((λ (($event :: (Referents Eventuality))) (tavla $dog $cats $ctx3 $event)) $actual_event)
-                    (fasnu $actual_event))))))
+               (CloseClause
+                (λ (($actual_event :: (Referents Eventuality)))
+                  (∧
+                   ((λ (($event :: (Referents Eventuality)))
+                      (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $dog $cats $ctx3 $event)))
+                    $actual_event)
+                   (fasnu $actual_event)))))
              $member)))))))))
   (case (id "31a52745397b69a3ab4672c18fa2d64ea75cc32a")
     (status available)
@@ -484,32 +486,33 @@
       ($w :: (Referents Entity))
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "3948dd78d5112f473847359d17f681269520ce9f")
     (status available)
     (term
      (Mention
-      (Bind
-       ($ctx2 :: (Referents Entity))
-       (Context)
-       ($ctx3 :: (Referents Entity))
-       (Context)
-       ($ctx4 :: (Referents Entity))
-       (Context)
-       ($ctx5 :: (Referents Entity))
-       (Context)
-       (CloseClause
-        (λ (($actual_event :: (Referents Eventuality)))
-          (∧
-           ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-           (fasnu $actual_event))))))))
+      (CloseClause
+       (λ (($actual_event :: (Referents Eventuality)))
+         (∧
+          ((λ (($event :: (Referents Eventuality)))
+             (Bind
+              ($ctx2 :: (Referents Entity))
+              (Context)
+              ($ctx3 :: (Referents Entity))
+              (Context)
+              ($ctx4 :: (Referents Entity))
+              (Context)
+              ($ctx5 :: (Referents Entity))
+              (Context)
+              (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+           $actual_event)
+          (fasnu $actual_event)))))))
   (case (id "3956e1cb70c49637158cd4a7407ac5ccf982c17d")
     (status available)
     (term
@@ -527,14 +530,13 @@
       ($w :: (Referents Entity))
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w Speaker $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "4042ee2afc837aa8bea2a718993dd4ed719ad42d")
     (status unavailable)
     (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
@@ -584,14 +586,13 @@
                ($w1 :: (Referents Entity))
                (SelectAtLeast 1 (λ (($y :: Entity)) (mlatu $y)))
                ((λ (($w :: (Referents Entity)))
-                  (Bind
-                   ($ctx3 :: (Referents Entity))
-                   (Context)
-                   (CloseClause
-                    (λ (($actual_event :: (Referents Eventuality)))
-                      (∧
-                       ((λ (($event :: (Referents Eventuality))) (tavla $dog $w $ctx3 $event)) $actual_event)
-                       (fasnu $actual_event))))))
+                  (CloseClause
+                   (λ (($actual_event :: (Referents Eventuality)))
+                     (∧
+                      ((λ (($event :: (Referents Eventuality)))
+                         (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $dog $w $ctx3 $event)))
+                       $actual_event)
+                      (fasnu $actual_event)))))
                 $w1)))
             $member))))))))
   (case (id "42c5da2578ee0adc173a7789faa03e92164665f5")
@@ -607,26 +608,26 @@
     (status available)
     (term
      (λ (($e :: (Referents Eventuality)))
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($clause_event :: (Referents Eventuality)))
-           (∧
-            (∧ (Among $clause_event $e) (Among $e $clause_event))
-            ((λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($lexical_event :: (Referents Eventuality)))
-                   (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $lexical_event))
-                 $actual_event)
-                (fasnu $actual_event)))
-             $e))))))))
+       (CloseClause
+        (λ (($clause_event :: (Referents Eventuality)))
+          (∧
+           (∧ (Among $clause_event $e) (Among $e $clause_event))
+           ((λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($lexical_event :: (Referents Eventuality)))
+                  (Bind
+                   ($ctx2 :: (Referents Entity))
+                   (Context)
+                   ($ctx3 :: (Referents Entity))
+                   (Context)
+                   ($ctx4 :: (Referents Entity))
+                   (Context)
+                   ($ctx5 :: (Referents Entity))
+                   (Context)
+                   (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $lexical_event)))
+                $actual_event)
+               (fasnu $actual_event)))
+            $e)))))))
   (case (id "4609d82730c3a0bb8c83f2db338169bafd034c35")
     (status unavailable)
     (reason
@@ -704,14 +705,13 @@
      (Bind
       ($r :: (Referents Entity))
       (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
-      (Bind
-       ($ctx3 :: (Referents Entity))
-       (Context)
-       (CloseClause
-        (λ (($actual_event :: (Referents Eventuality)))
-          (∧
-           ((λ (($event :: (Referents Eventuality))) (tavla Speaker $r $ctx3 $event)) $actual_event)
-           (fasnu $actual_event))))))))
+      (CloseClause
+       (λ (($actual_event :: (Referents Eventuality)))
+         (∧
+          ((λ (($event :: (Referents Eventuality)))
+             (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $r $ctx3 $event)))
+           $actual_event)
+          (fasnu $actual_event)))))))
   (case (id "4d4ad03ba86cacd6bea93987224d45d7ee5e94bc")
     (status available)
     (term
@@ -719,14 +719,13 @@
       ($w1 :: (Referents Entity))
       (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
       ((λ (($w :: (Referents Entity)))
-         (Bind
-          ($ctx3 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-              (fasnu $actual_event))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+              $actual_event)
+             (fasnu $actual_event)))))
        $w1))))
   (case (id "4dac43977fdeb1253b10b424e67c05ad70fea1f2")
     (status available)
@@ -735,28 +734,29 @@
       ($r :: (Referents Entity))
       (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
       (Mention
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla Speaker $r $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $r $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "4e062973565a461bfbff8b1c1e2b311b9849f16b")
     (status available)
     (term
      (Assert
-      (Bind
-       ($ctx2 :: (Referents Entity))
-       (Context)
-       ($ctx3 :: (Referents Entity))
-       (Context)
-       (CloseClause
-        (λ (($actual_event :: (Referents Eventuality)))
-          (∧
-           ((λ (($event :: (Referents Eventuality))) (tavla Speaker $ctx2 $ctx3 $event)) $actual_event)
-           (fasnu $actual_event))))))))
+      (CloseClause
+       (λ (($actual_event :: (Referents Eventuality)))
+         (∧
+          ((λ (($event :: (Referents Eventuality)))
+             (Bind
+              ($ctx2 :: (Referents Entity))
+              (Context)
+              ($ctx3 :: (Referents Entity))
+              (Context)
+              (tavla Speaker $ctx2 $ctx3 $event)))
+           $actual_event)
+          (fasnu $actual_event)))))))
   (case (id "4e4c65ee9d06e77cf05541003764e803eb2f029a")
     (status available)
     (term
@@ -768,21 +768,22 @@
        (Refer
         (λ (($v :: (Referents TruthValue)))
           ((JeiRel
-            (Bind
-             ($ctx2 :: (Referents Entity))
-             (Context)
-             ($ctx3 :: (Referents Entity))
-             (Context)
-             ($ctx4 :: (Referents Entity))
-             (Context)
-             ($ctx5 :: (Referents Entity))
-             (Context)
-             (CloseClause
-              (λ (($actual_event :: (Referents Eventuality)))
-                (∧
-                 ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event))
-                  $actual_event)
-                 (fasnu $actual_event))))))
+            (CloseClause
+             (λ (($actual_event :: (Referents Eventuality)))
+               (∧
+                ((λ (($event :: (Referents Eventuality)))
+                   (Bind
+                    ($ctx2 :: (Referents Entity))
+                    (Context)
+                    ($ctx3 :: (Referents Entity))
+                    (Context)
+                    ($ctx4 :: (Referents Entity))
+                    (Context)
+                    ($ctx5 :: (Referents Entity))
+                    (Context)
+                    (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+                 $actual_event)
+                (fasnu $actual_event)))))
            $v
            $ep)))
        (Mention $tv)))))
@@ -796,18 +797,20 @@
        ($r1 :: (Referents Entity))
        (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
        (Assert
-        (Bind
-         ($ctx2 :: (Referents Entity))
-         (Context)
-         ($ctx4 :: (Referents Entity))
-         (Context)
-         ($ctx5 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (klama $r1 $ctx2 $r $ctx4 $ctx5 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind
+                ($ctx2 :: (Referents Entity))
+                (Context)
+                ($ctx4 :: (Referents Entity))
+                (Context)
+                ($ctx5 :: (Referents Entity))
+                (Context)
+                (klama $r1 $ctx2 $r $ctx4 $ctx5 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "5033153a5c5b68c485fe108ee8c910f18dd71434")
     (status available)
     (term
@@ -818,14 +821,13 @@
        ($r1 :: (Referents Entity))
        (Refer (λ (($unit :: (Referents Entity))) (mlatu $unit)))
        (Assert
-        (Bind
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (tavla $r1 $r $ctx3 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r1 $r $ctx3 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "50ef8b629c53200c229526eff8a75f8fba6b259b")
     (status available)
     (term
@@ -833,32 +835,33 @@
       ($r :: (Referents Entity))
       (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla $r Speaker $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r Speaker $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "519c65d3104d364d4363ff8b27eecdec8abe7b27")
     (status available)
     (term
      (Assert
-      (Bind
-       ($ctx2 :: (Referents Entity))
-       (Context)
-       ($ctx3 :: (Referents Entity))
-       (Context)
-       ($ctx4 :: (Referents Entity))
-       (Context)
-       ($ctx5 :: (Referents Entity))
-       (Context)
-       (CloseClause
-        (λ (($actual_event :: (Referents Eventuality)))
-          (∧
-           ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-           (fasnu $actual_event))))))))
+      (CloseClause
+       (λ (($actual_event :: (Referents Eventuality)))
+         (∧
+          ((λ (($event :: (Referents Eventuality)))
+             (Bind
+              ($ctx2 :: (Referents Entity))
+              (Context)
+              ($ctx3 :: (Referents Entity))
+              (Context)
+              ($ctx4 :: (Referents Entity))
+              (Context)
+              ($ctx5 :: (Referents Entity))
+              (Context)
+              (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+           $actual_event)
+          (fasnu $actual_event)))))))
   (case (id "536aa8f5d8a23f0b5e51bf8b6b43a218c4634bcb")
     (status unavailable)
     (reason
@@ -899,14 +902,13 @@
        ($w1 :: (Referents Entity))
        (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
        ((λ (($w :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w Speaker $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         $w1)))))
   (case (id "5b327dd7decfabf290e971fdee6123a55d5c4d26")
     (status available)
@@ -926,26 +928,24 @@
     (term
      (∧
       ((λ (($s :: (Referents Entity)) ($l :: (Referents Entity)))
-         (Bind
-          ($ctx3 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (tavla $s $l $ctx3 $event)) $actual_event)
-              (fasnu $actual_event))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $s $l $ctx3 $event)))
+              $actual_event)
+             (fasnu $actual_event)))))
        Speaker
        Audience)
       (∧
        ((λ (($s :: (Referents Entity)) ($l :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla $s $l $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $s $l $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         Audience
         Speaker)
        (∧)))))
@@ -1010,14 +1010,13 @@
        ($w1 :: (Referents Entity))
        (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
        ((λ (($w :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         $w1)))))
   (case (id "622e4a564152b3e60db8afdd669d462b46663afe")
     (status available)
@@ -1052,14 +1051,13 @@
            (→
             (Among $member $w)
             ((λ (($x :: Entity))
-               (Bind
-                ($ctx3 :: (Referents Entity))
-                (Context)
-                (CloseClause
-                 (λ (($actual_event :: (Referents Eventuality)))
-                   (∧
-                    ((λ (($event :: (Referents Eventuality))) (tavla $x $r $ctx3 $event)) $actual_event)
-                    (fasnu $actual_event))))))
+               (CloseClause
+                (λ (($actual_event :: (Referents Eventuality)))
+                  (∧
+                   ((λ (($event :: (Referents Eventuality)))
+                      (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $x $r $ctx3 $event)))
+                    $actual_event)
+                   (fasnu $actual_event)))))
              $member)))))))))
   (case (id "635a3aa7bafa3719cc67c19e9d139aacb53252c0")
     (status available)
@@ -1073,14 +1071,13 @@
          ($w1 :: (Referents Entity))
          (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
          ((λ (($w :: (Referents Entity)))
-            (Bind
-             ($ctx3 :: (Referents Entity))
-             (Context)
-             (CloseClause
-              (λ (($actual_event :: (Referents Eventuality)))
-                (∧
-                 ((λ (($event :: (Referents Eventuality))) (tavla $r $w $ctx3 $event)) $actual_event)
-                 (fasnu $actual_event))))))
+            (CloseClause
+             (λ (($actual_event :: (Referents Eventuality)))
+               (∧
+                ((λ (($event :: (Referents Eventuality)))
+                   (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $w $ctx3 $event)))
+                 $actual_event)
+                (fasnu $actual_event)))))
           $w1)))))))
   (case (id "6489b84bf8e9ceae95a45d0dc9a4bed9e4eb6514")
     (status available)
@@ -1120,16 +1117,18 @@
         ($r2 :: (Referents Entity))
         (Refer (λ (($unit :: (Referents Entity))) (mlatu $unit)))
         (Assert
-         (Bind
-          ($ctx4 :: (Referents Entity))
-          (Context)
-          ($ctx5 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (klama $r $r1 $r2 $ctx4 $ctx5 $event)) $actual_event)
-              (fasnu $actual_event)))))))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind
+                 ($ctx4 :: (Referents Entity))
+                 (Context)
+                 ($ctx5 :: (Referents Entity))
+                 (Context)
+                 (klama $r $r1 $r2 $ctx4 $ctx5 $event)))
+              $actual_event)
+             (fasnu $actual_event))))))))))
   (case (id "6584fc7110a48d8b01400f0fed7714f08cf3cbac")
     (status unavailable)
     (reason
@@ -1144,14 +1143,13 @@
        ($r1 :: (Referents Entity))
        (Refer (λ (($unit :: (Referents Entity))) (gerku $unit)))
        (Assert
-        (Bind
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (tavla $r $r1 $ctx3 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $r1 $ctx3 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "676aca15433b25852f0cb06540b381890f0b57a6")
     (status available)
     (term
@@ -1180,14 +1178,13 @@
       ($r :: (Referents Entity))
       (Refer (λ (($named :: (Referents Entity))) (Named "alis" $named)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla Speaker $r $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $r $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "6b708ddcdacf0a49ffaf55306f0cccad98046a67")
     (status available)
     (term
@@ -1201,29 +1198,17 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast (+ $n 1) (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "6db1d0ab2a56d4dec895dc6191ac5bc37881bc41")
-    (status available)
-    (term
-     (Bind
-      ($base :: (Referents Entity))
-      (Local (Refer (λ (($x :: Entity)) (gerku $x))))
-      (Bind
-       ($sets :: (Referents (Set Entity)))
-       (Refer
-        (λ (($s :: (Set Entity)))
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧ ((StateClause (selcmi $s $base)) $actual_event) (fasnu $actual_event))))))
-       (Mention $sets)))))
+    (status unavailable)
+    (reason "m2-oracle: Refer-member-lift has ledger port-state none; term oracle unavailable"))
   (case (id "6dda66c58218158e235fe50e2f640eb4570dc8d9")
     (status available)
     (term
@@ -1231,14 +1216,13 @@
       ($w1 :: (Referents Entity))
       (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
       ((λ (($w :: (Referents Entity)))
-         (Bind
-          ($ctx3 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
-              (fasnu $actual_event))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w Speaker $ctx3 $event)))
+              $actual_event)
+             (fasnu $actual_event)))))
        $w1))))
   (case (id "6e39ed994d886bf1029e9d81b13d2c4969d12f1c")
     (status available)
@@ -1269,14 +1253,13 @@
         ($w1 :: (Referents Entity))
         (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $w $r $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w $r $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "6f6172a19fbd27927333f4dd1fa4152e9a5ae5c8")
     (status unavailable)
@@ -1387,16 +1370,18 @@
          (λ (($actual_event :: (Referents Eventuality)))
            (∧ ((StateClause (blabi $cat)) $actual_event) (fasnu $actual_event)))))
        (Assert
-        (Bind
-         ($ctx2 :: (Referents Entity))
-         (Context)
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (jbena $cat $ctx2 $ctx3 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind
+                ($ctx2 :: (Referents Entity))
+                (Context)
+                ($ctx3 :: (Referents Entity))
+                (Context)
+                (jbena $cat $ctx2 $ctx3 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "7318097d39a3fd427b8496b52e0a9c8c908bd088")
     (status available)
     (term
@@ -1456,14 +1441,13 @@
            (CloseClause
             (λ (($actual_event :: (Referents Eventuality)))
               (∧ ((StateClause (ponse $p $d)) $actual_event) (fasnu $actual_event)))))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (darxi $p $d $ctx3 $event)) $actual_event)
-               (fasnu $actual_event)))))))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (darxi $p $d $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event))))))))))
   (case (id "7cccf0a9acae76bbd8db11b56c25879603ef4cff") (status available) (term (SetOf (λ (($z :: Entity)) (∧)))))
   (case (id "7d1e0a45041ecaa91bb99f88da953e476b218b8f")
     (status available)
@@ -1518,14 +1502,13 @@
         ($w1 :: (Referents Entity))
         (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $r $w $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $w $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "808a6f9bdbbb1073dda1dc3a393dee0026919d4f")
     (status available)
@@ -1701,33 +1684,34 @@
         ($w1 :: (Referents Entity))
         (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $w $r $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w $r $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "9a6d68b66792504622ef5443bf9cdab8db165f01")
     (status available)
     (term
      (λ (($x :: (Referents Entity)))
-       (Bind
-        ($ctx1 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama $ctx1 $x $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx1 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama $ctx1 $x $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event)))))))
   (case (id "9c1407e2953b9b8ea62d6c2623bf886058927595")
     (status available)
     (term
@@ -1749,14 +1733,13 @@
         ($w1 :: (Referents Entity))
         (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $r $w $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $w $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "9e06566d9890b2c704417adef0a5b50d9cdcd8e4")
     (status available)
@@ -1791,16 +1774,18 @@
       ($cat :: (Referents Entity))
       (Refer (λ (($x :: (Referents Entity))) (∧ (mlatu $x) (blabi $x))))
       (Assert
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (jbena $cat $ctx2 $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               (jbena $cat $ctx2 $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "9eb692db840e8b2093a85c697191a3a561335644")
     (status available)
     (term
@@ -1864,14 +1849,13 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "a80380a1b22f80fe8a622376789319b054091307")
     (status available)
@@ -1881,14 +1865,13 @@
        ($w1 :: (Referents Entity))
        (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
        ((λ (($w :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w Speaker $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         $w1)))))
   (case (id "adaf5b13f560e52ca23d027a2d22093fa35294bb")
     (status unavailable)
@@ -1907,20 +1890,22 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast (+ $n 1) (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx2 :: (Referents Entity))
-            (Context)
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            ($ctx4 :: (Referents Entity))
-            (Context)
-            ($ctx5 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (klama $w $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind
+                   ($ctx2 :: (Referents Entity))
+                   (Context)
+                   ($ctx3 :: (Referents Entity))
+                   (Context)
+                   ($ctx4 :: (Referents Entity))
+                   (Context)
+                   ($ctx5 :: (Referents Entity))
+                   (Context)
+                   (klama $w $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "afdc655e5d92abe64d7f60264ba07d4e6d7aac18")
     (status available)
@@ -1954,20 +1939,22 @@
     (term
      (Mention
       (λ (($x :: (Referents Entity)))
-        (Bind
-         ($ctx1 :: (Referents Entity))
-         (Context)
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         ($ctx4 :: (Referents Entity))
-         (Context)
-         ($ctx5 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (klama $ctx1 $x $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-             (fasnu $actual_event)))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind
+                ($ctx1 :: (Referents Entity))
+                (Context)
+                ($ctx3 :: (Referents Entity))
+                (Context)
+                ($ctx4 :: (Referents Entity))
+                (Context)
+                ($ctx5 :: (Referents Entity))
+                (Context)
+                (klama $ctx1 $x $ctx3 $ctx4 $ctx5 $event)))
+             $actual_event)
+            (fasnu $actual_event))))))))
   (case (id "b4f5a39f1b309245b2d50930cb69faed4a7b4716")
     (status unavailable)
     (reason "m2-oracle: Close has no adapter-supplied lexical row declaration"))
@@ -1980,14 +1967,13 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $w Speaker $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w Speaker $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "b96bfb9de1d104d2377dbf04658ed8c492dcde96")
     (status available)
@@ -1999,14 +1985,13 @@
        ($r1 :: (Referents Entity))
        (Refer (λ (($unit :: (Referents Entity))) (mlatu $unit)))
        (Assert
-        (Bind
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (tavla $r $r1 $ctx3 $event)) $actual_event)
-             (fasnu $actual_event))))))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $r1 $ctx3 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))))))
   (case (id "bb1ea3fc5780f5d106de8232523d33221406da46")
     (status available)
     (term
@@ -2018,14 +2003,13 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $w $r $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w $r $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "bd272fdf0064b6f7f1a30d72aaa6909228be68f7")
     (status available)
@@ -2035,20 +2019,22 @@
       (Refer (λ (($x :: (Referents Entity))) (Named "bab" $x)))
       (Do
        (Assert
-        (Bind
-         ($ctx2 :: (Referents Entity))
-         (Context)
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         ($ctx4 :: (Referents Entity))
-         (Context)
-         ($ctx5 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (klama $bob $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-             (fasnu $actual_event))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind
+                ($ctx2 :: (Referents Entity))
+                (Context)
+                ($ctx3 :: (Referents Entity))
+                (Context)
+                ($ctx4 :: (Referents Entity))
+                (Context)
+                ($ctx5 :: (Referents Entity))
+                (Context)
+                (klama $bob $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))
        (Assert
         (Bind
          ($ctx2 :: (Referents Entity))
@@ -2087,18 +2073,20 @@
      (Bind
       ($w :: (Referents Entity))
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
-      (Bind
-       ($ctx2 :: (Referents Entity))
-       (Context)
-       ($ctx3 :: (Referents Entity))
-       (Context)
-       ($ctx4 :: (Referents Entity))
-       (Context)
-       (CloseClause
-        (λ (($actual_event :: (Referents Eventuality)))
-          (∧
-           ((λ (($event :: (Referents Eventuality))) (bajra $w $ctx2 $ctx3 $ctx4 $event)) $actual_event)
-           (fasnu $actual_event))))))))
+      (CloseClause
+       (λ (($actual_event :: (Referents Eventuality)))
+         (∧
+          ((λ (($event :: (Referents Eventuality)))
+             (Bind
+              ($ctx2 :: (Referents Entity))
+              (Context)
+              ($ctx3 :: (Referents Entity))
+              (Context)
+              ($ctx4 :: (Referents Entity))
+              (Context)
+              (bajra $w $ctx2 $ctx3 $ctx4 $event)))
+           $actual_event)
+          (fasnu $actual_event)))))))
   (case (id "c2893c48f65e9358154c3c71c07d9f10e125e8b4")
     (status available)
     (term
@@ -2111,14 +2099,13 @@
            ($w2 :: (Referents Entity))
            (SelectExactly 2 (λ (($x :: Entity)) (mlatu $x)))
            ((λ (($w1 :: (Referents Entity)))
-              (Bind
-               ($ctx3 :: (Referents Entity))
-               (Context)
-               (CloseClause
-                (λ (($actual_event :: (Referents Eventuality)))
-                  (∧
-                   ((λ (($event :: (Referents Eventuality))) (tavla $w $w1 $ctx3 $event)) $actual_event)
-                   (fasnu $actual_event))))))
+              (CloseClause
+               (λ (($actual_event :: (Referents Eventuality)))
+                 (∧
+                  ((λ (($event :: (Referents Eventuality)))
+                     (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w $w1 $ctx3 $event)))
+                   $actual_event)
+                  (fasnu $actual_event)))))
             $w2)))
         $w2)))))
   (case (id "c3ef43fc929c9a2356838ee5d5de4bea0a7d5b0d")
@@ -2181,20 +2168,22 @@
     (term
      ((λ (($a :: (Act Assertion))) (Do (Perform $a) (Perform $a)))
       (Assert
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama Speaker $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "cb238239f922d167cfddd4bbb3dfeaea323ce103")
     (status unavailable)
     (reason "m2-oracle: Massify basis type unavailable"))
@@ -2241,14 +2230,13 @@
           (→
            (Among $member $w)
            ((λ (($x :: Entity))
-              (Bind
-               ($ctx3 :: (Referents Entity))
-               (Context)
-               (CloseClause
-                (λ (($actual_event :: (Referents Eventuality)))
-                  (∧
-                   ((λ (($event :: (Referents Eventuality))) (tavla Speaker $x $ctx3 $event)) $actual_event)
-                   (fasnu $actual_event))))))
+              (CloseClause
+               (λ (($actual_event :: (Referents Eventuality)))
+                 (∧
+                  ((λ (($event :: (Referents Eventuality)))
+                     (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $x $ctx3 $event)))
+                   $actual_event)
+                  (fasnu $actual_event)))))
             $member))))))))
   (case (id "d12cc9e49c7b44ac7c5244121e90ff57baa5d4a7")
     (status unavailable)
@@ -2266,14 +2254,13 @@
          ($w1 :: (Referents Entity))
          (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
          ((λ (($w :: (Referents Entity)))
-            (Bind
-             ($ctx3 :: (Referents Entity))
-             (Context)
-             (CloseClause
-              (λ (($actual_event :: (Referents Eventuality)))
-                (∧
-                 ((λ (($event :: (Referents Eventuality))) (tavla $w $r $ctx3 $event)) $actual_event)
-                 (fasnu $actual_event))))))
+            (CloseClause
+             (λ (($actual_event :: (Referents Eventuality)))
+               (∧
+                ((λ (($event :: (Referents Eventuality)))
+                   (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $w $r $ctx3 $event)))
+                 $actual_event)
+                (fasnu $actual_event)))))
           $w1)))))))
   (case (id "d7c04355b8abb979b3e68ab4cb224f4617b83534")
     (status available)
@@ -2286,14 +2273,13 @@
         ($w1 :: (Referents Entity))
         (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
         ((λ (($w :: (Referents Entity)))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (tavla $r $w $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $w $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))
          $w1))))))
   (case (id "d8e9f58244e983851351b588de235d4375f926f0")
     (status available)
@@ -2318,20 +2304,22 @@
      (Ask
       (OpenQ
        (λ (($x :: (Referents Entity)))
-         (Bind
-          ($ctx2 :: (Referents Entity))
-          (Context)
-          ($ctx3 :: (Referents Entity))
-          (Context)
-          ($ctx4 :: (Referents Entity))
-          (Context)
-          ($ctx5 :: (Referents Entity))
-          (Context)
-          (CloseClause
-           (λ (($actual_event :: (Referents Eventuality)))
-             (∧
-              ((λ (($event :: (Referents Eventuality))) (klama $x $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-              (fasnu $actual_event))))))))))
+         (CloseClause
+          (λ (($actual_event :: (Referents Eventuality)))
+            (∧
+             ((λ (($event :: (Referents Eventuality)))
+                (Bind
+                 ($ctx2 :: (Referents Entity))
+                 (Context)
+                 ($ctx3 :: (Referents Entity))
+                 (Context)
+                 ($ctx4 :: (Referents Entity))
+                 (Context)
+                 ($ctx5 :: (Referents Entity))
+                 (Context)
+                 (klama $x $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+              $actual_event)
+             (fasnu $actual_event)))))))))
   (case (id "da97e598f0594e6ba811953858f978a3c3a9528f")
     (status available)
     (term
@@ -2403,18 +2391,20 @@
       (SelectExactly 3 (λ (($x :: Entity)) (gerku $x)))
       (Do
        (Assert
-        (Bind
-         ($ctx2 :: (Referents Entity))
-         (Context)
-         ($ctx3 :: (Referents Entity))
-         (Context)
-         ($ctx4 :: (Referents Entity))
-         (Context)
-         (CloseClause
-          (λ (($actual_event :: (Referents Eventuality)))
-            (∧
-             ((λ (($event :: (Referents Eventuality))) (bajra $dogs $ctx2 $ctx3 $ctx4 $event)) $actual_event)
-             (fasnu $actual_event))))))
+        (CloseClause
+         (λ (($actual_event :: (Referents Eventuality)))
+           (∧
+            ((λ (($event :: (Referents Eventuality)))
+               (Bind
+                ($ctx2 :: (Referents Entity))
+                (Context)
+                ($ctx3 :: (Referents Entity))
+                (Context)
+                ($ctx4 :: (Referents Entity))
+                (Context)
+                (bajra $dogs $ctx2 $ctx3 $ctx4 $event)))
+             $actual_event)
+            (fasnu $actual_event)))))
        (Assert
         (CloseClause
          (λ (($actual_event :: (Referents Eventuality)))
@@ -2426,20 +2416,22 @@
       ($r :: (Referents Entity))
       (Refer (λ (($named :: (Referents Entity))) (Named "alis" $named)))
       (Assert
-       (Bind
-        ($ctx2 :: (Referents Entity))
-        (Context)
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        ($ctx4 :: (Referents Entity))
-        (Context)
-        ($ctx5 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (klama $r $ctx2 $ctx3 $ctx4 $ctx5 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind
+               ($ctx2 :: (Referents Entity))
+               (Context)
+               ($ctx3 :: (Referents Entity))
+               (Context)
+               ($ctx4 :: (Referents Entity))
+               (Context)
+               ($ctx5 :: (Referents Entity))
+               (Context)
+               (klama $r $ctx2 $ctx3 $ctx4 $ctx5 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "e69b9851e31ac7dae947e10cb7bd7ddeedeca790")
     (status available)
     (term
@@ -2473,14 +2465,13 @@
            (→
             (Among $member $w)
             ((λ (($x :: Entity))
-               (Bind
-                ($ctx3 :: (Referents Entity))
-                (Context)
-                (CloseClause
-                 (λ (($actual_event :: (Referents Eventuality)))
-                   (∧
-                    ((λ (($event :: (Referents Eventuality))) (tavla $r $x $ctx3 $event)) $actual_event)
-                    (fasnu $actual_event))))))
+               (CloseClause
+                (λ (($actual_event :: (Referents Eventuality)))
+                  (∧
+                   ((λ (($event :: (Referents Eventuality)))
+                      (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r $x $ctx3 $event)))
+                    $actual_event)
+                   (fasnu $actual_event)))))
              $member)))))))))
   (case (id "e6de3a77f1ef095f2c747f051f659f74f57ebab3")
     (status available)
@@ -2529,14 +2520,13 @@
       ($r :: (Referents Entity))
       (Refer (λ (($named :: (Referents Entity))) (Named "alis" $named)))
       (Assert
-       (Bind
-        ($ctx3 :: (Referents Entity))
-        (Context)
-        (CloseClause
-         (λ (($actual_event :: (Referents Eventuality)))
-           (∧
-            ((λ (($event :: (Referents Eventuality))) (tavla $r Speaker $ctx3 $event)) $actual_event)
-            (fasnu $actual_event)))))))))
+       (CloseClause
+        (λ (($actual_event :: (Referents Eventuality)))
+          (∧
+           ((λ (($event :: (Referents Eventuality)))
+              (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla $r Speaker $ctx3 $event)))
+            $actual_event)
+           (fasnu $actual_event))))))))
   (case (id "f653cb0a56774dea1f78c007c770b90d51c88371")
     (status available)
     (term
@@ -2570,14 +2560,13 @@
             (CloseClause
              (λ (($actual_event :: (Referents Eventuality)))
                (∧ ((StateClause (ponse $p $d)) $actual_event) (fasnu $actual_event)))))
-           (Bind
-            ($ctx3 :: (Referents Entity))
-            (Context)
-            (CloseClause
-             (λ (($actual_event :: (Referents Eventuality)))
-               (∧
-                ((λ (($event :: (Referents Eventuality))) (darxi $p $d $ctx3 $event)) $actual_event)
-                (fasnu $actual_event))))))))))))
+           (CloseClause
+            (λ (($actual_event :: (Referents Eventuality)))
+              (∧
+               ((λ (($event :: (Referents Eventuality)))
+                  (Bind ($ctx3 :: (Referents Entity)) (Context) (darxi $p $d $ctx3 $event)))
+                $actual_event)
+               (fasnu $actual_event)))))))))))
   (case (id "f9f7acbbeb94b894a71e501a3ec02e82877fd496")
     (status available)
     (term
@@ -2586,14 +2575,13 @@
        ($w1 :: (Referents Entity))
        (SelectAtLeast 1 (λ (($x :: Entity)) (gerku $x)))
        ((λ (($w :: (Referents Entity)))
-          (Bind
-           ($ctx3 :: (Referents Entity))
-           (Context)
-           (CloseClause
-            (λ (($actual_event :: (Referents Eventuality)))
-              (∧
-               ((λ (($event :: (Referents Eventuality))) (tavla Speaker $w $ctx3 $event)) $actual_event)
-               (fasnu $actual_event))))))
+          (CloseClause
+           (λ (($actual_event :: (Referents Eventuality)))
+             (∧
+              ((λ (($event :: (Referents Eventuality)))
+                 (Bind ($ctx3 :: (Referents Entity)) (Context) (tavla Speaker $w $ctx3 $event)))
+               $actual_event)
+              (fasnu $actual_event)))))
         $w1)))))
   (case (id "fb5015ae6fdfa682c9b7f70814a49daf00df1d91")
     (status available)
