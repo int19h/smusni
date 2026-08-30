@@ -155,9 +155,15 @@ def rrAssignmentPreservesDependencies
         (fun candidate => candidate.1.role)
     mappedDependencies == some pair.1.dependencies
 
+def RRActualSite.embeddingCandidate (site : RRActualSite) : Bool :=
+  let role := site.identity.expansionRole.splitOn "/" |>.getLast?.getD
+    site.identity.expansionRole
+  !role.startsWith "default-"
+
 def rrDependencyComparison (declared : List RRDeclaredSite)
     (actual : List RRActualSite) : RRDependencyComparison :=
-  let embedding := (rrInjectiveAssignments declared actual).find?
+  let candidates := actual.filter RRActualSite.embeddingCandidate
+  let embedding := (rrInjectiveAssignments declared candidates).find?
     rrAssignmentPreservesDependencies
   match embedding with
   | some matched =>
@@ -334,6 +340,12 @@ def runM2RRAuditMutationGates : IO Unit := do
   if extraComparison.matchedRoles != 2 ||
       extraComparison.undeclaredEmittedOrigins != [extra.expansionRole] then
     throw <| IO.userError "RR audit did not isolate an undeclared emitted site"
+  let defaultOnly := rrDependencyComparison
+    [{ role := "relation", spelling := "probe", dependencies := [] }]
+    [{ identity := extra, role := .context, dependencies := [] }]
+  if defaultOnly.matchedRoles != 0 || defaultOnly.missingDeclaredRoles != ["relation"] ||
+      defaultOnly.undeclaredEmittedOrigins != [extra.expansionRole] then
+    throw <| IO.userError "RR audit allowed a computed default to satisfy a declaration"
 
 end M2
 end SmusniPilot

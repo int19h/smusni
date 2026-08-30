@@ -182,11 +182,15 @@ Context/Vague graph. Declared RR role names label fixture nodes and are used
 only to preserve edges under the injection; they are not matched to emitted
 `SiteRole` or `SiteId.expansionRole` names. Extra emitted nodes are retained as
 undeclared origins rather than mismatches.
+Computed-minimum `Close/default-*` sites are excluded from embedding candidates
+and can appear only as undeclared emitted origins.
 Across 32 linked cases it sees 13 declared roles and 26 emitted operand sites:
 6 declared roles match, all 6 matched dependency lists agree, 7 declarations
 remain unmatched, and 20 emitted sites are undeclared (principally
 expansion-introduced `Close/default-*` sites). Three cases with declarations
 have all roles matched; 16 cases have an emitted term and 16 are unavailable.
+All seven unmatched declarations belong to unavailable cases with no emitted
+term; no declaration fails to embed in a comparable case.
 The gate prints a per-case table with matched roles, dependency results,
 missing declarations, and undeclared emitted origins. These report-only
 results replace both the former 135/0 self-consistency claim and the uninformative
