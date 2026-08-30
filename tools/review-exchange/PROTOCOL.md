@@ -233,7 +233,9 @@ github_issues: #24,#25
 - Body contract, unchanged from v1: **Context** (live files/sections, commit or
   dirty-tree boundary, issues), **Claims or findings** (separated from settled
   human-partner decisions), **Evidence** (exact lines, terms, countermodels,
-  source excerpts, commands), **Questions or objections** (bounded), and
+  source excerpts, commands; a review request or completion report carries a
+  `Literal run:` line naming the command, the exact head SHA, the test
+  count, and the result), **Questions or objections** (bounded), and
   **Requested disposition** (a gate, not "review this"). Keep quotation
   minimal; cite prior message IDs. Never place secrets in the spool.
 
@@ -293,7 +295,10 @@ or durable issue update was silently skipped.
   about the mechanism. It is adversarial about correctness and quality, not
   about the announcement's literal test report: when the implementer states
   the command, head, test count, and result, and that matches the checks the
-  reviewer intended, the reviewer does not re-run them. Reviewer effort goes
+  reviewer intended, the reviewer does not re-run them. The reviewer's
+  **first act** is to check that the request's `Literal run:` line names the
+  commit under review and the intended gates; when it does, the review
+  says so ("taken as read") and goes to the code. Reviewer effort goes
   to the *additional* checks a specific part needs — unseen inputs,
   mutations, hand derivations — and a check that proved warranted is asked
   for as a test in the same PR, so the next review inherits it. Re-run the
