@@ -6,4 +6,3 @@
     (rows (gerku mlatu tavla))           ; L5.1, L3.1, L1.1
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                  ; L1.2
-)

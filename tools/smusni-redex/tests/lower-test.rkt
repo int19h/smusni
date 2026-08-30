@@ -66,6 +66,18 @@
                 (= (lowering-candidate-ordinal candidate) 63)))
          (lowering-manifest-candidates manifest)))
 (check-equal? (length (rr-fixture-cases (load-rr-fixture samples-63))) 3)
+(check-equal?
+ (read-exactly-one-datum (open-input-string "(ok)") 'unit-test)
+ '(ok))
+(check-exn
+ exn:fail?
+ (lambda ()
+   (read-exactly-one-datum
+    (open-input-string "(ok) (trailing)") 'unit-test)))
+(check-exn
+ exn:fail:read?
+ (lambda ()
+   (read-exactly-one-datum (open-input-string "(ok) )") 'unit-test)))
 
 (define spec-10
   (findf (lambda (candidate)

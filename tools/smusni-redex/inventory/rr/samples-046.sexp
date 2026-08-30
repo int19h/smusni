@@ -6,4 +6,3 @@
     (rows (gerku prenu nelci))            ; L1.1, L5.3
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

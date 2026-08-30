@@ -6,4 +6,3 @@
     (rows (mlatu cinri))                  ; L1.1, L3.4
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

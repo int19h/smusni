@@ -8,4 +8,3 @@
     (sites ((group-basis luho (deps ())))) ; L3.14
     (anaphora ())
     (force (mention)))))                  ; utterance consumer
-)

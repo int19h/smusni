@@ -1,6 +1,6 @@
 name = "smusni_pilot_lean"
 version = "0.1.0"
-defaultTargets = ["smoke"]
+defaultTargets = ["smoke", "m1"]
 
 [[require]]
 name = "plausible"
@@ -10,3 +10,10 @@ rev = "b7eb3304aeae834b12dda98993a37f6a41f6f0bb"
 [[lean_exe]]
 name = "smoke"
 root = "Main"
+
+[[lean_lib]]
+name = "SmusniPilot"
+
+[[lean_exe]]
+name = "m1"
+root = "M1Main"

@@ -5,4 +5,3 @@
     (attach ()) (readings (witness-set)) ; L5.2
     (rows (gerku bajra))              ; L1.1, L5.2
     (stores ()) (sites ()) (anaphora ()) (force ()))))
-)

@@ -1,0 +1,292 @@
+# base_head	892a7040d4f3786be42635089b6aac7743ba6b74
+# core_sha256	49febf9b1b0ea5fea795302cd89ca7e71eaa1fcc73a5310d725741b6d05c1150
+# definitions_sha256	91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc
+# a0_sha256	5966ff2403b4c37dd5b02ddffab33db15d2ded73f2cf0441602c2ac377d9534f
+# spec_sha256	19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4
+head	disposition	sources	evidence
+family:Select	gap-prose-only	spec-appendix	primitive family label; concrete Select constructors are separate
+metatheory:bind	gap-prose-only	spec-appendix	carrier sequencing operation denoted by term:Bind
+sort:AbstractNature	type-index-data	core	spec §3.1
+sort:Achievement	type-index-data	core	spec §3.1
+sort:Activity	type-index-data	core	spec §3.1
+sort:Amount	type-index-data	core	spec §3.1
+sort:Bool	type-index-data	core	spec §3.1
+sort:Cardinal	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1
+sort:Concept	type-index-data	core	spec §3.1
+sort:Entity	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1
+sort:Epistemology	type-index-data	core	spec §3.1
+sort:Eventuality	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1
+sort:Experience	type-index-data	core	spec §3.1
+sort:Ground	type-index-data	core	spec §3.1
+sort:Location	type-index-data	core	spec §3.1
+sort:Locution	type-index-data	core	spec §3.1
+sort:Natural	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1
+sort:Number	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1
+sort:Process	type-index-data	core	spec §3.1
+sort:Proposition	type-index-data	core	spec §3.1
+sort:Question	type-index-data	core	spec §3.1
+sort:Scale	type-index-data	core	spec §3.1
+sort:SignToken	type-index-data	core	spec §3.1
+sort:State	type-index-data	core	spec §3.1
+sort:Text	type-index-data	core	spec §3.1
+sort:Time	type-index-data	core	spec §3.1
+sort:TruthValue	type-index-data	core	spec §3.1
+sort:Unit	type-index-data	core	spec §3.4
+sort:UtteranceToken	type-index-data	core	spec §3.1
+term:$application	primitive-core	a0-grammar,spec-appendix	SmusniA0 generic application grammar | spec Appendix: the kernel
+term:$index	primitive-core	spec-appendix	spec Appendix: the kernel
+term:$lexical-predication	primitive-core	spec-appendix	spec Appendix: the kernel
+term:$natural	primitive-core	a0-grammar	SmusniA0 atom n
+term:$string	primitive-core	spec-appendix	spec Appendix: the kernel
+term:$variable	primitive-core	a0-grammar	SmusniA0 atom x
+term:+	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.9
+term:<	primitive-core	spec-appendix	spec Appendix: the kernel
+term:=	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:>	gap-prose-only	definitions	definition status blocked "#66"
+term:ActContent	primitive-core	spec-appendix	spec Appendix: the kernel
+term:ActualClause	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Additive	defined-surface	definitions	definition status executable
+term:AdmissibleCutoff	primitive-core	core	spec §6.4
+term:AdmissibleThreshold	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §6.4
+term:Aggregate	primitive-core	core	spec §4.9
+term:Among	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.8
+term:AmountValue	primitive-core	core	spec §9.2
+term:Answer	primitive-core	core,definitions	definition status executable | spec §8.4
+term:Ask	primitive-core	core	spec §7.1
+term:Assert	primitive-core	core	spec §7.1
+term:At	defined-surface	core,definitions	definition status executable | spec §4.2
+term:AtLeast	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:AtMost	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:AttachedAddress	primitive-core	core	spec §7.1
+term:AttachedDisplay	primitive-core	core	spec §7.1
+term:Audience	primitive-core	a0-grammar,core	SmusniA0 constant grammar | spec §5.1
+term:BasisUnitAt	primitive-core	core	spec §4.9
+term:Bind	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §2, §5.2
+term:CanonicalAggregateAt	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:CapableClause	defined-surface	core,definitions	definition status executable | spec §12
+term:Card	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.9
+term:CardBasis	defined-surface	core,definitions	definition status executable | spec §12
+term:ClauseAnd	defined-surface	core,definitions	definition status executable | spec §9.3
+term:ClauseIff	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:ClauseImp	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:ClauseNot	defined-surface	core,definitions	definition status executable | spec §9.3
+term:ClauseOr	defined-surface	core,definitions	definition status executable | spec §9.3
+term:ClauseXor	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:Close	defined-surface	core,definitions	definition status executable | spec §4.6
+term:CloseClause	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §9.3
+term:CloseWith	tool-only	a0-grammar	SmusniA0 adapter grammar
+term:COI-schemas-prose	gap-prose-only	definitions	definition status not-a-definition
+term:COIExpress	defined-surface	definitions	definition status executable
+term:Combine	primitive-core	core	spec §4.8
+term:CompleteGunmaAt	defined-surface	core,definitions	definition status executable | spec §4.9
+term:ComponentAt	defined-surface	core,definitions	definition status executable | spec §4.9
+term:components_κ	defined-surface	core	spec §12
+term:Context	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.3
+term:ContextualAnswer	defined-surface	core	spec §8.4
+term:Contrast	primitive-core	core	spec §7.3
+term:ContributesAt	primitive-core	core	spec §4.9
+term:CoRef	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §4.8
+term:CoveredBy	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §4.8
+term:CurrentToken	primitive-core	core	spec §5.1
+term:Deictic	primitive-core	spec-appendix	spec Appendix: the kernel
+term:DemonstratedClause	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:Desire	primitive-core	core	spec §7.6
+term:DirectClause	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §4.6
+term:Distrib	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Do	primitive-core	core	spec §7.2
+term:DoOOthers	primitive-core	core	spec §5.1, P40
+term:DropPlace	primitive-core	core	spec §4.3
+term:DuhuRel	defined-surface	core,definitions	definition status executable | spec §9.2
+term:During	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Enough	defined-surface	definitions	definition status executable
+term:EnumerationOrdinal	primitive-core	spec-appendix	spec Appendix: the kernel
+term:EventOfContent	primitive-core	core	spec §9.3
+term:Every	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:EvidentialBasis	primitive-core	core	spec §7.6
+term:Exactly	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Express	primitive-core	core	spec §7.1
+term:Few	defined-surface	definitions	definition status executable
+term:FewerThan	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:gei	defined-surface	definitions	definition status executable
+term:Generic	primitive-core	core	spec §5.8
+term:GlobalExactly	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Grade	defined-surface	core,definitions	definition status executable | spec §6.4
+term:GroundedBy	defined-surface	definitions	definition status executable
+term:GroupBasisConstraint	type-index-data	core	spec §4.9
+term:GunmaAt	defined-surface	core,definitions	definition status executable | spec §4.9
+term:GunmaPredAt	defined-surface	core,definitions	definition status executable | spec §4.9
+term:Happiness	primitive-core	core	spec §7.6
+term:Hearsay	primitive-core	core	spec §7.6
+term:Holds	primitive-core	core	spec §9.1
+term:Host	primitive-core	core	spec §7.1
+term:InContext	primitive-core	spec-appendix	spec Appendix: the kernel
+term:InnatelyCapable	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Intense	primitive-core	core	spec §7.6
+term:InterpretAct	primitive-core	spec-appendix	spec Appendix: the kernel
+term:InterpretContent	primitive-core	core	spec §7.5
+term:Interval	defined-surface	definitions	definition status executable
+term:JaiPromote	defined-surface	definitions	definition status executable
+term:JaiRaise	defined-surface	core,definitions	definition status executable | spec §12
+term:JaiRoleAdmissible	primitive-core	core	spec §12
+term:JeiRel	primitive-core	core	spec §9.2
+term:JoiClause	defined-surface	core,definitions	definition status executable | spec §12
+term:JoiEvent	defined-surface	core,definitions	definition status executable | spec §12
+term:JoiGroup	defined-surface	core,definitions	definition status executable | spec §12
+term:JoiPred	defined-surface	core,definitions	definition status executable | spec §12
+term:JoiTanru	defined-surface	core,definitions	definition status executable | spec §12
+term:klama	gap-prose-only	definitions	definition status mapping-schema
+term:Let	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §2, §4.4
+term:LetteralSign	primitive-core	core	spec §7.5
+term:List	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §3.5
+term:Local	primitive-core	core	spec §5.2
+term:LocutionOf	primitive-core	core	spec §7.4
+term:MaAOthers	primitive-core	core	spec §5.1, P40
+term:Many	defined-surface	definitions	definition status executable
+term:ManyK	primitive-core	core	spec §6.4
+term:Massify	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:MaxRefer	defined-surface	a0-grammar,definitions	SmusniA0 t grammar | definition status executable
+term:Meau0	defined-surface	definitions	definition status executable
+term:MeiRel	defined-surface	core	spec §12
+term:MemberCover	defined-surface	definitions	definition status executable
+term:Mention	primitive-core	core	spec §7.1
+term:MePred	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:MetalinguisticallyDefective	primitive-core	core	spec §7.3
+term:MetricBall	defined-surface	definitions	definition status executable
+term:MiAOthers	primitive-core	core	spec §5.1, P40
+term:MixAt	primitive-core	core	spec §4.9
+term:Moderate	primitive-core	core	spec §7.6
+term:MoreThan	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Most	defined-surface	core,definitions	definition status blocked "#66" | spec §12
+term:MotionVector	primitive-core	spec-appendix	spec Appendix: the kernel
+term:na'i-objection-prose	gap-prose-only	definitions	definition status not-a-definition
+term:NahiObjection	defined-surface	core,definitions	definition status executable | spec §12
+term:Named	primitive-core	core,definitions	definition status executable | spec §7.5
+term:NameSign	primitive-core	core	spec §7.5
+term:NewTopic	primitive-core	spec-appendix	spec Appendix: the kernel
+term:NiRel	primitive-core	core	spec §9.2
+term:No	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:Now	primitive-core	core	spec §5.1
+term:Observation	primitive-core	core	spec §7.6
+term:Only	defined-surface	definitions	definition status executable
+term:OpaqueQuote	primitive-core	core	spec §7.5
+term:OpenQ	primitive-core	core	spec §8.1
+term:OtherThan	primitive-core	core	spec §6.3
+term:Overlap	defined-surface	a0-grammar,definitions	SmusniA0 t grammar | definition status executable
+term:PeerUnitAt	primitive-core	core	spec §4.9
+term:Perform	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §7.1
+term:Polar	primitive-core	core	spec §8.1
+term:Presuppose	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.5
+term:QuestionOf	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Quote	tool-only	a0-grammar	SmusniA0 adapter grammar
+term:Realized	defined-surface	definitions	definition status executable
+term:RealizedAct	primitive-core	spec-appendix	spec Appendix: the kernel
+term:RealizedContent	primitive-core	core	spec §7.4
+term:RealizedDiscourse	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Realizes	primitive-core	core	spec §7.4
+term:Reciprocate	defined-surface	core,definitions	definition status executable | spec §12
+term:Refer	primitive-core	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §5.3
+term:RegionComplement	defined-surface	definitions	definition status executable
+term:Reify	primitive-core	core	spec §9.1
+term:Resume	primitive-core	spec-appendix	spec Appendix: the kernel
+term:RoiClause	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:Scalar	primitive-core	core	spec §6.3
+term:SelectAllBut	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §12
+term:SelectAtLeast	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.6
+term:SelectExactly	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.6
+term:SelectSome	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:SentenceSign	primitive-core	core	spec §7.5
+term:Set	primitive-core	core	spec §4.9
+term:SetOf	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.9
+term:ShiftedGround	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Sign	defined-surface	core	spec §7.5
+term:Site	tool-only	a0-grammar	SmusniA0 adapter grammar
+term:SiteValue	tool-only	a0-grammar	SmusniA0 adapter grammar
+term:Some	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:SpanRegion	defined-surface	definitions	definition status executable
+term:Speaker	primitive-core	a0-grammar,core	SmusniA0 constant grammar | spec §5.1
+term:SpeakerDescribes	defined-surface	core,definitions	definition status executable | spec §12
+term:SpeakerDescribesUnaddressed	defined-surface	core,definitions	definition status executable | spec §12
+term:SpeakerOf	primitive-core	core	spec §7.4
+term:StateClause	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §9.3
+term:StructuredQuote	primitive-core	core	spec §7.5
+term:SuhuRel	primitive-core	core	spec §9.2
+term:Supplement	primitive-core	core	spec §5.5
+term:Syntax	tool-only	a0-grammar	SmusniA0 adapter grammar
+term:Tanru	defined-surface	core,definitions	definition status executable | spec §6.2
+term:TanruAdmissible	primitive-core	core	spec §6.2
+term:TanruLinkConnect	defined-surface	core,definitions	definition status executable | spec §12
+term:te'a	primitive-core	core,definitions	definition status executable | spec §12 MEX
+term:That	defined-surface	core,definitions,spec-appendix	definition status metatheory-or-model-law | spec Appendix: defined forms | spec §5.1
+term:This	defined-surface	core,definitions,spec-appendix	definition status metatheory-or-model-law | spec Appendix: defined forms | spec §5.1
+term:TooFew	defined-surface	definitions	definition status executable
+term:TooMany	defined-surface	a0-grammar,definitions	SmusniA0 t grammar | definition status executable
+term:TooManyK	primitive-core	a0-grammar,core	SmusniA0 constant grammar | spec §6.4
+term:Topic	defined-surface	spec-appendix	spec Appendix: defined forms
+term:TopicAdmissible	primitive-core	spec-appendix	spec Appendix: the kernel
+term:Typical	primitive-core	core	spec §5.8
+term:Unhappiness	primitive-core	core	spec §7.6
+term:UnitSet	defined-surface	spec-appendix	spec Appendix: defined forms
+term:UnrealizedClause	defined-surface	definitions,spec-appendix	definition status executable | spec Appendix: defined forms
+term:Utterance	defined-surface	core,definitions	definition status mapping-schema | spec §7.4
+term:Vague	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.3, §6.5
+term:WordSign	primitive-core	core	spec §7.5
+term:xi	defined-surface	definitions	definition status executable
+term:Yonder	defined-surface	core,definitions,spec-appendix	definition status metatheory-or-model-law | spec Appendix: defined forms | spec §5.1
+term:ZipWith	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
+term:¬	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:×	primitive-core	spec-appendix	spec Appendix: the kernel
+term:÷	primitive-core	spec-appendix	spec Appendix: the kernel
+term:λ	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §2, §4.4
+term:→	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:↔	primitive-core	core	spec §4.5
+term:∀	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:∃	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:∈	primitive-core	core	spec §4.9
+term:−	primitive-core	core	spec §4.9
+term:∧	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
+term:∨	primitive-core	core	spec §4.5
+term:≤	primitive-core	spec-appendix	spec Appendix: the kernel
+term:⊕	primitive-core	core	spec §4.5
+term:⊤	defined-surface	a0-grammar,spec-appendix	SmusniA0 constant grammar | spec Appendix: defined forms
+type-form:Act	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.4
+type-form:ActOccurrence	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.4
+type-form:CompatibleLabel	type-index-data	core	spec §2, §4.7
+type-form:ContrastDomain	type-index-data	core	spec §3.5, §6.3
+type-form:ContributionBasis	type-index-data	core	spec §3.5, §4.9
+type-form:DecompositionBasis	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.5, §4.9
+type-form:EFn	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §2, §3.3
+type-form:Fn	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §2, §3.3
+type-form:Group	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1, §4.9
+type-form:Label	type-index-data	core	spec §2, §3.3
+type-form:List	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1, §3.5
+type-form:PerfComp	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.4
+type-form:PredTerm	type-index-data	core	spec §3.3
+type-form:Query	type-index-data	core	spec §3.4
+type-form:Record	type-index-data	core	spec §3.3
+type-form:RefComp	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.4
+type-form:Referents	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.2
+type-form:Region	type-index-data	core	spec §3.5, §6.4
+type-form:Row	type-index-data	core	spec §2, §3.3
+type-form:RowMinus	type-index-data	core	spec §2, §3.3
+type-form:RowOf	type-index-data	core	spec §2, §3.3
+type-form:Set	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.1, §4.9
+type-form:Sign	type-index-data	core	spec §3.1
+type-form:SignToken	type-index-data	core	spec §3.1
+type:$index	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:$variable	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:BasisKind	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:ClauseContent	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5
+type:Content	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5
+type:DefectKind	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Direction	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Discourse	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5
+type:EnumerationLevel	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Force	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:GenericMode	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Intensity	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:OccurrenceRole	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Proximity	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:ScalarMode	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:Target	type-index-data	spec-3.4-3.5	spec §3.4–§3.5
+type:ThresholdKind	type-index-data	a0-grammar,spec-3.4-3.5	SmusniA0 type grammar | spec §3.4–§3.5
+type:TopicResolution	type-index-data	spec-3.4-3.5	spec §3.4–§3.5

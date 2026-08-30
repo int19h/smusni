@@ -6,4 +6,3 @@
     (rows (mlatu blabi skicu))            ; L1.1, L3.2
     (stores ()) (sites ()) (anaphora ())
     (force (assert)))))                   ; L1.2
-)

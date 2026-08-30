@@ -12,4 +12,3 @@
     (rows (klama stali))                  ; L1.1
     (stores ()) (sites ()) (anaphora ())
     (force (assert connected)))))         ; L5.12
-)
