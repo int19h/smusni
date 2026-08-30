@@ -34,6 +34,7 @@
          hoist-ordered
          replace-site
          a0-type
+         a0-compatible?
          negate-record
          a0-synth
          a0-check

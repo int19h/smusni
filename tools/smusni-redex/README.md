@@ -551,3 +551,70 @@ historical 96. Five isolated warm runs call the actual named engines: legacy
 50 in the latest standalone gate; deterministic inclusive rule hotspots are
 printed. Every ordinary trigger remains clear. Neither legacy lowering hybrid
 is retired in B1.
+
+## B2 opaque-representation spike (#52)
+
+The first B2 deliverable is deliberately not a family expansion. It tests the
+accepted representation design on only `A0-Synth`, `A0-T-Natural`,
+`A0-T-Top`, and `A0-T-Let`. `port-b2-spike.rkt` compiles a validated raw datum
+once into immutable opaque occurrence nodes and compiles Γ once into an opaque
+environment snapshot. Both structures use Racket identity equality/hashing;
+the recursive Redex judgment receives constant-size node/environment inputs
+and asks an accessor for only the current node's immediate shape. The raw
+`SmusniA0` grammar and every output record remain unchanged.
+
+The compiler is a general opacity-aware datum traversal, not a case table. It
+creates distinct nodes for equal source occurrences, preserves paths and exact
+`datum → node → datum` round trips, and treats `Quote`/`Syntax` as one opaque
+node. Lambda, `Let`, and sequential `Bind` declarations receive opaque binder
+identities; every bound variable node links to its declaration identity, and
+the internal environment can extend/lookup by that identity while raw
+projection erases it. An identity-driven alpha projection reserves genuine
+free `$alphaN` names, names externally declared groups in scope-exit order,
+then names condition-internal declarations in syntax traversal order. Environment
+tests cover shadowing; targeted term tests cover multi-lambda, `Let`, sequential
+`Bind`, alpha/free-alpha collisions, equal subtrees, and both opaque heads. All
+84 A0/B1 differential inputs and 160 deterministic generated terms round-trip
+exactly.
+
+The accepted R1–R4/K1/C1–C4 gates are executable:
+
+- under the explicit `SMUSNI_B2_R1_FULL=1` test flag, five fresh Racket worker
+  processes run the Redex identity-path microbenchmark; each varies both
+  descendant count and environment depth at 16/32/64, with a 1.5× max/min
+  ceiling and a 10% material-slope noise boundary. Ordinary `check-smusni`
+  runs one in-process exact-input sanity ratio and does not pay worker startup;
+- one macro invocation emits each executable rule and its accessor-shape/raw-
+  production descriptor; that accessor token also executes the rule's root
+  match. Missing/duplicate/stale descriptor mutations fail;
+- a fail-closed recursive leak gate rejects opaque node/environment/binder
+  sentinels, unknown opaque wrappers, and procedures, as well as identities in
+  records, proofs, lowerings, manifests, vectors, boxes, and hashes;
+- caching on/off produces identical records, derivation counts, and complete
+  projected raw proof statements for the slice, all 84 A0/B1 inputs, and every
+  generated success/failure; a test-only two-rule relation proves multiple
+  derivations are not deduplicated;
+- public performance starts outside the raw API, includes exactly one term and
+  environment compilation per salted query, and reports compile time and exact
+  opacity-aware occurrence count.
+
+The corrected tracked literal measurement is R1 per-call
+0.012513/0.012169/0.013439 ms (max/min 1.104×, pass). Public compile+judge at
+16/32/64 is 1.588/4.375/12.240 ms, including compile
+0.086/0.151/0.533 ms, with node counts 97/193/385 and doubling ratios
+2.755×/2.798× (both below the 4× hard stop). The report-only 32/64/128 point is
+3.861/10.569/35.458 ms total, compile 0.168/0.367/0.994 ms, judge
+3.691/10.200/34.462 ms, node counts 193/385/769, ratios 2.738×/3.355×; copied
+list paths remain a full-migration review item rather than a hidden claim of
+asymptotic completion.
+Cache capacity controls at 256 and 4096 remained above 5×, while disabling
+caching worsened the second ratio to 6.340×; capacity tuning is therefore not
+the mechanism.
+
+This measurement releases no full rule migration. By the human-partner option-B
+decision, full migration/public-API switching is deferred until a practical
+typing trigger fires on real terms or lowering outputs; the raw judgment remains
+the executable vehicle for B-family work. The spike is retained as measured
+fallback evidence. Host traversal remains a separate design and is never an
+automatic fallback. Run the isolated R1 evidence explicitly with
+`SMUSNI_B2_R1_FULL=1 raco test tools/smusni-redex/tests/b2-spike-test.rkt`.

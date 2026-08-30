@@ -9,6 +9,7 @@
          racket/string
          redex/reduction-semantics
          "../inventory.rkt"
+         "../port-b2-spike.rkt"
          "../port-phase0.rkt"
          "../port-support.rkt"
          "../syntax.rkt"
@@ -470,6 +471,32 @@
          corpus)))
 (check-equal? a0-differences '())
 (check-equal? a0-stale-waivers '())
+
+;; B2 R2: every live A0/B1 differential term compiles through the generic
+;; opaque occurrence representation and round-trips exactly. This harness test
+;; is excluded from the frozen corpus's own semantic-input trace, avoiding a
+;; self-reference through a0-differential-cases.
+(define b2-roundtrip-inventory (load-inventory))
+(for ([item (in-list current-a0-differential-cases)])
+  (define datum
+    (legacy-datum->a0 (port-case-term item) b2-roundtrip-inventory))
+  (define-values (root count) (b2-compile-term datum))
+  (check-equal? (b2-node->datum root) datum)
+  (check-equal? count (b2-raw-occurrence-count datum))
+  (define environment
+    (for/list ([entry (in-list (port-case-env item))])
+      (match entry [(cons variable type) (list variable type)])))
+  (define memo-on (b2-spike-run-synth environment datum #:memo? #t))
+  (define memo-off (b2-spike-run-synth environment datum #:memo? #f))
+  (check-equal? (b2-spike-run-records memo-on)
+                (b2-spike-run-records memo-off))
+  (check-equal? (b2-spike-run-proofs memo-on)
+                (b2-spike-run-proofs memo-off))
+  ;; A positive result is necessarily inside the four-rule slice; compare its
+  ;; complete projected proof against the raw oracle as well.
+  (when (pair? (b2-spike-run-proofs memo-on))
+    (check-equal? (b2-spike-run-proofs memo-on)
+                  (b2-reference-proofs environment datum))))
 
 ;; B1 keeps source classification immutable and gates a separate, many-target
 ;; migration axis. Every deterministic lowering output has a tracked total
