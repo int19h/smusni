@@ -386,6 +386,54 @@ def runLocalGates : IO Unit := do
     throw <| IO.userError
       "inconsistent shared-site transforms did not report a merge conflict"
 
+  let rrCollisionId : SiteId :=
+    { document := "rr-collision"
+      occurrence := 0
+      expansionRole := "written-context" }
+  let rrCollisionSource : Interchange.Bundle 1 :=
+    { version := 1
+      term := .primitive .and <|
+        .positional (.context rrCollisionId .nil) <|
+        .positional (.bound 0) .nil
+      sites := [
+        { identity := rrCollisionId
+          role := .context
+          dependencies := []
+          rrLink := some "source-rr" }
+      ]
+      sourceMap := [] }
+  let rrCollisionReplacement : Interchange.Bundle 0 :=
+    { version := 1
+      term := .context rrCollisionId .nil
+      sites := [
+        { identity := rrCollisionId
+          role := .context
+          dependencies := []
+          rrLink := some "replacement-rr" }
+      ]
+      sourceMap := [] }
+  let checkedRrSource ← IO.ofExcept rrCollisionSource.checked
+  let checkedRrReplacement ← IO.ofExcept rrCollisionReplacement.checked
+  match checkedRrSource.substitute fun _ => checkedRrReplacement with
+  | .error (.inconsistentSharing witness) =>
+      if witness.identity != rrCollisionId ||
+          witness.first.rrLink == witness.second.rrLink then
+        throw <| IO.userError
+          "RR-link collision did not retain two unequal provenance rows"
+  | .ok _ => throw <| IO.userError "unequal same-identity RR links were silently merged"
+  let rrTwinReplacement : Interchange.Bundle 0 :=
+    { rrCollisionReplacement with
+      sites := [{ rrCollisionReplacement.sites.head! with
+        rrLink := some "source-rr" }] }
+  let checkedRrTwin ← IO.ofExcept rrTwinReplacement.checked
+  let rrTwinResult ← IO.ofBundleBinding <|
+    checkedRrSource.substitute fun _ => checkedRrTwin
+  match rrTwinResult.bundle.sites with
+  | [{ identity, rrLink := some link, .. }] =>
+      if identity != rrCollisionId || link != "source-rr" then
+        throw <| IO.userError "equal RR metadata was not preserved"
+  | _ => throw <| IO.userError "equal same-identity RR metadata produced a false conflict"
+
   let dependencyRootId : SiteId :=
     { document := "dependency-root"
       occurrence := 0

@@ -118,7 +118,9 @@ Lean's standard `propext`, `Classical.choice`, and `Quot.sound`; the pilot adds
 no axiom.
 The examples additionally prove operand substitution retains distinct values
 (7 versus 8), preserves a nested site's own binder scope inside a λ operand,
-and retains bound support for an outer variable captured by a λ.
+retains bound support for an outer variable captured by a λ, rejects unequal
+same-identity RR links with the witnessed conflict, and accepts the equal-link
+twin without a false conflict.
 
 Site discriminators pass:
 
@@ -165,7 +167,7 @@ occurrence/profile agreement, unique row identities, and actual-occurrence
 coverage for every row. Raw input may fail before constructing that object.
 Certified rename/substitute never re-run the raw validator: they transform the
 term, derive typed rows from the output occurrences, inherit only RR linkage
-through a reconciled metadata pool, reconcile the full derived rows, and
+through a full-row-reconciled metadata pool, reconcile the full derived rows, and
 construct output coherence directly. The sole public error is
 `inconsistentSharing`, carrying the SiteId, both candidate rows, and a proof
 that they differ. Validation still runs after source and text decoding. Each

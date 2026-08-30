@@ -726,6 +726,13 @@ def reconcileSiteTable : (candidates : List SiteEntry) →
                 second := candidate
                 unequal := same })
 
+theorem ReconciledSiteTable.coversIdentity {candidates : List SiteEntry}
+    (table : ReconciledSiteTable candidates) (identity : SiteId)
+    (covered : ∃ entry, entry ∈ candidates ∧ entry.identity = identity) :
+    ∃ entry, entry ∈ table.entries ∧ entry.identity = identity := by
+  rcases covered with ⟨entry, entryPresent, identityEq⟩
+  exact ⟨entry, table.candidatesCovered entry entryPresent, identityEq⟩
+
 def renameMetadata {source : Nat} (bundle : ValidatedBundle source) :
     List SiteEntry :=
   bundle.bundle.sites.map clearSiteProfile
@@ -855,29 +862,34 @@ def ValidatedBundle.rename {source target : Nat}
     (bundle : ValidatedBundle source) (ρ : Renaming source target) :
     Except BundleBindingConflict (RenamedBundle bundle ρ) :=
   let term := bundle.bundle.term.rename ρ
-  let metadata := renameMetadata bundle
-  let occurrences := typedOccurrenceTable term metadata
-    (renamedOccurrence_metadataCovered bundle ρ)
-  let candidates := typedOccurrenceCandidates occurrences
-  match reconcileSiteTable candidates with
+  let metadataCandidates := renameMetadata bundle
+  match reconcileSiteTable metadataCandidates with
   | .error conflict => .error conflict
-  | .ok table =>
-      let outputBundle : Bundle target := {
-        version := bundle.bundle.version
-        term
-        sites := table.entries
-        sourceMap := bundle.bundle.sourceMap }
-      let outputCoherence : BundleCoherence outputBundle :=
-        coherenceFromOccurrenceTable bundle.bundle.version term
-          bundle.bundle.sourceMap occurrences table
-      let validated : ValidatedBundle target := {
-        bundle := outputBundle
-        coherence := outputCoherence }
-      .ok {
-        certified := outputBundle
-        validated
-        validatedBundleEq := rfl
-        termEq := rfl }
+  | .ok metadataTable =>
+      let occurrences := typedOccurrenceTable term metadataTable.entries
+        (fun occurrence present =>
+          metadataTable.coversIdentity occurrence.use.identity <|
+            renamedOccurrence_metadataCovered bundle ρ occurrence present)
+      let candidates := typedOccurrenceCandidates occurrences
+      match reconcileSiteTable candidates with
+      | .error conflict => .error conflict
+      | .ok table =>
+          let outputBundle : Bundle target := {
+            version := bundle.bundle.version
+            term
+            sites := table.entries
+            sourceMap := bundle.bundle.sourceMap }
+          let outputCoherence : BundleCoherence outputBundle :=
+            coherenceFromOccurrenceTable bundle.bundle.version term
+              bundle.bundle.sourceMap occurrences table
+          let validated : ValidatedBundle target := {
+            bundle := outputBundle
+            coherence := outputCoherence }
+          .ok {
+            certified := outputBundle
+            validated
+            validatedBundleEq := rfl
+            termEq := rfl }
 
 def ValidatedBundle.weaken {scope : Nat} (bundle : ValidatedBundle scope) :
     Except BundleBindingConflict (RenamedBundle bundle Fin.succ) :=
@@ -889,32 +901,37 @@ def ValidatedBundle.substitute {source target : Nat}
     Except BundleBindingConflict (SubstitutedBundle bundle σ) :=
   let term := bundle.bundle.term.substitute
     (fun index => (σ index).bundle.term)
-  let metadata := substitutionMetadata bundle σ
-  let occurrences := typedOccurrenceTable term metadata
-    (substitutedOccurrence_metadataCovered bundle σ)
-  let candidates := typedOccurrenceCandidates occurrences
-  match reconcileSiteTable candidates with
+  let metadataCandidates := substitutionMetadata bundle σ
+  match reconcileSiteTable metadataCandidates with
   | .error conflict => .error conflict
-  | .ok table =>
-      let uses := typedTermSubstitutionUses bundle.bundle.term
-      let outputBundle : Bundle target := {
-        version := bundle.bundle.version
-        term
-        sites := table.entries
-        sourceMap := bundle.bundle.sourceMap ++
-          replacementSourceNotesForUses σ uses }
-      let outputCoherence : BundleCoherence outputBundle :=
-        coherenceFromOccurrenceTable bundle.bundle.version term
-          (bundle.bundle.sourceMap ++ replacementSourceNotesForUses σ uses)
-          occurrences table
-      let validated : ValidatedBundle target := {
-        bundle := outputBundle
-        coherence := outputCoherence }
-      .ok {
-        certified := outputBundle
-        validated
-        validatedBundleEq := rfl
-        termEq := rfl }
+  | .ok metadataTable =>
+      let occurrences := typedOccurrenceTable term metadataTable.entries
+        (fun occurrence present =>
+          metadataTable.coversIdentity occurrence.use.identity <|
+            substitutedOccurrence_metadataCovered bundle σ occurrence present)
+      let candidates := typedOccurrenceCandidates occurrences
+      match reconcileSiteTable candidates with
+      | .error conflict => .error conflict
+      | .ok table =>
+          let uses := typedTermSubstitutionUses bundle.bundle.term
+          let outputBundle : Bundle target := {
+            version := bundle.bundle.version
+            term
+            sites := table.entries
+            sourceMap := bundle.bundle.sourceMap ++
+              replacementSourceNotesForUses σ uses }
+          let outputCoherence : BundleCoherence outputBundle :=
+            coherenceFromOccurrenceTable bundle.bundle.version term
+              (bundle.bundle.sourceMap ++ replacementSourceNotesForUses σ uses)
+              occurrences table
+          let validated : ValidatedBundle target := {
+            bundle := outputBundle
+            coherence := outputCoherence }
+          .ok {
+            certified := outputBundle
+            validated
+            validatedBundleEq := rfl
+            termEq := rfl }
 
 theorem RenamedBundle.site_ids {source target : Nat}
     {input : ValidatedBundle source} {ρ : Renaming source target}
