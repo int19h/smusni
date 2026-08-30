@@ -40,6 +40,11 @@ structure SiteUse where
   scope : Nat
   deriving Repr, DecidableEq, BEq, ReflBEq, LawfulBEq
 
+structure SiteOccurrence where
+  use : SiteUse
+  support : List SerializedDependency
+  deriving Repr, DecidableEq, BEq
+
 mutual
   def Term.siteUses {scope : Nat} : Term scope → List SiteUse
     | .bound _ | .free _ | .natural _ | .string _ | .index _ => []

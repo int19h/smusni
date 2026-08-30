@@ -263,16 +263,15 @@ structure BundleCoherence {scope : Nat} (bundle : Bundle scope) where
   rootsCovered : ∀ use, use ∈ bundle.term.siteUses → use ∈ uses
   scopeBound : ∀ use, use ∈ uses → scope ≤ use.scope
   witness : ∀ use, use ∈ uses → TypedSiteUseWitness bundle use
-  edgesClosed : ∀ use (present : use ∈ uses)
-      (dependency : SerializedDependency) (_dependencyPresent :
-        dependency ∈ (witness use present).entry.dependencies)
-      (identity : SiteId),
-      dependency = .site identity →
-        ∃ child, child ∈ uses ∧ child.identity = identity ∧
-          child.scope = use.scope
+  profileAgreement : ∀ occurrence,
+    occurrence ∈ bundle.term.siteOccurrences →
+      ∃ present : occurrence.use ∈ uses,
+        (witness occurrence.use present).entry.dependencies =
+          occurrence.support
   tableUnique : (bundle.sites.map (fun entry => entry.identity)).Nodup
   tableCovered : ∀ entry, entry ∈ bundle.sites →
-    ∃ use, use ∈ uses ∧ use.identity = entry.identity
+    ∃ occurrence, occurrence ∈ bundle.term.siteOccurrences ∧
+      occurrence.use.identity = entry.identity
 
 def buildTypedSiteUseWitness {scope : Nat} (bundle : Bundle scope)
     (use : SiteUse) : Except String (TypedSiteUseWitness bundle use) := do
@@ -830,6 +829,77 @@ theorem witnessFromResult_mem {scope : Nat} {bundle : Bundle scope}
           apply List.mem_cons_of_mem
           apply ih
 
+def buildTypedUses {scope : Nat} (bundle : Bundle scope) :
+    (uses : List SiteUse) →
+      Except String (List (Sigma fun use => TypedSiteUseWitness bundle use))
+  | [] => .ok []
+  | use :: rest => do
+      let witness ← buildTypedSiteUseWitness bundle use
+      let tail ← buildTypedUses bundle rest
+      pure (⟨use, witness⟩ :: tail)
+
+theorem buildTypedUses_projection {scope : Nat} (bundle : Bundle scope) :
+    ∀ (uses : List SiteUse)
+      (result : List (Sigma fun use => TypedSiteUseWitness bundle use)),
+      buildTypedUses bundle uses = .ok result →
+        result.map Sigma.fst = uses
+  | [], result, success => by
+      simp only [buildTypedUses, Except.ok.injEq] at success
+      subst result
+      rfl
+  | use :: rest, result, success => by
+      simp only [buildTypedUses] at success
+      cases first : buildTypedSiteUseWitness bundle use with
+      | error message =>
+          simp [first, bind, Except.bind] at success
+      | ok witness =>
+          rw [first] at success
+          cases tailResult : buildTypedUses bundle rest with
+          | error message =>
+              simp [tailResult, bind, Except.bind] at success
+          | ok tail =>
+              rw [tailResult] at success
+              cases success
+              simp [buildTypedUses_projection bundle rest tail tailResult]
+
+def buildTypedRootUses {scope : Nat} (bundle : Bundle scope) :
+    Except String (List (Sigma fun use => TypedSiteUseWitness bundle use)) :=
+  buildTypedUses bundle (dedupSiteUses bundle.term.siteUses)
+
+structure OccurrenceProfilesWitness {scope : Nat} (bundle : Bundle scope)
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use))
+    (occurrences : List SiteOccurrence) : Type where
+  agreement : ∀ occurrence, occurrence ∈ occurrences →
+    ∃ present : occurrence.use ∈ result.map Sigma.fst,
+      (witnessFromResult result occurrence.use present).entry.dependencies =
+        occurrence.support
+
+def checkOccurrenceProfiles {scope : Nat} (bundle : Bundle scope)
+    (result : List (Sigma fun use => TypedSiteUseWitness bundle use)) :
+    (occurrences : List SiteOccurrence) →
+    (coverage : ∀ occurrence, occurrence ∈ occurrences →
+      occurrence.use ∈ result.map Sigma.fst) →
+      Except String (OccurrenceProfilesWitness bundle result occurrences)
+  | [], _ => .ok { agreement := by simp }
+  | occurrence :: rest, coverage =>
+      let present := coverage occurrence (by simp)
+      let selected := witnessFromResult result occurrence.use present
+      if profilesMatch : selected.entry.dependencies = occurrence.support then
+        match checkOccurrenceProfiles bundle result rest
+            (fun candidate candidatePresent =>
+              coverage candidate (by simp [candidatePresent])) with
+        | .error message => .error message
+        | .ok tail => .ok {
+            agreement := by
+              intro candidate candidatePresent
+              simp only [List.mem_cons] at candidatePresent
+              rcases candidatePresent with isHead | inRest
+              · subst candidate
+                exact ⟨present, profilesMatch⟩
+              · exact tail.agreement candidate inRest }
+      else Except.error (s!"site profile disagrees with term operands: " ++
+        s!"{repr occurrence.use.identity}")
+
 structure SiteTableUniqueWitness (sites : List SiteEntry) : Type where
   unique : (sites.map fun entry => entry.identity).Nodup
 
@@ -849,21 +919,23 @@ def checkSiteTableUnique : (sites : List SiteEntry) →
                 simp only [List.map_cons, List.nodup_cons]
                 exact ⟨duplicate, restUnique.unique⟩ }
 
-structure SiteTableCoverageWitness (uses : List SiteUse)
+structure SiteTableCoverageWitness (occurrences : List SiteOccurrence)
     (sites : List SiteEntry) : Type where
   covered : ∀ entry, entry ∈ sites →
-    ∃ use, use ∈ uses ∧ use.identity = entry.identity
+    ∃ occurrence, occurrence ∈ occurrences ∧
+      occurrence.use.identity = entry.identity
 
-def checkSiteTableCovered (uses : List SiteUse) :
+def checkSiteTableCovered (occurrences : List SiteOccurrence) :
     (sites : List SiteEntry) →
-      Except String (SiteTableCoverageWitness uses sites)
+      Except String (SiteTableCoverageWitness occurrences sites)
   | [] => .ok { covered := by simp }
   | entry :: rest =>
-      match lookup : uses.find? (fun use => use.identity == entry.identity) with
+      match lookup : occurrences.find? (fun occurrence =>
+          occurrence.use.identity == entry.identity) with
       | none =>
           .error s!"unreachable site sidecar entry: {repr entry.identity}"
-      | some use =>
-          match checkSiteTableCovered uses rest with
+      | some occurrence =>
+          match checkSiteTableCovered occurrences rest with
           | .error message => .error message
           | .ok restCovered =>
               .ok {
@@ -872,7 +944,7 @@ def checkSiteTableCovered (uses : List SiteUse) :
                   simp only [List.mem_cons] at present
                   rcases present with isEntry | inRest
                   · subst candidate
-                    refine ⟨use, List.mem_of_find?_eq_some lookup, ?_⟩
+                    refine ⟨occurrence, List.mem_of_find?_eq_some lookup, ?_⟩
                     have found := List.find?_some lookup
                     simpa using found
                   · exact restCovered.covered candidate inRest }
@@ -882,42 +954,43 @@ def Bundle.buildCoherence {scope : Nat} (bundle : Bundle scope) :
   if bundle.version != 1 then
     .error s!"unsupported interchange version {bundle.version}"
   let tableUnique ← checkSiteTableUnique bundle.sites
-  match closureSuccess : buildTypedClosureUses bundle with
+  match rootsSuccess : buildTypedRootUses bundle with
   | .error message => .error message
   | .ok result =>
       let uses := result.map Sigma.fst
-      match checkSiteTableCovered uses bundle.sites with
+      have projection : uses = dedupSiteUses bundle.term.siteUses :=
+        buildTypedUses_projection bundle
+          (dedupSiteUses bundle.term.siteUses) result rootsSuccess
+      have occurrenceCoverage : ∀ occurrence,
+          occurrence ∈ bundle.term.siteOccurrences → occurrence.use ∈ uses := by
+        intro occurrence occurrencePresent
+        rw [projection]
+        apply (mem_dedupSiteUses occurrence.use _).mpr
+        rw [← bundle.term.siteOccurrences_uses]
+        exact List.mem_map.mpr
+          ⟨occurrence, occurrencePresent, rfl⟩
+      let profiles ← checkOccurrenceProfiles bundle result
+        bundle.term.siteOccurrences occurrenceCoverage
+      match checkSiteTableCovered bundle.term.siteOccurrences bundle.sites with
       | .error message => .error message
       | .ok tableCovered =>
-          have terminal := buildTypedClosureUses_terminalInvariant bundle result
-            closureSuccess
           .ok {
             uses := uses
             usesUnique := by
-              obtain ⟨_finalUnseen, finalInvariant⟩ := terminal
-              exact finalInvariant.seenUnique
+              rw [projection]
+              exact nodup_dedupSiteUses _
             rootsCovered := by
-              exact buildTypedClosureUses_rootsCovered bundle result
-                closureSuccess
+              intro use present
+              rw [projection]
+              exact (mem_dedupSiteUses use _).mpr present
             scopeBound := by
               intro use present
-              obtain ⟨_finalUnseen, finalInvariant⟩ := terminal
-              apply scope_le_of_mem_siteUseUniverse bundle use
-              exact (finalInvariant.partition use).mpr (Or.inr present)
+              rw [projection] at present
+              exact Term.scope_le_of_mem_siteUses bundle.term use
+                ((mem_dedupSiteUses use _).mp present)
             witness := fun use present =>
               witnessFromResult result use present
-            edgesClosed := by
-              intro use present dependency dependencyPresent identity isSite
-              subst dependency
-              obtain ⟨finalUnseen, finalInvariant⟩ := terminal
-              obtain ⟨child, childState, childIdentity, childScope⟩ :=
-                finalInvariant.childrenAccounted use
-                  (witnessFromResult result use present)
-                  (witnessFromResult_mem result use present)
-                  identity dependencyPresent
-              rcases childState with inPending | inResult
-              · simp at inPending
-              · exact ⟨child, inResult, childIdentity, childScope⟩
+            profileAgreement := profiles.agreement
             tableUnique := tableUnique.unique
             tableCovered := tableCovered.covered }
 

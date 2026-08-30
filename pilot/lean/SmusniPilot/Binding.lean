@@ -79,8 +79,8 @@ mutual
         computation.dependencies ++ body.dependencies.filterMap Dependency.lower
     | .apply function arguments => function.dependencies ++ arguments.dependencies
     | .lexical _ arguments => arguments.dependencies
-    | .context site arguments => .site site :: arguments.dependencies
-    | .vague site constraint => .site site :: constraint.dependencies
+    | .context _ arguments => arguments.dependencies
+    | .vague _ constraint => constraint.dependencies
     | .primitive _ arguments => arguments.dependencies
 
   def TermList.dependencies {scope : Nat} :
@@ -89,6 +89,49 @@ mutual
     | .positional head tail | .labelled _ head tail =>
         head.dependencies ++ tail.dependencies
 end
+
+mutual
+  def Term.siteOccurrences {scope : Nat} : Term scope → List SiteOccurrence
+    | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
+    | .lambda _ body => body.siteOccurrences
+    | .bind _ computation body =>
+        computation.siteOccurrences ++ body.siteOccurrences
+    | .apply function arguments =>
+        function.siteOccurrences ++ arguments.siteOccurrences
+    | .lexical _ arguments | .primitive _ arguments =>
+        arguments.siteOccurrences
+    | .context site arguments =>
+        { use := { identity := site, role := .context, scope }
+          support := arguments.dependencies.map
+            SerializedDependency.ofDependency } :: arguments.siteOccurrences
+    | .vague site constraint =>
+        { use := { identity := site, role := .vague, scope }
+          support := constraint.dependencies.map
+            SerializedDependency.ofDependency } :: constraint.siteOccurrences
+
+  def TermList.siteOccurrences {scope : Nat} :
+      TermList scope → List SiteOccurrence
+    | .nil => []
+    | .positional head tail | .labelled _ head tail =>
+        head.siteOccurrences ++ tail.siteOccurrences
+end
+
+@[simp] theorem Term.siteOccurrences_uses {scope : Nat} (term : Term scope) :
+    term.siteOccurrences.map SiteOccurrence.use = term.siteUses := by
+  induction term using Term.rec
+    (motive_2 := fun scope terms =>
+      terms.siteOccurrences.map SiteOccurrence.use = terms.siteUses) <;>
+    simp_all [Term.siteOccurrences, TermList.siteOccurrences,
+      Term.siteUses, TermList.siteUses]
+
+@[simp] theorem TermList.siteOccurrences_uses {scope : Nat}
+    (terms : TermList scope) :
+    terms.siteOccurrences.map SiteOccurrence.use = terms.siteUses := by
+  induction terms using TermList.rec
+    (motive_1 := fun scope term =>
+      term.siteOccurrences.map SiteOccurrence.use = term.siteUses) <;>
+    simp_all [Term.siteOccurrences, TermList.siteOccurrences,
+      Term.siteUses, TermList.siteUses]
 
 namespace Substitution
 
