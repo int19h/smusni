@@ -117,14 +117,46 @@ outside the full 107-rule manifest, but not outside the measured S1 slice.
 `M2TypingBridge.lean` proves relation-to-executable completeness by one mutual
 constructor induction. The checking companion is generated from that exact
 recursor/handler proof term, so internal recursive checks and public
-`checkBidirectional` cannot drift into two handwritten proof paths. On the
-relation-supported domain, `synth` and `checkBidirectional` are characterized
-in both directions. The public priority theorem exposes the three cases:
+`checkBidirectional` cannot drift into two handwritten proof paths. The old
+`SynthSupported`/`CheckSupported` characterization has been removed: assuming
+that the declarative relation was already inhabited was circular evidence for
+executable-to-relation soundness.
+
+`M2TypingSoundness.lean` proves the missing direction on an independent
+manifest domain. `TypingManifestSupported result.trace` is only the Boolean
+claim that every rule ID emitted by the successful executable result is in the
+58-rule implemented manifest slice; it does not mention or assume a typing
+judgment. `synth_success_sound` takes executable success plus that trace fact
+and constructs `SynthJudgment ... result.observation`. The proof follows the
+mutual executable recursion through named handlers for expected checks,
+reference and Presuppose checks, primitive schemas, function application and
+partial application, PredTerm application, synthesis/check argument lists,
+lexical rows, and value operands. Lean-generated `caseNNN` names are dispatch
+glue only; the semantic proofs live in those named handlers.
+
+The S1 gate checks the same manifest predicate for all 31 available unchanged
+inputs and all 153 successful outputs; theorem
+`typingTraceSupported_instantiates_soundness` turns each passing Boolean check
+into the exact premise of `synth_success_sound`. Removing one observed rule
+from the predicate is a required failing mutation. Thus the 153/153 output
+count now instantiates executable-to-relation soundness rather than merely
+reporting that traces avoid a list of exclusions.
+
+The public priority theorem exposes the three checking cases:
 compatible synthesis gives `fromSynth`; incompatible synthesis gives the named
 `type-mismatch` without fallback; synthesis failure invokes exactly the shared
 expected-clause interpreter. It also proves synthesis/checking observation
 functionality, synthesis-type uniqueness, judgment-relative wrong-type
 failure, purity, computation category, and the five-effect bound.
+
+Expected-only Presuppose is classified recursively by
+`expectedOnlySynthesisForm`; its declarative counterpart includes recursive
+Presuppose bodies. Direct structural theorems and runtime regressions cover a
+nested expected-only body, a nested ordinarily synthable body, and a mutation
+that accepts every binary Presuppose. The soundness proof additionally exposed
+that `predTermArgumentResults` accepted a second labelled `:Eventuality` while
+the judgment permits only one. The executable now rejects that duplicate with
+`predterm-row`, and an explicit regression exercises the unseen duplicate.
 
 `M2Relation.lean` now states definition side conditions through those typing
 judgments (`PurePropertyJudgment`, `ReferenceMemberJudgment`, and
@@ -154,6 +186,9 @@ records. Concrete unseen `ActualClause` and natural-typing instantiations in
 constructor directly.
 
 There are no `sorry`, `axiom`, or `admit` declarations.
+`#print axioms synth_success_sound` reports only Lean's standard `propext`,
+`Classical.choice`, and `Quot.sound`; the proof carries no `native_decide`
+oracle axioms.
 
 ## Expansion sites and certified bundles
 

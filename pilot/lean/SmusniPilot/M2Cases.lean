@@ -1,5 +1,6 @@
 import SmusniPilot.S1
 import SmusniPilot.M2Templates
+import SmusniPilot.M2TypingSoundness
 
 namespace SmusniPilot
 namespace M2
@@ -742,6 +743,10 @@ structure CaseOutcome where
 def typingTraceSupported (result : TypingResult) : Bool :=
   result.trace.all typingRuleImplemented
 
+theorem typingTraceSupported_instantiates_soundness {result : TypingResult}
+    (supported : typingTraceSupported result = true) :
+    TypingManifestSupported result.trace := ⟨supported⟩
+
 def classifyUnselected (record : CorpusCase) (tag : String)
     (unselected : List M2DefinitionDispositionRecord) : Option CaseOutcome :=
   if let some blocked := unselected.find? fun item => item.status == "blocked" then
@@ -886,7 +891,7 @@ def CaseRun.ofOutcomes (outcomes : List CaseOutcome) : CaseRun := {
   outputTypingsSupported := outcomes.countP (·.outputTraceSupported)
   excludedTraceRules := outcomes.flatMap (·.excludedTraceRules) |>.eraseDups }
 
-def CaseRun.validateTypingCoverageWith (run : CaseRun)
+def CaseRun.validateSoundnessDomainWith (run : CaseRun)
     (implemented : M2TypingRuleId → Bool) : Except String Unit := do
   let badInputs := run.outcomes.filter fun outcome =>
     outcome.inputTypingAvailable && !outcome.typingTrace.all implemented
@@ -895,17 +900,17 @@ def CaseRun.validateTypingCoverageWith (run : CaseRun)
   let observedExcluded := (run.outcomes.flatMap fun outcome =>
     outcome.typingTrace.filter fun rule => !implemented rule).eraseDups
   if !badInputs.isEmpty || !badOutputs.isEmpty || !observedExcluded.isEmpty then
-    throw <| s!"typing relation coverage failed: inputs={badInputs.length} " ++
+    throw <| s!"typing soundness domain failed: inputs={badInputs.length} " ++
       s!"outputs={badOutputs.length} excluded={repr observedExcluded}"
   else pure ()
 
 def CaseRun.validateTypingCoverage (run : CaseRun) : Except String Unit :=
-  run.validateTypingCoverageWith typingRuleImplemented
+  run.validateSoundnessDomainWith typingRuleImplemented
 
 def CaseRun.validateTypingCoverageMutation (run : CaseRun) : Except String Unit :=
   let mutated := fun rule => typingRuleImplemented rule && rule != .a0TSetOf
-  if (run.validateTypingCoverageWith mutated).isOk then
-    throw "typing relation coverage mutation did not fail"
+  if (run.validateSoundnessDomainWith mutated).isOk then
+    throw "typing soundness domain mutation did not fail"
   else pure ()
 
 def runM2Cases (root : String) : IO CaseRun := do

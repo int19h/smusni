@@ -47,6 +47,10 @@ inductive ExpectedOnlySynthesisForm : {scope : Nat} → Term scope → Prop wher
       ExpectedOnlySynthesisForm (.primitive .local arguments)
   | list {scope : Nat} (arguments : TermList scope) :
       ExpectedOnlySynthesisForm (.primitive .list arguments)
+  | presuppose {scope : Nat} (condition body : Term scope)
+      (bodyExpectedOnly : ExpectedOnlySynthesisForm body) :
+      ExpectedOnlySynthesisForm
+        (.primitive .presuppose (judgmentTermList [condition, body]))
   | select {scope : Nat} (operator : FirstOrderPrimitive)
       (arguments : TermList scope)
       (selected : operator = .selectExactly ∨ operator = .selectAtLeast ∨
@@ -357,7 +361,7 @@ mutual
         (row : M2LexicalRowRecord) (label : String) (head : Term scope)
         (tail : TermList scope) (seen : List String)
         (fresh : seen.contains label = false) (notEvent : label ≠ ":Eventuality")
-        (place : Nat) (decoded : (label.drop 1).toString.toNat? = some place)
+        (place : Nat) (decoded : (label.drop 1).toNat? = some place)
         (positive : place > 0) (within : place ≤ row.ordinaryArity)
         (headResult : TypingObservation) (tailResults : List TypingObservation)
         (ordinary : Nat) (eventFilled : Bool)
@@ -574,6 +578,23 @@ mutual
         (exponentTyping : CheckJudgment environment exponent Ty.natural exponentResult) :
         PrimitiveJudgment environment .teha (judgmentTermList [base, exponent])
           (mergeObservations Ty.number [baseResult, exponentResult])
+    | amountValue {scope : Nat} (environment : Environment scope)
+        (amount scale : Term scope) (amountResult scaleResult : TypingObservation)
+        (amountTyping : CheckJudgment environment amount (Ty.referents Ty.amount)
+          amountResult)
+        (scaleTyping : CheckJudgment environment scale (Ty.referents Ty.scale)
+          scaleResult) :
+        PrimitiveJudgment environment .amountValue
+          (judgmentTermList [amount, scale])
+          (mergeObservations Ty.number [amountResult, scaleResult])
+    | contentRelation {scope : Nat} (environment : Environment scope)
+        (operator : FirstOrderPrimitive) (content : Term scope)
+        (contentResult : TypingObservation)
+        (selected : operator = .niRel ∨ operator = .jeiRel ∨
+          operator = .suhuRel)
+        (contentTyping : CheckJudgment environment content Ty.content contentResult) :
+        PrimitiveJudgment environment operator (judgmentTermList [content])
+          (mergeObservations (Ty.predTerm (Ty.arityRow 2)) [contentResult])
     | polar {scope : Nat} (environment : Environment scope)
         (content : Term scope) (contentResult : TypingObservation)
         (contentTyping : CheckJudgment environment content Ty.content contentResult) :

@@ -129,7 +129,7 @@ def isNamed (type : Ty) (name : TypeName) (arity : Nat) : Bool :=
 
 def asUnary (type : Ty) (name : TypeName) : Option Ty :=
   match type with
-  | .named actual [inner] => if actual == name then some inner else none
+  | .named actual [inner] => if actual = name then some inner else none
   | _ => none
 
 def asBinary (type : Ty) (name : TypeName) : Option (Ty × Ty) :=
@@ -546,6 +546,20 @@ def expectedCheckClause {scope : Nat} (term : Term scope) (expected : Ty) :
     expectedCheckClause (.primitive .selectAllBut arguments)
       (.named .typeFormRefComp [inner]) = some .referencePrimitive := rfl
 
+/-- Syntax forms whose type can only be supplied by expected-mode checking.
+`Presuppose` inherits that status exactly when its body does; this recursive
+classification prevents an outer expected-mode retry from bypassing a
+synthesizable inner `Presuppose`. -/
+def expectedOnlySynthesisForm {scope : Nat} : Term scope → Bool
+  | .context _ _ | .vague _ _ => true
+  | .primitive .refer _ | .primitive .local _ | .primitive .list _ => true
+  | .primitive .selectExactly _ | .primitive .selectAtLeast _ |
+      .primitive .selectAllBut _ => true
+  | .primitive .presuppose
+      (.positional _ (.positional body .nil)) => expectedOnlySynthesisForm body
+  | _ => false
+termination_by term => sizeOf term
+
 mutual
   def synth {scope : Nat} (environment : Environment scope) :
       Term scope → Except TypingError TypingResult
@@ -816,7 +830,10 @@ mutual
         | .ok result =>
             match predTermArgumentResults environment tail with
             | .error error => .error error
-            | .ok (rest, ordinary, _) => .ok (result :: rest, ordinary, true)
+            | .ok (rest, ordinary, eventFilled) =>
+                if eventFilled then
+                  failure "predterm-row" "application repeats the Eventuality fill"
+                else .ok (result :: rest, ordinary, true)
     | .labelled _ term tail =>
         match synth environment term with
         | .error error => .error error
@@ -860,8 +877,7 @@ mutual
                   | .error error => .error error
                   | .ok (rest, ordinary, _) => .ok (result :: rest, ordinary, true)
           else
-            let raw := (label.drop 1).toString
-            match raw.toNat? with
+            match (label.drop 1).toNat? with
             | none => failure "lexical-label" s!"{row.head} has unknown label {label}"
             | some place =>
                 if place == 0 || place > row.ordinaryArity then
@@ -1343,6 +1359,10 @@ mutual
       (expected : Ty) : Except TypingError TypingResult :=
     match arguments with
     | .positional condition (.positional body .nil) => do
+        if !expectedOnlySynthesisForm body then
+          failure "presuppose-body"
+            "expected-mode Presuppose requires an expected-only body"
+        else pure ()
         let conditionResult ← check environment condition Ty.content
         let bodyResult ← check environment body expected
         pure <| mergeResults expected [conditionResult, bodyResult] [.projective]
@@ -1375,20 +1395,18 @@ mutual
     match arguments with
     | .positional act .nil => do
         let result ← synth environment act
-        match result.type with
-        | .named .typeFormAct [force] =>
-            pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
-              [result] [.performance] [] .a0TPerform |>.withRule .a0Synth
-        | _ => failure "perform-type" "Perform expects Act<F>"
+        let some force := Ty.asUnary result.type .typeFormAct
+          | failure "perform-type" "Perform expects Act<F>"
+        pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
+          [result] [.performance] [] .a0TPerform |>.withRule .a0Synth
     | .positional role (.positional act .nil) => do
         let roleResult ← check environment role Ty.occurrenceRole
         let result ← synth environment act
-        match result.type with
-        | .named .typeFormAct [force] =>
-            pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
-              [roleResult, result] [.performance] [] .m2TPerformRole
-              |>.withRule .a0Synth
-        | _ => failure "perform-type" "Perform expects Act<F>"
+        let some force := Ty.asUnary result.type .typeFormAct
+          | failure "perform-type" "Perform expects Act<F>"
+        pure <| mergeResults (Ty.perfComp (Ty.actOccurrence force))
+          [roleResult, result] [.performance] [] .m2TPerformRole
+          |>.withRule .a0Synth
     | _ => failure "arity" "Perform expects an act, optionally preceded by a role"
   termination_by (sizeOf arguments, 0)
 

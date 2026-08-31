@@ -71,6 +71,36 @@ private def PrimitiveCompleteMotive {scope : Nat}
   ∃ result, synthPrimitive environment operator arguments = .ok result ∧
     result.observation = observation
 
+theorem expected_only_classifier_complete {scope : Nat} {term : Term scope}
+    (form : ExpectedOnlySynthesisForm term) :
+    expectedOnlySynthesisForm term = true := by
+  induction form with
+  | context => simp [expectedOnlySynthesisForm]
+  | vague => simp [expectedOnlySynthesisForm]
+  | refer => simp [expectedOnlySynthesisForm]
+  | «local» => simp [expectedOnlySynthesisForm]
+  | list => simp [expectedOnlySynthesisForm]
+  | select operator arguments selected =>
+      rcases selected with rfl | rfl | rfl <;>
+        simp [expectedOnlySynthesisForm]
+  | presuppose condition body bodyExpectedOnly bodyIH =>
+      simpa [judgmentTermList, expectedOnlySynthesisForm] using bodyIH
+
+theorem expected_only_classifier_sound {scope : Nat} (term : Term scope)
+    (classified : expectedOnlySynthesisForm term = true) :
+    ExpectedOnlySynthesisForm term := by
+  fun_induction expectedOnlySynthesisForm term <;>
+    simp_all [expectedOnlySynthesisForm]
+  case case1 => exact .context _ _
+  case case2 => exact .vague _ _
+  case case3 => exact .refer _
+  case case4 => exact .local _
+  case case5 => exact .list _
+  case case6 => exact .select .selectExactly _ (Or.inl rfl)
+  case case7 => exact .select .selectAtLeast _ (Or.inr (Or.inl rfl))
+  case case8 => exact .select .selectAllBut _ (Or.inr (Or.inr rfl))
+  case case9 => exact .presuppose _ _ (by assumption)
+
 private theorem expected_only_synth_fails {scope : Nat}
     (environment : Environment scope) {term : Term scope}
     (form : ExpectedOnlySynthesisForm term) :
@@ -96,6 +126,22 @@ private theorem expected_only_synth_fails {scope : Nat}
       exact ⟨{ code := "expected-type", detail :=
         "List literals require an expected List<T>" }, by
         simp [synth.eq_12, synthPrimitive, failure]⟩
+  | presuppose condition body bodyExpectedOnly =>
+      rcases expected_only_synth_fails environment bodyExpectedOnly with
+        ⟨bodyError, bodyFailure⟩
+      cases conditionCheck : check environment condition Ty.content with
+      | error conditionError =>
+          exact ⟨conditionError, by
+            rw [synth.eq_12]
+            simp only [synthPrimitive, judgmentTermList, synthPresuppose]
+            rw [conditionCheck]
+            rfl⟩
+      | ok conditionResult =>
+          exact ⟨bodyError, by
+            rw [synth.eq_12]
+            simp only [synthPrimitive, judgmentTermList, synthPresuppose]
+            rw [conditionCheck, bodyFailure]
+            rfl⟩
   | select operator arguments selected =>
       rcases selected with rfl | rfl | rfl <;>
         simp [synth.eq_12, synthPrimitive, failure]
@@ -347,6 +393,8 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     have notReferenceDomainRaw :
         (inner == Ty.named .typeFormReferents [inner]) = false := by
       simpa [Ty.referents] using notReferenceDomain
+    have notReferenceDomainEq : inner ≠ Ty.referents inner := by
+      exact not_eq_of_beq_eq_false notReferenceDomain
     refine ⟨result, ?_, ?_⟩
     · simp [check.eq_1, synth.eq_12, synthPrimitive, checkExpected.eq_3,
         expectedCheckClause_refer, Ty.asUnary_refComp,
@@ -355,6 +403,7 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
         Ty.referents, Ty.content, Ty.compatible, instBEqTy, Ty.beq,
         Ty.pureFn, Ty.named0, Ty.listBeq, propertyTypeSelf, propertyTypeSelfRaw,
         notReferenceDomain, notReferenceDomainRaw, memberCompatible,
+        notReferenceDomainEq,
         Ty.asUnary_referents, Ty.asUnary_referents_raw, beq_self_eq_true]
     · rw [observation_withRule, observation_mergeResults]
       simp [mergeObservations, TypingResult.observation]
@@ -396,7 +445,8 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
       simp only [judgmentTermList]
       rw [checkExpected.eq_4]
       simp [expectedCheckClause_presuppose, checkPresupposeReference,
-        judgmentTermList, conditionSuccess, bodySuccess, result]
+        judgmentTermList, expected_only_classifier_complete expectedOnly,
+        conditionSuccess, bodySuccess, result]
     · rw [observation_withRule, observation_mergeResults]
       rfl
   case list environment arguments itemType observations itemsTyping itemsIH =>
@@ -933,6 +983,27 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     simp [synthPrimitive, judgmentTermList, baseSuccess, exponentSuccess,
       mergeResults, mergeObservations, TypingResult.observation,
       TypingResult.withRule, failure]
+  case amountValue environment amount scale amountObservation scaleObservation
+      amountTyping scaleTyping amountIH scaleIH =>
+    simp only [CheckCompleteMotive] at amountIH scaleIH
+    simp only [PrimitiveCompleteMotive]
+    rcases amountIH with ⟨amountResult, amountSuccess, amountAgreement⟩
+    rcases scaleIH with ⟨scaleResult, scaleSuccess, scaleAgreement⟩
+    cases amountAgreement
+    cases scaleAgreement
+    simp [synthPrimitive, expectArity, positionalOperands, judgmentTermList,
+      amountSuccess, scaleSuccess, mergeResults, mergeObservations,
+      TypingResult.observation, TypingResult.withRule, failure]
+  case contentRelation environment operator content contentObservation selected
+      contentTyping contentIH =>
+    simp only [CheckCompleteMotive] at contentIH
+    simp only [PrimitiveCompleteMotive]
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    cases contentAgreement
+    rcases selected with rfl | rfl | rfl <;>
+      simp [synthPrimitive, expectArity, positionalOperands, judgmentTermList,
+        contentSuccess, mergeResults, mergeObservations,
+        TypingResult.observation, TypingResult.withRule, failure]
   case polar environment content contentObservation contentTyping contentIH =>
     simp only [CheckCompleteMotive] at contentIH
     simp only [PrimitiveCompleteMotive]
@@ -1157,11 +1228,10 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     rcases tailIH (by omega) with ⟨tailResults, tailSuccess, tailAgreement⟩
     refine ⟨headResult :: tailResults, ?_, ?_⟩
     · have freshNotMem : label ∉ seen := by simpa using fresh
-      have decoded' : (label.drop 1).copy.toNat? = some place := by simpa using decoded
       have nonzero : place ≠ 0 := by omega
       have placeWithin : ¬row.ordinaryArity < place := by omega
       have ordinaryWithin : ¬row.ordinaryArity < ordinary + 1 := by omega
-      simp [lexicalArgumentResults.eq_3, freshNotMem, notEvent, decoded', nonzero,
+      simp [lexicalArgumentResults.eq_3, freshNotMem, notEvent, decoded, nonzero,
         placeWithin, ordinaryWithin, headSuccess, tailSuccess]
     · simp [headAgreement, tailAgreement]
   all_goals trivial
@@ -1223,13 +1293,6 @@ theorem check_judgment_complete {scope : Nat} {environment : Environment scope}
   change CheckCompleteMotive environment term expected observation typing
   exact_check_companion typing
 
-def SynthSupported {scope : Nat} (environment : Environment scope)
-    (term : Term scope) : Prop := ∃ observation, SynthJudgment environment term observation
-
-def CheckSupported {scope : Nat} (environment : Environment scope)
-    (term : Term scope) (expected : Ty) : Prop :=
-  ∃ observation, CheckJudgment environment term expected observation
-
 theorem synthesis_observation_unique {scope : Nat} {environment : Environment scope}
     {term : Term scope} {first second : TypingObservation}
     (firstTyping : SynthJudgment environment term first)
@@ -1260,43 +1323,6 @@ theorem checking_observation_unique {scope : Nat} {environment : Environment sco
   rw [firstSuccess] at secondSuccess
   cases secondSuccess
   exact firstAgreement.symm.trans secondAgreement
-
-theorem synth_characterized_on_supported {scope : Nat}
-    {environment : Environment scope} {term : Term scope}
-    (supported : SynthSupported environment term) (observation : TypingObservation) :
-    (∃ result, synth environment term = .ok result ∧
-      result.observation = observation) ↔
-      SynthJudgment environment term observation := by
-  constructor
-  · rintro ⟨result, success, agreement⟩
-    rcases supported with ⟨supportedObservation, supportedTyping⟩
-    rcases synth_judgment_complete supportedTyping with
-      ⟨supportedResult, supportedSuccess, supportedAgreement⟩
-    rw [success] at supportedSuccess
-    cases supportedSuccess
-    have observationAgreement : observation = supportedObservation :=
-      agreement.symm.trans supportedAgreement
-    simpa [observationAgreement] using supportedTyping
-  · exact synth_judgment_complete
-
-theorem checkBidirectional_characterized_on_supported {scope : Nat}
-    {environment : Environment scope} {term : Term scope} {expected : Ty}
-    (supported : CheckSupported environment term expected)
-    (observation : TypingObservation) :
-    (∃ result, checkBidirectional environment term expected = .ok result ∧
-      result.observation = observation) ↔
-      CheckJudgment environment term expected observation := by
-  constructor
-  · rintro ⟨result, success, agreement⟩
-    rcases supported with ⟨supportedObservation, supportedTyping⟩
-    rcases check_judgment_complete supportedTyping with
-      ⟨supportedResult, supportedSuccess, supportedAgreement⟩
-    rw [success] at supportedSuccess
-    cases supportedSuccess
-    have observationAgreement : observation = supportedObservation :=
-      agreement.symm.trans supportedAgreement
-    simpa [observationAgreement] using supportedTyping
-  · exact check_judgment_complete
 
 inductive CheckPriorityCase {scope : Nat} (environment : Environment scope)
     (term : Term scope) (expected : Ty) : Except TypingError TypingResult → Prop where

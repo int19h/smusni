@@ -23,6 +23,72 @@ theorem unseen_natural_judgment_executes :
       result.observation = unseenNaturalObservation :=
   synth_judgment_complete unseen_natural_structural_judgment
 
+def nestedPresupposeCondition : Term 0 := .primitive .and .nil
+
+def nestedExpectedContext : Term 0 :=
+  .context (typingExampleSite "nested-presuppose") .nil
+
+def nestedExpectedPresuppose : Term 0 := .primitive .presuppose <|
+  judgmentTermList [nestedPresupposeCondition, nestedExpectedContext]
+
+def outerExpectedPresuppose : Term 0 := .primitive .presuppose <|
+  judgmentTermList [nestedPresupposeCondition, nestedExpectedPresuppose]
+
+def nestedSynthablePresuppose : Term 0 := .primitive .presuppose <|
+  judgmentTermList [nestedPresupposeCondition, nestedPresupposeCondition]
+
+def outerSynthablePresuppose : Term 0 := .primitive .presuppose <|
+  judgmentTermList [nestedPresupposeCondition, nestedSynthablePresuppose]
+
+theorem nested_expected_presuppose_is_expected_only :
+    ExpectedOnlySynthesisForm nestedExpectedPresuppose :=
+  .presuppose nestedPresupposeCondition nestedExpectedContext
+    (.context (typingExampleSite "nested-presuppose") .nil)
+
+theorem nested_synthable_presuppose_is_not_expected_only :
+    ¬ExpectedOnlySynthesisForm nestedSynthablePresuppose := by
+  intro form
+  have classified := expected_only_classifier_complete form
+  simp [nestedSynthablePresuppose, nestedPresupposeCondition,
+    judgmentTermList, expectedOnlySynthesisForm] at classified
+
+def overacceptPresupposeMutation {scope : Nat} (term : Term scope) : Bool :=
+  match term with
+  | .primitive .presuppose
+      (.positional _ (.positional _ .nil)) => true
+  | other => expectedOnlySynthesisForm other
+
+def validateExpectedOnlyClassifierWith
+    (classifier : Term 0 → Bool) : Except String Unit := do
+  if !classifier nestedExpectedPresuppose then
+    throw "nested expected-only Presuppose was rejected"
+  if classifier nestedSynthablePresuppose then
+    throw "nested synthable Presuppose was over-accepted as expected-only"
+
+def validateExpectedOnlyClassifierMutation : Except String Unit := do
+  validateExpectedOnlyClassifierWith expectedOnlySynthesisForm
+  if (validateExpectedOnlyClassifierWith overacceptPresupposeMutation).isOk then
+    throw "expected-only over-acceptance mutation did not fail"
+
+def duplicateEventIdentity : FreeId := {
+  domain := "$duplicate-event"
+  serial := 0 }
+
+def duplicateEventEnvironment : Environment 0 := {
+  Environment.empty with
+  free := [(duplicateEventIdentity, Ty.referents Ty.eventuality)] }
+
+def duplicateEventArguments : TermList 0 :=
+  .labelled ":Eventuality" (.free duplicateEventIdentity) <|
+    .labelled ":Eventuality" (.free duplicateEventIdentity) .nil
+
+def validatePredTermDuplicateEventRejection : Except String Unit :=
+  match predTermArgumentResults duplicateEventEnvironment duplicateEventArguments with
+  | .error error =>
+      if error.code == "predterm-row" then pure ()
+      else throw s!"duplicate Eventuality used unexpected error {error.code}"
+  | .ok _ => throw "duplicate Eventuality fill was over-accepted"
+
 def unseenRelationKey : ExpansionKey := {
   document := "m2-relation-unseen"
   occurrence := 73
@@ -64,6 +130,23 @@ theorem unseen_actual_clause_relation_to_dispatch
 
 def runM2TypingGates : IO Unit := do
   let environment := Environment.empty
+  IO.ofExcept validateExpectedOnlyClassifierMutation
+  IO.ofExcept validatePredTermDuplicateEventRejection
+  let nestedExpected ← IO.ofTyping <|
+    checkBidirectional environment outerExpectedPresuppose (Ty.refComp Ty.entity)
+  if nestedExpected.obligations.length != 2 ||
+      !nestedExpected.effects.contains .projective then
+    throw <| IO.userError
+      "nested expected-only Presuppose lost its projective obligations"
+  if (checkBidirectional environment outerSynthablePresuppose
+      (Ty.refComp Ty.entity)).isOk then
+    throw <| IO.userError
+      "nested synthable Presuppose was over-accepted in expected mode"
+  if (checkPresupposeReference environment
+      (judgmentTermList [nestedPresupposeCondition, nestedSynthablePresuppose])
+      (Ty.refComp Ty.entity)).isOk then
+    throw <| IO.userError
+      "direct expected-mode helper bypassed the structural classifier"
   if implementedTypingRuleRecords.length + unsupportedTypingRuleRecords.length !=
       m2TypingRuleRecords.length ||
       implementedTypingRuleRecords.any (fun implemented =>

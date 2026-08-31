@@ -54,6 +54,60 @@ end
 instance : ReflBEq Ty where
   rfl := Ty.beq_self _
 
+mutual
+  theorem Ty.eq_of_beq_true : ∀ {first second : Ty},
+      Ty.beq first second = true → first = second
+    | .named firstName firstArguments, .named secondName secondArguments, h => by
+        simp only [Ty.beq, Bool.and_eq_true] at h
+        rcases h with ⟨nameEq, argumentsEq⟩
+        have names : firstName = secondName := of_decide_eq_true nameEq
+        have arguments : firstArguments = secondArguments :=
+          Ty.listEq_of_beq_true argumentsEq
+        cases names
+        cases arguments
+        rfl
+    | .variable first, .variable second, h => by
+        have names : first = second := eq_of_beq h
+        cases names
+        rfl
+    | .index first, .index second, h => by
+        have values : first = second := eq_of_beq h
+        cases values
+        rfl
+    | .function firstEffectful firstParameters firstResult,
+        .function secondEffectful secondParameters secondResult, h => by
+        simp only [Ty.beq, Bool.and_eq_true] at h
+        rcases h with ⟨⟨effectfulEq, parametersEq⟩, resultEq⟩
+        have effectful : firstEffectful = secondEffectful := eq_of_beq effectfulEq
+        have parameters : firstParameters = secondParameters :=
+          Ty.listEq_of_beq_true parametersEq
+        have result : firstResult = secondResult := Ty.eq_of_beq_true resultEq
+        cases effectful
+        cases parameters
+        cases result
+        rfl
+    | .named _ _, .variable _ , h | .named _ _, .index _, h |
+      .named _ _, .function _ _ _, h | .variable _, .named _ _, h |
+      .variable _, .index _, h | .variable _, .function _ _ _, h |
+      .index _, .named _ _, h | .index _, .variable _, h |
+      .index _, .function _ _ _, h | .function _ _ _, .named _ _, h |
+      .function _ _ _, .variable _, h | .function _ _ _, .index _, h => by
+        simp [Ty.beq] at h
+
+  theorem Ty.listEq_of_beq_true : ∀ {first second : List Ty},
+      Ty.listBeq first second = true → first = second
+    | [], [], _ => rfl
+    | firstHead :: firstTail, secondHead :: secondTail, h => by
+        simp only [Ty.listBeq, Bool.and_eq_true] at h
+        rcases h with ⟨headEq, tailEq⟩
+        have head : firstHead = secondHead := Ty.eq_of_beq_true headEq
+        have tail : firstTail = secondTail := Ty.listEq_of_beq_true tailEq
+        cases head
+        cases tail
+        rfl
+    | [], _ :: _, h | _ :: _, [], h => by simp [Ty.listBeq] at h
+end
+
 structure FreeId where
   domain : String
   serial : Nat

@@ -25,6 +25,7 @@ def main : IO Unit := do
     s!"input-unavailable={cases.inputUnavailable} out-of-slice={cases.outOfSlice} " ++
     s!"input-typing={cases.inputTypingsSupported}/{cases.inputTypingsAvailable} " ++
     s!"output-typing={cases.outputTypingsSupported}/{cases.outputTypingsAvailable} " ++
+    s!"soundness-domain={cases.outputTypingsSupported}/{cases.outputTypingsAvailable} " ++
     s!"derived-site-entries={cases.rrDeclarations} " ++
     s!"derived-profile-mismatch-cases={cases.rrMismatchCases}"
   IO.println <|

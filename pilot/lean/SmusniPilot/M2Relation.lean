@@ -1,5 +1,5 @@
 import SmusniPilot.M2Cases
-import SmusniPilot.M2TypingBridge
+import SmusniPilot.M2TypingSoundness
 
 namespace SmusniPilot
 namespace M2
