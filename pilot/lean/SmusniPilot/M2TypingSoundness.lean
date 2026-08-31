@@ -4768,5 +4768,69 @@ theorem synth_success_sound_on_manifest {scope : Nat}
     SynthJudgment environment term result.observation :=
   synth_execution_sound environment term result success manifest
 
+/- `synth_execution_sound` is one mutual proof whose root happens to be the
+synthesis function. This proof-term companion reuses the exact motives and
+case handlers from that theorem with `check.induct`, rather than maintaining a
+second checking proof. It is deliberately shape-sensitive: a change to the
+mutual executable or to the root theorem must fail elaboration here. -/
+open Lean Meta Elab Tactic in
+elab "exact_check_sound_companion " environmentSyntax:term ", " termSyntax:term
+    ", " expectedSyntax:term : tactic => do
+  withMainContext do
+    let environment ← elabTerm environmentSyntax none
+    let term ← elabTerm termSyntax none
+    let expected ← elabTerm expectedSyntax none
+    let declaration ← getConstInfo ``synth_execution_sound
+    let value ← match declaration with
+      | .thmInfo information => pure information.value
+      | _ => throwError "synthesis soundness is not a theorem"
+    let mut body := value.consumeMData
+    for _ in [0:3] do
+      match body with
+      | .lam _ _ next _ => body := next.consumeMData
+      | _ => throwError "unexpected synthesis soundness proof shape"
+    let arguments := body.getAppArgs
+    if arguments.size < 3 then
+      throwError "mutual soundness recursor has too few arguments"
+    let shared := arguments.extract 0 (arguments.size - 3)
+    for argument in shared do
+      if argument.hasLooseBVars then
+        throwError "mutual soundness handler unexpectedly captures root indices"
+    let environmentType ← whnf (← inferType environment)
+    let environmentIndices := environmentType.getAppArgs
+    if environmentIndices.size != 1 then
+      throwError "typing environment has unexpected index arity"
+    let recursor ← mkConstWithFreshMVarLevels ``check.induct
+    let proof := mkAppN recursor
+      (shared ++ #[environmentIndices[0]!, environment, term, expected])
+    let goal ← getMainGoal
+    let goalType ← goal.getType
+    let proofType ← inferType proof
+    unless ← isDefEq proofType goalType do
+      throwError "checking soundness companion type mismatch\nproof: {proofType}\ngoal: {goalType}"
+    closeMainGoalUsing `exact_check_sound_companion fun _ _ => pure proof
+
+private theorem check_execution_sound_companion {scope : Nat}
+    (environment : Environment scope) (term : Term scope) (expected : Ty) :
+    CheckSoundMotive scope environment term expected := by
+  exact_check_sound_companion environment, term, expected
+
+theorem checkBidirectional_success_sound_on_manifest {scope : Nat}
+    {environment : Environment scope} {term : Term scope} {expected : Ty}
+    {result : TypingResult}
+    (success : checkBidirectional environment term expected = .ok result)
+    (manifest : TypingManifestSupported result.trace) :
+    CheckJudgment environment term expected result.observation := by
+  exact check_execution_sound_companion environment term expected result
+    (by simpa [checkBidirectional] using success) manifest
+
+theorem checkBidirectional_success_sound {scope : Nat}
+    {environment : Environment scope} {term : Term scope} {expected : Ty}
+    {result : TypingResult}
+    (success : checkBidirectional environment term expected = .ok result)
+    (manifest : result.trace.all typingRuleImplemented = true) :
+    CheckJudgment environment term expected result.observation :=
+  checkBidirectional_success_sound_on_manifest success ⟨manifest⟩
+
 end M2
 end SmusniPilot

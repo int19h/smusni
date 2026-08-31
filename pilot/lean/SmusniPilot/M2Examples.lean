@@ -52,6 +52,39 @@ theorem nested_synthable_presuppose_is_not_expected_only :
   simp [nestedSynthablePresuppose, nestedPresupposeCondition,
     judgmentTermList, expectedOnlySynthesisForm] at classified
 
+def nestedExpectedCheckResult : TypingResult := {
+  type := Ty.refComp Ty.entity
+  effects := [.context, .projective]
+  obligations := [
+    .presuppose "condition" (Ty.refComp Ty.entity),
+    .presuppose "condition" (Ty.refComp Ty.entity)]
+  trace := [
+    .a0TTop, .a0Synth, .a0TCheckSynth, .a0Check,
+    .a0TTop, .a0Synth, .a0TCheckSynth, .a0Check,
+    .a0TContext, .a0Check,
+    .b1TPresupposeReference, .a0Check,
+    .b1TPresupposeReference, .a0Check] }
+
+theorem nested_expected_check_soundness_instantiation :
+    checkBidirectional Environment.empty outerExpectedPresuppose
+      (Ty.refComp Ty.entity) = .ok nestedExpectedCheckResult →
+    CheckJudgment Environment.empty outerExpectedPresuppose
+      (Ty.refComp Ty.entity) nestedExpectedCheckResult.observation := by
+  intro success
+  exact checkBidirectional_success_sound success (by rfl)
+
+def compatibleNaturalCheckResult : TypingResult := {
+  type := Ty.natural
+  trace := [.a0TNatural, .a0Synth, .a0TCheckSynth, .a0Check] }
+
+theorem compatible_synthesis_check_soundness_instantiation :
+    checkBidirectional Environment.empty (.natural 7) Ty.number =
+      .ok compatibleNaturalCheckResult →
+    CheckJudgment Environment.empty (.natural 7) Ty.number
+      compatibleNaturalCheckResult.observation := by
+  intro success
+  exact checkBidirectional_success_sound success (by rfl)
+
 def overacceptPresupposeMutation {scope : Nat} (term : Term scope) : Bool :=
   match term with
   | .primitive .presuppose

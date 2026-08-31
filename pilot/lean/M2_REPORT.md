@@ -127,8 +127,13 @@ manifest domain. `TypingManifestSupported result.trace` is only the Boolean
 claim that every rule ID emitted by the successful executable result is in the
 58-rule implemented manifest slice; it does not mention or assume a typing
 judgment. `synth_success_sound` takes executable success plus that trace fact
-and constructs `SynthJudgment ... result.observation`. The proof follows the
-mutual executable recursion through named handlers for expected checks,
+and constructs `SynthJudgment ... result.observation`.
+`checkBidirectional_success_sound` exposes the checking companion with the
+same manifest premise and constructs `CheckJudgment ... result.observation`.
+The companion is extracted shape-sensitively from the exact motives and case
+handlers of `synth_execution_sound` and applies `check.induct`; it is not a
+second handwritten checking proof. The proof follows the mutual executable
+recursion through named handlers for expected checks,
 reference and Presuppose checks, primitive schemas, function application and
 partial application, PredTerm application, synthesis/check argument lists,
 lexical rows, and value operands. Lean-generated `caseNNN` names are dispatch
@@ -137,7 +142,7 @@ glue only; the semantic proofs live in those named handlers.
 The S1 gate checks the same manifest predicate for all 31 available unchanged
 inputs and all 153 successful outputs; theorem
 `typingTraceSupported_instantiates_soundness` turns each passing Boolean check
-into the exact premise of `synth_success_sound`. Removing one observed rule
+into the exact premise of both public soundness theorems. Removing one observed rule
 from the predicate is a required failing mutation. Thus the 153/153 output
 count now instantiates executable-to-relation soundness rather than merely
 reporting that traces avoid a list of exclusions.
@@ -186,9 +191,12 @@ records. Concrete unseen `ActualClause` and natural-typing instantiations in
 constructor directly.
 
 There are no `sorry`, `axiom`, or `admit` declarations.
-`#print axioms synth_success_sound` reports only Lean's standard `propext`,
-`Classical.choice`, and `Quot.sound`; the proof carries no `native_decide`
-oracle axioms.
+`#print axioms` on both `synth_success_sound` and
+`checkBidirectional_success_sound` reports only Lean's standard `propext`,
+`Classical.choice`, and `Quot.sound`; the proofs carry no `native_decide`
+oracle axioms. `M2Examples.lean` specializes public checking soundness to the
+nested expected-only Presuppose and to a compatible-synthesis natural-number
+control; the runtime gate independently executes both paths.
 
 ## Expansion sites and certified bundles
 
