@@ -1,0 +1,2 @@
+definition_id	additional_dependency	spec_ranges	reason
+D4.6.Close	CoRef	706-709	The explicit-event Close equation calls CoRef, but the frozen definition ledger omitted that declared dependency.

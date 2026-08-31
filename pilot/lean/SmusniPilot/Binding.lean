@@ -26,7 +26,6 @@ def Dependency.rename {source target : Nat}
     (ρ : Renaming source target) : Dependency source → Dependency target
   | .bound index => .bound (ρ index)
   | .free identity => .free identity
-  | .site identity => .site identity
 
 def Site.rename {source target : Nat}
     (ρ : Renaming source target) (site : Site source) : Site target :=
@@ -68,7 +67,6 @@ mutual
     | .bound index =>
         Fin.cases Option.none (fun predecessor => Option.some (.bound predecessor)) index
     | .free identity => Option.some (.free identity)
-    | .site identity => Option.some (.site identity)
 
   def Term.dependencies {scope : Nat} : Term scope → List (Dependency scope)
     | .bound index => [.bound index]
@@ -156,7 +154,6 @@ def Dependency.substitute {source target : Nat}
     Dependency source → List (Dependency target)
   | .bound index => (substitution index).dependencies
   | .free identity => [.free identity]
-  | .site identity => [.site identity]
 
 def Site.substitute {source target : Nat}
     (substitution : Substitution source target) (site : Site source) : Site target :=

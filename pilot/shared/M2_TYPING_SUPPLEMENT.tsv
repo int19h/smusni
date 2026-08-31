@@ -1,0 +1,30 @@
+rule_id	kind	subject	source_path	source_ranges	anchor	signature	reason
+M2-T-String	literal	Text	 spec.md	263-264	spec §2; §3.1	Text literal -> Text	The Redex A0 slice omits Text literals, but the all-S1 primitive cohort contains sign constructors over Text.
+M2-T-Subsort	compatibility	first-order hierarchy	spec.md	300-360	spec §3.1–§3.2	covariant declared subsorting plus singleton Referents lift	All-S1 typing must consume the live sort hierarchy instead of the numeric-only A0 compatibility fragment.
+M2-T-Core-Constant	constant	core inventory	tools/smusni-redex/inventory/core.sexp	79-99	spec anchors embedded in core.sexp	declared constant -> declared type	The all-S1 primitive cohort reaches CurrentToken and the projective others constants in addition to A0's Speaker/Audience/TooManyK.
+M2-T-Lexical-Row	row	fixture lexical rows	tools/smusni-redex/inventory/fixtures.sexp	1-55	spec §3.3; pilot fixture #12	row head plus arity/event mode -> typed residual PredTerm	The frozen corpus supplies lexical heads through the fixture; its row arity and event mode are consumed explicitly and remain pilot-only pending #12.
+M2-T-PredTerm-Apply	application	PredTerm	spec.md	369-390	spec §3.3	fill typed residual row; exhausted row -> Content	Primitive cases apply bound and lexical PredTerms, including labelled Eventuality fills.
+M2-T-Combine	primitive	Combine	spec.md	352-362,785-793	spec §3.2; §4.8	Referents<T> x Referents<U> -> Referents<join(T,U)>	The primitive baseline contains plural joins and singleton lifts.
+M2-T-MemberOf	primitive	membership	spec.md	856-875	spec §4.9	T x Set<T> -> Content	The primitive baseline contains set membership.
+M2-T-Force	primitive	Assert/Mention/Do	spec.md	1971-1990	spec §7.1	Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse	The primitive baseline exercises inert act construction and discourse sequencing.
+M2-T-LocutionOf	primitive	LocutionOf	spec.md	2122-2155	spec §7.4	Referents<UtteranceToken> x Referents<Locution> -> Content	Three primitive gates discriminate the two argument types.
+M2-T-Sign	primitive	sign constructors	spec.md	2203-2218	spec §7.5	Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>	Primitive gates cover valid Text signs and wrong Text/reference/content operands.
+M2-T-Reify	primitive	Reify	spec.md	2420-2439	spec §9.1	Content -> Proposition	Reification is inert and must not inherit the operand effects.
+M2-T-RealizedContent	primitive	RealizedContent	spec.md	2141-2174	spec §7.4	Referents<UtteranceToken> -> Content with projective definedness	The primitive baseline contains the token-to-captured-content projection.
+M2-T-DropPlace	primitive	DropPlace	spec.md	592-599	spec §4.3	PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>	The primitive baseline contains one valid row deletion gate.
+M2-T-Teha	primitive	te'a	spec.md	4176-4182	spec §12 MEX	Number x Natural -> Number	The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2.
+M2-T-Aggregate	primitive	Aggregate	spec.md	888-927,1007-1025	spec §4.9	DecompositionBasis<Group<T>,T> x Group<T> -> Content	Recursive expansion of CanonicalAggregateAt reaches Aggregate.
+M2-T-BasisUnitAt	primitive	BasisUnitAt	spec.md	888-927	spec §4.9	DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content	Recursive expansion of GunmaAt reaches the basis interface.
+M2-T-PeerUnitAt	primitive	PeerUnitAt	spec.md	888-932	spec §4.9	DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content	Recursive expansion of GunmaAt reaches the peer interface.
+M2-T-JaiRoleAdmissible	primitive	JaiRoleAdmissible	spec.md	3769-3808	spec §12 bare jai	PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content	The JaiRaise mapping's constrained Context must be typed and pure.
+M2-T-InRegion	lexical-interface	InRegion	spec.md	3488-3509	spec §6.4	Amount x Region<Scale> -> Content	The pure row-directed Grade template reaches this declared interface.
+M2-T-Grade-Row	schema	Grade	spec.md	3488-3509	spec §6.4	row metadata -> pure PredTerm<row>	The schema consumes its relation's declared degree projection, scale, and region without a site.
+M2-T-JaiRaise-Row	schema	JaiRaise	spec.md	3769-3808	spec §12 bare jai	row remapping plus role -> pure PredTerm<raised-row>	The schema consumes row metadata rather than inspecting predicate syntax.
+M2-T-Context-Constants	constant	context and index constants	spec.md	1317-1359	spec §5.1	declared utterance-context projection -> declared type	Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants.
+M2-T-Query	primitive	Polar/OpenQ/Ask	spec.md	1975-1990,2330-2418	spec §7.1; §8	Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>	Selected Close cases occur beneath question constructors.
+M2-T-Local	primitive	Local	spec.md	1411-1429	spec §5.2	RefComp<A> -> RefComp<A> under expected mode	Collection and performance specimens use the accessibility delimiter.
+M2-T-Perform-Role	primitive	Perform	spec.md	1984-1995	spec §7.1	OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>	Selected discourse specimens spell the role explicitly.
+M2-T-Generic	primitive	Generic	spec.md	1690-1726	spec §5.8	GenericMode x Fn<T,Content> x EFn<T,Content> -> Content	Selected cases wrap supported Close expansions under generic quantification.
+M2-T-Content-Interfaces	primitive	Named/Holds/display relations	spec.md	2203-2228,2420-2439	spec §7.4–§7.6; §9.1	typed interface arguments -> Content	Selected cases use the declared content-level interface relations around the expansion slice.
+M2-T-Numeric-Interfaces	primitive	subtraction/AmountValue/abstraction rows	spec.md	856-881,2505-2535	spec §4.9; §9.2	Number operations and typed abstraction relation rows	Selected cases embed Close under the numeric abstraction interfaces.
+M2-T-Residual-Row	row	bound and derived PredTerm rows	spec.md	369-420	spec §3.3	row-directed partial filling preserves the residual PredTerm row	Close must consume typed bound and derived relation rows, not only fixture lexical heads.

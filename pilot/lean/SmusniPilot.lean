@@ -11,3 +11,12 @@ import SmusniPilot.InterchangeLaws
 import SmusniPilot.BundleBinding
 import SmusniPilot.S1
 import SmusniPilot.Examples
+import SmusniPilot.M2Inventory
+import SmusniPilot.M2Typing
+import SmusniPilot.M2Examples
+import SmusniPilot.M2Templates
+import SmusniPilot.M2Cases
+import SmusniPilot.M2Relation
+import SmusniPilot.M2Bundle
+import SmusniPilot.M2Parity
+import SmusniPilot.M2RRAudit
