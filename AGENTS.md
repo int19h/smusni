@@ -99,109 +99,114 @@ synchronization. Do not silently rewrite published doctrine from review notes.
 
 ## Durable work tracking
 
-The GitHub issue tracker for `int19h/smusni` is the durable execution queue.
-Tracker issue [#1](https://github.com/int19h/smusni/issues/1) indexes the first
+The GitHub issue tracker for `int19h/smusni` is the durable execution queue for
+tracked actionable work. Tracker issue
+[#1](https://github.com/int19h/smusni/issues/1) indexes the first
 coherent-baseline backlog and its dependencies.
 
 - `review/` is intentionally ignored and remains available for rapid analysis,
   model-to-model exchange, drafts, and historical notes. It is never the sole
-  copy of an actionable requirement, accepted decision, test result, or TODO.
-- Every concrete item of work must have a GitHub issue before it is treated as
-  queued. When review discussion settles or discovers actionable work, create
-  or update the issue in the same turn.
-- Before starting work, inspect the live issue and search open/closed issues for
-  duplicates. The issue body is canonical for outcome, decision status, scope,
-  acceptance criteria, dependencies, and durable evidence links.
-- Summarize the current result in the issue; do not paste an obsolete review
-  document wholesale or make ignored files required reading.
+  copy of a tracked actionable requirement, accepted decision, test result, or
+  TODO.
+- Ad hoc research, diagnosis, discussion, and other untracked tasks may proceed
+  directly from the human prompt or addressed Collab mail. Do not create an
+  issue merely to answer such a task.
+- For an issue-backed task, inspect the live issue and search open and closed
+  issues for duplicates before starting. The issue body is canonical for
+  outcome, decision status, scope, acceptance criteria, dependencies, and
+  durable evidence links.
+- When work should become durable backlog, or when discussion settles an
+  actionable requirement or accepted decision, create or update the issue in
+  the same turn. Summarize the current result there; do not paste an obsolete
+  review document wholesale or make ignored files required reading.
 - Use labels to distinguish `ready`, `needs-design`, `speaker-evidence`,
   `model-theory`, `verification`, and blocked work. A “ready” label records
   semantic readiness, not authorization for unrelated edits or release.
-- Update the issue when scope or decisions change. Close it only after the
-  acceptance criteria and repository checks pass; a mailbox response or local
-  review note alone never closes work.
+- Update a tracked task's issue when scope or decisions change. Close it only
+  after the acceptance criteria and repository checks pass; a mailbox response
+  or local review note alone never closes work.
 - The human partner's adjudications are final. Record their durable
-  consequence in the issue body or a comment, while retaining rejected
-  alternatives and reopening criteria where the semantic decision genuinely
-  had several coherent options.
+  consequence in the relevant issue body or comment, creating a decision issue
+  when needed, while retaining rejected alternatives and reopening criteria
+  where the semantic decision genuinely had several coherent options.
 
-## Multi-model review collaboration
+## Multi-session review collaboration
 
-Several model sessions — currently Codex, Fable, Kimi K3, Qwen 3.8 Max,
-DeepSeek V4 Pro, Grok 4.6, and Gemini — review this repository as peers working
-with the human partner; no model's proposal becomes consensus merely because
-it was written. The external spool exposed through the ignored
-repository-local `mail` symlink replaces copy/paste between sessions; the
-symlink target is machine-local configuration and is never tracked. The
-tracked protocol, model registry, helper, templates, and tests live under
-`tools/review-exchange/`; read `PROTOCOL.md` there before using the exchange.
+Sessions review this repository as peers working with the human partner; no
+session's proposal becomes consensus merely because it was written. Durable
+coordination uses the external Herdr Collab project whose explicit id is
+`smusni`:
 
-**Bootstrapping.** A new session needs no launch prompt. At its first turn:
-identify your model slug by self-inspection (Claude → `fable`, OpenAI Codex →
-`codex`, Kimi → `kimi`, Qwen → `qwen`, DeepSeek → `deepseek`, Grok → `grok`,
-Gemini/Antigravity → `gemini`); run `python3
-tools/review-exchange/exchange.py join --model <slug>` and use the printed
-session id (`fable_1`, `codex_1.1`, …) as your actor from then on; run
-`status --actor <id>`; act on messages addressed
-**directly** to you (broadcasts are context), else on the prompt you were
-given, else on the work queued for your model in the tracker — and say which.
+```sh
+export HERDR_COLLAB_PROJECT=smusni
+```
 
-- **Actors are sessions**, named `<model>_<generation>[.<n>]` and self-assigned
-  by `join`; the current generation is `generation` in `participants.toml`.
-  Sessions of different generations coexist and may message each other;
-  a finished session runs `retire` after an addressed handoff and stays
-  addressable for later questions. Every session writes only its own
-  drafts and acknowledgements and publishes only its own messages; published
-  messages are immutable, and no session edits or moves another's files.
-- Messages are addressed to the audience the sender needs — one session, a
-  subset, or `all` (the active sessions) — and stored once. **No turn order is
-  prescribed**: the human partner decides which session wakes next, and may
-  give a question first to whichever session is best placed to answer it.
-- At the start and end of every substantive turn, run
-  `python3 tools/review-exchange/exchange.py status --actor <id>`, read
-  every pending message and its reply ancestors, and run the validator before
-  announcing the mailbox clear. Compose with `new`, publish with `publish`,
-  acknowledge with `ack`; never hand-write timestamps or move files.
-- Waiting on the inbox is the default end-of-turn state unless the human
-  partner directs a session not to wait. After the end-of-turn status check,
-  run `exchange.py wait --actor <id>` in the foreground with the longest idle
-  interval the harness allows per call, not exceeding one hour; when one call
-  cannot cover an hour, chain calls. Leave wait mode only when no qualifying
-  message has been observed for a full hour; handling a `WAIT_BATCH` restarts
-  the hour. Errors and human interruption do not count, and leaving wait mode
-  does not retire the session.
-- Correct a message with a new `supersedes` message; respond with `in_reply_to`.
-  Acknowledge only after the disposition is durably captured in a reply, issue,
-  or short explicit explanation; acknowledgement never means agreement or
-  completion of queued work.
+The project id or an explicit `--project smusni` must select every mailbox
+operation. Never infer a mailbox from the checkout, current directory,
+worktree, or the project's diagnostic root path. Herdr Collab supplies durable
+sessions, groups, messages, replies, and acknowledgements; it does not define
+participants, roles, generations, workflows, turn order, review gates, issue
+policy, or authority. Tailor those conventions to the task; when it is tracked,
+record its lasting scope and acceptance criteria in GitHub.
+
+- Give sessions and groups descriptive task-specific handles. Use
+  `herdr-collab agent spawn <handle> --kind <agent-kind> ...` to create a new
+  visible Herdr session. `herdr-collab session join` only registers a
+  participant that was started manually; it does not create a Herdr session.
+  Capture the returned UUID and set `HERDR_COLLAB_SESSION` for acting commands.
+- Check `herdr-collab inbox --pending` and `herdr-collab status` at natural
+  turn boundaries. Use `herdr-collab show <message-id>` to read a complete
+  message and its referenced ancestors. Do not impose polling, a forced model
+  turn, or a standing end-of-turn wait; use the finite foreground `wait` only
+  when the current task actually calls for it.
+- Publish task assignments, findings, questions, decisions, and handoffs with
+  durable `send` or `reply`. A direct `agent prompt` is only a transient wakeup
+  or alert and is never the sole copy of load-bearing content. Acknowledge with
+  `ack --disposition ...` only after recording the disposition; acknowledgement
+  means read and disposition captured, not agreement or completion.
 - Every substantive message separates claims, evidence, objections/questions,
   and requested disposition, citing live file paths/sections, source excerpts,
-  commit/working-tree state, and GitHub issue numbers.
-- No vote, quorum, silence, or acknowledgement count becomes consensus; record
-  named positions, name one durable recorder per docket, and leave genuine
-  semantic forks to the human partner. Each session is one accountable model
-  session; hidden subagents or swarms are not used without express
-  authorization, and authorized use is disclosed.
-- The spool is transient coordination, not authority. If an exchange creates
-  or changes actionable work, update GitHub. If it proposes a semantic change,
-  preserve the proposal in review until human-partner authorization; do not
-  silently apply it to the baseline.
-- If only one model is active, continue useful work and leave an addressed
-  handoff. Do not block routine progress merely waiting for an acknowledgement
-  unless the issue explicitly requires multi-model review or human-partner
-  adjudication.
+  commit/working-tree state, and GitHub issue numbers. Correct immutable mail
+  with a same-sender superseding message rather than editing it.
+- Use only `herdr-collab` commands to change collaboration state. Never edit,
+  move, or delete external state records by hand. Run `herdr-collab validate`
+  when diagnosing state or before claiming that a task's durable mailbox is
+  clear.
+- No vote, quorum, silence, group membership, or acknowledgement count becomes
+  consensus. Record named positions and one durable recorder per docket, and
+  leave genuine semantic forks to the human partner. If collaboration creates
+  or changes actionable work, update GitHub; if it proposes a semantic change,
+  preserve the proposal in review until human-partner authorization.
+- If only one session is active, continue useful work and leave an addressed
+  durable handoff. Do not block routine progress merely waiting for an
+  acknowledgement unless the issue requires independent review or
+  human-partner adjudication.
+
+**Resumable pauses.** Before an anticipated long pause, first persist every
+load-bearing decision, exact head, important path, unresolved finding with its
+location, and open question in durable mail or a handoff file. The coordinating
+session may then request native compaction while the context is still likely
+cached, explicitly naming what the lossy summary must retain. Do not compact
+automatically or on a timer, and preserve full loaded context when that detail
+is the session's main value, such as a reviewer comparing exact heads or an
+implementer mid-change. After requested compaction, run
+`herdr-collab session show "$HERDR_COLLAB_SESSION" --live`; normal liveness
+confirms the stored and live identities still match. If it reports
+`unavailable`, use deliberate `session refresh` or `agent adopt`, never a
+guessed reference. If an already-idle session later shows a cache-expired
+choice, inspect that exact dialog and continue its full context by default;
+never generalize this into unattended input for blocked trust, permission, or
+unrelated prompts.
 
 **Full-pass reviews.** Reviewing diffs finds what a change broke; only reading
-the documents whole finds what the accumulation of changes made inconsistent.
-A full-pass review — every in-scope document (`brief.md`, `spec.md`,
-`rationale.md`, `samples.md`, `primer.md`) loaded in full into **fresh**
-sessions, one per model — is the standing procedure whenever the changes
-since the last one, or a single sufficiently consequential change, warrant
-it; the coordinating Fable session decides when one is due and records the
-decision on GitHub. The procedure (bump the generation, generate the bundle,
-start fresh sessions that attest to a full load before reviewing, let the
-reviewing generation make the first fix pass, retire the previous
-generation after handoff) is in `PROTOCOL.md`.
+the documents whole finds what accumulated changes made inconsistent. When a
+task calls for a full pass, create a fresh, task-tailored set of sessions and
+load every in-scope document (`brief.md`, `spec.md`, `rationale.md`,
+`samples.md`, `primer.md`) in full. The generation label, handles, optional
+recipient group, review allocation, handoff, and retirement plan are project
+conventions for that run, not Herdr Collab protocol or enforced state. Generate
+a manifest-bearing bundle with `tools/full-pass-review/bundle.py`; see the
+README there for the historical label and an example convention.
 
 ## Delegated implementation
 
