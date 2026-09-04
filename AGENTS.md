@@ -155,10 +155,11 @@ record its lasting scope and acceptance criteria in GitHub.
   participant that was started manually; it does not create a Herdr session.
   Capture the returned UUID and set `HERDR_COLLAB_SESSION` for acting commands.
 - Check `herdr-collab inbox --pending` and `herdr-collab status` at natural
-  turn boundaries. Use `herdr-collab show <message-id>` to read a complete
-  message and its referenced ancestors. Do not impose polling, a forced model
-  turn, or a standing end-of-turn wait; use the finite foreground `wait` only
-  when the current task actually calls for it.
+  turn boundaries. `herdr-collab show <message-id>` reads the selected message
+  body; add `--json` to inspect that selected message's full record. Follow any
+  `in_reply_to` or `supersedes` ids explicitly to read related messages. Do not
+  impose polling, a forced model turn, or a standing end-of-turn wait; use the
+  finite foreground `wait` only when the current task actually calls for it.
 - Publish task assignments, findings, questions, decisions, and handoffs with
   durable `send` or `reply`. A direct `agent prompt` is only a transient wakeup
   or alert and is never the sole copy of load-bearing content. Acknowledge with
@@ -441,9 +442,9 @@ judgment that the documents lack value.
 
 ## Working protocol
 
-- Check your actor's exchange status before beginning and before ending
-  substantive semantic work; mention pending peer input that materially affects
-  the task.
+- When a task uses Collab, perform the natural-boundary inbox and status checks
+  described above and mention pending peer input that materially affects the
+  task; do not add forced polling to otherwise self-contained semantic work.
 - Lead with the current outcome, then the evidence and tradeoffs.
 - For reviews, actively seek counterexamples, contradictions, unstated
   assumptions, edition drift, non sequiturs, and apparently sourced claims that
