@@ -8,6 +8,8 @@ list, the xorlo page, guskant's commentary, Brismu, solpahi's articles,
 the Eberban and Toaq reference materials, and the plural-logic
 literature — are cited inline by name and section; full citations with
 URLs are collected in the specification's References section.
+Current settled/open boundaries are in [decisions.md](decisions.md); historical
+alternatives below do not override the corrected spec.
 
 ## 0. Method
 
@@ -182,12 +184,12 @@ route exists. The classical rewrite `(A → B) ∧ (B → A)` *textually
 copies* each operand: two syntactic occurrences are two `Context` sites
 (site identity is per occurrence, spec §5.3), two supplement handlers
 committing the side twice (handler placement is a fact about term
-structure — VC4), and a reshaped accessibility structure (in the
-rewrite, the second conjunct sees the first's introductions through
-`∧`, which the original `↔` never granted). `Let` cannot rescue it:
-`Let` is the *pure* sharing form — spec §4.4 forbids binding an
-effectful computation with it, precisely so that sharing a term never
-silently shares an evaluation. `Bind` shares an evaluation but shares
+structure — VC4), and a reshaped evaluation structure. The first conditional exports nothing,
+so it does not feed introductions to the second conjunct; that earlier claimed
+counterexample was false. Repeated evaluation and changed site/handler structure
+remain real costs. Sharing a formed inert content/function can preserve sites, but does not share
+its evaluation. `Let` shares values, not effectful results; that distinction is
+the surviving obstacle, not a claim that no inert sharing is possible. `Bind` shares an evaluation but shares
 its *returned value*, and `Content` returns unit — the meaning is the
 state transformation, and no boolean comes back to reuse. The derivation
 could be forced through by minting a truth-capture operator
@@ -330,8 +332,10 @@ remain #6. Property rows with no declared contribution basis, `pe'e joi`, and
 of several rival “bare aggregates” accidentally supplied by a model. The
 adopted answer is a primitive, rigid `Aggregate κ g` classification plus
 one-way rigidity (R), existence (E), within-class uniqueness (A), and local
-complete-cover functionality (F). `Massify` is the defined unique selection
-from that class. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
+complete-cover functionality (F). `Massify` now explicitly restricts its result reference to co-refer with the
+canonical aggregate's lift. The former one-count selection did not entail that
+contract on a nonminimal carrier. The local repair runs at the construction's
+governing scope and is not a new invariant-description hoist. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
 to the canonical aggregate or to an independently individuated team, family,
 body, committee, or other organization whose complete current cover happens
 to be the same.
@@ -447,10 +451,11 @@ loses xorlo's number-neutrality and contradicts L3.6's several-object
 result. *Some member is `Q`* lets `lo gerku` carry a cat into `ri`.
 *`Distrib` alone* — the textbook plural-logic restrictor, "X are Fs" iff
 each of X is F — is right wherever every plurality has individuals among
-it, and that is exactly the assumption §4.8 declines: in guskant's
-Condition₁ universe a bread reference has no unit among it, so `Distrib
-gerku` holds of bread and `lo gerku` could denote a loaf; the overlap
-conjunct is what the atomless boundary costs. *Reference-level only* forces
+it, and that is exactly the assumption §4.8 declines: a unitless subreference may overlap a nonminimal bread-unit embedding while
+having no represented T-unit among it, making `Distrib gerku` vacuous there.
+The overlap condition blocks dog-reference to that residue. Guskant's Condition₁
+motivates the non-atomic boundary under her individual definition; it does not
+prove that every Smusni first-order lift is minimal or that every loaf has no units. *Reference-level only* forces
 L3.6 to spell its per-object condition by hand, which is the lift again.
 *Lexical-only* is silent for every non-lexical restrictor. The lift is pure
 by construction — it sits under `∀`/`∃` — so a member property whose
@@ -658,6 +663,50 @@ inventory?** The UI lexicon is open; the core supplies the *shape*
 instances. **Cost.** The lexicon carries real semantic load — by design
 (§2.6).
 
+### 1.12a Discursives: reuse without an invented primitive tally
+
+The post-FP3 DISC/ARCHIVE reviews support defining discourse relations from
+existing lexical relations where the actual rows fit. `mintu` for `mi'u` retains
+its standard place; `drata` is the same-standard otherness candidate; `simsa`
+offers similarity (its third place is a respect/property, not automatically the
+same type as mintu's standard). `frica` and `jmina` are plausible ingredients for
+`ku'i` and `ji'a`, but a neutral comparison act (`karbi`) is not already contrast,
+and adding a token is not automatically argumentative addition.
+
+An existential standard is coherent unless its admitted domain makes sameness
+trivial; the dictionary does not say that every imaginable property is admitted.
+Independent existential sameness need not chain: red circle matches red square
+in color; red square matches blue square in shape; the endpoints match in
+neither. Sharing a standard, or restricting to standards agreeing on the
+relevant entries, can preserve chaining. This does not force Context or a unique
+speaker-intended standard. Explicit, recovered, shared-existential and
+per-comparison existential policies remain distinct. `mi'u nai` does not decide
+where the binder scopes relative to negation.
+
+“Me too” can compare distinct propositions under a role-aligning standard;
+it need not force a new Case sort or property-object reification. Occurrence
+handles can be relata of a nonidentity relation without an object-language
+inspector. Existing display machinery expresses the relation claim without
+the translator verifying its truth. No strict-new-proposition law for ji'a or
+net primitive saving has been demonstrated. Source: BPFK Highlight Discursives,
+dated IRC cases and the DISC/ARCHIVE reports in spec References.
+
+The broader CLL13.12 inventory is a candidate ledger, not certified reductions:
+
+| Words | Candidate ingredients | Work still owed |
+|---|---|---|
+| va'i, ta'u | valsi, tanru | Rewording/expansion relation, not just wordhood. |
+| li'a, ba'u | klina, banli | Discourse clarity/exaggeration dimensions. |
+| zo'o | display machinery | Actual humor relation; no unique CLL gismu bracket. |
+| sa'e, to'u, do'a, sa'u | satci, tordu, dunda, sampu | Discourse precision/brevity/generosity/simplicity, not literal length or giving. |
+| pa'e, je'u, su'a | pajni, jetnu, evidential/display machinery | Roles and force; displaying truth is not performing the host. |
+| ju'o, la'a | djuno, lakne | Certainty/probability, without treating certainty as automatically factive knowledge. |
+| ta'o | tanjo mnemonic | Trigonometric tangency does not define an aside. |
+| ra'u, mu'a | ralju, mupli | Relevant comparison collections/properties. |
+| zu'u, da'i | discourse/force organization | Framing/scenario semantics, not supplied by a mnemonic. |
+| ke'u | krefu | Recurrence of content/case versus words/event. |
+| po'o | logical/comparison machinery | Same-level alternatives, own-subpart exclusion, overlap and projection. |
+
 ### 1.13 Why facet joining is plain conjunction
 
 **Why not a dedicated operator.** A dedicated non-logical joining
@@ -831,8 +880,9 @@ De re/de dicto and opacity are real (`mi djica lo nu mi pilno lo karce`
 has two readings), so the model theory is world-indexed. But no Lojban
 sentence *binds* a world: the candidates were hunted down (attitudes, CAhA, `da'i`,
 property-internal descriptions — `lo ka viska lo pavyseljirna` included)
-and every candidate resolves by binder placement plus lexical
-intensional-place marking, evaluated in the world-indexed model. So terms
+but a lexical label alone does not provide delayed evaluation. The required
+typed description-consuming interface remains a bounded gap (spec §5.7/§14).
+This does not establish a need for object-language world variables. So terms
 stay world-free; `da'i` waits in the gap register for the treatment its
 three open dimensions deserve. The same restraint governs effects: the
 dynamics *is* one algebraic computation type in the model, but the
@@ -1081,15 +1131,17 @@ Eberban writes into definitions like its eating verb (everyone eats at
 least one; every apple is eaten) — that is a resolved cover reading,
 which P4 declines as a default and Lojban marks when it means.
 
-Solpahi's "A Simpler Quantifier Logic" stands in the record as
-independent convergence: plural constants demand plural variables (the
-2004 Clifford–xorxes exchange, quoted there), and bare PA as
-plural-existential
-witness-sets is P17 arrived at from the other direction — including
-the scope-commutativity bonus. His hybrid-era gap (`no prenu cu
-jmaji` inexpressible) was the price of xorlo's no-rewrite move, and
-this core pays the other half of that bill with plural selections and
-joint loci — a repair orthogonal to sets.
+Solpahi's “A Simpler Quantifier Logic” is a reform proposal (2016, revised
+2017), not independent ratification of ordinary plural PA. His plural-logic
+construction remains intellectual provenance for our counted plural helpers.
+Guskant and xorxes distinguish plural constants from ordinary singular variables.
+A plural reference can satisfy a collective predicate while no individual does;
+cross-domain existential generalization is not licensed. Ordinary `lo`,
+including `lo ro`/`lo su'o`, already supplies positive collective predication.
+That does not make descriptions interchangeable with plural quantifiers under
+negation. The current individual `su'o` ruling preserves this distinction.
+Other numeric PA's domain and exactness defaults remain explicit project choices,
+separate from termset products and from lexical argument types.
 
 ### 2.9 Why the reflection layer was tried and withdrawn
 
@@ -1296,36 +1348,35 @@ Condensed; each pin's full context is in spec §13. The ones that were
 genuinely fought:
 
 - **P1/P22 (xorlo, inner `no`).** "No default quantifiers. At all." is
-  the xorlo page verbatim; everything else follows from `Refer` +
-  nonempty plural references. For inner `no` that type argument shows
-  only that `lo no broda` cannot be a *reference*; it does not show the
-  form is meaningless, and guskant's gadri commentary ("Cannot say
+  the xorlo page verbatim. Inner `no` is a separate adopted negative-frame
+  policy, not a theorem that nonempty references must have positive unit counts.
+  It does not declare the form meaningless; guskant's gadri commentary ("Cannot say
   zero") supplies both the reading and the reason to want one: her
   unofficial `lo no broda = naku su'oi da poi ke'a broda`, motivated by
   answer continuity — `lo xo prenu cu jmaji …` answered by `no`,
   elliptical for `lo no prenu cu jmaji …` — the pattern that also
   carries `go'i`-inherited frames. The pin therefore special-cases
-  inner `no` at the mapping layer to the zero-count (`No`) schema over
+  inner `no` at the mapping layer to the uncounted plural-negative (`PluralNo`) schema over
   the description's property and the bridi frame: substitution into
   question frames works, nothing touches the nonemptiness of the
   reference type, and anaphora to the form is correctly inaccessible
-  because `No` exports no witness. (Ruling the form defective outright
+  because `PluralNo` exports no witness. (Ruling the form defective outright
   might look simpler, but it would rest on the unverifiable premise
   that usage avoids it — and it breaks the answer-substitution pattern
   that motivates the reading; hence the special case.)
-- **P2 (`ro` imports).** Saying `ro gerku cu blabi` commits the speaker
-  to there being dogs, and the commitment survives wrapping: `naku ro
-  gerku cu blabi` denies the universal while still granting dogs, and
-  `xu ro gerku cu blabi` questions the universal while still granting
-  them. Surviving negation and question force is the signature of
-  presupposition, not of an at-issue conjunct (a conjoined `∃` would be
-  negated and questioned along with the rest), so the import is a
-  `Presuppose` on the description quantifier's restrictor. The
-  non-importing reading is not lost: bare logic's `ro da` maps to plain
-  `∀` with no presupposition, so mathematical discourse pays nothing.
-  Cost: universal claims over empty restrictors are presupposition
-  failures rather than vacuous truths — the standard
-  natural-language trade.
+- **P2 (`ro` import, provisional).** The current project policy treats import
+  as presuppositional, but the claim that ordinary usage necessarily projects
+  existence through negation/questions was not established. Original CLL16.8
+  asserts existence entailment without that projection theory; the 2002
+  And Rosta/xorxes discussion records non-import proposals and dissent;
+  maintained CLL commit492ad55a (2022-02-13) removes plain-ro import;
+  project fork9392bb81 (2026-07-12) restores import and makes it presuppositional.
+  That last wording cannot independently ratify our policy. #15 retains
+  non-import, at-issue import and presuppositional import; #35 must reconcile
+  `ro broda` with `ro da poi broda`. Existence entailment alone cannot pick
+  one projection policy. The current examples are conditional on P2, not survey
+  results (References: ro edition/discussion record).
+
 - **P5 (collections and `joi`).** Three independent choices are bundled only
   because they meet at the same boundary. Bare collection bases remain
   non-maximal: the evidence is xorlo's abolition of default quantifiers (P1)
@@ -1340,8 +1391,8 @@ genuinely fought:
   descriptors and `joi` add the defined converse cover. Finally `joi1` beats
   `joi2`: only the
   whole-forming reading distinguishes it from `jo'u` without reviving covert
-  distributivity. `SelectExactly 1` chooses one result whole without asserting
-  global uniqueness; number-neutral group descriptors are unaffected.
+  distributivity. The local reference-level manufacture repair fixes one aggregate lift or one
+  event-whole CoRef class; number-neutral group descriptors are unaffected.
   Alternatives and the type/category costs are worked in
   §1.7a; the reopening tests are a genuine `joi` use whose result must remain
   the original plural reference, or a component-basis counterexample that
@@ -1383,36 +1434,20 @@ genuinely fought:
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (termsets, no maximality).** CLL ch. 16 §7 (Examples
-  16.41–16.45; the gloss follows Example 16.45) glosses `ci gerku ce'e re
-  nanmu cu batci` as: two picked groups, "every one of the dogs bites each of the
-  men" — full product — and stops. The coordinate-closure strengthening
-  ("and no other dog bites them") makes the sentence false in situations
-  speakers plainly use it for, so it is a named optional profile, not
-  the default. The bare-PA half is pinned *against* the letter of CLL
-  ch. 16 §6, whose account of bare numeric quantification is global
-  ("exactly two things, no more or less" — Example 16.34) and
-  distributive (`PA broda` as `PA da poi broda`): this specification
-  takes neutral witness-set
-  exactness — the xorlo-era reading, the one consistent with termset
-  composition and witness export — and keeps the CLL-literal global
-  reading as
-  the named `GlobalExactly`. The divergence is documented, not
-  smuggled — and it carries a positive compositional argument:
-  witness-set semantics is what composes *directly* with dynamic
-  anaphora — the selection's witness is the referent `ri` binds —
-  where the global reading exports at best the maximal extension of a
-  size claim, making the non-exclusion facts (§4.10's fourth runner)
-  and termset composition awkward; and neutrality is what keeps
-  collective predicates expressible under quantifiers at all (`su'o
-  prenu cu jmaji` — a reading a distributive default cannot state).
-  Motivation by composition and coverage, not preference. Independent convergence:
-  solpahi's "A Simpler Quantifier Logic" derives the same reading from
-  plural logic alone (bare PA = plural-existential over a PA-membered
-  witness), and notes the bonus this specification inherits: witness
-  existentials commute, so `ci gerku cu batci re remna` and its
-  `se`-conversion agree — the scope asymmetry of globally-exact
-  quantifiers was an artifact.
+- **P17 (termsets and numeric PA).** Original CLL16.7 supplies the explicit
+  dog/man full product. Preserve that current termset policy while recording its
+  collective cost: six pairwise predications need not follow from three people
+  collectively moving two pianos. Equal scope alone is no theorem of distribution.
+  Ordinary numeric PA's individual/plural nuclear domain and global/witness-only
+  exactness are separate choices. The retained non-`su'o` numeric mapping is
+  provisional neutral witness selection, inspired by solpahi's reform—not a
+  proved dominant xorlo usage or uniquely compositional anaphora policy.
+  Counted coordinate witness collections do not force a plural nuclear scope.
+  Global exact quantifiers do not generally commute; their scope asymmetry is
+  meaningful, not an error to dismiss. Ordinary `su'o` now binds individuals,
+  while descriptions still provide collective arguments. The published
+  SUHO/ARCHIVE reports preserve countermodels and the rejected overclaims.
+
 - **P8 vs the present-tense temptation.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone
   reflex, not a rule. But pure absence was also wrong, as compatibility
@@ -1537,11 +1572,11 @@ genuinely fought:
   anchor (`Context`) with genuinely loose extent (`Vague`).
 - **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform
   tolerance would erase the rounding reading (suffix `ji'i` with
-  `ma'u`/`ni'u` direction) that CLL states. Both positions denote
-  `Number`-valued `Vague` families over different regions — tolerance about
-  the anchor vs the rounding preimage of the stated numeral (each
-  nonempty by VC1) — so the underlying quantity is always the bound
-  Number, never an unconstrained "true value".
+  `ma'u`/`ni'u` direction) that CLL states. The retained point-valued family distinguishes tolerance from rounding but
+  fails the intended supertruth of approximate equality to a fixed number over
+  a non-singleton region. Attested `du`/arithmetic and inner-count uses require
+  a repaired interpretation. Same-value reuse differs from independent values;
+  sources do not choose interval arithmetic, unreduced syntax, or a full reducer.
 - **P39 (`CoveredBy` placement).** The dog-plus-cat countermodel requires a
   no-residue law, but it does not justify making descriptions stricter than
   predication. Official `lo` and the BPFK gadri equation identify the two;
@@ -1559,24 +1594,18 @@ genuinely fought:
   a constituted group. The independent post-xorlo discussion converges on
   this shape, while current CLL only records the project's own amendment.
   Exact context constraints, costs, and reopening evidence are in §1.7c.
-- **P41 (in-situ scope).** Exposed by the executable lowering (#56
-  increment 3, PR #61): §4.1 orders `Bind`-forming argument computations
-  among themselves and P18/P26 settle connective and prenexed scope, but
-  nothing said whether a description bound in another place sits outside an
-  in-situ quantifier or inside its nuclear scope. Adopted (#62, 2026-08-28):
-  descriptions outside, quantifiers over the body in surface order — the
-  class of quantified sumti taken by lowering result (default witness-set
-  PA, `ro`, inner `no`, thresholds, the marked global reading), termsets
-  excepted (L5.3) — the
-  reading xorlo already gives when the description is the sole term, since
-  `lo` introduces one referent at its own site and is no quantifier. The
-  alternative, full surface interleaving (original CLL 16.7's `lo` =
-  `su'o lo`), would
-  make the same `lo mlatu` mean different things depending on what precedes
-  it and contradict the gadri baseline; a speaker who wants the co-varying
-  reading says `su'o mlatu` or restricts the quantifier. Cost: the pre-xorlo
-  intuition is not honoured without marking. Reopening evidence: minimal
-  pairs showing the unmarked co-varying default among xorlo-era speakers.
+- **P41 (scope and dependent descriptions).** The August28 A/Agreed turns
+  really adopted invariant outer description placement and corrected which
+  expressions count as quantifiers. But the presented rationale wrongly claimed
+  guskant required invariance. Her §3.2.2 permits Skolem-like constants; the
+  earlier July13 adjudication and the human's latest clarification establish
+  that dependent `lo` is legitimate. The corrected rule retains the invariant
+  reading without prohibiting dependency-selected inner binding. This is not
+  pre-xorlo `lo = su'o lo`: referential persistence and quantificational force
+  remain different. Bindings must actually be in scope for their dependencies;
+  no annotation captures a later variable automatically. Remaining work concerns
+  profile realization, pure restrictors, attitude consumers and export, not
+  whether co-variation is permitted. Source/history: spec References and #62.
 
 ## 4. What would change our minds
 

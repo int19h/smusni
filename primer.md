@@ -3,6 +3,10 @@
 *The same definition as [the specification](spec.md), explained for people
 who speak Lojban rather than formal semantics.*
 
+Current decisions and the exact remaining questions are collected in
+[decisions.md](decisions.md). A provisional reading is not a claim that every
+related Lojban use already has a completed lowering.
+
 ## 0. Why a semantic core?
 
 You can learn, from CLL, what every Lojban construct does. What you cannot
@@ -205,7 +209,7 @@ capability without claiming that every duck is swimming now.
 ## 3. Things: reference
 
 Now the noun phrases. Under xorlo — the modern gadri baseline, which the
-core adopts wholesale —
+core uses as its baseline (with deviations explicitly recorded) —
 
 ```
 ; lo ci gerku
@@ -324,21 +328,21 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+(∀ {λ [[$p :: Entity] [$d :: Entity]]
   (→ (∧ (prenu $p)
-        (Distrib {λ [$z :: Entity] (xasli $z)} $d)
+        (xasli $d)
         (Close (ponse $p $d)))
      (Close (darxi $p $d)))})
 ```
 
-(The donkey variable is a *plural* one — if someone owns several donkeys,
-`ri` reaches all of them, and `Distrib` says every unit of `$d` is a
-donkey; the full form also carries the "there are donkey-owners"
-presupposition that `ro` brings — the spec's version spells it out.)
+(This is an individual-pair strong reading: every qualifying person–donkey
+pair satisfies the continuation. It does not decide whether every later ri must
+be singular. The full version carries P2's provisional import; general plural
+collections of individual witnesses remain an explicit interface question.)
 
 The pronoun inside the consequent covaries with the donkey inside the
-relative clause — classical logic can't write that with separate
-quantifiers, so the resolved strong reading *lowers* to one universal over
+relative clause. Separate sentence-local existentials do not themselves supply
+that later binding, so the resolved strong reading lowers to one universal over
 person–donkey pairs. This is a reading choice, not an equivalent rewrite of
 the compositional selection. The same selected construal, one level up, handles "every person
 has three dogs; they are tired" (each person's dogs are tired).
@@ -357,46 +361,47 @@ found that selects it, so it is not a second silent reading.
 
 ## 5. How many
 
-Quantifiers sit *on top of* reference. Three shapes to keep apart:
+Descriptions and quantifiers do different jobs:
 
-```
-; ci gerku cu bajra          — "three dogs ran"
-;   pick three dogs; they ran.  (witness selection)
-; ro gerku cu bajra          — "all dogs ran"
-;   presupposes there are dogs; each ran.  (importing universal)
-; ro da zo'u …               — "for absolutely everything…"
-;   the mathematician's ∀; no presupposition.  (bare logic)
-```
+- `lo ro prenu` refers to all relevant people; a predicate can hold of them
+  collectively. `ro'oi prenu` instead quantifies over eligible pluralities.
+- `lo su'o prenu` refers to one or more counted people. `su'o prenu`
+  quantifies over individuals: at least one person satisfies the predicate.
+  At least one is not exactly one, and does not itself determine later anaphora.
+- A description can depend on a surrounding variable: “every dog talks to
+  its cat(s)” need not use one shared cat reference. Referential is not invariant.
 
-(One honesty note the spec records as a pin: the printed CLL (ch. 16)
-glosses bare numbers globally — "exactly two things, no more or less" —
-and distributively, each thing separately. The core sides
-with modern usage on both counts: `ci gerku` picks its three and stays
-silent about others, says nothing about together-or-separately — which
-is how `su'o prenu cu jmaji`, "some people are gathering", can be true
-at all, though no single person gathers — and the global "and no more"
-reading is there when you mark it.)
+Other numeric PA retain a provisional P17 reading: `ci gerku` selects three
+dogs, stays silent about additional dogs, and predicates of that plurality.
+Original CLL gives individual, globally exact quantification instead. Our
+alternative was inspired by solpahi's reform; it is not proven dominant xorlo
+usage. Nuclear domain and where “exactly” applies are separate decisions.
 
-Two pins worth knowing. First, `ro broda` **imports**: saying "every
-broda" commits you to broda existing — and that commitment survives
-negation ("it's not true that every dog ran" still grants dogs), which is
-why the core represents it as a *presupposition*, a claim that projects
-out of whatever you wrap around it. Second, termsets: `ci gerku ce'e re
-prenu cu batci` picks out three dogs and two people with all six bitings
-— and says nothing about whether a fourth dog also joined in. CLL's own
-termset section (ch. 16) glosses it exactly so ("picks out two groups …
-every one of the dogs bites each of the men") and stops there; the "and nobody
-else" reading is available, but you have to say it.
+The explicit current termset rule for `ci gerku ce'e re prenu cu batci`
+requires all six dog–person predications. It does not require six physical
+events or exclude a fourth dog. This distribution is a policy, not a theorem
+of “joint scope”; joint carrying can distinguish it from a collective reading.
 
-Vague numbers get chapter 9's treatment. Two different shapes hide
-here: `so'i` "many" has *no* exact threshold — not even a secret one
-context knows — while `ji'i re no` "about twenty" states its number and
-leaves the *tolerance* fuzzy.
+P2 currently gives `ro broda` an existence presupposition, while bare
+`ro da` is mathematical universal quantification. It remains an open project
+choice: original CLL import, later non-import proposals/maintained CLL, and our
+presuppositional amendment are different sources. The `ro da poi` bridge is
+also open. Examples using P2 assume it; they are not speaker-survey results.
 
-One more thing quantifiers do: their picks stay referable. After `su'o
-gerku cu bajra`, the next sentence's `ri` can be those very dogs — a
-quantified claim and a lasting referent at once (the spec calls this
-witness export).
+A description's reference persists under nuclear negation. “These people do
+not gather” can be true while another plurality gathers. If there are no cats,
+`lo mlatu na jbena` has no successful reference either: negation does not
+rescue it (C25).
+
+Witness export is separate. Positive su'o/ri continuations are attested, but
+the individual truth condition does not settle one versus several accessible
+witnesses. An upper-bound claim may be true with no witnesses. The existing
+strong P6 reading stays; general export/dependency-preserving machinery remains
+documented work.
+
+“Many” and “about twenty” express genuine vagueness, but the current
+approximation representation does not yet adequately handle all equality and
+counting uses. Chapter9's distinctions do not claim that repair completed.
 
 ## 6. Doing things with words
 
@@ -495,8 +500,13 @@ Two special indicator families:
   content. That's why the core treats evidentials as targeted display
   rather than as a feature of assertion.
 
-Discursives (`ku'i` "however", `ji'a` "also") relate the current performed
-occurrence to a previous one; `na'i` objects to a prior utterance ("something's off about
+Discursives (`ku'i` “however”, `ji'a` “also”, `mi'u` “same case”) display
+claims about how contributions or their relevant parts relate. We can express
+that claim without the translator deciding its truth. Gismu such as mintu,
+simsa, frica and jmina are promising building blocks, but full target/standard/
+scope definitions remain unfinished. No strict novelty law for ji'a was found.
+“Only us” must permit our own members to satisfy the host; outsider overlap
+remains open. Meanwhile `na'i` objects to a prior utterance ("something's off about
 saying that") without negating anything — which is why Lojban has three
 negation-flavored words, and the core gives them three unrelated meanings:
 
@@ -504,7 +514,7 @@ negation-flavored words, and the core gives them three unrelated meanings:
 > (scalar: denies the stated point AND asserts something else on the
 > scale — `na'e melbi` says not-beautiful-but-something-else, perhaps
 > plain; it claims *more* than `na`, not less) / `na'i` (metalinguistic
-> objection: the utterance itself was defective — no truth claim at all).
+> objection: the utterance itself was defective—not negation of its host's truth).
 
 ## 8. Ideas about ideas
 
@@ -556,11 +566,11 @@ fact fixing a soritical boundary?*
   possible and repairable. A site also says which enclosing variables it may
   depend on, so an intended value can either stay constant or covary.
 - No fact fixes one soritical boundary → **`Vague`**. Where exactly “many”
-  starts, how wide a neutral region is, or how far “about twenty” extends. The
+  starts, how wide a genuinely fuzzy neutral region is, or how far “about twenty” extends. The
   meaning is a family of sharpenings of *one concept*, and the core computes
   pointwise with that family. Unrelated alternative meanings never go here.
 - There is no value to give because nothing was said → **absence**.
-  Tenselessness, `kau`'s exhaustivity, together-or-separately.
+  Habitual/gnomic tenselessness, `kau`'s exhaustivity, together-or-separately.
 
 The tanru, finally, in full honesty:
 
@@ -744,3 +754,22 @@ the [specification](spec.md), which you are now equipped to read — with
 the [catalog](catalog.md) beside it as the per-name reference (every
 operator: plain-language definition, formal definition where one
 exists, example, and where the details live).
+
+## 13. What the recent research settles—and does not
+
+- `no'e` can have an exact middle in a stipulated comparison: lojbab's
+  integer scale makes 100 neither large nor small. This does not force zero
+  width; several widths can select the same integer.
+- Happy occasions and cafe visits show that states recur. Context may determine
+  the occasions; the model still needs to say how it counts them.
+- Speakers can refer back to an imagined person introduced inside nu without
+  automatically asserting actual-world existence.
+- Approximate arithmetic/equality is attested. Reusing one uncertain value
+  differs from two independent values. Neither a full calculus nor unreduced
+  syntax is selected by that evidence.
+- Two ti occurrences can indicate the same or different things. Each needs its
+  own associated indication; one sentence-wide ground is insufficient generally.
+
+The [ledger](decisions.md) separates these requirements from open choices.
+Missing interfaces are not filled with plausible-looking formulas, and model
+proofs are not polls of Lojban speakers.

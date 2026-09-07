@@ -14,7 +14,9 @@ chapter, [rationale](rationale.md) where the shape is argued).
 Tightly coupled families (the force constructors, the sign
 constructors, the abstraction relations, the cardinal quantifiers)
 share one subsection with per-name coverage inside it, so that their
-common story is told once.
+common story is told once. Current coverage limits and unresolved interfaces
+are in [decisions.md](decisions.md); a candidate below is not a completed surface
+lowering merely because a placeholder name exists.
 
 Section numbers 1.47–1.49 and 2.28 are retired. They belonged to the
 withdrawn staged-reflection design; later numbers are deliberately left
@@ -56,7 +58,9 @@ swapping a `du'u` for a `ni` is ill-typed, not false.
 more things *referred to together*, which are not a set-object, not a
 mereological sum, and not a group — no object exists over and above
 the things. There is no empty plural reference; a single `T` lifts to
-a singleton reference at referential positions. Covariant in `T`.
+a singleton reference at referential positions. That lift need not be an
+Among-atom; first-order identity, lift injectivity and minimality are distinct.
+Covariant in `T`.
 **For.** The type of every ordinary lexical argument place. `mi jo'u
 do bevri lo pipno` — a plurality carries; no set carries anything.
 **See.** [Spec §3.2, §4.8](spec.md); [primer ch. 3](primer.md);
@@ -232,7 +236,7 @@ owed merely to rename function formation.
 **For.** Properties (`ka` with `ce'u` = λ, pin P12), quantifier
 bodies, everything higher-order.
 **Example.** `lo ka se klama` →
-`(λ {$x :: Referents Entity} {(Close (klama :2 $x))})`.
+`(λ {$x :: Referents Entity} (Close (klama :2 $x)))`.
 **See.** [Spec §4.4](spec.md); [primer ch. 8](primer.md).
 
 ### 1.14 `bind` (and the `Bind` word)
@@ -250,14 +254,14 @@ computation categories at one carrier, with an explicit effect join:
 inside Content. A bare act body stands for its performing one-act discourse
 (§7.1's display coercion), so a
 referent introduced before an act sequence stays bound across it. The
-surface form `(Bind {$x :: T} comp {body})` is a direct effectful binder;
+surface form `(Bind {$x :: T} comp body)` is a direct effectful binder;
 its denotation applies carrier `bind` to `comp` and the scoped body
 continuation.
 **Content-word status.** Both carrier `bind` and the direct `Bind` form
 are Class M structural machinery. A predicate may describe a binding or
 its result, but does not sequence the computation.
 **For.** Cross-sentence reference: `(Bind {$cat :: Referents Entity}
-(Refer mlatu-prop) {(Do (Assert …) (Assert …))})` — the
+(Refer mlatu-prop) (Do (Assert …) (Assert …)))` — the
 introduction runs once, the witness is reused in both acts.
 Multi-binding `Bind` is left-to-right nesting (spec §5.2).
 **See.** [Spec §5.2](spec.md); [primer ch. 4](primer.md);
@@ -361,7 +365,7 @@ lexicon's plurality field.
 ### 1.23 `SetOf`, `Card`, `∈`, and the arithmetic base
 
 **Informally.** Extensional set comprehension over a *pure* property;
-membership; cardinality (`Card : Set<T> → Cardinal`); and the number
+membership; finite-set cardinality (`Card : Set<T> ⇀ Cardinal`); and the number
 operators `+ − × ÷ < ≤` (with `>`/`≥` defined), partial operations
 carrying projective definedness conditions.
 **For.** Mathematics (`li`, `mekso`), the global readings
@@ -374,8 +378,9 @@ carrying projective definedness conditions.
 plurality satisfying the given property veridically, fixed for its
 force segment, accessible to later anaphora per the table. No implicit
 quantifier, no uniqueness, no default cardinality (xorlo, pin P1).
-Embedded under a quantifier it stays a referential constant — it does
-not covary (that is the selections' job).
+It may have declared Skolem-like dependencies on bound values (P41). A binding
+stays fixed in its continuation; a dependent binding must be inside its required
+governors. Fixed reference does not mean universal governor invariance.
 **For.** `lo`/`le`/`la` descriptions. `lo mlatu cu blabi .i ri jbena` —
 the cat outlives its sentence and survives negation.
 **See.** [Spec §5.3](spec.md); [primer ch. 3](primer.md);
@@ -429,8 +434,9 @@ domain. Composition is by the VC law: pointwise
 lifting, one precisification per parameter per binding site, truth
 simpliciter as supertruth. Never resolved by context, never coerced.
 **For.** Soritical thresholds (`so'i`), gradable cutoffs, `ji'i`
-tolerance/rounding boundaries, loose temporal/spatial extents, and neutral-
-region width.
+tolerance/rounding boundaries and loose temporal/spatial extents. A neutral
+region may instead be exact; ji'i equality/cardinality and profile completion
+remain explicit adequacy obligations.
 **See.** [Spec §5.3, §6](spec.md); [primer ch. 9](primer.md);
 [rationale §1.3](rationale.md).
 
@@ -438,24 +444,24 @@ region width.
 
 **Informally.** The quantifier-strength members of the `Refer`
 family: introduce a witness reference of the stated cardinal strength,
-with the restrictor pure and the strength n ≥ 1 (the zero floor, spec
-§12: a witness reference is nonempty by type, so no zero-strength
-selection forms). The witness laws: `(Distrib P w)` holds, and
+with the restrictor pure and the declared strength floor n ≥ 1 (spec §12).
+Reference nonemptiness alone does not imply positive counted units.
+The witness laws: `(CoveredBy P w)` holds, and
 `(CardBasis w P)` is `= n` (`SelectExactly`) or `≥ n`
-(`SelectAtLeast`). Unlike `Refer`, a selection under a governing
+(`SelectAtLeast`). A selection under a governing
 quantifier is *dependent* — one witness per value of the governor (the
 dependence law). A supported strong dependent-anaphora reading selects and
 lowers to a joint locus over that dependency; this is not an equivalent
-rewrite of the selection computation. The dependence law is also why no
-`Refer`-plus-cardinality spelling can replace them (a
-`Refer` is a governor-invariant constant). Binding a witness never
+rewrite of the selection computation. Reference may also depend on governors; any claimed replacement must preserve
+the actual witness, scope and export laws, not invoke a false invariant-Refer
+premise. Binding a witness never
 re-evaluates a selection; distinct selections introduce distinct
 discourse referents (introduction identity — the witness values may
 still co-refer). `SelectSome` is **defined** (§2.22).
 **For.** Bare-PA terms: `ci gerku cu bajra` selects a three-dog
 witness and predicates running of it, neutrally.
 `SelectAllBut n P` (`da'a`; default n = 1) is the complement-count
-member: its witness satisfies P member-wise (`Distrib P w`) and
+member: its witness satisfies the complete `CoveredBy P w` condition and
 leaves exactly n P-individuals behind, spelled by `SetOf`
 comprehension (spec §12); the omitted individuals are not a
 parameter.
@@ -482,7 +488,11 @@ at-issue value passes through: new information, speaker-committed,
 projecting past negation and question force. Dependent sides commit
 per instantiation inside their binder. Not interchangeable with
 presupposition: supplements always commit anew.
-**For.** `noi`, `sei`, `to…toi`, content-level indicator display.
+**Signature.** The permitted inert-anchor/computation-category family is
+`Supplement<B,A> : B × Content × Comp<A> → Comp<A>`, with structured Content
+preserved when that is the body. Anchor and side must be in scope at the handler.
+**For.** `noi` and content-level indicator display; general SEI/TO/ti'o dispatch
+is still a separate gap, not arbitrary text cast to one Content.
 `xu lo gerku noi blabi cu melbi` questions beauty, never whiteness.
 **See.** [Spec §5.5, §7.6](spec.md); [primer ch. 11](primer.md);
 [rationale §1.4](rationale.md).
@@ -587,8 +597,8 @@ value) into a first-class act of the corresponding force: assertion,
 question, directive, expressive display, address, and use/mention
 display of a value. Constructing performs nothing.
 **For.** One content under four forces: `do klama` / `xu do klama` /
-`ko klama` / displayed. `Mention` covers bare-sumti display and
-specimen fragments.
+`ko klama` / displayed. `Mention` is a genuine display act. A fragment value and an illustrative
+Mention wrapper are distinct; bare sumti do not acquire this force automatically.
 **See.** [Spec §7.1](spec.md); [primer ch. 6](primer.md);
 [rationale §1.11](rationale.md).
 
@@ -648,7 +658,8 @@ not a performance occurrence and does not invoke `RealizedContent`; the sign's
 own intended utterance context still governs its interpretation, not the later
 caller's); a question, directive, or
 expressive entry has no content projection and interprets only as an
-act.
+act. `InterpretContent(SentenceSign(c)) = c` at the constructor-defined
+Sentence kind; this is not a Structured-to-Sentence coercion.
 **For.** `la'e lu mi klama li'u` — the content, not the sentence.
 **See.** [Spec §7.5, §16.3](spec.md); [primer ch. 10](primer.md).
 
@@ -659,8 +670,8 @@ as objects — ordinary assertable relations, placeholder content words
 under the §16 program. Signatures (u an `UtteranceToken`, s a
 `SignToken<K>`, each relation `Content`-valued): `SpeakerOf u
 speaker`, `AudienceOf u audience` (both at `Referents<Entity>`);
-`LocutionOf locution u` (the locution first, at
-`Referents<Locution>` — the order the §11 anchoring clause writes);
+`LocutionOf u locution` (token first, with locution at
+`Referents<Locution>` — the §12 anchoring clause's order);
 `DeicticTimeOf u t`
 (`Time`); `DeicticPlaceOf u l` (`Location`); `TextOf u|s text`
 (`Text`); `Realizes u a` (`a` an act value of whatever force — the
@@ -956,9 +967,9 @@ owed.
 
 ## 2. Defined forms
 
-Everything below expands into the primitives (and other defined forms,
-acyclically). The expansion *is* the specification; the prose says the
-same thing a first time.
+Entries below with an actual expansion are defined acyclically in the core.
+Explicitly reserved names such as Only/Additive are not completed definitions;
+graph-only interfaces are declared separately.
 
 ### 2.1 `PredTerm<ρ>`
 
@@ -982,9 +993,9 @@ nested single fills. Distinct-label fills commute (fills are values),
 which is why Lojban's free surface order is pure notation. With a
 *computed* label (`fi'a`), `At` abbreviates the finite case split over
 literal fills.
-**Formally.** `(At R ℓ v) ≝ (λ {$rest :: Record ρ−ℓ} {(R ⟨$rest
-extended with ℓ = v⟩)})`;
-`(klama :2 This Yonder) ≝ (At (At klama x2 This) x3 Yonder)`.
+**Formally.** `(At R ℓ v) ≝ (λ {$rest :: Record ρ−ℓ} (R ⟨$rest
+extended with ℓ = v⟩))`;
+`(klama :2 This Yonder) ≝ (At (At klama 2 This) 3 Yonder)`.
 **For.** `klama fe ti tu`; `klama fi'a ti` at the computed-label case.
 **See.** [Spec §4.1, §4.7](spec.md); [primer ch. 1](primer.md).
 
@@ -994,12 +1005,12 @@ extended with ℓ = v⟩)})`;
 immediate application, retained for legibility and for identity of one
 value used twice (`goi` aliasing, act targets). May not bind an
 effectful computation; that is `Bind`'s job, by type.
-**Formally.** `(Let {$x :: T} v {body}) ≝ ((λ {$x :: T} {body}) v)`.
+**Formally.** `(Let {$x :: T} v body) ≝ ((λ {$x :: T} body) v)`.
 **Content-word status.** Class M structural machinery: no content word is
 owed for this sharing syntax.
 **For.** `(Let {$a :: Act Assertion} (Assert …)
-{(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-{(Do (Perform AttachedDisplay (Express (… $o …))))})})` — `Let` shares the raw act, while `Bind` names
+(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+(Do (Perform AttachedDisplay (Express (… $o …))))))` — `Let` shares the raw act, while `Bind` names
 the one performance occurrence the display targets.
 **See.** [Spec §4.4](spec.md); [primer ch. 7](primer.md).
 
@@ -1048,6 +1059,8 @@ g)`, `Yonder ≝ (Deictic Distal g)`, where `g` is the enclosing
 utterance context's ground (the `ctx` record's ground projection,
 spec §5.1).
 **For.** `ti`/`ta`/`tu`.
+**Boundary.** These fixed-ground abbreviations do not supply the complete
+occurrence-sensitive lowering for repeated demonstratives; see decisions Q12.
 **See.** [Spec §5.1](spec.md).
 
 ### 2.6 `Tanru`
@@ -1058,8 +1071,8 @@ modification link, retrieved by constrained `Context` from the relations
 `TanruAdmissible` (§1.32) admits. Convention changes resolver priors; it does
 not lexicalize the bare tanru or create a family of truth conditions.
 **Formally.** `((Tanru M H) fills…) ≝ (Bind {$link :: PredTerm ρ(H)}
-(Context (λ {$r :: PredTerm ρ(H)} {(TanruAdmissible M H $r)}) deps…)
-{(∧ (H fills…) ($link fills…))})`.
+(Context (λ {$r :: PredTerm ρ(H)} (TanruAdmissible M H $r)) deps…)
+(∧ (H fills…) ($link fills…)))`.
 **For.** `sutra klama` — a goer, with `sutra` bearing on the going
 in the way intended here; the library's named links are common exact
 recoveries, and a lujvo lexicalizes one.
@@ -1072,7 +1085,7 @@ recoveries, and a lujvo lexicalizes one.
 a reference, and counting as counting units *under a description*
 within a reference — how inner cardinality works, with no canonical
 atomic basis assumed.
-**Formally.** `(UnitSet P r) ≝ (SetOf (λ {$x :: T} {(∧ (P $x) (Among $x r))}))`;
+**Formally.** `(UnitSet P r) ≝ (SetOf (λ {$x :: T} (∧ (P $x) (Among $x r))))`;
 `(CardBasis r P) ≝ (Card (UnitSet P r))`.
 **For.** `lo ci gerku` — counted as dogs, three; the same plurality
 may count differently under another basis (three dogs, one pack).
@@ -1084,7 +1097,7 @@ may count differently under another basis (three dogs, one pack).
 equivalence the plural type uses instead of `=`) and plural overlap
 (some common subreference).
 **Formally.** `(CoRef x y) ≝ (∧ (Among x y) (Among y x))`;
-`(Overlap a b) ≝ (∃ (λ {$c :: Referents T} {(∧ (Among $c a) (Among $c b))}))`.
+`(Overlap a b) ≝ (∃ (λ {$c :: Referents T} (∧ (Among $c a) (Among $c b))))`.
 **See.** [Spec §4.8, §12](spec.md).
 
 ### 2.9 `Distrib` and `lu'a`
@@ -1093,8 +1106,8 @@ equivalence the plural type uses instead of `=`) and plural overlap
 unit among the reference. `lu'a` is this distribution applied at its
 use site. Never a default — unmarked plural predication is neutral
 (pin P4).
-**Formally.** `(Distrib Q r) ≝ (∀ (λ {$x :: T} {(→ (Among $x r)
-(Q $x))}))`, `T` the member type.
+**Formally.** `(Distrib Q r) ≝ (∀ (λ {$x :: T} (→ (Among $x r)
+(Q $x))))`, `T` the member type.
 **For.** "each of them", `ro`'s nuclear scope, forced distributive
 readings.
 **See.** [Spec §12, §4.8](spec.md); [primer ch. 3](primer.md);
@@ -1113,15 +1126,17 @@ among it, every part overlaps a P-unit. Defined only for inhabited P
 (MaxRefer P) ≝
   (Presuppose (∃ P)
     (Refer (λ {$r :: Referents T}
-      {(∧ (Distrib P $r)
-         (∀ (λ {$x :: T} {(→ (P $x) (Among $x $r))}))
+      (∧ (Distrib P $r)
+         (∀ (λ {$x :: T} (→ (P $x) (Among $x $r))))
          (∀ (λ {$r' :: Referents T}
-              {(→ (Among $r' $r)
-                 (∃ (λ {$x :: T} {(∧ (P $x) (Overlap $x $r'))})))})))})))
+              (→ (Among $r' $r)
+                 (∃ (λ {$x :: T} (∧ (P $x) (Overlap $x $r')))))))))))
 ```
 
 Models must supply this reference for each inhabited pure restrictor
 the mapping can form (plural comprehension — a model condition).
+Uniqueness up to CoRef is not proved from ACI alone; the optional separation
+law's conditional uniqueness proof is separate from existence (spec §12).
 **For.** `Every`'s witness export and explicitly/contextually maximal bases.
 Bare `loi`/`lo'i` use ordinary `(Local (Refer P))` instead (P5).
 **See.** [Spec §12, §11](spec.md).
@@ -1132,8 +1147,8 @@ Bare `loi`/`lo'i` use ordinary `(Local (Refer P))` instead (P5).
 the witness stand in the relation, both ways (member-wise; vacuous on
 a unitless reference — mass reciprocity needs an explicit basis).
 Consumed by `simxu`'s and `soi`'s lexicon rows.
-**Formally.** `(Reciprocate r P) ≝ (∀ (λ {$x $y :: T} {(→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
-(P $x $y))}))` — `T` the member sort; the units singleton-lift at
+**Formally.** `(Reciprocate r P) ≝ (∀ (λ {$x $y :: T} (→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
+(P $x $y))))` — `T` the member sort; the units singleton-lift at
 `Among` and at `P`'s places.
 **For.** `ci jbopre cu simxu lo ka tavla` — pairwise mutual talk.
 **See.** [Spec §12](spec.md); [samples §5](samples.md).
@@ -1149,17 +1164,19 @@ distribute (`ro` is each). The negative/bounded forms contain their
 selection under `¬` and export nothing.
 **Formally.**
 `(Exactly n P Q) ≝ (Bind {$w :: Referents T} (SelectExactly n P)
-{(Q $w)})`;
+(Q $w))`;
 `(AtLeast n P Q)` / `(Some P Q)` likewise over their selections;
-`(Every P Q) ≝ (Bind {$w :: Referents T} (MaxRefer P) {(Distrib Q
-$w)})` — the import is `MaxRefer`'s own presupposition; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
+`(Every P Q) ≝ (Bind {$w :: Referents T} (MaxRefer P) (Distrib Q
+$w))` — the import is `MaxRefer`'s own presupposition; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
 P Q))`; `(MoreThan n P Q) ≝ (AtLeast n+1 P Q)`; `(FewerThan n P Q) ≝
-(¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} {(∧ (P $x) (Q $x))}))) n)` (pure operands; the marked global reading).
+(¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} (∧ (P $x) (Q $x))))) n)` (pure operands; the marked global reading).
 Zero floor (spec §12): the selections form only at n ≥ 1;
 `(AtLeast 0 P Q) ≝ ⊤` and `(Exactly 0 P Q) ≝ (No P Q)`, with the
 bounded forms following from the definitions.
-**For.** `ci gerku cu bajra .i ri tatpi` (witness export); `no prenu
-cu jmaji` (the collective reading a distributive default cannot say).
+**Status.** Other numeric-PA mappings are provisional; ordinary su'o/no use
+IndividualSome/IndividualNo. Counted No remains a helper, while P22 uses the
+uncounted PluralNo. Neither witness export nor exactness follows from the word plural.
+**For.** The provisional numeric specimen `ci gerku cu bajra .i ri tatpi`.
 **See.** [Spec §12, §4.10, §5.6](spec.md); [primer ch. 5](primer.md);
 [rationale §3 (P17)](rationale.md).
 
@@ -1174,23 +1191,25 @@ kinds from `ThresholdKind`, §1.34; `P`, `Q` pure for `Most`.)
 
 ```text
 (Many P Q)    ≝ (Bind {$θ :: Natural} (Vague (AdmissibleThreshold ManyK P))
-                  {(AtLeast $θ P Q)})
+                  (AtLeast $θ P Q))
 (Few P Q)     ≝ (Bind {$θ :: Natural} (Vague (AdmissibleThreshold FewK P))
-                  {(FewerThan $θ P Q)})
+                  (FewerThan $θ P Q))
 (TooMany P Q) ≝ (Bind {$σ :: Referents Entity} (Context)
                        {$θ :: Natural} (Vague (AdmissibleThreshold TooManyK P $σ))
-                  {(MoreThan $θ P Q)})
+                  (MoreThan $θ P Q))
 (TooFew P Q)  ≝ (Bind {$σ :: Referents Entity} (Context)
                        {$θ :: Natural} (Vague (AdmissibleThreshold TooFewK P $σ))
-                  {(FewerThan $θ P Q)})
+                  (FewerThan $θ P Q))
 (Enough P Q)  ≝ (Bind {$σ :: Referents Entity} (Context)
                        {$θ :: Natural} (Vague (AdmissibleThreshold EnoughK P $σ))
-                  {(AtLeast $θ P Q)})
-(Most P Q)    ≝ (> (Card (SetOf (λ {$x :: T} {(∧ (P $x) (Q $x))})))
-                   (Card (SetOf (λ {$x :: T} {(∧ (P $x) (¬ (Q $x)))}))))
+                  (AtLeast $θ P Q))
+(Most P Q)    ≝ (> (Card (SetOf (λ {$x :: T} (∧ (P $x) (Q $x)))))
+                   (Card (SetOf (λ {$x :: T} (∧ (P $x) (¬ (Q $x)))))))
 ```
-**For.** `so'i prenu cu klama` — the family over admissible
-thresholds; no exact count hides anywhere.
+**Export.** Few/TooFew export nothing; positive forms export only at profiles
+where the inner selection does. Enough at threshold0 is top and exports nothing.
+Zero admissibility is per kind/standard, not a blanket ≥2 rule.
+**For.** `so'i prenu cu klama` — the family over admissible thresholds.
 **See.** [Spec §6.4, §12](spec.md); [primer ch. 5, ch. 9](primer.md).
 
 ### 2.14 `Grade`
@@ -1199,8 +1218,8 @@ thresholds; no exact count hides anywhere.
 the relation holds of a row record when its degree on the given scale
 falls in the given region — scale recoverable (`Context`), region
 boundary `Vague`.
-**Formally.** `(Grade R s reg) ≝ (λ {$rec :: Record ρ} {(InRegion
-(deg_R $rec s) reg)})`.
+**Formally.** `(Grade R s reg) ≝ (λ {$rec :: Record ρ} (InRegion
+(deg_R $rec s) reg))`.
 **For.** `ta barda` — big along which dimension is recovered; where
 "big" starts has no fact of the matter.
 **See.** [Spec §6.4, §12](spec.md); [primer ch. 9](primer.md).
@@ -1209,7 +1228,7 @@ boundary `Vague`.
 
 **Informally.** The set of values between two endpoints, each endpoint
 strict or non-strict (`ga'o`/`ke'i`).
-**Formally.** `(Interval a b k₁ k₂) ≝ (SetOf (λ {$x :: T} {(∧ (cmp₁ a $x) (cmp₂ $x b))}))`.
+**Formally.** `(Interval a b k₁ k₂) ≝ (SetOf (λ {$x :: T} (∧ (cmp₁ a $x) (cmp₂ $x b))))`.
 **See.** [Spec §12](spec.md).
 
 ### 2.16 `ZipWith`
@@ -1237,8 +1256,8 @@ row: the referent is what the name names, the namer contextual.
 content, its x2 a sentence sign expressing it (CLL 11.7's x2, `se
 du'u`). Derived because `Reify` already carries the crossing.
 **Formally.** `((DuhuRel c) x1 x2) ≝ (∧ (CoRef x1 (Reify c))
-(Distrib (λ {$s :: Sign Sentence} {(CoRef (Reify (InterpretContent
-$s)) (Reify c))}) x2))` — x2's signs are those whose interpretation
+(Distrib (λ {$s :: Sign Sentence} (CoRef (Reify (InterpretContent
+$s)) (Reify c))) x2))` — x2's signs are those whose interpretation
 reifies the same content.
 **For.** `lo se du'u mi klama` — the sentence, not the proposition.
 **See.** [Spec §9.2](spec.md); [samples §9](samples.md).
@@ -1249,7 +1268,7 @@ reifies the same content.
 from context, with the exhaustivity slot absent (pin P9) — the weakest
 reading, strengthened only lexically or by explicit marker.
 **Formally.** `(Answer q ContextualAnswer) ≝ (Bind {$a :: A} (Context)
-{(Answer q (TupleAnswer $a))})` at open domains; at `Query<Bool>` the
+(Answer q (TupleAnswer $a)))` at open domains; at `Query<Bool>` the
 retrieval is at `Bool` and the selection is `(PolarAnswer $a)` — the
 `xu kau` case (spec §8.2).
 **For.** `mi djuno lo du'u ma kau klama`.
@@ -1265,11 +1284,11 @@ sort A in the resolved reading, retrieves one intended
 `Context`, and uses `JaiRaise` to conjoin that role between the new x1 and the
 old x1 at `fai`.
 **Formally.** Writing ρ' for ρ with ℓ relabelled x1 and x1 relabelled
-`fai`: `(JaiPromote R ℓ) ≝ (λ {$r :: Record ρ'} {(R ⟨ℓ = $r.x1,
-x1 = $r.fai, rest unchanged⟩)})`. For bare `jai`, ρ' instead replaces x1
+`fai`: `(JaiPromote R ℓ) ≝ (λ {$r :: Record ρ'} (R ⟨ℓ = $r.x1,
+x1 = $r.fai, rest unchanged⟩))`. For bare `jai`, ρ' instead replaces x1
 by `Referents<T>` and adds `fai:Referents<A>`:
-`(JaiRaise R K) ≝ (λ {$r :: Record ρ'} {(∧ (R ⟨x1 = $r.fai,
-rest unchanged⟩) (K $r.x1 $r.fai))})`; the mapping binds K from
+`(JaiRaise R K) ≝ (λ {$r :: Record ρ'} (∧ (R ⟨x1 = $r.fai,
+rest unchanged⟩) (K $r.x1 $r.fai)))`; the mapping binds K from
 `Context (JaiRoleAdmissible R)` before applying it.
 **For.** `mi jai gau rinka` patterns; `fai` fills.
 **See.** [Spec §12, §6.1, §11](spec.md).
@@ -1293,13 +1312,16 @@ with no default (P24; CLL 10.19).
 **For.** `mi ca'a citka`; `ro datka ka'e flulimna`.
 **See.** [Spec §5.1, §12, §11](spec.md), pin P24.
 
-### 2.22 `SelectSome`
+### 2.22 `SelectSome` and the individual/plural closure forms
 
-**Informally.** The `su'o`-strength selection — at least one unit —
-as the weakest member of the selection family.
-**Formally.** `(SelectSome P) ≝ (SelectAtLeast 1 P)`.
-**For.** `su'o gerku cu bajra` — some dogs (one or more) ran.
-**See.** [Spec §5.6](spec.md); §1.27 above.
+`SelectSome P ≝ SelectAtLeast 1 P` is a counted plural helper, not ordinary
+surface su'o and not unrestricted plural existence. `IndividualSome P Q`
+expands to ∃x:T.(P x ∧ Q x), and `IndividualNo` negates it. `PluralSome`
+uses r:Referents<T> instead, with no counted-unit floor; `PluralNo` negates
+that condition and supplies P22's negative plural frame. These four are
+non-exporting truth-condition forms. Ordinary positive export remains a separate
+Q01 interface, while the selected P6 strong fragment remains.
+**See.** [Spec §4.10, §12, §14](spec.md); [decisions Q01](decisions.md).
 
 ### 2.23 `NahiObjection`
 
@@ -1308,7 +1330,7 @@ performed occurrence or utterance token; a raw act only when explicitly
 intended), that it is metalinguistically defective in a contextually recovered
 dimension — performing nothing, negating nothing.
 **Formally.** `(NahiObjection t) ≝ (Bind {$d :: DefectKind} (Context)
-{(Express (Close (MetalinguisticallyDefective t $d)))})`.
+(Express (Close (MetalinguisticallyDefective t $d))))`.
 **See.** [Spec §12, §7.3](spec.md); [primer ch. 7](primer.md).
 
 ### 2.24 `GroundedBy`
@@ -1318,22 +1340,22 @@ occurrence handle and display the speaker's basis for that occurrence — a mode
 a second claim.
 **Formally.** for `a : Act<F>`, `(GroundedBy b a) ≝
 (Bind {$o :: ActOccurrence F} (Perform Host a)
-{(Do (Perform AttachedDisplay
-  (Express (Close (EvidentialBasis Speaker $o b)))))})`.
+(Do (Perform AttachedDisplay
+  (Express (Close (EvidentialBasis Speaker $o b))))))`.
 **For.** `za'a do cadzu` — the assertion grounded in observation;
 negation touches the walking, never the basis.
 **See.** [Spec §12, §7.6](spec.md); [primer ch. 7](primer.md).
 
-### 2.25 `Only` and `Additive`
+### 2.25 `Only` and `Additive` — reserved focus names
 
-**Informally.** Constituent focus: `po'o` presupposes the host holds
-of the focus and denies it of every non-co-referent alternative;
-constituent `ji'a` presupposes an alternative and asserts the host of
-the focus.
-**Formally.** `(Only f H) ≝ (Presuppose H[f] (¬ (∃ (λ {$y :: T} {(∧ (¬
-(CoRef $y f)) H[$y])}))))`; `(Additive f H) ≝ (Presuppose (∃ (λ {$y :: T}
-{(∧ (¬ (CoRef $y f)) H[$y])})) H[f])`.
-**See.** [Spec §12, §7.2](spec.md).
+The former equations were inadequate: individual alternatives miss plural
+competitors, and excluding every non-CoRef value treats the focus's own members
+as outsiders. They are not completed surface definitions. A repair must quantify
+at the focus's Referents level, exempt own subparts and decide overlap,
+exhaustivity and projection. The not-Among candidate differs from not-Overlap.
+The host is one formed shared Fn/EFn frame, not copied source. The exact
+Presuppose placement is not established by the glosses.
+**See.** [Spec §12/§14](spec.md); [decisions Q10/Q11](decisions.md).
 
 ### 2.26 The COI schemas
 
@@ -1356,7 +1378,7 @@ discourse referents), yielding a *pure token-description property*;
 the opacity belongs to the consuming sign constructor, not to this
 notation. Performed-level token talk needs no special form — it is
 ordinary `Refer` at the token sort.
-**Formally.** `(Utterance {$u :: UtteranceToken} {fact…}) ≝ (λ {$u :: Referents UtteranceToken} {(∧ fact…)})`; the `Sign` notation likewise
+**Formally.** `(Utterance {$u :: UtteranceToken} {fact…}) ≝ (λ {$u :: Referents UtteranceToken} (∧ fact…))`; the `Sign` notation likewise
 at `SignToken<K>`.
 **For.** `lu mi klama li'u` → `(StructuredQuote (Utterance {$u :: UtteranceToken} {(Realizes $u (Assert (Close (klama Speaker))))}))`.
 **See.** [Spec §7.4–7.5](spec.md); [primer ch. 10](primer.md);
@@ -1384,8 +1406,8 @@ condition).
 ### 2.30 `MePred`
 
 **Informally.** `me` as a defined form: the Among-property of a
-sumti's referents — `(MePred X) ≝ (λ {$w :: Referents T} {(Among $w
-X)})`, X's computation bound before the pure property forms. The
+sumti's referents — `(MePred X) ≝ (λ {$w :: Referents T} (Among $w
+X))`, X's computation bound before the pure property forms. The
 ratified gadri definitions expand `lo PA sumti` through `me`.
 **For.** `la .baltazar. cu me le ci nolraitru`.
 **See.** [Spec §12, §11](spec.md).
@@ -1426,9 +1448,11 @@ reference interval, replacing ordinary clause closure; then make the count
 claim's holding State the outer clause eventuality. This keeps “the two
 goings” distinct from “the state of there being two goings.”
 **Formally.** `(RoiClause n C I) ≝ (StateClause (= (Card (SetOf
-(λ {$e :: Eventuality} {(∧ (C $e) (During $e I))}))) n))`, after all
+(λ {$e :: Eventuality} (∧ (C $e) (During $e I))))) n))`, after all
 surface arguments and contextual effects are bound so the comprehension is
 pure.
+**Boundary.** State episodes and non-cardinal ROI still need their interfaces;
+counting first-order presentations of one state is not counting occasions.
 **For.** `mi re roi klama`; `roi nai` negates the count before state lift.
 **See.** [Spec §12, §11](spec.md), pin P35.
 
@@ -1499,3 +1523,27 @@ projections §5.1 names. These symbols may change with the model (the
 `da'i` gap entry anticipates a world-shift operation) without any term
 changing — which is the point of keeping them out of the term
 language (rationale §1.14).
+
+## Post-full-pass inventory completions
+
+- **CoveredBy** (defined, §4.8): Distrib P r plus every subreference of r
+  overlapping a P-unit. No atom/minimal-lift premise; selection witnesses need
+  the full condition, not just Distrib.
+- **Massify / CanonicalAggregateAt** (defined, §12): the local reference-level
+  restriction returns a reference co-referring with the canonical Group object's
+  lift. CardBasis=1 alone did not establish that contract. Construction scope
+  preserves dependence; number-neutral group descriptions are not rewritten.
+- **components_κ / InRegion** (declared primitive interfaces): model graphs do
+  not count as core-term expansions. Group components remain partial without a
+  complete cover; the term-defined versus denotational distinction is explicit.
+- **Target injections**: PropositionTarget, ActTarget, OccurrenceTarget,
+  ReferenceTarget and SignTarget are §3.5's finite tagged-union injections.
+  Eliminate tags, with payload/index bound only in its matching arm; no blanket
+  payload equality is added.
+- **Discursive lexical candidates**: mintu/drata for mi'u/nai, simsa for si'a,
+  frica/jmina adaptations for ku'i/ji'a. These do not force a new Case object,
+  a smuni-only route or a net intrinsic count. Four standard policies and
+  target/nai/force details remain open (spec's discursive audit; rationale1.12a).
+- **Deictic**: the old fixed-ground This/That/Yonder abbreviations cover a
+  resolved fixed-ground fragment, not two independent pointing occurrences.
+  Occurrence anchoring and introduction/ri eligibility remain Q12 work.
