@@ -190,8 +190,9 @@ counterexample was false. Repeated evaluation and changed site/handler structure
 remain real costs. Sharing a formed inert content/function can preserve sites, but does not share
 its evaluation. `Let` shares values, not effectful results; that distinction is
 the surviving obstacle, not a claim that no inert sharing is possible. `Bind` shares an evaluation but shares
-its *returned value*, and `Content` returns unit — the meaning is the
-state transformation, and no boolean comes back to reuse. The derivation
+its *returned value*: Content's run returns unit, not a Boolean to reuse.
+Its separate event intension also survives and must be preserved by any
+expansion (spec §16.3). The derivation
 could be forced through by minting a truth-capture operator
 (`TruthOf : Content → RefComp<Bool>` — run once, reify the truth
 outcome), but that is not a reduction: it is a general
@@ -1436,6 +1437,8 @@ genuinely fought:
   holes would let the two sites diverge. One retrieval per key.
 - **P17 (termsets and numeric PA).** Original CLL16.7 supplies the explicit
   dog/man full product. Preserve that current termset policy while recording its
+  numeric-coordinate scope; pure ordinary su'o coordinates have the joint
+  individual locus of L5.3, not an implicit counted-plural selection. Record the
   collective cost: six pairwise predications need not follow from three people
   collectively moving two pianos. Equal scope alone is no theorem of distribution.
   Ordinary numeric PA's individual/plural nuclear domain and global/witness-only
@@ -1443,6 +1446,10 @@ genuinely fought:
   provisional neutral witness selection, inspired by solpahi's reform—not a
   proved dominant xorlo usage or uniquely compositional anaphora policy.
   Counted coordinate witness collections do not force a plural nuclear scope.
+  The provisional selection policy remains convenient because its explicit
+  witness binding composes directly with the existing export and product
+  interfaces; that is an architectural reason, not unique necessity or source
+  ratification.
   Global exact quantifiers do not generally commute; their scope asymmetry is
   meaningful, not an error to dismiss. Ordinary `su'o` now binds individuals,
   while descriptions still provide collective arguments. The published
@@ -1598,8 +1605,9 @@ genuinely fought:
   really adopted invariant outer description placement and corrected which
   expressions count as quantifiers. But the presented rationale wrongly claimed
   guskant required invariance. Her §3.2.2 permits Skolem-like constants; the
-  earlier July13 adjudication and the human's latest clarification establish
-  that dependent `lo` is legitimate. The corrected rule retains the invariant
+  earlier July13 adjudication supplies prior cross-project support. The human's
+  September7 clarification and subsequent synchronization authorization establish
+  the current instruction to preserve dependent `lo` legitimacy. The corrected rule retains the invariant
   reading without prohibiting dependency-selected inner binding. This is not
   pre-xorlo `lo = su'o lo`: referential persistence and quantificational force
   remain different. Bindings must actually be in scope for their dependencies;

@@ -12,12 +12,18 @@ Lean/Redex remain derived until the three-stage authority transfer in the charte
   No contradiction met the human's condition for a plural reform. At least one
   satisfier is not exactly one; export is a separate issue. `Some`/`SelectSome`
   remain counted plural core helpers; they are not ordinary `su'o`.
+  Status: the SUHO-v2 recommendation satisfies the human's conditional criterion
+  and is applied under the September7 document-synchronization authorization.
 - `lo` may depend on bound variables (Skolem-like reference). Invariant
   descriptions are a special case. The question is no longer whether dependent
   `lo` is legitimate. P41 now distinguishes dependency placement from reference
   persistence; a description does not become an existential quantifier.
+  Status: September7 clarification, followed by authorization to reconcile the
+  documents; the exact turns are recorded below. This is not inferred solely
+  from a panel vote or from July13's cross-project decision.
 - C25 preserves description bindings under `na`; failure of an empty Refer is
   ordinary falsity at its actual scope. No special negation-induced reselection.
+  Status: explicit human adoption on September6, not a newly inferred pin.
 - `lo ro`/`lo su'o` can supply ordinary collective arguments. They do not replace
   universal/existential plural quantification in embeddings. The gathering poll
   additionally depends on `jmaji`'s lexical singleton and location/episode reading.
@@ -41,10 +47,10 @@ interface” is not the same as “which meaning should the language select?”
 | Q01 | Individual `su'o`; non-exporting pure closure; unrestricted plural existence distinct from counted selection; P6 strong reading retained | Ordinary positive export (one/multiple individually satisfying witnesses), full dependent anaphora and experimental plural-quantifier mapping; upper-bound continuation with possible zero satisfiers | #17, #36, #87 |
 | Q02 | Numeric PA's source-domain, exactness and termset product are separable; current product retained | Decide non-su'o numeric nuclear-domain/exactness defaults and coordinate closure; no “dominant xorlo” claim without evidence | #87 |
 | Q03 | Existence entailment does not prove projection; original/2002/2022/2026 sources differ | P2 non-import versus at-issue import versus presuppositional import, and `ro da poi` bridge; current P2 remains provisional | #15, #35 |
-| Q04 | Fixed and dependent `lo` legitimate; explicit binding must respect dependencies; lambdas suspend descriptions | General dependency-profile factoring, pure-restrictor dependent description evaluation, typed de-dicto consumer/world/export interface | #62, #87 |
+| Q04 | Fixed and dependent `lo` legitimate; binding respects dependencies; lambdas provide suspension, not an implemented delayed consumer | General dependency-profile factoring, pure-restrictor dependent description evaluation, typed de-dicto consumer/world/export interface | #62, #87 |
 | Q05 | Meaningful anaphora to imagined/internal referents is attested | Modal continuation versus descriptive/role accessibility, with no automatic actual-world witness export | #17, #87 |
 | Q06 | Repeated state occasions are legitimate and context may supply the grain | Episode-satisfaction/basis interface; do not count duplicate state representatives; non-cardinal ROI lowering | #3, #10, #87 |
-| Q07 | `no'e` permits exact domain-supplied middles; partial without betweenness in the current interface | Optional width/factorization and recruited-scale policy; an exact integer extension does not force zero width. Astra/Grok prefer no extra independent width by default; Kimi has no further representation preference | #87 |
+| Q07 | `no'e` permits exact domain-supplied middles; partial without betweenness in the current interface | Optional width/factorization and recruited-scale policy; an exact integer extension does not force zero width. Astra/Grok prefer no extra independent width by default; Fable wants the exact route preserved; Kimi has no further representation preference | #87 |
 | Q08 | `ji'i` equality/arithmetic attested; same-value reuse differs from independent values | Approximate equality/cardinal denotation, Number/Natural boundary and cross-site correlations; no complete reduction calculus is required or selected | #87 |
 | Q09 | One formed site differs from separately written sites; same site may vary with declared dependency tuples | Common-tail omitted-value dependency policy, not global sameness from shared spelling | #16 |
 | Q10 | “Only us” must not treat our own members as outsiders; plural competitors need same-level typing | Subpart/overlap/exhaustivity and projection policies for po'o/ji'a; no strict ji'a novelty law found | #87 |
@@ -104,6 +110,13 @@ implementation or a completed conformance claim.
 | C36 | Sample/exposition/source-label synchronization; no unreviewed lexical row chosen. |
 | C37 | Bounded questions retained in Q01/Q05/Q13–Q15 with current evidence limits. |
 
+P22's intended negative-frame policy is retained, but its displayed formula
+changes from counted No to uncounted PluralNo. These are not generally equivalent:
+if a satisfying reference/nuclear frame has no counted unit, the old floor can
+miss it. Atomlessness alone does not establish that case. Ordinary no, counted
+No/AtMost0 boundary equations, and other PA variants need the Q02 cross-domain
+audit; a core helper equation is not automatically a revised surface equivalence.
+
 ## Decision provenance
 
 - [FP3-CONSENSUS-v5](https://github.com/int19h/smusni/issues/87#issuecomment-5552770486)
@@ -119,3 +132,12 @@ The later human correction explicitly rejects treating dependent lo legitimacy
 as still open, followed by authorization for this document synchronization.
 Older panel confirmations were recommendations, not authority transfers; their
 former open/adopted labels must be read in that temporal order.
+
+Exact local provenance: native PM transcript
+`~/.codex/sessions/2026/09/05/rollout-2026-09-05T03-11-56-01a0710d-ab22-7a22-9269-9e2d67e6769f.jsonl`:
+user line6887, 2026-09-07T06:44:09.066Z, asks why Skolemization is still treated
+as unsettled; PM line6890, 06:44:21.548Z, corrects the status and identifies
+invariance as a special case; user line6915, 06:56:56.226Z, authorizes updating
+the documents and the genuine open remainder, with subsequent panel review.
+This is authorization for the synchronization of determinations, not advance
+approval of every authored detail or of unrelated open semantic choices.

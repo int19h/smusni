@@ -2217,8 +2217,9 @@ default, because they relate performed discourse positions rather than every
 performance of a reusable package. Prior/current occurrences are ordinary
 `Bind`-bound results of `Perform` (no prior/following-discourse constants
 exist); a metalinguistic relation about a raw act can still target its
-`Let`-bound package explicitly. Constituent-level additive/exclusive focus (`ji'a` on a
-sumti, `po'o`) derives via `Presuppose` over alternatives (§12).
+`Let`-bound package explicitly. Constituent-level additive/exclusive focus
+(`ji'a` on a sumti, `po'o`) still needs the §12/§14 alternative-domain and
+projection repair. The former Presuppose derivation is not a completed mapping.
 
 ### 7.3 Metalinguistic rejection
 
@@ -3097,8 +3098,11 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   For resolved reference property R and pure unit basis U, `lo n R` uses
   `Refer (λr. R(r) ∧ CardBasis(r,U)=n)` for positive cardinal n; inner `su'o`
   substitutes `1 ≤ CardBasis(r,U)`. Inner `ro` is maximal reference, not a
-  cardinal value: on a pure unit-profile head it uses `MaxRefer U` over the
-  resolved relevant domain. Direct plural heads require their declared
+  cardinal value: where the complete resolved description R is the declared
+  lift `CoveredBy Q` of a pure member restrictor Q, it uses `MaxRefer Q` over
+  the relevant domain. Q retains all description restrictions, including
+  modifiers; the counting basis U must not replace it and drop those conditions.
+  Direct plural heads without that member lift require their declared
   maximality interface; do not invent a unit profile for them. Neither inner
   form becomes an outer individual/plural quantifier.
 - **L3.10** Inner `no` → the zero-count schema, never `Refer` (special case,
@@ -3164,9 +3168,15 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   The anaphor-free pure-restrictor case needs only the pure individual
   existential, not a selection `Bind` or `Local`. General positive export and
   remaining effectful restrictor cases are §14 obligations.
-- **L5.3** Termsets (`ce'e`, `nu'i`) → co-selected witness sets at one joint
-  locus with the full product; no coordinate maximality (the coordinate-closed
-  profile is a named strengthening).
+- **L5.3** Termsets (`ce'e`, `nu'i`) keep one joint locus. For pure ordinary
+  `su'o P ce'e su'o Q` coordinates and fully supplied pure relation R, this is
+  `∃x:T,y:S. P(x) ∧ Q(y) ∧ R(x,y)`: individual coordinates, no counted
+  SelectSome and no assumption that an individual lift is Among-minimal.
+  Applicable provisional numeric-PA coordinates instead co-select their counted
+  witness collections and require the full coordinate product, with no coordinate
+  maximality (the coordinate-closed profile is a strengthening). Mixed/effectful
+  cases without an explicit combined rule, and external termset witness export,
+  remain §14 gaps; do not infer them from equal scope alone.
 - **L5.4** `da'a n` → the `SelectAllBut` selection (§12; default n = 1).
 - **L5.5** `bu'a`/`bu'e`/`bu'i` → **typed quantification at `PredTerm<ρ>`** —
   predicate-typed variables, not predicate objects (the §9.1 reserved family
@@ -3612,7 +3622,8 @@ The collective negative associated with P22 uses `PluralNo` instead; neither
 must be confused with counted `No`. Whether `jmaji` admits individual
 participants is a lexical question, not an axiom supplied by the quantifier.
 
-**The export contract.** The exporting forms are exactly the definitions
+**The counted-family export contract.** Within the counted/maximal-reference
+family above, the exporting forms are exactly the definitions
 whose expansion is an outer `Bind` of a selection or maximal reference
 (`Exactly`, `AtLeast`, `Some`, `MoreThan`, `Every`); that `Bind` may be
 spelled at any width up to the enclosing `Do` — the accessibility table's
@@ -4491,7 +4502,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P16** Anaphora resolution is text-to-reading; calculus sees bindings;
   `goi` discourse-scoped; unassigned KOhA = keyed `Context` (one value per
   key — `ko'a du ko'a` is reflexively true).
-- **P17** Termsets: co-selected witness sets, full product, **no
+- **P17** For applicable provisional numeric termset coordinates: co-selected
+  witness sets, full product, **no
   maximality** — CLL ch. 16 §7's own gloss of `ci gerku ce'e re nanmu cu
   batci` (Examples 16.41–16.45; the gloss is 16.45) is two picked groups
   with every dog biting each man, and says nothing stronger; the
@@ -4513,7 +4525,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   xorlo. Ordinary `su'o` instead has singular-variable existential semantics;
   plural descriptions already express positive collective predication. Keep
   the CLL-literal global reading available as `GlobalExactly` and the
-  each-reading as `Distrib`/`lu'a`.
+  each-reading as `Distrib`/`lu'a`. Pure ordinary `su'o` coordinates instead
+  have L5.3's joint individual locus; no counted plural witness or minimal-lift
+  distribution is inserted. Mixed-coordinate and export cases remain explicit.
 - **P18** Connective scope from surface grammar; accessibility rows are
   meaning; `na` ≡ nuclear left-edge `naku`. Flips require same-domain duals
   and matching import/effect/accessibility conditions (L5.9), not merely a

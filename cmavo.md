@@ -9,6 +9,8 @@ grep for the cmavo you want. Families whose members lower uniformly
 Current settled/open status is [decisions.md](decisions.md); gaps below are
 not completed lowerings. Examples inherit the samples' resolved lexical-row
 and actual-mode conventions; a fragment need not be a complete act.
+The delimiter variants `(λ {$x :: T} body)` and `{λ [$x :: T] body}`
+have identical structure; delimiter shape is non-semantic (spec §2).
 Cmavo sequences that form a single grammatical unit — a unit at one
 level of the EBNF grammar, not a composition of its parts (`.i je` is
 not `.i` + `je`) — are indexed in §14. Cmavo that contribute pure
@@ -612,8 +614,10 @@ unassigned brodV are CLL's schematic sample predicates.
 
 ### ce'e (CEhE), nu'i / nu'u (NUhI/NUhU)
 
-Termsets: co-selected witness sets at one joint multi-parameter locus,
-full product, no coordinate maximality (P17).
+Pure ordinary su'o coordinates use a joint individual existential locus (L5.3).
+Applicable provisional numeric coordinates use co-selected counted witnesses
+and their full product, with no coordinate maximality (P17). Mixed and external
+export cases still need their specific rule.
 
 ```lisp
 ; ci gerku ce'e re prenu cu batci — co-selected witnesses, full
@@ -644,11 +648,12 @@ Structure only — see §13.
 Logical connection at the term locus: `∨ ∧ ↔ ∨`-of-left ("whether or
 not") over the joint predication, with surface grammar fixing
 structure and each connective carrying its accessibility row (P18).
-The rest of the bridi is **shared, not copied**: a description
-elsewhere in the sentence is introduced once, scoping over the
-connective, and elided places keep one shared `Context` site across
-both expansions (§5.3's site identity — `mi .e ti klama` names one
-shared destination, not two).
+Formed frames/sites are shared rather than copied. The examples below select
+invariant description bindings outside the connective. One shared Context site
+reuses its value at equal dependency tuples, but may vary at different declared
+tuples; it does not prove that `mi .e ti klama` always names one destination.
+The common-tail dependency policy remains Q09/#16, and dependent descriptions
+obey P41 rather than an unconditional outer-binding rule.
 
 ```lisp
 ; mi .e do nelci lo gerku — one dog referent, both conjuncts see it
@@ -1651,14 +1656,17 @@ sumti` through it).
 
 ```lisp
 ; la .baltazar. cu me le ci nolraitru — bindings in source order
-(Bind {$b :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} (Named "baltazar" $r)))
-  (Bind {$k :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity}
-          (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (nolraitru $y)))
-             (= (CardBasis $r (λ {$y :: Entity}
-                                (nolraitru $y))) 3))))
-    (Close (👉(MePred $k)👈 $b))))
+{Let [$P :: EFn ((Referents Entity)) Content]
+      {λ [$y :: Referents Entity] (nolraitru $y)}
+  {Bind [$b :: Referents Entity]
+        (Refer {λ [$r :: Referents Entity] (Named "baltazar" $r)})
+    {Bind [$k :: Referents Entity]
+          (Refer {λ [$r :: Referents Entity]
+            (∧ (SpeakerDescribes $r $P)
+               (= (CardBasis $r {λ [$y :: Entity]
+                     (SpeakerDescribes $y $P)}) 3))})
+      (Close ((MePred $k) $b))}}}
+; Count the described kings, not actual kings; $P is one inert shared value.
 ```
 
 **See.** [Spec §12, §11](spec.md); [catalog 2.30](catalog.md).

@@ -488,17 +488,18 @@ committee is asserted rather than derived from that cover.
 ; lei ci prenu du le kamni — fragment after resolving le kamni and κ
 {λ [[$κ :: DecompositionBasis (Group Entity) Entity]
     [$committee :: Referents (Group Entity)]]
-  {Bind [$people :: Referents Entity]
-        (Local (Refer {λ [$r :: Referents Entity]
-          (∧ (SpeakerDescribes $r
-               {λ [$y :: Referents Entity] (prenu $y)})
-             (= (CardBasis $r {λ [$x :: Entity]
-                   (SpeakerDescribes $x
-                     {λ [$y :: Referents Entity] (prenu $y)})}) 3))}))
-    {Bind [$described :: Referents (Group Entity)]
-          (Refer {λ [$g :: Group Entity]
-                   (CompleteGunmaAt $κ $g $people)})
-      (Assert (CoRef $described $committee))}}}
+  {Let [$P :: EFn ((Referents Entity)) Content]
+        {λ [$y :: Referents Entity] (prenu $y)}
+    {Bind [$people :: Referents Entity]
+          (Local (Refer {λ [$r :: Referents Entity]
+            (∧ (SpeakerDescribes $r $P)
+               (= (CardBasis $r {λ [$x :: Entity]
+                     (SpeakerDescribes $x $P)}) 3))}))
+      {Bind [$described :: Referents (Group Entity)]
+            (Refer {λ [$g :: Group Entity]
+                     (CompleteGunmaAt $κ $g $people)})
+        (Assert (CoRef $described $committee))}}}}
+; One formed description property is passed inertly at both uses.
 ```
 
 Canonical manufacture and the partial group-to-components crossing are
@@ -506,17 +507,18 @@ separate operations:
 
 ```lisp
 ; lu'o le ci prenu — canonical aggregate of the selected people
-{Bind [$people :: Referents Entity]
-      (Local (Refer {λ [$r :: Referents Entity]
-        (∧ (SpeakerDescribes $r
-             {λ [$y :: Referents Entity] (prenu $y)})
-           (= (CardBasis $r {λ [$x :: Entity]
-                 (SpeakerDescribes $x
-                   {λ [$y :: Referents Entity] (prenu $y)})}) 3))}))
-  {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
-        (Context (GroupBasisConstraint lu'o Entity) deps…)
-    {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
-      (Mention $aggregate)}}}
+{Let [$P :: EFn ((Referents Entity)) Content]
+      {λ [$y :: Referents Entity] (prenu $y)}
+  {Bind [$people :: Referents Entity]
+        (Local (Refer {λ [$r :: Referents Entity]
+          (∧ (SpeakerDescribes $r $P)
+             (= (CardBasis $r {λ [$x :: Entity]
+                   (SpeakerDescribes $x $P)}) 3))}))
+    {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+          (Context (GroupBasisConstraint lu'o Entity) deps…)
+      {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
+        (Mention $aggregate)}}}}
+; Sharing the property does not evaluate it.
 ```
 
 ```lisp
@@ -1283,9 +1285,23 @@ For an anaphor-free pure owner restriction, ordinary individual closure suffices
     {λ [$person :: Entity] (Close (blabi $person))}))
 ```
 
-Omitted lexical sites in that restrictor are already resolved/hoisted under the
-sample convention; no Refer or Local is hidden in a pure property. Replacing
-the existential with a dependent lo requires Q04's explicit pure consumer.
+A pure two-su'o termset has individual coordinates, not a counted plural
+selection and not distribution over an assumed-minimal lift:
+
+```lisp
+; su'o gerku ce'e su'o prenu cu nelci — pure joint individual locus
+(Assert
+  (∃ {λ [[$dog :: Entity] [$person :: Entity]]
+    (∧ (gerku $dog) (prenu $person) (Close (nelci $dog $person)))}))
+```
+
+This is the pure anaphor-free fragment; mixed-coordinate and export cases
+remain explicitly outside the completed rule.
+
+Omitted lexical sites in these pure examples are already resolved/hoisted under
+the sample convention; no Refer or Local is hidden in a pure property. Inside
+a pure restrictor, replacing the existential with a dependent lo requires Q04's
+explicit pure consumer.
 
 ## 14. Meanings without analyses
 

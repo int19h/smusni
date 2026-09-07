@@ -231,3 +231,7 @@ deixis, plural focus/discursive completion, approximate equality/cardinality,
 and model/force obligations. Ordinary singular `su'o`, legitimate Skolem-like
 description dependence and persistent reference under `na` are settled
 distinctions; their remaining interface work must not reopen those distinctions.
+The decision ledger records the status chronology: C25 was expressly adopted,
+the su'o recommendation is applied under the synchronization authorization,
+and the latest human clarification settles dependent-lo legitimacy. Review
+confirmation is not by itself an authority transfer or adoption of an open fork.
