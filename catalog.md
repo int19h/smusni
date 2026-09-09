@@ -458,8 +458,11 @@ premise. Binding a witness never
 re-evaluates a selection; distinct selections introduce distinct
 discourse referents (introduction identity — the witness values may
 still co-refer). `SelectSome` is **defined** (§2.22).
-**For.** Bare-PA terms: `ci gerku cu bajra` selects a three-dog
-witness and predicates running of it, neutrally.
+**For.** Residual provisional P17/core-helper readings: `ci gerku cu bajra`
+selects a three-dog witness and predicates running of it, neutrally. This is
+not the adopted P42 individual-count/witness contract. P42 admits any clean
+selected group of an allowed lower-bound size, retains its correlation, and
+keeps count truth separate; its full source/force mapping remains owed.
 `SelectAllBut n P` (`da'a`; default n = 1) is the complement-count
 member: its witness satisfies the complete `CoveredBy P w` condition and
 leaves exactly n P-individuals behind, spelled by `SetOf`
@@ -1173,9 +1176,14 @@ P Q))`; `(MoreThan n P Q) ≝ (AtLeast n+1 P Q)`; `(FewerThan n P Q) ≝
 Zero floor (spec §12): the selections form only at n ≥ 1;
 `(AtLeast 0 P Q) ≝ ⊤` and `(Exactly 0 P Q) ≝ (No P Q)`, with the
 bounded forms following from the definitions.
-**Status.** Other numeric-PA mappings are provisional; ordinary su'o/no use
-IndividualSome/IndividualNo. Counted No remains a helper, while P22 uses the
-uncounted PluralNo. Neither witness export nor exactness follows from the word plural.
+**Status.** These helper meanings are unchanged. They do not implement P42 by
+renaming a neutral plural nuclear argument into individual count truth.
+Outside P42's adopted bounded profile, other numeric-PA mappings are provisional;
+ordinary su'o/no use IndividualSome/IndividualNo. Counted No remains a helper,
+while P22 uses the uncounted PluralNo. Neither witness export nor exactness
+follows from the word plural.
+`GlobalExactly` supplies no export by itself. P42's broader R2/C_fin/model
+dependencies remain conditional or unadopted, with explicit §14 obligations.
 **For.** The provisional numeric specimen `ci gerku cu bajra .i ri tatpi`.
 **See.** [Spec §12, §4.10, §5.6](spec.md); [primer ch. 5](primer.md);
 [rationale §3 (P17)](rationale.md).
@@ -1319,8 +1327,11 @@ surface su'o and not unrestricted plural existence. `IndividualSome P Q`
 expands to ∃x:T.(P x ∧ Q x), and `IndividualNo` negates it. `PluralSome`
 uses r:Referents<T> instead, with no counted-unit floor; `PluralNo` negates
 that condition and supplies P22's negative plural frame. These four are
-non-exporting truth-condition forms. Ordinary positive export remains a separate
-Q01 interface, while the selected P6 strong fragment remains.
+non-exporting truth-condition forms. P42 now fixes the ordinary witness target
+for its bounded positive plural lower bounds: any admissible clean S, with the
+same S retained and no prior-salience/minimum-size/exhaustivity requirement.
+The general Q01 source/force export interface remains separate and unfinished,
+while the selected P6 strong fragment remains unchanged.
 **See.** [Spec §4.10, §12, §14](spec.md); [decisions Q01](decisions.md).
 
 ### 2.23 `NahiObjection`

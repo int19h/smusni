@@ -208,8 +208,10 @@ route the sharing through.
 
 ### 1.6 Witness export without run objects
 
-**Job.** `ci gerku cu bajra .i ri tatpi` — quantifier picks stay
-referable. **Why not a term-level "retrieve the witnesses of run R"
+**Job.** Quantifier picks can stay referable. The retained provisional
+`ci gerku cu bajra .i ri tatpi` specimen illustrates explicit binding,
+not a completed lowering of the adopted P42 profile. **Why not a term-level
+"retrieve the witnesses of run R"
 operator?** Because the object needed is just the referent: an
 accessibility rule ("a successful exporting evaluation introduces its
 witness referent") supplies it with no run identities, no retrieval
@@ -222,6 +224,58 @@ object-language retrieval operator. **Cost.** This is not an equivalent
 rewrite of the original selection computation and retroactively strengthens
 the antecedent when the later anaphor appears. The plural-information-state
 upgrade in §14 is the principled repair; exotic configurations stay gaps.
+
+### 1.6a The bounded lower-bound witness policy (P42)
+
+**Adopted meaning, unfinished realization.** In the fixed finite, total, pure
+individual profile for a positive plural lower bound, the count says how many
+individuals qualify; later `ri` need not receive the complete population.
+P42 permits any clean selected S of an admissible size, keeps that same S
+through its continuation, and closes over witness assignments inside a fixed
+interpretation. It requires neither a prior salient group nor an exactly-minimum
+choice. This is not a new run object, retrieval operator or general primitive.
+Spec §5.6 states the conditional truth/reference profile; L8.13–14 and §14
+retain the missing source/force and member-mapping work.
+
+**Why this default.** The reported human judgment for `su'o re gerku cu sipna
+.i ri cu cimei`, with four sleepers, was odd but not false. It supports the
+availability of the intended three-dog witness reading; choosing it as the
+ordinary default adds the modest economy/compatibility judgment that no prior
+salience or extra description-reading exception should be needed. The fragment
+contrast `su'o re gerku .i ro ri cu xunre` adds similar pressure: a fragment/
+bridi distinction permits different reference rules, but supplies no necessity
+for exhaustivity when `cu sipna` is added. Neither the fragment's complete
+meaning nor its answer-completion rule is thereby supplied.
+
+**What this does not prove.** Ri identity and the absence of an overt all
+do not by themselves choose a reference policy. Published CLL v1.1 §7.6
+supports reference preservation; §16.14 supplies exact-count later-variable
+uptake, where selected and complete references coincide. BPFK's approved
+PA-da-poi expansion does not specify a dynamic export construction. The
+2011/2014 discussions are relevant arguments with their own scope, not a
+ratified lower-bound rule. One discussion-elicited judgment is not a community
+pattern, and its gloss is not an elicited explanation of oddness. References,
+**RI witness-policy record**, preserves authors, dates, locators and roles.
+
+**Costs and alternatives.** Complete H gives a model-relative complete target
+without an extra subgroup choice; it remains coherent, but P42 does not require
+it. Selection can itself choose H, so it lacks guaranteed exhaustivity rather
+than forbidding complete reference. Exactly-minimum uptake is coherent but adds
+an unjustified size default; context-required uptake adds a salience condition;
+an H-default/subgroup hybrid decides a default and owes its reading trigger.
+Categorical no-reference remains a historical alternative, not a consequence
+of an unfinished interface. None is silently adopted as P42's ordinary default.
+
+Reference assignment is not prior hearer identifiability. Compatible later
+conditions can filter the same witness assignments; separate red/non-red
+discourses may succeed through different witnesses, while their joint condition
+cannot. A failed longer conjunction does not falsify its earlier satisfiable
+prefix. The scope/force realization and K's correlation lifetime remain #17
+work. The conditional clean-cover premise is not global C_fin comprehension
+or a proof of the full model. R2's broader numeric/definedness changes remain
+separate: witness anaphora never licenses deleting exact-count truth's upper
+bound. Reopen the default on stronger contrary speaker/source evidence or a
+specific compositional failure, not merely the still-missing implementation.
 
 ### 1.7 The plural algebra, without covers
 
@@ -1141,8 +1195,10 @@ cross-domain existential generalization is not licensed. Ordinary `lo`,
 including `lo ro`/`lo su'o`, already supplies positive collective predication.
 That does not make descriptions interchangeable with plural quantifiers under
 negation. The current individual `su'o` ruling preserves this distinction.
-Other numeric PA's domain and exactness defaults remain explicit project choices,
-separate from termset products and from lexical argument types.
+Other numeric PA's domain and exactness defaults outside the adopted P42
+profile remain explicit project choices, separate from termset products and
+from lexical argument types. P42 chooses a bounded individual-count/witness
+contract; it does not globally rewrite the counted plural helpers.
 
 ### 2.9 Why the reflection layer was tried and withdrawn
 
@@ -1435,14 +1491,14 @@ genuinely fought:
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (termsets and numeric PA).** Original CLL16.7 supplies the explicit
+- **P17 (residual termsets and numeric PA).** Original CLL16.7 supplies the explicit
   dog/man full product. Preserve that current termset policy while recording its
   numeric-coordinate scope; pure ordinary su'o coordinates have the joint
   individual locus of L5.3, not an implicit counted-plural selection. Record the
   collective cost: six pairwise predications need not follow from three people
   collectively moving two pianos. Equal scope alone is no theorem of distribution.
   Ordinary numeric PA's individual/plural nuclear domain and global/witness-only
-  exactness are separate choices. The retained non-`su'o` numeric mapping is
+  exactness outside P42 are separate choices. The retained residual non-`su'o` numeric mapping is
   provisional neutral witness selection, inspired by solpahi's reform—not a
   proved dominant xorlo usage or uniquely compositional anaphora policy.
   Counted coordinate witness collections do not force a plural nuclear scope.
@@ -1454,6 +1510,12 @@ genuinely fought:
   meaningful, not an error to dismiss. Ordinary `su'o` now binds individuals,
   while descriptions still provide collective arguments. The published
   SUHO/ARCHIVE reports preserve countermodels and the rejected overclaims.
+
+- **P42 (ordinary lower-bound witnesses).** See §1.6a. The human's September8
+  application instruction adopts the scoped RI RESULT-v2 policy, not the
+  reviewers' confidence levels as a vote or the broader R2/C_fin/model programme.
+  Count truth, reference output, resolved interpretation and admissible witness
+  assignments are separate; the new pin does not make a missing lowering exist.
 
 - **P8 vs the present-tense temptation.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone

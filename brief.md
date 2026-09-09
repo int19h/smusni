@@ -231,6 +231,11 @@ deixis, plural focus/discursive completion, approximate equality/cardinality,
 and model/force obligations. Ordinary singular `su'o`, legitimate Skolem-like
 description dependence and persistent reference under `na` are settled
 distinctions; their remaining interface work must not reopen those distinctions.
+The September8 P42 ruling also fixes selected-witness anaphora for the bounded
+finite, total, pure individual positive-lower-bound profile: no prior salience,
+minimum-size or complete-population requirement, with the same witness retained
+through its continuation and count truth kept separate. Its general source/
+force mapping and clean-reference construction remain explicit work.
 The decision ledger records the status chronology: C25 was expressly adopted,
 the su'o recommendation is applied under the synchronization authorization,
 and the latest human clarification settles dependent-lo legitimacy. Review

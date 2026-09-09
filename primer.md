@@ -371,11 +371,32 @@ Descriptions and quantifiers do different jobs:
 - A description can depend on a surrounding variable: “every dog talks to
   its cat(s)” need not use one shared cat reference. Referential is not invariant.
 
-Other numeric PA retain a provisional P17 reading: `ci gerku` selects three
+For ordinary positive lower bounds such as `su'o re`, P42 now fixes a bounded
+anaphoric policy: some group of at least two individually qualifying dogs can
+become the reference, and later `ri` keeps that same group. The group need not
+have been pointed out beforehand or include every sleeper. It may include
+every sleeper; selection does not forbid that. The policy is stated for fixed
+finite, total, pure individual readings, with clean representation assumed.
+
+Suppose four dogs sleep. `su'o re gerku cu sipna .i ri cu cimei` can use a
+three-dog witness under the intended cardinality reading. This does not make
+`ci gerku cu sipna` true in the R2 exact-count comparison: there are four
+sleepers, not exactly three. That false verdict belongs to an **unadopted
+comparison**, not the current bare-`ci` default. Under the still-live provisional
+P17 profile below, a three-dog witness is allowed and a fourth sleeper does not
+falsify the sentence. P42 adopts no new exact-number default. Count truth and
+what the pronoun can reuse are different jobs. The full source/force and
+`mei`/Context mapping is still work
+to do, not completed by choosing this meaning.
+
+Outside that adopted scope, other numeric PA retain a provisional P17 profile:
+`ci gerku` selects three
 dogs, stays silent about additional dogs, and predicates of that plurality.
 Original CLL gives individual, globally exact quantification instead. Our
 alternative was inspired by solpahi's reform; it is not proven dominant xorlo
-usage. Nuclear domain and where “exactly” applies are separate decisions.
+usage. It must not override P42's separate count/witness contract. Wider nuclear
+domain and where “exactly” applies remain separate decisions; the whole R2
+numeric/model programme was not adopted with P42.
 
 The explicit current termset rule for `ci gerku ce'e re prenu cu batci`
 requires all six dog–person predications. It does not require six physical
@@ -393,11 +414,18 @@ not gather” can be true while another plurality gathers. If there are no cats,
 `lo mlatu na jbena` has no successful reference either: negation does not
 rescue it (C25).
 
-Witness export is separate. Positive su'o/ri continuations are attested, but
-the individual truth condition does not settle one versus several accessible
-witnesses. An upper-bound claim may be true with no witnesses. The existing
+Witness export is separate. P42 settles the ordinary target in its bounded
+positive plural-lower-bound case, not a general mechanism. Positive singular
+su'o/ri continuations are attested, but individual truth alone does not settle
+every accessible collection. An upper-bound claim may be true with no witnesses. The existing
 strong P6 reading stays; general export/dependency-preserving machinery remains
 documented work.
+
+Nor does a later inconsistent continuation make an earlier satisfiable prefix
+false. A red-pair witness can satisfy “at least two sleep; all of them are red”
+while no same witness also satisfies “they are four”. Each occurrence keeps
+the same witness; the longer combination fails. Whether a reference introduced
+inside an already false compound survives is a different, still-open question.
 
 “Many” and “about twenty” express genuine vagueness, but the current
 approximation representation does not yet adequately handle all equality and

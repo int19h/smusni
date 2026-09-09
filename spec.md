@@ -1178,13 +1178,40 @@ empty universal “some relation” analysis.
 
 ### 4.10 Cardinal quantification
 
-For numeric PA other than the separately ruled `su'o`/ordinary `no`, the
-current provisional P17 mapping is **witness-set selection**: `ci
+**Adopted bounded individual-count/witness profile (P42).** For ordinary
+anaphoric uptake from a successful positive plural lower bound (`su'o n`, or
+an equivalent expression admitting the same sizes), with fixed natural n ≥ 2,
+in a finite, total, pure individual interpretation, count the individually
+qualifying values separately
+from the reference made available to anaphora. If H is the individuals satisfying
+the resolved restriction P and nuclear predicate Q, the at-issue lower-bound
+test is |H| ≥ n. The ordinary anaphoric policy admits a clean reference to any
+S ⊆ H with |S| ≥ n, not only an exactly-n or complete-H reference. The same
+witness is retained through its continuation (§5.6); no independently salient
+group is required. This is an adopted meaning policy with explicit construction
+debt, not a new completed source-to-core lowering (L8.13, §14).
+
+The finite count/reference comparison keeps its global count guard: under the
+R2 comparison, an exact numeral tests |H| = n, so finding a triple among four
+sleepers does not make `ci gerku cu sipna` true. That exact-numeral verdict is
+an **unadopted R2 comparison**, not the current bare-`ci` default: under the
+still-live residual provisional P17 mapping below, a three-dog witness is
+allowed and a fourth sleeper does not falsify the sentence. P42 adopts no new
+exact-numeral default; Q02 remains open. It adopts the bounded
+lower-bound witness policy, not the whole R2 programme: infinite-H definedness/
+projection changes, general outer PA over a bound description, other numeric
+domains and effectful lowering remain separately unadopted. Clean-reference
+existence is an explicit premise, not a theorem of `Combine` or a silently
+installed global C_fin comprehension law. See P42 and decisions Q01/Q02.
+
+**Residual provisional numeric profile.** Outside that adopted profile, for
+numeric PA other than the separately ruled `su'o`/ordinary `no`, the
+provisional P17 mapping is **witness-set selection**: `ci
 gerku cu bajra` selects a three-unit witness reference of dogs and
 predicates running of it —
 
 ```lisp
-; ci gerku cu bajra — the default (witness-set) reading
+; ci gerku cu bajra — residual provisional P17 profile, not the P42/R2 comparison
 {Bind [$w :: Referents Entity]
         (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
   (Close (bajra $w))}
@@ -1221,8 +1248,9 @@ or less", Example 16.34) and singular-variable — "`PA broda` … is
 shorthand for `PA da poi broda`" (16.6), which distributes; pin P17
 records, as one documented divergence with its argument, that this
 specification's provisional numeric mapping takes neutral witness-set selection.
-This is a project choice inspired by solpahi's reform, not a demonstrated
-dominant xorlo usage. Nuclear domain, global versus witness-only exactness, and
+This residual profile is a project choice inspired by solpahi's reform, not a
+demonstrated dominant xorlo usage and not a counter-rule to P42. Nuclear domain,
+global versus witness-only exactness outside the adopted scope, and
 termset coordinate closure remain separate questions (decision ledger Q02).
 Positive collective claims are already expressible by plural descriptions,
 for example `lo su'o prenu cu jmaji`; plural quantification is a different job.
@@ -1644,9 +1672,78 @@ SEI, TO and `ti'o` still need their separate force/attachment dispositions (§14
 
 ### 5.6 Quantifier witnesses, donkey configurations, anaphora
 
-**Selections and witness export.** Quantified terms whose witnesses can
-be referred back to are built from **selection computations** — the
-quantifier-strength members of the `Refer` family:
+**Ordinary positive lower-bound anaphora (P42; adopted 2026-09-08).** In the
+bounded ordinary-uptake profile of §4.10, not P6's selected strong dependent
+role, an antecedent with individually qualifying extension
+H and lower bound n ≥ 2 supplies an unrestricted selected witness: any finite,
+nonempty S ⊆ H with |S| ≥ n, represented by a clean `r_S : Referents<T>`.
+S need not be the smallest permitted group, independently salient, or all of H.
+It may equal H. Anaphoric reference preserves `r_S`; neither `ri` nor its
+appearance inside `ro ri` selects a fresh witness or adds exhaustivity.
+
+Fix the resolved interpretation first — restriction, nuclear predicate,
+source/role, scope, contextual parameters and continuation K — then range over
+its admissible witness assignments. This is not disjunction over alternative
+lexical readings, scopes or contextual resolutions. For this finite, total,
+pure comparison, the commitment can be displayed metatheoretically as:
+
+```text
+H = { x : T | P(x) and Q(x) }
+(|H| in D) and exists S [nonempty S subseteq H and |S| in D and K(r_S)]
+```
+
+For the adopted lower-bound case D = {n,n+1,...}. The exact-D comparison
+retains its separate global count test, not a test of the selected witness's
+size alone (§4.10). These sets and D are mathematical notation, not added
+core Set objects or primitives, and the projection is not a full lowering.
+
+**Clean-reference premise.** Here `r_S` must represent exactly the selected
+individuals without unselected represented units or uncovered residue. The
+conditional finite-cover construction uses the equality-disjunction E_S of
+the selected values:
+
+```text
+Full(E,r)  = CoveredBy(E,r) and forall x. E(x) implies Among(lift(x),r)
+Least(E,r) = Full(E,r) and forall s. Full(E,s) implies Among(r,s)
+```
+
+Given the required admitted Full cover for finite S, the join of its lifts
+supplies the clean Least reference. Full-cover existence is the premise;
+ACI/`Combine` alone does not supply it. The general C_fin admission extension
+and joint model construction remain #10 work. The adopted policy does not
+invent missing references in a model where its representation premise fails.
+
+Each antecedent has its own witness correlation. Every later use resolved to
+that antecedent retains the same `r_S` within an assignment; compatible
+continuations can filter assignments but cannot reselect at each occurrence.
+For four sleepers, a three-member S can satisfy the intended `ri cu cimei`
+reading. Separate all-red/no-red discourses can use different pairs, but their
+joint conditions fail on one unchanged nonempty S. A chosen S may be H;
+the default lacks a guarantee of complete coverage, not permission for it.
+The `mei` examples require the independently stated direct-reference/Context
+bridge; this policy does not complete that lexical mapping (#24).
+
+If the all-red prefix has a red-pair witness but an added `ri cu vomei`
+condition has no common witness, the longer conjunction fails without changing
+the earlier prefix's satisfiability. Incremental composition can retain the
+same assignments; whole-text closure versus fresh per-sentence selection is
+not an exhaustive choice. The extent of K, force-preserving cross-Host closure,
+source/introduction identity, whole-`PA ri` recency, fragments and general
+effects/dependencies remain explicit obligations (L8.13–14, §14, #9/#17).
+In particular, no reference-retention rule for a false compound or a failed
+governor is inferred, and the separate P6 strong reading is unchanged.
+
+The grounds and rejected alternatives are in rationale §1.6a/P42. The
+approved BPFK gadri expansion and published CLL v1.1 §7.6/§16.14 motivate
+individual quantification and reference preservation, not this default by
+themselves. The reported human RD-C04 judgment supports availability; adopting
+the default adds the recorded economy/compatibility choice. See References,
+**RI witness-policy record**, including the 2011/2014 discussions and their limits.
+
+**Library selections and residual export.** The existing counted helpers use
+**selection computations** — quantifier-strength members of the `Refer`
+family. Their bodies and export mechanism are not a completed implementation
+of the adopted P42 individual-count/continuation contract:
 
 ```text
 SelectExactly n P : RefComp<Referents<T>>   ; an n-unit witness set of P
@@ -1665,14 +1762,16 @@ explicitly bound by `Bind`, like every computation — and the nuclear
 content then predicates of it:
 
 ```lisp
-; ci gerku cu bajra .i ri tatpi
+; residual P17/library illustration: ci gerku cu bajra .i ri tatpi
 {Bind [$dogs :: Referents Entity]
         (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
   (Do (Assert (Close (bajra $dogs)))
       (Assert (Close (tatpi $dogs))))}
 ```
 
-The library's GQ forms (`Exactly`, `AtLeast`, `Some`, … — §12) are
+This display illustrates explicit binding in the residual provisional profile;
+it does not establish the missing general P42 source/force mapping. The
+library's GQ forms (`Exactly`, `AtLeast`, `Some`, … — §12) are
 defined over selections; forms whose success is grounded in absence or an
 upper bound (`No`, `AtMost`, `FewerThan`) select nothing and export
 nothing. `Every` exports the full restrictor reference. Binding a witness
@@ -3094,7 +3193,10 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   base; whether the base itself has external residue is already decided by its
   resolved lexical extension (P39).
 - **L3.9** Inner PA → unit count of the selected base (`CardBasis`); outer PA
-  → witness-set selection / subreference selection (P1, §4.10).
+  → witness-set selection / subreference selection in the residual provisional
+  profile (P1, §4.10). This helper route is not a completed lowering of P42;
+  its individual-count/witness meaning and explicit mapping gaps take precedence
+  within that adopted scope. Inner PA and independently bound base identity are unchanged.
   For resolved reference property R and pure unit basis U, `lo n R` uses
   `Refer (λr. R(r) ∧ CardBasis(r,U)=n)` for positive cardinal n; inner `su'o`
   substitutes `1 ≤ CardBasis(r,U)`. Inner `ro` is maximal reference, not a
@@ -3164,7 +3266,10 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   of the maximal witness); bare `ro da` → `∀`.
 - **L5.2** Ordinary `su'o P Q` → individual existential closure
   `IndividualSome P Q`; ordinary `no` → `IndividualNo P Q`. Other numeric PA
-  retain the provisional cardinal GQs over a counting basis (§4.10, P17).
+  retain the residual provisional cardinal GQs over a counting basis (§4.10,
+  P17), except the adopted bounded P42 profile. P42's individual count truth
+  and selected-witness policy are not replaced by a neutral plural helper;
+  their unfinished source/discourse realization is L8.13, not a fallback to P17.
   The anaphor-free pure-restrictor case needs only the pure individual
   existential, not a selection `Bind` or `Local`. General positive export and
   remaining effectful restrictor cases are §14 obligations.
@@ -3353,7 +3458,9 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
 **Anaphora** (L8; P16).
 
 - **L8.1** ⊳ `ri`/`ra`/`ru` by CLL ch. 7 counting over accessible referents
-  (§5.6);
+  (§5.6). `ri` preserves the resolved antecedent reference; P42 fixes the
+  ordinary selected-witness policy in its bounded lower-bound profile.
+  Counting/identity alone does not construct the required reference or export.
 - **L8.2** `vo'a`-series → bridi-place bindings;
 - **L8.3** KOhA assigned → bound variable; unassigned → keyed `Context`;
 - **L8.4** ⊳ cross-performance `go'i`/`go'e`/`go'a`/`go'o` expansion uses the
@@ -3407,6 +3514,17 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   also resets tenses and indicators, and `no'i` resumes what its `ni'o`
   dropped along with the suspended frame — never a destructive `da'o` alias
   (CLL 7.13, 19.3).
+
+- **L8.13** *(gap)* P42's general source/introduction realization and
+  force-preserving cross-Host witness closure, including K's extent and
+  correlation lifetime. The meaning policy is adopted; its truth projection
+  is not a complete lowering. #17 retains dependent/effectful and failure cases.
+- **L8.14** *(gap)* Outer PA over a resolved reference (`PA ri`, `PA ko'a`)
+  needs its explicit member/count domain, truth, local output and introduction/
+  recency rule (#9). A bare-ri skip rule alone does not determine whether the
+  complete quantified sumti `ro ri` is an eligible antecedent for a later ri.
+  The input reference stays fixed; numerical witness selection alone must not
+  erase the separate count condition. L5.30 scope is unchanged.
 
 **Abstractions** (L9; §9, P13, P14).
 
@@ -3567,12 +3685,18 @@ supplied merely by these equations (§14/Q01); existing P6 stays a distinct
 selected strong reading. This separation prevents a global rewrite of the
 counted `Some`/`No` family from silently changing inner `no`.
 
-**Counted cardinal and logical quantifiers** (witness-set semantics, §4.10;
+**Counted cardinal and logical helpers** (residual witness-set semantics, §4.10;
 export status per §5.6). Types: restrictors `P : Fn<(T), Content>` are
 pure member-level properties; the witness forms' nuclear scope `Q` is a
 property **of the witness reference**, `EFn<(Referents<T>), Content>` —
 neutral plural predication, per P4; `Every`'s nuclear scope is
-member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s:
+member-level (`ro` is each — CLL ch. 16), as is `GlobalExactly`'s.
+
+These definitions remain unchanged library meanings. Their neutral reference-
+level Q and local witness cardinality do not implement P42's individual
+qualifying-count condition or its full correlated discourse. `GlobalExactly`
+supplies no anaphoric export by itself. Do not silently rename or globally
+rewrite these helpers as the adopted surface policy. Their definitions are:
 
 ```text
 (Exactly n P Q)  ≝ {Bind [$w :: Referents T] (SelectExactly n P) (Q $w)}
@@ -4418,8 +4542,9 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 
 - **P1** No default quantifiers (xorlo). `lo P` = `Refer P`; inner PA
   counts the selected base's units; outer PA selects witness sets /
-  subreferences under the provisional numeric policy, except individual
-  `su'o`/ordinary `no`; nonemptiness from the reference sort. Inner `ro`
+  subreferences under the residual provisional numeric policy, except individual
+  `su'o`/ordinary `no` and P42's bounded individual-count/witness profile;
+  nonemptiness from the reference sort. Inner `ro`
   supplies maximality rather than a cardinal; inner `su'o` supplies a count floor.
 - **P2** `ro` over descriptions imports via `Presuppose`; bare `ro da` is
   mathematical `∀`. This remains the provisional project choice, not a settled
@@ -4502,7 +4627,8 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
 - **P16** Anaphora resolution is text-to-reading; calculus sees bindings;
   `goi` discourse-scoped; unassigned KOhA = keyed `Context` (one value per
   key — `ko'a du ko'a` is reflexively true).
-- **P17** For applicable provisional numeric termset coordinates: co-selected
+- **P17** Outside P42's adopted bounded profile, for applicable provisional
+  numeric termset coordinates: co-selected
   witness sets, full product, **no
   maximality** — CLL ch. 16 §7's own gloss of `ci gerku ce'e re nanmu cu
   batci` (Examples 16.41–16.45; the gloss is 16.45) is two picked groups
@@ -4521,7 +4647,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   less" — Example 16.34) *and* distributively (`PA broda` "is shorthand
   for `PA da poi broda`" — a singular variable), while this
   specification provisionally retains **neutral witness-set selection** for
-  other numeric PA (§4.10), inspired by solpahi's reform, not established
+  other numeric PA outside P42 (§4.10), inspired by solpahi's reform, not established
   xorlo. Ordinary `su'o` instead has singular-variable existential semantics;
   plural descriptions already express positive collective predication. Keep
   the CLL-literal global reading available as `GlobalExactly` and the
@@ -4695,6 +4821,28 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   C25 reference persistence under negation is unchanged; permitting dependence
   neither gives `lo` existential quantifier force nor mandates variation.
 
+- **P42** Ordinary selected-witness anaphora for successful positive plural
+  lower bounds (`su'o n` or an equivalent expression admitting the same sizes),
+  fixed natural n ≥ 2, in the finite, total, pure individual profile
+  (§4.10/§5.6). Count the individual qualifiers H separately; admit any clean
+  nonempty S ⊆ H of an allowed size, with no prior-salience requirement or
+  exactly-minimum default. Fix the interpretation first, then vary admissible
+  witness assignments; all references to that antecedent keep the same witness
+  through the ordinary-uptake continuation, not P6's selected strong dependent
+  role. S may equal H, but complete-H coverage is not
+  required. The separate global count guard is retained in this bounded
+  comparison; witness anaphora never removes an exact count's upper bound.
+  The profile assumes the stated clean-reference premise, not global C_fin
+  comprehension or completed model construction. The broader R2 programme,
+  general lowering and the other Q01/Q02/P6/failure choices are not adopted
+  by this pin. Complete-H, minimum-size, context-required and no-reference
+  policies remain recorded alternatives, not ordinary defaults in this scope.
+  Human-adopted2026-09-08 after RI RESULT-v2; the reported human judgment
+  supports availability, while the default adds a prescriptive economy/
+  compatibility choice. Reopens on stronger contrary speaker/source evidence
+  or a concrete compositional failure, not merely a missing implementation.
+  Sources and costs: rationale §1.6a and §3; References, RI witness-policy record.
+
 ## 14. Gap register
 
 Meanings this specification currently assigns no analysis, each with the
@@ -4708,7 +4856,12 @@ coverage claims, not the supported fragments of the named interfaces.
 - **Individual/plural quantifier interfaces (Q01/Q02).** The individual truth
   condition of ordinary su'o is fixed; its general positive export is not.
   A train/ri continuation is attested, but it does not choose singleton versus
-  plural collections of individually satisfying witnesses. Preserve P6 strong
+  plural collections of individually satisfying witnesses. P42 now settles
+  the ordinary selected target policy for its bounded positive plural lower
+  bounds; it does not complete the source/force-preserving mapping. Explicit
+  remaining work includes K's extent/correlation lifetime, PA+KOhA's count/
+  member rule and whole-sumti recency (L8.13–14), and clean-reference existence.
+  Preserve P6 strong
   reading selection and its retroactivity cost; do not infer singleton-only ri.
   Upper-bound truth can hold with no satisfier, so no nonempty export follows.
   Experimental plural quantifiers need their actual reference-property domain
@@ -4717,6 +4870,14 @@ coverage claims, not the supported fragments of the named interfaces.
   remain distinct policy questions; the current product is explicit, not an
   equal-scope theorem. Pure individual existential restrictors are supported;
   effectful/dependent description cases still need their typed route.
+- **Non-answer fragments and general answer completion.** A grammatical
+  sumti fragment need not assert a bridi (published CLL v1.1 §19.5). The
+  general meaning/force and referent-introduction rule for a standalone
+  non-answer mention remains unprovided. P22 handles its specific inner-no
+  substitution case; it and L10 do not supply a general whole-sumti answer
+  to an xo number question. Do not silently insert co'e/zasti or a prior
+  question to manufacture a reference. P42's fragment comparison motivates
+  this obligation, not a completed mention rule (#9).
 - **Description dependency and attitude evaluation (Q04).** Dependent lo is
   legitimate. Remaining: general factoring of declared dependency profiles,
   pure-restrictor reference evaluation, and a suspended-description consumer
@@ -4955,7 +5116,7 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | tense/aspect/space, BAI, CAhA | §11 L6 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE, state-episode/non-cardinal ROI interfaces | §2 |
 | gadri, descriptions, `lo'e`/`le'e` | §11 L3 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora, general dependent/pure-restrictor description hookup | §3 |
 | relative clauses, `goi`, `voi` | §11 L4 | `SpeakerDescribesUnaddressed` (P10; #49) | — | §4 |
-| quantifiers, termsets, negation scope | §11 L5 | GQ family, `GlobalExactly`, `Distrib` | ordinary positive export, mixed termsets, termset export; numeric PA policy provisional | §5 |
+| quantifiers, termsets, negation scope | §11 L5, L8.13–14 | GQ family, `GlobalExactly`, `Distrib`; P42 bounded witness policy | P42 source/force realization, ordinary/dependent positive export, mixed termsets, termset export; residual numeric PA policy provisional | §5 |
 | vague quantities, gradables | §6.4, §11 L5.28–L5.29 | degree GQs, `Grade` | approximate equality/cardinality, dependency-indexed profiles, neutral-width policy | §5, §8 |
 | anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8 | `Combine` plus the partial “others” context projections | exotic donkeys, nonactual continuation, occurrence-sensitive demonstratives | §3–§5 |
 | abstractions, `tu'a`, `jai`, `mo'e` | §11 L9 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote` | reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
@@ -5294,6 +5455,59 @@ chapter/section or dictionary entry. Living sources (wiki pages,
 jbovlaste) were last verified 2026-08-25; the repository snapshots
 used for source verification are noted per entry.
 
+- **RI witness-policy record (2026-09-08; P42).**
+  [RI RESULT-v2](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813)
+  and its [four accuracy approvals](https://github.com/int19h/smusni/issues/15#issuecomment-5593235922)
+  preceded the human's explicit instruction to apply the findings, recorded
+  in [#15](https://github.com/int19h/smusni/issues/15). The
+  [source audit](https://github.com/int19h/smusni/issues/15#issuecomment-5590819744)
+  and [primary register](https://github.com/int19h/smusni/issues/15#issuecomment-5590813014)
+  distinguish evidence from the project's prescriptive generalization. The
+  [RD-C04 judgment](https://github.com/int19h/smusni/issues/89#issuecomment-5592982748)
+  is one human response reported from a discussion with Fable, not a community
+  sample or an unqualified verdict oracle. The human's fragment contrast
+  [RD-R05](https://github.com/int19h/smusni/issues/89#issuecomment-5591756386)
+  motivates the question of adding exhaustivity with a predicate; Opus's
+  [RD-R06](https://github.com/int19h/smusni/issues/89#issuecomment-5593193223),
+  corrected by Astra and the panel, motivates the same-witness/prefix boundary,
+  not a completed closure architecture. These are intellectual and decision
+  provenance, not independent ratification of the final rule.
+- **Published CLL v1.1, P42 source comparison.** Cowan/LLG,
+  [§7.6](https://lojban.org/publications/cll/cll_v1.1_xhtml-section-chunks/section-ri-gohi-series.html),
+  [§16.6](https://lojban.org/publications/cll/cll_v1.1_xhtml-section-chunks/section-quantified-variables.html),
+  [§16.14](https://lojban.org/publications/cll/cll_v1.1_xhtml-section-chunks/section-notes-on-variables.html)
+  and [§19.5](https://lojban.org/publications/cll/cll_v1.1_xhtml-section-chunks/section-questions-and-answers.html),
+  verified September8. Reference preservation, exact numerical truth,
+  exact-count later-variable uptake and grammatical fragments are the relevant
+  evidence; none itself states P42's lower-bound default or a full fragment
+  denotation. These explicit v1.1 citations do not use project-authored
+  Contemporary CLL wording as independent authority.
+- **BPFK anaphora/variable notes.**
+  [Anaphoric Pro-sumti](https://mw.lojban.org/papri/BPFK_Section:_Anaphoric_Pro-sumti),
+  page501/revision123788 (2020-04-03 category edit; Tiki24 provenance), and
+  [Logical Variables](https://mw.lojban.org/papri/BPFK_Section:_Logical_Variables),
+  page550/revision123861, General Section Issues. The former motivates
+  referent-preserving repetition; the latter distinguishes singular assignments
+  and satisfying-value counts. Neither is a ratified lower-bound aggregation
+  rule. The pro-sumti checkpoint was recorded deferred; the bounded later
+  search found no separate approval settling this issue. The
+  [2019/2020 LLG meeting](https://mw.lojban.org/papri/LLG_2019_Annual_Meeting_Transcript)
+  approved revised gadri base123823 with example corrections, explicitly not
+  every linked page. Its narrow ri-for-ce'u correction supports reuse, not
+  P42's selection default. Revision/import dates are not authorship dates.
+- **Quantified-reference discussions used in P42.** Martin Bays and Jorge
+  Llambías, Lojban List, 2011-11-25, Message-IDs
+  `20111126012512.GA6702@gonzales` and
+  `CAO7tK2euHY7snwkb2L68spGHYpX=mAiVXYYjXs0Aws+3=JZdEQ@mail.gmail.com`:
+  two-or-more incidental reference, identifiability and domain reconstruction,
+  not a cross-sentence lower-bound default. Selpa'i, Bays and Llambías,
+  2014-09-04–06, Message-IDs `54083D4C.5000809@gmx.de`,
+  `20140904222640.GD29601@gonzales`,
+  `CAO7tK2eUfFe6GXXkh8n1Ej7CyAsgLYGbrxJrH9+ZXj6M2=K6EQ@mail.gmail.com`
+  and `20140906185208.GC8550@gonzales`: restrictive/incidental expressions,
+  quantified repetition and pure-quantifier objections. Their alternatives
+  prompted the comparison but are not endorsements of P42. The RI primary
+  register above supplies exact local archive MIME paths and decoded locators.
 - **Post-FP3 research (2026-09-05–07).** The
   [full-pass record](https://github.com/int19h/smusni/issues/87#issuecomment-5552770486),
   [su'o analysis](https://github.com/int19h/smusni/issues/87#issuecomment-5557668671),

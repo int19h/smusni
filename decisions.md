@@ -1,6 +1,7 @@
 # Current decisions and remaining work
 
-Post-full-pass-3 synchronization, 2026-09-07. `spec.md` remains the semantic
+Post-full-pass-3 synchronization, with scoped RI adoption on 2026-09-08.
+`spec.md` remains the semantic
 authority; this ledger records its current decisions, bounded coverage and work
 status. It replaces older review queues as a current-status guide, not the
 immutable reports as historical evidence. GitHub #20 and #87 record execution.
@@ -8,6 +9,21 @@ Lean/Redex remain derived until the three-stage authority transfer in the charte
 
 ## Settled distinctions
 
+- **P42: ordinary positive lower-bound witness anaphora.** In the fixed finite,
+  total, pure individual profile for `su'o n` (or an equivalent lower bound),
+  n ≥ 2, count the qualifying individuals separately and allow any clean
+  selected witness group of an
+  admissible size. No prior salience, minimum-size or complete-H requirement;
+  the same witness is retained throughout its continuation. Fix the resolved
+  interpretation before varying witness assignments. S may equal H; a failed
+  longer conjunction does not change the earlier prefix's satisfiability.
+  Status: human-adopted by the September8 instruction to apply RI RESULT-v2,
+  now recorded in spec §4.10/§5.6/P42. This is a meaning-policy application,
+  not a completed cross-Host lowering or global C_fin/model adoption.
+  The bounded profile retains the separate count guard; broader R2
+  definedness/projection and numeric-domain work remain unadopted. The
+  exact-ci/four-sleeper contrast is retained as the R2 comparison, not an
+  inference that witness anaphora makes exact counts witness-only.
 - Ordinary `su'o` quantifies over individuals, not neutral plural witnesses.
   No contradiction met the human's condition for a plural reform. At least one
   satisfier is not exactly one; export is a separate issue. `Some`/`SelectSome`
@@ -44,8 +60,8 @@ interface” is not the same as “which meaning should the language select?”
 
 | ID | Settled extent | What remains | Tracker |
 |---|---|---|---|
-| Q01 | Individual `su'o`; non-exporting pure closure; unrestricted plural existence distinct from counted selection; P6 strong reading retained | Ordinary positive export (one/multiple individually satisfying witnesses), full dependent anaphora and experimental plural-quantifier mapping; upper-bound continuation with possible zero satisfiers | #17, #36, #87 |
-| Q02 | Numeric PA's source-domain, exactness and termset product are separable; current product retained | Decide non-su'o numeric nuclear-domain/exactness defaults and coordinate closure; no “dominant xorlo” claim without evidence | #87 |
+| Q01 | Individual `su'o`; pure closure distinct from export; P42 fixes the ordinary selected-witness target for its bounded positive plural lower bounds; P6 retained | P42 source/introduction and force-preserving closure, K extent/correlation, clean-reference construction; general ordinary/dependent export, experimental plural quantifiers, and false/upper-bound cases | #9, #17, #36, #87 |
+| Q02 | Numeric domain, exactness and termset product are separable; P42 retains a separate individual count guard; current termset product retained | Numeric nuclear-domain/exactness and coordinate policies outside P42; broader R2 infinite-H/definedness and general outer-PA realization remain proposals, not adopted by RI | #15, #87 |
 | Q03 | Existence entailment does not prove projection; original/2002/2022/2026 sources differ | P2 non-import versus at-issue import versus presuppositional import, and `ro da poi` bridge; current P2 remains provisional | #15, #35 |
 | Q04 | Fixed and dependent `lo` legitimate; binding respects dependencies; lambdas provide suspension, not an implemented delayed consumer | General dependency-profile factoring, pure-restrictor dependent description evaluation, typed de-dicto consumer/world/export interface | #62, #87 |
 | Q05 | Meaningful anaphora to imagined/internal referents is attested | Modal continuation versus descriptive/role accessibility, with no automatic actual-world witness export | #17, #87 |
@@ -58,11 +74,22 @@ interface” is not the same as “which meaning should the language select?”
 | Q12 | Repeated demonstratives need occurrence-sensitive indications, not arbitrary pointing events | Typed utterance/source anchoring, ground binding, introduction/ri eligibility and quoted/imagined indications | #87 |
 | Q13 | ACI plus CoRef congruence gives the intended plural preorder; no full singleton discipline adopted | Full carrier witness/closure; optional separation and weaker lift injectivity; MaxRefer existence/uniqueness proof bounds; holding-situation domains and State/joint-event ontology | #10 |
 | Q14 | Projection/performance order and successful binding scopes remain distinct | Branch-Undef/accommodation/false-host continuation; full force-segment semantics and NewTopic/Resume transition details | #6, #11 |
-| Q15 | Surface coverage must name a lowering or a gap | SEI/TO/ti'o, xu focus, sign-kind crossings/me'o, TopicAdmissible purity, quoted Speaker provenance and repeated CAhA evaluation; the existing generic/lexicon/MOI/joi gaps remain | #6, #12, #14, #23, #24, #37, #87 |
+| Q15 | Surface coverage must name a lowering or a gap | PA+KOhA and non-answer-fragment/answer-completion mapping; SEI/TO/ti'o, xu focus, sign-kind crossings/me'o, TopicAdmissible purity, quoted Speaker provenance and repeated CAhA evaluation; other generic/lexicon/MOI/joi gaps remain | #6, #9, #12, #14, #23, #24, #37, #87 |
 
 No new survey result is asserted. Archive searches are bounded and not a
 representative population sample. Speaker prompts should separate truth,
 felicity, projection, comprehension and production, with date/experience recorded.
+
+**Next semantic choice in the current quantifier/reference discussion:** whether
+an otherwise eligible reference from a successful ordinary conjunct survives
+when the containing compound assertion is false (RD-C05a = RD-C05′). This is
+distinct from P42's successful antecedent and from a later extension making
+the whole discourse inconsistent. The subsequent, separate choice is P6
+outward export after a failed universal governor. Latest recorded positions
+for ordinary conjunct retention: Astra/Fable favor retention, Kimi weakly
+favors it, Opus has no preference. No deciding usage pattern or elicited
+judgment for that control is recorded. This is the live discussion order,
+not a new global implementation priority; #15/#87 preserve the docket.
 
 ## Full-pass disposition map
 
@@ -74,7 +101,7 @@ implementation or a completed conformance claim.
 |---|---|
 | C01 | Clarified nonminimal lifts, conditional guskant dependence and per-profile counting; atomism contradiction withdrawn. |
 | C02 | Local reference-level Massify/JoiEvent output repair, preserving construction scope; no global separation law or L3.6 rewrite. MePred singleton gloss qualified. |
-| C03 | Retained plural strong-witness formulas require CoveredBy/cardinality; ordinary su'o source examples separated from still-open plural export. P6 not repealed. |
+| C03 | Retained strong-witness formulas require CoveredBy/cardinality; P42 settles the bounded ordinary lower-bound target, not its general realization. Ordinary singular/dependent and failure cases remain distinct. P6 not repealed. |
 | C04 | De-dicto consumer gap, Q04; lambda availability is settled, hookup is not. |
 | C05 | Contextual episode coverage and model debt, Q06/Q13; no proof of count≤1 without a bridge. |
 | C06 | Keep JoiClause fasnu; record exactly where redundant. No proved CAhA contradiction. |
@@ -102,7 +129,7 @@ implementation or a completed conformance claim.
 | C28 | Tanru-family equations at complete rows; ordinary partial application supplies residual predicates. |
 | C29 | Graph-only projections classified as declared, not falsely term-defined; no numerical primitive reduction claimed. |
 | C30 | General typed function-row application and inert passing distinguished. |
-| C31 | Fragment value/display wrapper/Mention/force separated; missing me'o constructor remains a gap. |
+| C31 | Fragment value/display wrapper/Mention/force separated; non-answer sumti and general whole-sumti answer completion remain explicit gaps, as does the me'o constructor. |
 | C32 | Separate non-cardinal ROI, SEI/TO/ti'o and xu-focus dispositions recorded. |
 | C33 | Supplement signature/anchor/category constraints; force-segment continuation separately bounded. |
 | C34 | Null-conjunction State ontology remains Q13; no blanket State law added. |
@@ -119,6 +146,17 @@ audit; a core helper equation is not automatically a revised surface equivalence
 
 ## Decision provenance
 
+- **2026-09-08 RI application.** The human's instruction, “Apply these findings,
+  then give me the breakdown of the next unresolved issue,” adopts the scoped
+  [RI RESULT-v2 recommendation](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813).
+  [Four accuracy approvals](https://github.com/int19h/smusni/issues/15#issuecomment-5593235922)
+  precede that instruction; they were not themselves adoption. The
+  [source audit](https://github.com/int19h/smusni/issues/15#issuecomment-5590819744),
+  [reported human judgment](https://github.com/int19h/smusni/issues/89#issuecomment-5592982748),
+  [fragment contrast](https://github.com/int19h/smusni/issues/89#issuecomment-5591756386)
+  and [same-witness continuation control](https://github.com/int19h/smusni/issues/89#issuecomment-5593193223)
+  retain their source/constructed/conditional distinctions. No broader
+  Q03/P6/model/engine adoption or merge clearance follows from this application.
 - [FP3-CONSENSUS-v5](https://github.com/int19h/smusni/issues/87#issuecomment-5552770486)
 - [C25 human adoption](https://github.com/int19h/smusni/issues/87#issuecomment-5557227964)
 - [SUHO result](https://github.com/int19h/smusni/issues/87#issuecomment-5557668671)

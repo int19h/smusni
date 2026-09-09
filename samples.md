@@ -8,8 +8,11 @@ These are design specimens: alpha-equivalent terms and transparent library
 expansions are the same meaning, and no spelling here is "canonical".
 
 The post-FP3 decision ledger distinguishes actual lowerings from candidate
-acceptance cases. Numeric-PA specimens retain the provisional P17 profile;
-they do not establish it as standard xorlo. A `Mention` wrapper below is an
+acceptance cases. Existing numeric-PA core specimens retain the explicitly
+labelled residual provisional P17 profile; the adopted bounded P42 policy is
+recorded separately in §5 without pretending its missing lowering is complete.
+The provisional specimens do not establish their profile as standard xorlo.
+A `Mention` wrapper below is an
 illustrative display act, not an automatic force assigned to every bare sumti.
 
 Fragments (terms meant to appear inside a document) are marked; everything
@@ -609,8 +612,39 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ## 5. Quantifiers, witnesses, anaphora
 
+**Adopted bounded policy (P42).** Fix a finite, total, pure individual reading:
+four relevant dogs sleep, two are red and two are not. Count truth and the
+clean selected reference are separate. These are semantic comparison cases,
+not newly completed core lowerings:
+
+| Source / intended continuation | Result under the stated profile |
+|---|---|
+| `su'o re gerku cu sipna .i ri cu cimei` | Can succeed with a three-dog witness. |
+| `ci gerku cu sipna` | False in the **unadopted R2** global-exact comparison. Under the still-live residual P17 profile, a three-dog witness is allowed and a fourth sleeper does not falsify it. P42 adopts no new exact-numeral default. |
+| `su'o re gerku cu sipna .i ro ri cu xunre` | Can succeed with the red pair. |
+| `su'o re gerku cu sipna .i no ri cu xunre` | Can separately succeed with the non-red pair, not both conditions on one unchanged witness. |
+| `su'o re gerku cu sipna .i ro ri cu xunre .i ri cu vomei` | No common witness for the full conjunction; the red-pair prefix remains satisfiable. |
+
+The `mei` cases use the intended same-reference dog-count interpretation with
+the proposed direct-reference/Context bridge. The intended ri chain is fixed;
+bare-pro-sumti skipping alone does not settle the whole `ro ri` introduction's
+eligibility. Clean-reference existence, that PA+KOhA rule, source anchoring and
+force-preserving cross-Host closure remain explicit §14/L8.13–14 work. No row
+is an unconditional executable oracle. P42 neither chooses all of H nor forbids
+it, and adds no prior-salience or exactly-minimum condition.
+
+Provenance: the human-reported RD-C04 judgment and the constructed RD-C01,
+RD-R01 and RD-R06 controls in spec References, **RI witness-policy record**.
+The exact-count row contrasts the unadopted R2 proposal with the still-live
+residual P17 profile; it is not an adopted P42 verdict for exact numerals.
+The broader R2 programme and the remaining numeric choices are not adopted here.
+
+**Residual library/profile specimens.** The following binding pattern still
+illustrates the counted helper's defined behavior; it is not the new P42
+source-to-core or force-preserving construction.
+
 ```lisp
-; ci gerku cu bajra .i ri tatpi      [spec §5.6]
+; residual provisional P17: ci gerku cu bajra .i ri tatpi      [spec §5.6]
 {Bind [$dogs :: Referents Entity]
         (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
   (Do
@@ -623,9 +657,9 @@ value per key, so `ko'a du ko'a` is reflexively true.
 ; where the three gather TOGETHER; same shape.
 ```
 
-There is no retrieval operator: the exported witness *is* the three-dog
-reference the selection binds, and nothing else is needed
-(rationale §1.6).
+No retrieval operator is used in this helper specimen: its exported witness
+is the reference the explicit selection binds (rationale §1.6). This does not
+discharge P42's source, count-truth and general cross-Host obligations.
 
 ```lisp
 ; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness

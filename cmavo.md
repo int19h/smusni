@@ -464,7 +464,14 @@ For an anaphor-free resolved reading:
 
 At least one is not exactly one. This closure exports nothing by itself;
 general positive witness export remains Q01 work, separately from P6's selected
-strong fragment. **See.** [Spec §4.10/§12/§14](spec.md); [decisions.md](decisions.md).
+strong fragment. For compound positive lower bounds `su'o n`, n ≥ 2, P42
+adopts the bounded finite, total, pure individual witness policy: count the
+qualifiers separately and admit any clean selected group of the allowed size;
+`ri` retains that group with no fresh choice. No prior salience or exactly-
+minimum group is required, and S may equal the complete H. The general
+source/force mapping and clean-reference premise remain explicit obligations.
+This does not turn ordinary singular `su'o` into plural quantification.
+**See.** [Spec §4.10/§5.6/§12/§14](spec.md), P42; [decisions.md](decisions.md).
 
 ### su'oi / ro'oi (experimental PA)
 
@@ -476,12 +483,21 @@ unrestricted plural existence.
 
 ### Digits: pa re ci vo mu xa ze bi so no (PA)
 
-Under provisional non-su'o P17, outer numeric quantifiers select witness sets of that cardinality
+Under residual provisional non-su'o P17, outside P42's adopted bounded profile,
+outer numeric quantifiers select witness sets of that cardinality
 under a counting basis — neutral witness-set selection, not
 distributive and not global (P17's documented divergence; the
 CLL-literal alternatives are individual/global-exact). This project choice is
 not established xorlo. Ordinary no uses IndividualNo; inner no uses PluralNo.
 Counted No remains a separate helper.
+P42 separates individual count truth from the anaphoric witness: in the R2
+global-exact comparison, `ci gerku cu sipna` is false with four relevant
+sleepers even though a triple is available after `su'o re`. That false verdict
+belongs to the **unadopted R2 proposal**, not the current bare-`ci` default:
+under the still-live residual P17 mapping, a three-dog witness is allowed and
+a fourth sleeper does not falsify the sentence. P42 adopts no new exact-numeral
+default or the broader R2 programme, and does not redefine the library's
+neutral-plural helpers. The following is explicitly a residual P17 specimen.
 
 ```lisp
 ; re prenu cu bevri lo pipno
@@ -496,11 +512,17 @@ Counted No remains a separate helper.
 
 ### su'e / za'u / me'i (PA)
 
-At-most / more-than / fewer-than: `za'u n` is the exporting
+For the residual counted-helper profile, at-most / more-than / fewer-than:
+`za'u n` is the exporting
 `MoreThan` (an `AtLeast n+1` selection, same witness-set discipline);
 `su'e n` and `me'i n` are the bounded *tests* `AtMost`/`FewerThan`
 (spec §12) — negations of selections, which select nothing and export
 nothing.
+
+Over the fixed natural-number counts in P42, equivalent lower bounds such as
+`za'u pa` and `su'o re` have the same allowed witness sizes. `za'u re`
+instead means more than two. The full source mapping remains owed; upper-
+bound/zero/failure export is not decided by this lower-bound pin.
 
 **See.** [Spec §4.10, §5.6](spec.md).
 
@@ -1034,13 +1056,20 @@ separately anchored indications and explicit binding/ri eligibility (Q12).
 Recency anaphora: ⊳ resolved by CLL ch. 7 counting over accessible
 referents before the calculus; the term sees the binding, never a
 search (P16). Source order of fills feeds the counting.
+Ri preserves its resolved antecedent reference, not a smaller or larger group
+chosen to suit the continuation. P42 now fixes ordinary selected-witness uptake
+for its bounded positive plural lower bounds; count truth remains separate.
+Outer PA in `ro ri` or `re ri` acts on that same reference, but the generic
+PA+KOhA composition and eligible-introduction/recency rule remain L8.14's gap.
+The bare-ri skip rule alone does not decide whether a complete `ro ri` sumti
+can be the source of a later ri.
 When a resolved strong reading binds a witness outside its governor, P6 lowers
 that selected construal to a joint locus. This is not an equivalent rewrite of
 the original selection computation; the retroactivity cost and
 plural-information-state candidate are in the gap register, and no weak
 selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §11](spec.md), pin P16.
+**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P42.
 
 ### ko'a … fo'u (KOhA)
 
