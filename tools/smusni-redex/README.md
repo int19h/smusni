@@ -17,8 +17,15 @@ The PA-run decoder consumes each numeric continuation structurally. Standard
 individual exact/range/complement counts use pure comprehensions after L0.1;
 bare `me'i` uses universal negation without `Card`. Standard `ro`/`su'o`/`no`
 use individual closure; inner `no` uses the head's plural property. Positive
-inner cardinal descriptions use a reference property and their stated unit
-basis, sharing the inert `le` property. The original counted library helpers
+inner cardinal descriptions on the current simple-head `lo`/`le` path support
+single-digit positive exact counts (`pa` through `so`), using a reference
+property and its stated unit basis and sharing the inert `le` property.
+The complete PA run is read, but bare inner `su'o`, inner `su'o n`, and
+ordinary multi-digit inner exact counts are explicitly unimplemented and
+refuse at L3.9 after RR/composition validation. Their adopted CardBasis-floor
+and general exact-count implementation remains queued under #9. Inner `me'i`
+has a separate coverage refusal; outer P44 does not establish its mapping.
+Inner `no` retains its separate P22 path. The original counted library helpers
 keep their meanings but do not supply retired standard witness-set mappings.
 
 This is bounded lowering, not a general source/Host model. The count adapter
@@ -27,6 +34,8 @@ with the existing validated hoist plan. General multiple-count, dependent
 description scope, mixed/compound PA, fractional/non-finite, and source/force
 interfaces remain outside this adapter's implemented fragment. Threshold
 adaptation is the explicit L5.28 gap. F01 is not implemented.
+The unreachable historical M3 `threshold-argument-out` builder was retired;
+the retained threshold library equations and the L5.28 refusal remain.
 
 `RR` now has all nine documented fields. `references` explicitly lists each
 description/name occurrence by its first resolved source offset, for example

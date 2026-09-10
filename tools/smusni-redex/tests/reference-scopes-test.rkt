@@ -175,3 +175,19 @@
 (check-equal? (no-lowering-cause parsed-transitive-error) 'rr-missing)
 (check-equal? (no-lowering-rule parsed-transitive-error) "L5.30")
 (check-regexp-match #rx"separate lexical clause" (no-lowering-premise parsed-transitive-error))
+
+;; Kimi's post-panel regression, confirmed by Astra: use a distinct real
+;; governor so this reaches the source-supported kind refusal, not self-capture.
+(define inner-no-kind-parse (probe "lo no gerku cu tavla lo mlatu"))
+(define kind-starts (reference-occurrences inner-no-kind-parse))
+(check-equal? (length (remove-duplicates kind-starts)) 2)
+(define kind-error
+  (lower inner-no-kind-parse
+    (rr inner-no-kind-parse
+        `((,(first kind-starts) (dependent (governors ,(second kind-starts))
+                                          (scope ,(second kind-starts))))
+          (,(second kind-starts) invariant))
+        '(gerku tavla mlatu))))
+(check-equal? (no-lowering-rule kind-error) "L5.30")
+(check-equal? (no-lowering-cause kind-error) 'rr-missing)
+(check-regexp-match #rx"fixed quantified-sumti binder" (no-lowering-premise kind-error))

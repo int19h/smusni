@@ -18,6 +18,9 @@ CORPUS = [
     "rationale.md",
 ]
 
+# Independent expectation: deleting the final pin must not shrink the check.
+EXPECTED_PIN_MAX = 44
+
 
 def missing_links(root: Path) -> list[tuple[Path, int, str]]:
     failures: list[tuple[Path, int, str]] = []
@@ -37,7 +40,7 @@ def missing_links(root: Path) -> list[tuple[Path, int, str]]:
 
 def missing_pins(root: Path) -> list[int]:
     pins = {int(value) for value in re.findall(r"\bP(\d+)\b", (root / "spec.md").read_text())}
-    return sorted(set(range(1, 38)) - pins)
+    return sorted(set(range(1, EXPECTED_PIN_MAX + 1)) - pins)
 
 
 def lisp_balance(root: Path) -> list[tuple[Path, int, str]]:

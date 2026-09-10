@@ -625,25 +625,6 @@
   [(nuclear-cont-source x_Q x_ref) (close shorthand (pred x_Q x_ref))])
 
 (define-metafunction SmusniM3
-  threshold-argument-out : e e e e -> e
-  [(threshold-argument-out e_force many e_P e_Q)
-   (Bind (x_threshold :: Natural)
-         (Vague (AdmissibleThreshold ManyK e_P))
-     (force-out e_force (AtLeast x_threshold e_P e_Q)))
-   (where x_threshold
-          ,(variable-not-in (term (e_force e_P e_Q)) '$n))]
-  [(threshold-argument-out e_force too-many e_P e_Q)
-   (Bind (x_purpose :: Referents Entity) (Context)
-         (x_threshold :: Natural)
-         (Vague (AdmissibleThreshold TooManyK e_P x_purpose))
-     (force-out e_force (MoreThan x_threshold e_P e_Q)))
-   (where x_purpose
-          ,(variable-not-in (term (e_force e_P e_Q)) '$purpose))
-   (where x_threshold
-          ,(variable-not-in
-            (term (e_force e_P e_Q x_purpose)) '$n))])
-
-(define-metafunction SmusniM3
   global-exactly-definition : e -> e
   [(global-exactly-definition e_term)
    ,(expand-global-exactly-datum (term e_term))])
@@ -1547,13 +1528,10 @@
          'inner_unit 'inner_selbri 'NegatedSelbri 'na 'GohaWordTanruUnit
          'Plain 'PlainWord 'Gismu 'Cmavo 'phonemes 'span))
 (define transparent-terminal-path-keys (seteq 'Plain 'PlainWord))
-(define transparent-number-terminal-path-keys
-  (seteq 'PaRunQuantifier 'number 'first_number 'Plain 'PlainWord))
-
-;; Decode the actual PA-run grammar, including each continuation. Unknown
-;; wrappers and compound prefixes refuse instead of discarding their children.
-(define (decode-quantity subtree)
-  (define run (direct-semantic-node subtree (seteq 'PaRunQuantifier) "L5.2" (seteq)))
+;; Decode the complete PA-run grammar once. Position-specific consumers decide
+;; its interpretation or coverage disposition; unknown wrappers always refuse.
+(define (decode-pa-words subtree rule)
+  (define run (direct-semantic-node subtree (seteq 'PaRunQuantifier) rule (seteq)))
   (cond
     [(no-lowering? run) run]
     [else
@@ -1564,22 +1542,26 @@
             (pair? (unrecognized-direct-keys number (seteq 'first_number 'continuations)))
             (not (hash-has-key? number 'first_number))
             (not (list? (hash-ref number 'continuations '()))))
-        (no-lowering "L5.2" 'rule-underspecified "unsupported PA-run structure" subtree)]
+        (no-lowering rule 'rule-underspecified "unsupported PA-run structure" subtree)]
        [else
         (define words
-          (cons (decode-terminal-leaf (hash-ref number 'first_number) 'Cmavo "L5.2")
+          (cons (decode-terminal-leaf (hash-ref number 'first_number) 'Cmavo rule)
                 (for/list ([part (in-list (hash-ref number 'continuations '()))])
-                  (decode-terminal-leaf part 'Cmavo "L5.2"
+                  (decode-terminal-leaf part 'Cmavo rule
                                         (set-add transparent-terminal-path-keys
                                                  'NumberWordPaContinuation)))))
-        (define failure (findf no-lowering? words))
-        (define (digits-value digits)
-          (and (pair? digits)
-               (andmap (lambda (w) (hash-has-key? number-values w)) digits)
-               (for/fold ([n 0]) ([w (in-list digits)])
-                 (+ (* n 10) (hash-ref number-values w)))))
-        (cond
-          [failure failure]
+        (or (findf no-lowering? words) words)])]))
+
+(define (digits-value digits)
+  (and (pair? digits)
+       (andmap (lambda (w) (hash-has-key? number-values w)) digits)
+       (for/fold ([n 0]) ([w (in-list digits)])
+         (+ (* n 10) (hash-ref number-values w)))))
+
+(define (decode-quantity subtree)
+  (define words (decode-pa-words subtree "L5.2"))
+  (cond
+          [(no-lowering? words) words]
           [(equal? words '("no")) "no"]
           [(digits-value words) => values]
           [(= (length words) 1)
@@ -1596,7 +1578,27 @@
                                   "za'u" 'more-than "me'i" 'fewer-than
                                   "da'a" 'all-but) (first words)) ,n))]
           [else (no-lowering "L5.2" 'rule-underspecified
-                             "compound or non-finite PA is outside this count fragment" words)])])]))
+                             "compound or non-finite PA is outside this count fragment" words)]))
+
+(define (unsupported-inner-count? count)
+  (match count [`(unsupported-inner-count ,(? string?) ,(? list?)) #t] [_ #f]))
+
+(define (decode-inner-count subtree)
+  (define words (decode-pa-words subtree "L3.9"))
+  (define (unsupported reason) `(unsupported-inner-count ,reason ,words))
+  (cond
+    [(no-lowering? words) words]
+    [(and (= (length words) 1) (digits-value words)) => values]
+    [(digits-value words)
+     (unsupported "ordinary multi-digit inner exact counts are not implemented on this adapter path")]
+    [(equal? words '("su'o"))
+     (unsupported "bare inner su'o CardBasis floor is adopted but not implemented on this adapter path")]
+    [(and (equal? (first words) "su'o") (digits-value (rest words)))
+     (unsupported "inner su'o n CardBasis floors are not implemented on this adapter path")]
+    [(equal? (first words) "me'i")
+     (unsupported "inner me'i is outside this adapter's coverage; outer P44 does not supply its mapping")]
+    [(= (length words) 1) `(unresolved-count ,(string->symbol (first words)))]
+    [else (unsupported "compound or non-finite inner PA is outside the implemented single-digit path")]))
 (define description-tail-tags
   (seteq 'RelationDescriptionTail 'QuantifierRelationDescriptionTail))
 
@@ -1824,15 +1826,8 @@
               '()))
         (define quantifier-node
           (and tail-node (hash-ref tail-node 'quantifier (lambda () #f))))
-        (define quantifier-word
-          (and quantifier-node
-               (decode-terminal-leaf quantifier-node 'Cmavo "L3.9"
-                                     transparent-number-terminal-path-keys)))
         (define count
-          (and (string? quantifier-word)
-               (if (hash-has-key? number-values quantifier-word)
-                   (hash-ref number-values quantifier-word)
-                   `(unresolved-count ,(string->symbol quantifier-word)))))
+          (and quantifier-node (decode-inner-count quantifier-node)))
         (define relation
           (and tail-node (null? tail-unknown)
                (decode-simple-selbri (hash-ref tail-node 'selbri) "L3.1")))
@@ -1843,7 +1838,7 @@
            (no-lowering "L3.1" 'rule-underspecified
                         "description relation tail has an unknown child"
                         tail-unknown)]
-          [(no-lowering? quantifier-word) quantifier-word]
+          [(no-lowering? count) count]
           [(no-lowering? relation) relation]
           [(and (hash? leading) (positive? (hash-count leading)))
            (no-lowering "L3.11" 'rule-underspecified
@@ -2546,6 +2541,9 @@
         `(inner-no ,basis ,predicate)]
        [(and (exact-positive-integer? count))
         `(inner-pa ,basis ,count ,predicate)]
+       ;; Keep the full run in the source plan so ordinary RR/composition
+       ;; validation still runs before the explicit L3.9 coverage refusal.
+       [(unsupported-inner-count? count) `(inner-pa ,basis ,count ,predicate)]
        [else #f])]
     [`(name ,name) `(name ,name)]
     [`(quantifier ,(? standard-count? quantity) ,predicate)
@@ -3717,12 +3715,19 @@
 
 (define (redex-lower parse-case rr)
   (define sigma (parse-case->sigma parse-case (rr-fields-value rr)))
+  (define (inner-count-gap source)
+    (cond [(unsupported-inner-count? source) source]
+          [(list? source) (ormap inner-count-gap source)]
+          [else #f]))
   (define (threshold-source? source)
     (and (list? source)
          (or (and (pair? source) (eq? (first source) 'threshold))
              (ormap threshold-source? source))))
   (cond
     [(no-lowering? sigma) sigma]
+    [(inner-count-gap sigma)
+     => (lambda (gap)
+          (no-lowering "L3.9" 'rule-underspecified (second gap) (third gap)))]
     [(threshold-source? sigma)
      (no-lowering "L5.28" 'rule-underspecified
                   "standard threshold-count adaptation is an explicit documentary gap"

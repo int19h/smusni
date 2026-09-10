@@ -1,6 +1,13 @@
 (smusni-document-sync 1
   (source "PM input snapshot 62347a5; adopted v3/P2/P43/P44, F01 excluded")
   (issue "#20")
+  (inner-pa-coverage "L3.9" "#9"
+    (implemented "Single-digit positive exact counts (pa through so) in supported simple-head lo/le compositions, using the reference-property/unit-basis path and sharing the le property; inner no remains separate P22 handling.")
+    (unimplemented-adopted "Bare inner su'o CardBasis floor, positive-natural inner su'o n floors, and ordinary positive multi-digit inner exact counts. All PA continuations are preserved; adapter refusals are attributed to L3.9 after other input validation.")
+    (other-unsupported "General inner me'i is outside this adapter's coverage; no outer P44 meaning or outer IndividualSome route is substituted.")
+    (disposition "General implementation is separately queued under #9 after the bounded E01 checkpoint; these are not reopened choices about the adopted inner floors."))
+  (retired-adapter-builder threshold-argument-out
+    "Confirmed unreachable M3 output builder removed in batch03. Threshold library helpers/equations and the L5.28 unsupported boundary are preserved.")
   (historical-snapshots
     "history/pre-e01-port-corpus.sexp" "history/pre-e01-port-baseline.sexp"
     "Exact pre-E01 snapshots from 7ec9f80 are retained for migration and pilot provenance; the live corpus is independently regenerated from current source and tests.")

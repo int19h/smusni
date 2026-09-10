@@ -1,7 +1,7 @@
 (smusni-port-corpus
  1
  (count 370)
- (cases-sha1 "1cf614072360cd7d663283616e6ccd0a3a087b08")
+ (cases-sha1 "0cd26d1d494f4b5d0312628ed54d1c2c02ecc7d4")
  (fence-sources
   ("samples.md" 1 "738f3c4cc9a19d8708f73af84f65571286474905")
   ("samples.md" 2 "4dafb267405c206fcd2cfc26056b51d6d3940054")
@@ -203,6 +203,8 @@
    "919f556b6dc6b54f8c7456317db7ee46aba06ca3")
   ("tools/smusni-redex/tests/individual-lowering-test.rkt"
    "75b4197e8accec6647055ee6a47d2f89a798a3dd")
+  ("tools/smusni-redex/tests/inner-pa-test.rkt"
+   "00b577fe4442a023c455e66b1fbad57c01b69c44")
   ("tools/smusni-redex/tests/lower-test.rkt"
    "bd06de516d3511331a6b3f75527db60edf2f57dd")
   ("tools/smusni-redex/tests/models-test.rkt"
@@ -210,7 +212,7 @@
   ("tools/smusni-redex/tests/notation-test.rkt"
    "3ff1225f99e8113d61f737ac79f0028138fd828b")
   ("tools/smusni-redex/tests/reference-scopes-test.rkt"
-   "ee2771677c1d6392cc5a50bba83730160c643f95")
+   "2793ef06eb079303f4e5f5508bba6ae978cbd789")
   ("tools/smusni-redex/tests/rules-test.rkt"
    "635c2e313cc7a31355553daf64c87d90260c001e")
   ("tools/smusni-redex/tests/substitution-test.rkt"
@@ -439,7 +441,7 @@
      "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "0d97dcc8b5e3c3e7189269dfad906496df765d67")
-    (provenance (test "lower-test.rkt"))
+    (provenance (test "inner-pa-test.rkt") (test "lower-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)

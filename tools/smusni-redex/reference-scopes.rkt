@@ -72,6 +72,8 @@
          (for/fold ([needed (set)]) ([g (hash-ref direct-requirements id '())])
            (set-union needed (set-add (requirements g) g))))))
     (define levels (make-hash))
+    ;; Same-region scope recursion is well-founded by that same cycle check:
+    ;; every declared scope target was added as an edge before visiting.
     (define (level id)
       (hash-ref!
        levels id
