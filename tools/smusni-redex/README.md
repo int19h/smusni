@@ -33,7 +33,16 @@ description/name occurrence by its first resolved source offset, for example
 `(references ((18 invariant)))`. The adapter checks complete, unique coverage;
 it supplies no invariant default. A profile such as
 `(18 (dependent (governors 0) (scope 0)))` names resolved binding-source offsets.
-Malformed locations fail; a well-formed dependency profile is reported as an
+The selected scope fixes the quantifier nesting level at which the reference
+would be bound. A reference governor has its own selected level; a quantifier
+governor supplies the level immediately inside that quantifier. Dependencies
+must be available there. Validation rejects cycles, crossings outside a
+required governor, and captures of quantifiers from separate lexical clauses;
+it respects the parse's clause regions and fixed quantifier/invariant-reference
+orders. It does not reject a governor merely for having a later source offset.
+Nested descriptions also remain within the availability boundary of their
+containing property; naming an outer clause's later binder cannot capture it.
+Malformed locations or scope graphs fail; a well-formed dependency profile is reported as an
 unimplemented L5.30 scope after the other RR fields have been checked. These
 offsets are adapter metadata and never core terms. Existing fixtures explicitly
 select their documented invariant readings.

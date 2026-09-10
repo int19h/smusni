@@ -426,7 +426,7 @@
 ;; roots. Phase 0's new side is deliberately the old engine again, proving the
 ;; oracle plumbing with zero implicit differences and an empty waiver ledger.
 (define corpus (load-port-corpus))
-(check-equal? (length corpus) 369)
+(check-equal? (length corpus) 370)
 (define a0-benchmark-cases (a0-specimen-benchmark-cases corpus))
 (check-true (pair? a0-benchmark-cases))
 (check-true (< (length a0-benchmark-cases)
@@ -450,7 +450,7 @@
 (define current-a0-differential-cases (a0-differential-cases))
 (check-true a0-differential-ok?)
 (check-equal? (length a0-mechanism-cases) 29)
-(check-equal? (length current-a0-differential-cases) 113)
+(check-equal? (length current-a0-differential-cases) 114)
 (check-equal? (length (load-a0-waivers)) 32)
 (for ([item (in-list current-a0-differential-cases)])
   (define record (a0-port-record item))

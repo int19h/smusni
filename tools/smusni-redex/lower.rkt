@@ -15,6 +15,7 @@
          "check.rkt"
          "extract.rkt"
          "inventory.rkt"
+         "reference-scopes.rkt"
          "syntax.rkt"
          "types.rkt")
 
@@ -48,6 +49,7 @@
          call-with-probe-parse
          normalize-core
          individual-count-condition
+         substitute-free-symbol
          reference-occurrences
          redex-alpha-equivalent?
          site-signatures
@@ -3456,6 +3458,38 @@
 (define (reference-occurrences parse-case)
   (source-occurrences parse-case '(DescriptorWithGadriSumti NameSumti)))
 
+(define (parsed-scope-sites parse-case)
+  (define sites '())
+  (define (walk value path region)
+    (cond
+      [(hash? value)
+       (for ([(tag child) (in-hash value)])
+         (define child-path (append path (list tag)))
+         (define child-region (if (member tag '(BridiStatement FragmentStatement)) child-path region))
+         (define binding-tag? (member tag '(DescriptorWithGadriSumti NameSumti DescriptorWithoutGadriSumti)))
+         (define start (and binding-tag? (apply min (map car (parse-terminal-spans child)))))
+         (when (member tag '(DescriptorWithGadriSumti NameSumti DescriptorWithoutGadriSumti))
+           (define kind
+             (cond
+               [(eq? tag 'DescriptorWithoutGadriSumti) 'quantifier]
+               [(eq? tag 'NameSumti) 'reference]
+               [else
+                (match (term-view (hash tag child))
+                  [`(description ,gadri ,_ ,count)
+                   (if (or (equal? count 0) (member gadri '("lo'e" "le'e")))
+                       'quantifier 'reference)]
+                  [_ 'reference])]))
+           (set! sites (cons (scope-site start kind child-region) sites)))
+         ;; A binder inside a descriptor's property is local to that property,
+         ;; even when the grammar uses BE/linking rather than a nested bridi.
+         (define inner-path (if binding-tag? (append child-path (list (list 'binding start))) child-path))
+         (walk child inner-path (if binding-tag? inner-path child-region)))]
+      [(list? value)
+       (for ([child value] [index (in-naturals)])
+         (walk child (append path (list index)) region))]))
+  (walk (hash-ref parse-case 'parse) '() '())
+  sites)
+
 (define (validate-reference-profiles parse-case fields)
   (define expected (reference-occurrences parse-case))
   (define actual (hash-ref fields 'references #f))
@@ -3491,7 +3525,11 @@
         (no-lowering "L5.30" 'rr-missing
                      "RR.references must cover each description/name occurrence exactly once"
                      (list 'expected expected 'declared declared))]
-       [dependent? 'dependent]
+       [dependent?
+        (define scope-error (reference-scope-error (parsed-scope-sites parse-case) actual))
+        (if scope-error
+            (no-lowering "L5.30" 'rr-missing scope-error actual)
+            'dependent)]
        [else #t])]))
 
 (define mutation-empty-deletion-pass-through-keys
@@ -3836,16 +3874,49 @@
                                           (if (= (length missing) 1) "" "s"))))))])]))
 
 (define (plain-binder-parts binder)
-  (define flat
-    (if (and (= (length binder) 1) (list? (first binder)))
-        (first binder)
-        binder))
-  (define separator (index-of flat '::))
-  (and separator
-       (list (filter symbol? (take flat separator))
-             (drop flat (add1 separator)))))
+  (define pairs (plain-binder-pairs binder))
+  ;; Property instantiation consumes a unary telescope. Name/scope consumers
+  ;; use all pairs directly, including heterogeneous joint telescopes.
+  (and (= (length pairs) 1)
+       (let ([type (second (first pairs))])
+         (list (list (first (first pairs)))
+               (if (list? type) type (list type))))))
+
+(define (rename-binder binder old fresh)
+  (define (group items)
+    (define separator (index-of items '::))
+    (append (map (lambda (name) (if (eq? name old) fresh name))
+                 (take items separator))
+            (drop items separator)))
+  (if (and (pair? binder) (list? (first binder)))
+      (map group binder)
+      (group binder)))
 
 (define (substitute-free-symbol datum old replacement)
+  (unless (and (symbol? old) (symbol? replacement))
+    (raise-arguments-error 'substitute-free-symbol "expected symbol substitution"
+                           "old" old "replacement" replacement))
+  (define (under-binder binder body)
+    (define names (map first (plain-binder-pairs binder)))
+    (cond
+      [(member old names) (values binder body)]
+      [(member replacement names)
+       (define fresh (variable-not-in (list datum body old replacement) replacement))
+       (values (rename-binder binder replacement fresh)
+               (walk (substitute-free-symbol body replacement fresh)))]
+      [else (values binder (walk body))]))
+  (define (bindings pieces)
+    (match pieces
+      [(list body) (walk body)]
+      [(list binder rhs rest ...)
+       (define tail (if (= (length rest) 1) (first rest) `(Bind ,@rest)))
+       (define-values (new-binder new-tail) (under-binder binder tail))
+       ;; The current binder does not scope its own RHS. It scopes every
+       ;; later RHS and the final body, including a later shadowing binder.
+       (if (= (length rest) 1)
+           `(Bind ,new-binder ,(walk rhs) ,new-tail)
+           (match new-tail
+             [`(Bind ,more ...) `(Bind ,new-binder ,(walk rhs) ,@more)]))]))
   (define (walk value)
     (cond
       [(symbol? value) (if (eq? value old) replacement value)]
@@ -3853,31 +3924,14 @@
       [else
        (match value
          [`(λ ,binder ,body)
-          (define parts (and (list? binder) (plain-binder-parts binder)))
-          `(λ ,binder
-             ,(if (and parts (member old (first parts))) body (walk body)))]
+          (define-values (new-binder new-body) (under-binder binder body))
+          `(λ ,new-binder ,new-body)]
          [`(Let ,binder ,rhs ,body)
-          (define parts (and (list? binder) (plain-binder-parts binder)))
-          `(Let ,binder ,(walk rhs)
-             ,(if (and parts (member old (first parts))) body (walk body)))]
-         [`(Bind . ,pieces)
-          (define body (last pieces))
-          (define alternating (drop-right pieces 1))
-          (define shadowed? #f)
-          (define rewritten
-            (append*
-             (for/list ([index (in-range 0 (length alternating) 2)])
-               (define binder (list-ref alternating index))
-               (define rhs (list-ref alternating (add1 index)))
-               (define parts
-                 (and (list? binder) (plain-binder-parts binder)))
-               (define result (list binder (if shadowed? rhs (walk rhs))))
-               (when (and parts (member old (first parts)))
-                 (set! shadowed? #t))
-               result)))
-          `(Bind ,@rewritten ,(if shadowed? body (walk body)))]
+          (define-values (new-binder new-body) (under-binder binder body))
+          `(Let ,new-binder ,(walk rhs) ,new-body)]
+         [`(Bind . ,pieces) (bindings pieces)]
          [_ (map walk value)])]))
-  (walk datum))
+  (if (eq? old replacement) datum (walk datum)))
 
 (define (property-components datum)
   (match datum
@@ -4005,14 +4059,7 @@
                      (core-redex-adapter-term right-adapter)))
 
 (define (binder-variables binder)
-  (define flat
-    (if (and (= (length binder) 1) (list? (first binder)))
-        (first binder)
-        binder))
-  (define separator (index-of flat '::))
-  (if separator
-      (filter symbol? (take flat separator))
-      '()))
+  (map first (plain-binder-pairs binder)))
 
 ;; A location-independent but binding-sensitive retrieval-site certificate.
 ;; Each entry fixes traversal order, Context/Vague kind, and the enclosing

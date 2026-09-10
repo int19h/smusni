@@ -1,7 +1,7 @@
 (smusni-port-corpus
  1
- (count 369)
- (cases-sha1 "92242a4b2d03e0a73a5ed5a0a93f479dd367d43f")
+ (count 370)
+ (cases-sha1 "1cf614072360cd7d663283616e6ccd0a3a087b08")
  (fence-sources
   ("samples.md" 1 "738f3c4cc9a19d8708f73af84f65571286474905")
   ("samples.md" 2 "4dafb267405c206fcd2cfc26056b51d6d3940054")
@@ -209,8 +209,12 @@
    "d00c8deab0592b0056fcfd0f6ba0f5e81eeb559e")
   ("tools/smusni-redex/tests/notation-test.rkt"
    "3ff1225f99e8113d61f737ac79f0028138fd828b")
+  ("tools/smusni-redex/tests/reference-scopes-test.rkt"
+   "f372f5e90291558608e9d895cc59d6b1f41c76ab")
   ("tools/smusni-redex/tests/rules-test.rkt"
    "635c2e313cc7a31355553daf64c87d90260c001e")
+  ("tools/smusni-redex/tests/substitution-test.rkt"
+   "091d0b70cb0ae1d625ee2acb1c10f87a5a374e27")
   ("tools/smusni-redex/tests/types-test.rkt"
    "18acf44168f763f61949cb42b2119f78c34a9de1"))
  (cases
@@ -731,7 +735,7 @@
      "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "1faa3d381d7a55a274d312d2b4440b20c7a83fbc")
-    (provenance (test "lower-test.rkt"))
+    (provenance (test "lower-test.rkt") (test "reference-scopes-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)
@@ -2368,6 +2372,21 @@
     (env
      (($r EFn ((Referents Entity)) Content)
       ($x Fn ((Referents Entity)) Content)))
+    (inventory
+     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7d3ddb69a4968454e52e2e9e81af26e67288b50f")
+    (provenance (test "substitution-test.rkt"))
+    (term
+     (≤
+      2
+      (Card
+       (SetOf
+        (λ ($individual :: Entity)
+          (∧
+           (∃ (λ (($x :: Entity) ($y :: Entity)) (∧ (gerku $x) (prenu $y))))
+           (= $individual $individual)))))))
+    (env ())
     (inventory
      "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
