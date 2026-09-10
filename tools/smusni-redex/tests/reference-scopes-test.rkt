@@ -100,3 +100,78 @@
              '(prenu gerku mlatu tavla) '(actual non-importing))))
 (check-equal? (no-lowering-cause nested-bad) 'rr-missing)
 (check-regexp-match #rx"containing property scope" (no-lowering-premise nested-bad))
+
+;; E01-RR-TRANSITIVE-01, Astra's second E01 gate, 2026-09-10. A reference
+;; carries its governor availability; naming it cannot hide a local quantifier.
+(define transitive-sites
+  (list (scope-site 0 'quantifier '(left))
+        (scope-site 18 'reference '(left))
+        (scope-site 32 'reference '(right))))
+(define indirect
+  '((18 (dependent (governors 0) (scope 0)))
+    (32 (dependent (governors 18) (scope 18)))))
+(check-regexp-match #rx"separate lexical clause"
+                    (reference-scope-error transitive-sites indirect))
+(check-false (reference-scope-error transitive-sites
+              '((18 invariant) (32 (dependent (governors 18) (scope 18))))))
+(check-false (reference-scope-error transitive-sites
+              '((18 (dependent (governors 0) (scope 0))) (32 invariant))))
+
+(define nested-chain-sites
+  (list (scope-site 0 'reference '(clause))
+        (scope-site 10 'quantifier '(clause (binding 0)))
+        (scope-site 20 'reference '(clause (binding 0)))))
+(check-regexp-match #rx"separate lexical clause"
+  (reference-scope-error nested-chain-sites
+    '((0 (dependent (governors 20) (scope 20)))
+      (20 (dependent (governors 10) (scope 10))))))
+;; The quantifier ordered after invariant20 is not one of20's dependencies.
+(check-false (reference-scope-error nested-chain-sites
+              '((0 (dependent (governors 20) (scope 20))) (20 invariant))))
+(check-false (reference-scope-error nested-chain-sites
+              '((0 invariant) (20 (dependent (governors 10) (scope 10))))))
+
+;; Apply transitive requirements to the containing-property check too, even
+;; when the intervening reference is in another nested region.
+(define boundary-chain-sites
+  (list (scope-site 0 'reference '(clause))
+        (scope-site 10 'quantifier '(clause))
+        (scope-site 20 'reference '(clause branch))
+        (scope-site 30 'reference '(clause (binding 0)))))
+(check-regexp-match #rx"containing property scope"
+  (reference-scope-error boundary-chain-sites
+    '((0 invariant) (20 (dependent (governors 10) (scope 10)))
+      (30 (dependent (governors 20) (scope 20))))))
+(check-false (reference-scope-error boundary-chain-sites
+              '((0 (dependent (governors 10) (scope 10)))
+                (20 (dependent (governors 10) (scope 10)))
+                (30 (dependent (governors 20) (scope 20))))))
+
+;; Vary chain length: closure is over requirements, not fixture IDs or the
+;; binding-order graph. Only removing the actual quantifier dependency frees
+;; the final reference from its region requirement.
+(for ([length '(1 3 6)])
+  (define ids (range 10 (+ 10 length)))
+  (define chain-sites
+    (append (list (scope-site 0 'quantifier '(left)))
+            (map (lambda (id) (scope-site id 'reference '(left))) ids)
+            (list (scope-site 100 'reference '(right)))))
+  (define chain
+    (append (for/list ([id ids] [parent (cons 0 ids)])
+              `(,id (dependent (governors ,parent) (scope ,parent))))
+            `((100 (dependent (governors ,(last ids)) (scope ,(last ids)))))))
+  (check-regexp-match #rx"separate lexical clause" (reference-scope-error chain-sites chain))
+  (check-false (reference-scope-error chain-sites (cons `(,(first ids) invariant) (rest chain)))))
+
+;; The real parsed sentence previously reached a separate L5.12 refusal.
+;; Require the failure to come from scope legality at L5.30, so that unrelated
+;; lowering refusal cannot make this regression pass.
+(define-runtime-path transitive-path "fixtures/reference-scope-transitive.json")
+(define transitive-parse (call-with-input-file transitive-path read-json))
+(check-equal? (reference-occurrences transitive-parse) '(18 32))
+(define parsed-transitive-error
+  (lower transitive-parse
+         (rr transitive-parse indirect '(prenu mlatu gerku tavla sipna) '(actual non-importing))))
+(check-equal? (no-lowering-cause parsed-transitive-error) 'rr-missing)
+(check-equal? (no-lowering-rule parsed-transitive-error) "L5.30")
+(check-regexp-match #rx"separate lexical clause" (no-lowering-premise parsed-transitive-error))

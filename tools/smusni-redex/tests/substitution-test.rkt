@@ -56,3 +56,10 @@
 ;; The same shared telescope parser now supplies retrieval-site scope IDs.
 (define sites (site-signatures '(λ (($x :: Entity) ($y :: Number)) (Context $x $y))))
 (check-equal? sites (site-signatures '(λ (($a :: Entity) ($b :: Number)) (Context $a $b))))
+
+;; Astra's A1 clearance control (2026-09-10): alpha-invariance must not erase
+;; which variable a site uses under a shared telescope.
+(check-equal? (site-signatures '(λ (($x :: Entity) ($y :: Entity)) (Context $x)))
+              '((site 1 Context (1))))
+(check-equal? (site-signatures '(λ (($x :: Entity) ($y :: Entity)) (Context $y)))
+              '((site 1 Context (2))))

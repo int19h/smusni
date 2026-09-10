@@ -40,6 +40,10 @@ must be available there. Validation rejects cycles, crossings outside a
 required governor, and captures of quantifiers from separate lexical clauses;
 it respects the parse's clause regions and fixed quantifier/invariant-reference
 orders. It does not reject a governor merely for having a later source offset.
+Required governor and scope availability propagates transitively through
+dependent references before these checks. Binding-order edges are kept
+separate: an invariant reference does not acquire a quantifier dependency
+merely because the two binders have a fixed order.
 Nested descriptions also remain within the availability boundary of their
 containing property; naming an outer clause's later binder cannot capture it.
 Malformed locations or scope graphs fail; a well-formed dependency profile is reported as an

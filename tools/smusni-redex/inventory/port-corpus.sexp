@@ -210,11 +210,11 @@
   ("tools/smusni-redex/tests/notation-test.rkt"
    "3ff1225f99e8113d61f737ac79f0028138fd828b")
   ("tools/smusni-redex/tests/reference-scopes-test.rkt"
-   "f372f5e90291558608e9d895cc59d6b1f41c76ab")
+   "ee2771677c1d6392cc5a50bba83730160c643f95")
   ("tools/smusni-redex/tests/rules-test.rkt"
    "635c2e313cc7a31355553daf64c87d90260c001e")
   ("tools/smusni-redex/tests/substitution-test.rkt"
-   "091d0b70cb0ae1d625ee2acb1c10f87a5a374e27")
+   "813186716b0ea7b92d686d2542aadc2bb34ebb7f")
   ("tools/smusni-redex/tests/types-test.rkt"
    "18acf44168f763f61949cb42b2119f78c34a9de1"))
  (cases
