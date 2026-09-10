@@ -187,7 +187,7 @@ the raw package while retaining other captured sites.
 that domain; `Bool` is the two-element polar answer type (distinct
 from the epistemology-relative `TruthValue` sort).
 **For.** `xu`, `ma`, `mo`, `fi'a`, `pei` all land in `Query` at
-different domains; `kau` supplies the contextual answer selection
+different domains; implicit-answer `kau` supplies the contextual answer selection
 inside `Answer` (a `Proposition` results), while `QuestionOf` reifies
 a query as a `Question` object for question-object-selecting places.
 **See.** [Spec §8](spec.md); [primer ch. 6](primer.md).
@@ -357,8 +357,8 @@ assumptions.
 Axiomatized with `Combine` (`Among x y` iff `Combine x y` and `y`
 co-refer). Singulars lift to singleton references, so `Among x r` with
 `x` a unit reads "x is one of r".
-**For.** `me`-style membership talk, `Distrib`, subreference selection
-(`re lo mu plise`), and the subreference-monotonicity criterion of the
+**For.** `me`-style membership talk (`ko'a me ko'e`), `Distrib`, L3.9's
+outer-count individual membership lift, and the subreference-monotonicity criterion of the
 lexicon's plurality field.
 **See.** [Spec §4.8, §10](spec.md); [rationale §1.7, §2.8](rationale.md).
 
@@ -458,16 +458,18 @@ premise. Binding a witness never
 re-evaluates a selection; distinct selections introduce distinct
 discourse referents (introduction identity — the witness values may
 still co-refer). `SelectSome` is **defined** (§2.22).
-**For.** Residual provisional P17/core-helper readings: `ci gerku cu bajra`
-selects a three-dog witness and predicates running of it, neutrally. This is
-not the adopted P42 individual-count/witness contract. P42 admits any clean
-selected group of an allowed lower-bound size, retains its correlation, and
-keeps count truth separate; its full source/force mapping remains owed.
-`SelectAllBut n P` (`da'a`; default n = 1) is the complement-count
-member: its witness satisfies the complete `CoveredBy P w` condition and
+**For.** Explicit plural/core-helper comparisons select a three-dog witness
+and predicate running of it neutrally; they are not the standard mapping of
+`ci gerku cu bajra`. Standard finite numerals count individual qualifiers
+globally. P43 retires P42's automatic outward numerical-group export;
+explicit bindings retain their actual scope and correlation.
+`SelectAllBut n P` is the library complement-selection member, not the
+standard `da'a n` lowering. Its witness satisfies `CoveredBy P w` and
 leaves exactly n P-individuals behind, spelled by `SetOf`
 comprehension (spec §12); the omitted individuals are not a
-parameter.
+parameter. Standard finite pure `da'a n` instead counts exactly n P-members
+that fail Q (`GlobalExactly n P (λx.¬Qx)`, spec L5.4; default n = 1),
+without introducing a selected remainder group.
 **See.** [Spec §5.6, §4.10](spec.md); [primer ch. 5](primer.md);
 [rationale §1.6](rationale.md).
 
@@ -479,8 +481,9 @@ survives negation, disjunction, conditionals, and question force.
 Introductions inside the condition stay local to it. Polymorphic over
 the computation categories —
 `Presuppose : Content × Comp<A> → Comp<A>` (the §2.10 `MaxRefer` use).
-**For.** `ro`-import (pin P2), definedness of partial operations,
-lexical presuppositions. `naku ro gerku cu blabi` still grants dogs.
+**For.** Explicit `MaxRefer` import, definedness of partial operations and
+lexical presuppositions. Bare `ro` does not import under P2; do not use its
+external negation as a presupposition example.
 **See.** [Spec §5.5](spec.md); [primer ch. 5](primer.md);
 [rationale §1.4](rationale.md).
 
@@ -573,14 +576,13 @@ asserts membership in the coarse other-than-beautiful region. Also the
 
 ### 1.34 `AdmissibleThreshold`, `AdmissibleTolerance`, `AdmissibleCutoff`, `InRegion`, `deg_R`
 
-**Informally.** The gradable/vague-quantity interface: the axiomatic
-admissibility predicates. `AdmissibleTolerance : Number × Precision →
-Fn<(Number), Content>` and its rounding sibling `AdmissibleRounding`
-serve `ji'i` (the tolerance/rounding-preimage regions about an anchor
-at the numeral's precision, nonempty by VC1 — spec §12, pin P37;
-`Direction` — the closed `Up | Down | Either` — is declared with the
-rounding former);
-the threshold predicates serve the degree quantifiers (indexed by
+**Informally.** The gradable/vague-quantity interface. AdmissibleTolerance
+and AdmissibleRounding name the unfinished ji'i tolerance/rounding interfaces;
+their old Number-valued point-family signatures are superseded, not operative
+axioms. P37 instead constrains exact values inside a pure claim at each vague
+tolerance profile; equality remains exact and an actual count is tested against
+the constraint. The typed profile/composition/retention realization remains work.
+The threshold predicates serve the library degree helpers (indexed by
 the closed `ThresholdKind` enumeration — `ManyK | FewK | TooManyK |
 TooFewK | EnoughK`, an index type unrelated to the rejected `Kind`
 sort) and gradable
@@ -841,8 +843,8 @@ cross-clausal place-linking is a gap.
 
 ### 1.52 The MOI relation families
 
-**Informally.** Five lexical relation families indexed by a number
-(CLL 18.11), catalogued with exact rows: `MeiRel κ n` (κ hoisted from a
+**Informally.** The existing displayed numerical rows (CLL 18.11):
+`MeiRel κ n` (κ hoisted from a
 constrained `Context`; group completely
 constituted through `CompleteGunmaAt` from an n-membered set, members among
 it; comparison set for
@@ -853,8 +855,12 @@ model's measure — P29: no probability calculus), `VaheRel n` (scale
 position via the degree projection). Lexical families, not term
 expansions.
 **For.** `lei mi ratcu cu cimei`; `ti pamoi le'i mi ratcu`.
-`MeiRel κ 0`/experimental `nomei` is gap-registered: its proposed empty group
-has no component value at nonempty `Referents<T>`.
+That Group instance is not all adopted mei coverage: direct-reference positive
+mei and a separate exact set-count x2-only row for every Natural n are selected
+contracts awaiting construction. A supplied sole empty Set is countable at zero;
+this neither repairs a false full-member-cover row nor invents empty Referents.
+Nonnumeric moi uses the selected typed correspondence direction, with actual
+rows still owed (spec §14/Q15.g).
 **See.** [Spec §12, §11](spec.md), pin P29.
 
 ### 1.53 The declared partial projections and crossings
@@ -971,7 +977,7 @@ owed.
 ## 2. Defined forms
 
 Entries below with an actual expansion are defined acyclically in the core.
-Explicitly reserved names such as Only/Additive are not completed definitions;
+Explicitly reserved names such as Additive are not completed definitions;
 graph-only interfaces are declared separately.
 
 ### 2.1 `PredTerm<ρ>`
@@ -1138,9 +1144,12 @@ among it, every part overlaps a P-unit. Defined only for inhabited P
 
 Models must supply this reference for each inhabited pure restrictor
 the mapping can form (plural comprehension — a model condition).
-Uniqueness up to CoRef is not proved from ACI alone; the optional separation
-law's conditional uniqueness proof is separate from existence (spec §12).
-**For.** `Every`'s witness export and explicitly/contextually maximal bases.
+Uniqueness up to CoRef is not proved from ACI alone. The selected model contract
+uses local least covered upper bounds on admitted extensions; existence and
+joint realization remain owed. Model-wide separation is a stronger alternative,
+not silently adopted (spec §12/§14).
+**For.** The witness within the importing library Every's explicit Bind scope,
+and explicitly/contextually maximal bases; no automatic baseline ro-group export.
 Bare `loi`/`lo'i` use ordinary `(Local (Refer P))` instead (P5).
 **See.** [Spec §12, §11](spec.md).
 
@@ -1153,7 +1162,9 @@ Consumed by `simxu`'s and `soi`'s lexicon rows.
 **Formally.** `(Reciprocate r P) ≝ (∀ (λ {$x $y :: T} (→ (∧ (Among $x r) (Among $y r) (¬ (= $x $y)))
 (P $x $y))))` — `T` the member sort; the units singleton-lift at
 `Among` and at `P`'s places.
-**For.** `ci jbopre cu simxu lo ka tavla` — pairwise mutual talk.
+**For.** Pairwise mutual talk of an explicitly bound plural reference. The
+three-person selection in samples §5 is a plural/core comparison, not the
+standard outer-quantified `ci jbopre` lowering.
 **See.** [Spec §12](spec.md); [samples §5](samples.md).
 
 ### 2.12 The cardinal quantifiers
@@ -1161,8 +1172,9 @@ Consumed by `simxu`'s and `soi`'s lexicon rows.
 **Informally.** The witness-set family: select a witness of the stated
 strength and predicate the nuclear scope of it **neutrally** — the
 each-reading comes from the lexicon or `Distrib`, never from the
-quantifier (pin P17, pin P4). `Every` is the importing universal:
-presuppose the restrictor inhabited, export the maximal base,
+quantifier in these reference-level helpers (P4). `Every` is an explicit
+importing library universal, not the standard bare-ro mapping:
+presuppose the restrictor inhabited and bind the maximal base within its explicit scope,
 distribute (`ro` is each). The negative/bounded forms contain their
 selection under `¬` and export nothing.
 **Formally.**
@@ -1172,19 +1184,18 @@ selection under `¬` and export nothing.
 `(Every P Q) ≝ (Bind {$w :: Referents T} (MaxRefer P) (Distrib Q
 $w))` — the import is `MaxRefer`'s own presupposition; `(No P Q) ≝ (¬ (Some P Q))`; `(AtMost n P Q) ≝ (¬ (AtLeast n+1
 P Q))`; `(MoreThan n P Q) ≝ (AtLeast n+1 P Q)`; `(FewerThan n P Q) ≝
-(¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} (∧ (P $x) (Q $x))))) n)` (pure operands; the marked global reading).
+(¬ (AtLeast n P Q))`; `(GlobalExactly n P Q) ≝ (= (Card (SetOf (λ {$x :: T} (∧ (P $x) (Q $x))))) n)` (pure operands; standard finite exact count).
 Zero floor (spec §12): the selections form only at n ≥ 1;
 `(AtLeast 0 P Q) ≝ ⊤` and `(Exactly 0 P Q) ≝ (No P Q)`, with the
 bounded forms following from the definitions.
-**Status.** These helper meanings are unchanged. They do not implement P42 by
-renaming a neutral plural nuclear argument into individual count truth.
-Outside P42's adopted bounded profile, other numeric-PA mappings are provisional;
-ordinary su'o/no use IndividualSome/IndividualNo. Counted No remains a helper,
-while P22 uses the uncounted PluralNo. Neither witness export nor exactness
-follows from the word plural.
-`GlobalExactly` supplies no export by itself. P42's broader R2/C_fin/model
-dependencies remain conditional or unadopted, with explicit §14 obligations.
-**For.** The provisional numeric specimen `ci gerku cu bajra .i ri tatpi`.
+**Status.** Helper meanings are unchanged. Standard finite exact counts use
+`GlobalExactly`, not neutral plural `Exactly`; ordinary su'o/no use
+IndividualSome/IndividualNo. Counted No is distinct from P22's uncounted
+PluralNo. Core Bind scope does not license implicit baseline group export:
+P43 supersedes that P42 policy. General permitted source/force continuity,
+experimental mappings and model obligations remain explicit gaps.
+**For.** Pure standard exact counts; separately marked plural/core comparisons
+of selection and same-reference continuation.
 **See.** [Spec §12, §4.10, §5.6](spec.md); [primer ch. 5](primer.md);
 [rationale §3 (P17)](rationale.md).
 
@@ -1214,10 +1225,15 @@ kinds from `ThresholdKind`, §1.34; `P`, `Q` pure for `Most`.)
 (Most P Q)    ≝ (> (Card (SetOf (λ {$x :: T} (∧ (P $x) (Q $x)))))
                    (Card (SetOf (λ {$x :: T} (∧ (P $x) (¬ (Q $x)))))))
 ```
+**Status.** These are reference-level library comparisons. Their standard
+individual-count surface adaptation remains the explicit L5.28 gap; a
+neutral plural nuclear predicate is not silently substituted for an
+individual predicate. Helper binding scope is not baseline outward export.
 **Export.** Few/TooFew export nothing; positive forms export only at profiles
 where the inner selection does. Enough at threshold0 is top and exports nothing.
 Zero admissibility is per kind/standard, not a blanket ≥2 rule.
-**For.** `so'i prenu cu klama` — the family over admissible thresholds.
+**For.** The threshold-family comparison underlying vague count talk such
+as `so'i prenu cu klama`, subject to that mapping gap.
 **See.** [Spec §6.4, §12](spec.md); [primer ch. 5, ch. 9](primer.md).
 
 ### 2.14 `Grade`
@@ -1279,6 +1295,9 @@ reading, strengthened only lexically or by explicit marker.
 (Answer q (TupleAnswer $a)))` at open domains; at `Query<Bool>` the
 retrieval is at `Bool` and the selection is `(PolarAnswer $a)` — the
 `xu kau` case (spec §8.2).
+Explicit-value kau is a distinct selected mapping: consume the supplied value
+once and form its typed selection, not a new ContextualAnswer. General
+source/effect and query-aware consumer handling remains spec L10.3/§14 work.
 **For.** `mi djuno lo du'u ma kau klama`.
 **See.** [Spec §8.2](spec.md); [primer ch. 6](primer.md).
 
@@ -1324,14 +1343,20 @@ with no default (P24; CLL 10.19).
 
 `SelectSome P ≝ SelectAtLeast 1 P` is a counted plural helper, not ordinary
 surface su'o and not unrestricted plural existence. `IndividualSome P Q`
-expands to ∃x:T.(P x ∧ Q x), and `IndividualNo` negates it. `PluralSome`
+expands to ∃x:T.(P x ∧ Q x), and `IndividualNo` negates it.
+`IndividualEvery P Q ≝ ∀x:T.(P x → Q x)` names the non-importing closure
+shared by bare/restricted ro and their specimens. It is defined, not a new
+primitive or an outward witness source. Bare me'i defaults to ro and negates IndividualEvery
+on resolved pure individual P/Q (P44), without a finite-cardinality premise.
+Explicit me'i pa remains zero; neither truth equation supplies a later RI source.
+`PluralSome`
 uses r:Referents<T> instead, with no counted-unit floor; `PluralNo` negates
-that condition and supplies P22's negative plural frame. These four are
-non-exporting truth-condition forms. P42 now fixes the ordinary witness target
-for its bounded positive plural lower bounds: any admissible clean S, with the
-same S retained and no prior-salience/minimum-size/exhaustivity requirement.
-The general Q01 source/force export interface remains separate and unfinished,
-while the selected P6 strong fragment remains unchanged.
+that condition and supplies P22's negative plural frame. These closure forms are
+non-exporting truth-condition forms. P43 retains ordinary existential continuity
+and independently bound sources without synthesizing numerical/universal groups
+or governor-external families. The general Q01 source/force interface remains
+unfinished; supported in-scope P6 is retained. P42's old selected-S default
+is retired, not a residual fallback.
 **See.** [Spec §4.10, §12, §14](spec.md); [decisions Q01](decisions.md).
 
 ### 2.23 `NahiObjection`
@@ -1357,15 +1382,17 @@ a second claim.
 negation touches the walking, never the basis.
 **See.** [Spec §12, §7.6](spec.md); [primer ch. 7](primer.md).
 
-### 2.25 `Only` and `Additive` — reserved focus names
+### 2.25 `Only` and `Additive` — pure focus and unfinished display adaptation
 
-The former equations were inadequate: individual alternatives miss plural
-competitors, and excluding every non-CoRef value treats the focus's own members
-as outsiders. They are not completed surface definitions. A repair must quantify
-at the focus's Referents level, exempt own subparts and decide overlap,
-exhaustivity and projection. The not-Among candidate differs from not-Overlap.
-The host is one formed shared Fn/EFn frame, not copied source. The exact
-Presuppose placement is not established by the glosses.
+For pure H and independently resolved relevant alternatives A, both at
+`Fn<(Referents<T>), Content>`, and f at that reference type:
+`Only A H f ≝ H(f) ∧ ∀y.((A(y) ∧ H(y)) → Among(y,f))`.
+Host and exclusion are both at issue; no Presuppose wrapper. Own subparts
+are exempt, but overlapping outsiders can compete. The rejected not-Overlap
+policy would exempt them; the old not-CoRef formula wrongly excluded own members.
+Effectful shared-frame lifting must still avoid duplicate performances and
+uncontrolled side effects. Additive remains reserved for ji'a's unfinished
+target/lexical adaptation: it separately displays addition without strict novelty.
 **See.** [Spec §12/§14](spec.md); [decisions Q10/Q11](decisions.md).
 
 ### 2.26 The COI schemas
@@ -1524,8 +1551,11 @@ assertion member's captured Content without running it — spec §5.1,
 §7.1–7.4); an `InformationState` is a set of
 world–assignment pairs over the model's world set W; `Obligations`
 collects pending projective commitments; `hold_M` is `StateClause`'s model-
-level holding-state operation and `joint_M` its conjunctive instance,
-exhibited in spec §4.9 as the unique complete event constitution at `κ∧`;
+level holding-state operation, while `joint_M` is §4.9's event-level complete
+joint at `κ∧`. Event composition uses the operand events; the selected holding-
+fusion contract uses the operand holding states and still owes its State-closure/
+inheritance/model construction (§9.3/§14). These are two composition laws,
+not a requirement for two different joint operators or universally unequal results;
 `s ⊩_w c` is the at-issue
 verification relation for a State's partial situation; `Unit` is the one-value
 return type of contentful computations; and `ctx` is the utterance

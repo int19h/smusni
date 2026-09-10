@@ -153,9 +153,11 @@ enter the baseline.
 ### 1.4 Projective content: `Presuppose` and `Supplement`
 
 **Job.** Some commitments escape the operators wrapped around them.
-**Witnesses.** `naku ro gerku cu blabi` still grants dogs (`Presuppose` —
-import survives negation); `xu lo gerku noi blabi cu melbi` questions
-beauty, never whiteness (`Supplement`). **Why not conjunction?** `∧` puts
+**Witnesses.** An explicit `MaxRefer P` construction carries its nonemptiness
+condition even when its result is used by a negated predicate (`Presuppose`);
+bare `naku ro gerku cu blabi` does not carry that import under P2.
+`xu lo gerku noi blabi cu melbi` questions beauty, never whiteness
+(`Supplement`). **Why not conjunction?** `∧` puts
 both conjuncts under the negation/question — flatly wrong truth
 conditions in both witnesses. **Why two constructs and not one?**
 Presuppositions can be *satisfied* by prior context (no new commitment);
@@ -208,34 +210,41 @@ route the sharing through.
 
 ### 1.6 Witness export without run objects
 
-**Job.** Quantifier picks can stay referable. The retained provisional
-`ci gerku cu bajra .i ri tatpi` specimen illustrates explicit binding,
-not a completed lowering of the adopted P42 profile. **Why not a term-level
-"retrieve the witnesses of run R"
-operator?** Because the object needed is just the referent: an
-accessibility rule ("a successful exporting evaluation introduces its
-witness referent") supplies it with no run identities, no retrieval
-operator, and no bookkeeping — and every construction expressible with a
-retrieval operator is expressible by binding the referent. The dependent
-case (`ro prenu cu ponse ci gerku .i ri tatpi`) does not compositionally export
-the witness beyond its governor. Its supported strong reading is selected
-upstream and lowers one scope level up to a joint locus, rather than adding an
-object-language retrieval operator. **Cost.** This is not an equivalent
-rewrite of the original selection computation and retroactively strengthens
-the antecedent when the later anaphor appears. The plural-information-state
-upgrade in §14 is the principled repair; exotic configurations stay gaps.
+**Job.** Explicitly bound references can stay referable. Binding the same
+reference once suffices for later uses within its scope; no term-level run
+identity or witness-retrieval registry is required. The full-plural/library
+`ci gerku cu bajra .i ri tatpi` comparison illustrates that core pattern,
+not a current standard-language lowering of the bare continuation.
+
+The dependent case `ro prenu cu ponse ci gerku .i ri tatpi` does not
+compositionally export witnesses beyond the governor. Its former strong
+cross-sentence extension selected a joint locus upstream and paid a
+retroactive-strengthening cost. P43 no longer admits that rescue for
+baseline out-of-scope anaphora. The plural-information-state alternative
+remains extension work, not a prerequisite to the conservative baseline.
+Supported in-scope P6 readings and declared description dependencies remain.
 
 ### 1.6a The bounded lower-bound witness policy (P42)
 
-**Adopted meaning, unfinished realization.** In the fixed finite, total, pure
+**Historical policy, retired 2026-09-10.** This section records why the
+September8 selected-group policy was adopted. The human subsequently chose
+P43's conservative baseline, accepting bare-form compatibility costs where an
+explicit lo-su'o-n description preserves the positive reading. The former
+policy is not a fallback or current construction obligation. Its evidence
+and alternatives remain history, not retrospective endorsement of the ban.
+See spec References, **Conservative profile adoption and ordinary exactness**.
+
+**Former adopted meaning, unfinished realization.** In the fixed finite, total, pure
 individual profile for a positive plural lower bound, the count says how many
 individuals qualify; later `ri` need not receive the complete population.
 P42 permits any clean selected S of an admissible size, keeps that same S
 through its continuation, and closes over witness assignments inside a fixed
 interpretation. It requires neither a prior salient group nor an exactly-minimum
 choice. This is not a new run object, retrieval operator or general primitive.
-Spec §5.6 states the conditional truth/reference profile; L8.13–14 and §14
-retain the missing source/force and member-mapping work.
+The September8 version of spec §5.6 stated that conditional profile, with
+then-current L8.13–14 recording its construction debt. The historical
+[RI RESULT-v2](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813)
+preserves the policy; current §5.6/L8.13–14 instead state P43 and its remaining work.
 
 **Why this default.** The reported human judgment for `su'o re gerku cu sipna
 .i ri cu cimei`, with four sleepers, was odd but not false. It supports the
@@ -274,14 +283,17 @@ prefix. The scope/force realization and K's correlation lifetime remain #17
 work. The conditional clean-cover premise is not global C_fin comprehension
 or a proof of the full model. R2's broader numeric/definedness changes remain
 separate: witness anaphora never licenses deleting exact-count truth's upper
-bound. Reopen the default on stronger contrary speaker/source evidence or a
-specific compositional failure, not merely the still-missing implementation.
+bound. The former reopening criterion was stronger contrary speaker/source
+evidence or a specific compositional failure, not merely a missing implementation;
+it is historical, not a veto on the later adopted P43 trajectory.
 
 ### 1.7 The plural algebra, without covers
 
 **Job.** Number-neutral reference with subreference and join. **Witness.**
 `mi jo'u do bevri lo pipno` (a plurality acts; no set object exists to
-act), `re lo mu plise` (subreference selection). **Why not sets?** In
+act), `ko'a me ko'e` (subreference predication). Outer `re lo mu plise`
+is instead an individual count over an independently bound description,
+not a neutral selected-pair argument (L3.9). **Why not sets?** In
 the nonempty, atomistic, member-wise fragment the two designs are
 intertranslatable — the honest answer is an equivalence-plus-choice,
 argued in full in §2.8. The short form: sets used the way a set-typed
@@ -312,7 +324,8 @@ contextual `lo'i ratcu` discussion and preserves P1's selection while making
 the surface boundary honest. The outer restriction is singular-object-valued:
 bare outer reference remains number-neutral, but each selected group/set must
 individually have the complete base. The all-P base remains available through
-explicit `ro`/`MaxRefer` or a context that genuinely selects it; the cost is
+explicit inner/descriptive `ro`, the library `MaxRefer`, or a context that
+genuinely selects it; bare outer `ro` does not build that base. The cost is
 only that mathematical users must state maximality when the context does not
 already make it clear.
 
@@ -733,10 +746,13 @@ trivial; the dictionary does not say that every imaginable property is admitted.
 Independent existential sameness need not chain: red circle matches red square
 in color; red square matches blue square in shape; the endpoints match in
 neither. Sharing a standard, or restricting to standards agreeing on the
-relevant entries, can preserve chaining. This does not force Context or a unique
-speaker-intended standard. Explicit, recovered, shared-existential and
-per-comparison existential policies remain distinct. `mi'u nai` does not decide
-where the binder scopes relative to negation.
+relevant entries, can preserve chaining. The adjudicated ordinary default is
+recovered criteria, with sharing keyed to the comparison chain and a recoverably
+new criterion allowed. Explicit and admissible existential readings remain
+distinct alternatives, not silently replaced by Context. Nai complements at
+the same bound standard; changing existential scope would express a different
+claim. Exact rows, admissibility and nonassertive target adaptation remain work
+(spec References, **Round2 agreed contracts**, Q11).
 
 “Me too” can compare distinct propositions under a role-aligning standard;
 it need not force a new Case sort or property-object reification. Occurrence
@@ -1195,10 +1211,11 @@ cross-domain existential generalization is not licensed. Ordinary `lo`,
 including `lo ro`/`lo su'o`, already supplies positive collective predication.
 That does not make descriptions interchangeable with plural quantifiers under
 negation. The current individual `su'o` ruling preserves this distinction.
-Other numeric PA's domain and exactness defaults outside the adopted P42
-profile remain explicit project choices, separate from termset products and
-from lexical argument types. P42 chooses a bounded individual-count/witness
-contract; it does not globally rewrite the counted plural helpers.
+Ordinary finite numeric PA now counts individual qualifiers globally: a fourth
+relevant qualifier falsifies exact three. This was already the panel's ordinary-
+count conclusion; residual P17 wording had not applied it. Termset products,
+other count domains and effects remain separate. P43 retires extra group
+export without globally rewriting counted plural helpers.
 
 ### 2.9 Why the reflection layer was tried and withdrawn
 
@@ -1421,18 +1438,24 @@ genuinely fought:
   might look simpler, but it would rest on the unverifiable premise
   that usage avoids it — and it breaks the answer-substitution pattern
   that motivates the reading; hence the special case.)
-- **P2 (`ro` import, provisional).** The current project policy treats import
-  as presuppositional, but the claim that ordinary usage necessarily projects
-  existence through negation/questions was not established. Original CLL16.8
-  asserts existence entailment without that projection theory; the 2002
-  And Rosta/xorxes discussion records non-import proposals and dissent;
-  maintained CLL commit492ad55a (2022-02-13) removes plain-ro import;
-  project fork9392bb81 (2026-07-12) restores import and makes it presuppositional.
-  That last wording cannot independently ratify our policy. #15 retains
-  non-import, at-issue import and presuppositional import; #35 must reconcile
-  `ro broda` with `ro da poi broda`. Existence entailment alone cannot pick
-  one projection policy. The current examples are conditional on P2, not survey
-  results (References: ro edition/discussion record).
+- **P2 (non-importing bare/restricted `ro`).** The later panel outcome and
+  human clarification select ordinary universal conditional closure for both
+  `ro broda` and `ro da poi broda`; an empty restriction is vacuous, not an
+  existence assertion or presupposition. The revised gadri expansion ratified
+  by LLG aligns those forms, and BPFK Inexact Numbers gives direct quantified
+  equations supporting the non-importing analysis. Explicit `ro lo ...`
+  retains its description binding and reference requirements; no global
+  removal of `MaxRefer`/`Every`'s library presuppositions is intended.
+  The advantage is uniform individual quantification and the ordinary pure
+  negation duality. The cost is departure from published CLL v1.1 §16.8's
+  restricted import, whose combination with other CLL flip rules was disputed
+  in 2002. Cowan/Clifford's contrary arguments remain history, not erased votes.
+  At-issue and presuppositional import remain recorded alternatives, not open
+  baseline defaults. Commit492ad55a (2022-02-13) is an unmerged non-import
+  proposal branch; fork9392bb81 separately added project presuppositional
+  wording to already-importing text. Neither is independent ratification.
+  See spec References, **Non-importing ro decision** and **ro edition/discussion
+  record**. General source/effect realization remains work, not another P2 vote.
 
 - **P5 (collections and `joi`).** Three independent choices are bundled only
   because they meet at the same boundary. Bare collection bases remain
@@ -1491,18 +1514,17 @@ genuinely fought:
   split-normality witness.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (residual termsets and numeric PA).** Original CLL16.7 supplies the explicit
+- **P17 (provisional termsets; former numeric default retired).** Original CLL16.7 supplies the explicit
   dog/man full product. Preserve that current termset policy while recording its
   numeric-coordinate scope; pure ordinary su'o coordinates have the joint
   individual locus of L5.3, not an implicit counted-plural selection. Record the
   collective cost: six pairwise predications need not follow from three people
   collectively moving two pianos. Equal scope alone is no theorem of distribution.
-  Ordinary numeric PA's individual/plural nuclear domain and global/witness-only
-  exactness outside P42 are separate choices. The retained residual non-`su'o` numeric mapping is
-  provisional neutral witness selection, inspired by solpahi's reform—not a
-  proved dominant xorlo usage or uniquely compositional anaphora policy.
+  Ordinary finite numeric PA uses individual global exactness (§4.10), not
+  witness-local selection. The former residual numeric mapping was inspired
+  by solpahi's reform, not established xorlo, and is retired as the default.
   Counted coordinate witness collections do not force a plural nuclear scope.
-  The provisional selection policy remains convenient because its explicit
+  The historical selection policy was convenient because its explicit
   witness binding composes directly with the existing export and product
   interfaces; that is an architectural reason, not unique necessity or source
   ratification.
@@ -1511,11 +1533,42 @@ genuinely fought:
   while descriptions still provide collective arguments. The published
   SUHO/ARCHIVE reports preserve countermodels and the rejected overclaims.
 
-- **P42 (ordinary lower-bound witnesses).** See §1.6a. The human's September8
+- **P42 (retired ordinary lower-bound witnesses).** See §1.6a. The human's September8
   application instruction adopts the scoped RI RESULT-v2 policy, not the
   reviewers' confidence levels as a vote or the broader R2/C_fin/model programme.
   Count truth, reference output, resolved interpretation and admissible witness
-  assignments are separate; the new pin does not make a missing lowering exist.
+  assignments were separate; its retirement under P43 does not erase the
+  evidence or retrospectively complete its former construction.
+
+- **P43 (conservative baseline and explicit profiles).** The human's September10
+  trajectory adoption and application instruction retain ordinary existential/
+  independent-reference continuity without synthesizing outward numerical
+  groups or dependent families. This removes extra export contracts rather than
+  requiring a C/V recovery choice at construction. The cost is loss of some
+  familiar bare continuations; lo-su'o-n supplies a positive descriptive
+  alternative under stated premises, not universal equivalence. Global exact
+  count truth and P2's non-importing universal are retained; their remaining
+  source/numerical interfaces stay separate. Open answer slots, permitted quotation direction, dependencies and
+  partial uses still owe shared machinery. See spec §4.10/§5.6 and References,
+  **Conservative profile adoption and ordinary exactness**.
+
+- **P44 (bare me'i defaults to ro).** The human adopts the BPFK-specific
+  less-than-all convention rather than CLLv1.1 §18.9's blanket pa default.
+  Its explicit definition, omitted-bound rule and example, plus the recovered
+  2002 advocacy and 2004 drafting, are stronger evidence than treating the
+  old shorthand as immune to correction. Categorical symmetry supplies a
+  useful distinct short form for not-all; synonymy alone would not prove the
+  pa alternative wrong. The compatibility cost is that a CLL reader could
+  understand bare me'i as zero; explicit me'i pa and no retain that meaning.
+  The core negates IndividualEvery, rather than comparing infinite
+  cardinalities: a proper subset may have the same cardinality as its domain.
+  Default choice, existence requirements and reference accessibility remain
+  distinct; the new rule neither adds a positive satisfier nor exports its
+  counterexample. Strong contrary usage evidence or a concrete compositional
+  defect can motivate reconsideration, not merely missing ratification metadata.
+  No new corpus-prevalence claim is made. See spec References, **Bare me'i
+  default: P44 adoption and history**, for original sources and rejected
+  import packages; the broader 2002 debate was not unanimous.
 
 - **P8 vs the present-tense temptation.** CLL
   ch. 10 makes tense optional; "untensed = present" is an anglophone
@@ -1643,9 +1696,14 @@ genuinely fought:
   tolerance would erase the rounding reading (suffix `ji'i` with
   `ma'u`/`ni'u` direction) that CLL states. The retained point-valued family distinguishes tolerance from rounding but
   fails the intended supertruth of approximate equality to a fixed number over
-  a non-singleton region. Attested `du`/arithmetic and inner-count uses require
-  a repaired interpretation. Same-value reuse differs from independent values;
-  sources do not choose interval arithmetic, unreduced syntax, or a full reducer.
+  a non-singleton region. It is superseded by the Q08 claim-level constraint
+  direction: vague tolerance, an exact constrained value inside the claim,
+  ordinary equality/arithmetic there. Actual counts/identified values are tested,
+  not reselected. Compatibility is a chosen cost, not certainty about two
+  independent measurements. Aliases share one value; shared tolerance alone
+  does not correlate error. Preserve unreduced expressions when no further
+  reading is established, without a universal precision floor or full reducer.
+  Typed scope/effect/cardinal/retention realization remains work (spec §12/§14).
 - **P39 (`CoveredBy` placement).** The dog-plus-cat countermodel requires a
   no-residue law, but it does not justify making descriptions stricter than
   predication. Official `lo` and the BPFK gadri equation identify the two;

@@ -223,8 +223,8 @@ components/members are an ordinary non-maximal `Refer` plurality of the
 description, delimited by `Local` because that base is not a second surface
 referent (P5). Group descriptors use `CompleteGunmaAt`; set membership is
 exact. Inner PA counts the base, outer PA counts groups/sets.
-Context or explicit `ro`/`MaxRefer` may supply the maximal base, but the bare
-gadri does not.
+Context, explicit inner/descriptive `ro`, or library `MaxRefer` may supply
+the maximal base, but the bare gadri and bare outer `ro` do not.
 
 ```lisp
 ; loi gerku cu sruri lo zdani — an ordinary base bound first
@@ -439,13 +439,14 @@ the clause on the resultant object.
 
 ### ro (PA)
 
-Under provisional P2: importing `Every`, including maximal-witness export.
-Bare `ro da` is mathematical ∀. Import/projection and the restricted-variable
-bridge remain Q03, not a settled CLL/xorlo inference.
+Under P2, bare `ro broda` and restricted `ro da poi broda` use the same
+non-importing individual universal. An empty restriction is vacuous. Explicit
+`ro lo ...` retains its independently bound description; it is not replaced
+by a fresh MaxRefer and its reference requirements are not erased.
 
 ```lisp
 ; ro gerku cu bajra
-(Every {λ [$x :: Entity] (gerku $x)}
+(IndividualEvery {λ [$x :: Entity] (gerku $x)}
        {λ [$x :: Entity] (Close (bajra $x))})
 ```
 
@@ -463,15 +464,18 @@ For an anaphor-free resolved reading:
 ```
 
 At least one is not exactly one. This closure exports nothing by itself;
-general positive witness export remains Q01 work, separately from P6's selected
-strong fragment. For compound positive lower bounds `su'o n`, n ≥ 2, P42
-adopts the bounded finite, total, pure individual witness policy: count the
-qualifiers separately and admit any clean selected group of the allowed size;
-`ri` retains that group with no fresh choice. No prior salience or exactly-
-minimum group is required, and S may equal the complete H. The general
-source/force mapping and clean-reference premise remain explicit obligations.
-This does not turn ordinary singular `su'o` into plural quantification.
-**See.** [Spec §4.10/§5.6/§12/§14](spec.md), P42; [decisions.md](decisions.md).
+general positive existential continuity remains Q01 work, separately from
+P6's supported in-scope strong fragment. Compound lower bounds use the finite
+individual count table (§4.10); P43 does not export a new group for a later
+out-of-scope ri. The older P42 selected-S policy is retired. An explicit
+`lo su'o n` description supplies its own counted reference under L3.9 and
+preserves that binding where accessible. Ordinary su'o is not plural quantification.
+Bare `su'o` abbreviates `su'o pa`; these are the same ordinary existential
+reading and must not receive different source statuses. Individual uptake
+after larger counts remains a separately unprovided source reading. The
+completed BPFK comparison supplies the recursive truth definition, not a later
+ri selection rule or a proof that such a rule is impossible; no group export follows.
+**See.** [Spec §4.10/§5.6/§12/§14](spec.md), P43; [decisions.md](decisions.md).
 
 ### su'oi / ro'oi (experimental PA)
 
@@ -483,24 +487,18 @@ unrestricted plural existence.
 
 ### Digits: pa re ci vo mu xa ze bi so no (PA)
 
-Under residual provisional non-su'o P17, outside P42's adopted bounded profile,
-outer numeric quantifiers select witness sets of that cardinality
-under a counting basis — neutral witness-set selection, not
-distributive and not global (P17's documented divergence; the
-CLL-literal alternatives are individual/global-exact). This project choice is
-not established xorlo. Ordinary no uses IndividualNo; inner no uses PluralNo.
-Counted No remains a separate helper.
-P42 separates individual count truth from the anaphoric witness: in the R2
-global-exact comparison, `ci gerku cu sipna` is false with four relevant
-sleepers even though a triple is available after `su'o re`. That false verdict
-belongs to the **unadopted R2 proposal**, not the current bare-`ci` default:
-under the still-live residual P17 mapping, a three-dog witness is allowed and
-a fourth sleeper does not falsify the sentence. P42 adopts no new exact-numeral
-default or the broader R2 programme, and does not redefine the library's
-neutral-plural helpers. The following is explicitly a residual P17 specimen.
+Standard finite exact numerals count all individual qualifiers within the
+fixed resolved restriction. Four relevant sleepers make `ci gerku cu sipna`
+false; finding a triple proves at least three, not exactly three. For pure
+operands the count uses `GlobalExactly`, not the plural helper `Exactly`.
+P43 forbids new numerical-group export beyond the quantifier's scope.
+Ordinary no uses IndividualNo; inner no uses PluralNo; counted No remains a
+separate helper. P17's former default is retired, while its termset questions
+and the explicit full-plural profile remain separate. The following is a
+**plural/library comparison only**, not a standard bare-PA lowering.
 
 ```lisp
-; re prenu cu bevri lo pipno
+; full-plural/library comparison: re prenu cu bevri lo pipno
 (Bind {$w :: Referents Entity}
       👉(SelectExactly 2 (λ {$x :: Entity} (prenu $x)))👈
   (Bind {$p :: Referents Entity}
@@ -508,39 +506,46 @@ neutral-plural helpers. The following is explicitly a residual P17 specimen.
     (Close (bevri $w $p))))
 ```
 
-**See.** [Spec §4.10, §5.6](spec.md), pin P17.
+**See.** [Spec §4.10, §5.6](spec.md), pins P17/P43.
 
 ### su'e / za'u / me'i (PA)
 
-For the residual counted-helper profile, at-most / more-than / fewer-than:
-`za'u n` is the exporting
-`MoreThan` (an `AtLeast n+1` selection, same witness-set discipline);
-`su'e n` and `me'i n` are the bounded *tests* `AtMost`/`FewerThan`
-(spec §12) — negations of selections, which select nothing and export
-nothing.
+With an explicit bound n, standard finite individual su'e n, za'u n and
+me'i n compare the total qualifiers with n: at most, more than, or fewer than.
+`za'u pa` and
+`su'o re` are equivalent lower bounds; `za'u re` means more than two.
+No new numerical group escapes for later anaphora (P43).
+The library's counted-plural AtMost/MoreThan/FewerThan definitions remain
+distinct comparison forms, not automatic standard surface mappings. Other
+numeric/effectful domains and the full source mapping remain explicit work.
+Bare su'e/za'u default to pa. Bare me'i defaults to ro (P44), so its pure
+individual reading is `(¬ (IndividualEvery P Q))`, not a finite-cardinality
+comparison. Empty P gives false; nonempty P with no Q-satisfiers gives true.
+Explicit me'i pa remains fewer-than-one/zero. The human-adopted BPFK default
+departs from CLLv1.1's blanket pa rule; source/history and costs are recorded
+in spec References/rationale P44. It introduces no new later-RI source and
+does not supply missing larger-construction mappings.
 
-Over the fixed natural-number counts in P42, equivalent lower bounds such as
-`za'u pa` and `su'o re` have the same allowed witness sizes. `za'u re`
-instead means more than two. The full source mapping remains owed; upper-
-bound/zero/failure export is not decided by this lower-bound pin.
-
-**See.** [Spec §4.10, §5.6](spec.md).
+**See.** [Spec §4.10, L5.2, §5.6, P44](spec.md).
 
 ### so'a / so'e / so'i / so'o / so'u (PA)
 
-The vague-magnitude series: selections whose cardinality condition is
-a `Vague`-parameterized region on the count scale.
+The vague-magnitude series constrains the count scale by a
+`Vague`-parameterized region. The reference-level selection helpers remain
+comparisons; their standard individual-count adaptation is the explicit
+L5.28 gap, not an implicit ordinary plural-quantifier rule.
 
 **See.** [Spec §6.4–6.5](spec.md).
 
 ### ji'i (PA)
 
-Approximation, position-indexed (P37): both positions denote
-the retained candidate `Number`-valued `Vague` families—prefix/medial over the
-`AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
-preimage (stated digits exact by construction), directionally under
-`ma'u`/`ni'u`. Approximate equality and inner-count compatibility remain
-adequacy debts.
+Approximation, position-indexed (P37): tolerance versus rounding constrains
+an exact unknown value within the claim at each vague tolerance profile.
+Equality stays exact; actual cardinalities/identified measurements are tested,
+not replaced. Aliases share one value; independent sites need not share error.
+The old Number-valued point family is superseded. Typed profile, arithmetic,
+scope/effect and retention realization remain explicit work, with no universal
+precision floor or required full simplifier.
 
 **See.** [Spec §4.10, §6.4, §12](spec.md), pin P37.
 
@@ -550,12 +555,13 @@ Threshold quantifiers: `ThresholdKind` (TooManyK / EnoughK / TooFewK)
 over the count scale—a Vague threshold constrained by a Context purpose.
 
 ```lisp
-; du'e gerku cu bajra
+; Reference-level library comparison, not a completed standard
+; du'e gerku cu bajra lowering (L5.28).
 (👉TooMany👈 (λ {$x :: Entity} (gerku $x))
   (λ {$w :: Referents Entity} (Close (bajra $w))))
 ; TooMany is defined (catalog 2.13): a Context standard and a Vague
-; admissible threshold, then MoreThan — the comment explains, the
-; term above is already complete
+; admissible threshold, then MoreThan. The library term is complete;
+; its ordinary individual-count surface adaptation is separately owed.
 ```
 
 **See.** [Spec §6.4](spec.md); [catalog](catalog.md).
@@ -587,11 +593,9 @@ over a sequence, but cross-clausal place-linking is gap-registered.
 
 ```lisp
 ; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL Example 19.8
-(Presuppose (∃ (λ {$x :: Entity} (prenu $x)))
-  👉(∀ (λ {$x :: Entity} (→ (prenu $x)
-     (∃ (λ {$y :: Entity} (Close (patfu $y $x)))))))👈)
-; truth-condition illustration under the candidate importing bridge;
-; ro da poi versus ro broda is still Q03, not a completed universal lowering.
+👉(∀ (λ {$x :: Entity} (→ (prenu $x)
+     (∃ (λ {$y :: Entity} (Close (patfu $y $x)))))))👈
+; non-importing restricted universal under P2; no prior person reference.
 ; Prenex order = scope order: ro da outscopes su'o de.
 ```
 
@@ -599,10 +603,11 @@ over a sequence, but cross-clausal place-linking is gap-registered.
 
 ### da'a (PA)
 
-All-but-n (default one): the `SelectAllBut` selection — a neutral
-witness set whose remainder counts exactly n; the omitted
-individuals are not a parameter and may vary under distributive
-scope.
+All-but-n (default one). The finite pure standard mapping counts exactly n
+counterexamples, using GlobalExactly with a negated individual nuclear
+predicate (L5.4). It introduces no outward group. SelectAllBut retains its
+separate neutral plural-selection meaning and explicit binding scope; it
+is not the standard bare-da'a lowering.
 
 **See.** [Spec §12, §11](spec.md); [catalog 1.27](catalog.md).
 
@@ -637,7 +642,7 @@ unassigned brodV are CLL's schematic sample predicates.
 ### ce'e (CEhE), nu'i / nu'u (NUhI/NUhU)
 
 Pure ordinary su'o coordinates use a joint individual existential locus (L5.3).
-Applicable provisional numeric coordinates use co-selected counted witnesses
+The explicitly scoped provisional numerical-termset profile uses co-selected counted witnesses
 and their full product, with no coordinate maximality (P17). Mixed and external
 export cases still need their specific rule.
 
@@ -674,8 +679,9 @@ Formed frames/sites are shared rather than copied. The examples below select
 invariant description bindings outside the connective. One shared Context site
 reuses its value at equal dependency tuples, but may vary at different declared
 tuples; it does not prove that `mi .e ti klama` always names one destination.
-The common-tail dependency policy remains Q09/#16, and dependent descriptions
-obey P41 rather than an unconditional outer-binding rule.
+The common-tail default is minimal/invariant, subject to required and declared
+dependencies (Q09/#16); application arguments are not automatically dependencies.
+Dependent descriptions obey P41 rather than an unconditional outer-binding rule.
 
 ```lisp
 ; mi .e do nelci lo gerku — one dog referent, both conjuncts see it
@@ -1057,19 +1063,19 @@ Recency anaphora: ⊳ resolved by CLL ch. 7 counting over accessible
 referents before the calculus; the term sees the binding, never a
 search (P16). Source order of fills feeds the counting.
 Ri preserves its resolved antecedent reference, not a smaller or larger group
-chosen to suit the continuation. P42 now fixes ordinary selected-witness uptake
-for its bounded positive plural lower bounds; count truth remains separate.
+chosen to suit the continuation. P43 preserves accessible bindings but
+retires P42's newly exported numerical groups and governor-external families.
 Outer PA in `ro ri` or `re ri` acts on that same reference, but the generic
 PA+KOhA composition and eligible-introduction/recency rule remain L8.14's gap.
 The bare-ri skip rule alone does not decide whether a complete `ro ri` sumti
 can be the source of a later ri.
-When a resolved strong reading binds a witness outside its governor, P6 lowers
-that selected construal to a joint locus. This is not an equivalent rewrite of
-the original selection computation; the retroactivity cost and
-plural-information-state candidate are in the gap register, and no weak
-selected-witness reading is silently added.
+P6's supported in-scope strong reading remains; the former retroactive
+cross-sentence joint-locus rescue is not a baseline exception to P43.
+The plural-information-state extension and other missing source/force laws
+remain explicit. Open ma slots and later failed cardinality are not static
+scope errors, and no new weak selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P42.
+**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P43.
 
 ### ko'a … fo'u (KOhA)
 
@@ -1288,9 +1294,12 @@ between the new x1 and the old abstraction at `fai`.
 
 ### kau (UI)
 
-Indirect-question marker: `ContextualAnswer` — the answerhood object,
+Implicit-answer use: `ContextualAnswer` — the answerhood object,
 exhaustivity **absent** (weakest truth conditions; strengthenings
 lexical/pragmatic/explicit; P9).
+Explicit-value kau instead uses the supplied value once at its marked locus,
+with a typed answer selection; it must not create an unconstrained contextual
+answer. The general source/effect/query-aware construction remains L10.3/§14 work.
 
 ```lisp
 ; mi djuno lo du'u ma kau klama
@@ -1454,10 +1463,13 @@ the three things a treatment must define (spec §14's entry).
 Library discourse relations between performed occurrence handles (`Contrast`,
 `Addition`, `Parallel`, `Elaboration`, …), displayed beside the host
 occurrence. Raw act values remain explicit metalinguistic alternatives.
-Their complete focus lowering remains open: old Additive/Only missed plural
-competitors and excluded own subparts. Gismu-based mintu/drata/simsa/frica/jmina
-reductions are candidates. No strict ji'a novelty law or unique mi'u standard
-policy was found.
+Pure po'o now uses the same-level host-plus-exclusion Only rule: both at issue,
+own subparts exempt and relevant overlapping outsiders permitted. General
+effectful focus lifting remains work. Ji'a separately displays addition without
+strict novelty. Recovered discursive criteria are the ordinary default, shared
+by comparison chain; nai complements at the same bound criterion. Explicit and
+admissible existential readings remain distinct. Exact gismu rows, typed targets
+and sharing/effect implementation remain owed.
 
 ```lisp
 ; .i mi klama .i ku'i do stali — no prior/following-discourse
@@ -1702,17 +1714,19 @@ sumti` through it).
 
 ### mei / moi / si'e / cu'o / va'e (MOI)
 
-Number selbri: the MOI relation families — `MeiRel κ n` (group completely
+The existing displayed number-selbri rows are `MeiRel κ n` (group completely
 constituted at a constrained group basis from an n-membered set),
 `MoiRel` (n-th under a Context-recovered pure
 ordering), `SiheRel` (portion), `CuhoRel` (opaque probability,
 0 ≤ n ≤ 1, no probability calculus — P29), `VaheRel` (scale
 position). `me X me'u MOI` composes.
 
-The complete-member clause is defined for positive `mei` values. Experimental
-`nomei` proposes an empty mass/0-tuple, but the baseline's component carrier
-is nonempty `Referents<T>`; its null-group/empty-cover case is therefore an
-explicit §14 gap, not a covert empty plurality.
+The displayed Group clause is only one instance. The selected further contracts
+are direct-reference positive mei and a separate x2-only exact Set-count row
+for every Natural n, selected before SE/filling. The latter can count a supplied
+sole empty Set at zero without an empty Referents value; its full typed lowering,
+empty-lo'i and wider nobody/memberless-Group readings remain §14 work. Nonnumeric
+moi has the recovered typed-correspondence direction, not forced numeric coercion.
 
 ```lisp
 ; lei mi ratcu cu cimei — CLL Example 18.81; le MI ratcu = the

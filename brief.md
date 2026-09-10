@@ -231,11 +231,17 @@ deixis, plural focus/discursive completion, approximate equality/cardinality,
 and model/force obligations. Ordinary singular `su'o`, legitimate Skolem-like
 description dependence and persistent reference under `na` are settled
 distinctions; their remaining interface work must not reopen those distinctions.
-The September8 P42 ruling also fixes selected-witness anaphora for the bounded
-finite, total, pure individual positive-lower-bound profile: no prior salience,
-minimum-size or complete-population requirement, with the same witness retained
-through its continuation and count truth kept separate. Its general source/
-force mapping and clean-reference construction remain explicit work.
+The September10 trajectory adopts a conservative xorlo baseline over a shared
+plural-capable core, with explicit full-plural/experimental mappings. P43 retires
+P42's extra numerical-group/family export while retaining ordinary existential
+continuity and independently bound references. Standard finite exact/range/
+complement quantifiers count individual qualifiers; bare/restricted ro is
+non-importing, while explicit descriptions retain their own reference conditions.
+Bare me'i defaults to ro/not-all (P44); explicit me'i pa still means zero.
+The round2 agreements are recorded as selected contracts, with pure Only now
+defined and the remaining model/lexical/force construction explicitly unfinished.
+The lo-su'o-n descriptive alternative,
+typed source/force realization and remaining profile gaps are stated explicitly.
 The decision ledger records the status chronology: C25 was expressly adopted,
 the su'o recommendation is applied under the synchronization authorization,
 and the latest human clarification settles dependent-lo legitimacy. Review
