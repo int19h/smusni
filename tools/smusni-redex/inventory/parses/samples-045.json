@@ -7,7 +7,7 @@
         "gentufa",
         "--format",
         "json",
-        "lo no prenu cu jmaji"
+        "me'i gerku cu blabi"
       ],
       "index": 1,
       "parse": {
@@ -42,10 +42,10 @@
                                                                 "Plain": {
                                                                   "PlainWord": {
                                                                     "Gismu": {
-                                                                      "phonemes": "jmáji",
+                                                                      "phonemes": "blábi",
                                                                       "span": [
-                                                                        15,
-                                                                        20
+                                                                        14,
+                                                                        19
                                                                       ]
                                                                     }
                                                                   }
@@ -73,8 +73,8 @@
                                     "Cmavo": {
                                       "phonemes": "cu",
                                       "span": [
-                                        12,
-                                        14
+                                        11,
+                                        13
                                       ]
                                     }
                                   }
@@ -92,65 +92,45 @@
                                                 "SimpleSumti": {
                                                   "base_sumti": {
                                                     "SumtiBase": {
-                                                      "DescriptorWithGadriSumti": {
-                                                        "description": {
-                                                          "Plain": {
-                                                            "PlainWord": {
-                                                              "Cmavo": {
-                                                                "phonemes": "lo",
-                                                                "span": [
-                                                                  0,
-                                                                  2
-                                                                ]
+                                                      "DescriptorWithoutGadriSumti": {
+                                                        "quantifier": {
+                                                          "PaRunQuantifier": {
+                                                            "number": {
+                                                              "first_number": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "me'i",
+                                                                      "span": [
+                                                                        0,
+                                                                        4
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
                                                               }
                                                             }
                                                           }
                                                         },
-                                                        "tail": {
-                                                          "leading_tail_elements": {},
-                                                          "tail": {
-                                                            "QuantifierRelationDescriptionTail": {
-                                                              "quantifier": {
-                                                                "PaRunQuantifier": {
-                                                                  "number": {
-                                                                    "first_number": {
-                                                                      "Plain": {
-                                                                        "PlainWord": {
-                                                                          "Cmavo": {
-                                                                            "phonemes": "no",
-                                                                            "span": [
-                                                                              3,
-                                                                              5
-                                                                            ]
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                }
-                                                              },
-                                                              "selbri": {
-                                                                "UntaggedSelbri": {
-                                                                  "CoSelbri": {
-                                                                    "leading_selbri": {
-                                                                      "leading_selbri": {
-                                                                        "first_unit": {
-                                                                          "first": {
-                                                                            "LinkedTanruUnit": {
-                                                                              "base": {
-                                                                                "base": {
-                                                                                  "WordTanruUnit": {
-                                                                                    "Plain": {
-                                                                                      "PlainWord": {
-                                                                                        "Gismu": {
-                                                                                          "phonemes": "prénu",
-                                                                                          "span": [
-                                                                                            6,
-                                                                                            11
-                                                                                          ]
-                                                                                        }
-                                                                                      }
-                                                                                    }
+                                                        "selbri": {
+                                                          "UntaggedSelbri": {
+                                                            "CoSelbri": {
+                                                              "leading_selbri": {
+                                                                "leading_selbri": {
+                                                                  "first_unit": {
+                                                                    "first": {
+                                                                      "LinkedTanruUnit": {
+                                                                        "base": {
+                                                                          "base": {
+                                                                            "WordTanruUnit": {
+                                                                              "Plain": {
+                                                                                "PlainWord": {
+                                                                                  "Gismu": {
+                                                                                    "phonemes": "gérku",
+                                                                                    "span": [
+                                                                                      5,
+                                                                                      10
+                                                                                    ]
                                                                                   }
                                                                                 }
                                                                               }
@@ -190,12 +170,203 @@
           }
         }
       },
-      "source_comment": "lo no prenu cu jmaji — inner-no                       [pin P22]",
-      "surface": "lo no prenu cu jmaji",
+      "source_comment": "me'i gerku cu blabi — bare me'i = not-all              [pin P44]",
+      "surface": "me'i gerku cu blabi",
+      "unresolved": false
+    },
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "me'i pa gerku cu blabi"
+      ],
+      "index": 2,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "blábi",
+                                                                      "span": [
+                                                                        17,
+                                                                        22
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "cu": {
+                                "Plain": {
+                                  "PlainWord": {
+                                    "Cmavo": {
+                                      "phonemes": "cu",
+                                      "span": [
+                                        14,
+                                        16
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "DescriptorWithoutGadriSumti": {
+                                                        "quantifier": {
+                                                          "PaRunQuantifier": {
+                                                            "number": {
+                                                              "continuations": [
+                                                                {
+                                                                  "NumberWordPaContinuation": {
+                                                                    "Plain": {
+                                                                      "PlainWord": {
+                                                                        "Cmavo": {
+                                                                          "phonemes": "pa",
+                                                                          "span": [
+                                                                            5,
+                                                                            7
+                                                                          ]
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              ],
+                                                              "first_number": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "me'i",
+                                                                      "span": [
+                                                                        0,
+                                                                        4
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "selbri": {
+                                                          "UntaggedSelbri": {
+                                                            "CoSelbri": {
+                                                              "leading_selbri": {
+                                                                "leading_selbri": {
+                                                                  "first_unit": {
+                                                                    "first": {
+                                                                      "LinkedTanruUnit": {
+                                                                        "base": {
+                                                                          "base": {
+                                                                            "WordTanruUnit": {
+                                                                              "Plain": {
+                                                                                "PlainWord": {
+                                                                                  "Gismu": {
+                                                                                    "phonemes": "gérku",
+                                                                                    "span": [
+                                                                                      8,
+                                                                                      13
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "me'i pa gerku cu blabi — explicit fewer-than-one, finite pure profile",
+      "surface": "me'i pa gerku cu blabi",
       "unresolved": false
     }
   ],
-  "fence_sha1": "7549d4565ac0ab1e545914425fc678ca69065913",
+  "fence_sha1": "731ea98abcb88f842b7f760815976812fc9d6142",
   "jbotci_version": "jbotci 0.1.0",
   "ordinal": 45,
   "schema": "smusni-gentufa-parse-fixture-1",

@@ -5,6 +5,49 @@ static laws in `spec.md`. It is not a semantic authority: when the checker and
 the documents disagree, the discrepancy must be diagnosed against the live
 normative text.
 
+### Adopted document synchronization (E01, 2026-09-10)
+
+The current corpus contains 95 fences (78 specimen fences / 99 terms). The
+five `IndividualSome/No/Every` and `PluralSome/No` closures and pure `Only`
+have general Redex equations and typed interfaces. `Massify` uses the current
+reference-level existential co-reference equation, rather than cardinal-one
+selection. `GroupBasis<T>` expands to its declared decomposition-basis alias.
+
+The PA-run decoder consumes each numeric continuation structurally. Standard
+individual exact/range/complement counts use pure comprehensions after L0.1;
+bare `me'i` uses universal negation without `Card`. Standard `ro`/`su'o`/`no`
+use individual closure; inner `no` uses the head's plural property. Positive
+inner cardinal descriptions use a reference property and their stated unit
+basis, sharing the inert `le` property. The original counted library helpers
+keep their meanings but do not supply retired standard witness-set mappings.
+
+This is bounded lowering, not a general source/Host model. The count adapter
+supports one count per clause (including under an outer individual universal)
+with the existing validated hoist plan. General multiple-count, dependent
+description scope, mixed/compound PA, fractional/non-finite, and source/force
+interfaces remain outside this adapter's implemented fragment. Threshold
+adaptation is the explicit L5.28 gap. F01 is not implemented.
+
+`RR` now has all nine documented fields. `references` explicitly lists each
+description/name occurrence by its first resolved source offset, for example
+`(references ((18 invariant)))`. The adapter checks complete, unique coverage;
+it supplies no invariant default. A profile such as
+`(18 (dependent (governors 0) (scope 0)))` names resolved binding-source offsets.
+Malformed locations fail; a well-formed dependency profile is reported as an
+unimplemented L5.30 scope after the other RR fields have been checked. These
+offsets are adapter metadata and never core terms. Existing fixtures explicitly
+select their documented invariant readings.
+
+`inventory/source-sync-20260910.sexp` records retired source claims, comparisons
+retained as typed core specimens, and changed coverage populations. L5.28's
+reclassification as a gap accounts for the cited-rule count changing 70→69;
+no live lowering citation is waived. Original corpus and benchmark snapshots
+are retained under `inventory/history/`. `waiver-sync-20260910.sexp` preserves
+the previous field-scoped parity findings and their case-identity transport.
+The existing bounded pass-through rules and accepted legacy/Redex differences
+remain visible in the reports; a green run does not imply complete typing or
+formal-authority transfer. The separate Lean pilot is not regenerated here.
+
 Milestone 1 covers the declaration mirror, exhaustive classification of the
 Markdown `lisp` fences in `spec.md` and `samples.md`, the concrete reader,
 elaboration, extrinsic typing, and the static regression ledger. Fences in
@@ -143,9 +186,9 @@ M3.
 ## Executable lowering (#9 M3)
 
 M3 adds a derived lowering gate for live L1, L3, and L5 plus the L0.1 premise
-(47 lowering judgments after L5.30; fixtures are explicitly not exhaustive).
+(46 current lowering judgments; fixtures are explicitly not exhaustive).
 `inventory/lowering.sexp` identifies candidate fence keys, while one tracked
-`gentufa` JSON fixture and one eight-field `RR` S-expression fixture per fence
+`gentufa` JSON fixture and one nine-field `RR` S-expression fixture per fence
 preserve ordered cases. The same refresh maintains offline gentufa fixtures for
 structural-classifier and in-place-argument regressions, so the ordinary check
 remains independent of a local jbotci installation. Refresh parser fixtures
@@ -200,7 +243,9 @@ failure counts are printed. The report
 prints the number of eligible cases for which the gentufa/RR translation
 actually formed a Redex source view.
 
-M4's marked-global branch reads `global-exact` only from `RR.readings`. It
+The finite exact-count branch reads `global-exact` from `RR.readings`; range,
+complement, and bare-not-all profiles use `individual-count`. These record
+the resolved profile, not an optional witness-local alternative. The branch
 derives the omitted sites of both restrictor and nuclear rows from their
 selected fixture rows, using role-qualified identities so equal operand rows
 remain distinct. It requires an exact `RR.sites` set, rejects duplicate or
@@ -234,7 +279,7 @@ rather than describing it as randomized testing.
 Run `racket tools/smusni-redex/lower.rkt --probe-all` to inspect every surface
 specimen with the installed jbotci version. Existing tracked parse/RR fixtures
 are labelled `verified`. Every other case is parsed live and receives a
-generated eight-field skeleton labelled `unverified-skeleton`; such a result is
+generated nine-field skeleton labelled `unverified-skeleton`; such a result is
 discovery-only and is never reported as a match or accepted as promotion
 evidence. The command writes no fixture and is not part of `tools/check-smusni`.
 

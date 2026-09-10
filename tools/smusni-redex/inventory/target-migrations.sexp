@@ -1,5 +1,8 @@
 (smusni-target-migrations
  1
+ (migration (family B1) (source "B.infer-application.5aa652d101") (targets "E01-T-Only") (extent full) (reason "E01 ports the adopted pure reference-level host-plus-exclusion signature; effectful frames are rejected."))
+ (migration (family B1) (source "B.infer-application.6e12ec0ba8") (targets "E01-T-Closure") (extent full) (reason "E01 ports all five ordinary closure signatures with pure restrictors, compatible nuclei and no additional outward reference effect."))
+ (migration (family B1) (source "B.infer-application.a3c76a82e7") (targets "E01-T-Comparison") (extent full) (reason "E01 ports numeric less-than and less-or-equal with both operand types checked."))
  (migration (family B1) (source "B.infer-application.0470265b29") (targets "B1-T-Negation") (extent full) (reason "The target clause replaces unary legacy negation and adds the adopted refer-masking closure."))
  (migration (family B1) (source "B.infer-application.1058ba945b") (targets "B1-T-Distrib") (extent full) (reason "The target clause types the same property/reference distribution boundary."))
  (migration (family B1) (source "B.infer-application.32e6d797b9") (targets "B1-T-Every") (extent full) (reason "The target Every clause replaces the member-level universal branch and records MaxRefer import."))

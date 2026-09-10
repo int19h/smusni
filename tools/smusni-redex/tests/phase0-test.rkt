@@ -36,11 +36,11 @@
 ;; that a newly added head is detected rather than silently absorbed.
 (define observations (extract-definition-observations))
 (define definitions (load-definition-ledger))
-(check-equal? (length observations) 85)
+(check-equal? (length observations) 89)
 (check-equal? (apply + (map (compose length definition-observation-lines)
                             observations))
-              94)
-(check-equal? (length definitions) 85)
+              98)
+(check-equal? (length definitions) 89)
 (check-equal? (definition-ledger-findings observations definitions) '())
 (define added-observation
   (definition-observation 'NewTomorrowDefinition "12" '(9999)
@@ -94,11 +94,11 @@
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-status entry) 'executable))
                      definitions)
-              76)
+              80)
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'none))
                      definitions)
-              66)
+              64)
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'legacy-hybrid))
                      definitions)
@@ -110,11 +110,11 @@
 (check-equal? (count (lambda (entry)
                        (eq? (definition-entry-port-state entry) 'ported))
                      definitions)
-              12)
+              18)
 (check-equal? (count (lambda (entry)
                        (pair? (definition-entry-equation-ranges entry)))
                      definitions)
-              18)
+              24)
 (define covered-by-definition
   (findf (lambda (entry)
            (string=? (definition-entry-id entry) "D4.8.CoveredBy"))
@@ -285,8 +285,8 @@
 (define decision-ledger (load-infer-decisions))
 (define live-value-helpers (extract-infer-value-helpers))
 (define value-helper-ledger (load-infer-value-helpers))
-(check-equal? (length live-branches) 91)
-(check-equal? (length branch-ledger) 91)
+(check-equal? (length live-branches) 94)
+(check-equal? (length branch-ledger) 94)
 (check-equal? (length live-helpers) 34)
 (check-equal? (length helper-ledger) 34)
 (check-equal? (length live-decisions) 23)
@@ -297,7 +297,7 @@
 (check-equal? (count (lambda (entry)
                        (eq? (branch-entry-class entry) 'semantic-clause))
                      branch-ledger)
-              72)
+              75)
 (check-equal? (count (lambda (entry)
                        (eq? (branch-entry-class entry) 'auxiliary))
                      branch-ledger)
@@ -426,7 +426,7 @@
 ;; roots. Phase 0's new side is deliberately the old engine again, proving the
 ;; oracle plumbing with zero implicit differences and an empty waiver ledger.
 (define corpus (load-port-corpus))
-(check-equal? (length corpus) 337)
+(check-equal? (length corpus) 369)
 (define a0-benchmark-cases (a0-specimen-benchmark-cases corpus))
 (check-true (pair? a0-benchmark-cases))
 (check-true (< (length a0-benchmark-cases)
@@ -450,25 +450,27 @@
 (define current-a0-differential-cases (a0-differential-cases))
 (check-true a0-differential-ok?)
 (check-equal? (length a0-mechanism-cases) 29)
-(check-equal? (length current-a0-differential-cases) 84)
-(check-equal? (length (load-a0-waivers)) 36)
+(check-equal? (length current-a0-differential-cases) 113)
+(check-equal? (length (load-a0-waivers)) 32)
 (for ([item (in-list current-a0-differential-cases)])
   (define record (a0-port-record item))
   (when (eq? (port-record-status record) 'success)
     (check-equal? (port-record-derivations record) 1
                   (format "one A0 derivation for ~a" (port-case-id item)))))
-(check-true
- (a0-corpus-eligible?
+(define eligible-control
   (findf (lambda (item)
-           (string=? (port-case-id item)
-                     "27f27c1038df83b40e16a919fdaf24b405d04b04"))
-         corpus)))
-(check-false
- (a0-corpus-eligible?
+           (equal? (port-case-term item)
+                   '(SetOf (λ ($z :: Entity)
+                             (MoreThan 0 (λ ($x :: Entity) (gerku $x))
+                                       (λ ($w :: Referents Entity) (Close (jmaji $w))))))))
+         corpus))
+(define excluded-control
   (findf (lambda (item)
-           (string=? (port-case-id item)
-                     "519c65d3104d364d4363ff8b27eecdec8abe7b27"))
-         corpus)))
+           (equal? (port-case-term item) '(Assert (Close (klama Speaker))))) corpus))
+(check-not-false eligible-control)
+(check-not-false excluded-control)
+(check-true (a0-corpus-eligible? eligible-control))
+(check-false (a0-corpus-eligible? excluded-control))
 (check-equal? a0-differences '())
 (check-equal? a0-stale-waivers '())
 
@@ -505,7 +507,7 @@
 (define b1-target-migrations
   (filter (lambda (entry) (eq? (target-migration-family entry) 'B1))
           target-migrations))
-(check-equal? (length b1-target-migrations) 22)
+(check-equal? (length b1-target-migrations) 25)
 (check-equal? (target-migration-findings target-migrations) '())
 (define bad-target
   (struct-copy target-migration (first b1-target-migrations)
@@ -695,14 +697,15 @@
 (check-false duplicate-waiver-ok?)
 (check-equal? duplicate-stale (list (second duplicate-case-waivers)))
 
-;; P0.4: the tracked baseline names the exact pre-port head, 96 specimen-term
-;; executions, five warm runs, and every pre-registered trigger.
+;; P0.4: the refreshed benchmark names its source head and actual eligible
+;; specimen denominator. The original full-gate time and triggers remain.
 (match (load-port-baseline)
   [`(smusni-port-baseline 1
-     (head ,head) (corpus-sha1 ,_) (terms 96) (runs 5)
+     (head ,head) (corpus-sha1 ,_) (terms ,terms) (runs 5)
      (full-gate-ms ,(? real? full-gate))
      (triggers ,triggers ...) (modes ,modes ...))
-   (check-equal? head "e936816c9feedb9b750b6f4db9c2dd5737e7302b")
+   (check-true (regexp-match? #px"^[0-9a-f]{40}$" head))
+   (check-equal? terms (length a0-benchmark-cases))
    (check-equal? full-gate 71990)
    (check-equal? (map second triggers)
                  '(5.0 2000.0 250.0 500.0 2.0 3.0 1.5 4.0))

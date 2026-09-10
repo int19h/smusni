@@ -47,6 +47,8 @@
          structural-rule-leads
          call-with-probe-parse
          normalize-core
+         individual-count-condition
+         reference-occurrences
          redex-alpha-equivalent?
          site-signatures
          fixture-derivation-check
@@ -231,15 +233,48 @@
         ,@(for/list ([label (in-range 1 (add1 total))])
             (hash-ref fills label))))
     `(λ (,member :: Entity)
-       ,(if (eq? event-mode 'direct-event) `(Close ,application) application)))
+       ,(if (or (eq? role 'nuclear) (eq? event-mode 'direct-event))
+            `(Close ,application) application)))
   `(hoisted ,bindings
             ,(property-datum 'restrictor restrictor-member)
             ,(property-datum 'nuclear nuclear-member)))
 
+(define (individual-count-condition quantity restrictor nuclear)
+  (define member (variable-not-in (list quantity restrictor nuclear) '$individual))
+  (define (apply-property property)
+    (define components (property-components property))
+    (if components (instantiate-property components member) `(,property ,member)))
+  (define count
+    `(Card (SetOf (λ (,member :: Entity)
+                   (∧ ,(apply-property restrictor)
+                      ,(apply-property nuclear))))))
+  (match quantity
+    [(? exact-nonnegative-integer?) `(GlobalExactly ,quantity ,restrictor ,nuclear)]
+    [`(at-least ,n) `(≤ ,n ,count)]
+    [`(at-most ,n) `(≤ ,count ,n)]
+    [`(more-than ,n) `(¬ (≤ ,count ,n))]
+    [`(fewer-than ,n) `(¬ (≤ ,n ,count))]
+    [`(all-but ,n)
+     `(GlobalExactly ,n ,restrictor
+                     (λ (,member :: Entity)
+                       (¬ ,(apply-property nuclear))))]
+    ['not-all `(¬ (IndividualEvery ,restrictor ,nuclear))]
+    [_ (error 'individual-count-condition "unsupported resolved count ~e" quantity)]))
+
+(define (standard-count? quantity)
+  (or (exact-nonnegative-integer? quantity) (eq? quantity 'not-all)
+      (match quantity
+        [`(,(or 'at-least 'at-most 'more-than 'fewer-than 'all-but)
+           ,(? exact-nonnegative-integer?)) #t]
+        [_ #f])))
+
+(define (count-readings quantity)
+  (if (exact-nonnegative-integer? quantity) '(global-exact) '(individual-count)))
+
 (define (compose-global-exactly quantity force hoisted)
   (match hoisted
     [`(hoisted ,bindings ,restrictor ,nuclear)
-     (define content `(GlobalExactly ,quantity ,restrictor ,nuclear))
+     (define content (individual-count-condition quantity restrictor nuclear))
      (define body
        (case force
          [(none) content]
@@ -271,6 +306,13 @@
 
 (define-metafunction SmusniM3
   pure-out : e x -> e
+  [(pure-out plural-lexical x_P) (λ (x_ref :: Referents Entity) (x_P x_ref))
+   (where x_ref ,(variable-not-in (term x_P) '$r))]
+  [(pure-out plural-described x_P)
+   (λ (x_ref :: Referents Entity)
+     (SpeakerDescribes x_ref (λ (x_unit :: Referents Entity) (x_P x_unit))))
+   (where x_ref ,(variable-not-in (term x_P) '$r))
+   (where x_unit ,(variable-not-in (term (x_P x_ref)) '$y))]
   [(pure-out lexical x_P) (λ (x_ref :: Entity) (x_P x_ref))
    (where x_ref ,(variable-not-in (term x_P) '$x))]
   [(pure-out described x_P)
@@ -450,6 +492,44 @@
     (argument-cont-source (argument x_placeholder e_source) x_ref))])
 
 (define-metafunction SmusniM3
+  counted-description : e e x -> e
+  [(counted-description lexical e_n x_P)
+   (Refer (λ (x_r :: Referents Entity)
+            (∧ (x_P x_r)
+               (= (CardBasis x_r (λ (x_unit :: Entity) (x_P x_unit))) e_n))))
+   (where x_r ,(variable-not-in (term (e_n x_P)) '$reference))
+   (where x_unit ,(variable-not-in (term (e_n x_P x_r)) '$unit))]
+  [(counted-description described e_n x_P)
+   (Let (x_property :: EFn ((Referents Entity)) Content)
+        (λ (x_y :: Referents Entity) (x_P x_y))
+     (Refer (λ (x_r :: Referents Entity)
+              (∧ (SpeakerDescribes x_r x_property)
+                 (= (CardBasis x_r
+                               (λ (x_unit :: Entity)
+                                 (SpeakerDescribes x_unit x_property))) e_n)))))
+   (where x_property ,(variable-not-in (term (e_n x_P)) '$description))
+   (where x_y ,(variable-not-in (term (e_n x_P x_property)) '$y))
+   (where x_r ,(variable-not-in (term (e_n x_P x_property x_y)) '$reference))
+   (where x_unit ,(variable-not-in (term (e_n x_P x_property x_y x_r)) '$unit))])
+
+;; Keep a shared inert description property outside the generated binding.
+;; Rename its binder against the continuation before moving its scope.
+(define (bind-selection variable selection body)
+  (match selection
+    [`(Let (,property :: ,type ...) ,value ,computation)
+     (define fresh (variable-not-in (list variable selection body) property))
+     `(Let (,fresh :: ,@type) ,value
+        ,(bind-selection variable
+                         (substitute-free-symbol computation property fresh) body))]
+    [_ `(Bind (,variable :: Referents Entity) ,selection ,body)]))
+
+(define (local-selection selection)
+  (match selection
+    [`(Let ,binder ,value ,computation)
+     `(Let ,binder ,value ,(local-selection computation))]
+    [_ `(Local ,selection)]))
+
+(define-metafunction SmusniM3
   lo-argument-out : x x e (e ...) -> e
   [(lo-argument-out x_ref x_P (argument x_placeholder e_source) (e_body))
    (Bind (x_ref :: Referents Entity)
@@ -461,7 +541,7 @@
   [(lo-argument-out x_ref x_P
                     (select e_n (argument x_placeholder e_source))
                     (e_selection e_body))
-   (Bind (x_ref :: Referents Entity) e_selection e_body)])
+   ,(bind-selection (term x_ref) (term e_selection) (term e_body))])
 
 (define-metafunction SmusniM3
   le-cont-sources : e x x -> (e ...)
@@ -488,28 +568,23 @@
 
 (define-metafunction SmusniM3
   cardinal-sources : e e e x e e e x -> (e ...)
-  [(cardinal-sources witness e_force e_n x_P e_Q () () x_witness)
-   ((l0 (pure lexical x_P))
-    (cardinal-cont-source e_force e_Q x_witness))]
-  [(cardinal-sources exactly none e_n x_P e_Q () () x_witness)
-   ((l0 (pure lexical x_P))
-    (cardinal-cont-source none e_Q x_witness))]
   [(cardinal-sources some none e_unused x_P e_Q () () x_witness)
    ((l0 (pure lexical x_P))
     (cardinal-cont-source none e_Q x_witness))]
+  [(cardinal-sources no none e_unused x_P e_Q () () x_witness)
+   ((l0 (pure lexical x_P))
+    (cardinal-cont-source none e_Q x_witness))]
   [(cardinal-sources global e_force e_n x_P x_Q e_properties e_sites x_unused)
-   ((l0 (global-hoist e_properties e_sites)))])
+   ((l0 (global-hoist e_properties e_sites)))
+   (where ((property restrictor x_P e_p ...)
+           (property nuclear x_Q e_q ...)) e_properties)])
 
 (define-metafunction SmusniM3
   cardinal-compose : e e e x (e ...) -> e
-  [(cardinal-compose witness e_force e_n x_witness (e_P e_Q_body))
-   (Bind (x_witness :: Referents Entity)
-         (SelectExactly e_n e_P)
-     e_Q_body)]
-  [(cardinal-compose exactly e_force e_n x_witness (e_P e_Q_body))
-   (Exactly e_n e_P (λ (x_witness :: Referents Entity) e_Q_body))]
   [(cardinal-compose some e_force e_unused x_witness (e_P e_Q_body))
-   (Some e_P (λ (x_witness :: Referents Entity) e_Q_body))]
+   (IndividualSome e_P (λ (x_witness :: Entity) e_Q_body))]
+  [(cardinal-compose no e_force e_unused x_witness (e_P e_Q_body))
+   (IndividualNo e_P (λ (x_witness :: Entity) e_Q_body))]
   [(cardinal-compose global e_force e_n x_unused (e_hoisted))
    ,(compose-global-exactly (term e_n) (term e_force) (term e_hoisted))])
 
@@ -533,7 +608,7 @@
             '$unit))]
   [(le-out x_P (select e_n (argument x_placeholder e_source)) x_ref
            (e_selection e_body))
-   (Bind (x_ref :: Referents Entity) e_selection e_body)])
+   ,(bind-selection (term x_ref) (term e_selection) (term e_body))])
 
 (define-metafunction SmusniM3
   every-cont-source : e x -> e
@@ -691,24 +766,24 @@
                               (Close (selcmi x_set x_base))))
                  (Mention x_sets))))]
 
-  [(where e_property-source (argument-property-source e_kind x_P))
-   (m3-lower e_RR (gentufa e_parse e_property-source) e_P)
-   --------------------------------------------- "L3.9"
+  [--------------------------------------------- "L3.9"
    (m3-lower e_RR (gentufa e_parse (inner-pa e_kind e_n x_P))
-             (SelectExactly e_n e_P))]
+             (counted-description e_kind e_n x_P))]
 
   [(where x_witness
           ,(variable-not-in
             (term (e_RR e_parse e_kind x_P e_force
                         x_placeholder e_source)) '$w))
-   (where e_property-source (argument-property-source e_kind x_P))
-   (m3-lower e_RR (gentufa e_parse e_property-source) e_P)
+   (where e_plural-kind ,(case (term e_kind)
+                          [(lexical) 'plural-lexical]
+                          [(described) 'plural-described]))
+   (m3-lower e_RR (gentufa e_parse (l0 (pure e_plural-kind x_P))) e_P)
    (m3-lower e_RR
              (gentufa e_parse
                       (nuclear x_witness (Referents Entity)
                                (argument x_placeholder e_source)))
              e_Q)
-   (where e_out (force-out e_force (No e_P e_Q)))
+   (where e_out (force-out e_force (PluralNo e_P e_Q)))
    --------------------------------------------- "L3.10"
    (m3-lower e_RR
              (gentufa e_parse
@@ -728,12 +803,13 @@
              (gentufa e_parse (inner-pa described e_n x_P)) e_selection)
    --------------------------------------------- "L3.14"
    (m3-lower e_RR (gentufa e_parse (luho e_n x_P))
-             (Bind (x_people :: Referents Entity) (Local e_selection)
-               (Bind (x_basis :: DecompositionBasis (Group Entity) Entity)
-                     (Context (GroupBasisConstraint |lu'o| Entity) deps…)
-                 (Bind (x_aggregate :: Referents (Group Entity))
-                       (Massify x_basis x_people)
-                   (Mention x_aggregate)))))]
+             ,(bind-selection
+               (term x_people) (local-selection (term e_selection))
+               (term (Bind (x_basis :: DecompositionBasis (Group Entity) Entity)
+                           (Context (GroupBasisConstraint |lu'o| Entity) deps…)
+                       (Bind (x_aggregate :: Referents (Group Entity))
+                             (Massify x_basis x_people)
+                         (Mention x_aggregate))))))]
 
   [(m3-lower e_RR
              (gentufa e_parse (le x_P (pure described x_P))) e_property)
@@ -746,12 +822,14 @@
    (m3-lower e_RR (gentufa e_parse e_continuation) e_Q_body)
    --------------------------------------------- "L5.1"
    (m3-lower e_RR (gentufa e_parse (every x_P e_Q))
-             (Every e_P (λ (x_unit :: Entity) e_Q_body)))]
+             (IndividualEvery e_P (λ (x_unit :: Entity) e_Q_body)))]
 
   [(where x_witness
           ,(variable-not-in
             (term (e_RR e_parse e_mode e_force e_n x_P e_Q
                         e_properties e_sites)) '$w))
+   (side-condition
+    ,(not (match (term e_n) [`(all-but ,_) #t] [_ #f])))
    (where (e_subsource ...)
           (cardinal-sources e_mode e_force e_n x_P e_Q
                             e_properties e_sites x_witness))
@@ -762,6 +840,19 @@
    (m3-lower e_RR
              (gentufa e_parse
                       (cardinal e_mode e_force e_n x_P e_Q
+                                e_properties e_sites))
+             e_out)]
+
+  [(where ((property restrictor x_P e_p ...)
+           (property nuclear x_Q e_q ...)) e_properties)
+   (m3-lower e_RR
+             (gentufa e_parse (l0 (global-hoist e_properties e_sites))) e_hoisted)
+   (where e_out
+          ,(compose-global-exactly (term (all-but e_n)) (term e_force) (term e_hoisted)))
+   --------------------------------------------- "L5.4"
+   (m3-lower e_RR
+             (gentufa e_parse
+                      (cardinal global e_force (all-but e_n) x_P x_Q
                                 e_properties e_sites))
              e_out)]
 
@@ -813,23 +904,6 @@
    (m3-lower e_RR
              (gentufa e_parse (joi-group (e_operand ...))) e_out)]
 
-  [(where x_witness
-          ,(variable-not-in
-            (term (e_RR e_parse e_kind x_P x_placeholder e_source)) '$w))
-   (m3-lower e_RR (gentufa e_parse (l0 (pure lexical x_P))) e_P)
-   (m3-lower e_RR
-             (gentufa e_parse
-                      (nuclear x_witness (Referents Entity)
-                               (argument x_placeholder e_source)))
-             e_Q)
-   (where e_out (threshold-argument-out e_force e_kind e_P e_Q))
-   --------------------------------------------- "L5.28"
-   (m3-lower e_RR
-             (gentufa e_parse
-                      (threshold e_force e_kind x_P
-                                 (argument x_placeholder e_source)))
-             e_out)]
-
   [(where e_out (grade-out e_force x_R e_arg))
    --------------------------------------------- "L5.29"
    (m3-lower e_RR
@@ -840,7 +914,7 @@
    (m3-lower e_RR (gentufa e_parse (in-situ e_source)) e_out)] )
 
 (define rr-field-names
-  '(parse attach readings rows stores sites anaphora force))
+  '(parse attach readings rows stores sites references anaphora force))
 (define no-lowering-causes
   '(rr-missing row-missing rule-underspecified implementation no-reading
     out-of-fragment))
@@ -1473,6 +1547,54 @@
 (define transparent-terminal-path-keys (seteq 'Plain 'PlainWord))
 (define transparent-number-terminal-path-keys
   (seteq 'PaRunQuantifier 'number 'first_number 'Plain 'PlainWord))
+
+;; Decode the actual PA-run grammar, including each continuation. Unknown
+;; wrappers and compound prefixes refuse instead of discarding their children.
+(define (decode-quantity subtree)
+  (define run (direct-semantic-node subtree (seteq 'PaRunQuantifier) "L5.2" (seteq)))
+  (cond
+    [(no-lowering? run) run]
+    [else
+     (define node (second run))
+     (define number (and (hash? node) (hash-ref node 'number #f)))
+     (cond
+       [(or (pair? (unrecognized-direct-keys node (seteq 'number)))
+            (pair? (unrecognized-direct-keys number (seteq 'first_number 'continuations)))
+            (not (hash-has-key? number 'first_number))
+            (not (list? (hash-ref number 'continuations '()))))
+        (no-lowering "L5.2" 'rule-underspecified "unsupported PA-run structure" subtree)]
+       [else
+        (define words
+          (cons (decode-terminal-leaf (hash-ref number 'first_number) 'Cmavo "L5.2")
+                (for/list ([part (in-list (hash-ref number 'continuations '()))])
+                  (decode-terminal-leaf part 'Cmavo "L5.2"
+                                        (set-add transparent-terminal-path-keys
+                                                 'NumberWordPaContinuation)))))
+        (define failure (findf no-lowering? words))
+        (define (digits-value digits)
+          (and (pair? digits)
+               (andmap (lambda (w) (hash-has-key? number-values w)) digits)
+               (for/fold ([n 0]) ([w (in-list digits)])
+                 (+ (* n 10) (hash-ref number-values w)))))
+        (cond
+          [failure failure]
+          [(equal? words '("no")) "no"]
+          [(digits-value words) => values]
+          [(= (length words) 1)
+           (match (first words)
+             ["su'e" '(at-most 1)] ["za'u" '(more-than 1)]
+             ["me'i" 'not-all] ["da'a" '(all-but 1)]
+             [word word])]
+          [(and (member (first words) '("su'o" "su'e" "za'u" "me'i" "da'a"))
+                (digits-value (rest words)))
+           (define n (digits-value (rest words)))
+           (if (and (equal? (first words) "su'o") (= n 1))
+               "su'o"
+               `(,(hash-ref (hash "su'o" 'at-least "su'e" 'at-most
+                                  "za'u" 'more-than "me'i" 'fewer-than
+                                  "da'a" 'all-but) (first words)) ,n))]
+          [else (no-lowering "L5.2" 'rule-underspecified
+                             "compound or non-finite PA is outside this count fragment" words)])])]))
 (define description-tail-tags
   (seteq 'RelationDescriptionTail 'QuantifierRelationDescriptionTail))
 
@@ -1733,15 +1855,13 @@
      (define quantifier-node (hash-ref quantified 'quantifier))
      (define q-word
        (if (null? unknown)
-           (decode-terminal-leaf quantifier-node 'Cmavo "L5.2"
-                                 transparent-number-terminal-path-keys)
+           (decode-quantity quantifier-node)
            (no-lowering "L5.2" 'rule-underspecified
                         "quantified sumti has an unknown direct child" unknown)))
      (define relation
        (and (not (no-lowering? q-word))
             (decode-simple-selbri (hash-ref quantified 'selbri) "L5.2")))
-     (define quantity
-       (and (string? q-word) (hash-ref number-values q-word q-word)))
+     (define quantity q-word)
      (cond [(no-lowering? q-word) q-word]
            [(no-lowering? relation) relation]
            [else `(quantifier ,quantity ,relation)])]
@@ -2129,7 +2249,7 @@
   (define checks
     (list (require-readings fields
                             (append (if sentence? '(actual) '())
-                                    '(global-exact))
+                                    (count-readings quantity))
                             "L5.2")
           (require-rows fields (list predicate relation) "L5.2")
           (require-empty-resolution-fields fields "L5.2")))
@@ -2426,11 +2546,10 @@
         `(inner-pa ,basis ,count ,predicate)]
        [else #f])]
     [`(name ,name) `(name ,name)]
-    [`(quantifier ,(? number? quantity) ,predicate)
-     (if (member 'global-exact (rr-value fields 'readings))
-         `(global-cardinal ,quantity ,predicate)
-         `(cardinal ,quantity ,predicate))]
+    [`(quantifier ,(? standard-count? quantity) ,predicate)
+     `(global-cardinal ,quantity ,predicate)]
     [`(quantifier "su'o" ,predicate) `(some ,predicate)]
+    [`(quantifier "no" ,predicate) `(individual-no ,predicate)]
     [`(quantifier "ro" ,predicate) `(every ,predicate)]
     [`(quantifier "so'i" ,predicate) `(threshold many ,predicate)]
     [`(quantifier "du'e" ,predicate) `(threshold too-many ,predicate)]
@@ -2455,14 +2574,14 @@
   (match spec
     [`(le ,_) '(le)]
     [`(name ,_) '(name)]
-    [`(cardinal ,_ ,_) '(witness-set)]
-    [`(global-cardinal ,_ ,_) '(global-exact)]
-    [`(some ,_) '(witness-set)]
+    [`(global-cardinal ,quantity ,_) (count-readings quantity)]
+    [`(some ,_) '(individual)]
+    [`(individual-no ,_) '(individual)]
     [`(inner-pa described ,_ ,_) '(le inner-pa)]
     [`(inner-pa lexical ,_ ,_) '(inner-pa)]
     [`(inner-no described ,_) '(le)]
     [`(inner-no lexical ,_) '()]
-    [`(every ,_) '(importing)]
+    [`(every ,_) '(non-importing)]
     [`(threshold many ,_) '(many)]
     [`(threshold too-many ,_) '(too-many)]
     [_ '()]))
@@ -2472,9 +2591,9 @@
     [`(lo ,predicate) (list predicate)]
     [`(le ,predicate) (list predicate 'skicu)]
     [`(name ,_) '()]
-    [`(cardinal ,_ ,predicate) (list predicate)]
     [`(global-cardinal ,_ ,predicate) (list predicate)]
     [`(some ,predicate) (list predicate)]
+    [`(individual-no ,predicate) (list predicate)]
     [`(inner-pa lexical ,_ ,predicate) (list predicate)]
     [`(inner-pa described ,_ ,predicate) (list predicate 'skicu)]
     [`(inner-no lexical ,predicate) (list predicate)]
@@ -2496,16 +2615,13 @@
 
 (define (quantified-argument-spec? spec)
   (member (first spec)
-          '(cardinal some inner-no every threshold global-cardinal)))
+          '(some individual-no inner-no every threshold global-cardinal)))
 
 (define (argument-wrapper spec variable body)
   (match spec
     [`(lo ,predicate) `(lo ,predicate (argument ,variable ,body))]
     [`(le ,predicate) `(le ,predicate (argument ,variable ,body))]
     [`(name ,name) `(la ,name (argument ,variable ,body))]
-    [`(cardinal ,quantity ,predicate)
-     `(cardinal witness none ,quantity ,predicate
-                (argument ,variable ,body) () ())]
     [`(inner-pa lexical ,quantity ,predicate)
      `(lo ,predicate (select ,quantity (argument ,variable ,body)))]
     [`(inner-pa described ,quantity ,predicate)
@@ -2513,23 +2629,20 @@
     [_ (error 'argument-wrapper "unsupported Bind argument: ~e" spec)]))
 
 (define (force-consuming-quantifier-spec? spec l530?)
-  (or (member (first spec) '(some inner-no every threshold global-cardinal))
-      (and l530? (eq? (first spec) 'cardinal))))
+  (member (first spec) '(some individual-no inner-no every threshold global-cardinal)))
 
 (define (quantifier-wrapper spec variable body force l530?)
   (match spec
-    [`(cardinal ,quantity ,predicate)
-     (define source
-       `(cardinal ,(if l530? 'exactly 'witness) none ,quantity ,predicate
-                  (argument ,variable ,body) () ()))
-     (if (and l530? (not (eq? force 'none)))
-         `(force ,force ,source) source)]
     [`(some ,predicate)
      (define source
        `(cardinal some none none ,predicate
                   (argument ,variable ,body) () ()))
      (if (not (eq? force 'none))
          `(force ,force ,source) source)]
+    [`(individual-no ,predicate)
+     (define source `(cardinal no none none ,predicate
+                               (argument ,variable ,body) () ()))
+     (if (eq? force 'none) source `(force ,force ,source))]
     [`(inner-no ,basis ,predicate)
      `(inner-no ,basis ,predicate ,force (argument ,variable ,body))]
     [`(every ,predicate)
@@ -2695,7 +2808,8 @@
     (remove-duplicates
      (append (if (eq? category 'sentence) '(actual) '())
              (append-map argument-spec-readings (map second bindings))
-             (if (pair? global-cardinals) '(global-exact) '()))))
+             (append-map (lambda (spec) (count-readings (second spec)))
+                         global-cardinals))))
   (define expected-sites
     (append
      (if (hash-ref selbri 'tanru #f)
@@ -2979,25 +3093,15 @@
         (cond
           [(equal? quantity "ro")
            (define check
-             (validated-path fields "L5.1" (readings '(importing))
+             (validated-path fields "L5.1" (readings '(non-importing))
                              (list predicate relation) '()
                              #:force? sentence?))
            (if (no-lowering? check) check
                (if sentence?
                    `(force ,check (every ,predicate ,relation))
                    `(every ,predicate ,relation)))]
-          [(number? quantity)
-           (if (member 'global-exact (rr-value fields 'readings))
-               (global-hoist-source fields quantity predicate relation inv
-                                    sentence?)
-               (let ([check
-                      (validated-path fields "L5.2"
-                                      (readings '(witness-set))
-                                      (list predicate relation) '()
-                                      #:force? sentence?)])
-                 (if (no-lowering? check) check
-                     `(cardinal witness ,(force-or-none) ,quantity
-                                ,predicate ,relation () ())))) ]
+          [(standard-count? quantity)
+           (global-hoist-source fields quantity predicate relation inv sentence?)]
           [(equal? quantity "so'i")
            (define expected-sites `((threshold many (deps ()))))
            (define check
@@ -3306,7 +3410,10 @@
   (define direct-root
     (direct-semantic-node raw root-semantic-tags "M3"
                           transparent-root-path-keys))
-  (cond
+  (define reference-check (validate-reference-profiles parse-case fields))
+  (define result
+    (cond
+    [(no-lowering? reference-check) reference-check]
     [(no-lowering? direct-root) direct-root]
     [(eq? (first direct-root) 'IStatementConnection)
      (statement->sigma
@@ -3320,7 +3427,72 @@
     [else
      (no-lowering "M3" 'out-of-fragment
                   "gentufa parse has no supported statement root"
-                  (sort (set->list (parse-case-variants parse-case)) symbol<?))]))
+      (sort (set->list (parse-case-variants parse-case)) symbol<?))]))
+  (if (and (eq? reference-check 'dependent) (not (no-lowering? result)))
+      (no-lowering "L5.30" 'rule-underspecified
+                   "declared dependent reference scope is not implemented in this adapter fragment"
+                   (hash-ref fields 'references))
+      result))
+
+;; RR reference IDs are offsets in the resolved parse, like its terminal
+;; spans; they are adapter evidence and never appear in core output. Enumerate
+;; every description/name occurrence independently of the lowering outcome.
+(define (source-occurrences parse-case tags)
+  (define starts '())
+  (define (walk value)
+    (cond
+      [(hash? value)
+       (for ([(tag child) (in-hash value)])
+         (when (member tag tags)
+           (define spans (parse-terminal-spans child))
+           (unless (pair? spans)
+             (error 'reference-occurrences "description/name lacks source spans"))
+           (set! starts (cons (apply min (map car spans)) starts)))
+         (walk child))]
+      [(list? value) (for-each walk value)]))
+  (walk (hash-ref parse-case 'parse))
+  (sort starts <))
+
+(define (reference-occurrences parse-case)
+  (source-occurrences parse-case '(DescriptorWithGadriSumti NameSumti)))
+
+(define (validate-reference-profiles parse-case fields)
+  (define expected (reference-occurrences parse-case))
+  (define actual (hash-ref fields 'references #f))
+  (define failure #f)
+  (define declared '())
+  (define dependent? #f)
+  (cond
+    [(not (list? actual))
+     (no-lowering "L5.30" 'rr-missing "RR.references must be an explicit list" actual)]
+    [else
+     (for ([entry (in-list actual)])
+       (match entry
+         [`(,(? exact-nonnegative-integer? start) invariant)
+          (set! declared (cons start declared))]
+         [`(,(? exact-nonnegative-integer? start)
+            (dependent (governors ,(? exact-nonnegative-integer? governors) ...)
+                       (scope ,(? exact-nonnegative-integer? scope))))
+          (set! declared (cons start declared))
+          (define source-starts
+            (source-occurrences parse-case
+                                '(DescriptorWithGadriSumti NameSumti DescriptorWithoutGadriSumti)))
+          (if (and (pair? governors) (= (length governors) (length (remove-duplicates governors)))
+                   (andmap (lambda (g) (and (not (= g start)) (member g source-starts))) governors)
+                   (member scope governors))
+              (set! dependent? #t)
+              (set! failure (no-lowering "L5.30" 'rr-missing
+                                        "reference dependencies/scope need distinct resolved source locations" entry)))]
+         [_ (set! failure (no-lowering "L5.30" 'rr-missing
+                                      "malformed reference profile" entry))]))
+     (cond
+       [failure failure]
+       [(not (equal? (sort declared <) expected))
+        (no-lowering "L5.30" 'rr-missing
+                     "RR.references must cover each description/name occurrence exactly once"
+                     (list 'expected expected 'declared declared))]
+       [dependent? 'dependent]
+       [else #t])]))
 
 (define mutation-empty-deletion-pass-through-keys
   (seteq 'leading_tail_elements 'leading_terms 'terms 'conversions
@@ -3507,9 +3679,17 @@
 
 (define (redex-lower parse-case rr)
   (define sigma (parse-case->sigma parse-case (rr-fields-value rr)))
-  (if (no-lowering? sigma)
-      sigma
-      (let* ([rr-term (rr->redex rr)]
+  (define (threshold-source? source)
+    (and (list? source)
+         (or (and (pair? source) (eq? (first source) 'threshold))
+             (ormap threshold-source? source))))
+  (cond
+    [(no-lowering? sigma) sigma]
+    [(threshold-source? sigma)
+     (no-lowering "L5.28" 'rule-underspecified
+                  "standard threshold-count adaptation is an explicit documentary gap"
+                  sigma)]
+    [else (let* ([rr-term (rr->redex rr)]
              [input `(gentufa ,(parse-evidence parse-case) ,sigma)]
              [derivations (build-derivations (m3-lower ,rr-term ,input e_out))])
         (cond
@@ -3526,7 +3706,7 @@
            (define derivation (first derivations))
            (typed-lowered
             (fourth (derivation-term derivation))
-            (remove-duplicates (derivation-rule-ids derivation)))]))))
+            (remove-duplicates (derivation-rule-ids derivation)))]))]))
 
 (define (lower parse-case rr)
   (define fields (rr-fields-value rr))

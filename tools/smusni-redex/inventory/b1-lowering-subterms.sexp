@@ -1,7 +1,7 @@
 (smusni-b1-lowering-subterms
  1
  (count 32)
- (outputs-sha1 "a4efa23536735e6abcfee4dce92a57c21b5a81b3")
+ (outputs-sha1 "eac72b64f3eae5dbd441cc7ee53c914cabd774ca")
  (outputs
   (output
    (key "samples.md#1.1")
@@ -97,7 +97,7 @@
   (output
    (key "samples.md#34.1")
    (source "samples.md" 34 1)
-   (rules "L3.14" "L3.9" "L3.15" "L3.2" "L0.1")
+   (rules "L3.14" "L3.9")
    (disposition no-family-head)
    (offending)
    (subterms))
@@ -116,35 +116,33 @@
    (offending)
    (subterms
     (subterm
-     (id "58446186c6fa7dbc")
+     (id "e3f6ffc8cb57719d")
      (path 1)
      (term
       (CloseClause
        (ActualClause
         (StateClause
-         (Every
-          (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (gerku :1 $x)))))
+         (IndividualEvery
+          (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity)
             (CloseClause (ActualClause (StateClause (blabi :1 $x))))))))))
      (env ()))))
   (output
-   (key "samples.md#45.1")
-   (source "samples.md" 45 1)
+   (key "samples.md#46.1")
+   (source "samples.md" 46 1)
    (rules "L3.10" "L0.1" "L5.7" "L1.3" "L1.1")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "e41b535bf4a823c5")
+     (id "5e6d2b46159eabfb")
      (path 1)
      (term
       (CloseClause
        (ActualClause
         (StateClause
-         (No
-          (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (prenu :1 $x)))))
+         (PluralNo
+          (λ ($r :: Referents Entity) (prenu $r))
           (λ ($w :: Referents Entity)
             (CloseClause
              (ActualClause
@@ -152,14 +150,14 @@
                 (jmaji :1 $w :Eventuality $event))))))))))
      (env ()))))
   (output
-   (key "samples.md#46.1")
-   (source "samples.md" 46 1)
+   (key "samples.md#47.1")
+   (source "samples.md" 47 1)
    (rules "L5.3")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "a4e55c1ece4724bb")
+     (id "2881d3ef2254fd43")
      (path 5 1)
      (term
       (CloseClause
@@ -174,146 +172,56 @@
           $left)))))
      (env (($right Referents Entity) ($left Referents Entity))))))
   (output
-   (key "samples.md#48.1")
-   (source "samples.md" 48 1)
-   (rules "L5.28" "L0.1" "L5.7" "L1.3" "L1.6" "L1.1")
-   (disposition selected)
-   (offending)
-   (subterms
-    (subterm
-     (id "c28906129a38b214")
-     (path 3 1)
-     (term
-      (CloseClause
-       (ActualClause
-        (StateClause
-         (AtLeast
-          $n
-          (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (prenu :1 $x)))))
-          (λ ($w :: Referents Entity)
-            (CloseClause
-             (ActualClause
-              (λ ($event :: Referents Eventuality)
-                (Bind
-                 ($ctx2 :: Referents Entity)
-                 (Context)
-                 (Bind
-                  ($ctx3 :: Referents Entity)
-                  (Context)
-                  (Bind
-                   ($ctx4 :: Referents Entity)
-                   (Context)
-                   (Bind
-                    ($ctx5 :: Referents Entity)
-                    (Context)
-                    (klama
-                     :1
-                     $w
-                     :2
-                     $ctx2
-                     :3
-                     $ctx3
-                     :4
-                     $ctx4
-                     :5
-                     $ctx5
-                     :Eventuality
-                     $event))))))))))))))
-     (env (($n . Natural))))))
-  (output
-   (key "samples.md#58.1")
-   (source "samples.md" 58 1)
+   (key "samples.md#59.1")
+   (source "samples.md" 59 1)
    (rules "L1.2" "L1.3" "L1.6" "L1.10")
    (disposition no-family-head)
    (offending)
    (subterms))
   (output
-   (key "samples.md#59.1")
-   (source "samples.md" 59 1)
+   (key "samples.md#60.1")
+   (source "samples.md" 60 1)
    (rules "L5.11")
    (disposition no-family-head)
    (offending)
    (subterms))
   (output
-   (key "samples.md#63.1")
-   (source "samples.md" 63 1)
+   (key "samples.md#64.1")
+   (source "samples.md" 64 1)
    (rules "L5.29")
    (disposition no-family-head)
    (offending)
    (subterms))
   (output
-   (key "samples.md#63.2")
-   (source "samples.md" 63 2)
-   (rules "L5.28" "L0.1" "L5.7" "L1.3" "L1.6" "L1.1")
-   (disposition selected)
+   (key "samples.md#64.2")
+   (source "samples.md" 64 2)
+   (rules)
+   (disposition no-family-head)
    (offending)
-   (subterms
-    (subterm
-     (id "5490abdf57992a66")
-     (path 5 1)
-     (term
-      (CloseClause
-       (ActualClause
-        (StateClause
-         (MoreThan
-          $n
-          (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (gerku :1 $x)))))
-          (λ ($w :: Referents Entity)
-            (CloseClause
-             (ActualClause
-              (λ ($event :: Referents Eventuality)
-                (Bind
-                 ($ctx2 :: Referents Entity)
-                 (Context)
-                 (Bind
-                  ($ctx3 :: Referents Entity)
-                  (Context)
-                  (Bind
-                   ($ctx4 :: Referents Entity)
-                   (Context)
-                   (Bind
-                    ($ctx5 :: Referents Entity)
-                    (Context)
-                    (klama
-                     :1
-                     $w
-                     :2
-                     $ctx2
-                     :3
-                     $ctx3
-                     :4
-                     $ctx4
-                     :5
-                     $ctx5
-                     :Eventuality
-                     $event))))))))))))))
-     (env (($n . Natural) ($purpose Referents Entity))))))
+   (subterms))
   (output
-   (key "samples.md#63.3")
-   (source "samples.md" 63 3)
+   (key "samples.md#64.3")
+   (source "samples.md" 64 3)
    (rules "L1.8")
    (disposition no-family-head)
    (offending)
    (subterms))
   (output
-   (key "samples.md#71.1")
-   (source "samples.md" 71 1)
+   (key "samples.md#72.1")
+   (source "samples.md" 72 1)
    (rules "L5.30" "L3.1" "L1.2" "L5.1" "L0.1" "L1.3" "L1.6" "L1.1")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "7c491742d3d8fff2")
+     (id "668ac22896455289")
      (path 3 1)
      (term
       (CloseClause
        (ActualClause
         (StateClause
-         (Every
-          (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (gerku :1 $x)))))
+         (IndividualEvery
+          (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity)
             (CloseClause
              (ActualClause
@@ -324,27 +232,25 @@
                  (tavla :1 $x :2 $r :3 $ctx3 :Eventuality $event)))))))))))
      (env (($r Referents Entity))))))
   (output
-   (key "samples.md#72.1")
-   (source "samples.md" 72 1)
+   (key "samples.md#73.1")
+   (source "samples.md" 73 1)
    (rules "L5.30" "L1.2" "L5.1" "L0.1" "L5.2" "L1.3" "L1.6" "L1.1")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "4268934806d322ae")
+     (id "9a4b45a97730a6c7")
      (path 1)
      (term
       (CloseClause
        (ActualClause
         (StateClause
-         (Every
+         (IndividualEvery
+          (λ ($x :: Entity) (gerku $x))
           (λ ($x :: Entity)
-            (CloseClause (ActualClause (StateClause (gerku :1 $x)))))
-          (λ ($x :: Entity)
-            (Some
-             (λ ($x :: Entity)
-               (CloseClause (ActualClause (StateClause (mlatu :1 $x)))))
-             (λ ($w :: Referents Entity)
+            (IndividualSome
+             (λ ($x :: Entity) (mlatu $x))
+             (λ ($w :: Entity)
                (CloseClause
                 (ActualClause
                  (λ ($event :: Referents Eventuality)
@@ -385,21 +291,60 @@
   (output
    (key "spec.md#9.1")
    (source "spec.md" 9 1)
-   (rules "L5.2" "L0.1" "L1.3" "L1.6" "L1.1")
-   (disposition no-family-head)
-   (offending)
-   (subterms))
-  (output
-   (key "spec.md#10.1")
-   (source "spec.md" 10 1)
    (rules "L5.2" "L0.1")
    (disposition no-family-head)
    (offending)
    (subterms))
   (output
-   (key "spec.md#19.1")
-   (source "spec.md" 19 1)
+   (key "spec.md#17.1")
+   (source "spec.md" 17 1)
    (rules "L5.21")
    (disposition no-family-head)
    (offending)
-   (subterms))))
+   (subterms))
+  (output
+   (key "samples.md#45.1")
+   (source "samples.md" 45 1)
+   (rules "L5.2" "L0.1")
+   (disposition selected)
+   (offending)
+   (subterms
+    (subterm
+     (id "422cfb81c8b2ba90")
+     (path 1)
+     (term
+      (CloseClause
+       (ActualClause
+        (StateClause
+         (¬
+          (IndividualEvery
+           (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+           (λ ($nuclear_member :: Entity)
+             (CloseClause
+              (ActualClause (StateClause (blabi :1 $nuclear_member)))))))))))
+     (env ()))))
+  (output
+   (key "samples.md#45.2")
+   (source "samples.md" 45 2)
+   (rules "L5.2" "L0.1")
+   (disposition selected)
+   (offending)
+   (subterms
+    (subterm
+     (id "0de3eaf85caf4ceb")
+     (path 1)
+     (term
+      (CloseClause
+       (ActualClause
+        (StateClause
+         (¬
+          (≤
+           1
+           (Card
+            (SetOf
+             (λ ($individual :: Entity)
+               (∧
+                (gerku $individual)
+                (CloseClause
+                 (ActualClause (StateClause (blabi :1 $individual))))))))))))))
+     (env ()))))))

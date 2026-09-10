@@ -2,10 +2,12 @@
   ;; Ratchet: the count of §11 lowering judgments cited by at least one
   ;; surface specimen must never fall below this floor; raise it whenever
   ;; coverage grows.
-  (cited-floor 70)
+  ;; P43 synchronization: L5.28 became an explicit gap. See the exact
+  ;; population disposition in source-sync-20260910.sexp; no live citation lost.
+  (cited-floor 69)
   ;; Exact counts of §11's numbered clauses: total, lowering judgments,
   ;; gap, note, reading. Any change to §11's clause set must update these.
-  (rule-counts 148 127 9 6 6)
+  (rule-counts 150 125 13 6 6)
   ;; Lowering judgments no surface specimen cites yet (gap/note/reading
   ;; rules are outside F₀ and never appear here). Each entry names the issue
   ;; that owns the missing coverage (#9 M3 corpus).
@@ -54,7 +56,6 @@
   (uncovered "L11.12" "#9")
   (uncovered "L11.14" "#9")
   (uncovered "L12.4" "#9")
-  (uncovered "L12.5" "#9")
   (uncovered "L12.9" "#9")
   (uncovered "L12.10" "#9")
   (uncovered "L12.11" "#9")
