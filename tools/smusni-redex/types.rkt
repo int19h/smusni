@@ -15,6 +15,7 @@
          type-compatible?
          infer-core
          infer-specimen-forms
+         normalize-source-core
          pass-through-forms
          pure-typing?
          current-infer-core-observer
@@ -653,6 +654,81 @@
                 (cons computation results)
                 (or saw-performance? (eq? category 'perf)))))))
 
+;; Source notation is lowered to real AST nodes before the deep rule checks
+;; Discourse. Inference here is static: the Act expression occurs just once
+;; in the returned tree, and no context/retrieval site or binder is allocated.
+(define (notation-app node head . arguments)
+  (define a (if (core-list? node)
+                (core-atom head (core-list-source node) (core-list-line node)
+                           (core-list-column node) #f #f)
+                node))
+  (core-list (cons (struct-copy core-atom a [value head]) arguments)
+             (core-atom-source a) (core-atom-line a) (core-atom-column a) #f #f))
+
+(define (normalize-performance-operand node env inv)
+  (define result (infer-core node env inv))
+  (when (pair? (typing-gaps result))
+    (raise-type node "cannot normalize performance notation with inference gaps: ~e" (typing-gaps result)))
+  (match (typing-type result)
+    [`(Act ,_)
+     (define host (first (core-list-elements (notation-app node 'Host))))
+     (notation-app node 'Perform host node)]
+    [`(PerfComp ,_) node]
+    ['Discourse node]
+    [other (raise-type node "expected a Discourse, performance, or Act value, got ~e" other)]))
+
+(define (normalize-discourse-core node env inv)
+  (define operand (normalize-performance-operand node env inv))
+  (define result (infer-core operand env inv))
+  (if (eq? (typing-type result) 'Discourse)
+      operand
+      (notation-app node 'Do operand)))
+
+;; Environment-directed traversal for the source-facing API. The first
+;; PerformSource Content arm is already resolved and must stay byte-structural.
+(define (normalize-source-core node [env (hash)] [inv (load-inventory)])
+  (define (walk term scope)
+    (if (core-atom? term) term
+        (let* ([items (core-list-elements term)]
+               [head (application-head term)]
+               [rebuild (lambda (xs) (struct-copy core-list term [elements xs]))])
+          (case head
+            [(λ)
+             (rebuild (list (first items) (second items)
+                            (walk (third items) (extend-env scope (parse-telescope (second items))))))]
+            [(Let)
+             (rebuild (list (first items) (second items) (walk (third items) scope)
+                            (walk (fourth items) (extend-env scope (parse-binder-group (second items))))))]
+            [(Bind)
+             (define current scope)
+             (define pairs (drop-right (rest items) 1))
+             (define normalized
+               (append* (for/list ([i (in-range 0 (length pairs) 2)])
+                          (define binder (list-ref pairs i))
+                          (define value (walk (list-ref pairs (add1 i)) current))
+                          (set! current (extend-env current (parse-binder-group binder)))
+                          (list binder value))))
+             (rebuild (append (list (first items)) normalized (list (walk (last items) current))))]
+            [(PerformSource)
+             (perform-source-parts (core->plain-datum term))
+             (define offset (if (eq? (atom-value (second items)) 'Host) 1 0))
+             (define args (drop items (add1 offset)))
+             (match-define (list b s c r o d) args)
+             (define continuation-env
+               (extend-env scope (append (parse-binder-group r) (parse-binder-group o))))
+             (rebuild (append (take items (add1 offset))
+                              (list b (walk s scope) c r o
+                                    (normalize-discourse-core (walk d continuation-env) continuation-env inv))))]
+            [(Do)
+             (rebuild (cons (first items)
+                            (for/list ([arg (in-list (rest items))])
+                              (normalize-performance-operand (walk arg scope) scope inv))))]
+            [else (rebuild (map (lambda (child) (walk child scope)) items))]))))
+  ;; These are normalization-internal typing queries, not additional public
+  ;; inference roots for the Phase 0 corpus collector.
+  (parameterize ([current-infer-core-depth (add1 (current-infer-core-depth))])
+    (walk node env)))
+
 (define (infer-perform-source node env inv)
   (perform-source-parts (core->plain-datum node))
   (for ([name (in-set (core-free-variables node))])
@@ -674,7 +750,10 @@
   (define content (second (core-list-elements assertion)))
   (define s-result (infer-with-expected source env inv `(RefComp ,reference)))
   (define c-result (infer-core content (extend-env env (list x)) inv))
-  (define d-result (infer-core body (extend-env env (list r o)) inv))
+  (define continuation-env (extend-env env (list r o)))
+  (define normalized-body
+    (normalize-discourse-core (normalize-source-core body continuation-env inv) continuation-env inv))
+  (define d-result (infer-core normalized-body continuation-env inv))
   (define (unknown? type)
     (or (eq? type 'Unknown) (and (list? type) (ormap unknown? type))))
   (for ([term (in-list (list source content body))]

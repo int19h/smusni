@@ -282,6 +282,33 @@ inductive Obligation where
   | definedness (name : String) (category : Ty)
   deriving Repr, BEq, Inhabited
 
+inductive PerformanceBody : Ty → Type where
+  | act (force : Ty) : PerformanceBody (Ty.act force)
+  | computation (inner : Ty) : PerformanceBody (Ty.perfComp inner)
+  | discourse : PerformanceBody Ty.discourse
+
+def performanceBodyCertificate : (type : Ty) → Option (PerformanceBody type)
+  | .named .typeFormAct [force] => some (.act force)
+  | .named .typeFormPerfComp [inner] => some (.computation inner)
+  | .named .typeDiscourse [] => some .discourse
+  | _ => none
+
+def PerformanceBody.outputType {type : Ty} : PerformanceBody type → Ty
+  | .act _ | .discourse => Ty.discourse
+  | .computation inner => Ty.perfComp inner
+
+def PerformanceBody.effects {type : Ty} : PerformanceBody type → List Effect
+  | .act _ | .discourse => [.performance]
+  | .computation _ => []
+
+def PerformanceBody.rule {type : Ty} : PerformanceBody type → M2TypingRuleId
+  | .act _ => .a0TBindPerformanceAct
+  | .computation _ => .a0TBindPerformanceComp
+  | .discourse => .a0TBindPerformanceDiscourse
+
+theorem performanceBodyCertificate_complete {type : Ty} (mode : PerformanceBody type) :
+    performanceBodyCertificate type = some mode := by cases mode <;> rfl
+
 structure TypingResult where
   type : Ty
   effects : List Effect := []
@@ -630,17 +657,10 @@ mutual
         | .error _ => do
             let performanceResult ←
               check environment computation (Ty.perfComp binderType)
-            let resultType :=
-              match bodyResult.type with
-              | .named .typeFormAct _ => Ty.discourse
-              | type => if type == Ty.discourse then Ty.discourse else type
-            let rule :=
-              match bodyResult.type with
-              | .named .typeFormAct _ => .a0TBindPerformanceAct
-              | .named .typeFormPerfComp _ => .a0TBindPerformanceComp
-              | _ => .a0TBindPerformanceDiscourse
-            pure <| mergeResults resultType [performanceResult, bodyResult]
-              (if resultType == Ty.discourse then [.performance] else []) [] rule
+            let some mode := performanceBodyCertificate bodyResult.type
+              | failure "performance-bind-body" "performance Bind requires an Act, PerfComp or Discourse body"
+            pure <| mergeResults mode.outputType [performanceResult, bodyResult]
+              mode.effects [] mode.rule
               |>.withRule .a0Synth
     | .apply function arguments => do
         let functionResult ← synth environment function
@@ -1550,7 +1570,8 @@ def typingRuleImplemented (rule : M2TypingRuleId) : Bool :=
     .m2TCombine, .m2TLocutionOf, .m2TSign, .m2TReify,
     .m2TRealizedContent, .m2TTeha, .m2TQuery, .m2TGeneric,
     .m2TContentInterfaces, .m2TDropPlace, .f01TPerformSource,
-    .a0TPerform, .m2TPerformRole ].contains rule
+    .a0TPerform, .m2TPerformRole, .a0TBindPerformanceAct,
+    .a0TBindPerformanceComp, .a0TBindPerformanceDiscourse ].contains rule
 
 def implementedTypingRuleRecords : List M2TypingRuleRecord :=
   m2TypingRuleRecords.filter fun record => typingRuleImplemented record.id

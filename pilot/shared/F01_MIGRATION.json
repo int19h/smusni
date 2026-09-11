@@ -143,7 +143,7 @@
       ],
       [
         "corpus-sha1",
-        "\"bad9e35852eaba12a47d3007c1f2c40c17526a15\""
+        "\"352fdb84fe27bb454cf439a1b57bc88f0bdd5294\""
       ],
       [
         "terms",
@@ -259,20 +259,20 @@
   },
   "sources": {
     "pilot/history/pre-f01/port-corpus.sexp": "38d1aeee7cc61c4a1d007b44e96449f1f5e8c0ffdde7df1ce1d1327d1d559791",
-    "tools/smusni-redex/inventory/port-corpus.sexp": "3de6d9453652cbdc9ee303cad1f30006c897f6a27c0142d3420bed2f9d8653ed",
-    "pilot/shared/M1_S1_MANIFEST.json": "b98d243eab8b903bf711c9ae179eb77001fb6f3cc429ead22df12127c914e29f",
-    "pilot/shared/M2_CASE_MANIFEST.json": "1f5171102645fa342395b0f23566dcc3b18924f93dbf1bda5ecd5cb6b41b3040",
-    "pilot/shared/M2_REDEX_ORACLE.sexp": "09f6247e275d4d274453fce3c44d04b2069b0cdcf00664817d69f9152228f75c"
+    "tools/smusni-redex/inventory/port-corpus.sexp": "80ad442971f4bb26e39e5f0e54c15d73a54e36ef8ffe60a4253669c18ef8147d",
+    "pilot/shared/M1_S1_MANIFEST.json": "d2645419fe94b76907a2e8b21342a52bf41f140739c04183d99ecbf25163313d",
+    "pilot/shared/M2_CASE_MANIFEST.json": "2b115981d6be45aeb469f64a7c62da81a48643f67f25d268c7eac22156558e84",
+    "pilot/shared/M2_REDEX_ORACLE.sexp": "09d484229bb515463fdbb96a0c3dbfc385fe2ea3dd0c9aa36ce8ef1cfd044730"
   },
   "counts": {
     "old": 370,
-    "current": 404,
+    "current": 421,
     "old_dispositions": {
       "exact-input-retained": 370
     },
     "current_dispositions": {
       "exact-input-transport": 370,
-      "new-input": 34
+      "new-input": 51
     },
     "old_cohorts": {
       "definition_parity": 192,
@@ -282,10 +282,10 @@
       "out_of_slice": 32
     },
     "current_cohorts": {
-      "definition_parity": 192,
-      "primitive_baseline": 67,
-      "residual_pending": 92,
-      "out_of_slice": 50,
+      "definition_parity": 195,
+      "primitive_baseline": 76,
+      "residual_pending": 95,
+      "out_of_slice": 52,
       "plan_corpus_extras": 3
     }
   },
@@ -39722,6 +39722,119 @@
     },
     {
       "current": {
+        "id": "93840201365a510ccf7bbae834fc5f41cdb61e61",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Perform",
+              "Host",
+              [
+                "Assert",
+                [
+                  "CloseClause",
+                  [
+                    "ActualClause",
+                    [
+                      "StateClause",
+                      [
+                        "$P",
+                        "Speaker"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "1092e97cc7507d28b4821a36252e71ea08e098483ba855ad9af8ba594732f20e",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "residual_pending",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "e3cc58ea58d18b15852ecce37d7b52f277312ef6",
         "term": [
           "λ",
@@ -40580,6 +40693,116 @@
       },
       "old_id": "c224ce9bf417716f65f0929f616785a351c2cd3f",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "b546ecc02b029c93d9cbe6d396c040d593a904cc",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Perform",
+              "Host",
+              [
+                [
+                  "λ",
+                  [
+                    "$identity",
+                    "::",
+                    "Act",
+                    "Assertion"
+                  ],
+                  "$identity"
+                ],
+                "$A"
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "1edbd7b2d780929b7f33139a6c65b09a8c77ebb4cf63b5a0a29a98a74403c617",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -42448,6 +42671,103 @@
     },
     {
       "current": {
+        "id": "d798ee6fb108c5f8ac37c643a64a5c901f387086",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Assert",
+            [
+              "$P",
+              "Speaker"
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "30b78bfd33bc5aa21388bec428c60c125a2eff6447ab8e9b662311831806139c",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "62ef9d2abb3071b0cc188c169d027c46b0ce41fd",
         "term": [
           "ZipWith",
@@ -42864,6 +43184,100 @@
       },
       "old_id": "6c0a9d6bc8870f8f2143b708abe9ca66a40581c7",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "ea72087a9954bb6b413035442975c44dc230ba44",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            "$A"
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "3809f0064302d740b35a2e25084cb449b1d68ac37bd58a8bc741619d4165cbf1",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -44197,6 +44611,109 @@
       },
       "old_id": "4279b031e39014df46d1b9a3cfe6b6b5ad121e12",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "f22dc2c71a8db9ef57a2d76317b88ce0b6e1a466",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            [
+              "λ",
+              [
+                "$identity",
+                "::",
+                "Act",
+                "Assertion"
+              ],
+              "$identity"
+            ],
+            "$A"
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "45aa51cc74d42beac050ca376569f720de0c4143467599f76592d75cf77b71f2",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -47895,6 +48412,114 @@
     },
     {
       "current": {
+        "id": "4601e0fc1cd98dda4396bef40b0909f12e3e35b0",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Perform",
+              "Host",
+              [
+                "Let",
+                [
+                  "$saved",
+                  "::",
+                  "Act",
+                  "Assertion"
+                ],
+                "$A",
+                "$saved"
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "728e272648f1579d308a4f8cdb47e6f096a38837a8585925674b631896ef4398",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "definition_parity",
+        "oracle_status": "unavailable"
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "e2d793fbfb39dff9a96fadd7712f2782748b2307",
         "term": [
           "Assert",
@@ -48261,6 +48886,107 @@
     },
     {
       "current": {
+        "id": "679a6c30ff1a50022b0318f997405b963275d5ec",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Let",
+            [
+              "$saved",
+              "::",
+              "Act",
+              "Assertion"
+            ],
+            "$A",
+            "$saved"
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "75ba673b781f401921393521d4827ba8d50f1936d859fc09dc0297545e15693d",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "definition_parity",
+        "oracle_status": "unavailable"
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "011b7658e2a2aefa07aa2d0eab41435b7f353d67",
         "term": [
           "λ",
@@ -48600,6 +49326,110 @@
       },
       "old_id": "6b7cd4795ca590f2940d074bdd8b2f97572670dc",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "ff514347491377c35c8c785510b288646f816241",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Perform",
+              "Host",
+              [
+                "Assert",
+                [
+                  "$P",
+                  "Speaker"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "7839e4779b72f473d44887a4e9cab7f0894be622b29837878ff336a585d40a43",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -51288,6 +52118,115 @@
     },
     {
       "current": {
+        "id": "09fc95fdb0d521827abc465ef8941b72b090c8e1",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Assert",
+              [
+                "CloseClause",
+                [
+                  "ActualClause",
+                  [
+                    "StateClause",
+                    [
+                      "$P",
+                      "Speaker"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "946f6e18b4a766014b3a8bce092eb487bc9594ee391590cf9e7c1d8a618c4ae4",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "residual_pending",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "b7c361bf3ce652c761d68c33ce87b7f5169e4eb7",
         "term": [
           "PluralSome",
@@ -52807,6 +53746,97 @@
     },
     {
       "current": {
+        "id": "c9ad164deb21012d70b3d6c5b7c44768613c6a12",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$read"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          "$A"
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "a13a474fea3a8bc572b221c5f8d6c6a9cdfccae0beee8d9ae9f13420aa9e071b",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "out-of-slice",
+        "cohort": "out_of_slice",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "3f8eb9f0362cf06b2a5e7ccd87597e54763b23d0",
         "term": [
           "λ",
@@ -53603,6 +54633,112 @@
       },
       "old_id": "83c28a399ba2d060a09394adff67de5b8251d810",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "29b68fefa2ce78a0bbce1a5c1f66cb3e956a59b5",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Assert",
+            [
+              "CloseClause",
+              [
+                "ActualClause",
+                [
+                  "StateClause",
+                  [
+                    "$P",
+                    "Speaker"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "a72eebf84d2c5914893e56ab8bfa06cb81debd0ef0f2053661235e962797079d",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "residual_pending",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -56223,6 +57359,112 @@
     },
     {
       "current": {
+        "id": "0b831859fb8c84d39cc9b3a484d12960f6b31d5a",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              [
+                "λ",
+                [
+                  "$identity",
+                  "::",
+                  "Act",
+                  "Assertion"
+                ],
+                "$identity"
+              ],
+              "$A"
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "bfcfa63e5d6294bf469f5021dfa74f6b780febe0b542cca4efae6065197ccf17",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "1138ed0548a554660ae38acc0d17953c10674590",
         "term": [
           "Bind",
@@ -57263,6 +58505,97 @@
       },
       "old_id": "2f99adcc1ee02fe5c13f7cba5115517a8b9d35cd",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "156de5e2948e1c8c11fa68d9f757850ba8e801e0",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          "$A"
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "cf1d4eacb5c1f896dcbb8cbd1400f4d82c72f8d3f8eea5d13feedb2b7c3945d8",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -58343,6 +59676,110 @@
     },
     {
       "current": {
+        "id": "eb25b474d04d551d558e517f0248943c27c6712e",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Let",
+              [
+                "$saved",
+                "::",
+                "Act",
+                "Assertion"
+              ],
+              "$A",
+              "$saved"
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "da0527895910d349e1035194340fb711895fe19dbb32f74bfce25c14178f1fb9",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "pending-milestone-2",
+        "cohort": "definition_parity",
+        "oracle_status": "unavailable"
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
         "id": "14dc45f6fcb104cae08ce81c7d9ff9a0efe9dede",
         "term": [
           "IndividualNo",
@@ -58981,6 +60418,106 @@
       },
       "old_id": "c9eaacec932674eba5782744957fe45d08c20c3b",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "7d55d9ccb1beb10ebdd4aebc87c0f9fcab25868a",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Assert",
+              [
+                "$P",
+                "Speaker"
+              ]
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "e1e7b27b03812e9abbda214a427b0ebb6bd0159b930d91404d248a5598cc7923",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {
@@ -60869,6 +62406,198 @@
       },
       "old_id": "08eddca2756cf8f0c81d55982e8bc825d85ca200",
       "disposition": "exact-input-transport"
+    },
+    {
+      "current": {
+        "id": "0985603525b8aac62815498534fc4c9088dc0aed",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          [
+            "Context",
+            "$x"
+          ],
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          "$A"
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "f63e8056d1b9512e5ddeb3916b49f17a0c7ed9b08fc1e0d5f516204507d15513",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "out-of-slice",
+        "cohort": "out_of_slice",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
+    },
+    {
+      "current": {
+        "id": "dde772c1f4f3af472a4782b6b8d20c08e389f989",
+        "term": [
+          "PerformSource",
+          "Host",
+          [
+            "$x",
+            "::",
+            "Referents",
+            "Entity"
+          ],
+          "$S",
+          [
+            "Assert",
+            [
+              "$P",
+              "$x"
+            ]
+          ],
+          [
+            "$read",
+            "::",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ],
+          [
+            "$o",
+            "::",
+            "ActOccurrence",
+            "Assertion"
+          ],
+          [
+            "Do",
+            [
+              "Perform",
+              "Host",
+              "$A"
+            ]
+          ]
+        ],
+        "environment": [
+          [
+            "$A",
+            "Act",
+            "Assertion"
+          ],
+          [
+            "$D",
+            ".",
+            "Discourse"
+          ],
+          [
+            "$P",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$Q",
+            "Fn",
+            [
+              [
+                "Referents",
+                "Entity"
+              ]
+            ],
+            "Content"
+          ],
+          [
+            "$S",
+            "RefComp",
+            [
+              "Referents",
+              "Entity"
+            ]
+          ]
+        ],
+        "term_environment_sha256": "f65965a1a88f8b8fc1b48a257b37059d8a8ef8c6c799f9c9013951c0067e45b9",
+        "provenance": [
+          "test",
+          "\"perform-source-test.rkt\""
+        ],
+        "tag": "primitive-core",
+        "cohort": "primitive_baseline",
+        "oracle_status": null
+      },
+      "old_id": null,
+      "disposition": "new-input"
     },
     {
       "current": {

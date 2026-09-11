@@ -1,5 +1,10 @@
 # F01 — direct source-form formation, binding and typing
 
+This report records the reviewed `b706b4e` checkpoint. Its source-facing
+Act-continuation defect and the current correction, API contracts, changed
+classifications and validation are documented in [`F01_A1.md`](F01_A1.md).
+The historical counts below are not the successor's current counts.
+
 Source input: `3e45db536c8523d023f70ae25878a3ecb9f79663`, PM's merge of
 the accuracy-cleared F01 source with adopted P45 (`01759ba`). Work branch:
 `work/f01-encoding-20260911`; the previous E02 branch at `13d2672` is preserved.

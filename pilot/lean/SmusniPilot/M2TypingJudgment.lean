@@ -91,6 +91,15 @@ mutual
         (bodyTyping : SynthJudgment (environment.extend binderType) body bodyResult) :
         SynthJudgment environment (.bind binderType computation body)
           (mergeObservations bodyResult.type [computationResult, bodyResult])
+    | bindPerformance {scope : Nat} (environment : Environment scope)
+        (binderType : Ty) (computation : Term scope) (body : Term (scope + 1))
+        (computationResult bodyResult : TypingObservation)
+        (mode : PerformanceBody bodyResult.type)
+        (computationTyping : SynthJudgment environment computation computationResult)
+        (computationType : computationResult.type = Ty.perfComp binderType)
+        (bodyTyping : SynthJudgment (environment.extend binderType) body bodyResult) :
+        SynthJudgment environment (.bind binderType computation body)
+          (mergeObservations mode.outputType [computationResult, bodyResult] mode.effects)
     | performSource {scope : Nat} (environment : Environment scope)
         (reference : Ty) (source : Term scope) (content : Term (scope + 1))
         (continuation : Term (scope + 2))

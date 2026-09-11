@@ -1,6 +1,7 @@
 import SmusniPilot.S1
 import SmusniPilot.M2Templates
 import SmusniPilot.M2TypingSoundness
+import SmusniPilot.M2SourceNotation
 
 namespace SmusniPilot
 namespace M2
@@ -21,6 +22,7 @@ structure CoreElaborationState where
   nextOccurrence : Nat := 0
   definitions : List M2DefinitionId := []
   clauses : List M2ClauseId := []
+  sourceNotation : Bool := false
   deriving Repr, Inhabited
 
 def overloadDefinition (operator : FirstOrderPrimitive) :
@@ -63,7 +65,11 @@ mutual
         let (continuation, state) ← elaborateCore document
           ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
           (some Ty.discourse) continuation state
-        pure (.performSource reference source content continuation, state)
+        let next := (environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion)
+        let normalized ← sourceDiscourse next (← normalizeSourceTerm next continuation)
+        let changed := Interchange.encodeTerm normalized != Interchange.encodeTerm continuation
+        pure (.performSource reference source content normalized,
+          { state with sourceNotation := state.sourceNotation || changed })
     | .apply function arguments =>
         let (function, state) ← elaborateCore document environment none function state
         let (arguments, state) ←
@@ -107,7 +113,7 @@ mutual
                     | .error detail =>
                         return ← coreElaborationFailure "template-certificate" detail
                     | .ok _ =>
-                        let updated : CoreElaborationState := {
+                        let updated : CoreElaborationState := { state with
                           nextOccurrence := state.nextOccurrence + 1
                           definitions := state.definitions ++ [definition]
                           clauses := state.clauses ++ expansion.clauses }
@@ -633,7 +639,11 @@ mutual
           (occurrence.spelling :: read.spelling :: names)
           ((environment.extend (Ty.refComp x.type)).extend (Ty.actOccurrence Ty.assertion))
           (some Ty.discourse) body state
-        pure (.performSource x.type source content body, state)
+        let next := (environment.extend (Ty.refComp x.type)).extend (Ty.actOccurrence Ty.assertion)
+        let normalized ← sourceDiscourse next (← normalizeSourceTerm next body)
+        let changed := Interchange.encodeTerm normalized != Interchange.encodeTerm body
+        pure (.performSource x.type source content normalized,
+          { state with core := { state.core with sourceNotation := state.core.sourceNotation || changed } })
     | .form _ (.primitive .context) arguments =>
         let (arguments, state) ← elaborateSurfaceList document lexicalHeads freeNames
           rrLink names environment arguments state
@@ -902,14 +912,15 @@ def classifyDecodedCase (lexicalHeads : List String) (manifest : S1Manifest)
             rrAgreement := rrAgrees }
       | .ok typed =>
           let traceSupported := typingTraceSupported typed
-          let inputAvailable := state.core.definitions.isEmpty
+          let inputAvailable := state.core.definitions.isEmpty && !state.core.sourceNotation
           return {
             id := record.id
             originalTag := manifestCase.tag
-            disposition := if state.core.definitions.isEmpty then
+            disposition := if inputAvailable then
               .typedUnchanged else .typeDirectedExpansion
-            decidingRule := if state.core.definitions.isEmpty then
-              "bidirectional typing" else "generated definition-domain overload"
+            decidingRule := if inputAvailable then "bidirectional typing"
+              else if state.core.definitions.isEmpty then "expected-Discourse source notation"
+              else "generated definition-domain overload"
             type := some typed.type
             effects := typed.effects
             expandedDefinitions := state.core.definitions

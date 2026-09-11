@@ -33,7 +33,7 @@
 (reject (source-form 'Speaker))
 (reject (source-form '$S 'Speaker))
 (reject (source-form '$S '($P $x) '($Q Speaker)))
-(reject (source-form '$S '($P $x) '(Assert ($Q Speaker))))
+(check-equal? (typing-type (infer (source-form '$S '($P $x) '(Assert ($Q Speaker))))) 'Discourse)
 (reject (source-form '$unknown))
 (reject (source-form '$S '$unknown))
 (reject (source-form '$S '($P $x) '$unknown))
@@ -126,3 +126,39 @@
                            ($y :: Referents Entity) $S
                        (Do (Perform (Assert ($P $x))) (Perform (Assert ($Q $y)))))))
  'Discourse)
+
+;; F01-A1: expected-Discourse notation is selected by the declared Act type,
+;; including values without a constructor head. Compare actual normalized
+;; production trees, not only the resulting type. C1 stays exactly resolved.
+(define act-env (hash-set env '$A '(Act Assertion)))
+(define (normalized term)
+  (core->plain-datum (normalize-source-core (ast term) act-env)))
+(define (count-head tree wanted)
+  (if (list? tree)
+      (+ (if (and (pair? tree) (eq? (car tree) wanted)) 1 0)
+         (for/sum ([child (in-list tree)]) (count-head child wanted)))
+      0))
+(for ([act (in-list '($A (Assert ($P Speaker))
+                       (Let ($saved :: Act Assertion) $A $saved)
+                       ((λ ($identity :: Act Assertion) $identity) $A)))])
+  (define variants (map (lambda (d) (source-form '$S '($P $x) d))
+                        (list act `(Do ,act) `(Do (Perform Host ,act)))))
+  (define canonical (normalized (first variants)))
+  (check-equal? (count-head (last canonical) 'Perform) 1)
+  (check-equal? (list-ref canonical 4) '(Assert ($P $x)))
+  (check-equal? (normalized canonical) canonical)
+  (for ([term (in-list variants)])
+    (check-equal? (normalized term) canonical)
+    (check-equal? (typing-type (infer term act-env)) 'Discourse)
+    ;; Default source elaboration defers open typed notation to inference.
+    (check-equal? (typing-type (infer-core (elaboration-ast (elaborate-core (ast term))) act-env)) 'Discourse)
+    (define elaborated (elaborate-core (ast term) #:environment act-env))
+    (check-equal? (typing-type (infer-core (elaboration-ast elaborated) act-env)) 'Discourse)
+    (check-equal? (count-head (last (core->plain-datum (elaboration-ast elaborated))) 'Perform) 1)))
+(define contextual-act
+  '(Bind ($captured :: Referents Entity) (Context)
+         (Assert ($P $captured))))
+(define contextual-source (source-form '$S '($P $x) contextual-act))
+(check-equal? (site-signatures (normalized contextual-source)) (site-signatures contextual-source))
+(reject (source-form '$S '($P $read) '$A) act-env)
+(reject (source-form '(Context $x) '($P $x) '$A) act-env)

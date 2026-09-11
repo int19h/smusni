@@ -1,6 +1,6 @@
 (smusni-m2-oracle-sources
  1
- (count 192)
+ (count 195)
  (cases
   (case (id "001387765e509fe487e7c355464631bb66e96719") (status unavailable))
   (case (id "010a22f419f0e4714289ac20673998b765002c77") (status unavailable))
@@ -129,6 +129,7 @@
     (context assert-bridge)
     (source-typing (typing (Act Assertion) () ()))
     (payload-source-typing (typing Content () ())))
+  (case (id "4601e0fc1cd98dda4396bef40b0909f12e3e35b0") (status unavailable))
   (case (id "461e7d7ad9466fa7f5ace614d71b37fa8e8d0df1") (status unavailable))
   (case (id "46aa50ddf4c3dfe8ae551fe795b739337bf72d66")
     (status typed-source)
@@ -191,6 +192,7 @@
     (status typed-source)
     (context whole-a0)
     (source-typing (typing Content (context projective) (finite-set-cardinality-defined))))
+  (case (id "679a6c30ff1a50022b0318f997405b963275d5ec") (status unavailable))
   (case (id "686b8a01e259b902a68c4bf25a21c829e47c5f2b")
     (status typed-source)
     (context assert-bridge)
@@ -424,6 +426,7 @@
     (status typed-source)
     (context whole-a0)
     (source-typing (typing Content (projective) (finite-set-cardinality-defined))))
+  (case (id "eb25b474d04d551d558e517f0248943c27c6712e") (status unavailable))
   (case (id "ed9b04034814200f58fddbdec548f99a038bc428")
     (status typed-source)
     (context whole-a0)

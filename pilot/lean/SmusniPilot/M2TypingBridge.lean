@@ -219,6 +219,33 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     refine ⟨result, ?_, rfl⟩
     rw [synth.eq_7, bodySuccess, computationSuccess]
     rfl
+  case bindPerformance environment binderType computation body computationObservation
+      bodyObservation mode computationTyping computationType bodyTyping computationIH bodyIH =>
+    rcases computationIH with ⟨computationResult, computationSuccess, computationAgreement⟩
+    rcases bodyIH with ⟨bodyResult, bodySuccess, bodyAgreement⟩
+    cases computationAgreement
+    cases bodyAgreement
+    have computationTypeRaw : computationResult.type = Ty.perfComp binderType := computationType
+    have noReference : Ty.compatible computationResult.type (Ty.refComp binderType) = false := by
+      rw [computationTypeRaw]
+      have different : (Ty.perfComp binderType == Ty.refComp binderType) = false := rfl
+      have notClause : (Ty.perfComp binderType == Ty.clauseContent) = false := rfl
+      have refNotClause : (Ty.refComp binderType == Ty.clauseContent) = false := rfl
+      rw [Ty.compatible]
+      · simp only [different, notClause, refNotClause, Bool.false_eq_true, ↓reduceIte]
+      all_goals simp [Ty.perfComp, Ty.refComp]
+    have performance : Ty.compatible computationResult.type (Ty.perfComp binderType) = true := by
+      rw [computationTypeRaw]
+      rw [Ty.compatible]
+      · simp
+      all_goals simp [Ty.perfComp]
+    have modeFound : performanceBodyCertificate bodyResult.type = some mode :=
+      performanceBodyCertificate_complete mode
+    let checked : TypingResult := { computationResult with trace := computationResult.trace ++ [.a0TCheckSynth, .a0Check] }
+    refine ⟨(mergeResults mode.outputType [checked, bodyResult] mode.effects [] mode.rule).withRule .a0Synth, ?_, rfl⟩
+    simp [synth, check, bodySuccess, computationSuccess, noReference, performance,
+      modeFound, checked, failure]
+    rfl
   case performSource environment reference source content continuation sourceObservation
       contentObservation continuationObservation referenceValid sourceTyping contentTyping
       continuationTyping sourceIH contentIH continuationIH =>

@@ -1,7 +1,7 @@
 (smusni-port-corpus
  1
- (count 404)
- (cases-sha1 "bad9e35852eaba12a47d3007c1f2c40c17526a15")
+ (count 421)
+ (cases-sha1 "352fdb84fe27bb454cf439a1b57bc88f0bdd5294")
  (fence-sources
   ("samples.md" 1 "738f3c4cc9a19d8708f73af84f65571286474905")
   ("samples.md" 2 "4dafb267405c206fcd2cfc26056b51d6d3940054")
@@ -213,7 +213,7 @@
   ("tools/smusni-redex/tests/notation-test.rkt"
    "3ff1225f99e8113d61f737ac79f0028138fd828b")
   ("tools/smusni-redex/tests/perform-source-test.rkt"
-   "e127a5029cd7480f33da2dbc5596857cb256184b")
+   "afdfc03b8882c69215c7d4eb26b5768437fd75e2")
   ("tools/smusni-redex/tests/reference-scopes-test.rkt"
    "2793ef06eb079303f4e5f5508bba6ae978cbd789")
   ("tools/smusni-redex/tests/rules-test.rkt"
@@ -430,6 +430,26 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0985603525b8aac62815498534fc4c9088dc0aed")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Context $x)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "09f0948ce98ba5c5c10172f02e84d769c77fc947")
     (provenance (test "types-test.rkt"))
     (term
@@ -443,6 +463,26 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "09fc95fdb0d521827abc465ef8941b72b090c8e1")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Assert (CloseClause (ActualClause (StateClause ($P Speaker))))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "0a33e1a1815fb2640ffa77469a9a835d9c0a21e8")
     (provenance (test "lower-test.rkt"))
     (term
@@ -451,6 +491,26 @@
        (λ ($r :: Referents Entity) (gerku $r))
        (λ ($w :: Referents Entity) (Close (tavla $w Speaker))))))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0b831859fb8c84d39cc9b3a484d12960f6b31d5a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do ((λ ($identity :: Act Assertion) $identity) $A))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -674,6 +734,26 @@
     (provenance (test "closures-test.rkt"))
     (term (IndividualNo $x $r))
     (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "156de5e2948e1c8c11fa68d9f757850ba8e801e0")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -915,6 +995,26 @@
        (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
       (Mention $w)))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "29b68fefa2ce78a0bbce1a5c1f66cb3e956a59b5")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Assert (CloseClause (ActualClause (StateClause ($P Speaker)))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -1395,6 +1495,26 @@
       (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
       (Assert (Close ((Tanru sutra klama) $r)))))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4601e0fc1cd98dda4396bef40b0909f12e3e35b0")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host (Let ($saved :: Act Assertion) $A $saved)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -2076,6 +2196,26 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "679a6c30ff1a50022b0318f997405b963275d5ec")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Let ($saved :: Act Assertion) $A $saved)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "68256ed991f01e36f74061e40828823d71c2fb80")
     (provenance (fence "samples.md" 15 specimen 1))
     (term (Assert (CloseClause (ActualClause (StateClause (= (+ 2 2) 4))))))
@@ -2586,6 +2726,26 @@
        (λ ($x :: Entity) (gerku $x))
        (λ ($x :: Entity) (Close (blabi $x))))))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7d55d9ccb1beb10ebdd4aebc87c0f9fcab25868a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Assert ($P Speaker)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -3121,6 +3281,29 @@
     (provenance (test "closures-test.rkt"))
     (term (IndividualNo $x $r))
     (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "93840201365a510ccf7bbae834fc5f41cdb61e61")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform
+        Host
+        (Assert (CloseClause (ActualClause (StateClause ($P Speaker)))))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -3743,6 +3926,26 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "b546ecc02b029c93d9cbe6d396c040d593a904cc")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host ((λ ($identity :: Act Assertion) $identity) $A)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "b6fdf53c940c0fbfddd3982d10ccb1b9444ce6ae")
     (provenance (test "lower-test.rkt"))
     (term
@@ -4062,6 +4265,26 @@
     (provenance (test "closures-test.rkt"))
     (term (IndividualNo $x $r))
     (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c9ad164deb21012d70b3d6c5b7c44768613c6a12")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $read))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -4390,6 +4613,26 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d798ee6fb108c5f8ac37c643a64a5c901f387086")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Assert ($P Speaker))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "d815bd2bd0ebfc57c5d13a0712c6d6bd10c8ed6d")
     (provenance (test "perform-source-test.rkt"))
     (term
@@ -4474,6 +4717,26 @@
           (= (CardBasis $reference (λ ($unit :: Entity) (gerku $unit))) 3))))
       (Assert (Close (tavla Speaker $r)))))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dde772c1f4f3af472a4782b6b8d20c08e389f989")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host $A))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -4754,10 +5017,50 @@
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ea72087a9954bb6b413035442975c44dc230ba44")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do $A)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
   (case (id "ea91643d11339c87a832cf5f32fe66d40940c958")
     (provenance (test "types-test.rkt"))
     (term (LocutionOf CurrentToken CurrentToken))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "eb25b474d04d551d558e517f0248943c27c6712e")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Let ($saved :: Act Assertion) $A $saved))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -4962,6 +5265,26 @@
        (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
       (Mention $w)))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "f22dc2c71a8db9ef57a2d76317b88ce0b6e1a466")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      ((λ ($identity :: Act Assertion) $identity) $A)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
@@ -5183,6 +5506,26 @@
     (provenance (test "types-test.rkt"))
     (term (λ ($f :: Fn Entity Content) ($f Speaker)))
     (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ff514347491377c35c8c785510b288646f816241")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host (Assert ($P Speaker))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
      "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))

@@ -3,6 +3,7 @@
 (require racket/list
          racket/match
          "inventory.rkt"
+         "types.rkt"
          "syntax.rkt")
 
 (provide (struct-out site-id)
@@ -56,7 +57,7 @@
   (walk ast)
   (reverse found))
 
-(define (elaborate-core ast [inv (load-inventory)])
+(define (elaborate-core ast [inv (load-inventory)] #:environment [env #f])
   (define choices '())
   (define (record! node kind detail)
     (set! choices
@@ -113,4 +114,7 @@
          [else rebuilt])]))
   (define sites (collect-sites ast))
   (define result (walk ast))
-  (elaboration result (reverse choices) sites))
+  ;; Open terms without a supplied environment defer typed notation lowering
+  ;; to infer-core. Callers needing the canonical source AST supply the env.
+  (elaboration (if env (normalize-source-core result env inv) result)
+               (reverse choices) sites))

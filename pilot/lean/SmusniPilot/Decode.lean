@@ -26,6 +26,10 @@ partial def decodeTy : SurfaceTerm → Except String Ty
       return .function false (← decodeTyParameters parameters) (← decodeTy result)
   | .form _ (.unknown "EFn") [parameters, result] =>
       return .function true (← decodeTyParameters parameters) (← decodeTy result)
+  | .form _ (.unknown "Act") [.atom (.symbol force)] =>
+      pure (.named .typeFormAct [.index force])
+  | .form _ (.unknown "ActOccurrence") [.atom (.symbol force)] =>
+      pure (.named .typeFormActOccurrence [.index force])
   | term@(.form _ (.unknown name) arguments) => do
       if name.toNat?.isSome then
         match arguments with
@@ -130,7 +134,7 @@ def decodePerformSourceParts (arguments : List SurfaceTerm) :
   | _ => .error "PerformSource source binder must be Referents<T>"
   if read.type != .named .typeFormRefComp [x.type] then
     throw "PerformSource read binder must be RefComp<R>"
-  if occurrence.type != .named .typeFormActOccurrence [.variable "Assertion"] then
+  if occurrence.type != .named .typeFormActOccurrence [.index "Assertion"] then
     throw "PerformSource occurrence binder must be ActOccurrence Assertion"
   if read.spelling == occurrence.spelling then
     throw "PerformSource read and occurrence binders must be distinct"

@@ -1347,6 +1347,21 @@ private theorem synth_perform_source_handler {scope : Nat}
             (continuationSound continuationResult continuationEq continuationSupported)
   · simp [synth, validateSourceReferenceType, valid, failure] at success
 
+private theorem compatible_performance_exact (actual inner : Ty)
+    (compatible : Ty.compatible actual (Ty.perfComp inner) = true) :
+    actual = Ty.perfComp inner := by
+  cases equal : (actual == Ty.perfComp inner) with
+  | true => exact Ty.eq_of_beq_true equal
+  | false =>
+    have clause : (Ty.perfComp inner == Ty.clauseContent) = false := rfl
+    have pureFunction : (Ty.perfComp inner == Ty.pureFn [Ty.referents Ty.eventuality] Ty.content) = false := rfl
+    have effectFunction : (Ty.perfComp inner == Ty.effectfulFn [Ty.referents Ty.eventuality] Ty.content) = false := rfl
+    rw [Ty.compatible] at compatible
+    · simp only [equal, Bool.false_eq_true, ↓reduceIte, clause, pureFunction, effectFunction,
+        Bool.false_or] at compatible
+      split at compatible <;> simp_all
+    all_goals simp [Ty.perfComp]
+
 private theorem synth_bind_handler {scope : Nat}
     (environment : Environment scope) (binderType : Ty)
     (computation : Term scope) (body : Term (scope + 1))
@@ -1394,49 +1409,31 @@ private theorem synth_bind_handler {scope : Nat}
           | error performanceError =>
               simp [synth, bodyEq, referenceEq, performanceEq] at success
           | ok performanceResult =>
-              let resultType := match bodyResult.type with
-                | .named .typeFormAct _ => Ty.discourse
-                | type => if type == Ty.discourse then Ty.discourse else type
-              let rule : M2TypingRuleId := match bodyResult.type with
-                | .named .typeFormAct _ => .a0TBindPerformanceAct
-                | .named .typeFormPerfComp _ => .a0TBindPerformanceComp
-                | _ => .a0TBindPerformanceDiscourse
-              simp [synth, bodyEq, referenceEq, performanceEq,
-                resultType, rule] at success
-              cases success
-              have ruleMember : rule ∈
-                  ((mergeResults resultType [performanceResult, bodyResult]
-                    (if resultType == Ty.discourse then [.performance] else [])
-                    [] rule).withRule .a0Synth).trace := by
-                simp [mergeResults, TypingResult.withRule]
-              have implemented := supported.supported
-              rw [List.all_eq_true] at implemented
-              have ruleImplemented := implemented rule ruleMember
-              have ruleCases : rule = .a0TBindPerformanceAct ∨
-                  rule = .a0TBindPerformanceComp ∨
-                  rule = .a0TBindPerformanceDiscourse := by
-                unfold rule
-                cases bodyTypeEq : bodyResult.type with
-                | named name arguments =>
-                    cases name <;> simp
-                | «variable» name | index name => simp
-                | function effectful parameters output => simp
-              rcases ruleCases with ruleEq | ruleEq | ruleEq
-              · have excluded :
-                    typingRuleImplemented .a0TBindPerformanceAct = false := by
-                  decide
-                rw [ruleEq, excluded] at ruleImplemented
-                contradiction
-              · have excluded :
-                    typingRuleImplemented .a0TBindPerformanceComp = false := by
-                  decide
-                rw [ruleEq, excluded] at ruleImplemented
-                contradiction
-              · have excluded :
-                    typingRuleImplemented .a0TBindPerformanceDiscourse = false := by
-                  decide
-                rw [ruleEq, excluded] at ruleImplemented
-                contradiction
+              cases modeEq : performanceBodyCertificate bodyResult.type with
+              | none => simp [synth, bodyEq, referenceEq, performanceEq, modeEq, failure] at success
+              | some mode =>
+                have resultEq : result = (mergeResults mode.outputType
+                    [performanceResult, bodyResult] mode.effects [] mode.rule).withRule .a0Synth := by
+                  simpa [synth, bodyEq, referenceEq, performanceEq, modeEq] using success.symm
+                subst result
+                have supportedRaw : TypingManifestSupported
+                    (performanceResult.trace ++ bodyResult.trace ++ [mode.rule, .a0Synth]) := by
+                  simpa [mergeResults, TypingResult.withRule] using supported
+                have performanceSupported : TypingManifestSupported performanceResult.trace :=
+                  typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+                have bodySupported : TypingManifestSupported bodyResult.trace :=
+                  typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+                have checked := performanceSound performanceResult performanceEq performanceSupported
+                have computationFacts :
+                    SynthJudgment environment computation performanceResult.observation ∧
+                    performanceResult.type = Ty.perfComp binderType := by
+                  cases checked with
+                  | fromSynth _ _ _ _ typing compatible =>
+                    exact ⟨typing, compatible_performance_exact _ _ compatible⟩
+                exact SynthJudgment.bindPerformance environment binderType computation body
+                  performanceResult.observation bodyResult.observation mode
+                  computationFacts.1 computationFacts.2
+                  (bodySound bodyResult bodyEq bodySupported)
 
 private theorem synth_application_handler {scope : Nat}
     (environment : Environment scope) (function : Term scope)

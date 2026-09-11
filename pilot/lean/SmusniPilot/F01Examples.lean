@@ -20,7 +20,7 @@ def close (body : String) : String :=
   "{λ [[$source :: RefComp (Referents Entity)] [$P :: Fn ((Referents Entity)) Content]] " ++ body ++ "}"
 
 def decode (text : String) : Except String (Term 0 × DecodeState) := do
-  decodeClosedCore "f01-control" (SurfaceTerm.ofSExpr (← SExpr.parse text))
+  decodeSourceCore "f01-control" [] Environment.empty (SurfaceTerm.ofSExpr (← SExpr.parse text))
 
 def expectRejected (text : String) : IO Unit := do
   match decode text with
@@ -80,11 +80,73 @@ def run : IO Unit := do
     form (content := "(Bind [$z :: Referents Entity] (Context $o) ($P $z))"),
     form (source := "Speaker"), form (content := "$read"), form (content := "$o"),
     form (content := "Speaker"), form (continuation := "(Do (Perform (Assert ($P $x))))"),
-    form (continuation := "($P Speaker)"), form (continuation := "(Assert ($P Speaker))"),
+    form (continuation := "($P Speaker)"),
     form (continuation := "(Do (Perform 3 (Assert ($P Speaker))))"),
     (form).replace "[$read ::" "[$o ::", (form).replace "(Assert ($P $x))" "(Assert ($P $x) ($P $x))",
     (form).replace "PerformSource Host" "PerformSource Host Host"]
   for text in negatives do expectRejected (close text)
+
+  -- Source-facing normalization consumes declared types, not Assert spelling.
+  -- The structural M1 decoder and deep synth remain canonical-only APIs.
+  for act in ["$A", "(Assert ($P Speaker))",
+      "((λ [$saved :: Act Assertion] $saved) $A)",
+      "((λ [$saved :: Act Assertion] $saved) (Assert ($P Speaker)))"] do
+    let source := fun d => "{λ [$A :: Act Assertion] " ++ close (form (continuation := d)) ++ "}"
+    let variants := [source act, source ("(Do " ++ act ++ ")"),
+      source ("(Do (Perform Host " ++ act ++ "))")]
+    let mut canonical : Option String := none
+    for text in variants do
+      let term ← expectTyped text
+      let encoded := Interchange.renderCanonicalTerm term
+      if let some first := canonical then
+        if encoded != first then throw <| IO.userError "F01 Act/Do/Perform notation disagrees"
+      else canonical := some encoded
+      let again ← IO.ofExcept ((normalizeSourceTerm Environment.empty term).mapError (fun e => e.detail))
+      if Interchange.renderCanonicalTerm again != encoded then
+        throw <| IO.userError "F01 source normalization double-performed an Act"
+    let surface := SurfaceTerm.ofSExpr (← IO.ofExcept (SExpr.parse (source act)))
+    let (raw, _) ← IO.ofExcept (decodeClosedCore "f01-raw" surface)
+    if (synth Environment.empty raw).isOk then
+      throw <| IO.userError "F01 deep typing silently admitted unnormalized Act as Discourse"
+    let (normalized, _) ← IO.ofExcept ((synthesizeSource Environment.empty raw).mapError (fun e => e.detail))
+    if some (Interchange.renderCanonicalTerm normalized) != canonical then
+      throw <| IO.userError "F01 source-facing synthesis disagrees with decoder"
+
+  let external : Environment 0 := { Environment.empty with free := [
+    ({domain := "$S", serial := 0}, Ty.refComp (Ty.referents Ty.entity)),
+    ({domain := "$P", serial := 0}, Ty.pureFn [Ty.referents Ty.entity] Ty.content),
+    ({domain := "$A", serial := 0}, Ty.act Ty.assertion)] }
+  for act in ["$A", "(Let [$saved :: Act Assertion] $A $saved)"] do
+    let mut first : Option String := none
+    for d in [act, "(Do " ++ act ++ ")", "(Do (Perform Host " ++ act ++ "))"] do
+      let surface := SurfaceTerm.ofSExpr (← IO.ofExcept (SExpr.parse (form (source := "$S") (continuation := d))))
+      let (term, state) ← IO.ofExcept ((elaborateSurface "f01-source-api" [] ["$S", "$P", "$A"] none [] external none surface {}).mapError (fun e => e.detail))
+      if state.core.sourceNotation != (d != "(Do (Perform Host " ++ act ++ "))") then
+        throw <| IO.userError "F01 source normalization lost its changed-input disposition"
+      let _ ← IO.ofExcept ((synth external term).mapError (fun e => e.detail))
+      let encoded := Interchange.renderCanonicalTerm term
+      if let some prior := first then
+        if encoded != prior then throw <| IO.userError "F01 production elaborator Act notation mismatch"
+      else first := some encoded
+
+  -- Canonical force decoding exposes the previously unsupported performance
+  -- Bind typing consumers. Retain their real premises and reject Content or
+  -- reference-computation bodies rather than expanding the result category.
+  let boundPerformance := fun body => close <|
+    "(Bind [$next :: ActOccurrence Assertion] (Perform Host (Assert ($P Speaker))) " ++ body ++ ")"
+  for body in ["(Assert ($P Speaker))", "(Do (Perform Host (Assert ($P Speaker))))",
+      "(Perform Host (Assert ($P Speaker)))"] do
+    let surface := SurfaceTerm.ofSExpr (← IO.ofExcept (SExpr.parse (boundPerformance body)))
+    let (raw, _) ← IO.ofExcept (decodeClosedCore "f01-performance-bind" surface)
+    let result ← IO.ofExcept ((synth Environment.empty raw).mapError (fun e => e.detail))
+    if !result.trace.all typingRuleImplemented then
+      throw <| IO.userError "performance Bind consumer lacks its typing proof"
+  for body in ["($P Speaker)", "$source"] do
+    let surface := SurfaceTerm.ofSExpr (← IO.ofExcept (SExpr.parse (boundPerformance body)))
+    let (raw, _) ← IO.ofExcept (decodeClosedCore "f01-invalid-performance-bind" surface)
+    if (synth Environment.empty raw).isOk then
+      throw <| IO.userError "performance Bind accepted a non-performance body"
+  IO.println "F01-A1: four Act expressions x three source spellings; free-env Act/Let production paths; all three performance-Bind modes and two wrong-body controls PASS"
 
   -- Sites exercise all three arms at distinct depths. They are supplied
   -- syntactic sites; these controls do not certify source-family eligibility.

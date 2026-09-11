@@ -4,7 +4,7 @@
   (id "B.infer-application.c1e3d65f94")
   (function infer-application)
   (pattern (member head '(Context Vague Refer)))
-  (source-lines 817 820)
+  (source-lines 896 899)
   (source-sha1 "1c04961ce3ea8e4b1e0e061d559c8c303d23a13e")
   (class external-gap-or-diagnostic)
   (reason
@@ -13,7 +13,7 @@
   (id "B.infer-application.bcb5013b9d")
   (function infer-application)
   (pattern (not head))
-  (source-lines 821 848)
+  (source-lines 900 927)
   (source-sha1 "a5eb89b56ec6fec29d6e338a0a50ee4f76d7117e")
   (class semantic-clause)
   (reason
@@ -22,7 +22,7 @@
   (id "B.infer-application.3b0db6994d")
   (function infer-application)
   (pattern (member head '(∧ ∨ →)))
-  (source-lines 849 849)
+  (source-lines 928 928)
   (source-sha1 "25aa24b550e593e7ea752e6a0690e7b746fa4e73")
   (class auxiliary)
   (reason
@@ -31,7 +31,7 @@
   (id "B.infer-application.0470265b29")
   (function infer-application)
   (pattern (eq? head '¬))
-  (source-lines 850 852)
+  (source-lines 929 931)
   (source-sha1 "f4e6256d9f41c39e768a360e1af55457d933a628")
   (class semantic-clause)
   (reason
@@ -40,7 +40,7 @@
   (id "B.infer-application.0bf5acce49")
   (function infer-application)
   (pattern (member head '(∀ ∃)))
-  (source-lines 853 853)
+  (source-lines 932 932)
   (source-sha1 "20282f3d410ec70065e4debdb7056d7a2f43e935")
   (class auxiliary)
   (reason
@@ -49,7 +49,7 @@
   (id "B.infer-application.b79f85070e")
   (function infer-application)
   (pattern (eq? head '=))
-  (source-lines 861 869)
+  (source-lines 940 948)
   (source-sha1 "a53b92db48982523f52791b119342eae9bcec084")
   (class semantic-clause)
   (reason "This branch types equality over compatible operands."))
@@ -57,7 +57,7 @@
   (id "B.infer-application.94519d3b4f")
   (function infer-application)
   (pattern (eq? head '∈))
-  (source-lines 870 881)
+  (source-lines 949 960)
   (source-sha1 "4d651bfca228bf47a50f6b40691cb81206f1d70b")
   (class semantic-clause)
   (reason "This branch types membership over one value and a matching set."))
@@ -65,7 +65,7 @@
   (id "B.infer-application.6cfa6811cd")
   (function infer-application)
   (pattern (eq? head 'Among))
-  (source-lines 882 891)
+  (source-lines 961 970)
   (source-sha1 "9628fcd42389403f04b071769ae5d972f35d5094")
   (class semantic-clause)
   (reason
@@ -74,7 +74,7 @@
   (id "B.infer-application.665abbb3b1")
   (function infer-application)
   (pattern (eq? head 'Combine))
-  (source-lines 892 910)
+  (source-lines 971 989)
   (source-sha1 "8c64e847935837316d2d7962cdd76953d133f6e1")
   (class semantic-clause)
   (reason
@@ -85,7 +85,7 @@
   (pattern
    (or (member head '(+ −))
        (and (symbol? head) (string=? (symbol->string head) "te'a"))))
-  (source-lines 911 916)
+  (source-lines 990 995)
   (source-sha1 "d76e3ef594b021d572ca416b39cf16d8973094b1")
   (class semantic-clause)
   (reason "This branch types the currently supported numeric operations."))
@@ -93,7 +93,7 @@
   (id "B.infer-application.cc707a6b93")
   (function infer-application)
   (pattern (eq? head 'Close))
-  (source-lines 923 947)
+  (source-lines 1002 1026)
   (source-sha1 "8016e05d01e7cc8a9cf5c4b5e31e16e53d234171")
   (class semantic-clause)
   (reason
@@ -102,7 +102,7 @@
   (id "B.infer-application.5a4d305035")
   (function infer-application)
   (pattern (eq? head 'CloseClause))
-  (source-lines 948 952)
+  (source-lines 1027 1031)
   (source-sha1 "6b75e8f03e95d0de0449af4fafeb1f76097c2265")
   (class semantic-clause)
   (reason "This branch types closure of ClauseContent."))
@@ -110,7 +110,7 @@
   (id "B.infer-application.8d934f7b94")
   (function infer-application)
   (pattern (eq? head 'DirectClause))
-  (source-lines 953 958)
+  (source-lines 1032 1037)
   (source-sha1 "91ee332b1fff7672b9328c26c119934f4f8412d6")
   (class semantic-clause)
   (reason
@@ -119,7 +119,7 @@
   (id "B.infer-application.9f2b657aca")
   (function infer-application)
   (pattern (eq? head 'StateClause))
-  (source-lines 959 963)
+  (source-lines 1038 1042)
   (source-sha1 "6c5dfeb3b386eb546f72f781ec06c077206e6a10")
   (class semantic-clause)
   (reason "This branch types state-clause construction from Content."))
@@ -127,7 +127,7 @@
   (id "B.infer-application.06cd2851dd")
   (function infer-application)
   (pattern (member head '(ActualClause CapableClause ClauseNot)))
-  (source-lines 964 968)
+  (source-lines 1043 1047)
   (source-sha1 "0e750fa08711e195fac8259107b470573c6b259a")
   (class semantic-clause)
   (reason "This branch types unary clause-event formers."))
@@ -135,7 +135,7 @@
   (id "B.infer-application.df4748010c")
   (function infer-application)
   (pattern (member head '(ClauseAnd ClauseOr)))
-  (source-lines 969 973)
+  (source-lines 1048 1052)
   (source-sha1 "c55fd184306e94efc173d58ecdbdb73055cd28d5")
   (class semantic-clause)
   (reason "This branch types binary clause-event formers."))
@@ -143,7 +143,7 @@
   (id "B.infer-application.75814622a9")
   (function infer-application)
   (pattern (member head '(Assert Express)))
-  (source-lines 974 979)
+  (source-lines 1053 1058)
   (source-sha1 "bfba8abbf027ab86a7fa1744b72450c077f5ed61")
   (class semantic-clause)
   (reason
@@ -152,7 +152,7 @@
   (id "B.infer-application.549235b955")
   (function infer-application)
   (pattern (eq? head 'Mention))
-  (source-lines 980 983)
+  (source-lines 1059 1062)
   (source-sha1 "dc6e18ed5b91dd8149374e9e42c1ddac5243edf6")
   (class semantic-clause)
   (reason "This branch types expressive mention of one value."))
@@ -160,7 +160,7 @@
   (id "B.infer-application.2184af511c")
   (function infer-application)
   (pattern (eq? head 'Ask))
-  (source-lines 984 989)
+  (source-lines 1063 1068)
   (source-sha1 "3e0ea9a1c3e7583ce0cea199eaeeb0d683898751")
   (class semantic-clause)
   (reason "This branch types question acts from Query values."))
@@ -168,7 +168,7 @@
   (id "B.infer-application.d52dadd27f")
   (function infer-application)
   (pattern (eq? head 'ContextualAnswer))
-  (source-lines 990 993)
+  (source-lines 1069 1072)
   (source-sha1 "9bfa14ab2a76cbe1de3b515928d2fc631284b5ae")
   (class external-gap-or-diagnostic)
   (reason
@@ -177,7 +177,7 @@
   (id "B.infer-application.71541ce89b")
   (function infer-application)
   (pattern (eq? head 'Answer))
-  (source-lines 994 1000)
+  (source-lines 1073 1079)
   (source-sha1 "64fd463fbde020358b89a7a164a6cfa923387039")
   (class semantic-clause)
   (reason "This branch types answers against a Query domain."))
@@ -185,7 +185,7 @@
   (id "B.infer-application.4201c9cb5e")
   (function infer-application)
   (pattern (eq? head 'Polar))
-  (source-lines 1001 1005)
+  (source-lines 1080 1084)
   (source-sha1 "49042644cc063ab446210bb5cfd9c4095663dbdf")
   (class semantic-clause)
   (reason "This branch types polar query construction."))
@@ -193,7 +193,7 @@
   (id "B.infer-application.40e7e0d30d")
   (function infer-application)
   (pattern (eq? head 'OpenQ))
-  (source-lines 1006 1015)
+  (source-lines 1085 1094)
   (source-sha1 "d93ef525d58cef2bbf3400d77c0e8649cedd7946")
   (class semantic-clause)
   (reason "This branch types open query construction from a function."))
@@ -201,7 +201,7 @@
   (id "B.infer-application.bcd3c43b96")
   (function infer-application)
   (pattern (eq? head 'Perform))
-  (source-lines 1016 1033)
+  (source-lines 1095 1112)
   (source-sha1 "44775e1d05ae63f066aed97f7059daddb0fba8a5")
   (class semantic-clause)
   (reason
@@ -210,7 +210,7 @@
   (id "B.infer-application.b05067fda3")
   (function infer-application)
   (pattern (eq? head 'Do))
-  (source-lines 1034 1043)
+  (source-lines 1113 1122)
   (source-sha1 "bb77f391a23a3ba5ba31b8f2b7847e9a4fcf9527")
   (class semantic-clause)
   (reason "This branch types discourse sequencing."))
@@ -218,7 +218,7 @@
   (id "B.infer-application.5ef40f9d65")
   (function infer-application)
   (pattern (eq? head 'Reify))
-  (source-lines 1044 1050)
+  (source-lines 1123 1129)
   (source-sha1 "613cc6f083da0d63ac7ad948f7db23fb06658088")
   (class semantic-clause)
   (reason "This branch types Content reification."))
@@ -226,7 +226,7 @@
   (id "B.infer-application.c9d126e725")
   (function infer-application)
   (pattern (eq? head 'Holds))
-  (source-lines 1051 1056)
+  (source-lines 1130 1135)
   (source-sha1 "d63738fbef8a8ac600d6c33557fab31fca748653")
   (class semantic-clause)
   (reason "This branch types the inverse proposition bridge."))
@@ -234,7 +234,7 @@
   (id "B.infer-application.352ec4cb99")
   (function infer-application)
   (pattern (eq? head 'EventOfContent))
-  (source-lines 1057 1062)
+  (source-lines 1136 1141)
   (source-sha1 "57e44938d62ad777167de10cbbc6b258dbedf9c0")
   (class semantic-clause)
   (reason "This branch types clause-event projection."))
@@ -242,7 +242,7 @@
   (id "B.infer-application.bef09b7879")
   (function infer-application)
   (pattern (eq? head 'Presuppose))
-  (source-lines 1063 1068)
+  (source-lines 1142 1147)
   (source-sha1 "61997fffd0790900382109cf95ea5cc01d992cc5")
   (class semantic-clause)
   (reason "This branch types projective presupposition."))
@@ -250,7 +250,7 @@
   (id "B.infer-application.19d76065b1")
   (function infer-application)
   (pattern (eq? head 'Supplement))
-  (source-lines 1069 1074)
+  (source-lines 1148 1153)
   (source-sha1 "1c50b13c58ca3cac300cf24f1a68481006a16324")
   (class semantic-clause)
   (reason "This branch types projective supplements."))
@@ -258,7 +258,7 @@
   (id "B.infer-application.23128cb1e5")
   (function infer-application)
   (pattern (eq? head 'SetOf))
-  (source-lines 1075 1080)
+  (source-lines 1154 1159)
   (source-sha1 "b30ea76fa2146116c032145385302c6065164cba")
   (class semantic-clause)
   (reason "This branch types pure set comprehension."))
@@ -266,7 +266,7 @@
   (id "B.infer-application.ba2a5eae47")
   (function infer-application)
   (pattern (eq? head 'Card))
-  (source-lines 1081 1089)
+  (source-lines 1160 1168)
   (source-sha1 "dc8763e3cb8163112416e6e5c3b700ac5e30a660")
   (class semantic-clause)
   (reason
@@ -275,7 +275,7 @@
   (id "B.infer-application.92ef536358")
   (function infer-application)
   (pattern (eq? head 'CardBasis))
-  (source-lines 1090 1093)
+  (source-lines 1169 1172)
   (source-sha1 "6104a2ab931ffad7bfa008234062ea02fc544be1")
   (class semantic-clause)
   (reason "This branch types plural-basis cardinality."))
@@ -283,7 +283,7 @@
   (id "B.infer-application.1058ba945b")
   (function infer-application)
   (pattern (eq? head 'Distrib))
-  (source-lines 1094 1104)
+  (source-lines 1173 1183)
   (source-sha1 "bd74e1f1f582501eeb8d0f0207b9861b61cbefc5")
   (class semantic-clause)
   (reason "This branch types distribution over a matching plural reference."))
@@ -291,7 +291,7 @@
   (id "B.infer-application.4a46f40d6d")
   (function infer-application)
   (pattern (eq? head 'CoveredBy))
-  (source-lines 1105 1118)
+  (source-lines 1184 1197)
   (source-sha1 "80ace6b585b548061b208a5750033f61ccb4503d")
   (class semantic-clause)
   (reason "This branch types the pure unit-cover relation."))
@@ -299,7 +299,7 @@
   (id "B.infer-application.fbc2736adc")
   (function infer-application)
   (pattern (member head '(Exactly AtLeast MoreThan AtMost FewerThan)))
-  (source-lines 1119 1150)
+  (source-lines 1198 1229)
   (source-sha1 "cd7d034bb405ff4178e302cff467215585b9d54b")
   (class semantic-clause)
   (reason
@@ -308,7 +308,7 @@
   (id "B.infer-application.62993a9be6")
   (function infer-application)
   (pattern (member head '(Some No)))
-  (source-lines 1182 1203)
+  (source-lines 1261 1282)
   (source-sha1 "0225d9f11f01635fc91332b2a4e2520bebb732cb")
   (class semantic-clause)
   (reason
@@ -317,7 +317,7 @@
   (id "B.infer-application.32e6d797b9")
   (function infer-application)
   (pattern (eq? head 'Every))
-  (source-lines 1204 1215)
+  (source-lines 1283 1294)
   (source-sha1 "99833bf8b06538399ebd0cabe9e5d6cc4a99c18a")
   (class semantic-clause)
   (reason "This branch types member-level universal quantification."))
@@ -325,7 +325,7 @@
   (id "B.infer-application.3bf7014637")
   (function infer-application)
   (pattern (member head '(GlobalExactly Most)))
-  (source-lines 1216 1241)
+  (source-lines 1295 1320)
   (source-sha1 "317a4301d5e303d1f1c319e30414400bdf330820")
   (class semantic-clause)
   (reason
@@ -334,7 +334,7 @@
   (id "B.infer-application.9c64e02ab5")
   (function infer-application)
   (pattern (eq? head 'Generic))
-  (source-lines 1242 1259)
+  (source-lines 1321 1338)
   (source-sha1 "0b4302ff0c835bc1707cf4320c2251050fdd904e")
   (class semantic-clause)
   (reason
@@ -343,7 +343,7 @@
   (id "B.infer-application.7e59ad1f80")
   (function infer-application)
   (pattern (eq? head 'Reciprocate))
-  (source-lines 1260 1262)
+  (source-lines 1339 1341)
   (source-sha1 "6a78f51e346636d6328314f4bf7bfd756d82ae33")
   (class semantic-clause)
   (reason "This branch types reciprocal Content."))
@@ -351,7 +351,7 @@
   (id "B.infer-application.e0a5f1cd29")
   (function infer-application)
   (pattern (eq? head 'JoiPred))
-  (source-lines 1263 1283)
+  (source-lines 1342 1362)
   (source-sha1 "0fa55931fe3d4d23d4e196f619850eb4c93688b0")
   (class semantic-clause)
   (reason "This branch types contribution-basis predicate composition."))
@@ -359,7 +359,7 @@
   (id "B.infer-application.2d70998349")
   (function infer-application)
   (pattern (eq? head 'MeiRel))
-  (source-lines 1284 1294)
+  (source-lines 1363 1373)
   (source-sha1 "91f9dc030acb17e803462e399c142b596e8fdf78")
   (class semantic-clause)
   (reason
@@ -368,7 +368,7 @@
   (id "B.infer-application.a2b9314ec4")
   (function infer-application)
   (pattern (member head '(DuhuRel NiRel SuhuRel JeiRel)))
-  (source-lines 1295 1297)
+  (source-lines 1374 1376)
   (source-sha1 "3dc346f3d2ae87a842a10661e146cf78982845c4")
   (class semantic-clause)
   (reason "This branch types the abstraction-relation family."))
@@ -376,7 +376,7 @@
   (id "B.infer-application.ffa846a1d1")
   (function infer-application)
   (pattern (member head '(Tanru Scalar Grade JaiRaise)))
-  (source-lines 1298 1300)
+  (source-lines 1377 1379)
   (source-sha1 "7bd1279485a2b3509ceaad998f6104950fb208d9")
   (class semantic-clause)
   (reason "This branch types derived predicate-term formers."))
@@ -384,7 +384,7 @@
   (id "B.infer-application.11fdbcad2d")
   (function infer-application)
   (pattern (eq? head 'LocutionOf))
-  (source-lines 1301 1309)
+  (source-lines 1380 1388)
   (source-sha1 "1b86c8fdc9cb97f15bf86a65fc0549ef447ec4e7")
   (class semantic-clause)
   (reason "This branch types locution anchoring."))
@@ -392,7 +392,7 @@
   (id "B.infer-application.ed3af7d0b4")
   (function infer-application)
   (pattern (member head '(SpeakerDescribes SpeakerDescribesUnaddressed)))
-  (source-lines 1310 1339)
+  (source-lines 1389 1418)
   (source-sha1 "c110ed6b023041417e4d7d3f710345c87f6408a5")
   (class semantic-clause)
   (reason
@@ -420,7 +420,7 @@
       Aggregate
       CanonicalAggregateAt
       CoRef)))
-  (source-lines 1340 1346)
+  (source-lines 1419 1425)
   (source-sha1 "4412711eeb72983a0d45913a848283851ae1d44d")
   (class semantic-clause)
   (reason
@@ -429,7 +429,7 @@
   (id "B.infer-application.8259335bcd")
   (function infer-application)
   (pattern (eq? head 'components_κ))
-  (source-lines 1347 1359)
+  (source-lines 1426 1438)
   (source-sha1 "1e2f88908b2b72b80afd9d93902dfa4ea9070ddc")
   (class semantic-clause)
   (reason
@@ -438,7 +438,7 @@
   (id "B.infer-application.c394c81546")
   (function infer-application)
   (pattern (eq? head 'List))
-  (source-lines 1360 1365)
+  (source-lines 1439 1444)
   (source-sha1 "6dd15f98027c6fa51558ba19bdaa0f7caae19526")
   (class semantic-clause)
   (reason "This branch types homogeneous list construction."))
@@ -446,7 +446,7 @@
   (id "B.infer-application.7b73cf54c8")
   (function infer-application)
   (pattern (member head '(Utterance Sign)))
-  (source-lines 1366 1395)
+  (source-lines 1445 1474)
   (source-sha1 "573e48088de779bcdec0fe2180cda330f976c10f")
   (class semantic-clause)
   (reason
@@ -455,7 +455,7 @@
   (id "B.infer-application.6cf3db89ff")
   (function infer-application)
   (pattern (eq? head 'At))
-  (source-lines 1396 1422)
+  (source-lines 1475 1501)
   (source-sha1 "6adf40ab6ebd309e04462374bf266d279e06f6c6")
   (class semantic-clause)
   (reason "This branch types labelled row filling."))
@@ -463,7 +463,7 @@
   (id "B.infer-application.c993a8a196")
   (function infer-application)
   (pattern (eq? head 'DropPlace))
-  (source-lines 1423 1442)
+  (source-lines 1502 1521)
   (source-sha1 "0f1df23136557caa108a70287412a8945699324b")
   (class semantic-clause)
   (reason "This branch types labelled row deletion."))
@@ -471,7 +471,7 @@
   (id "B.infer-application.9673f48b69")
   (function infer-application)
   (pattern (member head '(OpaqueQuote WordSign NameSign LetteralSign)))
-  (source-lines 1443 1454)
+  (source-lines 1522 1533)
   (source-sha1 "8d3c083fac21197bda772694183f822598aacc1c")
   (class semantic-clause)
   (reason "This branch types atomic sign constructors from Text."))
@@ -479,7 +479,7 @@
   (id "B.infer-application.ac1fbaa0d4")
   (function infer-application)
   (pattern (eq? head 'SentenceSign))
-  (source-lines 1455 1460)
+  (source-lines 1534 1539)
   (source-sha1 "52228cc5da4c22b32fb9fd4abaeaa299eb57fe6f")
   (class semantic-clause)
   (reason
@@ -488,7 +488,7 @@
   (id "B.infer-application.2571a0349d")
   (function infer-application)
   (pattern (eq? head 'StructuredQuote))
-  (source-lines 1461 1467)
+  (source-lines 1540 1546)
   (source-sha1 "d629d40f8b62e7352da82466c036b5928b6ac840")
   (class semantic-clause)
   (reason
@@ -498,7 +498,7 @@
   (function infer-application)
   (pattern
    (member head '(InterpretContent RealizedContent AmountValue ZipWith)))
-  (source-lines 1468 1475)
+  (source-lines 1547 1554)
   (source-sha1 "c8a505c48e1c49c8d8cda1453a063ee59433cdd5")
   (class semantic-clause)
   (reason
@@ -507,7 +507,7 @@
   (id "B.infer-application.6d8fa6ea04")
   (function infer-application)
   (pattern (inventory-row inv head))
-  (source-lines 1476 1477)
+  (source-lines 1555 1556)
   (source-sha1 "cae25b5075c7f4d9c55fea3e832ce417e80b4432")
   (class auxiliary)
   (reason
@@ -516,7 +516,7 @@
   (id "B.infer-application.6ee7fcc327")
   (function infer-application)
   (pattern (and (symbol? head) (string-prefix? (symbol->string head) "$")))
-  (source-lines 1478 1502)
+  (source-lines 1557 1581)
   (source-sha1 "be25482911f30622a5133b5cabe4337623d7343f")
   (class semantic-clause)
   (reason
@@ -525,7 +525,7 @@
   (id "B.infer-application.2a55186a97")
   (function infer-application)
   (pattern else)
-  (source-lines 1503 1506)
+  (source-lines 1582 1585)
   (source-sha1 "672bf8081ea24a54772e07f82ae6196b2ea18eca")
   (class external-gap-or-diagnostic)
   (reason
@@ -534,7 +534,7 @@
   (id "B.infer-atom.8bc9025d28")
   (function infer-atom)
   (pattern (number? value))
-  (source-lines 427 427)
+  (source-lines 428 428)
   (source-sha1 "07aba0d524876b64b6b67128cea7eb1fb5f2934b")
   (class semantic-clause)
   (reason "This branch types numeric literals as Natural."))
@@ -542,7 +542,7 @@
   (id "B.infer-atom.ce74e4d595")
   (function infer-atom)
   (pattern (string? value))
-  (source-lines 428 428)
+  (source-lines 429 429)
   (source-sha1 "9d40e732afc45990a3a6367b07020db9c94ac71c")
   (class semantic-clause)
   (reason "This branch types string literals as Text."))
@@ -550,7 +550,7 @@
   (id "B.infer-atom.ab531e0313")
   (function infer-atom)
   (pattern (and (symbol? value) (string-prefix? (symbol->string value) "$")))
-  (source-lines 429 432)
+  (source-lines 430 433)
   (source-sha1 "95b81a4dc9f0721b442510c3199ad6347ed8cb2e")
   (class semantic-clause)
   (reason "This branch types variables by environment lookup."))
@@ -558,7 +558,7 @@
   (id "B.infer-atom.7e75d87b10")
   (function infer-atom)
   (pattern (and (symbol? value) (string-prefix? (symbol->string value) ":")))
-  (source-lines 433 434)
+  (source-lines 434 435)
   (source-sha1 "db1401daa727858c8fbc184085370429dd1fe855")
   (class auxiliary)
   (reason
@@ -567,7 +567,7 @@
   (id "B.infer-atom.1b4c787ae8")
   (function infer-atom)
   (pattern (member value '(MiAOthers MaAOthers DoOOthers)))
-  (source-lines 435 442)
+  (source-lines 436 443)
   (source-sha1 "60d7bafea1a8534eb89b0c0394d4a68263414982")
   (class semantic-clause)
   (reason "This branch types projectively defined participant pluralities."))
@@ -575,7 +575,7 @@
   (id "B.infer-atom.5f8bc73861")
   (function infer-atom)
   (pattern (hash-has-key? (inventory-constants inv) value))
-  (source-lines 443 445)
+  (source-lines 444 446)
   (source-sha1 "158c52ccb6263d91274fd484a8ca4bb2c850f146")
   (class auxiliary)
   (reason
@@ -584,7 +584,7 @@
   (id "B.infer-atom.1ace338ee9")
   (function infer-atom)
   (pattern (inventory-row inv value))
-  (source-lines 446 447)
+  (source-lines 447 448)
   (source-sha1 "335ed687187e9f735704d7827b62077746177fe7")
   (class auxiliary)
   (reason
@@ -593,7 +593,7 @@
   (id "B.infer-atom.ce9b6fda22")
   (function infer-atom)
   (pattern (inventory-name-declared? inv value))
-  (source-lines 448 449)
+  (source-lines 449 450)
   (source-sha1 "fb249055176e46d4795f9a144f69dd4d7690cfa8")
   (class auxiliary)
   (reason
@@ -602,7 +602,7 @@
   (id "B.infer-atom.a73027c966")
   (function infer-atom)
   (pattern else)
-  (source-lines 450 452)
+  (source-lines 451 453)
   (source-sha1 "f5bc4460ceca78b55f9674292bbcfb1f9c5a851d")
   (class external-gap-or-diagnostic)
   (reason
@@ -611,7 +611,7 @@
   (id "B.infer-bind.d2472c4d61")
   (function infer-bind)
   (pattern entry)
-  (source-lines 603 654)
+  (source-lines 604 655)
   (source-sha1 "50de211666a45c41c1f6f066050e635ec34d19fa")
   (class semantic-clause)
   (reason
@@ -620,7 +620,7 @@
   (id "B.infer-body.a875a325a5")
   (function infer-body)
   (pattern entry)
-  (source-lines 454 455)
+  (source-lines 455 456)
   (source-sha1 "4822d2d65f0e0f1b4087bb3b7bfa2e16053abf02")
   (class auxiliary)
   (reason "This helper removes display braces and delegates to inference."))
@@ -628,7 +628,7 @@
   (id "B.infer-core.c0a70a27c2")
   (function infer-core)
   (pattern (core-atom? node))
-  (source-lines 1515 1515)
+  (source-lines 1594 1594)
   (source-sha1 "4196cda9cf5c9cb87801f4b404842c13725d4833")
   (class auxiliary)
   (reason "This root branch dispatches atoms to the classified atom rules."))
@@ -636,7 +636,7 @@
   (id "B.infer-core.6c46012b17")
   (function infer-core)
   (pattern else)
-  (source-lines 1516 1516)
+  (source-lines 1595 1595)
   (source-sha1 "278331bbd1f846ed8a0152a59c9e24c73061cc8f")
   (class auxiliary)
   (reason
@@ -645,7 +645,7 @@
   (id "B.infer-lambda.f1215811eb")
   (function infer-lambda)
   (pattern entry)
-  (source-lines 457 465)
+  (source-lines 458 466)
   (source-sha1 "6ed4a69365a757d5e58d65e50fae9d15230d0229")
   (class semantic-clause)
   (reason
@@ -654,7 +654,7 @@
   (id "B.infer-let.2b0457eb02")
   (function infer-let)
   (pattern entry)
-  (source-lines 467 476)
+  (source-lines 468 477)
   (source-sha1 "fb56e5d45695c885d1bf7649a1865c4752d188f3")
   (class semantic-clause)
   (reason "This function types pure direct Let binding."))
@@ -662,7 +662,7 @@
   (id "B.infer-lexical-application.0da2d391c2")
   (function infer-lexical-application)
   (pattern entry)
-  (source-lines 693 719)
+  (source-lines 772 798)
   (source-sha1 "264d4e5f679f335533a43c057e6c2eb71a0b8cad")
   (class semantic-clause)
   (reason "This function types lexical row filling and saturation."))
@@ -670,7 +670,7 @@
   (id "B.infer-logical.3ed044b854")
   (function infer-logical)
   (pattern entry)
-  (source-lines 790 794)
+  (source-lines 869 873)
   (source-sha1 "31dc6972d51182255f865c44dcd5b1e1242b38b8")
   (class semantic-clause)
   (reason "This function types Content-valued logical operations."))
@@ -678,7 +678,7 @@
   (id "B.infer-predterm-application.60a142ba82")
   (function infer-predterm-application)
   (pattern `(PredTerm ,row ,filled ,event-already?))
-  (source-lines 768 781)
+  (source-lines 847 860)
   (source-sha1 "857a2db1974510682a92ccdb0622819dde664a34")
   (class semantic-clause)
   (reason
@@ -687,7 +687,7 @@
   (id "B.infer-predterm-application.8a1532e2f6")
   (function infer-predterm-application)
   (pattern `(PredTerm ,row))
-  (source-lines 782 784)
+  (source-lines 861 863)
   (source-sha1 "281b08c9eaf0dab050795a48f309dde709e2c79a")
   (class auxiliary)
   (reason
@@ -696,7 +696,7 @@
   (id "B.infer-predterm-application.01d739af63")
   (function infer-predterm-application)
   (pattern `(PredTerm ,row ,filled))
-  (source-lines 785 787)
+  (source-lines 864 866)
   (source-sha1 "4d009a882fd27064f387db3bf571dab45da2a403")
   (class auxiliary)
   (reason
@@ -705,7 +705,7 @@
   (id "B.infer-predterm-application.a90e55b334")
   (function infer-predterm-application)
   (pattern other)
-  (source-lines 788 788)
+  (source-lines 867 867)
   (source-sha1 "0d6001b95188200ae6888a542468055ca74f35c5")
   (class external-gap-or-diagnostic)
   (reason
@@ -714,7 +714,7 @@
   (id "B.infer-quantifier.1716ec1069")
   (function infer-quantifier)
   (pattern entry)
-  (source-lines 796 809)
+  (source-lines 875 888)
   (source-sha1 "87fa12dc2610f4631bd334e8dff34c43b4a0faf4")
   (class semantic-clause)
   (reason
@@ -723,7 +723,7 @@
   (id "B.infer-with-expected.e97d779317")
   (function infer-with-expected)
   (pattern (eq? head 'Context))
-  (source-lines 487 491)
+  (source-lines 488 492)
   (source-sha1 "5db85f5e8e7e772cee6b62dd274603b1141d5ce3")
   (class semantic-clause)
   (reason
@@ -732,7 +732,7 @@
   (id "B.infer-with-expected.47a9be9597")
   (function infer-with-expected)
   (pattern (eq? head 'Vague))
-  (source-lines 492 496)
+  (source-lines 493 497)
   (source-sha1 "bade96c0fedf5569a06311f97a2bcc9bb3d7bfdc")
   (class semantic-clause)
   (reason
@@ -741,7 +741,7 @@
   (id "B.infer-with-expected.e1c62efca4")
   (function infer-with-expected)
   (pattern (eq? head 'Refer))
-  (source-lines 497 528)
+  (source-lines 498 529)
   (source-sha1 "7ed63d7d2c2dd0d1055ae6dde40684f8f8ac86dd")
   (class semantic-clause)
   (reason
@@ -751,7 +751,7 @@
   (function infer-with-expected)
   (pattern
    (member head '(SelectExactly SelectAtLeast SelectSome SelectAllBut)))
-  (source-lines 529 555)
+  (source-lines 530 556)
   (source-sha1 "ff1547f55126ace62b2591ad521e76e4317dd1c2")
   (class semantic-clause)
   (reason
@@ -760,7 +760,7 @@
   (id "B.infer-with-expected.8396a62195")
   (function infer-with-expected)
   (pattern (eq? head 'Local))
-  (source-lines 556 563)
+  (source-lines 557 564)
   (source-sha1 "41527e4da1946be58b438aa3cf3de8fa0ab95b40")
   (class semantic-clause)
   (reason
@@ -769,7 +769,7 @@
   (id "B.infer-with-expected.e9b32c019b")
   (function infer-with-expected)
   (pattern (eq? head 'Massify))
-  (source-lines 564 578)
+  (source-lines 565 579)
   (source-sha1 "0853637f867200c3ba49aa90f64b8617b60f25e1")
   (class semantic-clause)
   (reason "This branch checks Massify using the expected group member type."))
@@ -777,7 +777,7 @@
   (id "B.infer-with-expected.72cabc6dd9")
   (function infer-with-expected)
   (pattern (eq? head 'JoiGroup))
-  (source-lines 579 597)
+  (source-lines 580 598)
   (source-sha1 "c7765e8bbeae136c6d5fb2bb9f47e538a5c806a6")
   (class semantic-clause)
   (reason "This branch checks JoiGroup using the expected group member type."))
@@ -785,7 +785,7 @@
   (id "B.infer-with-expected.04bdc5c665")
   (function infer-with-expected)
   (pattern else)
-  (source-lines 598 601)
+  (source-lines 599 602)
   (source-sha1 "ddd890904a1397c869499e11539131cd835f9278")
   (class auxiliary)
   (reason
@@ -793,7 +793,7 @@
  (helper
   (id "H.application-head.56d7f475ac")
   (function application-head)
-  (source-lines 80 83)
+  (source-lines 81 84)
   (source-sha1 "0f39608274359360a44d454c9edb6cf1f592cd64")
   (class auxiliary)
   (reason
@@ -801,7 +801,7 @@
  (helper
   (id "H.argument-fill-counts.3cb95eb94a")
   (function argument-fill-counts)
-  (source-lines 754 764)
+  (source-lines 833 843)
   (source-sha1 "df1838824e081be32cb0ef8ba897882761fe6b0a")
   (class auxiliary)
   (reason
@@ -809,7 +809,7 @@
  (helper
   (id "H.arrow-compatible?.1030cfd738")
   (function arrow-compatible?)
-  (source-lines 320 322)
+  (source-lines 321 323)
   (source-sha1 "148688c91b179c7780a35139331a08cf97025ecf")
   (class semantic-clause)
   (reason
@@ -817,7 +817,7 @@
  (helper
   (id "H.atom-value.376e68e5de")
   (function atom-value)
-  (source-lines 77 78)
+  (source-lines 78 79)
   (source-sha1 "89c80a276cde4332096809c64e10f49447266caf")
   (class auxiliary)
   (reason
@@ -825,7 +825,7 @@
  (helper
   (id "H.binder-separator.1c10cc1008")
   (function binder-separator)
-  (source-lines 386 394)
+  (source-lines 387 395)
   (source-sha1 "6455e093709d6c4e6233396ccbf8cafe5a6ae11c")
   (class auxiliary)
   (reason
@@ -833,7 +833,7 @@
  (helper
   (id "H.body-term.698b0634aa")
   (function body-term)
-  (source-lines 377 384)
+  (source-lines 378 385)
   (source-sha1 "24420e6fec9f23fc710f1a5ab2da347a5afb401b")
   (class auxiliary)
   (reason
@@ -841,7 +841,7 @@
  (helper
   (id "H.computation-inner.b33bcfbc7f")
   (function computation-inner)
-  (source-lines 478 482)
+  (source-lines 479 483)
   (source-sha1 "00c2a973c60823d8e894a12c3622ef64b2f45f65")
   (class semantic-clause)
   (reason
@@ -849,7 +849,7 @@
  (helper
   (id "H.dynamic-effect?.90a02a5f0a")
   (function dynamic-effect?)
-  (source-lines 85 86)
+  (source-lines 86 87)
   (source-sha1 "e126e4b200e02b13b85968f30dbbe0a07a968211")
   (class semantic-clause)
   (reason
@@ -857,7 +857,7 @@
  (helper
   (id "H.effectful-property?.0c83803051")
   (function effectful-property?)
-  (source-lines 130 134)
+  (source-lines 131 135)
   (source-sha1 "cd74302c1259cdfcf17741b6ba92e1b61ee386eb")
   (class semantic-clause)
   (reason
@@ -865,7 +865,7 @@
  (helper
   (id "H.ensure-compatible.f81289c0dc")
   (function ensure-compatible)
-  (source-lines 373 375)
+  (source-lines 374 376)
   (source-sha1 "1fdc09560a5294307a83653fcbedbfa7443c5249")
   (class auxiliary)
   (reason
@@ -873,7 +873,7 @@
  (helper
   (id "H.ensure-same-property-domain.bfe4c2246b")
   (function ensure-same-property-domain)
-  (source-lines 126 128)
+  (source-lines 127 129)
   (source-sha1 "897767162b096089c95668ce28949b0633e09554")
   (class semantic-clause)
   (reason
@@ -881,7 +881,7 @@
  (helper
   (id "H.extend-env.ecd2bb76ad")
   (function extend-env)
-  (source-lines 420 422)
+  (source-lines 421 423)
   (source-sha1 "54d57632351e1e6a6cb1b32cff0cc17c2b91d5e6")
   (class auxiliary)
   (reason
@@ -889,7 +889,7 @@
  (helper
   (id "H.first-order-collection-type?.55a1259246")
   (function first-order-collection-type?)
-  (source-lines 224 227)
+  (source-lines 225 228)
   (source-sha1 "845428f8af48010de93febd46d9665b27692dcf2")
   (class semantic-clause)
   (reason
@@ -897,7 +897,7 @@
  (helper
   (id "H.first-order-type?.6d5f1e5bc2")
   (function first-order-type?)
-  (source-lines 229 237)
+  (source-lines 230 238)
   (source-sha1 "8b6a4e29e1f9469d854d05a06d70c46a75fb286f")
   (class semantic-clause)
   (reason
@@ -905,7 +905,7 @@
  (helper
   (id "H.function-type?.c8f25dc0d9")
   (function function-type?)
-  (source-lines 315 318)
+  (source-lines 316 319)
   (source-sha1 "e4715861a518a3d83b55d66f2cf103a449d89d1f")
   (class semantic-clause)
   (reason
@@ -913,7 +913,7 @@
  (helper
   (id "H.gq-result-effects.2ae7dc8fcf")
   (function gq-result-effects)
-  (source-lines 136 141)
+  (source-lines 137 142)
   (source-sha1 "65e739589ad9b9edb21e69ed231e940249c3b3f5")
   (class semantic-clause)
   (reason
@@ -921,14 +921,14 @@
  (helper
   (id "H.legacy-angle-type?.96d83be1b6")
   (function legacy-angle-type?)
-  (source-lines 172 174)
+  (source-lines 173 175)
   (source-sha1 "56db140fdc667a51a6a9867bf58a6762c67b330d")
   (class auxiliary)
   (reason "This helper recognizes a forbidden legacy concrete type spelling."))
  (helper
   (id "H.literal-zero?.9a9933c805")
   (function literal-zero?)
-  (source-lines 146 147)
+  (source-lines 147 148)
   (source-sha1 "f05ae086caa68599fe3fc3b7e256def00c29cb7f")
   (class semantic-clause)
   (reason
@@ -936,7 +936,7 @@
  (helper
   (id "H.merge-results.da052c581a")
   (function merge-results)
-  (source-lines 149 158)
+  (source-lines 150 159)
   (source-sha1 "aaa4b9cc19bb29a479fe8b2359e2aa82299d1c69")
   (class semantic-clause)
   (reason
@@ -944,7 +944,7 @@
  (helper
   (id "H.parse-binder-group.b9301d59af")
   (function parse-binder-group)
-  (source-lines 396 409)
+  (source-lines 397 410)
   (source-sha1 "b1d4115eb88bfcd6e58461d72be5e8d2da43c1b1")
   (class auxiliary)
   (reason
@@ -952,14 +952,14 @@
  (helper
   (id "H.parse-telescope.d36ef56652")
   (function parse-telescope)
-  (source-lines 411 418)
+  (source-lines 412 419)
   (source-sha1 "588374c037c0a7e6099d3321709ddb365692ac45")
   (class auxiliary)
   (reason "This helper parses concrete lambda telescopes into binder groups."))
  (helper
   (id "H.parse-type.afe38dc05d")
   (function parse-type)
-  (source-lines 192 222)
+  (source-lines 193 223)
   (source-sha1 "0fc845d75def971e0e50fdaa02fe75ba293f57c9")
   (class auxiliary)
   (reason
@@ -967,7 +967,7 @@
  (helper
   (id "H.parse-type-node.cb3d106779")
   (function parse-type-node)
-  (source-lines 176 190)
+  (source-lines 177 191)
   (source-sha1 "4a7a468f7f23f8be42bfa6a7597375612aa18914")
   (class auxiliary)
   (reason
@@ -975,7 +975,7 @@
  (helper
   (id "H.property-domain.7a8a09e54d")
   (function property-domain)
-  (source-lines 116 124)
+  (source-lines 117 125)
   (source-sha1 "5a1ac4b0857856135c49c3b2c09a08d8ce4cb904")
   (class semantic-clause)
   (reason
@@ -983,7 +983,7 @@
  (helper
   (id "H.pure-property-domain.7f6af24877")
   (function pure-property-domain)
-  (source-lines 99 114)
+  (source-lines 100 115)
   (source-sha1 "1943319a19cdb2ebab81cb781b42695ed620cc0f")
   (class semantic-clause)
   (reason
@@ -991,7 +991,7 @@
  (helper
   (id "H.pure-typing?.0ece678122")
   (function pure-typing?)
-  (source-lines 88 90)
+  (source-lines 89 91)
   (source-sha1 "08906eea5cc990658796a32cd1437ae1fd8c1d0b")
   (class semantic-clause)
   (reason
@@ -999,7 +999,7 @@
  (helper
   (id "H.quantifier-domain-type?.49400650d1")
   (function quantifier-domain-type?)
-  (source-lines 239 243)
+  (source-lines 240 244)
   (source-sha1 "74d84f50098c65119a991be65c1a852ebd44f5b3")
   (class semantic-clause)
   (reason
@@ -1007,7 +1007,7 @@
  (helper
   (id "H.raise-type.0621303028")
   (function raise-type)
-  (source-lines 57 75)
+  (source-lines 58 76)
   (source-sha1 "f29f580f42baea77cce4c9dfbaa76c363d3a765f")
   (class external-gap-or-diagnostic)
   (reason
@@ -1015,7 +1015,7 @@
  (helper
   (id "H.row-index-shape.56a3757fc5")
   (function row-index-shape)
-  (source-lines 721 752)
+  (source-lines 800 831)
   (source-sha1 "7ec14ddc7b64e458fd2607ea8b017ca61ba787d7")
   (class semantic-clause)
   (reason
@@ -1023,7 +1023,7 @@
  (helper
   (id "H.same-parameter-type?.9c8ab11b92")
   (function same-parameter-type?)
-  (source-lines 92 97)
+  (source-lines 93 98)
   (source-sha1 "d9e517f3130508d2314ee1dfab3176661b6069ef")
   (class semantic-clause)
   (reason
@@ -1031,14 +1031,14 @@
  (helper
   (id "H.subsort?.f9dfb5a111")
   (function subsort?)
-  (source-lines 307 313)
+  (source-lines 308 314)
   (source-sha1 "b9f97c1329df4848b0e2be6107aa25bb56bae7d3")
   (class semantic-clause)
   (reason "This mechanism computes the declared transitive subsort relation."))
  (helper
   (id "H.suspend-results.b3e1218c65")
   (function suspend-results)
-  (source-lines 160 164)
+  (source-lines 161 165)
   (source-sha1 "44811ec3ba73f3bee19ea854320cfba66322f7ba")
   (class semantic-clause)
   (reason
@@ -1046,7 +1046,7 @@
  (helper
   (id "H.type-compatible?.0279a9c3b0")
   (function type-compatible?)
-  (source-lines 324 371)
+  (source-lines 325 372)
   (source-sha1 "10c1cc2be1cceebd8eb8f0490b50d92912b963db")
   (class semantic-clause)
   (reason
@@ -1054,7 +1054,7 @@
  (helper
   (id "H.type-well-formed?.2125a38f93")
   (function type-well-formed?)
-  (source-lines 245 296)
+  (source-lines 246 297)
   (source-sha1 "c6191bc7434dc8ba48bbba5de289363e7d663f19")
   (class semantic-clause)
   (reason
@@ -1065,7 +1065,7 @@
   (kind if)
   (pattern ((null? remaining) then))
   (ordinal 1)
-  (source-lines 613 630)
+  (source-lines 614 631)
   (source-sha1 "4c08d2ca38ab866ab30250ed62daaea7b1f71260")
   (class semantic-clause)
   (reason
@@ -1076,7 +1076,7 @@
   (kind match)
   (pattern `(Act ,_))
   (ordinal 1)
-  (source-lines 615 615)
+  (source-lines 616 616)
   (source-sha1 "64b3f8043eb441d90256a4332985a5c614f22a32")
   (class semantic-clause)
   (reason
@@ -1087,7 +1087,7 @@
   (kind match)
   (pattern _)
   (ordinal 1)
-  (source-lines 615 615)
+  (source-lines 616 616)
   (source-sha1 "c250a7dcab3b92b0c13587c278c9698e91cc1fd8")
   (class semantic-clause)
   (reason
@@ -1098,7 +1098,7 @@
   (kind match)
   (pattern `(PerfComp ,_))
   (ordinal 1)
-  (source-lines 619 619)
+  (source-lines 620 620)
   (source-sha1 "a41b977f3644e9a898ade3c8f8d3825dee361aa4")
   (class semantic-clause)
   (reason
@@ -1109,7 +1109,7 @@
   (kind match)
   (pattern 'Discourse)
   (ordinal 1)
-  (source-lines 620 620)
+  (source-lines 621 621)
   (source-sha1 "7a16de7c16b98b1320e46588b8dac764ddbd4a2d")
   (class semantic-clause)
   (reason "This arm admits Discourse as the body of a performance Bind."))
@@ -1119,7 +1119,7 @@
   (kind match)
   (pattern _)
   (ordinal 2)
-  (source-lines 621 621)
+  (source-lines 622 622)
   (source-sha1 "c250a7dcab3b92b0c13587c278c9698e91cc1fd8")
   (class semantic-clause)
   (reason
@@ -1130,7 +1130,7 @@
   (kind if)
   (pattern ((and saw-performance? act-body?) then))
   (ordinal 1)
-  (source-lines 625 625)
+  (source-lines 626 626)
   (source-sha1 "17f4bd2a32733740adfe0c4e9505cdad75b60655")
   (class semantic-clause)
   (reason
@@ -1141,7 +1141,7 @@
   (kind if)
   (pattern ((and saw-performance? act-body?) else))
   (ordinal 1)
-  (source-lines 626 626)
+  (source-lines 627 627)
   (source-sha1 "50f3d3d7d7d70e24c484d381c30d25ae789114be")
   (class semantic-clause)
   (reason
@@ -1152,7 +1152,7 @@
   (kind if)
   (pattern ((and saw-performance? act-body?) then))
   (ordinal 2)
-  (source-lines 629 629)
+  (source-lines 630 630)
   (source-sha1 "2afb4ade2cb6c02fe31376c4d2f90d49c36fbd69")
   (class semantic-clause)
   (reason
@@ -1163,7 +1163,7 @@
   (kind if)
   (pattern ((and saw-performance? act-body?) else))
   (ordinal 2)
-  (source-lines 630 630)
+  (source-lines 631 631)
   (source-sha1 "d6cda6c995feb4de629ff4dda4f51d7ec3906580")
   (class semantic-clause)
   (reason
@@ -1174,7 +1174,7 @@
   (kind if)
   (pattern ((null? remaining) else))
   (ordinal 1)
-  (source-lines 631 654)
+  (source-lines 632 655)
   (source-sha1 "4823cc44f9e7cea69e2dab31b60fcfb2ed9e2b5f")
   (class semantic-clause)
   (reason
@@ -1198,7 +1198,7 @@
        JoiGroup))
     then))
   (ordinal 1)
-  (source-lines 643 644)
+  (source-lines 644 645)
   (source-sha1 "d413a2e45fcf093a15566e0738201d89a09920c1")
   (class auxiliary)
   (reason
@@ -1222,7 +1222,7 @@
        JoiGroup))
     else))
   (ordinal 1)
-  (source-lines 645 645)
+  (source-lines 646 646)
   (source-sha1 "0040bc034fc644e21343f3e83c18d4ee67519e79")
   (class auxiliary)
   (reason
@@ -1233,7 +1233,7 @@
   (kind if)
   (pattern ((pure-typing? body) else))
   (ordinal 1)
-  (source-lines 461 461)
+  (source-lines 462 462)
   (source-sha1 "ad39ad283da1558d8085875d7dee6aa6ef23f195")
   (class semantic-clause)
   (reason
@@ -1244,7 +1244,7 @@
   (kind if)
   (pattern ((pure-typing? body) then))
   (ordinal 1)
-  (source-lines 461 461)
+  (source-lines 462 462)
   (source-sha1 "03a7e50bcdf02c407451de7fdecb0de1ab87af5e")
   (class semantic-clause)
   (reason "This arm assigns Fn when the lambda body is dynamically pure."))
@@ -1258,7 +1258,7 @@
          (string-prefix? (symbol->string (core-atom-value argument)) ":"))
     else))
   (ordinal 1)
-  (source-lines 705 705)
+  (source-lines 784 784)
   (source-sha1 "356a192b7913b04c54574d18c28d46e6395428ab")
   (class auxiliary)
   (reason
@@ -1273,7 +1273,7 @@
          (string-prefix? (symbol->string (core-atom-value argument)) ":"))
     then))
   (ordinal 1)
-  (source-lines 705 705)
+  (source-lines 784 784)
   (source-sha1 "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c")
   (class auxiliary)
   (reason "This arm excludes a label token from the inferred-argument list."))
@@ -1283,7 +1283,7 @@
   (kind if)
   (pattern (event-filled? else))
   (ordinal 1)
-  (source-lines 709 709)
+  (source-lines 788 788)
   (source-sha1 "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c")
   (class auxiliary)
   (reason
@@ -1294,7 +1294,7 @@
   (kind if)
   (pattern (event-filled? then))
   (ordinal 1)
-  (source-lines 709 709)
+  (source-lines 788 788)
   (source-sha1 "356a192b7913b04c54574d18c28d46e6395428ab")
   (class auxiliary)
   (reason
@@ -1308,7 +1308,7 @@
          (or (eq? (row-decl-event-mode row) 'holding-state) event-filled?))
     then))
   (ordinal 1)
-  (source-lines 717 717)
+  (source-lines 796 796)
   (source-sha1 "6a0157ffade0cfc9757020d81ab398f35c9febc9")
   (class semantic-clause)
   (reason
@@ -1322,7 +1322,7 @@
          (or (eq? (row-decl-event-mode row) 'holding-state) event-filled?))
     else))
   (ordinal 1)
-  (source-lines 718 718)
+  (source-lines 797 797)
   (source-sha1 "30722abd9ccf92f4c090ad78da058e486e93ae7f")
   (class semantic-clause)
   (reason
@@ -1333,7 +1333,7 @@
   (kind match)
   (pattern `(,arrow ,domains Content))
   (ordinal 1)
-  (source-lines 801 807)
+  (source-lines 880 886)
   (source-sha1 "d30b8f648a6aeaea37893b9ac66ba07f0887197f")
   (class semantic-clause)
   (reason
@@ -1344,7 +1344,7 @@
   (kind match)
   (pattern other)
   (ordinal 1)
-  (source-lines 808 809)
+  (source-lines 887 888)
   (source-sha1 "95ea776a424abd89b910da9ac7b216b51064baa1")
   (class external-gap-or-diagnostic)
   (reason
@@ -1352,7 +1352,7 @@
  (value-helper
   (id "V.card-definedness-effects.e8a68126ea")
   (name card-definedness-effects)
-  (source-lines 143 143)
+  (source-lines 144 144)
   (source-sha1 "ba1e7487aefe5c110fde13e4be3ae40949ba1edb")
   (class semantic-clause)
   (reason
@@ -1360,7 +1360,7 @@
  (value-helper
   (id "V.card-definedness-obligations.50c5d39d1b")
   (name card-definedness-obligations)
-  (source-lines 144 144)
+  (source-lines 145 145)
   (source-sha1 "d3dacb3cfa4e62863c5396072c9980057240e1d3")
   (class semantic-clause)
   (reason
@@ -1368,7 +1368,7 @@
  (value-helper
   (id "V.current-infer-core-depth.25bc1f58a7")
   (name current-infer-core-depth)
-  (source-lines 32 32)
+  (source-lines 33 33)
   (source-sha1 "226e43f0ec1a8498c64c6216b0b163176b8c16a5")
   (class auxiliary)
   (reason
@@ -1376,7 +1376,7 @@
  (value-helper
   (id "V.current-infer-core-observer.7c78bebfc6")
   (name current-infer-core-observer)
-  (source-lines 31 31)
+  (source-lines 32 32)
   (source-sha1 "1a16f9721d184ae76307486690cab84459242e2d")
   (class auxiliary)
   (reason
@@ -1384,7 +1384,7 @@
  (value-helper
   (id "V.default-subsorts.5209ae0900")
   (name default-subsorts)
-  (source-lines 298 305)
+  (source-lines 299 306)
   (source-sha1 "b2104931d26767e53c8ea858907873a7a288e97b")
   (class semantic-clause)
   (reason
@@ -1392,7 +1392,7 @@
  (value-helper
   (id "V.empty-effects.d6cda6c995")
   (name empty-effects)
-  (source-lines 55 55)
+  (source-lines 56 56)
   (source-sha1 "a695c7000e9ed1fe078007efccbd73442ba86f7b")
   (class semantic-clause)
   (reason "This constant is the identity element for semantic effect union."))
@@ -1400,7 +1400,7 @@
   (id "B.infer-application.a3c76a82e7")
   (function infer-application)
   (pattern (member head '(< ≤)))
-  (source-lines 854 860)
+  (source-lines 933 939)
   (source-sha1 "154766ab350fb45189cf4b9b76560cb8c3c7adb6")
   (class semantic-clause)
   (reason
@@ -1409,7 +1409,7 @@
   (id "B.infer-application.5aa652d101")
   (function infer-application)
   (pattern (eq? head 'Only))
-  (source-lines 1151 1161)
+  (source-lines 1230 1240)
   (source-sha1 "9ddd13a76c1db7f438e70c79340226b43b5da009")
   (class semantic-clause)
   (reason
@@ -1421,7 +1421,7 @@
    (member
     head
     '(IndividualSome IndividualNo IndividualEvery PluralSome PluralNo)))
-  (source-lines 1162 1181)
+  (source-lines 1241 1260)
   (source-sha1 "c8a6adca1df004b8c321ed4ff4dcc9fed4885ef2")
   (class semantic-clause)
   (reason
@@ -1430,7 +1430,7 @@
   (id "B.infer-application.eb9b60fe07")
   (function infer-application)
   (pattern (member head '(λ Let Bind PerformSource)))
-  (source-lines 917 922)
+  (source-lines 996 1001)
   (source-sha1 "e8b443453d5b2895a5e15fa5380058fba4a31698")
   (class auxiliary)
   (reason
@@ -1439,8 +1439,8 @@
   (id "B.infer-perform-source.385af5d2f7")
   (function infer-perform-source)
   (pattern entry)
-  (source-lines 656 691)
-  (source-sha1 "4f10a6e8ef0fd8750534bff50d52247dc4d0a68c")
+  (source-lines 732 770)
+  (source-sha1 "ab20794abbd01c21abf6b8deb36587282f1ec57f")
   (class semantic-clause)
   (reason
    "F01 checks the three independently scoped typing premises and annotations without claiming source eligibility or denotation."))
@@ -1450,7 +1450,7 @@
   (kind if)
   (pattern ((eq? (atom-value (first elements)) 'Host) else))
   (ordinal 1)
-  (source-lines 662 662)
+  (source-lines 738 738)
   (source-sha1 "6851b3982dec35e29a2f2f6d0b028f8311aa1a47")
   (class auxiliary)
   (reason
@@ -1461,7 +1461,7 @@
   (kind if)
   (pattern ((eq? (atom-value (first elements)) 'Host) then))
   (ordinal 1)
-  (source-lines 662 662)
+  (source-lines 738 738)
   (source-sha1 "d5a3dc8ec0413aa1eca0fd1ac1e9b1298fc7c49a")
   (class auxiliary)
   (reason
@@ -1472,7 +1472,7 @@
   (kind match)
   (pattern `(Referents ,inner))
   (ordinal 1)
-  (source-lines 668 668)
+  (source-lines 744 744)
   (source-sha1 "9d84cc0c461687bffe6c04cb288fce3835f89856")
   (class semantic-clause)
   (reason
@@ -1483,8 +1483,40 @@
   (kind match)
   (pattern _)
   (ordinal 1)
-  (source-lines 668 668)
+  (source-lines 744 744)
   (source-sha1 "c250a7dcab3b92b0c13587c278c9698e91cc1fd8")
   (class semantic-clause)
   (reason
-   "F01 validates the source binder reference shape; this is a typing-domain check, not a source-result model.")))
+   "F01 validates the source binder reference shape; this is a typing-domain check, not a source-result model."))
+ (helper
+  (id "H.normalize-discourse-core.ff0c786d56")
+  (function normalize-discourse-core)
+  (source-lines 680 685)
+  (source-sha1 "80b1400f067fd747607e6ee3a84cf6d53e89e130")
+  (class semantic-clause)
+  (reason
+   "This helper implements the documented type-directed Act/performance notation at expected-Discourse positions without semantic subtyping."))
+ (helper
+  (id "H.normalize-performance-operand.1ee20fe4c0")
+  (function normalize-performance-operand)
+  (source-lines 668 678)
+  (source-sha1 "56ac6d34487484cb383fb9741b407a8eafbe121e")
+  (class semantic-clause)
+  (reason
+   "This helper implements the documented type-directed Act/performance notation at expected-Discourse positions without semantic subtyping."))
+ (helper
+  (id "H.normalize-source-core.ab758d45d2")
+  (function normalize-source-core)
+  (source-lines 689 730)
+  (source-sha1 "a089fee0c2a8330bda464251524cdf773ada0b8b")
+  (class auxiliary)
+  (reason
+   "This helper carries the declared lexical typing environment through source normalization while leaving C1 resolved."))
+ (helper
+  (id "H.notation-app.a5de44f769")
+  (function notation-app)
+  (source-lines 660 666)
+  (source-sha1 "fc0ce34287ab8d022184004d1c28dcfd1de60f72")
+  (class auxiliary)
+  (reason
+   "This helper constructs explicit source-notation AST nodes without adding binders or sites.")))
