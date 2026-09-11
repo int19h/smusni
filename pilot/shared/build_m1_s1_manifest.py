@@ -93,7 +93,7 @@ def collect_term_heads(
                     found.add("$variable")
                 else:
                     found.add("$undeclared-free:" + raw)
-            elif raw in {"λ", "Bind", "Context", "Vague"}:
+            elif raw in {"λ", "Bind", "Context", "Vague", "PerformSource"}:
                 found.add("$malformed-structural:" + raw)
             elif raw.startswith(":") or raw in data_names:
                 pass
@@ -140,6 +140,32 @@ def collect_term_heads(
             found.add(first)
             for nested in value[1:]:
                 walk(nested, bound_names, False)
+            return
+        if first == "PerformSource":
+            found.add(first)
+            args = value[2:] if len(value) > 1 and value[1] == "Host" else value[1:]
+            if (len(args) != 6 or not isinstance(args[2], list)
+                    or len(args[2]) != 2 or args[2][0] != "Assert"
+                    or any(len(binder_names(args[i])) != 1 for i in (0, 3, 4))):
+                found.add("$malformed-structural:PerformSource")
+                return
+            x, source, assertion, read, occurrence, body = args
+            def annotation(binder):
+                parts = binder[binder.index("::") + 1:]
+                return parts[0] if len(parts) == 1 else parts
+            reference = annotation(x)
+            if (not isinstance(reference, list) or len(reference) != 2
+                    or reference[0] != "Referents"
+                    or annotation(read) != ["RefComp", reference]
+                    or annotation(occurrence) != ["ActOccurrence", "Assertion"]
+                    or binder_names(read) == binder_names(occurrence)):
+                found.add("$malformed-structural:PerformSource")
+                return
+            found.add("Assert")
+            walk(source, bound_names, check_undeclared_free)
+            walk(assertion[1], bound_names | set(binder_names(x)), check_undeclared_free)
+            walk(body, bound_names | set(binder_names(read) + binder_names(occurrence)),
+                 check_undeclared_free)
             return
         if first == "λ" and len(value) == 3:
             found.add(first)

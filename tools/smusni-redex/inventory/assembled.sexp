@@ -1,6 +1,6 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5")
+ (core-sha1 "0d5b36fe11b794c93d7be78e7d342a8b82ee876d")
  (fixture-sha1 "c2b1a5b22706c8e21e05c81e272217863b0a7cc1")
  (sorts
   AbstractNature
@@ -167,6 +167,7 @@
   OpenQ
   PeerUnitAt
   Perform
+  PerformSource
   PluralNo
   PluralSome
   Polar

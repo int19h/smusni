@@ -131,13 +131,13 @@
   (case 3 "mi co'e do" sentence (promised-rows)))
  (candidate
   "samples.md"
-  72
+  73
   "4890c0005f7c7eca9bd4ea5fe9a8eaffc08c4b38"
   (rules "L5.30" "L5.1" "L3.1")
   (case 1 "ro gerku cu tavla lo mlatu" sentence (promised-rows gerku mlatu tavla)))
  (candidate
   "samples.md"
-  73
+  74
   "61de1cdcc879bf59408a075914889e684113c681"
   (rules "L5.30" "L5.1" "L5.2")
   (case 1 "ro gerku cu tavla su'o mlatu" sentence (promised-rows gerku mlatu tavla)))

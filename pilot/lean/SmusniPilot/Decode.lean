@@ -113,6 +113,29 @@ def lookupBound (name : String) : (environment : List String) →
       if name == current then some 0
       else (lookupBound name rest).map Fin.succ
 
+-- Host/Assert are literal grammar markers. Redundant annotations are checked
+-- here; the core constructor keeps one reference type and three scoped arms.
+def decodePerformSourceParts (arguments : List SurfaceTerm) :
+    Except String (Binder × SurfaceTerm × SurfaceTerm × Binder × Binder × SurfaceTerm) := do
+  let arguments := match arguments with
+    | .atom (.symbol "Host") :: rest => rest
+    | rest => rest
+  let [rawX, source, .form _ (.primitive .assert) [content], rawRead, rawOccurrence, body] := arguments
+    | .error "PerformSource requires optional literal Host, source binder/source, literal Assert Content, read/occurrence binders and Discourse"
+  let x ← decodeBinder rawX
+  let read ← decodeBinder rawRead
+  let occurrence ← decodeBinder rawOccurrence
+  match x.type with
+  | .named .typeFormReferents [_] => pure ()
+  | _ => .error "PerformSource source binder must be Referents<T>"
+  if read.type != .named .typeFormRefComp [x.type] then
+    throw "PerformSource read binder must be RefComp<R>"
+  if occurrence.type != .named .typeFormActOccurrence [.variable "Assertion"] then
+    throw "PerformSource occurrence binder must be ActOccurrence Assertion"
+  if read.spelling == occurrence.spelling then
+    throw "PerformSource read and occurrence binders must be distinct"
+  pure (x, source, content, read, occurrence, body)
+
 structure DecodeNote where
   document : String
   ordinal : Nat
@@ -233,6 +256,15 @@ mutual
         let (clauses, body) ← decodeBindClauses arguments
         decodeBinds document lexicalHeads freeNames rrLink environment
           clauses body state
+    | .form _ (.primitive .performSource) arguments =>
+        let (x, source, content, read, occurrence, body) ← decodePerformSourceParts arguments
+        let state := state.recordSource document [x.spelling, read.spelling, occurrence.spelling]
+        let (source, state) ← decodeCore document lexicalHeads freeNames rrLink environment source state
+        let (content, state) ← decodeCore document lexicalHeads freeNames rrLink
+          (x.spelling :: environment) content state
+        let (body, state) ← decodeCore document lexicalHeads freeNames rrLink
+          (occurrence.spelling :: read.spelling :: environment) body state
+        pure (.performSource x.type source content body, state)
     | .form _ (.primitive .context) arguments =>
         let (decoded, afterArguments) ←
           decodeCoreList document lexicalHeads freeNames rrLink environment

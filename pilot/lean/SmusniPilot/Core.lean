@@ -13,6 +13,9 @@ mutual
         (body : Term (scope + 1)) : Term scope
     | bind {scope : Nat} (binderType : Ty)
         (computation : Term scope) (body : Term (scope + 1)) : Term scope
+    | performSource {scope : Nat} (referenceType : Ty)
+        (source : Term scope) (content : Term (scope + 1))
+        (continuation : Term (scope + 2)) : Term scope
     | apply {scope : Nat} (function : Term scope)
         (arguments : TermList scope) : Term scope
     | lexical {scope : Nat} (predicate : String)
@@ -50,6 +53,8 @@ mutual
     | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body => body.siteUses
     | .bind _ computation body => computation.siteUses ++ body.siteUses
+    | .performSource _ source content continuation =>
+        source.siteUses ++ content.siteUses ++ continuation.siteUses
     | .apply function arguments => function.siteUses ++ arguments.siteUses
     | .lexical _ arguments => arguments.siteUses
     | .context site arguments =>
@@ -87,6 +92,8 @@ mutual
     | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body => body.siteIds
     | .bind _ computation body => computation.siteIds ++ body.siteIds
+    | .performSource _ source content continuation =>
+        source.siteIds ++ content.siteIds ++ continuation.siteIds
     | .apply function arguments => function.siteIds ++ arguments.siteIds
     | .lexical _ arguments => arguments.siteIds
     | .context site arguments => site :: arguments.siteIds
@@ -105,6 +112,8 @@ mutual
     | .free identity => [identity]
     | .lambda _ body => body.freeIds
     | .bind _ computation body => computation.freeIds ++ body.freeIds
+    | .performSource _ source content continuation =>
+        source.freeIds ++ content.freeIds ++ continuation.freeIds
     | .apply function arguments => function.freeIds ++ arguments.freeIds
     | .lexical _ arguments => arguments.freeIds
     | .context _ arguments => arguments.freeIds
@@ -122,6 +131,8 @@ mutual
     | .bound _ | .free _ | .natural _ | .string _ | .index _ => []
     | .lambda _ body => body.siteScopes
     | .bind _ computation body => computation.siteScopes ++ body.siteScopes
+    | .performSource _ source content continuation =>
+        source.siteScopes ++ content.siteScopes ++ continuation.siteScopes
     | .apply function arguments => function.siteScopes ++ arguments.siteScopes
     | .lexical _ arguments => arguments.siteScopes
     | .context site arguments => (site, scope) :: arguments.siteScopes
@@ -147,6 +158,10 @@ mutual
     | .apply function arguments =>
         function.substitutionUsesAt depth ++
           arguments.substitutionUsesAt depth
+    | .performSource _ source content continuation =>
+        source.substitutionUsesAt depth ++
+          content.substitutionUsesAt (depth + 1) ++
+          continuation.substitutionUsesAt (depth + 2)
     | .lexical _ arguments | .context _ arguments | .primitive _ arguments =>
         arguments.substitutionUsesAt depth
     | .vague _ constraint => constraint.substitutionUsesAt depth

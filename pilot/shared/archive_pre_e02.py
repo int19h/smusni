@@ -28,7 +28,8 @@ PATHS = [
 ]
 
 
-def main():
+def main(*, corpus="tools/smusni-redex/inventory/history/pre-e01-port-corpus.sexp",
+         label="pre-E02"):
     records = []
     for name in PATHS:
         data = subprocess.check_output(["git", "show", f"{REVISION}:{name}"], cwd=ROOT)
@@ -41,14 +42,14 @@ def main():
                         "sha256": hashlib.sha256(data).hexdigest()})
     manifest = {"source_revision": REVISION,
                 "status": "historical inputs and reported results, not current validation",
-                "corpus": "tools/smusni-redex/inventory/history/pre-e01-port-corpus.sexp",
+                "corpus": corpus,
                 "files": records}
     data = (json.dumps(manifest, indent=2) + "\n").encode()
     target = DESTINATION / "ARCHIVE.json"
     if target.exists() and target.read_bytes() != data:
         raise SystemExit("refusing to replace historical archive manifest")
     target.write_bytes(data)
-    print(f"pre-E02 archive verified: {len(records)} files from {REVISION}")
+    print(f"{label} archive verified: {len(records)} files from {REVISION}")
 
 
 if __name__ == "__main__":

@@ -55,6 +55,15 @@ mutual
         let (body, state) ← elaborateCore document
           (environment.extend binderType) none body state
         pure (.bind binderType computation body, state)
+    | .performSource reference source content continuation =>
+        let (source, state) ← elaborateCore document environment
+          (some (Ty.refComp reference)) source state
+        let (content, state) ← elaborateCore document (environment.extend reference)
+          (some Ty.content) content state
+        let (continuation, state) ← elaborateCore document
+          ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
+          (some Ty.discourse) continuation state
+        pure (.performSource reference source content continuation, state)
     | .apply function arguments =>
         let (function, state) ← elaborateCore document environment none function state
         let (arguments, state) ←
@@ -611,6 +620,20 @@ mutual
         let (clauses, body) ← mapDecodeError (decodeBindClauses arguments)
         elaborateSurfaceBinds document lexicalHeads freeNames rrLink names environment
           clauses body state
+    | .form _ (.primitive .performSource) arguments =>
+        let (x, source, content, read, occurrence, body) ← mapDecodeError (decodePerformSourceParts arguments)
+        let decode := state.decode.recordSource document
+          [x.spelling, read.spelling, occurrence.spelling]
+        let state := { state with decode }
+        let (source, state) ← elaborateSurface document lexicalHeads freeNames rrLink
+          names environment (some (Ty.refComp x.type)) source state
+        let (content, state) ← elaborateSurface document lexicalHeads freeNames rrLink
+          (x.spelling :: names) (environment.extend x.type) (some Ty.content) content state
+        let (body, state) ← elaborateSurface document lexicalHeads freeNames rrLink
+          (occurrence.spelling :: read.spelling :: names)
+          ((environment.extend (Ty.refComp x.type)).extend (Ty.actOccurrence Ty.assertion))
+          (some Ty.discourse) body state
+        pure (.performSource x.type source content body, state)
     | .form _ (.primitive .context) arguments =>
         let (arguments, state) ← elaborateSurfaceList document lexicalHeads freeNames
           rrLink names environment arguments state
@@ -996,21 +1019,21 @@ def runM2Cases (root : String) : IO CaseRun := do
       throw <| IO.userError <| s!"frozen Refer case drifted: {id} " ++
         s!"got {repr outcome.disposition}/{outcome.decidingRule}/" ++
         s!"{repr outcome.expandedDefinitions}"
-  assertFrozen "dca2591716f1bddade1e6b1d76605a84e2b5157f"
+  assertFrozen "84dfb76d571acff8ff6909c051c6b8221a347eb3"
     .typedRejection "set-property" [.d53ReferMemberLift]
-  assertFrozen "cc26b9d3a5a7be71c84d4b961305f5e0152aafd8"
+  assertFrozen "4ac136045a9a033b204e1d994844d4bea899f991"
     .typeDirectedExpansion "generated definition-domain overload"
     [.d53ReferMemberLift]
-  assertFrozen "0325a882e54766a92866417b067a7d7694280900"
+  assertFrozen "e9be9fe64e49c1115b978ea22472b221b6e8287c"
     .typedRejection "refer-member-purity" []
-  assertFrozen "d936f713fab6df3e8eadb5235a1215d7241c43ca"
+  assertFrozen "a4dae63d4bb6943d08964c8a65a7c28c1ed6503d"
     .typedUnchanged "bidirectional typing" []
   -- Retain the four historical PR46/B1 discriminator inputs. These are
   -- assertions about the general classifier, never dispatch keys for output.
-  for id in ["1de177f660bc3c934b18cd20087636c6dce7f837",
-      "63f5f18694818117743c94ef567a0a25cc148c8d",
-      "c3d5175b715643891982317b895cbad77bf79fed",
-      "d8116f10e6b587310e323677fb87af53a97c9546"] do
+  for id in ["6964e1d3ba0bef78d774d795a84a8dd7c8343a77",
+      "056127c40eba32ecf0c586256bd9292d40f756c1",
+      "6630372bac3c65a1d2efd1ebe62e5f48f285f61a",
+      "588862c224b66667eb8bc4056d58a732be2051a8"] do
     let some outcome := outcomes.find? (·.id == id)
       | throw <| IO.userError s!"retained negation case missing: {id}"
     if outcome.disposition != .typeDirectedExpansion || outcome.type != some (Ty.set Ty.entity) ||

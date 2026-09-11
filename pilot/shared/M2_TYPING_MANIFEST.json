@@ -3,19 +3,19 @@
   "version": 2,
   "sources": {
     "redex": "tools/smusni-redex/port-a0.rkt",
-    "redex_sha256": "b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c",
+    "redex_sha256": "01c4fb99fe0776c0d146d7c53db5d27f06eeba0e2a19e3f14b7ebda96fb7afba",
     "core": "tools/smusni-redex/inventory/core.sexp",
-    "core_sha256": "794ec672dd0130a76d6f17fb82a9764d379f5b00c157688cf8b76a2a2d3b05c6",
+    "core_sha256": "78d5337a0a4c233ea98c0e8d2e8130118e7ac58d4ceb5e1a50516bebe696bee3",
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
     "fixtures_sha256": "9bf6ad60e661e7b1a2890cf6fb683c45c8f45e488f3321645ef76afcdc831aaf",
     "supplement": "pilot/shared/M2_TYPING_SUPPLEMENT.tsv",
-    "supplement_sha256": "e12dc1ade4036b1098ab392a90a915568c41d091ca6e513cc045468343ea0a97"
+    "supplement_sha256": "1f2265fd8e555e53761f06f319893df19f55346afb031559b423a88806e39a44"
   },
   "counts": {
     "required_redex_rules": 81,
-    "supplemental_rules": 29,
-    "required_rules": 110,
-    "supported_rules": 110,
+    "supplemental_rules": 30,
+    "required_rules": 111,
+    "supported_rules": 111,
     "unsupported_rules": 0,
     "grammar_categories": 9,
     "core_constants": 21,
@@ -24,74 +24,74 @@
   "grammar": {
     "τ": {
       "source_range": [
-        75,
-        81
+        76,
+        82
       ],
-      "source_sha256": "eb26a8c63deb8ea0c7f301b7ee07a2a0e8b891c09266ec2bed0f6e17f48f2c19",
+      "source_sha256": "2a376dc3e673383eab76b00ce38c1ad39f2a7797cfb3af545ee92d07f221d7af",
       "source": "[τ Entity Eventuality Number Natural Cardinal Content ClauseContent Discourse ThresholdKind (Referents τ) (Group τ) (List τ) (Set τ) (DecompositionBasis τ τ) (Act force) (ActOccurrence force) (Fn (τ ...) τ) (EFn (τ ...) τ) (RefComp τ) (PerfComp τ)]"
     },
     "direction": {
       "source_range": [
-        82,
-        82
+        83,
+        83
       ],
-      "source_sha256": "374b9d5df554b386686f7f53a0b5e8364d7803de5254e23e595f70f862f97ad9",
+      "source_sha256": "cf64051bf1044c5bf475303dc3463645053f3ce5756ac6821e77096b081fd3bf",
       "source": "[direction synth (check τ)]"
     },
     "R": {
       "source_range": [
-        84,
-        84
+        85,
+        85
       ],
-      "source_sha256": "e893ae29087ad151a107719caf6e234c6ae79fc58182ba740562da8b5d2bc1e5",
+      "source_sha256": "31676320330fd85e3bfad21db07b57e3a24c9f2aa6bae5a9c93183321c43bfd5",
       "source": "[R (typing τ (effect ...) (obligation ...))]"
     },
     "t": {
       "source_range": [
-        90,
-        145
+        91,
+        147
       ],
-      "source_sha256": "969132bb5431d22e434c40814384860cdf505b12b7296bcaa7646c9005aca3f4",
-      "source": "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (closure-head t t) (Only t t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (comparison t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
+      "source_sha256": "c01fd1e708155756a12dd823a4b5808a5799e87eb93fc7f9b89eab69bdb779eb",
+      "source": "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (PerformSource (x τ) t t (x τ) (x τ) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (closure-head t t) (Only t t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (comparison t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
     },
     "ρdecl": {
       "source_range": [
-        146,
-        146
+        148,
+        148
       ],
-      "source_sha256": "538fac7127b5b053b6b550bbc7723f54f033f5cebe596b7b34adb5185dfe6b91",
+      "source_sha256": "29b2bee7adbd79c9c2720d531c3a90eca427e3d51473d1ef681587c75137d1cb",
       "source": "[ρdecl (row variable-not-otherwise-mentioned n event-mode (label ...))]"
     },
     "dep": {
       "source_range": [
-        152,
-        152
+        154,
+        154
       ],
-      "source_sha256": "1c3f1135d9c2b9e764bf9f757d4050c5deddb5733c81a1c0280a842760211acf",
+      "source_sha256": "86bc3d954dd69f2beec57fc570bb25a153a74a8cdf27071a0bc772b510472315",
       "source": "[dep (site site-id) (outer x τ) (member)]"
     },
     "role": {
       "source_range": [
-        153,
-        153
+        155,
+        155
       ],
-      "source_sha256": "b62ee5f5d82b2782fd074d60355196523d965159aba888f562e753c1425c80b7",
+      "source_sha256": "f064914a1ecb262b33da9b937a1cb7a89ecffbcb94e78028bab968e4fc254ab0",
       "source": "[role (context t ...) (vague t)]"
     },
     "closure-head": {
       "source_range": [
-        66,
-        66
+        67,
+        67
       ],
-      "source_sha256": "319d71777fa22dc8d21a35f46d53e3b5c14c90f950c79fda333e8f64c0c0c9ff",
+      "source_sha256": "bbfdc46255f29ab32399352f4551aa9a0f956485ee0a4e3b0fad45439f1271fb",
       "source": "[closure-head IndividualSome IndividualNo IndividualEvery PluralSome PluralNo]"
     },
     "comparison": {
       "source_range": [
-        67,
-        67
+        68,
+        68
       ],
-      "source_sha256": "660fe622afed90344449b602babfa25450574afa6d813281c83f1c47026bec23",
+      "source_sha256": "7993249e4d2a12f2fd184d0439a271aaaa72b7583331823f16c01d019e37b9ce",
       "source": "[comparison < ≤]"
     }
   },
@@ -104,11 +104,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1936,
-          1938
+          1954,
+          1956
         ]
       ],
-      "source_sha256": "eae7c1ba30f9c8e41d08b836fb9318639c58bb7abcbbe24423f782bcda59630e",
+      "source_sha256": "d481b80f81824cd4a1528ba799f884aa39ba9c410a041c9d59baa182254dcfb4",
       "conclusion": "(a0-synth Γ t R)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -120,11 +120,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1943,
-          1945
+          1961,
+          1963
         ]
       ],
-      "source_sha256": "b1294258d3cd549d187348fd930d401e8189e920e56068e3a82c702d95f86c3a",
+      "source_sha256": "a9c289c32a8605d6c73b5e2bebe8b9d2415a6dcadb9ee7743979fe9476033709",
       "conclusion": "(a0-check Γ t τ R)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -136,11 +136,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1101,
-          1102
+          1119,
+          1120
         ]
       ],
-      "source_sha256": "1fa44146e27a7be689d104561b994c62110047de7371a683ec93c30694612bf3",
+      "source_sha256": "0db1c84c31fd74f6de81349fd9c7cc9d93f11203d8fa0d4b4429c0a3c240d0d2",
       "conclusion": "(a0-type synth Γ n (typing Natural () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -152,11 +152,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1104,
-          1105
+          1122,
+          1123
         ]
       ],
-      "source_sha256": "25957a89a7fed67b448510651377969f286f87c2b7d21a4668a6cbda7f0c73b1",
+      "source_sha256": "f0373d9e5ea8f584f0b74fc79e0a7b90bde134dc2b6b9c75faa601908d7d7304",
       "conclusion": "(a0-type synth Γ Speaker (typing (Referents Entity) () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -168,11 +168,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1107,
-          1108
+          1125,
+          1126
         ]
       ],
-      "source_sha256": "9414b5f1e6964a9cd41ed8faaae4c0598ec99111573f6fdbdcac0719f4b1a348",
+      "source_sha256": "1bb76f7009ba3ee7db2e3a9fe75a6b19ddbccbb67a35ced063b2b3e7da5d31c3",
       "conclusion": "(a0-type synth Γ Audience (typing (Referents Entity) () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -184,11 +184,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1110,
-          1111
+          1128,
+          1129
         ]
       ],
-      "source_sha256": "9f7aa5df47d4d1023faa1a846cb069c4921545f8adc6cdaf2215ea44520ef6c0",
+      "source_sha256": "29d2a38234bb1092a277dd50e532430453611a6a5e13a1059b344e89a6f5931a",
       "conclusion": "(a0-type synth Γ TooManyK (typing ThresholdKind () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -200,11 +200,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1113,
-          1114
+          1131,
+          1132
         ]
       ],
-      "source_sha256": "3dee28898774e25dd31981bf5e14e7c38e88a2255fbaf4bd09a008763be96da0",
+      "source_sha256": "2741ddf2f8e3fbe5a8a6327ca99a10b6ac40dd6ab4b815cbaff52a296739010e",
       "conclusion": "(a0-type synth Γ ⊤ (typing Content () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -216,11 +216,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1116,
-          1118
+          1134,
+          1136
         ]
       ],
-      "source_sha256": "44fe1f6c5511da032c777baeb91c85d6d7df66afe72ae5c1cb4d52ce99c3fb2a",
+      "source_sha256": "fba2ada300a9d10607a2abf812c052adbc77b79b0976a0723d8f59fdbec88c28",
       "conclusion": "(a0-type synth Γ x (typing τ () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -232,11 +232,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1120,
-          1129
+          1138,
+          1147
         ]
       ],
-      "source_sha256": "bfff7db52d91c6e1aa15e5aa817561a539f38bcbb3dd3ca2f3646c6664cb84c3",
+      "source_sha256": "caea11e3e52395e5e0d45a0dee2714310fe659a90b59b9a694f31872ea517db2",
       "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (Fn (τ) τ_body) () (obligation_scoped ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -248,11 +248,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1131,
-          1141
+          1149,
+          1159
         ]
       ],
-      "source_sha256": "548dd95352e24173c48cd4ea677f4bda1aa4e1e9ec63635138ea43931aed23cd",
+      "source_sha256": "9582b7231c43109785f580021a83dceae87d030e082e2e0cc140bb6b4b1d3085",
       "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (EFn (τ) τ_body) () (obligation_scoped ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -264,11 +264,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1143,
-          1156
+          1161,
+          1174
         ]
       ],
-      "source_sha256": "5dac2bb8c9361e4cfa95d1bf7389a527e031d087e060f11bf94e7ab5e1406cca",
+      "source_sha256": "24335ba92ead5ed763197eec334273ef2926c664e900dfa6b714fc74e84dbda4",
       "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -280,11 +280,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1158,
-          1172
+          1176,
+          1190
         ]
       ],
-      "source_sha256": "c9db9678dee4adfe208494420f9887925c2d070dc13983fc16a220cdeb81a6ce",
+      "source_sha256": "01dfa80dda52bb6f7836ffc64915cd5715255e65c2ecf176f19d0b903995cc4d",
       "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -296,11 +296,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1174,
-          1188
+          1192,
+          1206
         ]
       ],
-      "source_sha256": "02a8d253a9969b5c0c36de11ca18c1a5a017d0bde7dbcf2e70647f26ac696958",
+      "source_sha256": "b8cd81679651c99a3448caa5663fd11af3fa0082653acd717cbbe9f85ad35fec",
       "conclusion": "(a0-type synth Γ (Let (x τ) t_value t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -312,11 +312,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1190,
-          1196
+          1208,
+          1214
         ]
       ],
-      "source_sha256": "c350e4950d3a2da3ba35a2f48e7b7fac5938c831338ba61eb8cfba41ea59351b",
+      "source_sha256": "b3442427f067e17ceea25f1c2c07030084a987953dc00d6cc98a8fae16aa5fc0",
       "conclusion": "(a0-type synth Γ (Bind (binding_0 binding_1 binding_rest ...) t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -328,11 +328,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1198,
-          1206
+          1216,
+          1224
         ]
       ],
-      "source_sha256": "9022a93042b88464c1312d01b1181deb83d24ff4a978ce706da8fb1bcd56a996",
+      "source_sha256": "c577bcb406b79b4604b46abc8e730e5b6a22ff67d3d05c9ef316b9692ba9418f",
       "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -344,11 +344,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1208,
-          1222
+          1226,
+          1240
         ]
       ],
-      "source_sha256": "1f62e3b5bf5a246d6209296fde6b6945728f2ae825126342265fe7e95804158a",
+      "source_sha256": "a375d2a34cef823eef6b3ec8728d127fd6d535593f5575932857fdfa0ec268b7",
       "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -360,11 +360,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1224,
-          1239
+          1242,
+          1257
         ]
       ],
-      "source_sha256": "c7d0d1d088f480500c4d3e2e5f615a05b9a17a6dae44806ad1144940e8933ff5",
+      "source_sha256": "f8ff2831a88dacd54c5f613e21daee79e1a21ae120330e9321ff47ae8507a843",
       "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -376,11 +376,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1241,
-          1255
+          1259,
+          1273
         ]
       ],
-      "source_sha256": "b379f870baa8294dcd9c67e4ebceab5b6eb13ae4a2bed8f8130f75f6fa04ef13",
+      "source_sha256": "2edfd2e8ff13ca71789e003a8a4616dbce345268341438dc9af9d057c7f7b6a4",
       "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -392,11 +392,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1257,
-          1262
+          1275,
+          1280
         ]
       ],
-      "source_sha256": "f99d7d838084bed7049d15969b6194b4b41af6a5fcc1286e5b0d0bba5f4812d3",
+      "source_sha256": "72479a6549b4b0d3788b28d438f51bdba774b59fd04e957985e18413115b3afb",
       "conclusion": "(a0-type (check τ_expected) Γ t_actual R_actual)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -408,11 +408,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1264,
-          1268
+          1282,
+          1286
         ]
       ],
-      "source_sha256": "e3a71668761f933c5c54f0f24912b19e2160538491d8c5feabab19c05ed8138d",
+      "source_sha256": "1740194ef976d2660b8036815cab4834320af474e2c9ceb101ef87b4ba1da032",
       "conclusion": "(a0-type (check (RefComp τ)) Γ (Context t_argument ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -424,11 +424,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1270,
-          1274
+          1288,
+          1292
         ]
       ],
-      "source_sha256": "e8ac233c6cbd607cc3632b5464e7ee242a759d92cb8a08fdc336244060b22033",
+      "source_sha256": "c7ffe0305b72d8ed59fdd09d4c66783b6d50c7c02bebeb221cf1a9405a44b29a",
       "conclusion": "(a0-type (check (RefComp τ)) Γ (Vague t_property) (typing (RefComp τ) (context) (obligation ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -440,11 +440,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1276,
-          1286
+          1294,
+          1304
         ]
       ],
-      "source_sha256": "38659d4a2849c3616483d5263134cf3f0092a3b16208e53a6413085f0bc2a8ec",
+      "source_sha256": "b74bf78df4ec55f8af068fb8b28cce58156655b383c12b34585b00b97886d405",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -456,11 +456,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1288,
-          1296
+          1306,
+          1314
         ]
       ],
-      "source_sha256": "951a46fe74b5bcbd904dafddf90cd205eb7087de571d31e04ac9583ec61253c0",
+      "source_sha256": "52923ca530066e03e816444dc05f42a5f70f2f711101b477abf6169c7144e2cc",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -472,11 +472,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1298,
-          1309
+          1316,
+          1327
         ]
       ],
-      "source_sha256": "1535d5716b0f1852dd057326f3c258ea96617ed2bbb102fec314b1acd567354e",
+      "source_sha256": "64dfe9c67257ae575b248969ea6ad1d2d32ca89eb3e129503f06cc0341b8331a",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectExactly t_count t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -488,11 +488,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1311,
-          1320
+          1329,
+          1338
         ]
       ],
-      "source_sha256": "4f72f9ce967b2651bf6be242390a41a602e5c2d0ebff3aac1cad067f608cd0fb",
+      "source_sha256": "5929a6111a08d5b0d4cc179599c7cba473e26bcc5bf654cf3b63cf7887f7033c",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectSome t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -504,11 +504,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1358,
-          1371
+          1376,
+          1389
         ]
       ],
-      "source_sha256": "2b754e0ea559eebc0162ab0df7c75bc5a2b09a40d22773e6552c61989fe8bc80",
+      "source_sha256": "7b4753cb5e93f8787fde72528a2e9d6c0a8fecab1abd1b46dfc294656ea2752a",
       "conclusion": "(a0-type (check (RefComp (Referents (Group τ)))) Γ (Massify t_basis t_cover) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -520,11 +520,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1373,
-          1378
+          1391,
+          1396
         ]
       ],
-      "source_sha256": "7b5c321d854a7fdd7ba35ceceef86f1ba920abb9a73b1c8f81905d9232156d61",
+      "source_sha256": "d4eed8348027c563d8bac73c73f5b33b55e417b652516f347102f53a823492d1",
       "conclusion": "(a0-type synth Γ (Perform t_act) (typing (PerfComp (ActOccurrence force)) (performance) (obligation ...)))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -536,11 +536,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1380,
-          1389
+          1398,
+          1407
         ]
       ],
-      "source_sha256": "9c36805354b2188a79447b3e2f7bc1b4d0eb2d65d62f2f0cb5ffb9d499545a68",
+      "source_sha256": "adc80c1b28bd50dcca57c9d59cf8596ed7eb8935e88a4e45e7c2140dad9390eb",
       "conclusion": "(a0-type synth Γ (Exactly 0 v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -552,11 +552,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1391,
-          1401
+          1409,
+          1419
         ]
       ],
-      "source_sha256": "210c4a61f23b2d238de7451a25786b0d910defbd5569273bb0ce4fae1a5a3c08",
+      "source_sha256": "d4fad293d1dbec33bfde3eddfbe5922a02ef8e9122736cd7675bc501178c756a",
       "conclusion": "(a0-type synth Γ (Exactly t_count v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -568,11 +568,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1487,
-          1494
+          1505,
+          1512
         ]
       ],
-      "source_sha256": "b8f414240e19b5619a370bc48520c5cd5bc38209758077227dac61d288e97990",
+      "source_sha256": "e821d753c4944036610a100ef550a27dd8a1ddc5a39378b6c946b6b06f81c18f",
       "conclusion": "(a0-type synth Γ (No v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -584,11 +584,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1507,
-          1516
+          1525,
+          1534
         ]
       ],
-      "source_sha256": "6ec345d73de8469ef2ca8ab72dcdba51c39bfce2b438c028699de6558c7a0275",
+      "source_sha256": "25984dee66934f2bcef49e541bc0211a5e689abf84533c70b7fc2a70059b2964",
       "conclusion": "(a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -600,11 +600,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1550,
-          1558
+          1568,
+          1576
         ]
       ],
-      "source_sha256": "506a069cb965989bd2e1f67b0f6bd23df376bd3fc8b7188a31a4d563903fab93",
+      "source_sha256": "acee653d21798efa37d5f2d2527b4cbf8ea8a8f7e4d59d7004debafb45c7cc9e",
       "conclusion": "(a0-type synth Γ (GlobalExactly t_n t_P t_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -616,11 +616,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1560,
-          1569
+          1578,
+          1587
         ]
       ],
-      "source_sha256": "7eb356e69ccb401a323f5dee17daf7e7bcc9f891fb73145ad411b09381d1fbaf",
+      "source_sha256": "899bf9ebcd819db79a46fb67c7a9f9c46de6c39a27f631624f472554f940ea7e",
       "conclusion": "(a0-type synth Γ (TooMany t_P t_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -632,11 +632,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1571,
-          1580
+          1589,
+          1598
         ]
       ],
-      "source_sha256": "a66df474ef19c558aebaadad56ebfc064789b0165946cc6dbd67ff6a6f632ced",
+      "source_sha256": "19a938ad7d80fc0957f576bbfc08c5ae79349c0fb3c5df703d3650d32c4ae7c1",
       "conclusion": "(a0-type synth Γ (AdmissibleThreshold t_kind t_P t_purpose) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -648,11 +648,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1582,
-          1590
+          1600,
+          1608
         ]
       ],
-      "source_sha256": "27585be4e4ddea3aae599eff95e677653b900055e1044bd1fd03a364448f40ba",
+      "source_sha256": "227d6f0ccc81f97c9067b49b93865bcdf0cfdb236d6bfba6446905ecfb444532",
       "conclusion": "(a0-type synth Γ (CanonicalAggregateAt t_basis t_group t_cover) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -664,11 +664,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1592,
-          1596
+          1610,
+          1614
         ]
       ],
-      "source_sha256": "df5c760534c0e0fb4c70c58b15dd3b9e98bb3f250d1175bf953f6b4a7b5f0bc0",
+      "source_sha256": "c0c914ca781e6053ef7d120a3dd4f530db9dfbdc0085fc8915c2f3fa8ba1ee9f",
       "conclusion": "(a0-type synth Γ (SetOf t_P) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -680,11 +680,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1598,
-          1604
+          1616,
+          1622
         ]
       ],
-      "source_sha256": "4a1d6f16ae85cb5b10aa188d2d5d50b103cfdb0401e8ae5495745bf58198b0ff",
+      "source_sha256": "5da1982185848fed39f8feb9e8f7acc886416af2e0f2fc771a63f87bc878a8fb",
       "conclusion": "(a0-type synth Γ (Card t_set) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -696,11 +696,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1606,
-          1618
+          1624,
+          1636
         ]
       ],
-      "source_sha256": "b2759c6746789926f24606fc197b4e8b8ee0ae95531ccd39d04db7f40af36da9",
+      "source_sha256": "25dedc4e1424a86d80731a3cfa6b5a797ed2e6d75246885efd9b67e7163daa5e",
       "conclusion": "(a0-type synth Γ (= t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -712,11 +712,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1636,
-          1640
+          1654,
+          1658
         ]
       ],
-      "source_sha256": "ccd7194b09fbc07a10a3faf575cae5935417f6f635b6e3f933a81e9788d3de05",
+      "source_sha256": "1e4079ad033d51e2649d79d3b7712ea25fef6e7fd905ba107ee4e82a214910f7",
       "conclusion": "(a0-type synth Γ (∧ t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -728,11 +728,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1716,
-          1723
+          1734,
+          1741
         ]
       ],
-      "source_sha256": "67f1aa65beaabd81e68404b56be170fe7ba0688f4db014a17876efa5e9649ac2",
+      "source_sha256": "ebe6a578ef604f5ba6c273c58b13aa0adced06b7af5a4af0180d5bc85acf345a",
       "conclusion": "(a0-type synth Γ (CoRef t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -744,11 +744,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1763,
-          1766
+          1781,
+          1784
         ]
       ],
-      "source_sha256": "4ce2d6b103c950b59f18b54067cd3b7251236e016446e19bec31d434550d23f3",
+      "source_sha256": "139dbfc4426f32461a39016589ae96c9371364dec5a5ace7af191eeb34291188",
       "conclusion": "(a0-type (check (List τ)) Γ (List t_item ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -760,11 +760,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1768,
-          1780
+          1786,
+          1798
         ]
       ],
-      "source_sha256": "1cab4a0aea3176f8da5890b7d9654db2a5e7bb15ebb6768742362cf676474919",
+      "source_sha256": "8fd77f68ffe5c2a6c7136bef67106e3c284df63e93297f826d286ec8102a0d13",
       "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -776,11 +776,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1782,
-          1791
+          1800,
+          1809
         ]
       ],
-      "source_sha256": "e91350c6a1b4d7861e599eccd5c239f3853961099dcf4590b075c47720f455f5",
+      "source_sha256": "760a0aec528d1c0e46e17b77b2d7961a656f680957e5e19c2fd253ff96a45226",
       "conclusion": "(a0-type synth Γ (ZipWith v_f (List) (List)) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -792,11 +792,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1793,
-          1808
+          1811,
+          1826
         ]
       ],
-      "source_sha256": "86c18cbf3b02bc2e86688ba4e2dd6e19c9875db295ef1d107e7d64445ad13c10",
+      "source_sha256": "38a326a680969aec14a1dbabc4b07f6fb6a2e32b16434f368692a7b733b8a17a",
       "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -808,11 +808,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1810,
-          1813
+          1828,
+          1831
         ]
       ],
-      "source_sha256": "019817491e8694736a6281f84ae328cde7839c317fa44aca8b549a49f262cf2e",
+      "source_sha256": "bca1c3a74c39969c835bb49aeba4a57e2daf81540a1445e3b06b72d1fa4e2200",
       "conclusion": "(a0-type synth Γ (StateClause t_content) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -824,11 +824,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1815,
-          1825
+          1833,
+          1843
         ]
       ],
-      "source_sha256": "b4c5c92b8706bf5e06dcf933eee081386236cdbc544d8a5d4ab1a3817893e869",
+      "source_sha256": "0209e2463ff6b2442416d1e666fd556f1c3e938275c5c2fed6db75df1094f690",
       "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -840,11 +840,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1827,
-          1837
+          1845,
+          1855
         ]
       ],
-      "source_sha256": "e12660174bd378bcaf787c8e1040f5632ab3667d398c627c80e13b509737c32a",
+      "source_sha256": "d542039ed38f845a04dcbc508882c60904bce46d1a7ef5f5d9ae3402b8b6a437",
       "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -856,11 +856,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1839,
-          1847
+          1857,
+          1865
         ]
       ],
-      "source_sha256": "2d3f5830012a4e1c1a1e76d96f2fa85d2516367ad6599d3a41ad30cc2e1e1a7e",
+      "source_sha256": "bfb9d5de87f3520e3cce2e0c2d24290b1de2bb4f93743eaad0b254e15ce7acc9",
       "conclusion": "(a0-type synth Γ (ActualClause t_clause) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -872,11 +872,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1849,
-          1856
+          1867,
+          1874
         ]
       ],
-      "source_sha256": "5b872b0d619f93cb9e140fc253250704b4eb85e895b46787dffe0ef9524dd305",
+      "source_sha256": "b93ae4b6b1e349ce031e6f570e900b049ac7ee044148204418a2d2bf2af7b145",
       "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -888,11 +888,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1858,
-          1865
+          1876,
+          1883
         ]
       ],
-      "source_sha256": "ebffdb82ddfc13799c5b6133bd7b4c770f7ba1fa0305fcbd6c53db9bca7a1a63",
+      "source_sha256": "5884d56912e926d0f356360880f9be0bb3f0ad7a4325d157409aa8d82410e4df",
       "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -904,11 +904,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1867,
-          1874
+          1885,
+          1892
         ]
       ],
-      "source_sha256": "d90d642b9141cf403e1f20fd46a88501d1a8bc3f4d065b964f4c3784e837ad35",
+      "source_sha256": "5af9041f5ecc37d6b8087ce395d96d6a7432a718acba072d8cbfc20a10fba1bd",
       "conclusion": "(a0-type synth Γ (CloseClause t_clause) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -920,11 +920,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1876,
-          1889
+          1894,
+          1907
         ]
       ],
-      "source_sha256": "3f4048bbc1d42e789ef4f910731966ca868fbeb6b376a358c83edeb970ba11c8",
+      "source_sha256": "2cf2bf133b2899a9e91e440b184aee7127bfc4b4991c1416ee13d60cd0067608",
       "conclusion": "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -936,11 +936,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1891,
-          1903
+          1909,
+          1921
         ]
       ],
-      "source_sha256": "429036b2ac7d39af6c4cbddc49e531f6388dce7c5606eefe77ea7a0c78c276e6",
+      "source_sha256": "a0c6878c645226d0d3d578a9b28a810899d89024b9c223df3d387c5254478da5",
       "conclusion": "(a0-type synth Γ (t_function t_argument) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -952,11 +952,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1905,
-          1917
+          1923,
+          1935
         ]
       ],
-      "source_sha256": "d2c4afff67a2bed9096b6cd689331f5cdcb31ef9a350c1974a2f6ea6545bd4d8",
+      "source_sha256": "0517eba8572e5d0a8e0586cbe6879d801cf3fa484dd871859b79f3024e824ad6",
       "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -968,11 +968,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1919,
-          1931
+          1937,
+          1949
         ]
       ],
-      "source_sha256": "8bb4ec0c092dcd97cf38c0a63d3b333263a4a581d18e4fab9340d94cb83ab19c",
+      "source_sha256": "f465eaf84dda5e9aa4b40154df0ff010bf04d55e1e9ac523c523a4a60d534d98",
       "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -984,11 +984,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1322,
-          1333
+          1340,
+          1351
         ]
       ],
-      "source_sha256": "bbef2ae884f79a440feb956104f840fe6f9c86552c416ff60c460aa7cb61274e",
+      "source_sha256": "4652f2f89e89290502dbafbb47156b008b5b82faa5a7ab9facf7ec78406c342c",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAtLeast t_count t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1000,11 +1000,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1335,
-          1345
+          1353,
+          1363
         ]
       ],
-      "source_sha256": "3f758874c334c30c6b86687f410b087ddd90280be505ccdb4e4d6d543b4ea000",
+      "source_sha256": "1431450fa5256121650fcac371ccce4b9cd0b38e166b3259df6a983b729c1c0e",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAllBut t_count t_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1016,11 +1016,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1347,
-          1356
+          1365,
+          1374
         ]
       ],
-      "source_sha256": "01dd1dbcfc860ad1fd58dc0e02dcd73877487d443044692d71be7d1864e58c09",
+      "source_sha256": "7d387705de696242d640a3c7bc3f04d384ad006bcb51ed84ee271245a630cbaa",
       "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1032,11 +1032,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1642,
-          1646
+          1660,
+          1664
         ]
       ],
-      "source_sha256": "c5b0fca154701d58f3b4c53a96e3a59e20a1691cc7c5baef46330142b307229d",
+      "source_sha256": "4936bef38ab9e586203522b8ea9de6940d98bb7c4ac336caa761ae3906ef0a11",
       "conclusion": "(a0-type synth Γ (→ t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1048,11 +1048,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1648,
-          1651
+          1666,
+          1669
         ]
       ],
-      "source_sha256": "a6c4e0d42d1927dfa4f25a7f1eba8fec9672037a2e0aebad83d145b8bcbb5c4f",
+      "source_sha256": "9ca4124cec900b1e92e960582b0c5b1ee67b1c4df1833bb34ada74b34e210964",
       "conclusion": "(a0-type synth Γ (¬ t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1064,11 +1064,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1653,
-          1668
+          1671,
+          1686
         ]
       ],
-      "source_sha256": "8a6054b31d183b243d43cb868bd9076992dcff73ea5867bdbe22050f3290cb3f",
+      "source_sha256": "c5c89efc3510b7ec2ffdb04a1429a5ec6bf08e2fd8104eb4c4308bb522d44d8f",
       "conclusion": "(a0-type synth Γ (∀ v_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1080,11 +1080,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1670,
-          1685
+          1688,
+          1703
         ]
       ],
-      "source_sha256": "1d73dd78767d1d43db8f63a2cef611564acb8c81b48a950a76fc7144298b8ef0",
+      "source_sha256": "66adebed57752b47fde632f18e69166280791ee16be063c901a388c943b8a31d",
       "conclusion": "(a0-type synth Γ (∃ v_property) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1096,11 +1096,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1687,
-          1695
+          1705,
+          1713
         ]
       ],
-      "source_sha256": "b7423e0204411b05c4167128f5171ba1ee8658c0b711e991337b611ebe4bc97b",
+      "source_sha256": "6aa5d679d9aaae611dc3e79f5061314c6df1906b3e33d00226cdd0b380790079",
       "conclusion": "(a0-type synth Γ (Among t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1112,11 +1112,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1697,
-          1704
+          1715,
+          1722
         ]
       ],
-      "source_sha256": "b2a7f20bda9be38ea5fa46cdf977505550dd92e9cc76167d22d0c041c99d981c",
+      "source_sha256": "fb45a23ae25826176d99455125761599b5e85ab981d3d70c545c642a7e587632",
       "conclusion": "(a0-type synth Γ (Presuppose t_condition t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1128,11 +1128,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1706,
-          1714
+          1724,
+          1732
         ]
       ],
-      "source_sha256": "3ccccbd6251b9b53c0a3a5d96e96db43d19e7dde478c64d265f615e10d1fd1e2",
+      "source_sha256": "895a0b6ad05c8dac312b07ede719de38dc94534c43a73829f2eb6df24bdbe03b",
       "conclusion": "(a0-type (check (RefComp τ)) Γ (Presuppose t_condition t_body) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1144,11 +1144,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1725,
-          1739
+          1743,
+          1757
         ]
       ],
-      "source_sha256": "a7a28e602dc4006dde0f353508e82a5e83f1406e710fd9138dddf737b66034e9",
+      "source_sha256": "d48c9449474a9674d026386b6a3b0bec8750ea6cdcd538d205f3167882b72d26",
       "conclusion": "(a0-type synth Γ (Distrib v_Q t_reference) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1160,11 +1160,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1741,
-          1751
+          1759,
+          1769
         ]
       ],
-      "source_sha256": "76ef1d99e87598e06b4abe21d3c1521ff9d9d337cf3625e45e9d9f04198e4227",
+      "source_sha256": "69af9cdcd8d223c9e1aed5a351811a5d9d4e2667fc4aebe42d2e8c9e32b82285",
       "conclusion": "(a0-type synth Γ (CoveredBy v_P t_reference) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1176,11 +1176,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1753,
-          1761
+          1771,
+          1779
         ]
       ],
-      "source_sha256": "8e44cbec2515823738550120f81d6a9e35452da518bbbd4d07e532663f32d44c",
+      "source_sha256": "7f3d82955bfca79a988bc9add3c190f4dadd5337e9b830475a23338bd67640cd",
       "conclusion": "(a0-type synth Γ (Overlap t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1192,11 +1192,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1620,
-          1628
+          1638,
+          1646
         ]
       ],
-      "source_sha256": "65e019e442bcc5acbf846be6d227cf32bc271ed765ef928aba58010e0b0ee888",
+      "source_sha256": "8c1b6743e508421811ac6633d3ad0a0de7d7397932928ad6f36a5ed455a939cf",
       "conclusion": "(a0-type synth Γ (+ t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1208,11 +1208,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1403,
-          1406
+          1421,
+          1424
         ]
       ],
-      "source_sha256": "c0874180037d4637cedc10a4b8b4910f310a268a76619496dc0aaddecfe924f1",
+      "source_sha256": "94a49d47b5069d6fc3f8279ac4f5f49915ac111d7265eb536e4dd255f69f27ec",
       "conclusion": "(a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1224,11 +1224,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1408,
-          1418
+          1426,
+          1436
         ]
       ],
-      "source_sha256": "9a71b0edfcb9e4d14ab16e5ef5533075870a8a5b397f69f86506d78e8fce6ceb",
+      "source_sha256": "f535ce8c1abea283959afa323dd1d238312eb8f510c4e57e82c562fbdfd00500",
       "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1240,11 +1240,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1420,
-          1433
+          1438,
+          1451
         ]
       ],
-      "source_sha256": "2cc7547fdfebf84371a5cf9bf2185cf68f21e5d0944b4a2a06f8f13fa3cc0278",
+      "source_sha256": "249a66abffc4506ac99db4fee19ffb7d0b17216bc2692200aaf90d1594e43063",
       "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1256,11 +1256,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1435,
-          1442
+          1453,
+          1460
         ]
       ],
-      "source_sha256": "520ebfdaa2fc21224e66b6e81395c008c8d6d92f915d10e619069ff460f9dc5e",
+      "source_sha256": "576e21b0047570d8bc6fed6715ce05daf9d2cbb0034d2a5bb283f0f0ef625335",
       "conclusion": "(a0-type synth Γ (Some v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1272,11 +1272,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1471,
-          1485
+          1489,
+          1503
         ]
       ],
-      "source_sha256": "1cad9660456dccc5da1797f165983b7267c96c00e3cdc0cb7314c9643064b812",
+      "source_sha256": "4e22d7fb5eb1403b8a5301dbaf2e4790febef27f409960cbb4d4bd199e45df4c",
       "conclusion": "(a0-type synth Γ (Every v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1288,11 +1288,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1496,
-          1505
+          1514,
+          1523
         ]
       ],
-      "source_sha256": "9b15eecbd7c5b84f8224a127dbfca4efa049874b0f371f8a9a3cfdb3fcae0726",
+      "source_sha256": "16cfed52d4f2bfcc111935b4956cb86feddd415e610189934bae5f87ec6afb20",
       "conclusion": "(a0-type synth Γ (AtMost t_n v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1304,11 +1304,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1518,
-          1521
+          1536,
+          1539
         ]
       ],
-      "source_sha256": "1b89c5dec07bea3b4ba16db30cadf5986cee92ff8ab28cb634791ffbbd16e368",
+      "source_sha256": "dbca07921ce8e06ec471e5085d4ed9c6eaa0926609e3e9c3dc3e4499e30203a3",
       "conclusion": "(a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1320,11 +1320,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1523,
-          1533
+          1541,
+          1551
         ]
       ],
-      "source_sha256": "89100d34e4a73759afbb38b3a3755c7f41e35b40e017546b4d892b0baa8ea3fd",
+      "source_sha256": "a441d4e942d6c09768f6f786f3d769eff6ccc6488ce41fc666d1e2d81aba7793",
       "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1336,11 +1336,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1535,
-          1548
+          1553,
+          1566
         ]
       ],
-      "source_sha256": "b99b4f99cee4ef7ae0a397633027f1a571caa022fe55b648adcdea00935d9f3c",
+      "source_sha256": "66b2f56ddc48f77581b244649dce9f69420718d4c0e23d3c62e39c001d5ec070",
       "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1352,11 +1352,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1444,
-          1457
+          1462,
+          1475
         ]
       ],
-      "source_sha256": "d5dcdc4dcd759ea4b14a1469849c5c4e391c8eb29774f60b6139473c3c808ac6",
+      "source_sha256": "3f7ff6ad460574e96ffa379334bed49568cb646d9de1e42b32fa272e672a79b0",
       "conclusion": "(a0-type synth Γ (closure-head v_P v_Q) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1368,11 +1368,11 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1630,
-          1634
+          1648,
+          1652
         ]
       ],
-      "source_sha256": "de47b1024e9359780c4318922d2e5194137e0a5117632ddb9d902bce4edf148f",
+      "source_sha256": "e2ad2b46d2c7d325ce3ae3764ece7d7939c1a1133fd5567c9b6e1c171fb1369f",
       "conclusion": "(a0-type synth Γ (comparison t_left t_right) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
     },
@@ -1384,13 +1384,29 @@
       "source_path": "tools/smusni-redex/port-a0.rkt",
       "source_ranges": [
         [
-          1459,
-          1469
+          1477,
+          1487
         ]
       ],
-      "source_sha256": "1f301597d70d0b1da0c9f48e36af1de2018b6fba72bb9d010b89b5a3beaae81b",
+      "source_sha256": "5b061bd0d7602e552e18c98d78ff853c75f111d718d8a80819105211606dab4b",
       "conclusion": "(a0-type synth Γ (Only v_A v_H t_f) R_out)",
       "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "F01-T-PerformSource",
+      "kind": "structural",
+      "subject": "PerformSource",
+      "anchor": "spec §7.1.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2340,
+          2358
+        ]
+      ],
+      "source_sha256": "4e938295ef01fccbcf8283b67404411e8fde39579f5d530c8c0a5ad86db17e05",
+      "conclusion": "RefComp<R>; Content under x:R; Discourse under read:RefComp<R>,o:ActOccurrence Assertion -> Discourse",
+      "reason": "General three-arm direct form; source-family eligibility and denotation remain supplied premises/outside typing."
     },
     {
       "id": "M2-T-String",
@@ -1400,11 +1416,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          279,
-          280
+          280,
+          281
         ]
       ],
-      "source_sha256": "d87ab3adef7dacc6f214c4ac4c6f9858397e20751fe861178b20c76202f5025f",
+      "source_sha256": "143008e689625cf9c3812d43a65fda66ddd69e6922457de793aaacea1a554da4",
       "conclusion": "Text literal -> Text",
       "reason": "The Redex A0 slice omits Text literals, but the all-S1 primitive cohort contains sign constructors over Text."
     },
@@ -1416,11 +1432,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          316,
-          376
+          317,
+          377
         ]
       ],
-      "source_sha256": "50c940d409901a3d0ec551c54fd0acf5438724732bf886a4e45ecbb40558939b",
+      "source_sha256": "63fe0686f72a69ac2792f71c6966c48e758d11de714b2c567413a2ff145a7337",
       "conclusion": "covariant declared subsorting plus singleton Referents lift",
       "reason": "All-S1 typing must consume the live sort hierarchy instead of the numeric-only A0 compatibility fragment."
     },
@@ -1464,11 +1480,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          389,
-          410
+          390,
+          411
         ]
       ],
-      "source_sha256": "9f27848ea17738a135b516ebf5cf22b0c52edfc027dcc760dfd5f23d640657a6",
+      "source_sha256": "c31149aa5f0dac204d89d5905e4d16edbe56ada819dd98648e650340be1b6637",
       "conclusion": "fill typed residual row; exhausted row -> Content",
       "reason": "Primitive cases apply bound and lexical PredTerms, including labelled Eventuality fills."
     },
@@ -1480,15 +1496,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          368,
-          378
+          369,
+          379
         ],
         [
-          835,
-          843
+          841,
+          849
         ]
       ],
-      "source_sha256": "6073058a5351517d9c9e3ddb301704de524fcf51676514e3c022328566ce4e2f",
+      "source_sha256": "aa84ad62a56116d437ca17adc535345d677c45ab68da1b0a4a2c3aebdd93ee5b",
       "conclusion": "Referents<T> x Referents<U> -> Referents<join(T,U)>",
       "reason": "The primitive baseline contains plural joins and singleton lifts."
     },
@@ -1500,11 +1516,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          916,
-          935
+          922,
+          941
         ]
       ],
-      "source_sha256": "bc3e545e2067708239c110a6f71223f0585a15ebede88674da2e43498342a718",
+      "source_sha256": "ee35e3ac9db5fa73a0c5252b08f8530143ee2380ab6e6a11f1f721883bcf352a",
       "conclusion": "T x Set<T> -> Content",
       "reason": "The primitive baseline contains set membership."
     },
@@ -1516,11 +1532,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2179,
-          2198
+          2197,
+          2216
         ]
       ],
-      "source_sha256": "162b614ed3aa986608c307fb7f9410312b46756df0caa4c6af54b568ce760733",
+      "source_sha256": "10d4b09aef3fd69f83d0620b47f773c54ddd426da46646a3419bc79da1d1c24e",
       "conclusion": "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse",
       "reason": "The primitive baseline exercises inert act construction and discourse sequencing."
     },
@@ -1532,11 +1548,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2339,
-          2372
+          2516,
+          2549
         ]
       ],
-      "source_sha256": "c1e6de38b7216416553888f89eddfd13ad06fa3355dbc7017115029d5cd93b57",
+      "source_sha256": "d624931a0614f137be301fcc22e2d24880abe1e6586f7dbed89840f1f720225a",
       "conclusion": "Referents<UtteranceToken> x Referents<Locution> -> Content",
       "reason": "Three primitive gates discriminate the two argument types."
     },
@@ -1548,11 +1564,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2420,
-          2453
+          2601,
+          2634
         ]
       ],
-      "source_sha256": "7451e4bda1454101b258c27db073ba1106e2ee7970254ddbe9876924c08f53db",
+      "source_sha256": "6e06692a9187e60b5cbd84c5f51044484a35b18b79c59793a295252506fa9357",
       "conclusion": "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>",
       "reason": "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
     },
@@ -1564,11 +1580,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2644,
-          2663
+          2825,
+          2844
         ]
       ],
-      "source_sha256": "b51c2e7affade5f61f1dae8572508d45bc2868af6742cd27c7c15b9f4da116b3",
+      "source_sha256": "252363d805b367fe3dceecf6dfba8e15fb95e0cbdeb070274154adc09d56a399",
       "conclusion": "Content -> Proposition",
       "reason": "Reification is inert and must not inherit the operand effects."
     },
@@ -1580,11 +1596,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2358,
-          2391
+          2535,
+          2572
         ]
       ],
-      "source_sha256": "0a95b86c80a8c5b00b278849eb35ef46205c90c7658e319905169df9c9a4ce2a",
+      "source_sha256": "a4d462ea0380c4a487e0fdc73a3f6ba7fde2248b93574d130f257b7378b4f518",
       "conclusion": "Referents<UtteranceToken> -> Content with projective definedness",
       "reason": "The primitive baseline contains the token-to-captured-content projection."
     },
@@ -1596,11 +1612,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          641,
-          648
+          647,
+          654
         ]
       ],
-      "source_sha256": "ab9ccd4bf03b23fbefdd439a0e4760a0dbfeae7d472fd438828f95909ca6c667",
+      "source_sha256": "55024d65e454aed481202e20aa6858d9025db37dc7c5cc776b1cd97be9aa6036",
       "conclusion": "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>",
       "reason": "The primitive baseline contains one valid row deletion gate."
     },
@@ -1612,11 +1628,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4667,
-          4673
+          4860,
+          4866
         ]
       ],
-      "source_sha256": "4e48da765bd7992b415ee9ae6bd148feb1421a4503abb21d34e2a23a3ea255f6",
+      "source_sha256": "17682726da7e5b063d148a04e2fd432e2e9473df449576d46690142cd0b5ebcc",
       "conclusion": "Number x Natural -> Number",
       "reason": "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
     },
@@ -1628,15 +1644,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          948,
-          987
+          954,
+          993
         ],
         [
-          1067,
-          1085
+          1073,
+          1091
         ]
       ],
-      "source_sha256": "14787bff2c9ddcdb493a1ad3100706f736613b52a895d77bc309a13fbe3ca6db",
+      "source_sha256": "06511b27faa803e2ef0b33bbc5b4339ed2f91d249b200300c425f47de24440c9",
       "conclusion": "DecompositionBasis<Group<T>,T> x Group<T> -> Content",
       "reason": "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
     },
@@ -1648,11 +1664,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          948,
-          987
+          954,
+          993
         ]
       ],
-      "source_sha256": "d4eb2c98d121843873bb468245dad340216b833d0e0ecdf48df89b2d25a3acaa",
+      "source_sha256": "d4f382594a8b35ae68461f6b7be84fc837212628a8f3d8e7c03e3161ba8211fb",
       "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content",
       "reason": "Recursive expansion of GunmaAt reaches the basis interface."
     },
@@ -1664,11 +1680,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          948,
-          992
+          954,
+          998
         ]
       ],
-      "source_sha256": "e4bcb9bf7586a48658c22707a8de1c1dcb5112951b61251dd7d8aa30ed99c22b",
+      "source_sha256": "12375eac4b3c6ebb3a0d046d3760b750b988627cdee8869f6cd72511a154c71c",
       "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content",
       "reason": "Recursive expansion of GunmaAt reaches the peer interface."
     },
@@ -1680,11 +1696,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4229,
-          4268
+          4422,
+          4461
         ]
       ],
-      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
+      "source_sha256": "1b26fbe3af339c75960239962d14aea376782d4631a1374a4817f2567d939bf0",
       "conclusion": "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content",
       "reason": "The JaiRaise mapping's constrained Context must be typed and pure."
     },
@@ -1696,11 +1712,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          3908,
-          3929
+          4101,
+          4122
         ]
       ],
-      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
+      "source_sha256": "381aaef1aa4955cfabbabcdf078e297ba87489891aa8c51fe5d574f3d67b061c",
       "conclusion": "Amount x Region<Scale> -> Content",
       "reason": "The pure row-directed Grade template reaches this declared interface."
     },
@@ -1712,11 +1728,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          3908,
-          3929
+          4101,
+          4122
         ]
       ],
-      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
+      "source_sha256": "381aaef1aa4955cfabbabcdf078e297ba87489891aa8c51fe5d574f3d67b061c",
       "conclusion": "row metadata -> pure PredTerm<row>",
       "reason": "The schema consumes its relation's declared degree projection, scale, and region without a site."
     },
@@ -1728,11 +1744,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4229,
-          4268
+          4422,
+          4461
         ]
       ],
-      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
+      "source_sha256": "1b26fbe3af339c75960239962d14aea376782d4631a1374a4817f2567d939bf0",
       "conclusion": "row remapping plus role -> pure PredTerm<raised-row>",
       "reason": "The schema consumes row metadata rather than inspecting predicate syntax."
     },
@@ -1744,11 +1760,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1422,
-          1474
+          1433,
+          1485
         ]
       ],
-      "source_sha256": "9cac0d2b4b1a76c414b9a5543c4236992225caab169f9c6e2b1efcc3d872bc59",
+      "source_sha256": "115d0b349c496a76e4e4c67368fe56cabe6a059eb36a2758c6cf5f5cda6d34c5",
       "conclusion": "declared utterance-context projection -> declared type",
       "reason": "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
     },
@@ -1760,15 +1776,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2183,
-          2198
+          2201,
+          2216
         ],
         [
-          2554,
-          2642
+          2735,
+          2823
         ]
       ],
-      "source_sha256": "33857ae050ea0ded250e663c8526f217e4e66f39b4379aa250e1b28d45500314",
+      "source_sha256": "9361af01c9d23bc0ac419a4dcbd2324da3ab49525d09170d130e4a8bfac40a9b",
       "conclusion": "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>",
       "reason": "Selected Close cases occur beneath question constructors."
     },
@@ -1780,11 +1796,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1523,
-          1541
+          1538,
+          1556
         ]
       ],
-      "source_sha256": "19c1d97b828ab8d175607f2b1ca65a2806bf1b52870d3ae027760c5b93e87014",
+      "source_sha256": "4c42b3745ee47ff081dde28a5a7e902c661933978d1be525a6d60fce853c65b8",
       "conclusion": "RefComp<A> -> RefComp<A> under expected mode",
       "reason": "Collection and performance specimens use the accessibility delimiter."
     },
@@ -1796,11 +1812,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2192,
-          2203
+          2210,
+          2221
         ]
       ],
-      "source_sha256": "739c5473b10d4319adfc4924571180dedd9a14d9224459ca2dbaed33883e3cc1",
+      "source_sha256": "27045693dcbccaee452b9d7aa97006208f749e804b44eadabcb3bb21997a9e3a",
       "conclusion": "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>",
       "reason": "Selected discourse specimens spell the role explicitly."
     },
@@ -1812,11 +1828,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1899,
-          1915
+          1917,
+          1933
         ]
       ],
-      "source_sha256": "df41267ba57c6d9351ad3096cf484490ea81c7fa22a3676cde997cbfa4fca127",
+      "source_sha256": "94ed8bcd5f5f56589174c8c251b3a573de9f9398397c003daf220d333856643e",
       "conclusion": "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content",
       "reason": "Selected cases wrap supported Close expansions under generic quantification."
     },
@@ -1828,15 +1844,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2420,
-          2470
+          2601,
+          2651
         ],
         [
-          2644,
-          2663
+          2825,
+          2844
         ]
       ],
-      "source_sha256": "88d5eb357938073e4ba864af40eedc448de6e44bbfb43c1c542f070858bd5bb1",
+      "source_sha256": "5613be37269ddb677de7a88b126920ae78f618443658a4586c1ead0975ce327e",
       "conclusion": "typed interface arguments -> Content",
       "reason": "Selected cases use the declared content-level interface relations around the expansion slice."
     },
@@ -1848,15 +1864,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          916,
-          941
+          922,
+          947
         ],
         [
-          2729,
-          2759
+          2910,
+          2940
         ]
       ],
-      "source_sha256": "808bd3ddec3311ce41cd60e2bf31b2a29a650d75e1c5e72104c07c45b2434f7a",
+      "source_sha256": "6f09b31beb5653cd67829f8eb3ec2ddce7c1799e481fd09ebd15d2602d180df0",
       "conclusion": "Number operations and typed abstraction relation rows",
       "reason": "Selected cases embed Close under the numeric abstraction interfaces."
     },
@@ -1868,11 +1884,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          389,
-          452
+          390,
+          453
         ]
       ],
-      "source_sha256": "77c92eca14735c615736ee9b5e4a116d3d429ffdeef1dbc32ed437cbc45882e2",
+      "source_sha256": "7bf3b22788d24d15a35428adfb46a7cbceb986b0e012866412d3c1a0e26b3030",
       "conclusion": "row-directed partial filling preserves the residual PredTerm row",
       "reason": "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
     }

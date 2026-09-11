@@ -742,7 +742,7 @@
         'infer-application 'cond
         'infer-core 'cond))
 (define entry-functions
-  '(infer-body infer-lambda infer-let infer-bind infer-lexical-application
+  '(infer-body infer-lambda infer-let infer-bind infer-perform-source infer-lexical-application
                infer-logical infer-quantifier))
 
 (define (read-module-syntax path)
@@ -2100,6 +2100,12 @@
         (match-define (list variable type) (first pairs))
         `(Let (,variable ,type)
            ,(legacy-datum->a0 value inv) ,(legacy-datum->a0 body inv))]
+       [`(PerformSource . ,_)
+        (match-define (list b s c r o d) (perform-source-parts datum))
+        `(PerformSource ,(first (legacy-binder-pairs b))
+                        ,(legacy-datum->a0 s inv) ,(legacy-datum->a0 c inv)
+                        ,(first (legacy-binder-pairs r))
+                        ,(first (legacy-binder-pairs o)) ,(legacy-datum->a0 d inv))]
        [`(Bind . ,pieces)
         (define body (last pieces))
         (define alternating (drop-right pieces 1))

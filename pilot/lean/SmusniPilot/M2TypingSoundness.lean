@@ -1302,6 +1302,51 @@ private theorem synth_lambda_handler {scope : Nat}
         SynthJudgment.lambda environment binderType body bodyResult.observation
           (bodySound bodyResult bodyEq bodySupported)
 
+private theorem synth_perform_source_handler {scope : Nat}
+    (environment : Environment scope) (reference : Ty)
+    (source : Term scope) (content : Term (scope + 1)) (continuation : Term (scope + 2))
+    (sourceSound : CheckSoundMotive scope environment source (Ty.refComp reference))
+    (contentSound : CheckSoundMotive (scope + 1) (environment.extend reference) content Ty.content)
+    (continuationSound : CheckSoundMotive (scope + 2)
+      ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
+      continuation Ty.discourse) :
+    SynthSoundMotive scope environment (.performSource reference source content continuation) := by
+  intro result success supported
+  by_cases valid : sourceReferenceTypeValid reference = true
+  · cases sourceEq : check environment source (Ty.refComp reference) with
+    | error error => simp [synth, validateSourceReferenceType, valid, sourceEq] at success
+    | ok sourceResult =>
+      cases contentEq : check (environment.extend reference) content Ty.content with
+      | error error => simp [synth, validateSourceReferenceType, valid, sourceEq, contentEq] at success
+      | ok contentResult =>
+        cases continuationEq : check
+          ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
+          continuation Ty.discourse with
+        | error error => simp [synth, validateSourceReferenceType, valid, sourceEq, contentEq, continuationEq] at success
+        | ok continuationResult =>
+          have resultEq : result = (mergeResults Ty.discourse
+              [sourceResult, contentResult, continuationResult] [.performance] []
+              .f01TPerformSource).withRule .a0Synth := by
+            simpa [synth, validateSourceReferenceType, valid, sourceEq, contentEq, continuationEq]
+              using success.symm
+          subst result
+          have supportedRaw : TypingManifestSupported
+              (sourceResult.trace ++ contentResult.trace ++ continuationResult.trace ++
+                [.f01TPerformSource, .a0Synth]) := by
+            simpa [mergeResults, TypingResult.withRule, List.append_assoc] using supported
+          have sourceSupported : TypingManifestSupported sourceResult.trace :=
+            typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+          have contentSupported : TypingManifestSupported contentResult.trace :=
+            typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+          have continuationSupported : TypingManifestSupported continuationResult.trace :=
+            typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+          exact SynthJudgment.performSource environment reference source content continuation
+            sourceResult.observation contentResult.observation continuationResult.observation valid
+            (sourceSound sourceResult sourceEq sourceSupported)
+            (contentSound contentResult contentEq contentSupported)
+            (continuationSound continuationResult continuationEq continuationSupported)
+  · simp [synth, validateSourceReferenceType, valid, failure] at success
+
 private theorem synth_bind_handler {scope : Nat}
     (environment : Environment scope) (binderType : Ty)
     (computation : Term scope) (body : Term (scope + 1))
@@ -1417,60 +1462,57 @@ private theorem synth_application_handler {scope : Nat}
             (functionSound functionResult functionEq functionSupported)
             applicationTyping
 
-private theorem synthPerform_excluded_handler {scope : Nat}
-    (environment : Environment scope) (arguments : TermList scope) :
-    PerformSoundMotive scope environment arguments := by
+private theorem synthPerform_handler {scope : Nat}
+    (environment : Environment scope) (act : Term scope)
+    (actSound : SynthSoundMotive scope environment act) :
+    PerformSoundMotive scope environment (.positional act .nil) := by
   intro result success supported
-  cases arguments with
-  | nil => simp [synthPerform, failure] at success
-  | labelled label head tail => simp [synthPerform, failure] at success
-  | positional first tail =>
-      cases tail with
-      | nil =>
-          cases actEq : synth environment first with
-          | error error => simp [synthPerform, actEq] at success
-          | ok actResult =>
-              cases forceEq : Ty.asUnary actResult.type .typeFormAct with
-              | none => simp [synthPerform, actEq, forceEq, failure] at success
-              | some force =>
-                  have resultEq : result =
-                      (mergeResults (Ty.perfComp (Ty.actOccurrence force))
-                        [actResult] [.performance] [] .a0TPerform).withRule
-                        .a0Synth := by
-                    simpa [synthPerform, actEq, forceEq] using success.symm
-                  subst result
-                  exact (typing_manifest_excludes (rule := .a0TPerform)
-                    supported (by
-                    simp [mergeResults, TypingResult.withRule]) (by
-                    decide)).elim
-      | labelled label head rest => simp [synthPerform, failure] at success
-      | positional act rest =>
-          cases rest with
-          | nil =>
-              cases roleEq : check environment first Ty.occurrenceRole with
-              | error error => simp [synthPerform, roleEq] at success
-              | ok roleResult =>
-                  cases actEq : synth environment act with
-                  | error error => simp [synthPerform, roleEq, actEq] at success
-                  | ok actResult =>
-                      cases forceEq : Ty.asUnary actResult.type .typeFormAct with
-                      | none =>
-                          simp [synthPerform, roleEq, actEq, forceEq, failure]
-                            at success
-                      | some force =>
-                          have resultEq : result =
-                              (mergeResults (Ty.perfComp (Ty.actOccurrence force))
-                                [roleResult, actResult] [.performance] []
-                                .m2TPerformRole).withRule .a0Synth := by
-                            simpa [synthPerform, roleEq, actEq, forceEq]
-                              using success.symm
-                          subst result
-                          exact (typing_manifest_excludes (rule := .m2TPerformRole)
-                            supported (by
-                            simp [mergeResults, TypingResult.withRule]) (by
-                            decide)).elim
-          | positional third more => simp [synthPerform, failure] at success
-          | labelled label third more => simp [synthPerform, failure] at success
+  cases actEq : synth environment act with
+  | error error => simp [synthPerform, actEq] at success
+  | ok actResult =>
+    cases forceEq : Ty.asUnary actResult.type .typeFormAct with
+    | none => simp [synthPerform, actEq, forceEq, failure] at success
+    | some force =>
+      have resultEq : result = (mergeResults (Ty.perfComp (Ty.actOccurrence force))
+          [actResult] [.performance] [] .a0TPerform).withRule .a0Synth := by
+        simpa [synthPerform, actEq, forceEq] using success.symm
+      subst result
+      have actSupported : TypingManifestSupported actResult.trace := by
+        apply typing_manifest_drop_two
+        simpa [mergeResults, TypingResult.withRule] using supported
+      exact PrimitiveJudgment.perform environment act actResult.observation force
+        (actSound actResult actEq actSupported) forceEq
+
+private theorem synthPerform_role_handler {scope : Nat}
+    (environment : Environment scope) (role act : Term scope)
+    (roleSound : CheckSoundMotive scope environment role Ty.occurrenceRole)
+    (actSound : SynthSoundMotive scope environment act) :
+    PerformSoundMotive scope environment (.positional role (.positional act .nil)) := by
+  intro result success supported
+  cases roleEq : check environment role Ty.occurrenceRole with
+  | error error => simp [synthPerform, roleEq] at success
+  | ok roleResult =>
+    cases actEq : synth environment act with
+    | error error => simp [synthPerform, roleEq, actEq] at success
+    | ok actResult =>
+      cases forceEq : Ty.asUnary actResult.type .typeFormAct with
+      | none => simp [synthPerform, roleEq, actEq, forceEq, failure] at success
+      | some force =>
+        have resultEq : result = (mergeResults (Ty.perfComp (Ty.actOccurrence force))
+            [roleResult, actResult] [.performance] [] .m2TPerformRole).withRule .a0Synth := by
+          simpa [synthPerform, roleEq, actEq, forceEq] using success.symm
+        subst result
+        have supportedRaw : TypingManifestSupported
+            (roleResult.trace ++ actResult.trace ++ [.m2TPerformRole, .a0Synth]) := by
+          simpa [mergeResults, TypingResult.withRule] using supported
+        have roleSupported : TypingManifestSupported roleResult.trace :=
+          typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+        have actSupported : TypingManifestSupported actResult.trace :=
+          typing_manifest_sublist supportedRaw (by intro item member; simp [member])
+        exact PrimitiveJudgment.performRole environment role act
+          roleResult.observation actResult.observation force
+          (roleSound roleResult roleEq roleSupported)
+          (actSound actResult actEq actSupported) forceEq
 
 private theorem threshold_handler {scope : Nat}
     (environment : Environment scope) (kind property purpose : Term scope)
@@ -2488,6 +2530,8 @@ private theorem primitive_dropPlace_handler {scope : Nat}
           | string literal => simp [synthPrimitive, relationEq, rowEq, failure] at success
           | lambda binder body => simp [synthPrimitive, relationEq, rowEq, failure] at success
           | bind binder computation body =>
+              simp [synthPrimitive, relationEq, rowEq, failure] at success
+          | performSource reference source content continuation =>
               simp [synthPrimitive, relationEq, rowEq, failure] at success
           | «apply» function arguments =>
               simp [synthPrimitive, relationEq, rowEq, failure] at success
@@ -4278,369 +4322,372 @@ theorem synth_execution_sound {scope : Nat} (environment : Environment scope)
       synth_primitive_result_handler environment operator arguments
         primitiveSound
   case case53 =>
+    exact fun _ environment reference source content continuation sourceSound contentSound continuationSound =>
+      synth_perform_source_handler environment reference source content continuation
+        sourceSound contentSound continuationSound
+  case case54 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .speaker arguments
         (Ty.referents Ty.entity) .a0TSpeaker .speaker (by simp [synthPrimitive])
-  case case54 =>
+  case case55 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .audience arguments
         (Ty.referents Ty.entity) .a0TAudience .audience (by simp [synthPrimitive])
-  case case55 =>
+  case case56 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .tooManyK arguments
         Ty.thresholdKind .a0TThresholdKind .tooManyK (by simp [synthPrimitive])
-  case case56 =>
+  case case57 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .currentToken arguments
         (Ty.referents Ty.utteranceToken) .m2TCoreConstant .currentToken
         (by simp [synthPrimitive])
-  case case57 =>
+  case case58 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .host arguments
         Ty.occurrenceRole .m2TContextConstants .host (by simp [synthPrimitive])
-  case case58 =>
+  case case59 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .attachedDisplay arguments
         Ty.occurrenceRole .m2TContextConstants .attachedDisplay
         (by simp [synthPrimitive])
-  case case59 =>
+  case case60 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .attachedAddress arguments
         Ty.occurrenceRole .m2TContextConstants .attachedAddress
         (by simp [synthPrimitive])
-  case case60 =>
+  case case61 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .typical arguments
         Ty.genericMode .m2TContextConstants .typical (by simp [synthPrimitive])
-  case case61 =>
+  case case62 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .moderate arguments
         Ty.intensity .m2TContextConstants .moderate (by simp [synthPrimitive])
-  case case62 =>
+  case case63 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .intense arguments
         Ty.intensity .m2TContextConstants .intense (by simp [synthPrimitive])
-  case case63 =>
+  case case64 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .observation arguments
         Ty.epistemology .m2TContextConstants .observation (by simp [synthPrimitive])
-  case case64 =>
+  case case65 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .hearsay arguments
         Ty.epistemology .m2TContextConstants .hearsay (by simp [synthPrimitive])
-  case case65 =>
+  case case66 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .manyK arguments
         Ty.thresholdKind .m2TContextConstants .manyK (by simp [synthPrimitive])
-  case case66 =>
+  case case67 =>
     exact fun _ environment arguments =>
       primitive_constant_handler environment .now arguments
         Ty.time .m2TContextConstants .now (by simp [synthPrimitive])
-  case case67 =>
+  case case68 =>
     exact fun _ environment arguments =>
       primitive_projective_constant_handler environment .miAOthers arguments
         .miAOthers (by simp [synthPrimitive])
-  case case68 =>
+  case case69 =>
     exact fun _ environment arguments =>
       primitive_projective_constant_handler environment .maAOthers arguments
         .maAOthers (by simp [synthPrimitive])
-  case case69 =>
+  case case70 =>
     exact fun _ environment arguments =>
       primitive_projective_constant_handler environment .doOOthers arguments
         .doOOthers (by simp [synthPrimitive])
-  case case70 =>
+  case case71 =>
     exact fun _ environment first second firstSound secondSound =>
       primitive_combine_handler environment first second firstSound secondSound
-  case case72 =>
+  case case73 =>
     exact fun _ environment arguments _recursiveSound =>
       primitive_memberOf_excluded_handler environment arguments
-  case case73 =>
+  case case74 =>
     exact fun _ environment content contentSound =>
       primitive_force_handler environment .assert Ty.assertion content
         (Or.inl ⟨rfl, rfl⟩) contentSound
-  case case75 =>
+  case case76 =>
     exact fun _ environment content contentSound =>
       primitive_force_handler environment .express Ty.expressive content
         (Or.inr ⟨rfl, rfl⟩) contentSound
-  case case77 =>
+  case case78 =>
     exact fun _ environment value valueSound =>
       primitive_mention_handler environment value valueSound
-  case case79 =>
+  case case80 =>
     exact fun _ environment arguments argumentsSound =>
       primitive_discourse_handler environment arguments argumentsSound
-  case case80 =>
+  case case81 =>
     exact fun _ environment content contentSound =>
       primitive_polar_handler environment content contentSound
-  case case82 =>
+  case case83 =>
     exact fun _ environment property propertySound =>
       primitive_openQ_handler environment property propertySound
-  case case84 =>
+  case case85 =>
     exact fun _ environment query querySound =>
       primitive_ask_handler environment query querySound
-  case case86 =>
+  case case87 =>
     exact fun _ environment mode property nuclear modeSound propertySound
         nuclearSound =>
       primitive_generic_handler environment mode property nuclear modeSound
         propertySound nuclearSound
-  case case88 =>
+  case case89 =>
     exact fun _ environment token locution tokenSound locutionSound =>
       primitive_locution_handler environment token locution tokenSound
         locutionSound
-  case case99 =>
+  case case100 =>
     exact fun _ environment proposition propositionSound =>
       primitive_holds_handler environment proposition propositionSound
-  case case101 =>
+  case case102 =>
     exact fun _ environment anchor side body anchorSound sideSound bodySound =>
       primitive_supplement_handler environment anchor side body anchorSound
         sideSound bodySound
-  case case107 =>
+  case case108 =>
     exact fun _ environment content contentSound =>
       primitive_sentenceSign_handler environment content contentSound
-  case case109 =>
+  case case110 =>
     exact fun _ environment content contentSound =>
       primitive_reify_handler environment content contentSound
-  case case111 =>
+  case case112 =>
     exact fun _ environment token tokenSound =>
       primitive_realizedContent_handler environment token tokenSound
-  case case113 =>
+  case case114 =>
     exact fun _ environment relation label relationSound =>
       primitive_dropPlace_handler environment relation label relationSound
-  case case115 =>
+  case case116 =>
     exact fun _ environment base exponent baseSound exponentSound =>
       primitive_teha_handler environment base exponent baseSound exponentSound
-  case case117 =>
+  case case118 =>
     exact fun _ environment first second firstSound secondSound =>
       primitive_subtract_handler environment first second firstSound secondSound
-  case case119 =>
+  case case120 =>
     exact fun _ environment arguments amountSound scaleSound =>
       primitive_amountValue_handler environment arguments amountSound scaleSound
-  case case120 =>
+  case case121 =>
     exact fun _ environment arguments contentSound =>
       primitive_contentRelation_handler environment .niRel arguments
         (Or.inl rfl) contentSound
-  case case121 =>
+  case case122 =>
     exact fun _ environment arguments contentSound =>
       primitive_contentRelation_handler environment .jeiRel arguments
         (Or.inr (Or.inl rfl)) contentSound
-  case case122 =>
+  case case123 =>
     exact fun _ environment arguments contentSound =>
       primitive_contentRelation_handler environment .suhuRel arguments
         (Or.inr (Or.inr rfl)) contentSound
-  case case127 =>
+  case case128 =>
     exact fun _ environment arguments binarySound result success supported =>
       binarySound addition_schema result (by
         simpa [synthPrimitive] using success) supported
-  case case128 =>
+  case case129 =>
     exact fun _ environment arguments binarySound result success supported =>
       binarySound equality_schema result (by
         simpa [synthPrimitive] using success) supported
-  case case129 =>
-    exact fun _ environment => primitive_top_handler environment
   case case130 =>
+    exact fun _ environment => primitive_top_handler environment
+  case case131 =>
     exact fun _ environment first second firstSound secondSound =>
       primitive_and_handler environment first second firstSound secondSound
-  case case132 =>
+  case case133 =>
     exact fun _ environment arguments binarySound result success supported =>
       binarySound .implies result (by
         simpa [synthPrimitive] using success) supported
-  case case133 =>
+  case case134 =>
     exact fun _ environment body bodySound =>
       primitive_negation_handler environment body bodySound
-  case case139 =>
+  case case140 =>
     exact fun _ environment property propertySound =>
       primitive_setOf_handler environment property propertySound
-  case case141 =>
+  case case142 =>
     exact fun _ environment setTerm setSound =>
       primitive_card_handler environment setTerm setSound
-  case case144 =>
+  case case145 =>
     exact fun _ environment arguments unarySound result success supported =>
       unarySound .stateClause result (by
         simpa [synthPrimitive] using success) supported
-  case case145 =>
+  case case146 =>
     exact fun _ environment clause clauseSound =>
       primitive_closeClause_handler environment clause clauseSound
-  case case148 =>
+  case case149 =>
     exact fun _ environment arguments binarySound result success supported =>
       binarySound .lessThan result (by
         simpa [synthPrimitive] using success) supported
-  case case149 =>
+  case case150 =>
     exact fun _ environment arguments binarySound result success supported =>
       binarySound .lessOrEqual result (by
         simpa [synthPrimitive] using success) supported
-  case case157 =>
-    exact fun _ environment act _actSound =>
-      synthPerform_excluded_handler environment (.positional act .nil)
   case case158 =>
-    exact fun _ environment role act _roleSound _actSound =>
-      synthPerform_excluded_handler environment
-        (.positional role (.positional act .nil))
-  case case162 =>
+    exact fun _ environment act actSound =>
+      synthPerform_handler environment act actSound
+  case case159 =>
+    exact fun _ environment role act roleSound actSound =>
+      synthPerform_role_handler environment role act roleSound actSound
+  case case163 =>
     exact fun _ environment kind property purpose kindSound propertySound
         purposeSound =>
       threshold_handler environment kind property purpose kindSound
         propertySound purposeSound
-  case case164 =>
+  case case165 =>
     exact fun _ environment condition body _conditionSound _bodySound =>
       synthPresuppose_excluded_handler environment condition body
-  case case166 =>
+  case case167 =>
     exact fun _ environment operator rule first second firstSound secondSound =>
       referenceBinary_handler environment operator rule first second firstSound
         secondSound
-  case case168 =>
+  case case169 =>
     exact fun _ environment operator rule property propertySound =>
       quantify_handler environment operator rule property propertySound
-  case case160 =>
+  case case161 =>
     exact fun _ environment operator rule expected resultType term termSound =>
       unaryCheck_handler environment operator rule term expected resultType termSound
-  case case170 =>
+  case case171 =>
     exact fun _ environment operator rule expected resultType first second
         firstSound secondSound =>
       binaryCheck_handler environment operator rule first second expected
         resultType firstSound secondSound
-  case case172 =>
+  case case173 =>
     exact fun _ environment operator rule resultType first second firstSound
         secondSound =>
       binarySynth_handler environment operator rule resultType first second
         firstSound secondSound
-  case case174 =>
+  case case175 =>
     exact fun _ environment relation role _relationSound _roleSound =>
       jaiRole_excluded_handler environment relation role
-  case case176 =>
+  case case177 =>
     exact fun _ environment basis unit wholeTerm basisSound unitSound wholeSound =>
       peerUnit_handler environment basis unit wholeTerm basisSound unitSound
         wholeSound
-  case case178 =>
+  case case179 =>
     exact fun _ environment basis unit cover basisSound unitSound coverSound =>
       basisUnit_handler environment basis unit cover basisSound unitSound
         coverSound
-  case case180 =>
+  case case181 =>
     exact fun _ environment basis group basisSound groupSound =>
       aggregate_handler environment basis group basisSound groupSound
-  case case182 =>
+  case case183 =>
     exact fun _ environment operator arguments arity argumentsSound =>
       contentInterface_handler environment operator arguments arity argumentsSound
-  case case183 =>
+  case case184 =>
     exact fun _ environment => synth_arguments_nil_handler environment
-  case case187 =>
+  case case188 =>
     exact fun _ environment head tail _headResult _headEq _tailResults _tailEq
         headSound tailSound =>
       synth_arguments_cons_handler environment head tail headSound tailSound
-  case case188 =>
+  case case189 =>
     exact fun _ environment predicate arguments type found applySound =>
       lexical_declared_handler environment predicate arguments type found
         applySound
-  case case190 =>
+  case case191 =>
     exact fun _ environment predicate arguments notDeclared row found
         argumentsSound =>
       lexical_row_handler environment predicate arguments notDeclared row found
         argumentsSound
-  case case191 =>
+  case case192 =>
     exact fun _ environment row seen =>
       lexical_arguments_nil_handler environment row seen
-  case case195 =>
+  case case196 =>
     exact fun _ environment row seen head tail _headResult _headEq
         _rest _ordinary _eventFilled _tailEq _within headSound tailSound =>
       lexical_arguments_positional_handler environment row seen head tail
         headSound tailSound
-  case case199 =>
+  case case200 =>
     exact fun _ environment row seen label head tail _fresh selected
         _directGuard _headResult _headEq _error _tailEq headSound tailSound =>
       lexical_arguments_event_selected_handler environment row seen label head
         tail selected headSound tailSound
-  case case200 =>
+  case case201 =>
     exact fun _ environment row seen label head tail _fresh selected
         _directGuard _headResult _headEq _rest _ordinary _eventFilled _tailEq
         headSound tailSound =>
       lexical_arguments_event_selected_handler environment row seen label head
         tail selected headSound tailSound
-  case case201 =>
+  case case202 =>
     exact fun _ environment row seen label head tail fresh notEvent decoded =>
       lexical_arguments_unknown_label_impossible environment row seen label
         head tail fresh notEvent decoded
-  case case202 =>
+  case case203 =>
     exact fun _ environment row seen label head tail fresh notEvent place
         decoded outside =>
       lexical_arguments_outside_label_impossible environment row seen label
         head tail fresh notEvent place decoded outside
-  case case204 =>
+  case case205 =>
     exact fun _ environment row seen label head tail _fresh notEvent
         _place _decoded _within _headResult _headEq _error _tailEq headSound
         tailSound =>
       lexical_arguments_label_selected_handler environment row seen label head
         tail notEvent headSound tailSound
-  case case205 =>
+  case case206 =>
     exact fun _ environment row seen label head tail _fresh notEvent
         _place _decoded _within _headResult _headEq _rest _ordinary
         _eventFilled _tailEq _over headSound tailSound =>
       lexical_arguments_label_selected_handler environment row seen label head
         tail notEvent headSound tailSound
-  case case206 =>
+  case case207 =>
     exact fun _ environment row seen label head tail _fresh notEvent
         _place _decoded _within _headResult _headEq _rest _ordinary
         _eventFilled _tailEq _notOver headSound tailSound =>
       lexical_arguments_label_selected_handler environment row seen label head
         tail notEvent headSound tailSound
-  case case208 =>
+  case case209 =>
     exact fun _ environment functionResult effectful parameters output
         functionType _empty =>
       apply_function_nil_handler environment functionResult effectful parameters
         output functionType
-  case case209 =>
+  case case210 =>
     exact fun _ environment functionResult effectful parameters output
         functionType _nonempty =>
       apply_function_nil_handler environment functionResult effectful parameters
         output functionType
-  case case211 =>
+  case case212 =>
     exact fun _ environment functionResult effectful output argument parameter
         remaining functionType argumentSound =>
       apply_function_last_handler environment functionResult effectful parameter
         remaining output argument functionType argumentSound
-  case case213 =>
+  case case214 =>
     exact fun _ environment functionResult effectful output argument tail
         tailNonempty parameter remaining functionType argumentSound continuation =>
       apply_function_more_selected_handler environment functionResult effectful
         output argument tail tailNonempty parameter remaining functionType
         argumentSound continuation
-  case case214 =>
+  case case215 =>
     exact fun _ environment functionResult functionType argument argumentSound =>
       apply_clause_content_handler environment functionResult argument
         functionType argumentSound
-  case case216 =>
+  case case217 =>
     exact fun _ environment functionResult arguments ordinary eventRequired
         _notFunction _notClause shape argumentsSound =>
       apply_predterm_handler environment functionResult arguments ordinary
         eventRequired shape argumentsSound
-  case case217 =>
+  case case218 =>
     exact fun _ environment functionResult arguments notFunction notClause
         shape =>
       apply_nonapp_selected_impossible environment functionResult arguments
         notFunction notClause shape
-  case case218 =>
+  case case219 =>
     exact fun _ environment => pred_arguments_nil_handler environment
-  case case221 =>
+  case case222 =>
     exact fun _ environment head tail _headResult _headEq _rest _ordinary
         _eventFilled _tailEq headSound tailSound =>
       pred_arguments_positional_handler environment head tail headSound tailSound
-  case case223 =>
+  case case224 =>
     exact fun _ environment head tail _headResult _headEq _error _tailEq
         headSound tailSound =>
       pred_arguments_event_handler environment head tail headSound tailSound
-  case case224 =>
+  case case225 =>
     exact fun _ environment head tail _headResult _headEq _rest _ordinary
         _tailEq headSound tailSound =>
       pred_arguments_event_handler environment head tail headSound tailSound
-  case case225 =>
+  case case226 =>
     exact fun _ environment head tail _headResult _headEq _rest _ordinary
         _eventFilled _tailEq _notFilled headSound tailSound =>
       pred_arguments_event_handler environment head tail headSound tailSound
-  case case228 =>
+  case case229 =>
     exact fun _ environment label head tail notEvent _headResult _headEq _rest
         _ordinary _eventFilled _tailEq headSound tailSound =>
       pred_arguments_labelled_handler environment label head tail notEvent
         headSound tailSound
-  case case229 =>
+  case case230 =>
     exact fun _ environment => value_arguments_nil_handler environment
-  case case234 =>
+  case case235 =>
     exact fun _ environment head tail _value _headResult _headEq _tailResults
         _tailEq headSound tailSound =>
       value_arguments_positional_handler environment head tail headSound tailSound

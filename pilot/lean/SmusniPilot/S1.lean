@@ -7,7 +7,7 @@ namespace SmusniPilot
 open Lean
 
 def pinnedM1BaseHead : String :=
-  "8bea3eadebaf4e942ff55e17d6b3a39ea4684862"
+  "3e45db536c8523d023f70ae25878a3ecb9f79663"
 
 structure S1Counts where
   total_cases : Nat
@@ -71,9 +71,16 @@ def decodeCorpusEnvironmentEntry : SExpr → Except String (String × SExpr)
       if !name.startsWith "$" then
         throw s!"environment identity is not a variable: {name}"
       match types with
+      | [.atom (.symbol "."), type] =>
+          if type == .atom (.symbol ".") then throw "environment entry has no type"
+          else pure (name, type)
       | [] => throw "environment entry has no type"
-      | [type] => pure (name, type)
-      | _ => pure (name, .list .paren types)
+      | _ =>
+          if types.any (fun type => type == .atom (.symbol ".")) then
+            throw "malformed dotted environment entry"
+          else match types with
+            | [type] => pure (name, type)
+            | _ => pure (name, .list .paren types)
   | value => .error s!"malformed environment entry: {repr value}"
 
 def validateCorpusEnvironment : SExpr → Except String Unit
@@ -196,6 +203,20 @@ def decodeCorpus : SExpr → Except String (List CorpusCase)
   | _ => .error "bad port corpus root or version"
 
 def runCorpusSchemaMutationProbes : IO Unit := do
+  -- Racket prints an association pair with an atomic type as ($x . T),
+  -- while compound cdr types are normally flattened. Both carry a type,
+  -- never a term-level dot constructor or an inferred/default environment.
+  for (source, expected) in [
+      ("($d . Discourse)", "Discourse"), ("($d Discourse)", "Discourse"),
+      ("($s . (RefComp (Referents Entity)))", "(RefComp (Referents Entity))"),
+      ("($s RefComp (Referents Entity))", "(RefComp (Referents Entity))")] do
+    let (_, actual) ← IO.ofExcept (SExpr.parse source >>= decodeCorpusEnvironmentEntry)
+    let expected ← IO.ofExcept (SExpr.parse expected)
+    if actual != expected then throw <| IO.userError "environment type representation changed"
+  for source in ["($d .)", "($d . .)", "($d . Discourse Content)", "($d Discourse . Content)"] do
+    let parsed ← IO.ofExcept (SExpr.parse source)
+    if (decodeCorpusEnvironmentEntry parsed).isOk then
+      throw <| IO.userError s!"malformed environment pair accepted: {source}"
   let invalid := [
     "(smusni-port-corpus 2 (count 0) (cases-sha1 \"x\") (fence-sources) (definition-sources) (test-sources) (cases))",
     "(smusni-port-corpus 1 (count 1) (cases-sha1 \"x\") (fence-sources) (definition-sources) (test-sources) (cases))",
@@ -239,6 +260,14 @@ partial def undeclaredVariables (freeNames boundNames : List String) :
                   visit (binder.spelling :: currentBound) rest
           visit boundNames clauses
       | .error error => ["$malformed-bind-binder:" ++ error]
+  | .form _ (.primitive .performSource) arguments =>
+      match decodePerformSourceParts arguments with
+      | .ok (x, source, content, read, occurrence, body) =>
+          undeclaredVariables freeNames boundNames source ++
+            undeclaredVariables freeNames (x.spelling :: boundNames) content ++
+            undeclaredVariables freeNames
+              (occurrence.spelling :: read.spelling :: boundNames) body
+      | .error error => ["$malformed-perform-source:" ++ error]
   | term@(.form _ (.variable name) arguments) =>
       if term.isBinderDescriptor then []
       else
@@ -621,7 +650,7 @@ def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
         rrLink surface
     if bundle.sites.any fun site => site.rrLink != rrLink then
       throw <| IO.userError s!"case {record.id}: site RR linkage mismatch"
-    if record.id == "3dcc6a7fd3cdc51e4a4478def6eaad15dad9fbe3" then
+    if record.id == "7e1f848a9b2b5d077ec1fbc5cda0ebdd13052676" then
       match bundle.term with
       | .lambda (.function false [] _) (.apply (.bound _) .nil) => pure ()
       | _ => throw <| IO.userError <|

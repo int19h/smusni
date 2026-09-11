@@ -3,6 +3,7 @@
 (require racket/list
          racket/match
          racket/port
+         racket/set
          redex/reduction-semantics)
 
 (provide (struct-out core-atom)
@@ -15,6 +16,8 @@
          redex-adapter->core
          (rename-out [adapter-binder-pairs plain-binder-pairs])
          validate-core-form
+         perform-source-parts
+         core-free-variables
          SmusniSurface
          SmusniCore
          (struct-out core-redex-adapter))
@@ -38,10 +41,14 @@
      (λ ((x τ) ...) t)
      (Let (x τ) t t)
      (Bind ((x τ t) ...) t)
+     (PerformSource (x τ) t t (x τ) (x τ) t)
      (t t ...)]
   #:binding-forms
   (λ ((x τ) ...) t #:refers-to (shadow x ...))
   (Let (x τ) t_rhs t_body #:refers-to x)
+  (PerformSource (x_first τ_first) t_source t_first #:refers-to x_first
+                 (x_read τ_read) (x_occ τ_occ)
+                 t_next #:refers-to (shadow x_read x_occ))
   (Bind ((x τ t_rhs) #:...bind (clauses x (shadow clauses x)))
         t_body #:refers-to clauses))
 
@@ -176,6 +183,8 @@
     [(core-atom? form) (void)]
     [else
      (define elems (core-list-elements form))
+     (when (and (pair? elems) (node-symbol? (first elems) 'PerformSource))
+       (perform-source-parts (core->plain-datum form)))
      (when (and (pair? elems)
                 (core-atom? (first elems))
                 (member (core-atom-value (first elems)) '(λ Let Bind)))
@@ -217,6 +226,29 @@
      (define type (if (= (length type-items) 1) (first type-items) type-items))
      (for/list ([variable (in-list variables)]) `(,variable ,type)))))
 
+;; The literal Host and Assert are grammar, not evaluated operands. Keep the
+;; three disjoint binding arms explicit; this is not an ordinary Bind expansion.
+;; Return the three descriptors and S/C1/D in source order, with Host normalized.
+(define (perform-source-parts datum)
+  (define pieces
+    (match datum
+      [`(PerformSource Host ,rest ...) rest]
+      [`(PerformSource ,rest ...) rest]
+      [_ (error 'PerformSource "expected direct form")]))
+  (match pieces
+    [(list binder source (list 'Assert content) read-binder occurrence-binder body)
+     (for ([b (in-list (list binder read-binder occurrence-binder))])
+       (unless (and (list? b)
+                    (match b [(list (? symbol?) ':: _ _ ...) #t] [_ #f])
+                    (= (length (adapter-binder-pairs b)) 1))
+         (error 'PerformSource "requires single typed binder descriptors, got ~e" b)))
+     (when (eq? (caar (adapter-binder-pairs read-binder))
+                (caar (adapter-binder-pairs occurrence-binder)))
+       (error 'PerformSource "read and occurrence binders must be distinct"))
+     (list binder source content read-binder occurrence-binder body)]
+    [_ (error 'PerformSource
+              "requires optional literal Host, binder, source, literal (Assert Content), read/occurrence binders, and Discourse")]))
+
 (define (plain->redex-binding datum)
   (define (walk value)
     (cond
@@ -249,6 +281,11 @@
               (match-define (list variable type) (first pairs))
               `(,variable ,type ,(walk (list-ref alternating (add1 index))))))
           `(Bind ,grouped ,(walk body))]
+         [(PerformSource)
+          (match-define (list b s c r o d) (perform-source-parts value))
+          `(PerformSource ,(first (adapter-binder-pairs b)) ,(walk s) ,(walk c)
+                          ,(first (adapter-binder-pairs r))
+                          ,(first (adapter-binder-pairs o)) ,(walk d))]
          [else (map walk value)])]))
   (walk datum))
 
@@ -256,6 +293,34 @@
   (core-redex-adapter
    (plain->redex-binding (core->plain-datum form))
    form))
+
+;; Lexical scope is independent of type-directed inference. In particular,
+;; Context's supplied metadata cannot hide an out-of-scope dollar variable.
+;; Type annotations are not terms and do not contribute term variables.
+(define (core-free-variables form)
+  (define (walk term bound)
+    (match term
+      [(? symbol? name)
+       (if (and (string-prefix? (symbol->string name) "$")
+                (not (set-member? bound name))) (set name) (set))]
+      [`(λ ,binders ,body)
+       (walk body (set-union bound (list->set (map first binders))))]
+      [`(Let (,name ,_) ,value ,body)
+       (set-union (walk value bound) (walk body (set-add bound name)))]
+      [`(Bind ,binders ,body)
+       (define-values (free scope)
+         (for/fold ([free (set)] [scope bound]) ([binder (in-list binders)])
+           (match-define (list name _ value) binder)
+           (values (set-union free (walk value scope)) (set-add scope name))))
+       (set-union free (walk body scope))]
+      [`(PerformSource (,x ,_) ,source ,content (,read ,_) (,occurrence ,_) ,body)
+       (set-union (walk source bound) (walk content (set-add bound x))
+                  (walk body (set-add (set-add bound read) occurrence)))]
+      [(? list? terms)
+       (for/fold ([free (set)]) ([term (in-list terms)])
+         (set-union free (walk term bound)))]
+      [_ (set)]))
+  (walk (core-redex-adapter-term (core->redex-adapter form)) (set)))
 
 (define (redex-adapter->core adapter)
   (unless (core-redex-adapter? adapter)

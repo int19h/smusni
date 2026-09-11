@@ -128,6 +128,7 @@
   (form Express primitive special O surface "spec §7.1")
   (form Mention primitive special O surface "spec §7.1")
   (form Perform primitive special O surface "spec §7.1")
+  (form PerformSource primitive special O lowering-only "spec §7.1.1")
   (form Do primitive special O generic "spec §7.2")
   (form Polar primitive special O surface "spec §8.1")
   (form OpenQ primitive special O surface "spec §8.1")

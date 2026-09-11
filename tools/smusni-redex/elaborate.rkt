@@ -69,7 +69,21 @@
       [else
        (define elements (core-list-elements node))
        (define head (head-of node))
-       (define walked (map walk elements))
+       (define walked
+         (if (eq? head 'PerformSource)
+             (let* ([offset (if (and (>= (length elements) 2)
+                                     (core-atom? (second elements))
+                                     (eq? (core-atom-value (second elements)) 'Host)) 1 0)]
+                    [assert-index (+ 3 offset)])
+               (perform-source-parts (core->plain-datum node))
+               (for/list ([element (in-list elements)] [index (in-naturals)])
+                 (if (= index assert-index)
+                     ;; The entire C1 subtree is already resolved, including
+                     ;; any inert nested Act values. Do not re-elaborate its
+                     ;; internal Assert constructors as force shorthands.
+                     element
+                     (walk element))))
+             (map walk elements)))
        (define rebuilt (struct-copy core-list node [elements walked]))
        (cond
          [(and (eq? head 'Close) (= (length walked) 2))

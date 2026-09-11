@@ -622,7 +622,7 @@
                      `((,name (EFn (,type) Content)) ($r (Referents ,type)))))))
   (define actual-control
     (findf (lambda (item)
-             (equal? (port-case-id item) "9179373ca8c2e48ede6fe47086cebd79b7f61352"))
+             (equal? (port-case-id item) "2a00f8ca5df0ba140dbe29fa18c0acda9b274913"))
            (load-port-corpus)))
   (check-not-false actual-control "the transported actual #83 control must remain present")
   (check-not-false (member '(status unavailable) (oracle-case actual-control)))

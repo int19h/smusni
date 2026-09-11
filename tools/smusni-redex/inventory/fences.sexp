@@ -499,37 +499,38 @@
   specimen
   "cee1f11c30a4f8541a7f8e567642de3453389bbb"
   (origin "core"))
+ (fence "samples.md" 72 specimen "8a0b52f4154b7714316a8a653626e38ef8ba3102" (origin "core"))
  (fence
   "samples.md"
-  72
+  73
   specimen
   "4890c0005f7c7eca9bd4ea5fe9a8eaffc08c4b38"
   (origin "surface")
   (rules "L5.30" "L5.1" "L3.1"))
  (fence
   "samples.md"
-  73
+  74
   specimen
   "61de1cdcc879bf59408a075914889e684113c681"
   (origin "surface")
   (rules "L5.30" "L5.1" "L5.2"))
  (fence
   "samples.md"
-  74
+  75
   specimen
   "9f96043bd01fe3c20d5c5f8fc8ebf7bbb62c627b"
   (origin "surface")
   (rules "L5.1" "L5.30" "L3.1"))
  (fence
   "samples.md"
-  75
+  76
   specimen
   "e8d065dc136052444d446128d5d3978d68393e60"
   (origin "surface")
   (rules "L5.1" "L5.2" "L4.1"))
  (fence
   "samples.md"
-  76
+  77
   specimen
   "f504ad67c71bc8b8beec3c88b73547faa75fec58"
   (origin "surface")

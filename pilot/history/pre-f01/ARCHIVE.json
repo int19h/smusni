@@ -1,0 +1,97 @@
+{
+  "source_revision": "01759ba0042744fb8694c9214842c93aa1a684ff",
+  "status": "historical inputs and reported results, not current validation",
+  "corpus": "pilot/history/pre-f01/port-corpus.sexp",
+  "files": [
+    {
+      "source": "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv",
+      "snapshot": "M1_CONSTRUCTOR_DISPOSITION.tsv",
+      "sha256": "e6e49643ece813e8ff8105a732a6ece15073a225ca8770c8b9566ba879df6358"
+    },
+    {
+      "source": "pilot/shared/M1_S1_MANIFEST.json",
+      "snapshot": "M1_S1_MANIFEST.json",
+      "sha256": "8b7e6508361a3432cef1b68a7e198c2f9f3d9f6e5c47ae3e1270fa67860897b7"
+    },
+    {
+      "source": "pilot/shared/M1_INPUTS.md",
+      "snapshot": "M1_INPUTS.md",
+      "sha256": "679bfa33dec0d916a768e1968c7db3e144523015aa6146c2ab5e470704dfa9ae"
+    },
+    {
+      "source": "pilot/shared/M2_CASE_MANIFEST.json",
+      "snapshot": "M2_CASE_MANIFEST.json",
+      "sha256": "09ce9f35cd77e5156cdc081d3012260dd27f30d7a94747fe44ae5e96d91060b9"
+    },
+    {
+      "source": "pilot/shared/M2_DEFINITION_MANIFEST.json",
+      "snapshot": "M2_DEFINITION_MANIFEST.json",
+      "sha256": "a168afe35e6395c281ae79443123dc796a8fed3a69036e4c7306f5c2f37f5e0e"
+    },
+    {
+      "source": "pilot/shared/M2_TYPING_MANIFEST.json",
+      "snapshot": "M2_TYPING_MANIFEST.json",
+      "sha256": "80054be2e37a3c9142db0cbbd5732a5d015e323878707cf5c53d0c291e8beaf0"
+    },
+    {
+      "source": "pilot/shared/M2_REDEX_ORACLE.sexp",
+      "snapshot": "M2_REDEX_ORACLE.sexp",
+      "sha256": "5613cdef90b99233a68a812f892d61d0bf034d3d2ff3bb74f71242c1aee1f3cd"
+    },
+    {
+      "source": "pilot/shared/M2_RANGE_SUPPLEMENT.tsv",
+      "snapshot": "M2_RANGE_SUPPLEMENT.tsv",
+      "sha256": "1ca639eee13fc7626d1bf6a7322dc0903d4c99b51414360dda00b356c89e5e14"
+    },
+    {
+      "source": "pilot/shared/M2_DEPENDENCY_SUPPLEMENT.tsv",
+      "snapshot": "M2_DEPENDENCY_SUPPLEMENT.tsv",
+      "sha256": "785b9d61973771a61060fd0c39bbe64d4bb0905f83261df29ff5e93037470ad2"
+    },
+    {
+      "source": "pilot/shared/M2_TYPING_SUPPLEMENT.tsv",
+      "snapshot": "M2_TYPING_SUPPLEMENT.tsv",
+      "sha256": "e12dc1ade4036b1098ab392a90a915568c41d091ca6e513cc045468343ea0a97"
+    },
+    {
+      "source": "pilot/lean/M1_REPORT.md",
+      "snapshot": "M1_REPORT.md",
+      "sha256": "b2439caff8b5908bd128f4d8a9e40049e144feed3dcdeeb3716c196be32d5cc6"
+    },
+    {
+      "source": "pilot/lean/M2_REPORT.md",
+      "snapshot": "M2_REPORT.md",
+      "sha256": "a88577cd4daf1958bd0c4dbfe8fb137efbf9bfdace7136741c650e5f5861e3fb"
+    },
+    {
+      "source": "pilot/shared/M2_MIGRATION.json",
+      "snapshot": "M2_MIGRATION.json",
+      "sha256": "dc08233a9e92a03b2e6ccb1712d1bbaef5c508e97eabbec237d51bea4768f6cd"
+    },
+    {
+      "source": "pilot/shared/M2_ORACLE_SOURCES.sexp",
+      "snapshot": "M2_ORACLE_SOURCES.sexp",
+      "sha256": "26c3c1ebb1a4e8fa051dd8c2ccf41ee4c1d35c45c87eb9f9dbc1d29f7d7027a7"
+    },
+    {
+      "source": "tools/smusni-redex/inventory/port-corpus.sexp",
+      "snapshot": "port-corpus.sexp",
+      "sha256": "38d1aeee7cc61c4a1d007b44e96449f1f5e8c0ffdde7df1ce1d1327d1d559791"
+    },
+    {
+      "source": "pilot/lean/E02_ASSERT_BRIDGE.md",
+      "snapshot": "E02_ASSERT_BRIDGE.md",
+      "sha256": "c7ef62cfcee25f43dcff5a9e294cd4fa49b8adc05f8fcf9e3a674d9883bf66f3"
+    },
+    {
+      "source": "pilot/lean/E02_CONSUMER_BATCH01.md",
+      "snapshot": "E02_CONSUMER_BATCH01.md",
+      "sha256": "0fa86c02977893f9a9d81f05961102913e2525661816868b92501428daccfee2"
+    },
+    {
+      "source": "pilot/lean/E02_NEGATION_FIDELITY.md",
+      "snapshot": "E02_NEGATION_FIDELITY.md",
+      "sha256": "696c8a51e7f7c151c34db18265067f03ac5cff786f8bd28bb3037328ca24ca48"
+    }
+  ]
+}

@@ -292,7 +292,7 @@
           (λ ($x :: Entity) (Close (blabi $x)))))
  '("L5.1"))
 (check-lowers
- "samples.md" 72
+ "samples.md" 73
  '(Bind ($cats :: Referents Entity)
         (Refer (λ ($cat :: Referents Entity) (mlatu $cat)))
     (Assert
@@ -300,7 +300,7 @@
             (λ ($dog :: Entity) (Close (tavla $dog $cats))))))
  '("L5.30" "L5.1" "L3.1"))
 (check-lowers
- "samples.md" 73
+ "samples.md" 74
  '(Assert
    (IndividualEvery (λ ($dog :: Entity) (gerku $dog))
           (λ ($dog :: Entity)

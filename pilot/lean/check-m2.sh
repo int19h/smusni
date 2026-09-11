@@ -15,6 +15,7 @@ python3 pilot/shared/build_m2_migration.py
 raco test pilot/shared/export_m2_redex_oracle.rkt
 racket pilot/shared/export_m2_redex_oracle.rkt
 racket pilot/shared/export_m2_redex_oracle.rkt --sources
+python3 pilot/shared/build_f01_migration.py
 python3 pilot/lean/build_m2_inventory.py
 
 if rg -n '\b(sorry|axiom|admit)\b' pilot/lean -g '*.lean'; then

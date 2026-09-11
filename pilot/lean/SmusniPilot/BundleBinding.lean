@@ -47,6 +47,10 @@ mutual
     | .apply function arguments =>
         typedTermSubstitutionUsesAt source depth scopeEq function ++
           typedTermListSubstitutionUsesAt source depth scopeEq arguments
+    | .performSource _ preparation content continuation =>
+        typedTermSubstitutionUsesAt source depth scopeEq preparation ++
+          typedTermSubstitutionUsesAt source (depth + 1) (by omega) content ++
+          typedTermSubstitutionUsesAt source (depth + 2) (by omega) continuation
     | .lexical _ arguments | .context _ arguments | .primitive _ arguments =>
         typedTermListSubstitutionUsesAt source depth scopeEq arguments
     | .vague _ constraint =>
@@ -345,6 +349,19 @@ theorem Term.siteUses_substitute_correspondsAt {scope : Nat}
     · rw [Substitution.lift_bundleSubstitutionAt] at bodyPresent
       have result := bodyIH source (depth + 1) (by omega) target σ output
         bodyPresent
+      grind
+  case performSource reference preparation content continuation preparationIH contentIH continuationIH =>
+    intro source depth scopeEq target σ output present
+    simp only [Term.substitute, Term.siteUses, List.mem_append] at present
+    simp only [Term.siteUses, typedTermSubstitutionUsesAt, List.mem_append]
+    rcases present with (preparationPresent | contentPresent) | continuationPresent
+    · have result := preparationIH source depth scopeEq target σ output preparationPresent
+      grind
+    · rw [Substitution.lift_bundleSubstitutionAt] at contentPresent
+      have result := contentIH source (depth + 1) (by omega) target σ output contentPresent
+      grind
+    · rw [Substitution.lift_bundleSubstitutionAt, Substitution.lift_bundleSubstitutionAt] at continuationPresent
+      have result := continuationIH source (depth + 2) (by omega) target σ output continuationPresent
       grind
   all_goals
     intros <;>

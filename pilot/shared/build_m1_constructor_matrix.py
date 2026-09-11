@@ -24,7 +24,7 @@ DEFINITIONS = ROOT / "tools/smusni-redex/inventory/definitions.sexp"
 A0 = ROOT / "tools/smusni-redex/port-a0.rkt"
 SPEC = ROOT / "spec.md"
 OUTPUT = ROOT / "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv"
-BASE_HEAD = "8bea3eadebaf4e942ff55e17d6b3a39ea4684862"
+BASE_HEAD = "3e45db536c8523d023f70ae25878a3ecb9f79663"
 
 PRIMITIVE = "primitive-core"
 DEFINED = "defined-surface"

@@ -137,6 +137,9 @@ mutual
           encodeTerm computation, encodeTerm body]
     | .apply function arguments =>
         list [symbol "apply", encodeTerm function, encodeTerms arguments]
+    | .performSource reference source content continuation =>
+        list [symbol "perform-source", encodeTy reference, encodeTerm source,
+          encodeTerm content, encodeTerm continuation]
     | .lexical predicate arguments =>
         list [symbol "lexical", string predicate, encodeTerms arguments]
     | .context site arguments =>
@@ -182,6 +185,10 @@ mutual
           (← decodeTerm (scope + 1) body)
     | .list .paren [.atom (.symbol "apply"), function, arguments] =>
         return .apply (← decodeTerm scope function) (← decodeTerms scope arguments)
+    | .list .paren
+        [.atom (.symbol "perform-source"), reference, source, content, continuation] =>
+        return .performSource (← decodeTy reference) (← decodeTerm scope source)
+          (← decodeTerm (scope + 1) content) (← decodeTerm (scope + 2) continuation)
     | .list .paren
         [.atom (.symbol "lexical"), .atom (.string predicate), arguments] =>
         return .lexical predicate (← decodeTerms scope arguments)

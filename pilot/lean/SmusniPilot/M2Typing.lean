@@ -585,6 +585,20 @@ def expectedOnlySynthesisForm {scope : Nat} : Term scope → Bool
   | _ => false
 termination_by term => sizeOf term
 
+def sourceMemberTypeValid : Ty → Bool
+  | .named .typeFormSet [inner] | .named .typeFormGroup [inner]
+    | .named .typeFormList [inner] => sourceMemberTypeValid inner
+  | other => Ty.firstOrder other
+
+def sourceReferenceTypeValid (reference : Ty) : Bool :=
+  match Ty.asUnary reference .typeFormReferents with
+  | some inner => sourceMemberTypeValid inner
+  | none => false
+
+def validateSourceReferenceType (reference : Ty) : Except TypingError Unit :=
+  if sourceReferenceTypeValid reference then pure ()
+  else failure "source-reference-type" "PerformSource requires Referents<T> with first-order T"
+
 mutual
   def synth {scope : Nat} (environment : Environment scope) :
       Term scope → Except TypingError TypingResult
@@ -635,6 +649,15 @@ mutual
     | .context _ _ => failure "expected-type" "Context requires an expected RefComp type"
     | .vague _ _ => failure "expected-type" "Vague requires an expected RefComp type"
     | .primitive operator arguments => synthPrimitive environment operator arguments
+    | .performSource reference source content continuation => do
+        validateSourceReferenceType reference
+        let sourceResult ← check environment source (Ty.refComp reference)
+        let contentResult ← check (environment.extend reference) content Ty.content
+        let continuationResult ← check
+          ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
+          continuation Ty.discourse
+        pure <| mergeResults Ty.discourse [sourceResult, contentResult, continuationResult]
+          [.performance] [] .f01TPerformSource |>.withRule .a0Synth
   termination_by term => (sizeOf term, 0)
 
   def check {scope : Nat} (environment : Environment scope)
@@ -1526,7 +1549,8 @@ def typingRuleImplemented (rule : M2TypingRuleId) : Bool :=
     .m2TAggregate, .m2TBasisUnitAt, .m2TPeerUnitAt, .m2TForce,
     .m2TCombine, .m2TLocutionOf, .m2TSign, .m2TReify,
     .m2TRealizedContent, .m2TTeha, .m2TQuery, .m2TGeneric,
-    .m2TContentInterfaces, .m2TDropPlace ].contains rule
+    .m2TContentInterfaces, .m2TDropPlace, .f01TPerformSource,
+    .a0TPerform, .m2TPerformRole ].contains rule
 
 def implementedTypingRuleRecords : List M2TypingRuleRecord :=
   m2TypingRuleRecords.filter fun record => typingRuleImplemented record.id

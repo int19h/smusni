@@ -20,6 +20,9 @@ mutual
     | .lambda type body => .lambda type (eraseSiteIds body)
     | .bind type computation body =>
         .bind type (eraseSiteIds computation) (eraseSiteIds body)
+    | .performSource reference source content continuation =>
+        .performSource reference (eraseSiteIds source) (eraseSiteIds content)
+          (eraseSiteIds continuation)
     | .apply function arguments =>
         .apply (eraseSiteIds function) (eraseSiteIdsList arguments)
     | .lexical head arguments => .lexical head (eraseSiteIdsList arguments)
@@ -110,6 +113,9 @@ mutual
     | .bind type computation body =>
         return .bind type (← canonicalizeLexicalLabels computation)
           (← canonicalizeLexicalLabels body)
+    | .performSource reference source content continuation =>
+        return .performSource reference (← canonicalizeLexicalLabels source)
+          (← canonicalizeLexicalLabels content) (← canonicalizeLexicalLabels continuation)
     | .apply function arguments =>
         return .apply (← canonicalizeLexicalLabels function)
           (← canonicalizeLexicalLabelsList arguments)

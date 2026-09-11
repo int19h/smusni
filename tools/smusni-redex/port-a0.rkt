@@ -36,6 +36,7 @@
          b1-expand-max-refer
          a0-hoist
          site-plan
+         free-core-variables
          introducing?
          hoist-ordered
          replace-site
@@ -91,6 +92,7 @@
      (λ ((x τ) ...) t)
      (Let (x τ) t t)
      (Bind ((x τ t) ...) t)
+     (PerformSource (x τ) t t (x τ) (x τ) t)
      (Context t ...)
      (Vague t)
      (Refer t)
@@ -162,6 +164,9 @@
   #:binding-forms
   (λ ((x τ) ...) t #:refers-to (shadow x ...))
   (Let (x τ) t_rhs t_body #:refers-to x)
+  (PerformSource (x_first τ_first) t_source t_first #:refers-to x_first
+                 (x_read τ_read) (x_occ τ_occ)
+                 t_next #:refers-to (shadow x_read x_occ))
   (Bind ((x τ t_rhs) #:...bind (clauses x (shadow clauses x)))
         t_body #:refers-to clauses))
 
@@ -577,6 +582,10 @@
         (set-union
          (free-core-variables value bound)
          (free-core-variables body (set-add bound variable)))]
+       [`(PerformSource (,x ,_) ,s ,c (,r ,_) (,o ,_) ,d)
+        (set-union (free-core-variables s bound)
+                   (free-core-variables c (set-add bound x))
+                   (free-core-variables d (set-add (set-add bound r) o)))]
        [`(Bind ,bindings ,body)
         (let loop ([remaining bindings] [scope bound] [free (set)])
           (if (null? remaining)
@@ -710,6 +719,7 @@
   [(introducing? (SelectAtLeast t_1 t_2)) #t]
   [(introducing? (SelectSome t)) #t]
   [(introducing? (SelectAllBut t_1 t_2)) #t]
+  [(introducing? (PerformSource (x_1 τ_1) t_s t_c (x_2 τ_2) (x_3 τ_3) t_d)) #t]
   [(introducing? (Quote t)) #f]
   [(introducing? (Syntax t)) #f]
   [(introducing? (λ ((x τ) ...) t_body)) (introducing? t_body)]
@@ -828,6 +838,14 @@
           `(Let (,replacement ,type)
              ,(walk active environment)
              ,(walk body (hash-set environment variable replacement)))]
+         [`(PerformSource (,x ,type) ,s ,c (,r ,rt) (,o ,ot) ,d)
+          (define nx (fresh-variable))
+          (define nr (fresh-variable))
+          (define no (fresh-variable))
+          `(PerformSource (,nx ,type) ,(walk s environment)
+                          ,(walk c (hash-set environment x nx))
+                          (,nr ,rt) (,no ,ot)
+                          ,(walk d (hash-set (hash-set environment r nr) o no)))]
          [`(Bind ,bindings ,body)
           (define-values (normalized-bindings extended)
             (for/fold ([normalized '()] [scope environment])

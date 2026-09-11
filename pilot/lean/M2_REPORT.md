@@ -1,5 +1,11 @@
 # Lean pilot milestone 2 — E02 migration checkpoint
 
+This file now records historical E02 checkpoints, including its then-pending
+review wording. PR92 was subsequently cleared and merged at `01759ba`.
+Current F01 structural work and its bounded validation are reported in
+[`F01_IMPLEMENTATION.md`](F01_IMPLEMENTATION.md). The unchanged E02 copy is
+archived at `../history/pre-f01/M2_REPORT.md`; no historical totals were reset.
+
 Current code correction: [`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md).
 Human approval now authorizes the generic refer-only negation law; the code
 and proof correction makes the four retained cases succeed. PM's exact

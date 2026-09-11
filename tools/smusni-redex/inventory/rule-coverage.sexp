@@ -7,7 +7,10 @@
   (cited-floor 69)
   ;; Exact counts of §11's numbered clauses: total, lowering judgments,
   ;; gap, note, reading. Any change to §11's clause set must update these.
-  (rule-counts 150 125 13 6 6)
+  (rule-counts 151 126 13 6 6)
+  ;; F01's new mapping consumes supplied resolved source/frame inputs; its
+  ;; parameterized core specimen is not an executable surface-lowering test.
+  (uncovered "L8.13" "#9")
   ;; Lowering judgments no surface specimen cites yet (gap/note/reading
   ;; rules are outside F₀ and never appear here). Each entry names the issue
   ;; that owns the missing coverage (#9 M3 corpus).

@@ -28,6 +28,7 @@ STRUCTURAL_PRIMITIVES = {
     "term:$string",
     "term:$variable",
     "term:Bind",
+    "term:PerformSource",
     "term:Context",
     "term:Vague",
     "term:λ",

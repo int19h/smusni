@@ -5,6 +5,18 @@ static laws in `spec.md`. It is not a semantic authority: when the checker and
 the documents disagree, the discrepancy must be diagnosed against the live
 normative text.
 
+### F01 structural encoding (2026-09-11)
+
+`PerformSource` has a direct three-arm binder and general formation/typing
+checks. Its resolved first Content arm is not force-shorthand elaborated.
+Source-family eligibility, execution, capture/replay and run/event quotient
+laws are **not implemented by these checks**. The current corpus has 96 fences
+(79 specimen fences / 100 terms); the new example is a parameterized core
+specimen, not an executable surface-lowering fixture. L8.13 remains explicitly
+uncovered under #9. See [`F01_IMPLEMENTATION.md`](../../pilot/lean/F01_IMPLEMENTATION.md).
+The following E01 account remains valid except for its historical counts and
+its pre-F01 implementation-status sentence.
+
 ### Adopted document synchronization (E01, 2026-09-10)
 
 The current corpus contains 95 fences (78 specimen fences / 99 terms). The
@@ -33,7 +45,8 @@ supports one count per clause (including under an outer individual universal)
 with the existing validated hoist plan. General multiple-count, dependent
 description scope, mixed/compound PA, fractional/non-finite, and source/force
 interfaces remain outside this adapter's implemented fragment. Threshold
-adaptation is the explicit L5.28 gap. F01 is not implemented.
+adaptation is the explicit L5.28 gap. F01 dynamic source/Host laws remain
+unimplemented by the structural encoding described above.
 The unreachable historical M3 `threshold-argument-out` builder was retired;
 the retained threshold library equations and the L5.28 refusal remain.
 

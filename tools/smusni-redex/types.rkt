@@ -653,6 +653,43 @@
                 (cons computation results)
                 (or saw-performance? (eq? category 'perf)))))))
 
+(define (infer-perform-source node env inv)
+  (perform-source-parts (core->plain-datum node))
+  (for ([name (in-set (core-free-variables node))])
+    (unless (hash-has-key? env name)
+      (raise-type node "PerformSource has out-of-scope variable ~a" name)))
+  (define elements (rest (core-list-elements node)))
+  (define args (if (eq? (atom-value (first elements)) 'Host) (rest elements) elements))
+  (match-define (list binder source assertion read-binder occurrence-binder body) args)
+  (define x (first (parse-binder-group binder)))
+  (define r (first (parse-binder-group read-binder)))
+  (define o (first (parse-binder-group occurrence-binder)))
+  (define reference (cdr x))
+  (unless (match reference [`(Referents ,inner) (first-order-type? inner)] [_ #f])
+    (raise-type binder "PerformSource source binder requires Referents<T>"))
+  (unless (equal? (cdr r) `(RefComp ,reference))
+    (raise-type read-binder "PerformSource read annotation must be RefComp of the source reference"))
+  (unless (equal? (cdr o) '(ActOccurrence Assertion))
+    (raise-type occurrence-binder "PerformSource occurrence annotation must be ActOccurrence Assertion"))
+  (define content (second (core-list-elements assertion)))
+  (define s-result (infer-with-expected source env inv `(RefComp ,reference)))
+  (define c-result (infer-core content (extend-env env (list x)) inv))
+  (define d-result (infer-core body (extend-env env (list r o)) inv))
+  (define (unknown? type)
+    (or (eq? type 'Unknown) (and (list? type) (ormap unknown? type))))
+  (for ([term (in-list (list source content body))]
+        [result (in-list (list s-result c-result d-result))]
+        [expected (in-list (list `(RefComp ,reference) 'Content 'Discourse))])
+    ;; This direct rule has no Unknown/default-success alternative. Existing
+    ;; inference gaps in an arm cannot discharge a stated typing premise.
+    (unless (and (null? (typing-gaps result))
+                 (not (unknown? (typing-type result)))
+                 (type-compatible? (typing-type result) expected))
+      (raise-type term "PerformSource arm requires ~e without inference gaps, got ~e (~e)"
+                  expected (typing-type result) (typing-gaps result))))
+  (merge-results 'Discourse (list s-result c-result d-result)
+                 #:effects (set 'performance)))
+
 (define (infer-lexical-application node head arguments env inv row)
   (define argument-results
     (for/list ([argument (in-list arguments)]
@@ -877,11 +914,12 @@
      (for ([arg (in-list arguments)] [result (in-list results)])
        (ensure-compatible arg (typing-type result) 'Number))
      (merge-results 'Number results)]
-    [(member head '(λ Let Bind))
+    [(member head '(λ Let Bind PerformSource))
      (case head
        [(λ) (infer-lambda node env inv)]
        [(Let) (infer-let node env inv)]
-       [(Bind) (infer-bind node env inv)])]
+       [(Bind) (infer-bind node env inv)]
+       [(PerformSource) (infer-perform-source node env inv)])]
     [(eq? head 'Close)
      (unless (= (length arguments) 1) (raise-type node "Close takes one operand"))
      (define operand (infer-core (first arguments) env inv))
@@ -978,12 +1016,20 @@
     [(eq? head 'Perform)
      (unless (member (length arguments) '(1 2))
        (raise-type node "Perform takes an act, optionally preceded by a role"))
+     (define roles
+       (if (= (length arguments) 2)
+           (let ([role (infer-core (first arguments) env inv)])
+             (unless (and (equal? (typing-type role) 'OccurrenceRole)
+                          (null? (typing-gaps role)))
+               (raise-type (first arguments) "Perform role must have type OccurrenceRole"))
+             (list role))
+           '()))
      (define act-node (last arguments))
      (define act (infer-core act-node env inv))
      (match (typing-type act)
        [`(Act ,force)
         (merge-results `(PerfComp (ActOccurrence ,force))
-                       (list act) #:effects (set 'performance))]
+                       (append roles (list act)) #:effects (set 'performance))]
        [other (raise-type act-node "Perform requires Act<F>, got ~e" other)])]
     [(eq? head 'Do)
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))

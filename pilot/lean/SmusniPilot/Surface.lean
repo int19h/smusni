@@ -154,7 +154,7 @@ partial def SurfaceTerm.offendingHeadsWith (lexicalHeads : List String) :
 
 partial def SurfaceTerm.structuralErrors : SurfaceTerm → List String
   | .atom (.symbol raw) =>
-      if ["λ", "Bind", "Context", "Vague"].contains raw then
+      if ["λ", "Bind", "Context", "Vague", "PerformSource"].contains raw then
         ["term:" ++ raw ++ ":missing-form"]
       else []
   | .atom (.string _) | .empty _ => []
@@ -167,6 +167,16 @@ partial def SurfaceTerm.structuralErrors : SurfaceTerm → List String
         arguments.flatMap structuralErrors
   | .form _ (.primitive .vague) arguments =>
       (if arguments.length == 1 then [] else ["term:Vague:bad-arity"]) ++
+        arguments.flatMap structuralErrors
+  | .form _ (.primitive .performSource) arguments =>
+      let args := match arguments with
+        | .atom (.symbol "Host") :: rest => rest
+        | rest => rest
+      let valid := match args with
+        | [x, _, .form _ (.primitive .assert) [_], read, occurrence, _] =>
+            x.isBinderDescriptor && read.isBinderDescriptor && occurrence.isBinderDescriptor
+        | _ => false
+      (if valid then [] else ["term:PerformSource:bad-shape"]) ++
         arguments.flatMap structuralErrors
   | .form _ _ arguments => arguments.flatMap structuralErrors
   | .application _ function arguments =>

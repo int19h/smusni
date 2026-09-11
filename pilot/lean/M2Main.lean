@@ -2,10 +2,12 @@ import SmusniPilot.M2Examples
 import SmusniPilot.M2Cases
 import SmusniPilot.M2Parity
 import SmusniPilot.M2RRAudit
+import SmusniPilot.F01Examples
 
 open SmusniPilot
 
 def main : IO Unit := do
+  F01.run
   M2.runM2TypingGates
   M2.runM2ParityMutationGates
   M2.runM2RRAuditMutationGates
@@ -82,9 +84,12 @@ def main : IO Unit := do
   for outcome in cases.outcomes do
     if ["definition-property", "definition-basis"].contains
         outcome.decidingRule then
-      let anchor := if outcome.decidingRule == "definition-property" then
-        "spec §5.3:1570-1584; oracle not-in-domain/unavailable"
-      else "spec §12:3967-3992; Massify basis type"
+      let declaration := if outcome.decidingRule == "definition-property" then
+        M2DefinitionId.d53ReferMemberLift.record
+      else M2DefinitionId.d12Massify.record
+      let ranges := String.intercalate "," <| declaration.specRanges.map fun range =>
+        s!"{range.start}-{range.stop}"
+      let anchor := s!"spec.md:{ranges} ({declaration.head}); oracle not-in-domain/unavailable"
       IO.println <| s!"M2 semantic-typed-rejection {outcome.id} " ++
         s!"rule={outcome.decidingRule} anchor={anchor} " ++
         s!"expanded={repr outcome.expandedDefinitions}"
