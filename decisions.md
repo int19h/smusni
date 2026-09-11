@@ -10,6 +10,17 @@ Lean/Redex remain derived until the three-stage authority transfer in the charte
 
 ## Settled distinctions
 
+- **P45: negation-local reference purity.** Human-confirmed September11,2026
+  UTC: retain the previously reviewed PR46/#13/B1 behavior. A reference
+  introduced and consumed solely inside negation does not count against the
+  enclosing `Fn` purity judgment. All other effects and every obligation stay;
+  `Local` and other connectives are unchanged. This explicitly reconciles
+  §3.3/L0.1's stricter wording. It is not a general non-export-implies-purity
+  theorem or full model proof. The strict internal-activity alternative and
+  provenance are recorded in rationale §2.11 and spec References.
+  [Approval](https://github.com/int19h/smusni/issues/74#issuecomment-5630303444).
+  Lean typing/proof alignment and the four retained E02 cases are implementation
+  work, not another undecided policy or grounds to weaken the consumer gate.
 - **P44: bare me'i defaults to ro.** Human-adopted September10: ordinary
   individual not-all is negated IndividualEvery, not an infinite-cardinality
   comparison. Explicit me'i n is unchanged; me'i pa is zero. No new source
