@@ -365,6 +365,14 @@ found that selects it, so it is not a second silent reading.
 
 ## 5. How many
 
+Set-building conditions must be pure. Under P45, a condition may test whether
+a temporary reference can satisfy something inside negation without adding
+that reference to the conversation. Only that reference-introduction effect
+is sealed: consulting context, making a side claim or calling an otherwise
+effectful function still counts. This does not make `Local` pure or change
+the rules for other connectives. The condition must not move a candidate-
+dependent selection outside the set-building test just to obtain purity.
+
 Descriptions and quantifiers do different jobs:
 
 - `lo ro prenu` refers to all relevant people; a predicate can hold of them

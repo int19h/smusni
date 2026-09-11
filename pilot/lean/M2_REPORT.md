@@ -1,329 +1,209 @@
-# Lean pilot milestone 2 report
+# Lean pilot milestone 2 — E02 migration checkpoint
 
-Status: **candidate gates pass; exact-head review pending.** PR #82 fixed the
-Redex oracle defect in #81 and is included through main merge `dc6eaee`.
+Current code correction: [`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md).
+Human approval now authorizes the generic refer-only negation law; the code
+and proof correction makes the four retained cases succeed. PM's exact
+P45 commits are integrated; combined M1/M2/root checks pass. Review remains
+pending; see the current report for source lineage and bounded coverage.
 
-## Mechanism
+Previous correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md).
+At checkpoint eb72540, the strengthened consumer correctly failed four actual typed-outcome
+differences: prior 74/74 AST matches were not all successful typed Lean parity.
 
-The M2 path consumes a `SurfaceTerm`, the canonical corpus environment, the
-generated lexical-row/core-constant inputs, an expected type supplied by the
-surrounding binder where required, and an explicit occurrence context
-`(document, structural ordinal, definition ID)`. It resolves a selected
-definition ID from generated manifest records, recursively applies its cited
-template clauses, allocates expansion sites from the occurrence context, runs
-fail-closed bidirectional typing, and replays the term/metadata/allocation
-certificate through M1's proof-producing `Bundle.checked` constructor to obtain
-`ValidatedBundle 0`/`BundleCoherence`.
+Prior follow-up: the PM-authorized one-Assert bridge is documented in
+[`E02_ASSERT_BRIDGE.md`](E02_ASSERT_BRIDGE.md): 74 typed targets (54 whole-A0,
+20 bridge) from the unchanged 192 candidates. It preserves obligation
+metadata and requires independent source/target payload typings.
 
-No S1 case ID selects an output. Case IDs provide document identity and join
-the corpus to the S1 manifest. No corpus surface string is matched. The
-hand-authored data on the path is:
+The remainder records checkpoint **3a7edfc**, before that widening; its
+54-target oracle counts and timings are preserved historical results.
 
-1. the definition templates in `SmusniPilot/M2Templates.lean`, transcribed
-   from the manifest's live ranges; and
-2. the semantic typing clauses itemized by
-   `M2_TYPING_SUPPLEMENT.tsv` where the frozen A0 rule set does not cover the
-   v1.2 all-S1/recursive-expansion scope.
+Migration-checkpoint status: bounded M1/M2 gates pass; independent review and the broader
+typed-oracle coverage disposition remain pending. This is not all-S1 exact
+parity, a full-migration result, or a transfer of semantic authority.
 
-## Generated inputs
+Input: `18cd6267ad38abde8836a553f1531a4f05f339c6` (integrated E01).
+F01's separate PerformSource branch and E03 lowering work are excluded.
+The pre-E02 reports, manifests, supplements and oracle are preserved under
+`../history/pre-e02/`, first committed in `828c6d2`; they are historical
+results, not current validation. `shared/archive_pre_e02.py` reproduces that
+archive from the recorded Git revision and refuses differing existing bytes.
 
-- `M2_DEFINITION_MANIFEST.json`: 28 selected definitions = 19 a0/ported,
-  3 plan-v2 extras, 6 declared dependency-closure definitions; 34 clauses;
-  one selected definition domain. It carries ledger/spec/supplement digests,
-  the full 85-definition disposition catalog, and the reviewed `Close → CoRef`
-  dependency supplement. Template certificates reject a clause outside the
-  root definition's transitive declared closure.
-- `M2_TYPING_MANIFEST.json`: 107 rules = 78 frozen A0/B1 rules plus 29 cited
-  M2 rules; 21 generated core constants; 50 generated lexical fixture rows;
-  seven pinned Redex grammar categories. `FirstOrderPrimitive` has no success
-  catch-all.
-- `M2_CASE_MANIFEST.json`: generated partition of all 337 S1 cases: 160
-  definition-parity, 3 Grade/Jai corpus extras, 50 M1 primitive baseline, 93
-  residual pending, 31 out-of-slice. The 160 is computed as pending-M2 cases
-  with a nonempty defined-head set wholly contained in the generated 19-head
-  a0/ported set.
-- `M2_REDEX_ORACLE.sexp`: generated from the corrected frozen A0/B1 definition
-  metafunctions. It contains 118 honest term targets and 42 explicit
-  oracle-unavailable dispositions; no unavailable target is called exact.
+## Mechanism and source inputs
 
-The PR #82 typing regeneration changes five semantic rule bodies:
-`A0-T-DirectClause-{Pure,Effectful}` and
-`A0-T-ActualClause-Event-{Pure,Effectful}` preserve `Fn`/`EFn`, while
-`A0-T-CloseClause` exposes the conservative EFn call. `A0-T-CloseWith` and
-the apply/synth/check records move only because their source ranges shifted.
+The pilot consumes current corpus terms **and their environments**, generated
+constructor/definition/typing inventories, exact normative equation ranges,
+lexical row arity/event mode, and occurrence context. Definition selection
+still follows the original rule: pending-M2 cases with a nonempty defined-head
+set wholly contained in the current a0/ported head set. No case-ID output
+table, surface-string match, or arbitrary 160-case reset is used.
 
-All generators run in check mode from `check-m2.sh` and fail on stale output.
+The generated chain now has 25 ported heads, 3 plan extras, 6 dependency
+definitions: 34 selected definitions, 40 clauses, one selected domain,
+89 catalog entries. Typing input contains 81 Redex rules plus 29 supplemental
+clauses (110 records), nine grammar categories (including the closure and
+comparison head families), 21 core constants and 50 pilot lexical rows.
 
-## Definition coverage
+The exact old definition source is `138259e:spec.md`, verified against the
+archived manifest's SHA-256. Supplement ranges were transported from that
+source, with changed surrounding doctrine reread at the adopted source.
+Using the immediately preceding engine base would have cited unrelated text.
+The old typing source is `a04cf29:tools/smusni-redex/port-a0.rkt`, likewise
+digest-checked. `M2_MIGRATION.json` records every old/current Redex rule body:
+the CoRef rule changed, and Closure, Comparison, and Only are new rule inputs;
+the other 77 existing rule bodies are identical despite range movement.
 
-All 28 selected IDs have general templates. The path handles all declared
-clauses, including zero/positive `AtLeast` and `Exactly`, all three
-type-directed `Close` rows, structurally recursive equal-length `ZipWith`, the
-`Refer` member-property overload, the `Massify → CanonicalAggregateAt →
-CompleteGunmaAt → GunmaAt → CoRef` closure, `ActualClause`, and
-`DirectClause`.
+General typed templates now implement IndividualSome/No/Every, PluralSome/No,
+and pure Only. The closure templates retain individual versus reference
+domains, permit the compatible effectful nuclear arrow, and do not export a
+selection witness. Only checks both pure property types and expands to host
+plus Among exclusion without projection. Massify now constructs a
+reference-level Refer restriction with an existential canonical group and
+CoRef, not SelectExactly 1. Its basis whole type is consumed and checked
+against Group<T>; CanonicalAggregateAt enforces the same domain.
+The prior typed templates and recursive dependency certificates remain live.
 
-`Grade` is a pure row-directed schema consuming an explicit `DegreeField`;
-`JaiRaise` consumes explicit row reconstruction/projection metadata. Bare jai
-has its distinct constrained-`Context` mapping. Synthetic unseen gates cover
-both. The positive corpus Jai case remains `input-unavailable` because S1 does
-not carry its row reconstruction metadata. `RowOf zzzz` is instead the named
-`unknown-row` typed rejection, with an unseen unknown-row gate.
+Hand-authored semantic data on the input-to-output path remains the general
+templates and the explicitly cited supplemental typing clauses. The new
+comparison rules compute typing from both operands. Nothing selects an output
+by corpus identity. Frozen IDs occur only in transported regression assertions.
 
-## Current all-S1 result
+## Source-to-source accounting
 
-At the rebased review candidate:
+`../shared/M2_MIGRATION.json` retains every term, environment, provenance,
+old/current identity, cohort and definition disposition.
 
-- typed unchanged: 31;
-- successful type-directed expansion: 122;
-- typed rejection: 60;
-- pending milestone 3: 48;
-- selected-domain blocked: 10;
-- input unavailable: 1;
-- out of slice: 65.
+| Population | Count |
+| --- | ---: |
+| Historical S1 inputs | 337 |
+| Current S1 inputs | 370 |
+| Exact term/environment transports | 285 |
+| Of those, identity-only inputs | 279 |
+| Of those, changed definition semantics | 6 |
+| Retired exact term/environment inputs | 52 |
+| New term/environment inputs | 85 |
+| Historical parity cohort | 160 |
+| Current criterion-derived parity cohort | 192 |
 
-These are final case dispositions, not a claim that every typed rejection
-failed before expansion. In the 50-case M1 primitive baseline: 31 are typed
-unchanged, one is a final successful expansion, and 18 are typed rejections.
-Both pure member-level `Refer` occurrences expand; `58c6...` then fails the
-enclosing `SetOf` purity rule. `2b3c...` fails `refer-member-purity` and
-`61a28...` stays reference-level primitive.
+The historical 160 split into 118 identity-only, 2 changed-definition, and
+40 retired inputs. Across all 337 inputs, four additional out-of-slice
+JoiGroup consumers reach changed Massify through the full ledger dependency
+closure; they are not falsely labelled identity-only. Retirement means the
+exact input is absent; it is not a
+claim that its language meaning was retired. Rewritten terms are not paired
+by an old fence ordinal or similarity. E01's tracked source-sync record
+supplies the numerical/P2/P43/threshold/description dispositions. Exact term
+identity itself is not semantic equivalence when a dependency changed.
 
-Those four v1.2 Refer cases are hard assertions, not printed observations:
-`58c6... = typedRejection/set-property` after the member lift,
-`58da... = typeDirectedExpansion/generated definition-domain overload`,
-`2b3c... = typedRejection/refer-member-purity`, and
-`61a28... = typedUnchanged/bidirectional typing`, including exact expanded-ID
-lists. The public member checker and elaborator require an exact member domain
-and an effect-free property construction; subsort and construction-effect
-mutations have direct unseen gates.
+The current partition is 192 parity candidates, 3 Grade/Jai extras, 51 M1
+primitive cases, 92 residual pending cases, and 32 structurally out-of-slice
+cases. Every current case is in exactly one cohort.
 
-## Declarative relation and theorems
+## Typed Redex oracle and its limit
 
-`M2TypingJudgment.lean` is the Prop-valued A0 relation. Its mutually inductive
-`SynthJudgment`, `CheckJudgment`, `ApplyJudgment`, positional/row/lexical
-argument judgments, and primitive rule classes contain no fuel, search order,
-or stored executable equality. The supported rule IDs are selected from the
-generated 107-rule manifest; every other manifest record is returned by
-`unsupportedTypingRuleRecords` rather than silently defaulted.
-The proved relation slice covers 58 generated rule records and lists 49
-exclusions. Measured in each case's actual environment, all 31 available
-unchanged-input typings and all 153 successful output typings have traces
-wholly inside that theorem domain. No excluded ID occurs in a successful S1
-output trace. The gate emits every remaining excluded ID individually with the
-reason “not observed in a successful S1 output trace”; those records remain
-outside the full 107-rule manifest, but not outside the measured S1 slice.
+Available targets require an actual source A0 typing and a target A0 check
+at that source type. Lexical declarations are computed from the actual
+fixture arity/event mode for source and target, independently of Lean.
+The exporter preserves A0's top spelling until after typing, then converts
+the target to the interchange spelling. Each available record carries its
+source type. No untyped metafunction RHS is counted as available.
 
-`M2TypingBridge.lean` proves relation-to-executable completeness by one mutual
-constructor induction. The checking companion is generated from that exact
-recursor/handler proof term, so internal recursive checks and public
-`checkBidirectional` cannot drift into two handwritten proof paths. The old
-`SynthSupported`/`CheckSupported` characterization has been removed: assuming
-that the declarative relation was already inhabited was circular evidence for
-executable-to-relation soundness.
+Expected non-admission raises a dedicated domain exception with the actual
+stage/input. Unexpected implementation exceptions fail generation instead of
+being swallowed as unavailable. Empty typed-oracle output also fails.
+The generic effectful CoveredBy member-property guard is preserved. Six
+exporter tests exercise that guard, the actual transported symbolic #83 case
+(`9179373c…`, formerly `7318097d…`), an unseen effectful equivalent, and an
+unseen pure positive control.
 
-`M2TypingSoundness.lean` proves the missing direction on an independent
-manifest domain. `TypingManifestSupported result.trace` is only the Boolean
-claim that every rule ID emitted by the successful executable result is in the
-58-rule implemented manifest slice; it does not mention or assume a typing
-judgment. `synth_success_sound` takes executable success plus that trace fact
-and constructs `SynthJudgment ... result.observation`.
-`checkBidirectional_success_sound` exposes the checking companion with the
-same manifest premise and constructs `CheckJudgment ... result.observation`.
-The companion is extracted shape-sensitively from the exact motives and case
-handlers of `synth_execution_sound` and applies `check.induct`; it is not a
-second handwritten checking proof. The proof follows the mutual executable
-recursion through named handlers for expected checks,
-reference and Presuppose checks, primitive schemas, function application and
-partial application, PredTerm application, synthesis/check argument lists,
-lexical rows, and value operands. Lean-generated `caseNNN` names are dispatch
-glue only; the semantic proofs live in those named handlers.
+Current oracle: **54 available, 138 unavailable** of 192. All 54 are compared:
+54 term matches, 54 site-signature matches, zero differences. Unavailable:
 
-The S1 gate checks the same manifest predicate for all 31 available unchanged
-inputs and all 153 successful outputs; theorem
-`typingTraceSupported_instantiates_soundness` turns each passing Boolean check
-into the exact premise of both public soundness theorems. Removing one observed rule
-from the predicate is a required failing mutation. Thus the 153/153 output
-count now instantiates executable-to-relation soundness rather than merely
-reporting that traces avoid a list of exclusions.
+- 47 outside the frozen A0 whole-source grammar;
+- 90 with no admitted A0 source derivation;
+- 1 member-Refer lift whose ledger still has port-state none.
 
-The public priority theorem exposes the three checking cases:
-compatible synthesis gives `fromSynth`; incompatible synthesis gives the named
-`type-mismatch` without fallback; synthesis failure invokes exactly the shared
-expected-clause interpreter. It also proves synthesis/checking observation
-functionality, synthesis-type uniqueness, judgment-relative wrong-type
-failure, purity, computation category, and the five-effect bound.
+These are explicit non-admission/domain boundaries, not 138 semantic
+ill-typing judgments. Among transported old targets, 22 remain available,
+61 formerly available targets are now non-admitted, and 37 remain unavailable.
+New inputs contribute 32 available and 40 unavailable candidates.
+The archived old oracle had not required these whole-term typing witnesses;
+its 118 published RHSs cannot be relabelled as current typed parity.
 
-Expected-only Presuppose is classified recursively by
-`expectedOnlySynthesisForm`; its declarative counterpart includes recursive
-Presuppose bodies. Direct structural theorems and runtime regressions cover a
-nested expected-only body, a nested ordinarily synthable body, and a mutation
-that accepts every binary Presuppose. The soundness proof additionally exposed
-that `predTermArgumentResults` accepted a second labelled `:Eventuality` while
-the judgment permits only one. The executable now rejects that duplicate with
-`predterm-row`, and an explicit regression exercises the unseen duplicate.
+**Coverage follow-up / PM disposition required (#74/#83):** broader parity
+for those non-admitted whole terms requires a separately justified typed
+oracle interface (including the needed wrapper/row/expected-mode domains).
+This checkpoint does not expand the frozen E01 engine or hide that remaining
+coverage cost. The selected cohort was not reduced to the available set.
 
-`M2Relation.lean` now states definition side conditions through those typing
-judgments (`PurePropertyJudgment`, `ReferenceMemberJudgment`, and
-`DecompositionBasisJudgment`), not calls to `synth`. `TemplateEquation` remains
-Prop-valued and existential over derivations. The proved interface has both
-directions where the relation is inhabited (the domain premise is
-`∃ expectedPayload, TemplateEquation ...`) via
-`dispatch_sound_against_template` and `declarative_dispatch_complete`, and
-relation functionality without dispatcher-success assumptions.
-`SupplementalTemplateEquation` covers typed Let and Refer-member-lift leaves.
-Grade and JaiRaise were removed from the coverage claim: their synthetic
-`GradePlan`/`JaiRaisePlan` values still exercise executable templates, but no
-independent judgment validates those plans. The recursive surface decoder/state
-allocator is likewise outside the converse theorem.
+## Lean typing, relations and certificates
 
-Three `TemplateEquation` families still carry executable-equality premises:
-`close`/`directClause` use `typedClosePlan` (and `expandClose` for Close), and
-`zipWith` uses `termAsList`/`expandZipWith`. The other 22 constructors use
-typing judgments for semantic side conditions. This is a declared proof gap,
-not covered by the sentence above.
+All 370 cases are classified: 31 typed unchanged, 157 successful expansions,
+62 typed rejections, 48 pending M3, 6 selected-domain blocked, 1 input
+unavailable, and 65 final out-of-slice dispositions. Final dispositions and
+the structural input partition are different classifications.
 
-The hand-authored template RHSs in `M2Templates.lean` are the declarative
-content transcribed clause by clause from the generated manifest ranges; the
-dispatcher is proved to produce those RHSs. They are not fixture-keyed output
-records. Concrete unseen `ActualClause` and natural-typing instantiations in
-`M2Examples.lean` exercise both relation directions and the structural typing
-constructor directly.
+There are 59 implemented declarative typing rules and 51 explicitly excluded
+manifest rules. All 31 available unchanged-input typings and all 188
+successful output typings satisfy the independent manifest-domain predicate.
+Comparison was added to the actual executable and declarative rules, with
+both soundness and completeness checked. Generated induction handler numbers
+moved by two; their named semantic handlers were retained.
 
-There are no `sorry`, `axiom`, or `admit` declarations.
-`#print axioms` on both `synth_success_sound` and
-`checkBidirectional_success_sound` reports only Lean's standard `propext`,
-`Classical.choice`, and `Quot.sound`; the proofs carry no `native_decide`
-oracle axioms. `M2Examples.lean` specializes public checking soundness to the
-nested expected-only Presuppose and to a compatible-synthesis natural-number
-control; the runtime gate independently executes both paths.
+TemplateEquation now includes the six new definition families and the typed
+group-basis condition. The existing dispatcher soundness/completeness domain
+is retained, not replaced with a premise assuming its desired output judgment.
+The three existing executable-equality families (Close/DirectClause/ZipWith)
+remain declared proof limits. Grade/Jai plan validation and the recursive
+surface decoder/site allocator remain outside the converse theorem.
+Neither the 59-rule typing slice nor the definition relation is an all-S1
+semantic adequacy proof.
 
-## Expansion sites and certified bundles
+The four public typing/dispatch theorem axiom checks report only
+`propext`, `Classical.choice`, and `Quot.sound`. No new axioms, omitted
+proofs, or test-output special cases were introduced.
 
-`TooMany` is the required site-introducing specimen. It allocates a purpose
-`Context` and threshold `Vague`; the Vague support contains the ordered bound
-purpose dependency. The site key uses document/case identity, structural
-occurrence ordinal, definition ID, and expansion role/slot. Gates cover:
+Unseen controls cover every new closure at Entity/Eventuality/Number with
+effectful nuclear predicates, non-export, pure/effectful-host Only,
+Massify's Refer/existential shape and wrong whole-basis rejection, numeric
+comparisons and wrong operand types, and explicit dependent-reference
+metadata plus malformed-profile mutations. Existing certificate, corrupted
+bundle, expected-only, purity and row controls continue to run.
 
-- identical key → identical pair;
-- distinct copied occurrence → distinct pair;
-- distinct roles within one occurrence → distinct pair;
-- alpha/renaming invariance;
-- canonical/bracket-insensitive reserialization invariance; and
-- one lambda occurrence shared by two applications → one syntactic pair.
+## RR and source/index joins
 
-`Grade` introduces no site. Bare jai introduces its one constrained Context.
-`buildElaborationBundle` takes the primitive term, RR metadata, allocation
-certificate, source map, and RR link and returns M1 `ValidatedBundle` only if
-occurrence/table/profile coherence is proved. The version-1 serialized `site`
-dependency tag remains decodable but is rejected as a semantic profile;
-internal `Dependency.site` is absent.
+RR.references is required and decoded as explicit invariant or dependent
+profiles. The decoder preserves source offsets, governor lists and scope;
+it rejects duplicate sources/governors, empty governors, self-dependence and
+scope outside the governor list. This is **shape validation**, not a Lean
+proof of source attachment, graph legality or dependent-reference realization.
+Those limitations are printed alongside the consumed profiles.
 
-The RR adoption audit decodes all 29 pinned RR fixtures and searches for an
-injective structural embedding of the declared dependency graph in the emitted
-Context/Vague graph. Declared RR role names label fixture nodes and are used
-only to preserve edges under the injection; they are not matched to emitted
-`SiteRole` or `SiteId.expansionRole` names. Extra emitted nodes are retained as
-undeclared origins rather than mismatches.
-Computed-minimum `Close/default-*` sites are excluded from embedding candidates
-and can appear only as undeclared emitted origins.
-Across 32 linked cases it sees 13 declared roles and 26 emitted operand sites:
-6 declared roles match, all 6 matched dependency lists agree, 7 declarations
-remain unmatched, and 20 emitted sites are undeclared (principally
-expansion-introduced `Close/default-*` sites). Three cases with declarations
-have all roles matched; 16 cases have an emitted term and 16 are unavailable.
-All seven unmatched declarations belong to unavailable cases with no emitted
-term; no declaration fails to embed in a comparable case.
-The gate prints a per-case table with matched roles, dependency results,
-missing declarations, and undeclared emitted origins. These report-only
-results replace both the former 135/0 self-consistency claim and the uninformative
-8/8 length comparison.
+A current RR link requires source ordinal **and exact fence digest**.
+Six stale RR files remain explicit HistoricalRRFixture records and are not
+fed into current bundles or audits. There are 28 current RR fixtures and
+32 linked corpus cases. Context/Vague graph audit: 12 declared sites,
+23 operand sites, 6 matched roles/dependency agreements, zero comparable
+mismatches, 17 undeclared emitted origins, 17 comparable and 15 unavailable
+cases. Reference-source profiles are not conflated with those site graphs.
+The sites attached to emitted current RR links total 22; the earlier
+unfiltered-link count included non-current paths and is not current coverage.
 
-Non-zero per-case RR results (the gate also prints all 19 zero rows):
+## Validation at this checkpoint
 
-| case | fixture | declared/matched/dep-ok | missing roles | undeclared emitted origins |
-| --- | --- | --- | --- | --- |
-| `1089e6` | `samples-023#1` | 0/0/0 | — | `Close/default-:2,:3,:4,:5` |
-| `250874` | `samples-063#3` | 1/1/1 | — | — |
-| `29cfac` | `samples-027#1` | 1/0/0 | `group-basis` | — |
-| `302aef` | `samples-071#1` | 0/0/0 | — | `Close/default-:3` |
-| `3979ff` | `samples-058#1` | 1/0/0 | `tanru-link` | — |
-| `3e12ed` | `samples-063#1` | 2/0/0 | `scale`, `cutoff` | — |
-| `411d8a` | `samples-034#1` | 1/0/0 | `group-basis` | — |
-| `428f27` | `samples-072#1` | 0/0/0 | — | `Close/default-:3` |
-| `433ec3` | `samples-048#1` | 1/0/0 | `threshold` | — |
-| `519c65` | `samples-001#1` | 0/0/0 | — | `Close/default-:2,:3,:4,:5` |
-| `5f5b05` | `spec-019#1` | 0/0/0 | — | two `Close/default-:3` occurrences |
-| `7668b7` | `samples-036#1` | 0/0/0 | — | `Close/default-:2` |
-| `a2dc10` | `samples-059#1` | 1/0/0 | `contrast-domain` | — |
-| `ae0905` | `samples-063#2` | 2/2/2 | — | `Close/default-:2,:3,:4,:5` |
-| `c27acb` | `spec-009#1` | 0/0/0 | — | `Close/default-:2,:3,:4` |
-| `ec2d5f` | `spec-010#1` | 3/3/3 | — | — |
+- `./pilot/lean/check-m1.sh`: passes; 370 source/text round trips,
+  51 primitive core round trips, 303 generated round trips; 29.97 s wall,
+  2,012,076 KiB maximum RSS on the recorded rebuilding run.
+- `./pilot/lean/check-m2.sh`: passes; counts above, all generator checks,
+  six exporter tests, existing and unseen controls; 120.66 s wall,
+  3,532,448 KiB maximum RSS on the final rebuilding run after including
+  the two grammar-family records (earlier rebuilding run: 45.88 s).
+- Public theorem axiom inspection: the four checks described above pass.
+- `tools/check-smusni`: passes, 152.36 s wall, 376,780 KiB maximum RSS.
+  No unchanged E01 suite was rerun during exploration. Final idempotent
+  regeneration of the root inventory/fences and the complete M1/M2 chain
+  was byte-identical. `git diff --check` and the tracked document checker pass.
 
-Causes for every unmatched declared role (also printed in the gate):
-
-- `group-basis` in `29cfac`/`samples-027#1` and
-  `411d8a`/`samples-034#1`: no M2 term is emitted because the cases are
-  `outOfSlice` at M1 structural/offending-head provenance.
-- `tanru-link` in `3979ff`/`samples-058#1`: no M2 term is emitted because
-  `D6.2.Tanru` is pending M3; its fills-parameterized expansion has not reached
-  the Redex port.
-- `scale` and `cutoff` in `3e12ed`/`samples-063#1`, and `contrast-domain` in
-  `a2dc10`/`samples-059#1`: no M2 term is emitted because unselected `D5.1.That`
-  is a metatheory/model-law out-of-slice head.
-- `threshold` in `433ec3`/`samples-048#1`: no M2 term is emitted because the
-  selected definition domain is blocked (`definition-domain`).
-
-## Parity result
-
-The gate compares (1) alpha-normal CoreTerms after SiteId erasure and lexical
-row-label normalization, and (2) ordered `(site kind, binder scope,
-dependency support)` signatures. After PR #82 correction and regeneration:
-
-- generated cohort: 160;
-- honest Redex term targets: 118;
-- explicit oracle-unavailable: 42;
-- comparable successful Lean terms: 118;
-- term matches: 118;
-- site-signature matches: 118;
-- differences: 0.
-
-Every available target is compared. The 42 unavailable targets are 33 Redex
-definition/domain exclusions, 6 missing `Close` row adapter inputs,
-1 `Refer-member-lift` (`port-state none`), 1 unavailable typed Massify basis,
-and `731809...`, whose Redex purity-oracle defect is tracked in #83. These are
-dispositions, not waivers.
-
-The three corpus extras remain separate: the two Grade cases (`3e12...`,
-`71ab...`) also contain unselected model-context `That`, so they do not acquire
-an exact Grade oracle merely because the pure explicit-row synthetic gate
-passes; the positive Jai case (`9ef0...`) is the sole `input-unavailable` case
-because S1 lacks row reconstruction metadata. Synthetic Grade, JaiRaise,
-bare-jai, TooMany, and unseen Refer/row gates pass. Grade/Jai/Refer term
-expansion is never called exact where the ledger has `port-state none`.
-
-## Timing
-
-On this VM after `lake clean`:
-
-- `lake build m2`: 21.04 s wall, 1,712,684 KiB maximum RSS;
-- `lake exe m2`: 0.29 s wall, 129,228 KiB maximum RSS;
-- full `check-m2.sh` including generators/oracle/build/run: 9.85 s wall in
-  the recorded incremental run (338,584 KiB maximum RSS).
-
-## Explicit limits
-
-- Only the manifest-selected definition/domain slice is complete. Symbolic
-  `AtLeast`/`Exactly` expansion and unequal-length `ZipWith` remain their
-  recorded blocked/unselected domains; pending-M3 heads are not in the
-  completeness claim.
-- Fixture lexical rows remain pilot-only pending #12; place-row shape and
-  event mode are consumed, and missing named rows fail closed.
-- The 42 oracle-unavailable parity cases retain the explicit reasons above.
-- The converse relation theorem covers `dispatchDefinition`; recursive surface
-  decoding/state allocation has a deliberately narrower claim, with explicit
-  typed Let/Refer-member template-leaf relations only.
-- The measured S1 theorem domain covers 31/31 available input typings and
-  153/153 successful output typings. The other 49 manifest rules remain
-  explicit, individually reported non-S1 exclusions.
-- Final exact-head reviewer dispositions are not yet recorded here.
+This remains derived verification work under #74/#19/#83. Review, merge,
+semantic authority transfer, and any separately scoped oracle widening
+require their own recorded dispositions.

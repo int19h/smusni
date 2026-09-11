@@ -14,6 +14,7 @@ structure RRDeclaredSite where
 structure RRFixtureCase where
   index : Nat
   sites : List RRDeclaredSite
+  references : List RRReferenceProfile
   deriving Repr, BEq
 
 structure RRFixture where
@@ -48,7 +49,10 @@ def decodeRRFixtureCase : SExpr → Except String RRFixtureCase
       let sites ← match rawSites with
         | .list _ values => values.mapM decodeRRDeclaredSite
         | value => throw s!"RR case {index} sites are not a list: {repr value}"
-      pure { index, sites }
+      let some rawReferences := SExpr.field? "references" fields
+        | throw s!"RR case {index} lacks explicit references"
+      let references ← decodeRRReferences rawReferences
+      pure { index, sites, references }
   | value => throw s!"malformed RR case: {repr value}"
 
 def decodeRRFixture : SExpr → Except String RRFixture
@@ -234,7 +238,10 @@ def loadRRFixtures (root : String) (manifest : S1Manifest) :
       throw <| IO.userError s!"RR audit digest mismatch for {record.path}"
     let fullPath : String := root ++ "/" ++ record.path
     let source ← IO.FS.readFile fullPath
-    let fixture ← IO.ofExcept <| (SExpr.parse source >>= decodeRRFixture).mapError fun error =>
+    let fixture ← IO.ofExcept <| (do
+      let parsed ← SExpr.parse source
+      validateRRFixture parsed
+      decodeRRFixture parsed).mapError fun error =>
       s!"{record.path}: {error}"
     pure (record.path, fixture)
 
@@ -254,6 +261,13 @@ def runM2RRAudit (root : String) (caseRun : CaseRun) : IO RRAuditRun := do
           | throw <| IO.userError s!"RR-linked case {record.id} lacks fixture case {caseIndex}"
         let some outcome := caseRun.outcomes.find? fun item => item.id == record.id
           | throw <| IO.userError s!"RR-linked case {record.id} lacks M2 outcome"
+        -- Reference-source offsets are not Context/Vague site identities.
+        -- Consume and report them separately; this graph audit cannot prove
+        -- source attachment/scope legality or realize dependent references.
+        IO.println <| s!"M2 RR-references {record.id} profiles={repr fixtureCase.references} " ++
+          (if fixtureCase.references.any (·.scope.isSome) then
+            "status=dependent-realization-unimplemented; source-legality-not-checked-by-Lean"
+          else "status=explicit-invariant-metadata; source-legality-not-checked-by-Lean")
         match outcome.term with
         | none =>
             audits := audits ++ [{

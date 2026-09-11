@@ -304,6 +304,31 @@ def mergeResults (type : Ty) (results : List TypingResult)
   obligations := results.flatMap (·.obligations) ++ obligations
   trace := results.flatMap (·.trace) ++ [rule] }
 
+-- Human-confirmed PR46/B1 negation law: only escaping reference introduction
+-- is masked. In particular this is not the law of Local or other connectives.
+def negationEffects (effects : List Effect) : List Effect :=
+  effects.filter (· != .refer)
+
+def negateResult (body : TypingResult) : TypingResult := {
+  type := Ty.content
+  effects := negationEffects body.effects
+  obligations := body.obligations
+  trace := body.trace ++ [.b1TNegation, .a0Synth] }
+
+theorem negateResult_obligations (body : TypingResult) :
+    (negateResult body).obligations = body.obligations := rfl
+
+theorem negationEffects_nonrefer (effects : List Effect) (effect : Effect)
+    (notRefer : effect ≠ .refer) :
+    effect ∈ negationEffects effects ↔ effect ∈ effects := by
+  cases effect <;> simp_all [negationEffects] <;> (intro _; rfl)
+
+theorem negationEffects_no_refer (effects : List Effect) :
+    Effect.refer ∉ negationEffects effects := by
+  simp [negationEffects]
+  intro _
+  rfl
+
 structure Environment (scope : Nat) where
   bound : Fin scope → Ty
   free : List (FreeId × Ty) := []
@@ -1174,7 +1199,12 @@ mutual
             .a0TAnd |>.withRule .a0Synth
         | _ => failure "arity" "and expects zero or two operands"
     | .implies => binaryCheck .b1TImplication Ty.content Ty.content
-    | .not => unaryCheck .b1TNegation Ty.content Ty.content
+    | .not =>
+        match arguments with
+        | .positional body .nil => do
+            let checked ← check environment body Ty.content
+            pure (negateResult checked)
+        | _ => failure "arity" "negation expects one Content"
     | .forall => quantify .b1TForall
     | .exists => quantify .b1TExists
     | .among => referenceBinary .b1TAmong
@@ -1202,12 +1232,7 @@ mutual
         | _ => failure "arity" "Card expects one set"
     | .admissibleThreshold => synthAdmissibleThreshold environment arguments
     | .stateClause =>
-        match arguments with
-        | .positional content .nil => do
-            let result ← check environment content Ty.content
-            pure <| mergeResults Ty.clauseContent [result] [] [] .a0TStateClause
-              |>.withRule .a0Synth
-        | _ => failure "arity" "StateClause expects one Content"
+        unaryCheck .a0TStateClause Ty.content Ty.clauseContent
     | .closeClause =>
         match arguments with
         | .positional clause .nil => do
@@ -1221,6 +1246,7 @@ mutual
               |>.withRule .a0Synth
         | _ => failure "arity" "CloseClause expects one ClauseContent"
     | .perform => synthPerform environment arguments
+    | .lessThan | .lessOrEqual => binaryCheck .e01TComparison Ty.number Ty.content
     | .list => failure "expected-type" "List literals require an expected List<T>"
     | .refer | .selectExactly | .selectAtLeast | .selectAllBut | .local =>
         failure "expected-type" s!"{operator.name} requires an expected RefComp type"
@@ -1493,7 +1519,7 @@ def typingRuleImplemented (rule : M2TypingRuleId) : Bool :=
     .m2TPredTermApply, .m2TLexicalRow, .m2TString,
     .m2TCoreConstant, .m2TContextConstants, .m2TNumericInterfaces, .m2TLocal,
     .a0TSpeaker, .a0TAudience, .a0TThresholdKind, .a0TTop,
-    .a0TAnd, .b1TImplication, .b1TNegation, .a0TEquality,
+    .a0TAnd, .b1TImplication, .b1TNegation, .a0TEquality, .e01TComparison,
     .b1TAmong, .b1TAddition, .a0TStateClause,
     .b1TForall, .b1TExists, .b1TPresupposeReference,
     .a0TSetOf, .a0TCard, .a0TAdmissibleThreshold, .a0TCloseClause,

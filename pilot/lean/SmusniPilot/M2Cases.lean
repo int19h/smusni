@@ -132,13 +132,10 @@ end
 def decodeCorpusTypingEnvironment (environment : SExpr) : Except String
     (List (FreeId × Ty)) :=
   match environment with
-  | .list _ entries => entries.mapM fun
-      | .list _ [.atom (.symbol name), rawType] => do
-          if !name.startsWith "$" then
-            .error s!"environment identity is not a variable: {name}"
-          let type ← decodeTy (SurfaceTerm.ofSExpr rawType)
-          pure ({ domain := name, serial := 0 }, type)
-      | value => .error s!"malformed typed environment entry: {repr value}"
+  | .list _ entries => entries.mapM fun entry => do
+      let (name, rawType) ← decodeCorpusEnvironmentEntry entry
+      let type ← decodeTy (SurfaceTerm.ofSExpr rawType)
+      pure ({ domain := name, serial := 0 }, type)
   | value => .error s!"environment is not a list: {repr value}"
 
 def environmentForCorpus (environment : SExpr) : Except String (Environment 0) := do
@@ -307,6 +304,11 @@ def typedClosePlan {scope : Nat} (environment : Environment scope)
             fill := none }
           eventMode := if event then .directEvent else .holdingState }
 
+def referenceClosureDomain (type : Ty) : Bool :=
+  match Ty.asUnary type .typeFormReferents with
+  | some inner => Ty.firstOrder inner
+  | none => false
+
 def dispatchDefinition {scope : Nat} (environment : Environment scope)
     (key : ExpansionKey) (definition : M2DefinitionId)
     (arguments : List (Term scope)) : Except TypingError (ExpansionPayload scope) := do
@@ -332,7 +334,9 @@ def dispatchDefinition {scope : Nat} (environment : Environment scope)
         let [basis, group, cover] := arguments
           | coreElaborationFailure "definition-arity"
               "CanonicalAggregateAt expects basis, group, and cover"
-        let (_, componentType) ← decompositionTypes environment basis
+        let (wholeType, componentType) ← decompositionTypes environment basis
+        if wholeType != Ty.group componentType then
+          coreElaborationFailure "definition-basis" "CanonicalAggregateAt requires a Group<T>/T basis"
         pure <| (expandCanonicalAggregateAt componentType basis group cover).payload
     | .d12CoRef =>
         let [first, second] := arguments
@@ -367,12 +371,57 @@ def dispatchDefinition {scope : Nat} (environment : Environment scope)
               "GlobalExactly expects three arguments"
         let memberType ← memberTypeOfProperty environment property
         pure <| (expandGlobalExactly memberType count property nuclear).payload
+    | .d12IndividualSome =>
+        let [property, nuclear] := arguments
+          | coreElaborationFailure "definition-arity" "IndividualSome expects two arguments"
+        let parameter ← memberTypeOfProperty environment property
+        if !Ty.firstOrder parameter then
+          coreElaborationFailure "definition-domain" "IndividualSome property domain is not admitted"
+        pure <| (expandIndividualSome parameter property nuclear).payload
+    | .d12IndividualNo =>
+        let [property, nuclear] := arguments
+          | coreElaborationFailure "definition-arity" "IndividualNo expects two arguments"
+        let parameter ← memberTypeOfProperty environment property
+        if !Ty.firstOrder parameter then
+          coreElaborationFailure "definition-domain" "IndividualNo property domain is not admitted"
+        pure <| (expandIndividualNo parameter property nuclear).payload
+    | .d12IndividualEvery =>
+        let [property, nuclear] := arguments
+          | coreElaborationFailure "definition-arity" "IndividualEvery expects two arguments"
+        let parameter ← memberTypeOfProperty environment property
+        if !Ty.firstOrder parameter then
+          coreElaborationFailure "definition-domain" "IndividualEvery property domain is not admitted"
+        pure <| (expandIndividualEvery parameter property nuclear).payload
+    | .d12PluralSome =>
+        let [property, nuclear] := arguments
+          | coreElaborationFailure "definition-arity" "PluralSome expects two arguments"
+        let parameter ← memberTypeOfProperty environment property
+        if !referenceClosureDomain parameter then
+          coreElaborationFailure "definition-domain" "PluralSome property domain is not admitted"
+        pure <| (expandPluralSome parameter property nuclear).payload
+    | .d12PluralNo =>
+        let [property, nuclear] := arguments
+          | coreElaborationFailure "definition-arity" "PluralNo expects two arguments"
+        let parameter ← memberTypeOfProperty environment property
+        if !referenceClosureDomain parameter then
+          coreElaborationFailure "definition-domain" "PluralNo property domain is not admitted"
+        pure <| (expandPluralNo parameter property nuclear).payload
+    | .d12Only =>
+        let [alternatives, host, focus] := arguments
+          | coreElaborationFailure "definition-arity" "Only expects alternatives, host, focus"
+        let parameter ← memberTypeOfProperty environment alternatives
+        let hostParameter ← memberTypeOfProperty environment host
+        if parameter != hostParameter || !referenceClosureDomain parameter then
+          coreElaborationFailure "definition-domain" "Only requires pure properties of the same reference type"
+        pure <| (expandOnly parameter alternatives host focus).payload
     | .d12Grade => coreElaborationFailure "row-input-unavailable" "Grade requires a resolved DegreeField row input"
     | .d12JaiRaise => coreElaborationFailure "row-input-unavailable" "JaiRaise requires resolved row reconstruction metadata"
     | .d12Massify =>
         let [basis, cover] := arguments
           | coreElaborationFailure "definition-arity" "Massify expects basis and cover"
-        let (_, componentType) ← decompositionTypes environment basis
+        let (wholeType, componentType) ← decompositionTypes environment basis
+        if wholeType != Ty.group componentType then
+          coreElaborationFailure "definition-basis" "Massify requires a Group<T>/T basis"
         pure <| (expandMassify componentType basis cover).payload
     | .d12MaxRefer =>
         let [property] := arguments
@@ -773,7 +822,8 @@ def classifyUnselected (record : CorpusCase) (tag : String)
     }
   else none
 
-def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecord)
+def classifyDecodedCase (lexicalHeads : List String) (manifest : S1Manifest)
+    (manifestCase : S1CaseRecord)
     (record : CorpusCase) : Except String CaseOutcome := do
   let surface := SurfaceTerm.ofSExprWithLexicon lexicalHeads record.term
   if !manifestCase.offending_heads.isEmpty then
@@ -787,7 +837,10 @@ def classifyDecodedCase (lexicalHeads : List String) (manifestCase : S1CaseRecor
     return outcome
   let freeNames := freeNamesFromEnvironment record.environment
   let environment ← environmentForCorpus record.environment
-  let rrLink := rrLinkFromProvenance record.provenance
+  let rrLink := (rrLinkFromProvenance record.provenance).bind fun candidate =>
+    if manifest.typed_records.any fun typed =>
+        typed.path == candidate && typed.schema == "RRFixture"
+    then some candidate else none
   match elaborateSurface record.id lexicalHeads freeNames rrLink [] environment none
       surface {} with
   | .error error =>
@@ -931,7 +984,7 @@ def runM2Cases (root : String) : IO CaseRun := do
   let outcomes ← corpus.mapM fun record => do
     let some manifestCase := findManifestCase manifest record.id
       | throw <| IO.userError s!"M2 case absent from S1 manifest: {record.id}"
-    IO.ofExcept <| classifyDecodedCase lexicalHeads manifestCase record
+    IO.ofExcept <| classifyDecodedCase lexicalHeads manifest manifestCase record
   if outcomes.length != manifest.counts.total_cases then
     throw <| IO.userError "M2 did not classify every S1 case"
   let assertFrozen := fun (id : String) (disposition : CaseDisposition)
@@ -943,15 +996,27 @@ def runM2Cases (root : String) : IO CaseRun := do
       throw <| IO.userError <| s!"frozen Refer case drifted: {id} " ++
         s!"got {repr outcome.disposition}/{outcome.decidingRule}/" ++
         s!"{repr outcome.expandedDefinitions}"
-  assertFrozen "58c6ffc749c2646868481de082505374ffabf2df"
+  assertFrozen "dca2591716f1bddade1e6b1d76605a84e2b5157f"
     .typedRejection "set-property" [.d53ReferMemberLift]
-  assertFrozen "58da5cf5634a11f88da8aa2a3f88db4707056141"
+  assertFrozen "cc26b9d3a5a7be71c84d4b961305f5e0152aafd8"
     .typeDirectedExpansion "generated definition-domain overload"
     [.d53ReferMemberLift]
-  assertFrozen "2b3c9244ebe77552801d7ae17388f626b3dd74c3"
+  assertFrozen "0325a882e54766a92866417b067a7d7694280900"
     .typedRejection "refer-member-purity" []
-  assertFrozen "61a28f59bc37ccdacbcb320cc8b1704889eb23c8"
+  assertFrozen "d936f713fab6df3e8eadb5235a1215d7241c43ca"
     .typedUnchanged "bidirectional typing" []
+  -- Retain the four historical PR46/B1 discriminator inputs. These are
+  -- assertions about the general classifier, never dispatch keys for output.
+  for id in ["1de177f660bc3c934b18cd20087636c6dce7f837",
+      "63f5f18694818117743c94ef567a0a25cc148c8d",
+      "c3d5175b715643891982317b895cbad77bf79fed",
+      "d8116f10e6b587310e323677fb87af53a97c9546"] do
+    let some outcome := outcomes.find? (·.id == id)
+      | throw <| IO.userError s!"retained negation case missing: {id}"
+    if outcome.disposition != .typeDirectedExpansion || outcome.type != some (Ty.set Ty.entity) ||
+        !outcome.outputTypingAvailable || !outcome.outputTraceSupported ||
+        !outcome.typingTrace.contains .b1TNegation then
+      throw <| IO.userError s!"retained negation case lacks successful proved Set typing: {id}"
   pure <| CaseRun.ofOutcomes outcomes
 
 end M2

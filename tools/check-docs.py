@@ -19,7 +19,7 @@ CORPUS = [
 ]
 
 # Independent expectation: deleting the final pin must not shrink the check.
-EXPECTED_PIN_MAX = 44
+EXPECTED_PIN_MAX = 45
 
 
 def missing_links(root: Path) -> list[tuple[Path, int, str]]:

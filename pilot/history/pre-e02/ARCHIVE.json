@@ -1,0 +1,67 @@
+{
+  "source_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+  "status": "historical inputs and reported results, not current validation",
+  "corpus": "tools/smusni-redex/inventory/history/pre-e01-port-corpus.sexp",
+  "files": [
+    {
+      "source": "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv",
+      "snapshot": "M1_CONSTRUCTOR_DISPOSITION.tsv",
+      "sha256": "dc85cef1d793c91dfc32b3396a3ae2364ea8069649d4d26314dbc3c5f255d778"
+    },
+    {
+      "source": "pilot/shared/M1_S1_MANIFEST.json",
+      "snapshot": "M1_S1_MANIFEST.json",
+      "sha256": "110315b78117fa74682d9900357d6b5bb5568a6792dc9f94dd862e6a5247e3d7"
+    },
+    {
+      "source": "pilot/shared/M1_INPUTS.md",
+      "snapshot": "M1_INPUTS.md",
+      "sha256": "d730b6dd490bdfcd53bc1aac4c7c474ca807dd4d915ef91572231af41a261fae"
+    },
+    {
+      "source": "pilot/shared/M2_CASE_MANIFEST.json",
+      "snapshot": "M2_CASE_MANIFEST.json",
+      "sha256": "13fa091752b6f218f3939d9b6ce80d4ab41158da0f060fc943c57178418ed9e2"
+    },
+    {
+      "source": "pilot/shared/M2_DEFINITION_MANIFEST.json",
+      "snapshot": "M2_DEFINITION_MANIFEST.json",
+      "sha256": "f6809de8dd51f84429033ec80d9ea369cbb6e3034e73ace3308fad60e55f77a4"
+    },
+    {
+      "source": "pilot/shared/M2_TYPING_MANIFEST.json",
+      "snapshot": "M2_TYPING_MANIFEST.json",
+      "sha256": "a9bba4815f8463bc927fc25afc2a3913e84d22c01ef0584e0ca94276c17af33a"
+    },
+    {
+      "source": "pilot/shared/M2_REDEX_ORACLE.sexp",
+      "snapshot": "M2_REDEX_ORACLE.sexp",
+      "sha256": "1f6f713591fd3f8dc15f6d1ae4637bcbcb0e33d327b67e17af79306929814bd7"
+    },
+    {
+      "source": "pilot/shared/M2_RANGE_SUPPLEMENT.tsv",
+      "snapshot": "M2_RANGE_SUPPLEMENT.tsv",
+      "sha256": "b8fc35d0dec17a0f81c0d9b30bca9f16f6bffb186321ec0986be1595de573f7b"
+    },
+    {
+      "source": "pilot/shared/M2_DEPENDENCY_SUPPLEMENT.tsv",
+      "snapshot": "M2_DEPENDENCY_SUPPLEMENT.tsv",
+      "sha256": "677926608aa9c4ba500fb61272230c3967d7c8a4abf8192545398774a0378ad0"
+    },
+    {
+      "source": "pilot/shared/M2_TYPING_SUPPLEMENT.tsv",
+      "snapshot": "M2_TYPING_SUPPLEMENT.tsv",
+      "sha256": "dcf12677b0e2ab3e2dceb7f0431949d3d2c5381b6593db86b0d8295f62209aa2"
+    },
+    {
+      "source": "pilot/lean/M1_REPORT.md",
+      "snapshot": "M1_REPORT.md",
+      "sha256": "e65db5b274343b50f08f06af78d65bdb86e606d0435f18c304854a38cc776df2"
+    },
+    {
+      "source": "pilot/lean/M2_REPORT.md",
+      "snapshot": "M2_REPORT.md",
+      "sha256": "e88100aa5ceac4795e46ed48784d51c25b005a17498428ebc40529e8e055f48e"
+    }
+  ]
+}

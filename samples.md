@@ -612,6 +612,23 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ## 5. Quantifiers, witnesses, anaphora
 
+**P45 pure-position controls (core schemata, not new surface judgments).**
+For pure member restriction P and pure reference-level nuclear property Q,
+the properties using `No P Q`, `AtMost 1 P Q`, `FewerThan 1 P Q` or
+`Exactly 0 P Q` may enter `SetOf`: their defined negations close the local
+reference-introduction effect. In a candidate-dependent variant such as
+`SetOf (λx. No P_x (λw. Q(x,w)))`, the witness remains within each candidate's
+negative test. Moving one selection outside is not the rule.
+
+The unnegated positive selecting body does not gain purity. Contextual
+retrieval, projective effects or an opaque effectful Q remain impure when
+evaluated under negation; obligation metadata is retained. `AtLeast 0`
+does not evaluate Q, whereas `Exactly 0 = No` does. `Local` remains
+effectful, and double negation exports no witness. These are the four
+retained E02 cases and their required controls, not a claim that the pending
+Lean correction or full model proof has already passed. See spec P45 and
+References, **Negation-local purity: P45 reconciliation**.
+
 **Adopted standard profile (P43; finite pure count comparison).** Fix a
 resolved domain with four sleeping dogs, two red and two not red. Count truth
 does not create an outward quantified group. These rows state semantic

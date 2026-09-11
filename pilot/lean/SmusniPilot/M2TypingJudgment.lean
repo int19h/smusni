@@ -32,6 +32,14 @@ def mergeObservations (type : Ty) (results : List TypingObservation)
   effects := canonicalEffects (results.flatMap (·.effects) ++ effects)
   obligations := results.flatMap (·.obligations) ++ obligations }
 
+def negateObservation (body : TypingObservation) : TypingObservation := {
+  type := Ty.content
+  effects := negationEffects body.effects
+  obligations := body.obligations }
+
+@[simp] theorem negateResult_observation (body : TypingResult) :
+    (negateResult body).observation = negateObservation body.observation := rfl
+
 def judgmentTermList {scope : Nat} : List (Term scope) → TermList scope
   | [] => .nil
   | head :: tail => .positional head (judgmentTermList tail)
@@ -387,6 +395,11 @@ mutual
         (rule : BinaryPrimitiveRule operator firstResult secondResult resultType) :
         PrimitiveJudgment environment operator (judgmentTermList [first, second])
           (mergeObservations resultType [firstResult, secondResult])
+    | negation {scope : Nat} (environment : Environment scope) (body : Term scope)
+        (result : TypingObservation)
+        (typing : CheckJudgment environment body Ty.content result) :
+        PrimitiveJudgment environment .not (judgmentTermList [body])
+          (negateObservation result)
     | unaryCheck {scope : Nat} (environment : Environment scope)
         (operator : FirstOrderPrimitive) (term : Term scope)
         (expected resultType : Ty) (result : TypingObservation)
@@ -715,12 +728,13 @@ mutual
         BinaryPrimitiveRule .among first second Ty.content
 
   inductive UnaryCheckedPrimitiveRule : FirstOrderPrimitive → Ty → Ty → Prop where
-    | not : UnaryCheckedPrimitiveRule .not Ty.content Ty.content
     | stateClause : UnaryCheckedPrimitiveRule .stateClause Ty.content Ty.clauseContent
 
   inductive BinaryCheckedPrimitiveRule : FirstOrderPrimitive → Ty → Ty → Prop where
     | implies : BinaryCheckedPrimitiveRule .implies Ty.content Ty.content
     | subtract : BinaryCheckedPrimitiveRule .subtract Ty.number Ty.number
+    | lessThan : BinaryCheckedPrimitiveRule .lessThan Ty.number Ty.content
+    | lessOrEqual : BinaryCheckedPrimitiveRule .lessOrEqual Ty.number Ty.content
 end
 
 @[simp] theorem observation_withRule (result : TypingResult)
