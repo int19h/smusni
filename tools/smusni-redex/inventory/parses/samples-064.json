@@ -1,0 +1,295 @@
+{
+  "cases": [
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "ta barda"
+      ],
+      "index": 1,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "WordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Gismu": {
+                                                                      "phonemes": "bárda",
+                                                                      "span": [
+                                                                        3,
+                                                                        8
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "ProSumti": {
+                                                        "Plain": {
+                                                          "PlainWord": {
+                                                            "Cmavo": {
+                                                              "phonemes": "ta",
+                                                              "span": [
+                                                                0,
+                                                                2
+                                                              ]
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "ta barda — gradable predication: Context scale; Vague cutoff  [spec §6.4]",
+      "surface": "ta barda",
+      "unresolved": false
+    },
+    {
+      "category": "content",
+      "command": [],
+      "index": 2,
+      "parse": false,
+      "source_comment": "Reference-level threshold comparison: Vague threshold, Context purpose.",
+      "surface": false,
+      "unresolved": "Spec L5.28 is a gap; samples §8 labels this term a reference-level comparison, not a standard surface lowering (#9/#20)."
+    },
+    {
+      "category": "sentence",
+      "command": [
+        "jbotci",
+        "gentufa",
+        "--format",
+        "json",
+        "mi co'e do"
+      ],
+      "index": 3,
+      "parse": {
+        "RegularText": {
+          "paragraphs": {
+            "TextParagraphWithAdditionalNiho": {
+              "first": {
+                "SimpleParagraph": {
+                  "initial": {
+                    "StatementOrFragmentStatement": {
+                      "StatementBase": {
+                        "BridiStatement": {
+                          "bridi": {
+                            "BridiWithLeadingTerms": {
+                              "bridi_tail": {
+                                "BridiTailWithPossibleTailTerms": {
+                                  "first": {
+                                    "first": {
+                                      "first": {
+                                        "SelbriSimpleBridiTail": {
+                                          "selbri": {
+                                            "UntaggedSelbri": {
+                                              "CoSelbri": {
+                                                "leading_selbri": {
+                                                  "leading_selbri": {
+                                                    "first_unit": {
+                                                      "first": {
+                                                        "LinkedTanruUnit": {
+                                                          "base": {
+                                                            "base": {
+                                                              "GohaWordTanruUnit": {
+                                                                "Plain": {
+                                                                  "PlainWord": {
+                                                                    "Cmavo": {
+                                                                      "phonemes": "co'e",
+                                                                      "span": [
+                                                                        3,
+                                                                        7
+                                                                      ]
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "terms": [
+                                            {
+                                              "ConnectedTerm": {
+                                                "leading_term": {
+                                                  "SumtiTerm": {
+                                                    "base_sumti": {
+                                                      "leading_sumti": {
+                                                        "leading_sumti": {
+                                                          "leading_sumti": {
+                                                            "SimpleSumti": {
+                                                              "base_sumti": {
+                                                                "SumtiBase": {
+                                                                  "ProSumti": {
+                                                                    "Plain": {
+                                                                      "PlainWord": {
+                                                                        "Cmavo": {
+                                                                          "phonemes": "do",
+                                                                          "span": [
+                                                                            8,
+                                                                            10
+                                                                          ]
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "leading_terms": [
+                                {
+                                  "ConnectedTerm": {
+                                    "leading_term": {
+                                      "SumtiTerm": {
+                                        "base_sumti": {
+                                          "leading_sumti": {
+                                            "leading_sumti": {
+                                              "leading_sumti": {
+                                                "SimpleSumti": {
+                                                  "base_sumti": {
+                                                    "SumtiBase": {
+                                                      "ProSumti": {
+                                                        "Plain": {
+                                                          "PlainWord": {
+                                                            "Cmavo": {
+                                                              "phonemes": "mi",
+                                                              "span": [
+                                                                0,
+                                                                2
+                                                              ]
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "source_comment": "mi co'e do — elliptical selbri: Context; not Vague   [spec §6.1]",
+      "surface": "mi co'e do",
+      "unresolved": false
+    }
+  ],
+  "fence_sha1": "b53d5c6c6eafa47816dcb3dc8437b083cae3dd37",
+  "jbotci_version": "jbotci 0.1.0",
+  "ordinal": 64,
+  "schema": "smusni-gentufa-parse-fixture-1",
+  "source": "samples.md"
+}

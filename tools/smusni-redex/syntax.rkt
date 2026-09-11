@@ -13,6 +13,7 @@
          core->plain-datum
          core->redex-adapter
          redex-adapter->core
+         (rename-out [adapter-binder-pairs plain-binder-pairs])
          validate-core-form
          SmusniSurface
          SmusniCore

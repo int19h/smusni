@@ -162,7 +162,7 @@
       "unresolved": false
     }
   ],
-  "fence_sha1": "0381ec3ed5e5eefb48e813e4d611efdafc4c7e78",
+  "fence_sha1": "dc75fd1862f35daa19094d81680d127900274a05",
   "jbotci_version": "jbotci 0.1.0",
   "ordinal": 34,
   "schema": "smusni-gentufa-parse-fixture-1",

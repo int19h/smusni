@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
- (core-sha1 "a0d3945d54d2de7ad8ca31ef3b2218e7381d91b9")
- (fixture-sha1 "b17425cef314392641e64df823b08b90ac382fff")
+ (core-sha1 "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5")
+ (fixture-sha1 "c2b1a5b22706c8e21e05c81e272217863b0a7cc1")
  (sorts
   AbstractNature
   Achievement
@@ -79,6 +79,7 @@
   Yonder)
  (forms
   +
+  <
   =
   ActualClause
   AdmissibleCutoff
@@ -132,6 +133,9 @@
   GunmaPredAt
   Happiness
   Holds
+  IndividualEvery
+  IndividualNo
+  IndividualSome
   InterpretContent
   JaiRaise
   JaiRoleAdmissible
@@ -158,10 +162,13 @@
   Named
   NiRel
   No
+  Only
   OpaqueQuote
   OpenQ
   PeerUnitAt
   Perform
+  PluralNo
+  PluralSome
   Polar
   Presuppose
   RealizedContent
@@ -206,6 +213,7 @@
   −
   ∧
   ∨
+  ≤
   ⊕)
  (fixture-rows
   bajra

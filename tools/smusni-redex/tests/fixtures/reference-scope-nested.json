@@ -1,0 +1,412 @@
+{
+  "surface": "lo prenu poi tavla lo gerku ku'o cu tavla ro mlatu",
+  "category": "sentence",
+  "command": [
+    "jbotci",
+    "gentufa",
+    "--turtai",
+    "json",
+    "lo prenu poi tavla lo gerku ku'o cu tavla ro mlatu"
+  ],
+  "parse": {
+    "RegularText": {
+      "paragraphs": {
+        "TextParagraphWithAdditionalNiho": {
+          "first": {
+            "SimpleParagraph": {
+              "initial": {
+                "StatementOrFragmentStatement": {
+                  "StatementBase": {
+                    "BridiStatement": {
+                      "bridi": {
+                        "BridiWithLeadingTerms": {
+                          "leading_terms": [
+                            {
+                              "ConnectedTerm": {
+                                "leading_term": {
+                                  "SumtiTerm": {
+                                    "base_sumti": {
+                                      "leading_sumti": {
+                                        "leading_sumti": {
+                                          "leading_sumti": {
+                                            "SimpleSumti": {
+                                              "base_sumti": {
+                                                "SumtiBase": {
+                                                  "DescriptorWithGadriSumti": {
+                                                    "description": {
+                                                      "Plain": {
+                                                        "PlainWord": {
+                                                          "Cmavo": {
+                                                            "phonemes": "lo",
+                                                            "span": [
+                                                              0,
+                                                              2
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "tail": {
+                                                      "leading_tail_elements": {},
+                                                      "tail": {
+                                                        "RelationDescriptionTail": {
+                                                          "selbri": {
+                                                            "UntaggedSelbri": {
+                                                              "CoSelbri": {
+                                                                "leading_selbri": {
+                                                                  "leading_selbri": {
+                                                                    "first_unit": {
+                                                                      "first": {
+                                                                        "LinkedTanruUnit": {
+                                                                          "base": {
+                                                                            "base": {
+                                                                              "WordTanruUnit": {
+                                                                                "Plain": {
+                                                                                  "PlainWord": {
+                                                                                    "Gismu": {
+                                                                                      "phonemes": "prénu",
+                                                                                      "span": [
+                                                                                        3,
+                                                                                        8
+                                                                                      ]
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "relative_clauses": {
+                                                            "first": {
+                                                              "BridiRelativeClause": {
+                                                                "RestrictiveBridiRelativeClause": {
+                                                                  "poi": {
+                                                                    "Plain": {
+                                                                      "PlainWord": {
+                                                                        "Cmavo": {
+                                                                          "phonemes": "poĭ",
+                                                                          "span": [
+                                                                            9,
+                                                                            12
+                                                                          ]
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "subbridi": {
+                                                                    "BridiSubbridi": {
+                                                                      "RelationOnlyBridi": {
+                                                                        "BridiTailWithPossibleTailTerms": {
+                                                                          "first": {
+                                                                            "first": {
+                                                                              "first": {
+                                                                                "SelbriSimpleBridiTail": {
+                                                                                  "selbri": {
+                                                                                    "UntaggedSelbri": {
+                                                                                      "CoSelbri": {
+                                                                                        "leading_selbri": {
+                                                                                          "leading_selbri": {
+                                                                                            "first_unit": {
+                                                                                              "first": {
+                                                                                                "LinkedTanruUnit": {
+                                                                                                  "base": {
+                                                                                                    "base": {
+                                                                                                      "WordTanruUnit": {
+                                                                                                        "Plain": {
+                                                                                                          "PlainWord": {
+                                                                                                            "Gismu": {
+                                                                                                              "phonemes": "távla",
+                                                                                                              "span": [
+                                                                                                                13,
+                                                                                                                18
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  },
+                                                                                  "terms": [
+                                                                                    {
+                                                                                      "ConnectedTerm": {
+                                                                                        "leading_term": {
+                                                                                          "SumtiTerm": {
+                                                                                            "base_sumti": {
+                                                                                              "leading_sumti": {
+                                                                                                "leading_sumti": {
+                                                                                                  "leading_sumti": {
+                                                                                                    "SimpleSumti": {
+                                                                                                      "base_sumti": {
+                                                                                                        "SumtiBase": {
+                                                                                                          "DescriptorWithGadriSumti": {
+                                                                                                            "description": {
+                                                                                                              "Plain": {
+                                                                                                                "PlainWord": {
+                                                                                                                  "Cmavo": {
+                                                                                                                    "phonemes": "lo",
+                                                                                                                    "span": [
+                                                                                                                      19,
+                                                                                                                      21
+                                                                                                                    ]
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            },
+                                                                                                            "tail": {
+                                                                                                              "leading_tail_elements": {},
+                                                                                                              "tail": {
+                                                                                                                "RelationDescriptionTail": {
+                                                                                                                  "selbri": {
+                                                                                                                    "UntaggedSelbri": {
+                                                                                                                      "CoSelbri": {
+                                                                                                                        "leading_selbri": {
+                                                                                                                          "leading_selbri": {
+                                                                                                                            "first_unit": {
+                                                                                                                              "first": {
+                                                                                                                                "LinkedTanruUnit": {
+                                                                                                                                  "base": {
+                                                                                                                                    "base": {
+                                                                                                                                      "WordTanruUnit": {
+                                                                                                                                        "Plain": {
+                                                                                                                                          "PlainWord": {
+                                                                                                                                            "Gismu": {
+                                                                                                                                              "phonemes": "gérku",
+                                                                                                                                              "span": [
+                                                                                                                                                22,
+                                                                                                                                                27
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          }
+                                                                                                                                        }
+                                                                                                                                      }
+                                                                                                                                    }
+                                                                                                                                  }
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "kuho": {
+                                                                    "Plain": {
+                                                                      "PlainWord": {
+                                                                        "Cmavo": {
+                                                                          "phonemes": "ku'o",
+                                                                          "span": [
+                                                                            28,
+                                                                            32
+                                                                          ]
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "cu": {
+                            "Plain": {
+                              "PlainWord": {
+                                "Cmavo": {
+                                  "phonemes": "cu",
+                                  "span": [
+                                    33,
+                                    35
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "bridi_tail": {
+                            "BridiTailWithPossibleTailTerms": {
+                              "first": {
+                                "first": {
+                                  "first": {
+                                    "SelbriSimpleBridiTail": {
+                                      "selbri": {
+                                        "UntaggedSelbri": {
+                                          "CoSelbri": {
+                                            "leading_selbri": {
+                                              "leading_selbri": {
+                                                "first_unit": {
+                                                  "first": {
+                                                    "LinkedTanruUnit": {
+                                                      "base": {
+                                                        "base": {
+                                                          "WordTanruUnit": {
+                                                            "Plain": {
+                                                              "PlainWord": {
+                                                                "Gismu": {
+                                                                  "phonemes": "távla",
+                                                                  "span": [
+                                                                    36,
+                                                                    41
+                                                                  ]
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "terms": [
+                                        {
+                                          "ConnectedTerm": {
+                                            "leading_term": {
+                                              "SumtiTerm": {
+                                                "base_sumti": {
+                                                  "leading_sumti": {
+                                                    "leading_sumti": {
+                                                      "leading_sumti": {
+                                                        "SimpleSumti": {
+                                                          "base_sumti": {
+                                                            "SumtiBase": {
+                                                              "DescriptorWithoutGadriSumti": {
+                                                                "quantifier": {
+                                                                  "PaRunQuantifier": {
+                                                                    "number": {
+                                                                      "first_number": {
+                                                                        "Plain": {
+                                                                          "PlainWord": {
+                                                                            "Cmavo": {
+                                                                              "phonemes": "ro",
+                                                                              "span": [
+                                                                                42,
+                                                                                44
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "selbri": {
+                                                                  "UntaggedSelbri": {
+                                                                    "CoSelbri": {
+                                                                      "leading_selbri": {
+                                                                        "leading_selbri": {
+                                                                          "first_unit": {
+                                                                            "first": {
+                                                                              "LinkedTanruUnit": {
+                                                                                "base": {
+                                                                                  "base": {
+                                                                                    "WordTanruUnit": {
+                                                                                      "Plain": {
+                                                                                        "PlainWord": {
+                                                                                          "Gismu": {
+                                                                                            "phonemes": "mlátu",
+                                                                                            "span": [
+                                                                                              45,
+                                                                                              50
+                                                                                            ]
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
