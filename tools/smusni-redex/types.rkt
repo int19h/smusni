@@ -194,6 +194,11 @@
   (define first-type (parse-type-node (first nodes)))
   (cond
     [(null? (rest nodes)) first-type]
+    [(eq? first-type 'GroupBasis)
+     (unless (= (length nodes) 2)
+       (raise-type (first nodes) "GroupBasis takes one component type"))
+     (define component (parse-type-node (second nodes)))
+     `(DecompositionBasis (Group ,component) ,component)]
     [(member first-type '(Fn EFn))
      (unless (and (= (length nodes) 3) (core-list? (second nodes)))
        (raise-type (first nodes)
@@ -809,6 +814,13 @@
      (unless (= (length arguments) 1) (raise-type node "¬ takes one Content"))
      (infer-logical node head arguments env inv)]
     [(member head '(∀ ∃)) (infer-quantifier node head arguments env inv)]
+    [(member head '(< ≤))
+     (unless (= (length arguments) 2)
+       (raise-type node "~a takes two numeric operands" head))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (for ([arg (in-list arguments)] [result (in-list results)])
+       (ensure-compatible arg (typing-type result) 'Number))
+     (merge-results 'Content results)]
     [(eq? head '=)
      (unless (= (length arguments) 2) (raise-type node "= takes two operands"))
      (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
@@ -1090,6 +1102,37 @@
                            [(Exactly AtLeast)
                             (not (literal-zero? (first arguments)))]
                            [else #f]))))]
+    [(eq? head 'Only)
+     (unless (= (length arguments) 3)
+       (raise-type node "Only takes alternatives, host, and focus"))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (define domain (pure-property-domain (first arguments) (first results) "Only alternatives"))
+     (unless (match domain [`(Referents ,_) #t] [_ #f])
+       (raise-type node "Only alternatives must take Referents<T>"))
+     (define host-domain (pure-property-domain (second arguments) (second results) "Only host"))
+     (ensure-same-property-domain node domain host-domain "Only alternatives/host")
+     (ensure-compatible (third arguments) (typing-type (third results)) domain)
+     (merge-results 'Content results)]
+    [(member head '(IndividualSome IndividualNo IndividualEvery PluralSome PluralNo))
+     (unless (= (length arguments) 2)
+       (raise-type node "~a takes restrictor and nuclear scope" head))
+     (define results (map (lambda (arg) (infer-core arg env inv)) arguments))
+     (define domain
+       (pure-property-domain (first arguments) (first results)
+                             (format "~a restrictor" head)))
+     (unless (if (member head '(PluralSome PluralNo))
+                 (match domain [`(Referents ,inner) (first-order-type? inner)] [_ #f])
+                 (first-order-type? domain))
+       (raise-type node "~a has the wrong individual/plural domain ~e" head domain))
+     (define nuclear-domain
+       (property-domain (second arguments) (second results)
+                        (format "~a nuclear scope" head)))
+     (unless (type-compatible? `(Fn (,nuclear-domain) Content)
+                               `(Fn (,domain) Content))
+       (raise-type node "~a incompatible nuclear domain ~e for ~e"
+                   head nuclear-domain domain))
+     (merge-results 'Content results
+                    #:effects (gq-result-effects (second results) #:exports? #f))]
     [(member head '(Some No))
      (unless (= (length arguments) 2)
        (raise-type node "~a takes restrictor and nuclear scope" head))

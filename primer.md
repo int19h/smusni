@@ -3,6 +3,10 @@
 *The same definition as [the specification](spec.md), explained for people
 who speak Lojban rather than formal semantics.*
 
+Current decisions and the exact remaining questions are collected in
+[decisions.md](decisions.md). A provisional reading is not a claim that every
+related Lojban use already has a completed lowering.
+
 ## 0. Why a semantic core?
 
 You can learn, from CLL, what every Lojban construct does. What you cannot
@@ -58,15 +62,17 @@ dense specification when you want to. One example sentence follows us
 through the whole book:
 
 ```
-lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
+lo ci gerku noi blabi ku'o goi ko'a cu na batci re prenu .i .uinai cai ko'a tatpi
 ```
 
-"The three dogs, which are white, didn't bite two people. Ugh — they are
-tired." By the end you will be able to write down everything this little
+"The three dogs, which are white, didn't bite exactly two people. Ugh — they
+are tired." The first claim denies the exact count, not the existence of any
+bitten pair. `goi ko'a` explicitly names the dog reference for reuse as ko'a.
+By the end you will be able to write down everything this little
 discourse commits its speaker to, and everything it leaves open. (Even
 the word order teaches: the `.uinai cai` sits at the front of its
 sentence so that the displayed feeling is about the whole claim — placed
-after `ri` it would be a feeling about the dogs.)
+after `ko'a` it would be a feeling about the dogs.)
 
 ## 1. Saying things: predication
 
@@ -205,7 +211,7 @@ capability without claiming that every duck is swimming now.
 ## 3. Things: reference
 
 Now the noun phrases. Under xorlo — the modern gadri baseline, which the
-core adopts wholesale —
+core uses as its baseline (with deviations explicitly recorded) —
 
 ```
 ; lo ci gerku
@@ -303,14 +309,16 @@ maximal, erase its truth conditions, or hide the resulting collection.
 
 ## 4. What later sentences can see
 
-Our running example continues `.i ri … tatpi` — "they are tired." What
-does `ri` reach back to? This is where the core earns its keep, because
-"reference that persists" is the thing classical logic is famously bad at.
+Our running example continues `.i .uinai cai ko'a tatpi` — "ugh, they are
+tired." Ko'a reuses the dog reference explicitly aliased by `goi ko'a`.
+This illustrates reference persistence without deciding how ri would select
+an antecedent after the intervening quantified people.
 
 The core's model: a conversation carries a growing stock of **discourse
-referents**. `lo`-phrases add to the stock. So do successful quantifiers:
-after `ci gerku cu bajra` ("three dogs ran"), *those three dogs* are
-available, and `.i ri tatpi` says they are tired. Every connective has a
+referents**. An explicitly bound description such as `lo ci gerku goi ko'a`
+introduces dogs that later ko'a preserves. Ordinary existential continuity
+is also retained; a numerical count does not create an outward group merely
+for a later ri. Every connective has a
 stated policy — the core calls it the accessibility table — for what
 survives it:
 
@@ -324,21 +332,21 @@ survives it:
 ```
 ; ro prenu poi ponse su'o xasli cu darxi ri
 ; "everyone who owns a donkey beats it"
-(∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
+(∀ {λ [[$p :: Entity] [$d :: Entity]]
   (→ (∧ (prenu $p)
-        (Distrib {λ [$z :: Entity] (xasli $z)} $d)
+        (xasli $d)
         (Close (ponse $p $d)))
      (Close (darxi $p $d)))})
 ```
 
-(The donkey variable is a *plural* one — if someone owns several donkeys,
-`ri` reaches all of them, and `Distrib` says every unit of `$d` is a
-donkey; the full form also carries the "there are donkey-owners"
-presupposition that `ro` brings — the spec's version spells it out.)
+(This is an individual-pair strong reading: every qualifying person–donkey
+pair satisfies the continuation. It does not decide whether every later ri must
+be singular. P2's bare/restricted universal is non-importing; any additional
+collection must have its own permitted source rule and respect P43.)
 
 The pronoun inside the consequent covaries with the donkey inside the
-relative clause — classical logic can't write that with separate
-quantifiers, so the resolved strong reading *lowers* to one universal over
+relative clause. Separate sentence-local existentials do not themselves supply
+that later binding, so the resolved strong reading lowers to one universal over
 person–donkey pairs. This is a reading choice, not an equivalent rewrite of
 the compositional selection. The same selected construal, one level up, handles "every person
 has three dogs; they are tired" (each person's dogs are tired).
@@ -357,46 +365,74 @@ found that selects it, so it is not a second silent reading.
 
 ## 5. How many
 
-Quantifiers sit *on top of* reference. Three shapes to keep apart:
+Descriptions and quantifiers do different jobs:
 
-```
-; ci gerku cu bajra          — "three dogs ran"
-;   pick three dogs; they ran.  (witness selection)
-; ro gerku cu bajra          — "all dogs ran"
-;   presupposes there are dogs; each ran.  (importing universal)
-; ro da zo'u …               — "for absolutely everything…"
-;   the mathematician's ∀; no presupposition.  (bare logic)
-```
+- `lo ro prenu` refers to all relevant people; a predicate can hold of them
+  collectively. `ro'oi prenu` instead quantifies over eligible pluralities.
+- `lo su'o prenu` refers to one or more counted people. Ordinary `su'o prenu`
+  quantifies over individuals: at least one person satisfies the predicate.
+- `lo su'o re gerku` has an inner count of at least two dog units. The
+  description binds a reference; an outer `su'o re gerku` counts individual
+  qualifiers in the bridi instead.
+- Descriptions may depend on surrounding variables. Referential does not
+  mean invariant, and dependence does not erase scope.
 
-(One honesty note the spec records as a pin: the printed CLL (ch. 16)
-glosses bare numbers globally — "exactly two things, no more or less" —
-and distributively, each thing separately. The core sides
-with modern usage on both counts: `ci gerku` picks its three and stays
-silent about others, says nothing about together-or-separately — which
-is how `su'o prenu cu jmaji`, "some people are gathering", can be true
-at all, though no single person gathers — and the global "and no more"
-reading is there when you mark it.)
+In the standard finite individual reading, exact numbers really are exact.
+If four equally relevant dogs sleep, `ci gerku cu sipna` is false and
+`su'o re gerku cu sipna` is true. Selecting a triple does not make exact
+three true. This ordinary-count conclusion was previously agreed but had
+not been applied to the old residual P17 wording.
 
-Two pins worth knowing. First, `ro broda` **imports**: saying "every
-broda" commits you to broda existing — and that commitment survives
-negation ("it's not true that every dog ran" still grants dogs), which is
-why the core represents it as a *presupposition*, a claim that projects
-out of whatever you wrap around it. Second, termsets: `ci gerku ce'e re
-prenu cu batci` picks out three dogs and two people with all six bitings
-— and says nothing about whether a fourth dog also joined in. CLL's own
-termset section (ch. 16) glosses it exactly so ("picks out two groups …
-every one of the dogs bites each of the men") and stops there; the "and nobody
-else" reading is available, but you have to say it.
+Bare `me'i` means “not all” (P44): `me'i gerku cu sipna` requires a relevant
+dog that does not sleep. It permits none of the dogs to sleep; it does not
+mean “some but not all.” With no relevant dogs it is false. By contrast,
+explicit `me'i pa gerku cu sipna` means no relevant dogs sleep, and is true
+even when there are none. This BPFK-aligned default replaces CLLv1.1's
+implicit pa for the bare form; other explicit me'i bounds are unchanged.
 
-Vague numbers get chapter 9's treatment. Two different shapes hide
-here: `so'i` "many" has *no* exact threshold — not even a secret one
-context knows — while `ji'i re no` "about twenty" states its number and
-leaves the *tolerance* fuzzy.
+The new conservative rule P43 retires P42's extra outward numerical-group
+export. In `su'o re gerku cu sipna .i ri cu cimei`, if ri is intended to
+obtain a new group from the first sentence's quantification, that use is
+out of scope. It is not repaired by searching for enough sleeping dogs.
+By contrast, `lo su'o re gerku cu sipna .i ro ri cu xunre` can preserve
+an independently bound description on the stated clean/memberwise reading.
+This alternative changes the spelling; it is not a universal substitution
+under negation, dependence or collective readings.
 
-One more thing quantifiers do: their picks stay referable. After `su'o
-gerku cu bajra`, the next sentence's `ri` can be those very dogs — a
-quantified claim and a lasting referent at once (the spec calls this
-witness export).
+Ordinary existential continuity remains, as do independently bound
+references and supported in-scope strong donkey readings. Closed governors
+do not export dependent families. An unanswered ma may remain an open
+source, and a resolved `ci ri` may later fail its count: missing values
+and false counts are not the same as an out-of-scope reference. The full
+typed source/force machinery remains explicit work.
+
+The shared core still contains plural counted selections. In a deliberately
+marked full-plural/library comparison, exact three can mean a reference
+with exactly three units without excluding other qualifying individuals.
+That is not the standard bare-numeral rule. Actual su'oi/ro'oi and full-plural
+surface mappings have stated remaining gaps; core expressibility is not
+automatic surface coverage.
+
+The provisional termset product for `ci gerku ce'e re prenu cu batci`
+still requires all six selected dog–person predications, not six physical
+events. Global exactness/product and mixed-quantifier interactions remain
+separate work; equal scope alone does not settle them.
+
+P2 now uses non-importing bare and restricted ro: no dogs makes the ordinary
+universal true. Explicit descriptions retain their own reference requirements.
+The decision follows the later agreed outcome and human clarification, not
+merely the exact-number rule. Published CLL v1.1, the 2002 debate, the 2022
+proposal branch and this project's presuppositional wording have different
+status; the 2022 proposal did not establish a maintained-default change.
+
+A description's reference persists under nuclear negation (C25). If there
+are no cats, `lo mlatu na jbena` still has no successful reference:
+negation does not rescue it. Nor does a later inconsistent continuation
+retroactively falsify an earlier satisfiable prefix. Construction follows
+the declared structure; it does not solve actual truth first.
+
+“Many” and “about twenty” express genuine vagueness; approximate equality,
+counting, effects and other numerical domains retain their explicit gaps.
 
 ## 6. Doing things with words
 
@@ -454,7 +490,7 @@ is a little relation from the dictionary — an experiencer, a target, and
 a degree on an intensity scale — displayed alongside its host:
 
 ```
-; .i .uinai cai ri tatpi     (ri = the dogs, from the prior sentence)
+; .i .uinai cai ko'a tatpi   (ko'a aliases the prior dog reference)
 {Let [$a :: Act Assertion] (Assert (Close (tatpi $dogs)))
   {Bind [$o :: ActOccurrence Assertion] (Perform Host $a)
     (Do (Perform AttachedDisplay
@@ -495,8 +531,17 @@ Two special indicator families:
   content. That's why the core treats evidentials as targeted display
   rather than as a feature of assertion.
 
-Discursives (`ku'i` "however", `ji'a` "also") relate the current performed
-occurrence to a previous one; `na'i` objects to a prior utterance ("something's off about
+Discursives (`ku'i` “however”, `ji'a` “also”, `mi'u` “same case”) display
+claims about how contributions or their relevant parts relate. We can express
+that claim without the translator deciding its truth. Gismu such as mintu,
+simsa, frica and jmina are promising building blocks, but full target/standard/
+scope definitions remain unfinished. Ordinary criteria are recovered and shared
+along the comparison, while explicitly different standard readings stay possible;
+nai tests the opposite claim at that same standard. Ji'a does not require novelty.
+“Only us” says both that we satisfy the claim and that relevant outsiders do not.
+Our own members are exempt, but an overlapping group containing an outsider can
+compete. General effectful focus composition still needs its detailed rule.
+Meanwhile `na'i` objects to a prior utterance ("something's off about
 saying that") without negating anything — which is why Lojban has three
 negation-flavored words, and the core gives them three unrelated meanings:
 
@@ -504,7 +549,7 @@ negation-flavored words, and the core gives them three unrelated meanings:
 > (scalar: denies the stated point AND asserts something else on the
 > scale — `na'e melbi` says not-beautiful-but-something-else, perhaps
 > plain; it claims *more* than `na`, not less) / `na'i` (metalinguistic
-> objection: the utterance itself was defective — no truth claim at all).
+> objection: the utterance itself was defective—not negation of its host's truth).
 
 ## 8. Ideas about ideas
 
@@ -556,11 +601,11 @@ fact fixing a soritical boundary?*
   possible and repairable. A site also says which enclosing variables it may
   depend on, so an intended value can either stay constant or covary.
 - No fact fixes one soritical boundary → **`Vague`**. Where exactly “many”
-  starts, how wide a neutral region is, or how far “about twenty” extends. The
+  starts, how wide a genuinely fuzzy neutral region is, or how far “about twenty” extends. The
   meaning is a family of sharpenings of *one concept*, and the core computes
   pointwise with that family. Unrelated alternative meanings never go here.
 - There is no value to give because nothing was said → **absence**.
-  Tenselessness, `kau`'s exhaustivity, together-or-separately.
+  Habitual/gnomic tenselessness, `kau`'s exhaustivity, together-or-separately.
 
 The tanru, finally, in full honesty:
 
@@ -608,87 +653,62 @@ Lojban without paradox.
 
 ## 11. The whole example
 
-```
-lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
+```lojban
+lo ci gerku noi blabi ku'o goi ko'a cu na batci re prenu .i .uinai cai ko'a tatpi
 ```
 
-Everything at once now. `lo ci gerku` introduces a three-dog referent.
-`noi blabi` commits, *aside*, that they're white — a supplement: the `na`
-that follows will not touch it, and if this had been a `xu` question the
-whiteness still wouldn't be questioned. `na batci re prenu`: the at-issue
-claim, negated — within it, `re prenu` selects a two-person witness set;
-the negation says no such biting configuration holds. `.i ri`: the dogs.
-Notice what the negation *did* block: the two people are trapped inside
-it, inaccessible to any later anaphor — which is exactly why `ri` skips
-them and lands on the dogs, introduced outside. `tatpi` claims they're
-tired; the sentence-initial `.uinai cai` displays the speaker's intense
-unhappiness about that whole claim. The tenseless sentences are read
-episodically here, so *when* is not open but handed to context — the
-biting denial targets the contextually relevant occasion, like
-chapter 2's stove. What was left open, on purpose: whether the dogs act
-jointly or severally; and nothing else — everything other than that
-was said.
+The three dogs are explicitly named ko'a, so the second sentence can reuse
+them without relying on a disputed RI-skip rule. Their whiteness is a NOI
+aside: negation does not deny it. The first main claim is **not exactly two
+people were bitten**, not “no bitten pair exists”. If three people qualify,
+the denial is true. The counted people are individuals; the three dogs can
+still participate together according to the resolved predicate reading.
 
-And here is that story written down — the sentence's full core term, on
-its episodic readings (each sentence's occasion contextually anchored,
-the way chapter 2 anchored the stove):
+For this episodic, invariant-omission reading, the biting occasion, locus
+and tool are recovered before the count is evaluated. That keeps the
+individual count predicate pure. The second sentence has its own occasion
+and says the same dogs are tired; sentence-initial .uinai cai displays intense
+unhappiness about that whole assertion.
 
 ```lisp
-{Bind [$dogs :: Referents Entity]                       ; chapter 3: lo introduces…
+; lo ci gerku noi blabi ku'o goi ko'a cu na batci re prenu .i .uinai cai ko'a tatpi
+; (episodic readings: each sentence's occasion is Context-anchored; P8)
+{Bind [$dogs :: Referents Entity]
       (Refer {λ [$r :: Referents Entity]
         (∧ (gerku $r)
-            (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))}) ; …three dogs
+            (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))})
   (Do
-    {Bind [$occ1 :: Time] (Context)                       ; chapter 2: the occasion —
-      {Let [$a1 :: Act Assertion]                      ; outside the negation
-            (Assert
-              (Supplement $dogs (Close (blabi $dogs))  ; the noi aside, outside the ¬
-                (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)} ; chapter 5: a two-person
-                     {λ [$ppl :: Referents Entity]          ; witness
+    {Bind [$occ1 :: Time] (Context)
+          [$biteLocus :: Referents Entity] (Context)
+          [$bitingTool :: Referents Entity] (Context)
+      {Let [$a1 :: Act Assertion]         ; OUTSIDE the negation; so na
+            (Assert                       ; denies biting AT that occasion
+              (Supplement $dogs (Close (blabi $dogs))
+                (¬ (GlobalExactly 2 {λ [$x :: Entity] (prenu $x)}
+                     {λ [$person :: Entity]
                        (CloseClause (ActualClause
                          {λ [$e :: Referents Eventuality]
-                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                           (∧ ((DirectClause (batci $dogs $person $biteLocus $bitingTool)) $e)
                               (cabna $e $occ1))}))}))))
-        (Perform $a1)}}                             ; chapter 6: …and say it
+        (Perform Host $a1)}}
     {Bind [$occ2 :: Time] (Context)
       {Let [$a2 :: Act Assertion]
             (Assert
-              (CloseClause (ActualClause                  ; chapter 4: ri = $dogs
+              (CloseClause (ActualClause
                 {λ [$e :: Referents Eventuality]
-                  (∧ (Close (tatpi $dogs :Eventuality $e))
-                     (cabna $e $occ2))})))
+                  (∧ (Close (tatpi $dogs :Eventuality $e)) ; the prior direct-event
+                     (cabna $e $occ2))})))         ; fill is kept: tatpi's mode is #12's
         {Bind [$o2 :: ActOccurrence Assertion] (Perform Host $a2)
           (Do (Perform AttachedDisplay
-            (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})} ; chapter 7
+            (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}
 ```
 
-Three names appear here that earlier chapters only gestured at.
-`CardBasis` is chapter 3's `…exactly-three-units…` made honest: it
-counts a plural referent *by a unit predicate* — these, counted as
-dogs, number three. (The count alone would tolerate a pack riding
-along; what rules it out is `gerku`'s own plural meaning, which under a
-count profile requires the referent to be *covered* by dog units — pin
-P39 — so `lo ci gerku` is three dogs and nothing else.) `Exactly n P body` is chapter 5's witness
-selection as one operator: pick an n-unit P witness and run the
-body on it — on the witness *as a plurality*, which is why the body's
-variable `$ppl` is reference-typed: whether the dogs bit the two
-together or one by one is not part of what was said (chapter 3's
-together-or-separately, again). And `Supplement` is `noi` itself: it attaches the aside
-(the whiteness) to its anchor (`$dogs`) alongside the at-issue claim —
-the aside is new information, committed by the speaker — but it
-*projects* the way chapter 5's presuppositions do, sitting structurally
-beside the `¬` rather than under it, where no negation or question can
-reach. Everything else you have seen: the two
-`Let`/`Perform` pairs are chapter 6's acts-as-values, built and then
-said; and the `Unhappiness` relation takes the bound occurrence `$o2` —
-this performance of `$a2` — as its target, with `Express` then packaging
-that displayed content as an act: the unhappiness is about *that assertion
-as made here*, which only a language whose acts are values and whose
-performances are handles can even write down.
-
-If you can reconstruct the story from the sentence — or check it off
-against the term, line by line — you have the core. The specification
-is the same story with the definitions filled in.
+CardBasis counts units inside the dog description. GlobalExactly counts
+individual people satisfying the already resolved biting condition.
+Supplement carries the separate whiteness claim. The two Let/Perform
+constructions remain two Hosts; the attitude refers to the second occurrence,
+not a newly performed copy of its content. Broader dependency and source/
+force interfaces remain the explicit work listed in the specification.
 
 ## 12. Glossary and further reading
 
@@ -707,9 +727,9 @@ is the same story with the definitions filled in.
 | `Vague` | family of soritical sharpenings; no cutoff fact | `so'i`, gradable cutoffs, `ji'i` tolerance | §5.3, §6 |
 | `Referents` / `Among` / `Combine` | one-or-more things; some-of; together-with | plural sumti, `jo'u` | §3.2, §4.8 |
 | accessibility table | what later text can refer back to | `ri` across `.i`/`ja`/`naku` | §5.4 |
-| `Presuppose` | claim that survives negation | `ro`-import | §5.5 |
+| `Presuppose` | requirement that survives negation | explicit `MaxRefer`, partial-operation definedness | §5.5 |
 | `Supplement` | aside, committed regardless | `noi`, `sei` | §5.5 |
-| witness export | a quantifier's picks stay referable | `ci gerku … .i ri` | §5.6 |
+| reference continuity | an accessible binding is reused | `lo ci gerku goi ko'a … .i ko'a` | §5.6 |
 | `Generic` | typical-talk without a specimen | `lo'e`/`le'e` | §5.8 |
 | `Act` / `ActOccurrence` / `Perform` | reusable speech-act package / one contextualized performance / doing it | quoted vs spoken, `go'i`/`ra'o` | §7.1–7.4 |
 | `ActContent` / `RealizedContent` | raw package content / a performed assertion's captured content | quotation vs `la'e di'u` | §7.4 |
@@ -744,3 +764,27 @@ the [specification](spec.md), which you are now equipped to read — with
 the [catalog](catalog.md) beside it as the per-name reference (every
 operator: plain-language definition, formal definition where one
 exists, example, and where the details live).
+
+## 13. What the recent research settles—and does not
+
+- `no'e` can have an exact middle in a stipulated comparison: lojbab's
+  integer scale makes 100 neither large nor small. This does not force zero
+  width; several widths can select the same integer. The model also permits
+  inherited uncertainty and meaningful variation of the neutral band, without
+  automatically adding a fresh width every time no'e is used.
+- Happy occasions and cafe visits show that states recur. Context may determine
+  the occasions; the model still needs to say how it counts them.
+- Speakers can refer back to an imagined person introduced inside nu without
+  automatically asserting actual-world existence.
+- Approximate arithmetic/equality uses constrained exact values inside the
+  claim, with vague tolerances around them. Reusing one value differs from two
+  independent values; the same tolerance does not mean the same error. We may
+  retain expressions without simplifying them. Typed composition still needs
+  work, but the choice of this direction is settled.
+- Two ti occurrences can indicate the same or different things. Each needs its
+  own associated indication; one sentence-wide ground is insufficient generally.
+
+The [ledger](decisions.md) separates agreed contracts from unfinished
+construction and genuinely uncovered readings; it is not a list of panel impasses.
+Missing interfaces are not filled with plausible-looking formulas, and model
+proofs are not polls of Lojban speakers.

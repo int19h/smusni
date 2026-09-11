@@ -170,12 +170,12 @@
           }
         }
       },
-      "source_comment": "ci gerku cu bajra — the default (witness-set) reading",
+      "source_comment": "ci gerku cu bajra — standard finite individual exact count",
       "surface": "ci gerku cu bajra",
       "unresolved": false
     }
   ],
-  "fence_sha1": "4da2df77645deee22f6ddfbb87b1418fa7bfecc5",
+  "fence_sha1": "51db28bc844d630b0bc9e4d9619cf3fb36107cda",
   "jbotci_version": "jbotci 0.1.0",
   "ordinal": 9,
   "schema": "smusni-gentufa-parse-fixture-1",

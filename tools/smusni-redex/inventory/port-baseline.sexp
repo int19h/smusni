@@ -1,8 +1,8 @@
 (smusni-port-baseline
  1
- (head "e936816c9feedb9b750b6f4db9c2dd5737e7302b")
- (corpus-sha1 "2e3f325453051f62dbf2c739805678784fcae788")
- (terms 96)
+ (head "8af17e87d0a8c6832ba0bf724046b57cbfb26f3c")
+ (corpus-sha1 "0cd26d1d494f4b5d0312628ed54d1c2c02ecc7d4")
+ (terms 4)
  (runs 5)
  (full-gate-ms 71990)
  (triggers
@@ -17,19 +17,19 @@
  (modes
   (mode
    old-only
-   (median-total-ms 536.733346)
-   (p95-term-ms 12.445733999999902)
-   (max-term-ms 23.764877999999953)
-   (peak-rss-bytes 272400384))
+   (median-total-ms 31.76641600000039)
+   (p95-term-ms 14.2308950000006)
+   (max-term-ms 14.383020000000215)
+   (peak-rss-bytes 320765952))
   (mode
    new-only
-   (median-total-ms 538.398569)
-   (p95-term-ms 12.402122999999847)
-   (max-term-ms 22.804267999999865)
-   (peak-rss-bytes 273240064))
+   (median-total-ms 8.516845000000103)
+   (p95-term-ms 2.413144000000102)
+   (max-term-ms 2.684135999999853)
+   (peak-rss-bytes 320544768))
   (mode
    side-by-side
-   (median-total-ms 1068.5421070000002)
-   (p95-term-ms 24.799783999999818)
-   (max-term-ms 45.83797299999969)
-   (peak-rss-bytes 272572416))))
+   (median-total-ms 39.10231999999996)
+   (p95-term-ms 16.04841000000033)
+   (max-term-ms 16.514643999999862)
+   (peak-rss-bytes 321810432))))

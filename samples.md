@@ -7,6 +7,14 @@ comment line is its Lojban source; specimens exercising a pin cite it.
 These are design specimens: alpha-equivalent terms and transparent library
 expansions are the same meaning, and no spelling here is "canonical".
 
+The decision ledger distinguishes actual lowerings from candidate acceptance
+cases. Standard finite numerical counts are individual and globally exact;
+P43 retires P42's extra ordinary quantified-group export. Counted-plural core
+specimens are explicitly labelled library/full-plural comparisons, not baseline
+surface lowerings or a claim that the experimental mapping is complete.
+A `Mention` wrapper below is an
+illustrative display act, not an automatic force assigned to every bare sumti.
+
 Fragments (terms meant to appear inside a document) are marked; everything
 else is a complete meaning, with `Assert`/`Ask` and closure written out
 where they matter and elided (per spec §2 notation) where they don't.
@@ -17,7 +25,8 @@ referred back to, specimens abbreviate `lo du'u c` to its object former
 in exporting the unused referent. The capitalized indicator relations
 (`Happiness`, `Unhappiness`, `Desire`, `EvidentialBasis`) are §16
 placeholders — see-also the `-nmo` indicator-emotion family the
-audit adopts (spec §16.5).
+audit proposes (spec §16.5); no intensity-extended lexical row is adopted by
+that candidate listing.
 At a force boundary, a displayed complete eventless Content may use spec §2's
 actual-reading shorthand for
 `CloseClause(ActualClause(StateClause(content)))`; examples in which the
@@ -165,12 +174,12 @@ episodic specimen selected `ActualClause`; a capability reading selects
 (Assert
   (CloseClause
     (StateClause
-      (Every {λ [$x :: Entity] (datka $x)}
+      (IndividualEvery {λ [$x :: Entity] (datka $x)}
         {λ [$duck :: Entity]
           (CloseClause
             (CapableClause (DirectClause (flulimna $duck))))}))))
-; Every's nuclear scope is member-level (§12: Distrib over the maximal
-; reference); each duck's capability clause closes locally; the outer State
+; IndividualEvery quantifies over individuals without importing a reference;
+; each duck's capability clause closes locally; the outer State
 ; is the universal claim. No one event is shared by every duck.
 ```
 
@@ -269,9 +278,10 @@ and UI/span targeting is the remaining `ConnectionPlan` gap, not part of
 ```
 
 Pinned reading: a new referent — one or more real cats, number-neutral,
-no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (though its
-selected witness stays referable — §5 below); `lo` introduces with no
-quantificational force at all.
+no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (positive
+continuation is attested; its general export interface is Q01); `lo` introduces with no
+quantificational force at all. Ordinary su'o's general export policy remains
+separate from its individual truth condition (decisions Q01).
 
 `lo R` remains literally `Refer R`; where R's resolved lexical mode declares
 a unit profile, its plural extension already includes `CoveredBy`. The
@@ -379,8 +389,7 @@ speaker-to-one/audience-to-another pairing:
 ; mi'o klama — one place-1 value and one omitted place-2 Context site [P40]
 {Bind [$to :: Referents Entity] (Context)
   (Assert
-    (Close (klama (Combine Speaker Audience)
-                  :2 $to :3 This :4 That :5 Yonder)))}
+    (Close (klama (Combine Speaker Audience) :2 $to)))}
 ```
 
 The sibling forms use named token-context projections whose §5.1 constraints
@@ -482,14 +491,18 @@ committee is asserted rather than derived from that cover.
 ; lei ci prenu du le kamni — fragment after resolving le kamni and κ
 {λ [[$κ :: DecompositionBasis (Group Entity) Entity]
     [$committee :: Referents (Group Entity)]]
-  {Bind [$people :: Referents Entity]
-        (Local (SelectExactly 3 {λ [$x :: Entity]
-          (SpeakerDescribes $x
-            {λ [$y :: Referents Entity] (prenu $y)})}))
-    {Bind [$described :: Referents (Group Entity)]
-          (Refer {λ [$g :: Group Entity]
-                   (CompleteGunmaAt $κ $g $people)})
-      (Assert (CoRef $described $committee))}}}
+  {Let [$P :: EFn ((Referents Entity)) Content]
+        {λ [$y :: Referents Entity] (prenu $y)}
+    {Bind [$people :: Referents Entity]
+          (Local (Refer {λ [$r :: Referents Entity]
+            (∧ (SpeakerDescribes $r $P)
+               (= (CardBasis $r {λ [$x :: Entity]
+                     (SpeakerDescribes $x $P)}) 3))}))
+      {Bind [$described :: Referents (Group Entity)]
+            (Refer {λ [$g :: Group Entity]
+                     (CompleteGunmaAt $κ $g $people)})
+        (Assert (CoRef $described $committee))}}}}
+; One formed description property is passed inertly at both uses.
 ```
 
 Canonical manufacture and the partial group-to-components crossing are
@@ -497,14 +510,18 @@ separate operations:
 
 ```lisp
 ; lu'o le ci prenu — canonical aggregate of the selected people
-{Bind [$people :: Referents Entity]
-      (Local (SelectExactly 3 {λ [$x :: Entity]
-        (SpeakerDescribes $x
-          {λ [$y :: Referents Entity] (prenu $y)})}))
-  {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
-        (Context (GroupBasisConstraint lu'o Entity) deps…)
-    {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
-      (Mention $aggregate)}}}
+{Let [$P :: EFn ((Referents Entity)) Content]
+      {λ [$y :: Referents Entity] (prenu $y)}
+  {Bind [$people :: Referents Entity]
+        (Local (Refer {λ [$r :: Referents Entity]
+          (∧ (SpeakerDescribes $r $P)
+             (= (CardBasis $r {λ [$x :: Entity]
+                   (SpeakerDescribes $x $P)}) 3))}))
+    {Bind [$κ :: DecompositionBasis (Group Entity) Entity]
+          (Context (GroupBasisConstraint lu'o Entity) deps…)
+      {Bind [$aggregate :: Referents (Group Entity)] (Massify $κ $people)
+        (Mention $aggregate)}}}}
+; Sharing the property does not evaluate it.
 ```
 
 ```lisp
@@ -575,8 +592,9 @@ classes, which no single referent could verify (rationale §1.9).
 Pinned reading: whiteness is a projective side commitment — the negation
 touches only the beauty claim. Contrast: `xu lo gerku noi blabi cu melbi`
 questions beauty and still commits whiteness; and the restrictive
-`poi`-variant above puts whiteness *inside* what `na` can reach through
-the description.
+`poi`-variant makes whiteness a condition of successful reference. Under C25,
+that reference binding still sits outside nuclear na; failed reference is not
+turned into truth by that na.
 
 ```lisp
 ; mi tavla le pendo goi ko'a — aliasing is shared binding
@@ -594,8 +612,33 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ## 5. Quantifiers, witnesses, anaphora
 
+**Adopted standard profile (P43; finite pure count comparison).** Fix a
+resolved domain with four sleeping dogs, two red and two not red. Count truth
+does not create an outward quantified group. These rows state semantic
+expectations, not completed general source/force lowerings:
+
+| Source / intended continuation | Standard-profile result |
+|---|---|
+| `ci gerku cu sipna` | False: four individual qualifiers, not exactly three. |
+| `su'o re gerku cu sipna` | True: at least two qualify. |
+| `su'o re gerku cu sipna .i ri cu cimei`, with ri intended as a newly exported numerical group | No baseline lowering for that out-of-scope reference; the old P42 selected-S policy is retired. |
+| `su'o re gerku cu sipna .i ro ri cu xunre`, same intended source | Likewise no new numerical-group export. |
+| `lo su'o re gerku cu sipna .i ro ri cu xunre` | On the stated clean/memberwise reading, can use the red pair as one initially bound description reference. Later ri preserves it; no reselection. |
+
+The lo-su'o-n route keeps the inner lower bound n and the original binding.
+It is not a universal substitution under other scopes or collective readings.
+PA+KOhA recency, the intended direct-reference mei bridge and complete
+force-preserving continuation remain explicit mapping obligations. No row
+claims those interfaces implemented. The earlier P42 examples and reported
+human judgments remain in rationale §1.6a and spec References, **RI
+witness-policy record**; their compatibility pressure is not erased.
+
+**Explicit plural/library comparisons (not baseline surface lowerings).**
+The following binding pattern illustrates the counted helper's defined behavior, not standard bare-PA
+anaphora or a complete full-plural source/force construction.
+
 ```lisp
-; ci gerku cu bajra .i ri tatpi      [spec §5.6]
+; full-plural/library comparison: ci gerku cu bajra .i ri tatpi [spec §5.6]
 {Bind [$dogs :: Referents Entity]
         (SelectExactly 3 {λ [$x :: Entity] (gerku $x)})
   (Do
@@ -608,12 +651,12 @@ value per key, so `ko'a du ko'a` is reflexively true.
 ; where the three gather TOGETHER; same shape.
 ```
 
-There is no retrieval operator: the exported witness *is* the three-dog
-reference the selection binds, and nothing else is needed
-(rationale §1.6).
+No retrieval operator is used in this helper specimen: its exported witness
+is the reference the explicit selection binds (rationale §1.6). This does not
+license standard numerical-group export or discharge general cross-Host obligations.
 
 ```lisp
-; ro prenu cu ponse ci gerku .i ri tatpi — dependent witness
+; historical excluded extension: ro prenu cu ponse ci gerku .i ri tatpi
 ; truth-conditional joint-locus artifact; the discourse keeps two Host acts
 (Presuppose (∃ {λ [$x :: Entity] (prenu $x)})
   (∧
@@ -621,28 +664,28 @@ reference the selection binds, and nothing else is needed
       (∀ {λ [$p :: Entity]
         (→ (prenu $p)
            (∃ {λ [$d :: Referents Entity]
-             (∧ (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+             (∧ (CoveredBy {λ [$x :: Entity] (gerku $x)} $d)
                 (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
                 (Close (ponse $p $d)))}))})
       ; the anaphoric continuation at the joint locus (strong reading):
       (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
         (→ (∧ (prenu $p)
-              (Distrib {λ [$x :: Entity] (gerku $x)} $d)
+              (CoveredBy {λ [$x :: Entity] (gerku $x)} $d)
               (= (CardBasis $d {λ [$x :: Entity] (gerku $x)}) 3)
               (Close (ponse $p $d)))
            (Close (tatpi $d)))})))
 ```
 
-Pinned reading: each person owns three dogs, and each person's dogs are
-tired — the resolver selects the strong joint-locus construal and the mapping
-lowers that reading with the governing quantifier; the lowering keeps the
+Historical strong reading: each person owns three dogs, and each person's dogs
+are tired. This cross-sentence quantified-family rescue is excluded by P43,
+not an ordinary baseline lowering. The old joint-locus construction kept the
 first sentence's assertion
 (a bare conditional would be vacuously true of a dogless person). The
 summed reading ("all the dogs together") requires explicit collection. This
 is not an equivalent rewrite of the original selection computation: two
-qualifying dog witnesses, only one tired, separate them. The present rule pays
-with retroactive strengthening; plural-information states are the recorded
-repair, while the weak selected-witness comparison is not a baseline Lojban
+qualifying dog witnesses, only one tired, separate them. The former rule paid
+with retroactive strengthening; plural-information states remain extension
+work, while the weak selected-witness comparison is not a baseline Lojban
 reading without a surface selector.
 
 This displayed Content does not collapse the two written sentences into one
@@ -652,36 +695,49 @@ the artifact to state the selected cross-sentence truth constraint.
 ```lisp
 ; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
 (Assert
-  (Presuppose (∃ {λ [$x :: Entity]
-                (∧ (prenu $x)
-                   (∃ {λ [$y :: Entity] (∧ (xasli $y) (Close (ponse $x $y)))}))})
-    (∀ {λ [[$p :: Entity] [$d :: Referents Entity]]
-      (→ (∧ (prenu $p)
-            (Distrib {λ [$z :: Entity] (xasli $z)} $d)
-            (Close (ponse $p $d)))
-         (Close (darxi $p $d)))})))
-; $d at the plural type: the witness donkeys — the Distrib conjunct
-; is the selection's own witness law; so the locus ranges over
-; donkey-witness pluralities only; the atomic-pair spelling is the
-; distributive strengthening.
+  (∀ {λ [[$p :: Entity] [$d :: Entity]]
+    (→ (∧ (prenu $p)
+          (xasli $d)
+          (Close (ponse $p $d)))
+       (Close (darxi $p $d)))}))
+; individual-pair strong fragment for ordinary su'o and P2's non-importing
+; universal. This does not make every ri singleton-only. Other collection
+; readings must obey P43 and have their own source mapping.
 ```
 
 ```lisp
-; ro gerku cu blabi — importing universal   [pin P2]
+; ro gerku cu blabi — non-importing individual universal [pin P2]
 (Assert
-  (Every {λ [$x :: Entity] (gerku $x)}
+  (IndividualEvery {λ [$x :: Entity] (gerku $x)}
          {λ [$x :: Entity] (Close (blabi $x))}))
-; ≝ {Bind [$w :: Referents Entity] (MaxRefer gerku-property)
-;      (Distrib blabi-property $w)} per spec §12: MaxRefer's own Presuppose
-; carries the import and the maximal witness $w is exported for later
-; anaphora. The bare Presuppose(∃ gerku)(∀ x. gerku x → blabi x) has the
-; same truth conditions but exports nothing — it is the truth-condition
-; artifact of spec §5.6 rather than the lowering.
+; ≝ ∀ x:Entity. gerku(x) → Close(blabi(x)); no implicit dog reference,
+; MaxRefer, existence presupposition or outward universal group.
 ```
 
-Contrast: `naku ro gerku cu blabi` — the nonemptiness presupposition
-projects; only the universal is negated. Bare-logic `ro da` carries no
-presupposition.
+Contrast: with no relevant dogs the positive universal is true and its
+external negation false. Explicit `ro lo gerku` retains the separately bound
+description and its reference requirements; do not replace it by MaxRefer.
+
+```lisp
+; me'i gerku cu blabi — bare me'i = not-all              [pin P44]
+; A resolved pure individual nucleus, as in the preceding ro example.
+(Assert
+  (¬ (IndividualEvery {λ [$x :: Entity] (gerku $x)}
+                      {λ [$x :: Entity] (Close (blabi $x))})))
+
+; me'i pa gerku cu blabi — explicit fewer-than-one, finite pure profile
+(Assert
+  (¬ (≤ 1 (Card (SetOf {λ [$x :: Entity]
+                 (∧ (gerku $x) (Close (blabi $x)))})))))
+```
+
+For three relevant dogs, these are respectively false/false if all are white,
+true/false if two are white, and true/true if none is white. With no relevant
+dogs, bare me'i is false and explicit me'i pa true. These are fixed-domain
+pure controls, not a corpus-prevalence claim. The bare not-all rule also works
+without counting an infinite restriction: among the naturals, not all are
+nonzero, even though the nonzero naturals have the same infinite cardinality.
+No later RI source follows merely from a true counterexample claim.
 
 ```lisp
 ; lo no prenu cu jmaji — inner-no                       [pin P22]
@@ -690,13 +746,13 @@ presupposition.
 ; and records no answer; the answer lowers through the zero-count
 ; special case; never Refer:
 (Assert
-  (No {λ [$x :: Entity] (prenu $x)}
+  (PluralNo {λ [$x :: Referents Entity] (prenu $x)}
       {λ [$w :: Referents Entity] (Close (jmaji $w))}))
 ; the nuclear scope is reference-typed (spec §12): "no people-witness
 ; gathers" — the collective reading a distributive quantifier could not
 ; state at all.
 ; answer substitution into the question's frame works; anaphora to
-; the form is inaccessible (No exports nothing — nothing to refer to).
+; the form is inaccessible (PluralNo exports nothing — nothing to refer to).
 ```
 
 ```lisp
@@ -726,7 +782,8 @@ in scope distinctions (CLL 16.7), so the members predicate neutrally —
 the full product there needs explicit `ro…ro` (CLL Example 16.46).
 
 ```lisp
-; ci jbopre cu simxu lo ka tavla — a reciprocal    [spec §12]
+; Explicit plural/core comparison — not standard ci jbopre quantification.
+; A selected trio in pairwise mutual talk.                 [spec §12]
 {Bind [$trio :: Referents Entity]
         (SelectExactly 3 {λ [$x :: Entity] (jbopre $x)})
   (Assert
@@ -738,7 +795,8 @@ the full product there needs explicit `ro…ro` (CLL Example 16.46).
 ```
 
 ```lisp
-; so'i prenu cu klama — vague quantity    [spec §6.4]
+; Reference-level vague-quantity comparison.              [spec §6.4]
+; Standard so'i prenu cu klama needs the L5.28 count adaptation.
 {Bind [$n :: Natural]
         (Vague (AdmissibleThreshold ManyK {λ [$x :: Entity] (prenu $x)}))
   (Assert
@@ -746,8 +804,9 @@ the full product there needs explicit `ro…ro` (CLL Example 16.46).
                 {λ [$w :: Referents Entity] (Close (klama $w))}))}
 ```
 
-No exact count hides here: the term denotes the family over admissible
-thresholds, and `na so'i prenu cu klama` negates pointwise (spec §6.5).
+No exact count hides here: this library term denotes the family over
+admissible thresholds, and its negation is pointwise (spec §6.5). It does
+not claim a completed ordinary so'i lowering or baseline group export.
 
 ## 6. Acts, questions, answers
 
@@ -848,7 +907,7 @@ own lexical presupposition, never from `kau`.
       (Express (Close (Happiness Speaker $o Moderate)))))}}
 
 ; .au mi sipna — propositional attitude: host subordinated  [spec §7.6]
-(Express (Close (Desire Speaker (Reify (Close (sipna Speaker))))))
+(Express (Close (Desire Speaker (Reify (Close (sipna Speaker))) Moderate)))
 ; no assertion of sleeping occurs — the host-force profile of .au.
 
 ; .uinai cai do klama — paired emotion; then degree   [spec §7.6]
@@ -950,9 +1009,10 @@ own lexical presupposition, never from `kau`.
 Pinned reading: the occurrence-specifically intended eventuality-sorted
 abstraction pertaining to the book, its sort fixed by the host place
 (`djica` x2). The speaker declines to spell it out; the hearer need only
-recover it closely enough for the discourse. The shape conjunct matters:
-aboutness alone would admit nearly anything, and negation must target this
-one intended abstraction rather than every book-related event.
+recover it closely enough for the discourse. The shape conjunct states event sort and represented-content provenance;
+its additional non-vacuity is not proved (C14). The aboutness and intended-value
+constraints still matter, and negation targets this intended abstraction rather
+than every book-related event.
 
 The positive/negative pattern is uniform for tanru links, `tu'a`
 abstractions, bare-`jai` roles, and topic resolutions (with `C` the at-issue
@@ -991,7 +1051,8 @@ denial of all admissible alternatives.
          (Vague {λ [$r :: Region Scale] (AdmissibleCutoff $s $r)})
   (Assert (Close ((Grade barda $s $reg) That)))}
 
-; du'e gerku cu klama — Vague threshold; Context purpose  [spec §6.4]
+; Reference-level threshold comparison: Vague threshold, Context purpose.
+; Standard du'e gerku cu klama adaptation remains L5.28 work. [spec §6.4]
 {Bind [$purpose :: Referents Entity] (Context)  ; too many FOR WHAT: recoverable
        [$n :: Natural]
          (Vague (AdmissibleThreshold TooManyK
@@ -1028,7 +1089,7 @@ there is no intended soritical boundary, as in the cutoff examples above.
 {Let [$p :: Proposition] (Reify (Close (klama Speaker)))
   {Bind [$s :: Referents (Sign Sentence)]
           (Refer {λ [$x :: Referents (Sign Sentence)]
-            ((DuhuRel (Close (klama Speaker))) $p :2 $x)})
+            ((DuhuRel (Holds $p)) $p :2 $x)})
     (Mention $s)}}
 ; place 1 is filled with the reified content itself — the relation
 ; identifies it; so leaving place 1 to contextual closure would add a
@@ -1072,6 +1133,7 @@ there is no intended soritical boundary, as in the cutoff examples above.
     (Mention $state)}}
 ; StateClause is already the event property nu needs; no event place is
 ; added to CoRef/du and EventOfContent selects this same holding state.
+; This displayed reading is de re: $home was bound outside StateClause.
 ```
 
 ## 10. Signs and mention
@@ -1131,27 +1193,36 @@ there is no intended soritical boundary, as in the cutoff examples above.
 ; both occurrences consume the one binding.
 ```
 
-## 11. The spiral sentence, in full
+## 11. The spiral sentence, with an explicit alias
+
+The explicit `goi ko'a` / `ko'a` variant keeps the intended dog source
+unambiguous. The older unaliased RI version is not used to decide the still
+open source/recency rules by silently skipping an inaccessible quantified
+expression. This episodic specimen fixes the omitted biting locus and tool
+as invariant contextual values, hoisted outside the count and its negation;
+other dependency readings require their own mapping.
 
 ```lisp
-; lo ci gerku noi blabi cu na batci re prenu .i .uinai cai ri tatpi
+; lo ci gerku noi blabi ku'o goi ko'a cu na batci re prenu .i .uinai cai ko'a tatpi
 ; (episodic readings: each sentence's occasion is Context-anchored; P8)
 {Bind [$dogs :: Referents Entity]
       (Refer {λ [$r :: Referents Entity]
         (∧ (gerku $r)
             (= (CardBasis $r {λ [$x :: Entity] (gerku $x)}) 3))})
   (Do
-    {Bind [$occ1 :: Time] (Context)          ; the biting's occasion — bound
+    {Bind [$occ1 :: Time] (Context)
+          [$biteLocus :: Referents Entity] (Context)
+          [$bitingTool :: Referents Entity] (Context)
       {Let [$a1 :: Act Assertion]         ; OUTSIDE the negation; so na
             (Assert                       ; denies biting AT that occasion
               (Supplement $dogs (Close (blabi $dogs))
-                (¬ (Exactly 2 {λ [$x :: Entity] (prenu $x)}
-                     {λ [$ppl :: Referents Entity]
+                (¬ (GlobalExactly 2 {λ [$x :: Entity] (prenu $x)}
+                     {λ [$person :: Entity]
                        (CloseClause (ActualClause
                          {λ [$e :: Referents Eventuality]
-                           (∧ ((DirectClause (batci $dogs $ppl)) $e)
+                           (∧ ((DirectClause (batci $dogs $person $biteLocus $bitingTool)) $e)
                               (cabna $e $occ1))}))}))))
-        (Perform $a1)}}
+        (Perform Host $a1)}}
     {Bind [$occ2 :: Time] (Context)
       {Let [$a2 :: Act Assertion]
             (Assert
@@ -1164,22 +1235,19 @@ there is no intended soritical boundary, as in the cutoff examples above.
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}
 ```
 
-(The indicator sits sentence-initially — `.uinai cai ri tatpi` — so its
-grammatical target is the whole second assertion, per the CLL attachment
-rule the mapping annex carries; placed after `ri` it would instead
-display unhappiness about the dogs.) Everything committed: three real
-dogs, introduced; their whiteness, as a projective aside the negation
-never touches; the denial that any two-person witness was bitten at the
-contextually relevant occasion — the occasion binder sits outside the
-`¬`, which is exactly the tenseless-denial semantics of P8 ("I didn't
-turn off the stove" denies one particular failure); their tiredness at
-its own occasion; and the speaker's displayed intense unhappiness
-about that last claim. Everything open, on purpose: whether the biting
-denial and the tiredness hold of the dogs jointly or severally (P4);
-and which precisification of nothing — because nothing else
-here is vague. The occasions are not open but *recovered*: `Context`,
-not absence — the habitual readings, which would drop the temporal
-conjuncts entirely, are the other members of P8's reading family.
+The first assertion denies **exactly two individually bitten people** at
+the recovered occasion. With exactly three qualifying people that denial
+is true; with exactly two it is false. No two-person plurality is passed
+to the nuclear predicate. Dog plurality remains neutral under P4; the
+individuality of the counted person argument is supplied by outer PA.
+
+The dog reference is introduced once, named by ko'a, and retained. Its
+whiteness is contributed by NOI outside the negation. The second assertion
+uses the same dogs at its own recovered occasion. Sentence-initial
+`.uinai cai` targets that second assertion's occurrence, so the two Hosts,
+their captures and the displayed attitude are not collapsed into one claim.
+The shown pure restrictions use the document's resolved/hoisted lexical-site
+convention; this is not a new general dependency or force-model construction.
 
 ## 12. Direct binding notation
 
@@ -1218,12 +1286,10 @@ no baseline constructor for quoted core notation.
 
 ## 13. In-situ scope
 
-A description bound in one place and a quantifier in another do not
-interleave: the description's `Bind` is formed at clause level in source
-order (spec §4.1), and the quantifier applies to the clause body (spec §11
-L5.30, pin P41). Two quantifiers scope in surface order, whether they lower
-to a witness-set selection `Bind` (`su'o`, a bare PA, a threshold) or to a
-place-absorbing former (`ro`, inner `no`, the marked global reading).
+Descriptions are not quantifiers, but may have declared dependencies (P41).
+The first specimen is the invariant reading, not a prohibition on dependent
+`lo`. A dependent description's binding must be inside the governor it uses.
+Quantified sumti retain surface order and termsets their explicit joint rule.
 
 ```lisp
 ; ro gerku cu tavla lo mlatu — the cats are one contextual plurality;
@@ -1231,7 +1297,7 @@ place-absorbing former (`ro`, inner `no`, the marked global reading).
 {Bind [$cats :: Referents Entity]
         (Refer {λ [$x :: Referents Entity] (mlatu $x)})
   (Assert
-    (Every {λ [$x :: Entity] (gerku $x)}
+    (IndividualEvery {λ [$x :: Entity] (gerku $x)}
            {λ [$dog :: Entity] (Close (tavla $dog $cats))}))}
 ```
 
@@ -1239,11 +1305,56 @@ place-absorbing former (`ro`, inner `no`, the marked global reading).
 ; ro gerku cu tavla su'o mlatu — two quantifiers: surface order is scope
 ; order; the cats may vary with the dog                         [pin P41]
 (Assert
-  (Every {λ [$x :: Entity] (gerku $x)}
+  (IndividualEvery {λ [$x :: Entity] (gerku $x)}
          {λ [$dog :: Entity]
-           (Some {λ [$y :: Entity] (mlatu $y)}
-                 {λ [$w :: Referents Entity] (Close (tavla $dog $w))})}))
+           (IndividualSome {λ [$y :: Entity] (mlatu $y)}
+                 {λ [$cat :: Entity] (Close (tavla $dog $cat))})}))
 ```
+
+A dependent-description reading is distinct from that existential claim:
+
+```lisp
+; ro gerku cu tavla lo mlatu — declared dog-dependent lo [P41]
+(Assert
+  (IndividualEvery {λ [$x :: Entity] (gerku $x)}
+    {λ [$dog :: Entity]
+      {Bind [$cats :: Referents Entity]
+            (Refer {λ [$r :: Referents Entity] (mlatu $r)})
+        (Close (tavla $dog $cats))}}))
+```
+
+This depicts dependency at its actual binding scope. It does not choose a
+general partial-profile sharing/export policy, nor turn lo into su'o.
+For an anaphor-free pure owner restriction, ordinary individual closure suffices:
+
+```lisp
+; ro prenu poi ponse su'o gerku ku'o cu blabi — pure resolved restriction
+(Assert
+  (IndividualEvery
+    {λ [$person :: Entity]
+      (∧ (prenu $person)
+         (IndividualSome {λ [$dog :: Entity] (gerku $dog)}
+           {λ [$dog :: Entity] (Close (ponse $person $dog))}))}
+    {λ [$person :: Entity] (Close (blabi $person))}))
+```
+
+A pure two-su'o termset has individual coordinates, not a counted plural
+selection and not distribution over an assumed-minimal lift:
+
+```lisp
+; su'o gerku ce'e su'o prenu cu nelci — pure joint individual locus
+(Assert
+  (∃ {λ [[$dog :: Entity] [$person :: Entity]]
+    (∧ (gerku $dog) (prenu $person) (Close (nelci $dog $person)))}))
+```
+
+This is the pure anaphor-free fragment; mixed-coordinate and export cases
+remain explicitly outside the completed rule.
+
+Omitted lexical sites in these pure examples are already resolved/hoisted under
+the sample convention; no Refer or Local is hidden in a pure property. Inside
+a pure restrictor, replacing the existential with a dependent lo requires Q04's
+explicit pure consumer.
 
 ## 14. Meanings without analyses
 
@@ -1277,3 +1388,25 @@ li pa joi re du li ci
   — joik-connected mekso operands parse, but no number/operator/collection
     denotation has been established for this locus.
 ```
+
+## 15. New acceptance cases and scoped non-equivalences
+
+These are evidence-backed tests for the remaining interfaces, not invented
+finished lowerings. Exact source attribution is in spec References/decisions.
+
+| Case | Required reading / boundary |
+|---|---|
+| `lo ro prenu cu jmaji` versus `ro'oi prenu cu jmaji` | One predication of all relevant people differs from every eligible plurality satisfying it. Singleton failure needs its lexical/domain premise. |
+| `naku lo su'o prenu cu jmaji` versus negated plural existence | Denial of the bound people's gathering does not deny every possible gathering plurality. |
+| No cats; `lo mlatu na jbena` | No successful reference, hence no successful claim; C25 does not move Refer under negation. External negation of the whole Bind has a different truth condition. |
+| `mi pu re roi gleki` | Contextually distinguishable happy occasions; not duplicate representations of one holding state. |
+| `li 100 cu no'e barda ke rarna namcu` under lojbab's stipulated scale | Exact integer middle, without a forced choice of width representation. |
+| Ksion's `li pai du li ji'i ci pi pavopamuze` | Adequate approximation-equality reading owed; the old exact-equality/supervaluation term is not sufficient. |
+| `mi'o po'o zvati` | Own subparts are exempt; relevant overlapping alternatives not Among the focus can compete. Host and exclusion are both at issue; effectful lowering remains owed. |
+| Imagined cave person assigned ko'a, then a question about ko'a | Preserve the meaningful nonactual continuation without asserting actual existence. |
+| `ti du ti` / `ti na du ti` with respectively same/different indicated targets | Distinct indication occurrences may share a target; one sentence-wide ground is insufficient. |
+
+A zero-profile degree example is already reducible: `Enough` at threshold0
+reduces to `AtLeast 0 = ⊤` and exports no witness; `TooMany` at0 instead
+uses `AtLeast 1`. This is a core boundary test, not a claim that a particular
+surface purpose must admit zero.

@@ -170,12 +170,12 @@
           }
         }
       },
-      "source_comment": "ro gerku cu blabi — importing universal   [pin P2]",
+      "source_comment": "ro gerku cu blabi — non-importing individual universal [pin P2]",
       "surface": "ro gerku cu blabi",
       "unresolved": false
     }
   ],
-  "fence_sha1": "8eac378a0dbb7e9bb101843b6c5f2217febf3ca7",
+  "fence_sha1": "ce7d66da0f0de2e3dc692c23cc3d3b836c9789ba",
   "jbotci_version": "jbotci 0.1.0",
   "ordinal": 44,
   "schema": "smusni-gentufa-parse-fixture-1",

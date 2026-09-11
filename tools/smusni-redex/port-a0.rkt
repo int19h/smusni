@@ -20,6 +20,12 @@
          b1-expand-some
          b1-expand-every
          b1-expand-no
+         e01-expand-individual-some
+         e01-expand-individual-no
+         e01-expand-individual-every
+         e01-expand-plural-some
+         e01-expand-plural-no
+         e01-expand-only
          b1-expand-at-most
          b1-expand-more-than
          b1-expand-fewer-than
@@ -57,6 +63,8 @@
   [fill-label label Eventuality]
   [event-mode holding-state direct-event]
   [arrow Fn EFn]
+  [closure-head IndividualSome IndividualNo IndividualEvery PluralSome PluralNo]
+  [comparison < ≤]
   [effect context refer projective effectful-call performance]
   [comp-category Content ClauseContent Discourse (RefComp τ) (PerfComp τ)]
   [obligation finite-set-cardinality-defined
@@ -95,6 +103,8 @@
      (Some t t)
      (Every t t)
      (No t t)
+     (closure-head t t)
+     (Only t t t)
      (AtMost t t t)
      (GlobalExactly t t t)
      (TooMany t t)
@@ -117,6 +127,7 @@
      (SetOf t)
      (Card t)
      (= t t)
+     (comparison t t)
      (+ t t)
      (∧ t t)
      (List t ...)
@@ -200,14 +211,17 @@
 
 (define-definition-metafunction SmusniA0
   a0-expand-massify : τ t t -> t
-  (definition-case canonical-selection
+  (definition-case canonical-reference
     [(a0-expand-massify τ t_basis t_cover)
-     (SelectExactly
-      1
-      (λ ((x_group (Group τ)))
-        (CanonicalAggregateAt t_basis x_group t_cover)))
+     (Refer
+      (λ ((x_reference (Referents (Group τ))))
+        (∃ (λ ((x_group (Group τ)))
+             (∧ (CanonicalAggregateAt t_basis x_group t_cover)
+                (CoRef x_reference x_group))))))
      (where x_group
-            ,(variable-not-in (term (τ t_basis t_cover)) '$group))]))
+            ,(variable-not-in (term (τ t_basis t_cover)) '$group))
+     (where x_reference
+            ,(variable-not-in (term (τ t_basis t_cover x_group)) '$reference))]))
 
 (define-definition-metafunction SmusniA0
   a0-expand-zipwith : t t t -> t
@@ -393,6 +407,51 @@
   (definition-case negated-some
     [(b1-expand-no τ t_P t_Q)
      (¬ (Some t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-individual-some : τ t t -> t
+  (definition-case individual-exists
+    [(e01-expand-individual-some τ t_P t_Q)
+     (∃ (λ ((x_unit τ)) (∧ (t_P x_unit) (t_Q x_unit))))
+     (where x_unit ,(variable-not-in (term (τ t_P t_Q)) '$x))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-individual-no : τ t t -> t
+  (definition-case negated-individual-exists
+    [(e01-expand-individual-no τ t_P t_Q)
+     (¬ (IndividualSome t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-individual-every : τ t t -> t
+  (definition-case individual-forall
+    [(e01-expand-individual-every τ t_P t_Q)
+     (∀ (λ ((x_unit τ)) (→ (t_P x_unit) (t_Q x_unit))))
+     (where x_unit ,(variable-not-in (term (τ t_P t_Q)) '$x))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-plural-some : τ t t -> t
+  (definition-case plural-exists
+    [(e01-expand-plural-some τ t_P t_Q)
+     (∃ (λ ((x_reference (Referents τ)))
+          (∧ (t_P x_reference) (t_Q x_reference))))
+     (where x_reference ,(variable-not-in (term (τ t_P t_Q)) '$r))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-plural-no : τ t t -> t
+  (definition-case negated-plural-exists
+    [(e01-expand-plural-no τ t_P t_Q)
+     (¬ (PluralSome t_P t_Q))]))
+
+(define-definition-metafunction SmusniA0
+  e01-expand-only : τ t t t -> t
+  (definition-case host-and-exclusion
+    [(e01-expand-only τ t_A t_H t_f)
+     (∧ (t_H t_f)
+        (∀ (λ ((x_alternative (Referents τ)))
+             (→ (∧ (t_A x_alternative) (t_H x_alternative))
+                (Among x_alternative t_f)))))
+     (where x_alternative
+            ,(variable-not-in (term (τ t_A t_H t_f)) '$alternative))]))
 
 (define-definition-metafunction SmusniA0
   b1-expand-at-most : t τ t t -> t
@@ -817,6 +876,7 @@
 
 (define (a0-compatible? actual expected)
   (or (equal? actual expected)
+      (and (equal? expected 'Entity) (a0-first-order-type? actual))
       (and (equal? actual 'Cardinal)
            (member expected '(Natural Number)))
       (and (equal? actual 'Natural) (equal? expected 'Number))
@@ -834,6 +894,8 @@
         [`(Referents ,inner) (a0-compatible? actual inner)]
         [_ #f])
       (match* (actual expected)
+        [(`(Referents ,actual-inner) `(Referents ,expected-inner))
+         (a0-compatible? actual-inner expected-inner)]
         [(`(,actual-arrow ,params ,result)
           `(,expected-arrow ,expected-params ,expected-result))
          #:when (and (member actual-arrow '(Fn EFn))
@@ -1381,6 +1443,33 @@
 
   [(a0-type synth Γ v_P R_P)
    (where (Fn (τ) Content) (record-type-of R_P))
+   (side-condition ,(null? (record-effects (term R_P))))
+   (side-condition
+    ,(if (member (term closure-head) '(IndividualSome IndividualNo IndividualEvery))
+         (a0-first-order-type? (term τ))
+         (match (term τ)
+           [`(Referents ,inner) (a0-first-order-type? inner)] [_ #f])))
+   (a0-type (check (EFn (τ) Content)) Γ v_Q R_Q)
+   (where (effect_extra ...)
+          ,(gq-extra-effects (term (record-type-of R_Q)) #f))
+   (where R_out (merge-records Content (R_P R_Q) (effect_extra ...) ()))
+   ----------------------------------------------- "E01-T-Closure"
+   (a0-type synth Γ (closure-head v_P v_Q) R_out)]
+
+  [(a0-type synth Γ v_A
+            (typing (Fn ((Referents τ)) Content) () (obligation_A ...)))
+   (a0-type synth Γ v_H
+            (typing (Fn ((Referents τ)) Content) () (obligation_H ...)))
+   (a0-type (check (Referents τ)) Γ t_f R_f)
+   (where R_out
+          (merge-records Content
+                         ((typing Content () (obligation_A ... obligation_H ...)) R_f)
+                         () ()))
+   ----------------------------------------------- "E01-T-Only"
+   (a0-type synth Γ (Only v_A v_H t_f) R_out)]
+
+  [(a0-type synth Γ v_P R_P)
+   (where (Fn (τ) Content) (record-type-of R_P))
    (a0-type synth Γ v_Q R_Q)
    (where (arrow (τ) Content) (record-type-of R_Q))
    (where (effect_extra ...)
@@ -1538,6 +1627,12 @@
    ----------------------------------------------- "B1-T-Addition"
    (a0-type synth Γ (+ t_left t_right) R_out)]
 
+  [(a0-type (check Number) Γ t_left R_left)
+   (a0-type (check Number) Γ t_right R_right)
+   (where R_out (merge-records Content (R_left R_right) () ()))
+   ----------------------------------------------- "E01-T-Comparison"
+   (a0-type synth Γ (comparison t_left t_right) R_out)]
+
   [(a0-type (check Content) Γ t_left R_left)
    (a0-type (check Content) Γ t_right R_right)
    (where R_out (merge-records Content (R_left R_right) () ()))
@@ -1618,8 +1713,11 @@
    (a0-type (check (RefComp τ)) Γ
             (Presuppose t_condition t_body) R_out)]
 
-  [(a0-type (check (Referents Eventuality)) Γ t_left R_left)
-   (a0-type (check (Referents Eventuality)) Γ t_right R_right)
+  [(a0-type synth Γ t_left R_left)
+   (a0-type synth Γ t_right R_right)
+   (side-condition
+    ,(a0-reference-compatible? (record-type (term R_left))
+                              (record-type (term R_right))))
    (where R_out (merge-records Content (R_left R_right) () ()))
    ----------------------------------------------- "A0-T-CoRef"
    (a0-type synth Γ (CoRef t_left t_right) R_out)]
@@ -1881,7 +1979,8 @@
     "B1-T-AtLeast-Zero" "B1-T-AtLeast-Positive"
     "B1-T-AtLeast-Symbolic" "B1-T-Some"
     "B1-T-Every" "B1-T-AtMost" "B1-T-FewerThan-Zero"
-    "B1-T-FewerThan-Positive" "B1-T-FewerThan-Symbolic"))
+    "B1-T-FewerThan-Positive" "B1-T-FewerThan-Symbolic"
+    "E01-T-Closure" "E01-T-Comparison" "E01-T-Only"))
 
 ;; Adjacent provenance table required by the A0 brief. These are normative
 ;; formation/typing anchors, not claims that the derived Redex rule is itself
@@ -1964,7 +2063,10 @@
     ("B1-T-AtMost" "spec §4.10; §12 AtMost")
     ("B1-T-FewerThan-Zero" "spec §4.10; §12 FewerThan zero")
     ("B1-T-FewerThan-Positive" "spec §4.10; §12 FewerThan")
-    ("B1-T-FewerThan-Symbolic" "spec §4.10; §12 FewerThan totality")))
+    ("B1-T-FewerThan-Symbolic" "spec §4.10; §12 FewerThan totality")
+    ("E01-T-Closure" "spec §12 individual and unrestricted plural existence")
+    ("E01-T-Comparison" "spec §4.9 numeric comparisons")
+    ("E01-T-Only" "spec §12 pure Only host and exclusion")))
 
 (define a0-coverage-probes
   `((synth () 3)
@@ -2108,7 +2210,13 @@
            (FewerThan n P Q))
     (synth ((P (Fn (Entity) Content))
             (Q (EFn ((Referents Entity)) Content)))
-           (FewerThan 1 P Q))))
+           (FewerThan 1 P Q))
+    (synth ((P (Fn (Entity) Content)) (Q (EFn (Entity) Content)))
+           (IndividualEvery P Q))
+    (synth () (≤ 2 3))
+    (synth ((A (Fn ((Referents Entity)) Content))
+            (H (Fn ((Referents Entity)) Content)))
+           (Only A H Speaker))))
 
 (define (derivation-rule-names derivation)
   (append (if (derivation-name derivation)
@@ -2149,8 +2257,20 @@
           (make-coverage b1-expand-overlap)
           (make-coverage b1-expand-covered-by)
           (make-coverage b1-expand-select-some)
-          (make-coverage b1-expand-max-refer)))
+          (make-coverage b1-expand-max-refer)
+          (make-coverage e01-expand-individual-some)
+          (make-coverage e01-expand-individual-no)
+          (make-coverage e01-expand-individual-every)
+          (make-coverage e01-expand-plural-some)
+          (make-coverage e01-expand-plural-no)
+          (make-coverage e01-expand-only)))
   (parameterize ([relation-coverage coverages])
+    (term (e01-expand-individual-some Entity P Q))
+    (term (e01-expand-individual-no Entity P Q))
+    (term (e01-expand-individual-every Entity P Q))
+    (term (e01-expand-plural-some Entity P Q))
+    (term (e01-expand-plural-no Entity P Q))
+    (term (e01-expand-only Entity A H Speaker))
     (term (a0-expand-let $x Entity Speaker (P $x)))
     (term (a0-expand-exactly 0 Entity P Q))
     (term (a0-expand-exactly 2 Entity P Q))

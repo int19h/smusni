@@ -104,10 +104,33 @@
         (cons #px"(^|[^$A-Za-z0-9_-])x[1-9]([^A-Za-z0-9_-]|$)"
               "legacy x-prefixed row label")))
 
+;; Notation restrictions apply to code, not prose in line comments or quoted
+;; strings. Preserve positions and newlines so token boundaries remain intact.
+(define (notation-code text)
+  (define out (open-output-string))
+  (for/fold ([state 'code]) ([ch (in-string text)])
+    (define next
+      (case state
+        [(comment) (if (char=? ch #\newline) 'code 'comment)]
+        [(escape) 'string]
+        [(string) (cond [(char=? ch #\\) 'escape]
+                        [(char=? ch #\") 'code]
+                        [else 'string])]
+        [else (cond [(char=? ch #\;) 'comment]
+                    [(char=? ch #\") 'string]
+                    [else 'code])]))
+    (write-char (if (or (char=? ch #\newline)
+                        (and (eq? state 'code) (eq? next 'code)))
+                    ch #\space)
+                out)
+    next)
+  (get-output-string out))
+
 (define (validate-notation! fences)
   (for ([item (in-list fences)])
+    (define code (notation-code (fence-content item)))
     (for ([entry (in-list banned-notation)])
-      (when (regexp-match? (car entry) (fence-content item))
+      (when (regexp-match? (car entry) code)
         (error 'validate-notation!
                "~a #~a (line ~a) contains ~a"
                (fence-source item) (fence-ordinal item)

@@ -6,6 +6,11 @@ and links into the specification. The spec is normative; this index
 orients. Entries are grouped in the mapping annex's order (spec §11);
 grep for the cmavo you want. Families whose members lower uniformly
 (digits, BAI, UI, BY, VUhU) get one entry with representatives.
+Current settled/open status is [decisions.md](decisions.md); gaps below are
+not completed lowerings. Examples inherit the samples' resolved lexical-row
+and actual-mode conventions; a fragment need not be a complete act.
+The delimiter variants `(λ {$x :: T} body)` and `{λ [$x :: T] body}`
+have identical structure; delimiter shape is non-semantic (spec §2).
 Cmavo sequences that form a single grammatical unit — a unit at one
 level of the EBNF grammar, not a composition of its parts (`.i je` is
 not `.i` + `je`) — are indexed in §14. Cmavo that contribute pure
@@ -38,8 +43,8 @@ fills at distinct labels commute).
 ```lisp
 ; klama fa mi fi la .paris.
 (Bind {$p :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(Named "paris" $r)}))
-  {(Close (klama 👉:1 Speaker :3 $p👈))})
+      (Refer (λ {$r :: Referents Entity} (Named "paris" $r)))
+  (Close (klama 👉:1 Speaker :3 $p👈)))
 ```
 
 **See.** [Spec §4.1–4.2, §11](spec.md).
@@ -52,14 +57,14 @@ The fill tag for the place `jai` demotes the old x1 into.
 ; mi jai gau rinka lo nu do klama kei fai lo nu mi darxi lo bitmu
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(Close (klama :1 Audience :Eventuality $e))}))
-  {(Bind {$w :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(bitmu $r)}))
-    {(Bind {$cause :: Referents Eventuality}
+        (Close (klama :1 Audience :Eventuality $e))))
+  (Bind {$w :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity} (bitmu $r)))
+    (Bind {$cause :: Referents Eventuality}
           (Refer (λ {$e :: Referents Eventuality}
-            {(Close (darxi :1 Speaker :2 $w :Eventuality $e))}))
-      {(Close ((JaiPromote rinka gau-role)
-               :1 Speaker :2 $eff 👉:fai $cause👈))})})})
+            (Close (darxi :1 Speaker :2 $w :Eventuality $e))))
+      (Close ((JaiPromote rinka gau-role)
+               :1 Speaker :2 $eff 👉:fai $cause👈)))))
 ; gau-role: the agent label gau's tag reduction supplies
 ```
 
@@ -98,7 +103,7 @@ sites retrieve independently.
 ```lisp
 ; mi klama zo'e
 (Bind {$dest :: Referents Entity} (Context)
-  {(Close (klama Speaker $dest))})
+  (Close (klama Speaker $dest)))
 ```
 
 **See.** [Spec §5.3, §11](spec.md), pin P15.
@@ -111,7 +116,7 @@ typical filler for the place.
 ```lisp
 ; mi klama zu'i
 (Bind {$dest :: Referents Entity} 👉(Context)👈
-  {(Close (klama Speaker $dest))})
+  (Close (klama Speaker $dest)))
 ```
 
 The typicality is an **admissibility condition on the retrieval** —
@@ -130,9 +135,9 @@ tag type (P14).
 ```lisp
 ; ko'a co'e ko'e — unassigned KOhA are keyed retrievals (P16)
 (Bind {$a :: Referents Entity} (Context)
-  {(Bind {$b :: Referents Entity} (Context)
-    {(Bind {$r :: PredTerm ρ} 👉(Context)👈
-      {(Close ($r $a $b))})})})
+  (Bind {$b :: Referents Entity} (Context)
+    (Bind {$r :: PredTerm ρ} 👉(Context)👈
+      (Close ($r $a $b)))))
 ```
 
 **See.** [Spec §5.3, §11](spec.md), pin P14.
@@ -156,8 +161,8 @@ type; no default quantifier (P1, xorlo).
 ```lisp
 ; lo gerku cu bajra
 (Bind {$dogs :: Referents Entity}
-      👉(Refer (λ {$r :: Referents Entity} {(gerku $r)}))👈
-  {(Close (bajra $dogs))})
+      👉(Refer (λ {$r :: Referents Entity} (gerku $r)))👈
+  (Close (bajra $dogs)))
 ```
 
 **See.** [Spec §5.3, §11](spec.md), pin P1; [primer ch. 3](primer.md).
@@ -172,17 +177,13 @@ clause — the describing event is this very utterance (P10).
 ; le gerku cu bajra
 (Bind {$x :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {👉(Close (skicu Speaker $r Audience
-             (λ {$y :: Referents Entity} {(gerku $y)})))👈}))
-  {(Close (bajra $x))})
+        👉(SpeakerDescribes $r (λ {$y :: Referents Entity} (gerku $y)))👈))
+  (Close (bajra $x)))
 ```
 
-`Close` here is the **licensed display abbreviation** of the fully
-anchored term — the reference property conjoining
-`(LocutionOf $e u₀)` at the utterance's own token, printed in full at
-the spec's §11 `le` row — saying `le gerku` *is* the describing
-(P10). An abbreviation of a real term, not a reinterpretation of
-`Close`.
+`SpeakerDescribes` is the actual anchored definition: its describing event
+is this utterance's locution, via token-first LocutionOf. Unanchored
+Close(skicu …) is not an equivalent abbreviation.
 
 **See.** [Spec §11](spec.md), pin P10; [rationale §2.6](rationale.md).
 
@@ -195,8 +196,8 @@ referent bears the name-sign.
 ; la .alis. cu bajra
 (Bind {$x :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(Named "alis" $r)}))
-  {(Close (bajra $x))})
+        (Named "alis" $r)))
+  (Close (bajra $x)))
 ```
 
 **See.** [Spec §7.5, §11](spec.md).
@@ -209,8 +210,8 @@ as holder for `le'e`); no prototype individual (P11).
 
 ```lisp
 ; lo'e gerku cu batci
-(👉Generic Typical👈 (λ {$x :: Entity} {(gerku $x)})
-  (λ {$x :: Entity} {(Close (batci $x))}))
+(👉Generic Typical👈 (λ {$x :: Entity} (gerku $x))
+  (λ {$x :: Entity} (Close (batci $x))))
 ```
 
 **See.** [Spec §5.8, §11](spec.md), pin P11.
@@ -222,21 +223,21 @@ components/members are an ordinary non-maximal `Refer` plurality of the
 description, delimited by `Local` because that base is not a second surface
 referent (P5). Group descriptors use `CompleteGunmaAt`; set membership is
 exact. Inner PA counts the base, outer PA counts groups/sets.
-Context or explicit `ro`/`MaxRefer` may supply the maximal base, but the bare
-gadri does not.
+Context, explicit inner/descriptive `ro`, or library `MaxRefer` may supply
+the maximal base, but the bare gadri and bare outer `ro` do not.
 
 ```lisp
 ; loi gerku cu sruri lo zdani — an ordinary base bound first
 (Bind {$base :: Referents Entity}
-      👉(Local (Refer (λ {$x :: Entity} {(gerku $x)})))👈
-  {(Bind {$κ :: GroupBasis Entity}
-         (Context GroupBasisConstraint[loi,Entity] deps…)
-    {(Bind {$g :: Referents (Group Entity)}
+      👉(Local (Refer (λ {$x :: Entity} (gerku $x))))👈
+  (Bind {$κ :: GroupBasis Entity}
+         (Context (GroupBasisConstraint loi Entity) deps…)
+    (Bind {$g :: Referents (Group Entity)}
            👉(Refer (λ {$r :: Group Entity}
-             {(CompleteGunmaAt $κ $r $base)}))👈
-      {(Bind {$z :: Referents Entity}
-             (Refer (λ {$r :: Referents Entity} {(zdani $r)}))
-        {(Close (sruri $g $z))})})})})
+             (CompleteGunmaAt $κ $r $base)))👈
+      (Bind {$z :: Referents Entity}
+             (Refer (λ {$r :: Referents Entity} (zdani $r)))
+        (Close (sruri $g $z))))))
 ```
 
 **See.** [Spec §4.8–4.9, §11](spec.md), pin P5; [rationale §2.8](rationale.md).
@@ -260,23 +261,25 @@ Unit count of the selected base under a counting basis:
 ; lo ci gerku cu bajra
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (gerku $r)
+        (∧ (gerku $r)
            👉(= (CardBasis $r (λ {$y :: Entity}
-                               {(gerku $y)})) 3)👈)}))
-  {(Close (bajra $d))})
+                               (gerku $y))) 3)👈)))
+  (Close (bajra $d)))
 ```
 
 **See.** [Spec §4.10, §11](spec.md), pin P1.
 
 ### Inner `no` (`lo no broda`)
 
-Never `Refer` (plural references are nonempty by type): the zero-count
-schema `No`, relativized to the bridi frame (P22).
+Never `Refer` under P22's explicit negative-frame/answer-substitution policy
+(reference nonemptiness alone does not force positive unit counts): the
+schema `PluralNo`, relativized to the bridi frame (P22), not counted No or
+ordinary individual no.
 
 ```lisp
 ; lo no gerku cu bajra
-(No (λ {$x :: Entity} {(gerku $x)})
-    (λ {$w :: Referents Entity} {(Close (bajra $w))}))
+(PluralNo (λ {$x :: Referents Entity} (gerku $x))
+    (λ {$w :: Referents Entity} (Close (bajra $w))))
 ```
 
 **See.** [Spec §12](spec.md), pin P22.
@@ -305,9 +308,8 @@ members — `Distrib` at the use site (the explicit each-reading; spec
 ; lu'a le prenu cu bevri — each of them carries
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(Close (skicu Speaker $r Audience
-           (λ {$y :: Referents Entity} {(prenu $y)})))}))
-  {👉(Distrib (λ {$x :: Entity} {(Close (bevri $x))}) $p)👈})
+        (SpeakerDescribes $r (λ {$y :: Referents Entity} (prenu $y)))))
+  👉(Distrib (λ {$x :: Entity} (Close (bevri $x))) $p)👈)
 ```
 
 **See.** [Spec §4.8, §12, §11](spec.md).
@@ -327,8 +329,8 @@ quantifiers, the restrictor (P20: the only domain restriction on `da`).
 ; lo gerku poi blabi cu bajra
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (gerku $r) (blabi $r))}))
-  {(Close (bajra $d))})
+        (∧ (gerku $r) (blabi $r))))
+  (Close (bajra $d)))
 ```
 
 **See.** [Spec §5.3, §11](spec.md), pin P20.
@@ -342,9 +344,9 @@ beside the at-issue claim; negation and questioning never touch it
 ```lisp
 ; lo gerku noi blabi cu bajra
 (Bind {$d :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(Supplement $d (Close (blabi $d))
-     (Close (bajra $d)))👈})
+      (Refer (λ {$r :: Referents Entity} (gerku $r)))
+  👉(Supplement $d (Close (blabi $d))
+     (Close (bajra $d)))👈)
 ```
 
 **See.** [Spec §5.5, §11](spec.md), pin P7; [primer ch. 5](primer.md).
@@ -371,9 +373,9 @@ rest of the discourse (P16).
 ```lisp
 ; lo gerku goi ko'a cu blabi .i ko'a bajra — ko'a ⊳-assigned to $d
 (Bind {$d :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {(Do (Assert (Close (blabi $d)))
-       (Assert (Close (bajra 👉$d👈))))})
+      (Refer (λ {$r :: Referents Entity} (gerku $r)))
+  (Do (Assert (Close (blabi $d)))
+       (Assert (Close (bajra 👉$d👈)))))
 ```
 
 **See.** [Spec §5.6, §11](spec.md), pin P16.
@@ -391,10 +393,9 @@ associated sumti is bound before the pure restriction forms.
 ; le stizu pe mi cu blanu — CLL Example 8.18
 (Bind {$s :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (Close (skicu Speaker $r Audience
-             (λ {$y :: Referents Entity} {(stizu $y)})))
-           👉(Close (srana $r Speaker))👈)}))
-  {(Close (blanu $s))})
+        (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (stizu $y)))
+           👉(Close (srana $r Speaker))👈)))
+  (Close (blanu $s)))
 ```
 
 **See.** [Spec §11](spec.md); CLL 8.3.
@@ -411,17 +412,15 @@ supplements keeping source order at the effect level.
 ; — CLL Example 8.39
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(∧ (Close (skicu Speaker $r Audience
-             (λ {$y :: Referents Entity} {(gerku $y)})))
-           👉(blabi $r)👈)}))
-  {👉(Supplement $d
+        (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (gerku $y)))
+           👉(blabi $r)👈)))
+  👉(Supplement $d
      (Bind {$p :: Referents Entity}
            (Refer (λ {$r :: Referents Entity}
-             {(∧ (Close (skicu Speaker $r Audience
-                  (λ {$y :: Referents Entity} {(pendo $y)})))
-                (Close (srana $r Speaker)))}))   ; le MI pendo (CLL 8.7)
-       {(Close (ponse $p $d))})
-     (Close (klama $d)))👈})
+             (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (pendo $y)))
+                (Close (srana $r Speaker)))))   ; le MI pendo (CLL 8.7)
+       (Close (ponse $p $d)))
+     (Close (klama $d)))👈)
 ```
 
 **See.** [Spec §11](spec.md); CLL 8.4.
@@ -440,91 +439,129 @@ the clause on the resultant object.
 
 ### ro (PA)
 
-Over descriptions: importing `Every` — `Presuppose` nonemptiness plus
-distributive `∀` (P2; `ro` is *each*). Bare `ro da`: mathematical `∀`,
-no import.
+Under P2, bare `ro broda` and restricted `ro da poi broda` use the same
+non-importing individual universal. An empty restriction is vacuous. Explicit
+`ro lo ...` retains its independently bound description; it is not replaced
+by a fresh MaxRefer and its reference requirements are not erased.
 
 ```lisp
 ; ro gerku cu bajra
-(Presuppose (∃ (λ {$x :: Entity} {(gerku $x)}))
-  (∀ (λ {$x :: Entity} {(→ (gerku $x) (Close (bajra $x)))})))
+(IndividualEvery {λ [$x :: Entity] (gerku $x)}
+       {λ [$x :: Entity] (Close (bajra $x))})
 ```
 
 **See.** [Spec §4.5, §5.6, §11](spec.md), pin P2.
 
 ### su'o (PA)
 
-At-least-one selection: the weakest member of the selection family
-(`SelectSome ≝ SelectAtLeast 1`); exports its witness.
+Individual existential quantification, not SelectSome's neutral plural witness.
+For an anaphor-free resolved reading:
 
 ```lisp
 ; su'o gerku cu bajra
-(Bind {$w :: Referents Entity}
-      👉(SelectSome (λ {$x :: Entity} {(gerku $x)}))👈
-  {(Close (bajra $w))})
+(IndividualSome {λ [$x :: Entity] (gerku $x)}
+                {λ [$x :: Entity] (Close (bajra $x))})
 ```
 
-**See.** [Spec §5.6, §4.10](spec.md); [catalog 2.22](catalog.md).
+At least one is not exactly one. This closure exports nothing by itself;
+general positive existential continuity remains Q01 work, separately from
+P6's supported in-scope strong fragment. Compound lower bounds use the finite
+individual count table (§4.10); P43 does not export a new group for a later
+out-of-scope ri. The older P42 selected-S policy is retired. An explicit
+`lo su'o n` description supplies its own counted reference under L3.9 and
+preserves that binding where accessible. Ordinary su'o is not plural quantification.
+Bare `su'o` abbreviates `su'o pa`; these are the same ordinary existential
+reading and must not receive different source statuses. Individual uptake
+after larger counts remains a separately unprovided source reading. The
+completed BPFK comparison supplies the recursive truth definition, not a later
+ri selection rule or a proof that such a rule is impossible; no group export follows.
+**See.** [Spec §4.10/§5.6/§12/§14](spec.md), P43; [decisions.md](decisions.md).
+
+### su'oi / ro'oi (experimental PA)
+
+Plural existential/universal quantification differs from ordinary su'o/ro and
+from lo su'o/lo ro reference under embeddings. Its actual reference-property
+domain and export mapping remain explicit work; counted SelectSome is not
+unrestricted plural existence.
+
 
 ### Digits: pa re ci vo mu xa ze bi so no (PA)
 
-Outer numeric quantifiers select witness sets of that cardinality
-under a counting basis — neutral witness-set selection, not
-distributive and not global (P17's documented divergence; the
-CLL-literal readings are `GlobalExactly` and `Distrib`). Outer `no`
-is not a selection: it lowers through the zero-count test `No`, which
-exports nothing (spec §12's zero floor; P22).
+Standard finite exact numerals count all individual qualifiers within the
+fixed resolved restriction. Four relevant sleepers make `ci gerku cu sipna`
+false; finding a triple proves at least three, not exactly three. For pure
+operands the count uses `GlobalExactly`, not the plural helper `Exactly`.
+P43 forbids new numerical-group export beyond the quantifier's scope.
+Ordinary no uses IndividualNo; inner no uses PluralNo; counted No remains a
+separate helper. P17's former default is retired, while its termset questions
+and the explicit full-plural profile remain separate. The following is a
+**plural/library comparison only**, not a standard bare-PA lowering.
 
 ```lisp
-; re prenu cu bevri lo pipno
+; full-plural/library comparison: re prenu cu bevri lo pipno
 (Bind {$w :: Referents Entity}
-      👉(SelectExactly 2 (λ {$x :: Entity} {(prenu $x)}))👈
-  {(Bind {$p :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(pipno $r)}))
-    {(Close (bevri $w $p))})})
+      👉(SelectExactly 2 (λ {$x :: Entity} (prenu $x)))👈
+  (Bind {$p :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity} (pipno $r)))
+    (Close (bevri $w $p))))
 ```
 
-**See.** [Spec §4.10, §5.6](spec.md), pin P17.
+**See.** [Spec §4.10, §5.6](spec.md), pins P17/P43.
 
 ### su'e / za'u / me'i (PA)
 
-At-most / more-than / fewer-than: `za'u n` is the exporting
-`MoreThan` (an `AtLeast n+1` selection, same witness-set discipline);
-`su'e n` and `me'i n` are the bounded *tests* `AtMost`/`FewerThan`
-(spec §12) — negations of selections, which select nothing and export
-nothing.
+With an explicit bound n, standard finite individual su'e n, za'u n and
+me'i n compare the total qualifiers with n: at most, more than, or fewer than.
+`za'u pa` and
+`su'o re` are equivalent lower bounds; `za'u re` means more than two.
+No new numerical group escapes for later anaphora (P43).
+The library's counted-plural AtMost/MoreThan/FewerThan definitions remain
+distinct comparison forms, not automatic standard surface mappings. Other
+numeric/effectful domains and the full source mapping remain explicit work.
+Bare su'e/za'u default to pa. Bare me'i defaults to ro (P44), so its pure
+individual reading is `(¬ (IndividualEvery P Q))`, not a finite-cardinality
+comparison. Empty P gives false; nonempty P with no Q-satisfiers gives true.
+Explicit me'i pa remains fewer-than-one/zero. The human-adopted BPFK default
+departs from CLLv1.1's blanket pa rule; source/history and costs are recorded
+in spec References/rationale P44. It introduces no new later-RI source and
+does not supply missing larger-construction mappings.
 
-**See.** [Spec §4.10, §5.6](spec.md).
+**See.** [Spec §4.10, L5.2, §5.6, P44](spec.md).
 
 ### so'a / so'e / so'i / so'o / so'u (PA)
 
-The vague-magnitude series: selections whose cardinality condition is
-a `Vague`-parameterized region on the count scale.
+The vague-magnitude series constrains the count scale by a
+`Vague`-parameterized region. The reference-level selection helpers remain
+comparisons; their standard individual-count adaptation is the explicit
+L5.28 gap, not an implicit ordinary plural-quantifier rule.
 
 **See.** [Spec §6.4–6.5](spec.md).
 
 ### ji'i (PA)
 
-Approximation, position-indexed (P37): both positions denote
-`Number`-valued `Vague` families — prefix/medial over the
-`AdmissibleTolerance` region, suffix over the `AdmissibleRounding`
-preimage (stated digits exact by construction), directionally under
-`ma'u`/`ni'u`.
+Approximation, position-indexed (P37): tolerance versus rounding constrains
+an exact unknown value within the claim at each vague tolerance profile.
+Equality stays exact; actual cardinalities/identified measurements are tested,
+not replaced. Aliases share one value; independent sites need not share error.
+The old Number-valued point family is superseded. Typed profile, arithmetic,
+scope/effect and retention realization remain explicit work, with no universal
+precision floor or required full simplifier.
 
 **See.** [Spec §4.10, §6.4, §12](spec.md), pin P37.
 
 ### du'e / rau / mo'a (PA)
 
 Threshold quantifiers: `ThresholdKind` (TooManyK / EnoughK / TooFewK)
-over the count scale — contextual threshold, explicit kind.
+over the count scale—a Vague threshold constrained by a Context purpose.
 
 ```lisp
-; du'e gerku cu bajra
-(👉TooMany👈 (λ {$x :: Entity} {(gerku $x)})
-  (λ {$w :: Referents Entity} {(Close (bajra $w))}))
+; Reference-level library comparison, not a completed standard
+; du'e gerku cu bajra lowering (L5.28).
+(👉TooMany👈 (λ {$x :: Entity} (gerku $x))
+  (λ {$w :: Referents Entity} (Close (bajra $w))))
 ; TooMany is defined (catalog 2.13): a Context standard and a Vague
-; admissible threshold, then MoreThan — the comment explains, the
-; term above is already complete
+; admissible threshold, then MoreThan. The library term is complete;
+; its ordinary individual-count surface adaptation is separately owed.
 ```
 
 **See.** [Spec §6.4](spec.md); [catalog](catalog.md).
@@ -536,7 +573,7 @@ restricted only by `poi` (P20).
 
 ```lisp
 ; da gerku
-(∃ (λ {$x :: Entity} {(gerku $x)}))
+(∃ (λ {$x :: Entity} (gerku $x)))
 ```
 
 The prenexed spelling `da zo'u da gerku` denotes the same term;
@@ -556,20 +593,21 @@ over a sequence, but cross-clausal place-linking is gap-registered.
 
 ```lisp
 ; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL Example 19.8
-(Presuppose (∃ (λ {$x :: Entity} {(prenu $x)}))
-  👉(∀ (λ {$x :: Entity} {(→ (prenu $x)
-     (∃ (λ {$y :: Entity} {(Close (patfu $y $x))})))}))👈)
-; prenex order = scope order: ro da outscopes su'o de
+👉(∀ (λ {$x :: Entity} (→ (prenu $x)
+     (∃ (λ {$y :: Entity} (Close (patfu $y $x)))))))👈
+; non-importing restricted universal under P2; no prior person reference.
+; Prenex order = scope order: ro da outscopes su'o de.
 ```
 
 **See.** [Spec §11, §12](spec.md), pin P26; [catalog 1.51](catalog.md).
 
 ### da'a (PA)
 
-All-but-n (default one): the `SelectAllBut` selection — a neutral
-witness set whose remainder counts exactly n; the omitted
-individuals are not a parameter and may vary under distributive
-scope.
+All-but-n (default one). The finite pure standard mapping counts exactly n
+counterexamples, using GlobalExactly with a negated individual nuclear
+predicate (L5.4). It introduces no outward group. SelectAllBut retains its
+separate neutral plural-selection meaning and explicit binding scope; it
+is not the standard bare-da'a lowering.
 
 **See.** [Spec §12, §11](spec.md); [catalog 1.27](catalog.md).
 
@@ -593,32 +631,35 @@ unassigned brodV are CLL's schematic sample predicates.
 ```lisp
 ; su'o bu'a zo'u la .djim. bu'a la .djan. — CLL Example 16.105
 (Bind {$j :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(Named "djim" $r)}))
-  {(Bind {$n :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(Named "djan" $r)}))
-    {👉(∃ (λ {$F :: PredTerm ρ} {(Close ($F $j $n))}))👈})})
+      (Refer (λ {$r :: Referents Entity} (Named "djim" $r)))
+  (Bind {$n :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity} (Named "djan" $r)))
+    👉(∃ (λ {$F :: PredTerm ρ} (Close ($F $j $n))))👈))
 ```
 
 **See.** [Spec §11](spec.md), pin P30.
 
 ### ce'e (CEhE), nu'i / nu'u (NUhI/NUhU)
 
-Termsets: co-selected witness sets at one joint multi-parameter locus,
-full product, no coordinate maximality (P17).
+Pure ordinary su'o coordinates use a joint individual existential locus (L5.3).
+The explicitly scoped provisional numerical-termset profile uses co-selected counted witnesses
+and their full product, with no coordinate maximality (P17). Mixed and external
+export cases still need their specific rule.
 
 ```lisp
 ; ci gerku ce'e re prenu cu batci — co-selected witnesses, full
 ; product (P17)
 (Bind 👉{$dogs :: Referents Entity}
-        (SelectExactly 3 (λ {$x :: Entity} {(gerku $x)}))
+        (SelectExactly 3 (λ {$x :: Entity} (gerku $x)))
         {$people :: Referents Entity}
-        (SelectExactly 2 (λ {$x :: Entity} {(prenu $x)}))👈
-  {(Distrib (λ {$d :: Entity}
-     {(Distrib (λ {$p :: Entity}
-        {(Close (batci $d $p))}) $people)}) $dogs)})
+        (SelectExactly 2 (λ {$x :: Entity} (prenu $x)))👈
+  (Distrib (λ {$d :: Entity}
+     (Distrib (λ {$p :: Entity}
+        (Close (batci $d $p))) $people)) $dogs))
 ; the selections commute (one joint locus); the member-wise Distrib
 ; nest is CLL's full product — every dog bites each person — with the
-; plural witnesses exported and no coordinate maximality
+; bound coordinate values and no coordinate maximality; a general external
+; termset-anaphora export policy remains gap-registered.
 ```
 
 **See.** [Spec §4.10, §11](spec.md), pin P17; [samples §5](samples.md).
@@ -634,29 +675,31 @@ Structure only — see §13.
 Logical connection at the term locus: `∨ ∧ ↔ ∨`-of-left ("whether or
 not") over the joint predication, with surface grammar fixing
 structure and each connective carrying its accessibility row (P18).
-The rest of the bridi is **shared, not copied**: a description
-elsewhere in the sentence is introduced once, scoping over the
-connective, and elided places keep one shared `Context` site across
-both expansions (§5.3's site identity — `mi .e ti klama` names one
-shared destination, not two).
+Formed frames/sites are shared rather than copied. The examples below select
+invariant description bindings outside the connective. One shared Context site
+reuses its value at equal dependency tuples, but may vary at different declared
+tuples; it does not prove that `mi .e ti klama` always names one destination.
+The common-tail default is minimal/invariant, subject to required and declared
+dependencies (Q09/#16); application arguments are not automatically dependencies.
+Dependent descriptions obey P41 rather than an unconditional outer-binding rule.
 
 ```lisp
 ; mi .e do nelci lo gerku — one dog referent, both conjuncts see it
 (Bind {$d :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(CloseClause
+      (Refer (λ {$r :: Referents Entity} (gerku $r)))
+  👉(CloseClause
       (ClauseAnd (DirectClause (nelci Speaker $d))
-                 (DirectClause (nelci Audience $d))))👈})
+                 (DirectClause (nelci Audience $d))))👈)
 ```
 
 ```lisp
 ; mi .a do klama lo zarci — ∨ instead; the store is still introduced
 ; once, outside the disjunction
 (Bind {$z :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(zarci $r)}))
-  {👉(CloseClause
+      (Refer (λ {$r :: Referents Entity} (zarci $r)))
+  👉(CloseClause
       (ClauseOr (DirectClause (klama Speaker $z))
-                (DirectClause (klama Audience $z))))👈})
+                (DirectClause (klama Audience $z))))👈)
 ```
 
 **See.** [Spec §4.5, §5.3–5.4, §11](spec.md), pin P18. Compounds
@@ -689,10 +732,10 @@ all tails.
 ```lisp
 ; mi nelci lo gerku gi'e bajra — Speaker shared, dog in one tail only
 (Bind {$d :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(gerku $r)}))
-  {👉(CloseClause
+      (Refer (λ {$r :: Referents Entity} (gerku $r)))
+  👉(CloseClause
       (ClauseAnd (DirectClause (nelci Speaker $d))
-                 (DirectClause (bajra Speaker))))👈})
+                 (DirectClause (bajra Speaker))))👈)
 ```
 
 ```lisp
@@ -700,13 +743,12 @@ all tails.
 ; the tail-term do applies to both tails (dunda x3 and lebna x3)
 (Bind {$b :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(Close (skicu Speaker $r Audience
-           (λ {$y :: Referents Entity} {(cukta $y)})))}))
-  {(Bind {$m :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity} {(jdini $r)}))
-    {(CloseClause
+        (SpeakerDescribes $r (λ {$y :: Referents Entity} (cukta $y)))))
+  (Bind {$m :: Referents Entity}
+        (Refer (λ {$r :: Referents Entity} (jdini $r)))
+    (CloseClause
       (ClauseAnd (DirectClause (dunda Speaker $b 👉Audience👈))
-                 (DirectClause (lebna Speaker $m 👉Audience👈))))})})
+                 (DirectClause (lebna Speaker $m 👉Audience👈))))))
 ```
 
 Elided places in *different* tails stay distinct sites (CLL 14.58's
@@ -725,10 +767,10 @@ the same tail-sharing discipline as the afterthought forms.
 ```lisp
 ; ga mi gi do citka lo plise — forethought ∨, apple introduced once
 (Bind {$p :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(plise $r)}))
-  {👉(CloseClause
+      (Refer (λ {$r :: Referents Entity} (plise $r)))
+  👉(CloseClause
       (ClauseOr (DirectClause (citka Speaker $p))
-                (DirectClause (citka Audience $p))))👈})
+                (DirectClause (citka Audience $p))))👈)
 ```
 
 **See.** [Spec §4.5, §5.3, §11](spec.md); §14 for the gek/guhek units.
@@ -736,7 +778,8 @@ the same tail-sharing discipline as the afterthought forms.
 ### na (NA)
 
 Bridi negation: `¬` at the left edge — `na` ≡ left-edge `naku`, with
-CLL ch. 16's flip rules governing movement past quantifiers (P18).
+same-domain flip conditions (P18); import, effects and accessibility must match.
+Description persistence under nuclear na is C25.
 
 ```lisp
 ; mi na klama
@@ -748,7 +791,8 @@ CLL ch. 16's flip rules governing movement past quantifiers (P18).
 ### naku
 
 `¬` at its surface position: quantifier scope read off the surface
-order; movement flips per ch. 16.
+order; movement needs same-domain duality with import/effect conditions.
+Counted plural Some and individual Every are not such a pair.
 
 **See.** [Spec §4.5, §11](spec.md), pin P18; §14 (`na ku` unit).
 
@@ -812,7 +856,7 @@ Respectively-pairing: `ZipWith` over the paired lists.
 ```lisp
 ; mi fa'u do tavla do fa'u mi
 (ZipWith (λ {$s $l :: Referents Entity}
-           {(Close (tavla $s $l))})
+           (Close (tavla $s $l)))
   (List Speaker Audience) (List Audience Speaker))
 ```
 
@@ -857,8 +901,8 @@ anchor); chains (`pu pu`) compose as anchor paths.
 ; mi pu klama
 (CloseClause
   (λ {$e :: Referents Eventuality}
-    {(∧ ((DirectClause (klama Speaker)) $e)
-       (purci $e Now))}))
+    (∧ ((DirectClause (klama Speaker)) $e)
+       (purci $e Now))))
 ```
 
 **See.** [Spec §11 tense block](spec.md), pin P8/P24.
@@ -889,12 +933,11 @@ event bears the mover's `muvdu` motion in the `farna` direction);
 ; ⊳-resolved against the ground
   (Bind {$v :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        {(Close (skicu Speaker $r Audience
-           (λ {$y :: Referents Entity} {(verba $y)})))}))
-  {(CloseClause
+        (SpeakerDescribes $r (λ {$y :: Referents Entity} (verba $y)))))
+  (CloseClause
     (λ {$e :: Referents Eventuality}
-      {(∧ ((DirectClause (cadzu $v)) $e)
-         👉(MotionVector $e $v rightward)👈)}))})
+      (∧ ((DirectClause (cadzu $v)) $e)
+         👉(MotionVector $e $v rightward)👈))))
 ```
 
 **See.** [Spec §11](spec.md); [catalog 1.50](catalog.md).
@@ -951,8 +994,8 @@ conversions apply to the underlying row (§14 sequences).
 ; mi klama bai do
 (CloseClause
   (λ {$e :: Referents Eventuality}
-    {(∧ ((DirectClause (klama Speaker)) $e)
-       (Close (bapli :1 Audience :2 $e)))}))
+    (∧ ((DirectClause (klama Speaker)) $e)
+       (Close (bapli :1 Audience :2 $e)))))
 ```
 
 **See.** [Spec §11](spec.md); [lexicon interface §10](spec.md).
@@ -1004,7 +1047,8 @@ constructs content, commands nothing).
 ### ti / ta / tu (KOhA)
 
 Demonstratives: `Deictic` at proximal/medial/distal against the
-current ground.
+current ground in the fixed-ground fragment. Repeated occurrences need
+separately anchored indications and explicit binding/ri eligibility (Q12).
 
 ```lisp
 ; ti gerku
@@ -1018,13 +1062,20 @@ current ground.
 Recency anaphora: ⊳ resolved by CLL ch. 7 counting over accessible
 referents before the calculus; the term sees the binding, never a
 search (P16). Source order of fills feeds the counting.
-When a resolved strong reading binds a witness outside its governor, P6 lowers
-that selected construal to a joint locus. This is not an equivalent rewrite of
-the original selection computation; the retroactivity cost and
-plural-information-state candidate are in the gap register, and no weak
-selected-witness reading is silently added.
+Ri preserves its resolved antecedent reference, not a smaller or larger group
+chosen to suit the continuation. P43 preserves accessible bindings but
+retires P42's newly exported numerical groups and governor-external families.
+Outer PA in `ro ri` or `re ri` acts on that same reference, but the generic
+PA+KOhA composition and eligible-introduction/recency rule remain L8.14's gap.
+The bare-ri skip rule alone does not decide whether a complete `ro ri` sumti
+can be the source of a later ri.
+P6's supported in-scope strong reading remains; the former retroactive
+cross-sentence joint-locus rescue is not a baseline exception to P43.
+The plural-information-state extension and other missing source/force laws
+remain explicit. Open ma slots and later failed cardinality are not static
+scope errors, and no new weak selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §11](spec.md), pin P16.
+**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P43.
 
 ### ko'a … fo'u (KOhA)
 
@@ -1101,7 +1152,7 @@ readings arise.
 
 ```lisp
 ; lo ka ce'u tavla mi
-(λ {$x :: Referents Entity} {(Close (tavla $x Speaker))})
+(λ {$x :: Referents Entity} (Close (tavla $x Speaker)))
 ```
 
 **See.** [Spec §9.2, §11](spec.md), pin P12.
@@ -1121,7 +1172,7 @@ abstraction-relation family instead (next entry; spec §9.2).
 ; lo nu mi klama cu nandu
 (Bind {$ev :: Referents Eventuality}
       (Refer 👉(ActualClause (DirectClause (klama Speaker)))👈)
-  {(Close (nandu $ev))})
+  (Close (nandu $ev)))
 ```
 
 **See.** [Spec §9, §11](spec.md); [primer ch. 6](primer.md).
@@ -1140,8 +1191,8 @@ the 0-adic case). `se du'u`
 ```lisp
 ; mi djuno lo du'u la .frank. cu bebna
 (Bind {$f :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(Named "frank" $r)}))
-  {(Close (djuno Speaker 👉(Reify (Close (bebna $f)))👈))})
+      (Refer (λ {$r :: Referents Entity} (Named "frank" $r)))
+  (Close (djuno Speaker 👉(Reify (Close (bebna $f)))👈)))
 ```
 
 **See.** [Spec §9.1–9.2, §11](spec.md); [catalog 1.31, 2.18](catalog.md);
@@ -1155,7 +1206,7 @@ referent — the reified-property family is a §9.1 reservation).
 
 ```lisp
 ; lo ka se klama
-(λ {$x :: Referents Entity} {(Close (klama :2 $x))})
+(λ {$x :: Referents Entity} (Close (klama :2 $x)))
 ```
 
 **See.** [Spec §4.4, §9.2, §11](spec.md), pin P12.
@@ -1174,7 +1225,7 @@ a gap proposal.
 ```lisp
 ; lo ni mi klama
 (Refer (λ {$a :: Referents Amount}
-  {(Close (👉(NiRel (Close (klama :1 Speaker)))👈 $a))}))
+  (Close (👉(NiRel (Close (klama :1 Speaker)))👈 $a))))
 ; the outer Close handles NiRel's unfilled scale place (x2)
 ```
 
@@ -1195,13 +1246,13 @@ does not assert that any X-related abstraction will do.
 ; mi troci tu'a lo vorme — an event-sorted abstraction (the host
 ; place selects the sort), shape conjunct + srana-aboutness (P14)
 (Bind {$door :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(vorme $r)}))
-  {(Bind {$a :: Referents Eventuality}
+      (Refer (λ {$r :: Referents Entity} (vorme $r)))
+  (Bind {$a :: Referents Eventuality}
         👉(Context (λ {$v :: Referents Eventuality}
-          {(∧ (∃ (λ {$p :: Proposition}
-                {(CoRef $v (EventOfContent (Holds $p)))}))
-              (Close (srana $v $door)))}) $door)👈
-    {(Close (troci Speaker $a))})})
+          (∧ (∃ (λ {$p :: Proposition}
+                (CoRef $v (EventOfContent (Holds $p)))))
+              (Close (srana $v $door)))) $door)👈
+    (Close (troci Speaker $a))))
 ```
 
 **See.** [Spec §11](spec.md), pin P14.
@@ -1220,8 +1271,8 @@ between the new x1 and the old abstraction at `fai`.
 ; mi jai gau rinka lo nu do klama
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(Close (klama :1 Audience :Eventuality $e))}))
-  {(Close (👉(JaiPromote rinka gau-role)👈 :1 Speaker :2 $eff))})
+        (Close (klama :1 Audience :Eventuality $e))))
+  (Close (👉(JaiPromote rinka gau-role)👈 :1 Speaker :2 $eff)))
 ; the unfilled fai place closes contextually; gau-role is the label
 ; gau's tag reduction supplies
 ```
@@ -1230,12 +1281,12 @@ between the new x1 and the old abstraction at `fai`.
 ; mi jai rinka lo nu do morsi — bare jai, common agent-role resolution
 (Bind {$death :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
-        {(Close (morsi :1 Audience :Eventuality $e))}))
-  {(Bind {$role :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
+        (Close (morsi :1 Audience :Eventuality $e))))
+  (Bind {$role :: Fn ((Referents Entity) (Referents Eventuality)) Content}
         (Context
-          (λ {$k :: Fn<(Referents<Entity>, Referents<Eventuality>), Content>}
-            {(JaiRoleAdmissible rinka $k)}))
-    {(Close ((JaiRaise rinka $role) :1 Speaker :2 $death))})})
+          (λ {$k :: Fn ((Referents Entity) (Referents Eventuality)) Content}
+            (JaiRoleAdmissible rinka $k)))
+    (Close ((JaiRaise rinka $role) :1 Speaker :2 $death))))
 ; Close recovers the old rinka x1 at fai; $role relates Speaker to it.
 ```
 
@@ -1243,15 +1294,18 @@ between the new x1 and the old abstraction at `fai`.
 
 ### kau (UI)
 
-Indirect-question marker: `ContextualAnswer` — the answerhood object,
+Implicit-answer use: `ContextualAnswer` — the answerhood object,
 exhaustivity **absent** (weakest truth conditions; strengthenings
 lexical/pragmatic/explicit; P9).
+Explicit-value kau instead uses the supplied value once at its marked locus,
+with a typed answer selection; it must not create an unconstrained contextual
+answer. The general source/effect/query-aware construction remains L10.3/§14 work.
 
 ```lisp
 ; mi djuno lo du'u ma kau klama
 (Close (djuno Speaker
   (Reify 👉(Answer (OpenQ (λ {$x :: Referents Entity}
-                            {(Close (klama $x))}))
+                            (Close (klama $x))))
                    ContextualAnswer)👈)))
 ```
 
@@ -1298,7 +1352,7 @@ utterance-level scope even from embedded positions.
 
 ```lisp
 ; ma klama
-(Ask (OpenQ (λ {$x :: Referents Entity} {(Close (klama $x))})))
+(Ask (OpenQ (λ {$x :: Referents Entity} (Close (klama $x)))))
 ```
 
 **See.** [Spec §8.1–8.3, §11](spec.md).
@@ -1317,9 +1371,9 @@ family). ⊳ Target selection by grammatical attachment (P19).
 ; .uinai mi klama — the display targets the bound host occurrence; degree
 ; Moderate is the unmarked region (cai would make it Intense)
 (Let {$a :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {(Do (Perform AttachedDisplay
-      (Express (Close (Unhappiness Speaker $o Moderate)))))})})
+  (Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    (Do (Perform AttachedDisplay
+      (Express (Close (Unhappiness Speaker $o Moderate)))))))
 ```
 
 The occurrence handle makes the host-force/display target explicit after
@@ -1389,8 +1443,8 @@ dimension; performs nothing, negates nothing.
 ; do klama .i na'i — the objected act Let-bound (§7.2: no
 ; discourse constants); its performance occurrence Bind-bound
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
-  {(Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    {👉(NahiObjection $o)👈})})
+  (Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
+    👉(NahiObjection $o)👈))
 ```
 
 **See.** [Spec §7.3, §12](spec.md); [catalog 2.23](catalog.md).
@@ -1409,18 +1463,23 @@ the three things a treatment must define (spec §14's entry).
 Library discourse relations between performed occurrence handles (`Contrast`,
 `Addition`, `Parallel`, `Elaboration`, …), displayed beside the host
 occurrence. Raw act values remain explicit metalinguistic alternatives.
-Constituent `ji'a` and `po'o` are focus derivations
-(`Additive`/`Only`).
+Pure po'o now uses the same-level host-plus-exclusion Only rule: both at issue,
+own subparts exempt and relevant overlapping outsiders permitted. General
+effectful focus lifting remains work. Ji'a separately displays addition without
+strict novelty. Recovered discursive criteria are the ordinary default, shared
+by comparison chain; nai complements at the same bound criterion. Explicit and
+admissible existential readings remain distinct. Exact gismu rows, typed targets
+and sharing/effect implementation remain owed.
 
 ```lisp
 ; .i mi klama .i ku'i do stali — no prior/following-discourse
 ; constants exist (§7.2): raw acts are Let-bound, occurrences Bind-bound
 (Let {$a1 :: Act Assertion} (Assert (Close (klama Speaker)))
-  {(Bind {$o1 :: ActOccurrence Assertion} (Perform Host $a1)
-    {(Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
-      {(Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
-        {(Do (Perform AttachedDisplay
-          (Express (Close (Contrast $o2 $o1)))))})})})})
+  (Bind {$o1 :: ActOccurrence Assertion} (Perform Host $a1)
+    (Let {$a2 :: Act Assertion} (Assert (Close (stali Audience)))
+      (Bind {$o2 :: ActOccurrence Assertion} (Perform Host $a2)
+        (Do (Perform AttachedDisplay
+          (Express (Close (Contrast $o2 $o1)))))))))
 ```
 
 **See.** [Spec §7.2, §11](spec.md); [catalog 2.25](catalog.md).
@@ -1468,9 +1527,9 @@ A lone vocative with no distinct host uses unary/Host `Perform`, not
 ```lisp
 ; doi .djan. ko klama — the vocative act, then the command to John
 (Bind {$j :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(Named "djan" $r)}))
-  {(Do 👉(Perform AttachedAddress (Vocative $j))👈
-       (Command 👉$j👈 (Close (klama $j))))})
+      (Refer (λ {$r :: Referents Entity} (Named "djan" $r)))
+  (Do 👉(Perform AttachedAddress (Vocative $j))👈
+       (Command 👉$j👈 (Close (klama $j)))))
 ; the ⊳ active-do binding makes ko and do resolve to $j (P27)
 ```
 
@@ -1494,15 +1553,15 @@ no temporal order implied.
 
 ### sei … se'u (SEI)
 
-Metalinguistic comment: projective supplement beside the host —
-non-restrictive material landing on the supplement channel (§5.5).
+Metalinguistic comment: complete attachment/force/accessibility lowering
+remains work; not automatically one Content-valued Supplement.
 
 **See.** [Spec §5.5](spec.md).
 
 ### to … toi (TO)
 
-Parenthetical text: supplement-channel discourse beside the host, the
-enclosed text performed as an aside.
+Parenthetical text: arbitrary discourse is not one Content side. Its force,
+attachment and accessibility need a typed lowering; gap-registered.
 
 **See.** [Spec §5.5](spec.md).
 
@@ -1562,6 +1621,8 @@ forms a letteral from any word.
 
 Mention of a math-expression sign (the expression itself, unevaluated
 as a sign); contrast `li`.
+The MathExpression sign constructor remains a gap; the value/sign distinction
+does not itself supply that constructor.
 
 **See.** [Spec §4.9, §7.5, §11](spec.md).
 
@@ -1589,8 +1650,8 @@ an outside binding gives the de re reading.
 ```lisp
 ; ko'a du ko'e — unassigned KOhA are keyed retrievals (P16)
 (Bind {$a :: Referents Entity} (Context)
-  {(Bind {$b :: Referents Entity} (Context)
-    {👉(CloseClause (StateClause (CoRef $a $b)))👈})})
+  (Bind {$b :: Referents Entity} (Context)
+    👉(CloseClause (StateClause (CoRef $a $b)))👈))
 ```
 
 **See.** [Spec §4.5, §11](spec.md), pin P23.
@@ -1636,32 +1697,36 @@ sumti` through it).
 
 ```lisp
 ; la .baltazar. cu me le ci nolraitru — bindings in source order
-(Bind {$b :: Referents Entity}
-      (Refer (λ {$r :: Referents Entity} {(Named "baltazar" $r)}))
-  {(Bind {$k :: Referents Entity}
-        (Refer (λ {$r :: Referents Entity}
-          {(∧ (Close (skicu Speaker $r Audience
-               (λ {$y :: Referents Entity} {(nolraitru $y)})))
-             (= (CardBasis $r (λ {$y :: Entity}
-                                {(nolraitru $y)})) 3))}))
-    {(Close (👉(MePred $k)👈 $b))})})
+{Let [$P :: EFn ((Referents Entity)) Content]
+      {λ [$y :: Referents Entity] (nolraitru $y)}
+  {Bind [$b :: Referents Entity]
+        (Refer {λ [$r :: Referents Entity] (Named "baltazar" $r)})
+    {Bind [$k :: Referents Entity]
+          (Refer {λ [$r :: Referents Entity]
+            (∧ (SpeakerDescribes $r $P)
+               (= (CardBasis $r {λ [$y :: Entity]
+                     (SpeakerDescribes $y $P)}) 3))})
+      (Close ((MePred $k) $b))}}}
+; Count the described kings, not actual kings; $P is one inert shared value.
 ```
 
 **See.** [Spec §12, §11](spec.md); [catalog 2.30](catalog.md).
 
 ### mei / moi / si'e / cu'o / va'e (MOI)
 
-Number selbri: the MOI relation families — `MeiRel κ n` (group completely
+The existing displayed number-selbri rows are `MeiRel κ n` (group completely
 constituted at a constrained group basis from an n-membered set),
 `MoiRel` (n-th under a Context-recovered pure
 ordering), `SiheRel` (portion), `CuhoRel` (opaque probability,
 0 ≤ n ≤ 1, no probability calculus — P29), `VaheRel` (scale
 position). `me X me'u MOI` composes.
 
-The complete-member clause is defined for positive `mei` values. Experimental
-`nomei` proposes an empty mass/0-tuple, but the baseline's component carrier
-is nonempty `Referents<T>`; its null-group/empty-cover case is therefore an
-explicit §14 gap, not a covert empty plurality.
+The displayed Group clause is only one instance. The selected further contracts
+are direct-reference positive mei and a separate x2-only exact Set-count row
+for every Natural n, selected before SE/filling. The latter can count a supplied
+sole empty Set at zero without an empty Referents value; its full typed lowering,
+empty-lo'i and wider nobody/memberless-Group readings remain §14 work. Nonnumeric
+moi has the recovered typed-correspondence direction, not forced numeric coercion.
 
 ```lisp
 ; lei mi ratcu cu cimei — CLL Example 18.81; le MI ratcu = the
@@ -1669,17 +1734,16 @@ explicit §14 gap, not a covert empty plurality.
 ; contextually
 (Bind {$base :: Referents Entity}
       (Local (Refer (λ {$r :: Referents Entity}
-        {(∧ (Close (skicu Speaker $r Audience
-             (λ {$y :: Referents Entity} {(ratcu $y)})))
-           (Close (srana $r Speaker)))})))
-  {(Bind {$κg :: GroupBasis Entity}
-         (Context GroupBasisConstraint[lei,Entity] deps₁…)
-    {(Bind {$g :: Referents (Group Entity)}
+        (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (ratcu $y)))
+           (Close (srana $r Speaker))))))
+  (Bind {$κg :: GroupBasis Entity}
+         (Context (GroupBasisConstraint lei Entity) deps₁…)
+    (Bind {$g :: Referents (Group Entity)}
            (Refer (λ {$r :: Group Entity}
-             {(CompleteGunmaAt $κg $r $base)}))
-      {(Bind {$κmei :: GroupBasis Entity}
-             (Context GroupBasisConstraint[mei,Entity] deps₂…)
-        {(Close (👉(MeiRel $κmei 3)👈 :1 $g))})})})})
+             (CompleteGunmaAt $κg $r $base)))
+      (Bind {$κmei :: GroupBasis Entity}
+             (Context (GroupBasisConstraint mei Entity) deps₂…)
+        (Close (👉(MeiRel $κmei 3)👈 :1 $g))))))
 ```
 
 **See.** [Spec §12, §11](spec.md), pin P29; [catalog 1.52](catalog.md).
@@ -1713,8 +1777,8 @@ na'e-family contraries, not `¬` (P18 handles `na`).
 
 ```lisp
 ; mi na'e klama
-(Bind {$d :: ContrastDomain ρ(klama)} (Context)
-  {(Close ((Scalar OtherThan $d klama) :1 Speaker))})
+(Bind {$d :: ContrastDomain (RowOf klama)} (Context)
+  (Close ((Scalar OtherThan $d klama) :1 Speaker)))
 ```
 
 **See.** [Spec §6.3, §11](spec.md); [catalog](catalog.md).
@@ -1746,7 +1810,7 @@ categorizer's `be` in `lo su'u … kei be lo fasnu` likewise).
 
 ```lisp
 ; ta blanu zdani be mi — the be-fill rides inside the head unit
-(Close ((Tanru blanu 👉(At zdani x2 Speaker)👈) That))
+(Close ((Tanru blanu 👉(At zdani 2 Speaker)👈) That))
 ```
 
 **See.** [Spec §6.2, §4.2](spec.md).
@@ -1846,10 +1910,10 @@ binders exposed, the tag conjunct inside (P32):
   (CloseClause
     (StateClause
       (∃ (λ {$e1 :: Referents Eventuality}
-        {(∧ ((DirectClause (klama Speaker)) $e1)
+        (∧ ((DirectClause (klama Speaker)) $e1)
            (∃ (λ {$e2 :: Referents Eventuality}
-             {(∧ ((DirectClause (citka Speaker)) $e2)
-                (balvi $e2 $e1))})))})))))
+             (∧ ((DirectClause (citka Speaker)) $e2)
+                (balvi $e2 $e1))))))))))
 ```
 
 **See.** [Spec §11](spec.md), pin P32.
@@ -1879,7 +1943,7 @@ per the I+stag+BO pattern (P32).
 ### na ku
 
 Surface-position negation as a quantifier-scope unit: `¬` exactly
-where it stands, flip rules on movement (P18) — not `na` + a
+where it stands, conditional same-domain flips on movement (P18)—not `na` + a
 description terminator.
 
 **See.** [Spec §4.5, §11](spec.md), pin P18.
@@ -1901,7 +1965,8 @@ associated relation.
 ### number + ROI (re roi, so'i roi …)
 
 Occurrence-count tense as one unit: the counted instantiation-set
-schema (P35) — see the `roi` entry in §6.
+schema (P35)—see roi in §6. Non-cardinal counts and recurring-state episodes
+still need their interfaces.
 
 **See.** [Spec §11](spec.md), pin P35.
 

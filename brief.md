@@ -66,8 +66,8 @@ At the repository root:
 
 1. **`spec.md`** — the dense, formally precise specification. Audience:
    readers comfortable with formal semantics (typed lambda calculi,
-   generalized quantifiers, dynamic semantics, speech-act theory). Complete
-   and normative: types, term formers, well-formedness, semantics
+   generalized quantifiers, dynamic semantics, speech-act theory). Normative
+   within its declared analyzed coverage: types, term formers, well-formedness, semantics
    (denotational where possible, dynamic/effectful where needed), and the
    principles mapping Lojban constructs to core terms. Focused strictly on
    the semantic core: how and why it is **necessary and sufficient** to
@@ -92,6 +92,10 @@ At the repository root:
    example, its core term, and links into the specification; its
    final section collects the documented no-mappings and the open
    adjacencies the cmavo-centric view makes visible.
+
+**`decisions.md`** keeps the current settled/open split and full-pass disposition
+ledger. Historical review reports remain evidence; they do not silently become
+new normative rules or revive questions later settled by the human partner.
 
 ## Hard constraints
 
@@ -171,10 +175,10 @@ transfer described below. A Redex-based checker
 (`tools/smusni-redex`, run by `tools/check-smusni`) already extracts the
 specimens from the specification and samples, type-checks them against a
 fixture lexicon, and exercises the model-profile fixtures; it tests the
-documents, reports its own known debts, and decides no meaning. A **Lean 4**
-mechanization is the next line: the core as an extensible typed DSL, direct
+documents, reports its own known debts, and decides no meaning. The **Lean 4**
+mechanization programme models the core as an extensible typed DSL, direct
 core binders elaborating to Lean binding syntax, sample terms as checked
-objects rather than prose, with a bounded Redex-to-Lean pilot queued in the
+objects rather than prose, with bounded pilot and parity work recorded in the
 tracker. Lojban text could later be fed in through an independently
 specified parsing and reading-resolution layer, and a **Metamath
 cross-check** against Brismu's derivations would test the pin list from
@@ -219,3 +223,26 @@ supplements; linguistic quotation and signs; and mex to the extent Lojban ties
 it to meaning. A staged
 core-self-description extension was designed and set aside; it is future
 design history, not baseline coverage.
+
+Coverage is deliberately narrower than the architecture's intended reach.
+The current gap register includes delayed de-dicto consumers, dependent-reference
+and witness-export interfaces, recurring-state episodes, occurrence-sensitive
+deixis, plural focus/discursive completion, approximate equality/cardinality,
+and model/force obligations. Ordinary singular `su'o`, legitimate Skolem-like
+description dependence and persistent reference under `na` are settled
+distinctions; their remaining interface work must not reopen those distinctions.
+The September10 trajectory adopts a conservative xorlo baseline over a shared
+plural-capable core, with explicit full-plural/experimental mappings. P43 retires
+P42's extra numerical-group/family export while retaining ordinary existential
+continuity and independently bound references. Standard finite exact/range/
+complement quantifiers count individual qualifiers; bare/restricted ro is
+non-importing, while explicit descriptions retain their own reference conditions.
+Bare me'i defaults to ro/not-all (P44); explicit me'i pa still means zero.
+The round2 agreements are recorded as selected contracts, with pure Only now
+defined and the remaining model/lexical/force construction explicitly unfinished.
+The lo-su'o-n descriptive alternative,
+typed source/force realization and remaining profile gaps are stated explicitly.
+The decision ledger records the status chronology: C25 was expressly adopted,
+the su'o recommendation is applied under the synchronization authorization,
+and the latest human clarification settles dependent-lo legitimacy. Review
+confirmation is not by itself an authority transfer or adoption of an open fork.

@@ -1444,7 +1444,8 @@
 (define b1-source-heads
   '(+ ¬ Among Presuppose Distrib CoveredBy Exactly AtLeast MoreThan AtMost
       FewerThan Some No Every SelectExactly SelectAtLeast SelectSome
-      SelectAllBut ∀ ∃ →))
+      SelectAllBut ∀ ∃ →
+      IndividualSome IndividualNo IndividualEvery PluralSome PluralNo Only < ≤))
 
 ;; These mechanisms are shared A0 foundations rather than vertical-family
 ;; migration sources: B1 rules consume their already-ported compatibility and
@@ -2239,8 +2240,10 @@
   '(λ Let Bind Context Vague Refer
     SelectExactly SelectAtLeast SelectSome SelectAllBut
     Exactly AtLeast Some Every No AtMost GlobalExactly TooMany MoreThan
+    IndividualSome IndividualNo IndividualEvery PluralSome PluralNo
+    Only
     FewerThan Distrib MaxRefer CoveredBy Overlap Massify Perform
-    CanonicalAggregateAt AdmissibleThreshold SetOf Card = + ∧ → ¬ ∀ ∃ Among
+    CanonicalAggregateAt AdmissibleThreshold SetOf Card = + < ≤ ∧ → ¬ ∀ ∃ Among
     Presuppose List ZipWith
     CoRef CloseClause ActualClause DirectClause StateClause CloseWith))
 
@@ -2352,7 +2355,8 @@
 ;; subterms are maximal with respect to the extended closed grammar and retain
 ;; the lexical binder environment needed to replay them independently.
 (define b1-lowering-family-heads
-  '(AtLeast Some Every No AtMost MoreThan FewerThan Distrib MaxRefer
+  '(IndividualSome IndividualNo IndividualEvery PluralSome PluralNo Only < ≤
+    AtLeast Some Every No AtMost MoreThan FewerThan Distrib MaxRefer
     CoveredBy Overlap SelectAtLeast SelectSome SelectAllBut ∀ ∃ → ¬
     Presuppose +))
 

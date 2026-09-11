@@ -67,10 +67,11 @@
  (alpha-equivalent?
   SmusniA0
   (term (a0-expand-massify Entity $basis $cover))
-  '(SelectExactly
-    1
-    (λ (($group (Group Entity)))
-      (CanonicalAggregateAt $basis $group $cover)))))
+  '(Refer
+    (λ (($reference (Referents (Group Entity))))
+      (∃ (λ (($group (Group Entity)))
+           (∧ (CanonicalAggregateAt $basis $group $cover)
+              (CoRef $reference $group))))))))
 (check-equal? (term (a0-expand-zipwith f (List) (List))) '⊤)
 (check-equal?
  (term (a0-expand-zipwith f (List a as) (List b bs)))

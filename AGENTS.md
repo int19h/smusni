@@ -466,7 +466,7 @@ judgment that the documents lack value.
   per clone) refuse commits in the shared checkout and warn when it leaves
   `main`. Uncommitted work found there is preserved (patch + stash) and
   announced, never discarded and never silently adopted.
-- Run `python3 review/checks.py` after documentation edits and report any
+- Run `python3 tools/check-docs.py .` after documentation edits and report any
   limitation it exposes; do not call a corpus synchronized when
   corpus-integrity, link, term-balance, or pin checks fail.
 - A decision recorded in review is not silently applied to the baseline.

@@ -6,7 +6,7 @@
   (row bajra 4 direct-event "fixture; official row: surface/limbs/gait (jbovlaste); pending #12")
   (row balvi 2 holding-state "fixture binary tense-facet projection; pending #12")
   (row barda 2 holding-state "fixture; official row pending #12")
-  (row batci 3 direct-event "fixture; official row pending #12")
+  (row batci 4 direct-event "officialdata batci: biter, bitten, locus, tool; jbotci vlacku 2026-09-10; fixture pending full #12 adjudication")
   (row bevri 4 direct-event "fixture; official row pending #12")
   (row blabi 1 holding-state "fixture; official row pending #12")
   (row cabna 2 holding-state "fixture binary tense-facet projection; pending #12")
