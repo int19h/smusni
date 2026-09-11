@@ -1,6 +1,14 @@
 # Lean pilot milestone 2 — E02 migration checkpoint
 
-Status: current bounded M1/M2 gates pass; independent review and the broader
+Current follow-up: the PM-authorized one-Assert bridge is documented in
+[`E02_ASSERT_BRIDGE.md`](E02_ASSERT_BRIDGE.md): 74 typed targets (54 whole-A0,
+20 bridge) from the unchanged 192 candidates. It preserves obligation
+metadata and requires independent source/target payload typings.
+
+The remainder records checkpoint **3a7edfc**, before that widening; its
+54-target oracle counts and timings are preserved historical results.
+
+Migration-checkpoint status: bounded M1/M2 gates pass; independent review and the broader
 typed-oracle coverage disposition remain pending. This is not all-S1 exact
 parity, a full-migration result, or a transfer of semantic authority.
 
