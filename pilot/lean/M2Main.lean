@@ -49,10 +49,12 @@ def main : IO Unit := do
       s!"comparable={audit.comparable}"
   IO.println <|
     s!"M2 parity cohort={parity.cohort} available={parity.oracleAvailable} " ++
+    s!"whole-a0={parity.wholeA0Available} assert-bridge={parity.assertBridgeAvailable} " ++
     s!"unavailable={parity.oracleUnavailable} compared={parity.compared} " ++
     s!"term-matches={parity.termMatches} site-matches={parity.siteMatches} " ++
     s!"differences={parity.differences.length} known-81={parity.knownBlockerDifferences} " ++
     s!"unexplained={parity.unexplainedDifferences}"
+  IO.println s!"M2 oracle non-admission categories={repr parity.unavailableCategories} local-only-comparisons=0"
   for difference in parity.differences do
     IO.println <| s!"M2 parity-difference {difference.id} " ++
       s!"part={difference.part} issue={repr difference.knownIssue} " ++
@@ -81,8 +83,8 @@ def main : IO Unit := do
     if ["definition-property", "definition-basis"].contains
         outcome.decidingRule then
       let anchor := if outcome.decidingRule == "definition-property" then
-        "spec §5.3:1457-1461; oracle not-in-domain/unavailable"
-      else "spec §12:3565-3567; Massify basis type"
+        "spec §5.3:1570-1584; oracle not-in-domain/unavailable"
+      else "spec §12:3967-3992; Massify basis type"
       IO.println <| s!"M2 semantic-typed-rejection {outcome.id} " ++
         s!"rule={outcome.decidingRule} anchor={anchor} " ++
         s!"expanded={repr outcome.expandedDefinitions}"

@@ -296,8 +296,8 @@ def build() -> dict[str, Any]:
         })
 
     selected.sort(key=lambda row: row["id"])
-    if port_selected != 19:
-        raise ValueError(f"expected 19 a0/ported definition rows, found {port_selected}")
+    if port_selected != 25:
+        raise ValueError(f"expected 25 E01 a0/ported definition rows, found {port_selected}")
     if {row["id"] for row in selected if row["selection"] == "plan-v2-extra"} != EXTRA_IDS:
         raise ValueError("M2 extra definition selection drift")
     if dependency_selected != 6:

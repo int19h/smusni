@@ -435,6 +435,18 @@ a typing fact, not an algorithm. `PredTerm ρ`, `Fn`, and `EFn` are types
 and appear freely in variable annotations, λ parameter lists, and
 `Context`/`Vague` type arguments.
 
+**Negation-local reference purity (P45).** The no-introductions requirement
+has one explicit, bounded qualification: a reference introduced and consumed
+solely inside negation's Content test does not count against the enclosing
+`Fn` purity judgment. Negation removes only the reference-introduction effect
+from its body's effect observation. Contextual retrieval, projective emission,
+opaque effectful-call and other effects remain; every obligation record is
+retained, not discharged or erased by this typing rule. No reference escapes
+negation or double negation. This is not a rule purifying `Local`, which still
+returns a value under its effectful contract, or changing another connective's
+effect rule. A general residual-effect characterization beyond negation is
+not adopted here. See References, **Negation-local purity: P45 reconciliation**.
+
 One signature convention holds document-wide: `→` marks total
 operations; `⇀` marks partial ones, whose definedness condition
 projects (§5.5); and a `RefComp`/`PerfComp`/`Comp` result type marks the
@@ -1664,7 +1676,7 @@ not license a baseline surface export forbidden by §5.6/P43.
 | `Do` | Left to right; each performance sees preceding successful introductions; introductions that escape their acts survive the sequence. In §7.1.1's assertion fragment, every terminal T/F/U payload returns its occurrence, preserving incoming bindings, successful additions whose scope reaches the continuation, and reached legal sides; additions whose scope ends are projected. This does not restore rejected worlds to cumulative acceptance or decide failure behavior of excluded forces. |
 | `PerformSource` | Its source sees the incoming scope; only the assertion frame sees the source-value binder. The discourse continuation sees the reusable read and occurrence handle, not a fictitious source value on failure. Existing scope premises govern successful prefix retention as in `Do`; no new source behind a P43 barrier escapes. The read introduces nothing and preserves the caller's state. |
 | `∨` | Operands each see the incoming state; branch-local introductions do not escape the disjunction. |
-| `¬` | Operand sees the incoming state; nothing escapes. |
+| `¬` | Operand sees the incoming state; nothing escapes. P45 specifies the corresponding reference-only closure in the purity judgment; other effects and all obligation records are retained. |
 | `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. The joint-locus reading selection of §5.6 applies when the resolved reading binds a consequent anaphor to an antecedent introduction. |
 | `↔`, `⊕` | Each operand evaluated exactly once against the incoming state; nothing escapes. (Hence primitive: rewrites would duplicate evaluation.) |
 | `∃`, `∀`, GQs | The restrictor is pure (`Fn`); body introductions are local to each instantiation. Explicit reference/selection bindings obey their actual enclosing scope. No closure by itself synthesizes an outward numerical/universal group or dependent family. Ordinary existential continuity and the distinction between library bindings and surface export are stated in §5.6; their remaining lowering debt is explicit. |
@@ -3282,8 +3294,11 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   site's value or precisification is the same at every instantiation of the
   pure position, and binding it once outside changes its place, not its
   tuple. Introductions are not hoisted: a property that would introduce a
-  referent (`Refer`, a selection) inside a pure position has no pure form,
-  and its reference must already be bound outside (§12). `Close` here fixes
+  referent (`Refer`, a selection) inside a pure position has no pure form
+  unless P45's negation-local qualification applies; otherwise its reference
+  must already be bound outside (§12). P45 does not hoist a selection: a
+  candidate-dependent witness remains inside its negative test. No other
+  effect is removed to make the property pure. `Close` here fixes
   the **actual mode** for restrictor-internal predications — a
   description's or comprehension's restrictor predicates in its own actual
   mode and is not under the host clause's CAhA, which governs the main
@@ -3987,6 +4002,18 @@ or widen a quantifier's scope. Their definitions are:
                    ; reference for Among — Distrib is unit distribution
 ```
 
+P45 applies to the negation-closed reference effects of `No`, `AtMost`,
+`FewerThan` and `Exactly 0` via their definitions. With otherwise pure
+operands and satisfied existing domain/definedness conditions, these forms
+may occur inside a pure property, including a comprehension whose pure
+restriction or nuclear property depends on its candidate. Their
+positive selecting counterparts do not acquire that permission. This is
+the reference-counted helper family, not a change to ordinary surface `no`
+or `su'o`. `Exactly 0 = No` still evaluates Q under negation and retains
+Q's non-reference effects; literal `AtLeast 0` never evaluates Q. A pure
+position therefore continues to reject an evaluated contextual/projective
+or opaque effectful Q. No selection is moved outside the candidate's scope.
+
 **Zero and the selection floor.** The selections are formed only at
 n ≥ 1: `SelectExactly 0` and `SelectAtLeast 0` are ill-formed — a
 declared floor on these counted selection primitives, not a theorem that
@@ -4008,8 +4035,11 @@ arithmetic demands.
 **both operands must be pure there**: the mapping hoists a nuclear
 scope's `Context`/`Vague` sites out of the comprehension first (L0.1), and a
 nuclear scope that would introduce a referent has no global reading unless
-that reference is already bound outside the comprehension — introductions
-are not hoisted.
+P45's negation-local qualification applies or that reference is already bound
+outside the comprehension. Introductions are not hoisted, and P45 removes no
+other effect. The enclosing `Card` keeps its own projective finiteness effect;
+the qualification concerns the operand's purity, not purification of the
+whole count.
 
 Ordinary `no prenu cu jmaji` uses `IndividualNo` and tests individuals.
 The collective negative associated with P22 uses `PluralNo` instead; neither
@@ -5157,6 +5187,20 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   cost preserved in rationale §3. Sources and drafting/approval distinctions:
   References, **Bare me'i default: P44 adoption and history**.
 
+- **P45** Negation-local reference purity (human-adopted September11,2026 UTC).
+  A reference introduced and consumed wholly inside negation's Content test
+  does not make the enclosing property impure merely by that introduction.
+  Remove only the reference-introduction effect; retain all other effects
+  and every obligation. The witness does not escape, including through double
+  negation. `Local` and other connectives keep their existing contracts. This
+  explicitly qualifies §3.3/L0.1 rather than silently inferring a general
+  purity principle from non-export. The rejected strict internal-activity
+  reading would reject the present negated-selection expansions and revise
+  the reviewed pure helper admissions; alternative pure expressions would
+  require construction, not an unsupported inexpressibility claim. Rationale
+  §2.11 records the costs and limits. Sources: References, **Negation-local
+  purity: P45 reconciliation**.
+
 ## 14. Gap register
 
 This register distinguishes agreed semantic contracts whose construction is
@@ -5875,6 +5919,23 @@ candidates, not ratify a final expansion. See rationale §1.12a and decisions Q1
   result is a project construction, not a newly attributed CLL/xorlo rule.
   Source history for P43/C25 and ordinary continuity remains in its own
   references below; the constructed controls are not corpus judgments.
+
+- **Negation-local purity: P45 reconciliation.** The human's
+  [explicit approval, September11,2026 UTC](https://github.com/int19h/smusni/issues/74#issuecomment-5630303444)
+  confirms the bounded historical interpretation and authorizes prose and
+  Lean alignment. In the August27,2026 [PR46 correction list](https://github.com/int19h/smusni/pull/46#issuecomment-5434046797),
+  fable_2 required the four negation-closed helper forms in `SetOf`; codex_2's
+  [direct/expanded negation finding](https://github.com/int19h/smusni/issues/13#issuecomment-5434325114)
+  specified removal of escaping reference effects only. The August28
+  [B1 amended brief](https://github.com/int19h/smusni/issues/52#issuecomment-5458951974)
+  made that a pre-implementation requirement while preserving other effects
+  and obligations. The [zero-boundary review](https://github.com/int19h/smusni/pull/46#pullrequestreview-5037192626)
+  distinguishes unevaluated Q in `AtLeast 0` from evaluated Q in `Exactly 0`.
+  These were argued reviewer/implementation decisions, not recovered personal
+  human adjudications of the original prose. The [source/history dossier](https://github.com/int19h/smusni/issues/74#issuecomment-5629839116)
+  recovers that chain and its limits; the current explicit approval supplies
+  the prose reconciliation. External Lojban/DPL evidence is comparative
+  support, not independent authority for the project's `Fn` effect judgment.
 
 - **Bare me'i default: P44 adoption and history.**
   [Human adoption, September10,2026](https://github.com/int19h/smusni/issues/15#issuecomment-5623520624)

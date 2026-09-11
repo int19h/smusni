@@ -674,6 +674,12 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
       simp_all [judgmentTermList, mergeResults, TypingResult.observation,
         TypingResult.withRule, failure, Ty.referenceCompatible]
       simp [mergeObservations, TypingResult.observation]
+  case negation environment body observation typing typingIH =>
+    simp only [CheckCompleteMotive] at typingIH
+    simp only [PrimitiveCompleteMotive]
+    rcases typingIH with ⟨result, success, agreement⟩
+    cases agreement
+    simp [synthPrimitive, judgmentTermList, success, negateResult_observation]
   case unaryCheck environment operator checked expected resultType resultObservation
       typing rule typingIH ruleIH =>
     simp only [CheckCompleteMotive] at typingIH

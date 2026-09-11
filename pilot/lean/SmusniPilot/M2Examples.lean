@@ -161,7 +161,207 @@ theorem unseen_actual_clause_relation_to_dispatch
     .d12ActualClause [unseenRelationClause] unseenRelationPayload
     ⟨unseen_actual_clause_template, certificate, typing⟩
 
+def runE02Gates : IO Unit := do
+  for member in [Ty.entity, Ty.eventuality, Ty.number] do
+    let p : FreeId := { domain := "$unseen-restrictor", serial := 7 }
+    let q : FreeId := { domain := "$unseen-nuclear", serial := 19 }
+    for referenceLevel in [false, true] do
+      let parameter := if referenceLevel then Ty.referents member else member
+      let environment : Environment 0 := { Environment.empty with free := [
+        (p, Ty.pureFn [parameter] Ty.content),
+        (q, Ty.effectfulFn [parameter] Ty.content)] }
+      let definitions := if referenceLevel then [.d12PluralSome, .d12PluralNo]
+        else [.d12IndividualSome, .d12IndividualNo, .d12IndividualEvery]
+      for definition in definitions do
+        let key : ExpansionKey := { document := "unseen-e02", occurrence := 17, definition }
+        let expanded ← IO.ofTyping <| dispatchDefinition environment key definition
+          [.free p, .free q]
+        let typed ← IO.ofTyping <| synth environment expanded.term
+        if typed.type != Ty.content || !typed.effects.contains .effectfulCall ||
+            typed.effects.contains .refer || !typingTraceSupported typed then
+          throw <| IO.userError "non-exporting closure lost its typed effect/domain contract"
+  let basis : FreeId := { domain := "$unseen-basis", serial := 11 }
+  let alternative : FreeId := { domain := "$unseen-alternative", serial := 1 }
+  let host : FreeId := { domain := "$unseen-host", serial := 2 }
+  let focus : FreeId := { domain := "$unseen-focus", serial := 3 }
+  let reference := Ty.referents Ty.eventuality
+  let focusEnvironment : Environment 0 := { Environment.empty with free := [
+    (alternative, Ty.pureFn [reference] Ty.content),
+    (host, Ty.pureFn [reference] Ty.content), (focus, reference)] }
+  let onlyKey : ExpansionKey := {
+    document := "unseen-only"
+    occurrence := 42
+    definition := .d12Only }
+  let only ← IO.ofTyping <| dispatchDefinition focusEnvironment onlyKey .d12Only
+    [.free alternative, .free host, .free focus]
+  let onlyTyped ← IO.ofTyping <| synth focusEnvironment only.term
+  if !onlyTyped.effects.isEmpty || !typingTraceSupported onlyTyped then
+    throw <| IO.userError "pure Only lost its typed nonprojective contract"
+  let effectfulHost := { focusEnvironment with free := [
+    (alternative, Ty.pureFn [reference] Ty.content),
+    (host, Ty.effectfulFn [reference] Ty.content), (focus, reference)] }
+  if (dispatchDefinition effectfulHost onlyKey .d12Only
+      [.free alternative, .free host, .free focus]).isOk then
+    throw <| IO.userError "Only silently admitted an effectful host"
+  let cover : FreeId := { domain := "$unseen-cover", serial := 12 }
+  let component := Ty.eventuality
+  let environment : Environment 0 := { Environment.empty with free := [
+    (basis, Ty.decompositionBasis (Ty.group component) component),
+    (cover, Ty.referents component)] }
+  let key : ExpansionKey := {
+    document := "unseen-massify"
+    occurrence := 23
+    definition := .d12Massify }
+  let expanded ← IO.ofTyping <| dispatchDefinition environment key .d12Massify
+    [.free basis, .free cover]
+  match expanded.term with
+  | .primitive .refer (.positional (.lambda referenceType
+      (.primitive .exists (.positional (.lambda groupType _) .nil))) .nil) =>
+      if referenceType != Ty.referents (Ty.group component) ||
+          groupType != Ty.group component then
+        throw <| IO.userError "Massify lost the canonical group/reference distinction"
+  | _ => throw <| IO.userError "Massify must use Refer/existential CoRef, not counted selection"
+  let typed ← IO.ofTyping <| checkBidirectional environment expanded.term
+    (Ty.refComp (Ty.referents (Ty.group component)))
+  if !typingTraceSupported typed then
+    throw <| IO.userError "new Massify output is outside the typing soundness domain"
+  let wrongBasis := { environment with free := [
+    (basis, Ty.decompositionBasis Ty.entity component),
+    (cover, Ty.referents component)] }
+  if (dispatchDefinition wrongBasis key .d12Massify [.free basis, .free cover]).isOk then
+    throw <| IO.userError "Massify ignored the basis whole type"
+  for comparison in [FirstOrderPrimitive.lessThan, .lessOrEqual] do
+    let typed ← IO.ofTyping <| synth Environment.empty
+      (primitive comparison [.natural 917, .natural 1203])
+    if !typed.trace.contains .e01TComparison || !typingTraceSupported typed then
+      throw <| IO.userError "comparison omitted its proved rule"
+    if (synth Environment.empty (primitive comparison [.string "wrong", .natural 1])).isOk then
+      throw <| IO.userError "comparison accepted a nonnumeric operand"
+  let profiles ← IO.ofExcept <| SExpr.parse "((17 (dependent (governors 3 8) (scope 8))))" >>=
+    decodeRRReferences
+  match profiles with
+  | [profile] =>
+      if profile.source != 17 || profile.governors != [3, 8] || profile.scope != some 8 then
+        throw <| IO.userError "dependent reference metadata was ignored or made invariant"
+  | _ => throw <| IO.userError "reference profile count changed"
+  for source in ["false", "((0 invariant) (0 invariant))",
+      "((1 (dependent (governors) (scope 0))))",
+      "((1 (dependent (governors 0 0) (scope 0))))",
+      "((1 (dependent (governors 1) (scope 1))))",
+      "((1 (dependent (governors 0) (scope 2))))"] do
+    let parsed ← IO.ofExcept (SExpr.parse source)
+    if (decodeRRReferences parsed).isOk then
+      throw <| IO.userError s!"malformed reference metadata accepted: {source}"
+
+def runNegationFidelityGates : IO Unit := do
+  let env := Environment.empty
+  let top0 : Term 0 := top
+  let negate := fun {scope : Nat} (body : Term scope) => primitive .not [body]
+  let setProperty := fun (body : Term 1) => primitive .setOf [.lambda Ty.entity body]
+  let pureNegative ← IO.ofTyping <| checkBidirectional env (negate top0) Ty.content
+  if !pureNegative.effects.isEmpty || !typingTraceSupported pureNegative ||
+      !pureNegative.trace.contains .a0Check then
+    throw <| IO.userError "pure negation failed the public checking soundness domain"
+  -- Both operands really depend on the comprehension candidate. Their
+  -- selection is retained under negation, not hoisted out of the lambda.
+  let property : Term 1 := .lambda Ty.entity <| primitive .and [
+    .lexical "gerku" (termList [.bound 0]), primitive .equal [.bound 0, .bound 1]]
+  let nuclear : Term 1 := .lambda (Ty.referents Ty.entity) <|
+    .lexical "ponse" (termList [.bound 1, .bound 0])
+  if property.dependencies.isEmpty || nuclear.dependencies.isEmpty then
+    throw <| IO.userError "candidate-dependent negation control lost its outer dependency"
+  let positive := (expandSome Ty.entity property nuclear).term
+  for depth in [1, 2] do
+    let body := if depth == 1 then negate positive else negate (negate positive)
+    let checked ← IO.ofTyping <| checkBidirectional (env.extend Ty.entity) body Ty.content
+    if !typingTraceSupported checked || !checked.trace.contains .b1TNegation then
+      throw <| IO.userError "negation checking trace left the independent proof domain"
+    let result ← IO.ofTyping <| synth env (setProperty body)
+    if result.type != Ty.set Ty.entity || !result.effects.isEmpty ||
+        !typingTraceSupported result || !result.trace.contains .b1TNegation then
+      throw <| IO.userError "local-reference negation lost pure SetOf typing or proof coverage"
+  if (synth env (setProperty positive)).isOk then
+    throw <| IO.userError "positive reference selection was purified"
+  let localBody : Term 1 := .bind (Ty.referents Ty.entity)
+    (primitive .local [primitive .selectAtLeast [.natural 1, property]]) top
+  if (synth env (setProperty localBody)).isOk then
+    throw <| IO.userError "Local was incorrectly purified"
+  let localResult ← IO.ofTyping <| synth (env.extend Ty.entity) localBody
+  if !localResult.effects.contains .refer then
+    throw <| IO.userError "Local lost its reference effect"
+
+  let site := typingExampleSite "negative-context"
+  let contextBody : Term 0 := .bind Ty.entity (.context site .nil) top
+  let contextResult ← IO.ofTyping <| synth env (negate contextBody)
+  if !contextResult.effects.contains .context then
+    throw <| IO.userError "negation erased context consultation"
+  let projective : Term 0 := primitive .presuppose [top0, top0]
+  let projectiveBefore ← IO.ofTyping <| synth env projective
+  let projectiveAfter ← IO.ofTyping <| synth env (negate projective)
+  if !projectiveAfter.effects.contains .projective ||
+      projectiveAfter.obligations != projectiveBefore.obligations then
+    throw <| IO.userError "negation erased/discharged presupposition metadata"
+  let cardinal : Term 0 := primitive .equal [
+    primitive .card [primitive .setOf [.lambda Ty.entity top]], .natural 1]
+  let cardinalAfter ← IO.ofTyping <| synth env (negate cardinal)
+  if !cardinalAfter.effects.contains .projective ||
+      !cardinalAfter.obligations.contains .finiteSetCardinalityDefined then
+    throw <| IO.userError "negation lost Card projectivity/definedness"
+  let opaqueId : FreeId := { domain := "$opaque-negative-call", serial := 7 }
+  let opaqueEnv : Environment 0 := { env with free := [
+    (opaqueId, Ty.effectfulFn [Ty.referents Ty.entity] Ty.content)] }
+  let opaqueCall := apply (Term.free opaqueId) [primitive .speaker]
+  let opaqueAfter ← IO.ofTyping <| synth opaqueEnv (negate opaqueCall)
+  if !opaqueAfter.effects.contains .effectfulCall then
+    throw <| IO.userError "negation erased opaque EFn call effects"
+  for (environment, body) in [(env, contextBody), (env, projective),
+      (env, cardinal), (opaqueEnv, opaqueCall)] do
+    if (synth environment (setProperty (weaken (negate body)))).isOk then
+      throw <| IO.userError "a remaining non-reference effect entered pure SetOf"
+
+  let effectfulQ : Term 1 := .lambda (Ty.referents Ty.entity)
+    (.bind Ty.entity (.context (typingExampleSite "zero-q-context") .nil) top)
+  let zeroAtLeast := (expandAtLeast Ty.entity (.natural 0) property effectfulQ).term
+  let zeroExactly := (expandExactly Ty.entity (.natural 0) property effectfulQ).term
+  let zeroResult ← IO.ofTyping <| synth env (setProperty zeroAtLeast)
+  if !zeroResult.effects.isEmpty then
+    throw <| IO.userError "AtLeast0 evaluated its effectful Q"
+  if (synth env (setProperty zeroExactly)).isOk then
+    throw <| IO.userError "Exactly0 failed to retain its evaluated Q effects"
+
+  let mixed : TypingResult := {
+    type := Ty.content
+    effects := [.context, .refer, .projective, .effectfulCall, .performance]
+    obligations := [.finiteSetCardinalityDefined,
+      .whenPositive "$n" (.presuppose "scoped-condition" (Ty.refComp Ty.entity)),
+      .definedness "captured-source" Ty.content]
+    trace := [.a0TContext, .a0TCard] }
+  let masked := negateResult mixed
+  if masked.effects != [.context, .projective, .effectfulCall, .performance] ||
+      masked.obligations != mixed.obligations ||
+      masked.trace != mixed.trace ++ [.b1TNegation, .a0Synth] then
+    throw <| IO.userError "refer-only observation law changed non-refer metadata"
+  -- Metadata retention above does not make a performance computation Content.
+  let performance : Term 0 := primitive .perform [primitive .assert [top0]]
+  if (synth env (negate performance)).isOk then
+    throw <| IO.userError "negation admitted performance as Content"
+  for arguments in [[], [Term.natural 3], [top0, top0]] do
+    if (synth env (primitive .not arguments)).isOk then
+      throw <| IO.userError "negation lost its arity/Content guard"
+  for selection in [FirstOrderPrimitive.selectAtLeast, .selectExactly] do
+    let invalid : Term 1 := .bind (Ty.referents Ty.entity)
+      (primitive selection [.natural 0, property]) top
+    if (synth env (setProperty (negate invalid))).isOk then
+      throw <| IO.userError "negation bypassed the selection floor"
+  -- StateClause's unfiltered observation law remains unchanged.
+  let stateResult ← IO.ofTyping <| synth env (primitive .stateClause [contextBody])
+  if stateResult.type != Ty.clauseContent || !stateResult.effects.contains .context then
+    throw <| IO.userError "StateClause observation law changed"
+  IO.println "M2 negation fidelity controls: PASS"
+
 def runM2TypingGates : IO Unit := do
+  runNegationFidelityGates
+  runE02Gates
   let environment := Environment.empty
   IO.ofExcept validateExpectedOnlyClassifierMutation
   IO.ofExcept validatePredTermDuplicateEventRejection

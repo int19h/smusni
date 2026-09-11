@@ -23,6 +23,7 @@ FIXTURES = ROOT / "tools/smusni-redex/inventory/fixtures.sexp"
 RR_DIR = ROOT / "tools/smusni-redex/inventory/rr"
 PARSE_DIR = ROOT / "tools/smusni-redex/inventory/parses"
 OUTPUT = ROOT / "pilot/shared/M1_S1_MANIFEST.json"
+FENCES = ROOT / "tools/smusni-redex/inventory/fences.sexp"
 
 
 def sexp_field(entry: list, name: str):
@@ -308,12 +309,20 @@ def build() -> dict[str, Any]:
             }
         )
 
+    current_fences = {(entry[1], entry[2]): entry[4]
+                      for entry in parse_sexp(FENCES.read_text())[2:]
+                      if isinstance(entry, list) and entry and entry[0] == "fence"}
     records = []
     for path in sorted(RR_DIR.glob("*.sexp")):
+        fixture = parse_sexp(path.read_text())
+        source = next(entry for entry in fixture if isinstance(entry, list)
+                      and entry and entry[0] == "fence")
+        current = current_fences.get((source[1], source[2])) == source[3]
         records.append(
             {
                 "path": str(path.relative_to(ROOT)),
-                "schema": "RRFixture",
+                "schema": "RRFixture" if current else "HistoricalRRFixture",
+                "disposition": "current-source" if current else "stale-source-index-or-digest; not a current RR input",
                 "sha256": sha256(path),
             }
         )
@@ -350,7 +359,7 @@ def build() -> dict[str, Any]:
             ),
             "inventory_hashes": sorted(inventory_hashes),
             "rr_syntax_normalization":
-                "28 fixtures remove one ignored trailing ')' relative to base_head",
+                "Current RR inputs require exact source ordinal and fence digest; stale RR files remain explicit historical records, not semantic joins.",
         },
         "counts": {
             "primitive_core": counts["primitive-core"],

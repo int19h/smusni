@@ -84,15 +84,19 @@ same as!"); [rationale §2.8](rationale.md).
 
 **Informally.** `Fn<(A…), B>` is the pure function type: a body that
 performs no dynamic effects when its result is evaluated — no
-introductions, no contextual retrievals, no projective emissions.
+introductions, no contextual retrievals, no projective emissions, subject
+to P45's explicit negation-local reference qualification: references consumed
+wholly inside the negative Content test do not count against purity. Other
+effects and every obligation record remain; `Local` and other connective
+rules are unchanged.
 `EFn` is the effectful arrow. Purity is demanded exactly at set
 comprehension, quantifier and `Generic` restrictors, and selection
 restrictors; nuclear scopes are `EFn`.
 **For.** Properties are `Fn<(T), Content>`; `ka` abstractions are λs
-at these types. A restrictor that smuggles a `Refer` simply fails to
-have the pure type — the purity discipline is a typing fact, not an
+at these types. A restrictor that exposes a `Refer` without P45's closing
+negation fails to have the pure type — the purity discipline is a typing fact, not an
 algorithm.
-**See.** [Spec §3.3](spec.md); [rationale §1.14](rationale.md) (the
+**See.** [Spec §3.3, P45](spec.md); [rationale §1.14, §2.11](rationale.md) (the
 pure/effectful seam).
 
 ### 1.5 `Record ρ` and `Label<ρ>` — rows

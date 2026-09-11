@@ -794,7 +794,13 @@ Description persistence under nuclear na is C25.
 order; movement needs same-domain duality with import/effect conditions.
 Counted plural Some and individual Every are not such a pair.
 
-**See.** [Spec §4.5, §11](spec.md), pin P18; §14 (`na ku` unit).
+For an already scoped negative Content test, P45 permits a wholly internal
+reference witness without making the enclosing property impure solely by
+that introduction. It does not move surface descriptions under negation,
+alter C25/P43 accessibility, or erase contextual/projective/call effects.
+`Local` and other connectives keep their existing rules.
+
+**See.** [Spec §3.3, §4.5, §11](spec.md), pins P18/P45; §14 (`na ku` unit).
 
 ### joi (JOI)
 

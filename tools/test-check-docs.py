@@ -21,7 +21,7 @@ class DocumentationChecks(unittest.TestCase):
         for name in checker.CORPUS:
             (self.root / name).write_text(f"# {name}\n")
         (self.root / "AGENTS.md").write_text("Standalone charter\n")
-        (self.root / "spec.md").write_text(" ".join(f"P{i}" for i in range(1, 45)))
+        (self.root / "spec.md").write_text(" ".join(f"P{i}" for i in range(1, 46)))
 
     def specimen(self, text):
         (self.root / "samples.md").write_text(text)
@@ -66,21 +66,21 @@ class DocumentationChecks(unittest.TestCase):
         self.assertEqual(self.run_checker().returncode, 1)
 
     def test_missing_late_pin_fails(self):
-        for missing in (38, 43):
+        for missing in (38, 43, 44):
             with self.subTest(missing=missing):
                 (self.root / "spec.md").write_text(
-                    " ".join(f"P{i}" for i in range(1, 45) if i != missing))
+                    " ".join(f"P{i}" for i in range(1, 46) if i != missing))
                 self.assertEqual(checker.missing_pins(self.root), [missing])
                 result = self.run_checker()
                 self.assertEqual(result.returncode, 1)
                 self.assertIn(f"pins_missing=[{missing}]", result.stdout)
 
     def test_deleted_final_pin_does_not_lower_expectation(self):
-        (self.root / "spec.md").write_text(" ".join(f"P{i}" for i in range(1, 44)))
-        self.assertEqual(checker.missing_pins(self.root), [44])
+        (self.root / "spec.md").write_text(" ".join(f"P{i}" for i in range(1, 45)))
+        self.assertEqual(checker.missing_pins(self.root), [45])
         result = self.run_checker()
         self.assertEqual(result.returncode, 1)
-        self.assertIn("pins_missing=[44]", result.stdout)
+        self.assertIn("pins_missing=[45]", result.stdout)
 
 
 if __name__ == "__main__":

@@ -3,22 +3,22 @@
   "version": 1,
   "sources": {
     "definitions": "tools/smusni-redex/inventory/definitions.sexp",
-    "definitions_sha256": "91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc",
+    "definitions_sha256": "04b735fc2c9f88fa0d97909321c73d5b7fd5b58046d2f50af8438e62a9f532b8",
     "spec": "spec.md",
-    "spec_sha256": "19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4",
+    "spec_sha256": "55b7dda95bd6ec4b02403a521366c1b355e8f402ac254c1db39d785d74d79cab",
     "range_supplement": "pilot/shared/M2_RANGE_SUPPLEMENT.tsv",
-    "range_supplement_sha256": "b8fc35d0dec17a0f81c0d9b30bca9f16f6bffb186321ec0986be1595de573f7b",
+    "range_supplement_sha256": "1ca639eee13fc7626d1bf6a7322dc0903d4c99b51414360dda00b356c89e5e14",
     "dependency_supplement": "pilot/shared/M2_DEPENDENCY_SUPPLEMENT.tsv",
-    "dependency_supplement_sha256": "677926608aa9c4ba500fb61272230c3967d7c8a4abf8192545398774a0378ad0"
+    "dependency_supplement_sha256": "785b9d61973771a61060fd0c39bbe64d4bb0905f83261df29ff5e93037470ad2"
   },
   "counts": {
-    "definition_port_state": 19,
+    "definition_port_state": 25,
     "plan_v2_extra": 3,
     "dependency_closure": 6,
-    "selected_definitions": 28,
+    "selected_definitions": 34,
     "selected_domains": 1,
-    "selected_clauses": 34,
-    "catalog_definitions": 85
+    "selected_clauses": 40,
+    "catalog_definitions": 89
   },
   "definitions": [
     {
@@ -43,21 +43,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            3728,
-            3741
+            4188,
+            4201
           ]
         ],
-        "range_sha256": "114ba3296c3329ea84daa83d1a6ed0d8077cfb9514f2ed539b6d7651da8beef2"
+        "range_sha256": "f4fd6853f8f14964b172a3f02923387b798ccdc4b706b0b53c6172903680d868"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            3734,
-            3735
+            4194,
+            4195
           ]
         ],
-        "range_sha256": "01bc1f971b000f5b5b552524750498780991592d3e07059d24e3f62a22d48e1b"
+        "range_sha256": "f4121984ed302d92a9ef738fa6467158af8e9955baf5d400bd04819e2653b959"
       },
       "supplement": {
         "kind": "definition",
@@ -91,32 +91,36 @@
       ],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "20b1e099b421adcd9eecc03a37f1a2479c4a1083",
+        "ledger_sha1": "76f7c0f017d60aad6103f05d5844caa47f41e4bc",
         "ranges": [
           [
-            3405,
-            3405
+            3795,
+            3795
           ],
           [
-            3422,
-            3429
+            3833,
+            3833
+          ],
+          [
+            3824,
+            3830
           ]
         ],
-        "range_sha256": "cad25d744a9f26b2788d2b5b352cf4a92f64ccff9df521654f415fd6b5418a44"
+        "range_sha256": "5c4cb400639c6962fedb8f26e420eb57df9d59ed786148654df31b19a4595bd0"
       },
       "equation": {
-        "ledger_sha1": "c93d0dce9d9243eceeabd8b2a5d159279e3adcbe",
+        "ledger_sha1": "305d1d5a1d5d55369138269c4ba9077fec5c71b1",
         "ranges": [
           [
-            3405,
-            3405
+            3795,
+            3795
           ],
           [
-            3429,
-            3429
+            3833,
+            3833
           ]
         ],
-        "range_sha256": "678a2e02001dc873fed97c71ce33ab6267dfe0c47cc3045d0b72d3978d67ce99"
+        "range_sha256": "9b643652a11e07defef6194582849d621c4640c7197f825fed7619b84dc7e445"
       },
       "supplement": null
     },
@@ -140,24 +144,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "dfe99ff1052e003fad9450683cd6c456a44c99d1",
+        "ledger_sha1": "ba5ca37a04a679e13253f0dbda3b7017315903e7",
         "ranges": [
           [
-            3413,
-            3413
+            3803,
+            3803
           ]
         ],
-        "range_sha256": "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
+        "range_sha256": "7b99cb830e59f63f5ee46674ff18e56436ae4221e41c51fbeabe6abc779d051b"
       },
       "equation": {
-        "ledger_sha1": "dfe99ff1052e003fad9450683cd6c456a44c99d1",
+        "ledger_sha1": "ba5ca37a04a679e13253f0dbda3b7017315903e7",
         "ranges": [
           [
-            3413,
-            3413
+            3803,
+            3803
           ]
         ],
-        "range_sha256": "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
+        "range_sha256": "7b99cb830e59f63f5ee46674ff18e56436ae4221e41c51fbeabe6abc779d051b"
       },
       "supplement": null
     },
@@ -183,21 +187,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            3558,
-            3571
+            3997,
+            4022
           ]
         ],
-        "range_sha256": "d5efb742b3289b80fd49de807eec104dc0fbeafa69ac6523f25e7bc03d835bf1"
+        "range_sha256": "85e633c9d3b1f9bc71ac6876278ec9476818ad0063b08dc0808649ec747e2d51"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            3562,
-            3563
+            4001,
+            4002
           ]
         ],
-        "range_sha256": "15fda3225ab825817bea9675feece972c72157fc2cf80141d3b4e64a79cff21a"
+        "range_sha256": "1d255a1f77280bab0dcb7b01001de9c984b857cc8da389590fda6015ba3411b7"
       },
       "supplement": {
         "kind": "definition",
@@ -225,21 +229,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            3643,
-            3650
+            4088,
+            4095
           ]
         ],
-        "range_sha256": "28e8f0e85a1f67fb0feb12d656532547f4deb488199680f4d7989be9a83218ca"
+        "range_sha256": "2f40be0b23557afbcb4a72dee937aa7d1dba8bc844a50534bf1c78ab2e03734d"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            3646,
-            3646
+            4091,
+            4091
           ]
         ],
-        "range_sha256": "c35affe506631c01fae26c01dfbf7b2424c64085548820de272201af682f5fa7"
+        "range_sha256": "9cd2f7d9ed98da24960664a6af9dff7795da144bd968ede9c884919613c82d88"
       },
       "supplement": {
         "kind": "definition",
@@ -267,24 +271,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "1795c4787baaf5964a8bff48b1bb2705a165bc44",
+        "ledger_sha1": "416c89d5b45496813a6720dbeec2b370fac3af1e",
         "ranges": [
           [
-            3417,
-            3419
+            3807,
+            3807
           ]
         ],
-        "range_sha256": "05fc1e6d340ee2201ea74c61bfbc97c4d0e7d33b6df12fdbf7a4ba2089e01506"
+        "range_sha256": "3f9c03a3761a64c78fa0c53d4973efa93fc759e8671a3316be473dc1f3292c27"
       },
       "equation": {
-        "ledger_sha1": "1d9bc7c360263f8d15eec5ffce16ac9578b60278",
+        "ledger_sha1": "416c89d5b45496813a6720dbeec2b370fac3af1e",
         "ranges": [
           [
-            3417,
-            3417
+            3807,
+            3807
           ]
         ],
-        "range_sha256": "7fb9ae1f51b7db97f144fd37539d0987e732c31e0dfe0df9d83e7e316672a7d4"
+        "range_sha256": "3f9c03a3761a64c78fa0c53d4973efa93fc759e8671a3316be473dc1f3292c27"
       },
       "supplement": null
     },
@@ -308,24 +312,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "b0ee1faf419372cef5e59fd9f3b9e4258095d98a",
+        "ledger_sha1": "43d91f202246b5d926c85ccd67c93c776e38dd4f",
         "ranges": [
           [
-            3407,
-            3411
+            3797,
+            3798
           ]
         ],
-        "range_sha256": "2d405cfde7bc52a9e889716bfaf001e194a0cc8eb24aa35476dcfbb0de901e35"
+        "range_sha256": "8ab9ae1a3fad294c5a5e24d56049da57dae994c2531bf94cfde5ee77d80fc11c"
       },
       "equation": {
-        "ledger_sha1": "f18645615f00f5210f09bc6a2f70ed7e9a372620",
+        "ledger_sha1": "43d91f202246b5d926c85ccd67c93c776e38dd4f",
         "ranges": [
           [
-            3407,
-            3408
+            3797,
+            3798
           ]
         ],
-        "range_sha256": "3e2a76a2e6860795c27e59225d45bb585dc17dec291463e95fd4c3c8e4f2c78a"
+        "range_sha256": "8ab9ae1a3fad294c5a5e24d56049da57dae994c2531bf94cfde5ee77d80fc11c"
       },
       "supplement": null
     },
@@ -350,32 +354,36 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "bb45dd616e7461e16cbf8b2dce69b0e216f3c66f",
+        "ledger_sha1": "96fead33c47b804cdf4362a33f7b63315dd4fee5",
         "ranges": [
           [
-            3404,
-            3404
+            3794,
+            3794
           ],
           [
-            3422,
-            3430
+            3834,
+            3834
+          ],
+          [
+            3824,
+            3830
           ]
         ],
-        "range_sha256": "1230d6330f6a1ae3b93503aaf55ad590393e50cfdb717b9945d982fecd834c48"
+        "range_sha256": "cef5987cac1f799c9e9777d575586df1d945128e44847f0ba332578060c87d40"
       },
       "equation": {
-        "ledger_sha1": "ed2e3ff438b724f748de2b4ad65060faabb1e872",
+        "ledger_sha1": "1767c6672a9637c95f285dc62057f4983fa359b3",
         "ranges": [
           [
-            3404,
-            3404
+            3794,
+            3794
           ],
           [
-            3430,
-            3430
+            3834,
+            3834
           ]
         ],
-        "range_sha256": "0a6c858f8095b47b2683d608b94492814376d50822381f32f2ee8c43624e7613"
+        "range_sha256": "c258ed4f78ed521babcc8d334871097faf964fcee1ad4224ff88e61735f3fa56"
       },
       "supplement": null
     },
@@ -398,24 +406,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "92546d8f7488e601322b4631aefe4b15d1bd42ae",
+        "ledger_sha1": "f424215f418759ddd444f811ee1622d755cacd76",
         "ranges": [
           [
-            3415,
-            3415
+            3805,
+            3805
           ]
         ],
-        "range_sha256": "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
+        "range_sha256": "16b576455129ed872358ccf93949d55641d089c7587ce61ac098b6cfc6ea8816"
       },
       "equation": {
-        "ledger_sha1": "92546d8f7488e601322b4631aefe4b15d1bd42ae",
+        "ledger_sha1": "f424215f418759ddd444f811ee1622d755cacd76",
         "ranges": [
           [
-            3415,
-            3415
+            3805,
+            3805
           ]
         ],
-        "range_sha256": "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
+        "range_sha256": "16b576455129ed872358ccf93949d55641d089c7587ce61ac098b6cfc6ea8816"
       },
       "supplement": null
     },
@@ -441,24 +449,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "f6515b638e3a3ef07f389ae77df31393cbf62c7c",
+        "ledger_sha1": "42e64c6d1fa200eb622e11e74465356ada50bc68",
         "ranges": [
           [
-            3416,
-            3416
+            3806,
+            3806
           ]
         ],
-        "range_sha256": "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
+        "range_sha256": "b312c08c3e73573f57f313963930214009a272487ecc7b0512a71028298700d7"
       },
       "equation": {
-        "ledger_sha1": "f6515b638e3a3ef07f389ae77df31393cbf62c7c",
+        "ledger_sha1": "42e64c6d1fa200eb622e11e74465356ada50bc68",
         "ranges": [
           [
-            3416,
-            3416
+            3806,
+            3806
           ]
         ],
-        "range_sha256": "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
+        "range_sha256": "b312c08c3e73573f57f313963930214009a272487ecc7b0512a71028298700d7"
       },
       "supplement": null
     },
@@ -483,30 +491,176 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            1901,
-            1917
+            2108,
+            2137
           ],
           [
-            3488,
-            3509
+            3908,
+            3929
           ]
         ],
-        "range_sha256": "3cf2dcc1f2468b7c33a14905b818154402e2da4d0c692ba1d9b0b3a1767203de"
+        "range_sha256": "6fd22ec40b35a62ebe8506eee06f97d36d5409ab1aca54b38142dd022e1a1f71"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            3504,
-            3505
+            3924,
+            3925
           ]
         ],
-        "range_sha256": "ba9e522eaf9f56cd6632f2137ba9398d29d00b1b8b023d0fbc7850daeef1635a"
+        "range_sha256": "d5558ef6bb09957bf8836d88cf45188ac1651af19851743758c15da4a6e2e6a9"
       },
       "supplement": {
         "kind": "schema",
         "reason": "Grade is a pure row-directed schema in section 6.4 and its library equation, not the L5.29 site-introducing lowering."
       }
+    },
+    {
+      "id": "D12.IndividualEvery",
+      "head": "IndividualEvery",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∀",
+        "λ",
+        "→"
+      ],
+      "cases": [
+        "individual-forall"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "1fb177fb72174fb305dce52f7e89d079aa6f2663",
+        "ranges": [
+          [
+            3760,
+            3760
+          ],
+          [
+            3753,
+            3755
+          ],
+          [
+            3765,
+            3778
+          ]
+        ],
+        "range_sha256": "357fe1c94f3013ee54c047d58cd8812cefb0892de3635e29f011f582941a7b42"
+      },
+      "equation": {
+        "ledger_sha1": "06a8a28bfc6a21a6b23e719fb540053d2456e584",
+        "ranges": [
+          [
+            3760,
+            3760
+          ]
+        ],
+        "range_sha256": "6057ba3684666b691caa74a871983de6363482e1b0026c9a85e961a502c89791"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.IndividualNo",
+      "head": "IndividualNo",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "¬",
+        "IndividualSome"
+      ],
+      "cases": [
+        "negated-individual-exists"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "2c170d8212203de3c848618a631e8da2c97af718",
+        "ranges": [
+          [
+            3759,
+            3759
+          ],
+          [
+            3753,
+            3755
+          ],
+          [
+            3765,
+            3778
+          ]
+        ],
+        "range_sha256": "ee093c8ab7b28e3ed17bc5f4bf2b8423f89ee8ae385edfb82fe817a7ebb528cf"
+      },
+      "equation": {
+        "ledger_sha1": "f3aee89491f15d5a7cd8b1c310cf68a4e32f97b7",
+        "ranges": [
+          [
+            3759,
+            3759
+          ]
+        ],
+        "range_sha256": "46dc10ccb234dc08f4c0f65dda48b9a138c887f1cac82a19f9fcb1b4f8d25621"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.IndividualSome",
+      "head": "IndividualSome",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∃",
+        "λ",
+        "∧"
+      ],
+      "cases": [
+        "individual-exists"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "2f1c53a6a08bfe95ae5e03bfa3001d27507fda61",
+        "ranges": [
+          [
+            3758,
+            3758
+          ],
+          [
+            3753,
+            3755
+          ],
+          [
+            3765,
+            3778
+          ]
+        ],
+        "range_sha256": "4cbcf26cf996c94646dfea5e08bb35954213c5b7139491a90be986ba0a161a59"
+      },
+      "equation": {
+        "ledger_sha1": "380f30e9e22cbadcdfd7b3ee6ef452408055cbbc",
+        "ranges": [
+          [
+            3758,
+            3758
+          ]
+        ],
+        "range_sha256": "5d9f733e36c9395ecc8d5d36dc7f8affbdd092ce366cc7cb8e444cbb02aa047e"
+      },
+      "supplement": null
     },
     {
       "id": "D12.JaiRaise",
@@ -531,29 +685,29 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            3316,
-            3321
+            3661,
+            3666
           ],
           [
-            3769,
-            3808
+            4229,
+            4268
           ]
         ],
-        "range_sha256": "57f43c30afdac7265c66a455499629e382b5d2b3044c78f800174863d1268b76"
+        "range_sha256": "ffe28371b1a465499beb9425890e62bc046f82655580bba8a8aab014289d9a08"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            3785,
-            3788
+            4245,
+            4248
           ],
           [
-            3795,
-            3802
+            4255,
+            4262
           ]
         ],
-        "range_sha256": "2330e0c3595d2a794df9d999a4cd5a40461f2a315a577874cd0e8bf108f1803f"
+        "range_sha256": "5c494200c2fc43fefd665077c494129047593c5fbb7ba01d4a5fae4d25622e95"
       },
       "supplement": {
         "kind": "schema-mapping",
@@ -570,34 +724,37 @@
       },
       "port_state": "a0",
       "dependencies": [
-        "SelectExactly",
+        "Refer",
         "λ",
-        "CanonicalAggregateAt"
+        "∃",
+        "∧",
+        "CanonicalAggregateAt",
+        "CoRef"
       ],
       "cases": [
-        "canonical-selection"
+        "canonical-reference"
       ],
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "ba3854dcca84f6df53b1688c039ea9b83114d7ba",
+        "ledger_sha1": "0cceeea9a492994148d45e498f1c805e028ac67f",
         "ranges": [
           [
-            3565,
-            3567
+            4004,
+            4007
           ]
         ],
-        "range_sha256": "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
+        "range_sha256": "494770f9a602b856adf824a91ede41c2a74c7ec6e9bb2978fd224e740cb015d0"
       },
       "equation": {
-        "ledger_sha1": "ba3854dcca84f6df53b1688c039ea9b83114d7ba",
+        "ledger_sha1": "0cceeea9a492994148d45e498f1c805e028ac67f",
         "ranges": [
           [
-            3565,
-            3567
+            4004,
+            4007
           ]
         ],
-        "range_sha256": "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
+        "range_sha256": "494770f9a602b856adf824a91ede41c2a74c7ec6e9bb2978fd224e740cb015d0"
       },
       "supplement": null
     },
@@ -627,24 +784,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "95e376fb51889cf09c3d76996eefe1b22911fad8",
+        "ledger_sha1": "c3954a9903f836b918d804428b4315318b51e8ad",
         "ranges": [
           [
-            3650,
-            3661
+            4095,
+            4099
           ]
         ],
-        "range_sha256": "a1dcc212677ff270f90b1f551996305450fff289faaccc631a0733f9dc4ba1df"
+        "range_sha256": "6811fefedfb408d5d14ca9f59e1b630a2d36ee1de3991ef50e95c0af6afaacee"
       },
       "equation": {
-        "ledger_sha1": "b363621f6d435cdb5ea974cea9c940473612b199",
+        "ledger_sha1": "c3954a9903f836b918d804428b4315318b51e8ad",
         "ranges": [
           [
-            3650,
-            3654
+            4095,
+            4099
           ]
         ],
-        "range_sha256": "938b551803291b47dedba24085ba223d908f3d54d26ee7d5a1f7a473c6360713"
+        "range_sha256": "6811fefedfb408d5d14ca9f59e1b630a2d36ee1de3991ef50e95c0af6afaacee"
       },
       "supplement": null
     },
@@ -667,24 +824,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "4147cd0cc804ffa7268c72942af65ecf8ebdef03",
+        "ledger_sha1": "8ea91779ec74102e06b1b5391c7a2fe328182aa3",
         "ranges": [
           [
-            3414,
-            3414
+            3804,
+            3804
           ]
         ],
-        "range_sha256": "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
+        "range_sha256": "1e4c077f52edfcab3ec8450a2b985b080f29d8ead87b928e40a243585c3d728e"
       },
       "equation": {
-        "ledger_sha1": "4147cd0cc804ffa7268c72942af65ecf8ebdef03",
+        "ledger_sha1": "8ea91779ec74102e06b1b5391c7a2fe328182aa3",
         "ranges": [
           [
-            3414,
-            3414
+            3804,
+            3804
           ]
         ],
-        "range_sha256": "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
+        "range_sha256": "1e4c077f52edfcab3ec8450a2b985b080f29d8ead87b928e40a243585c3d728e"
       },
       "supplement": null
     },
@@ -707,24 +864,67 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "32e9f28d8e8a18ec3bf9493655819543cb9a65e7",
+        "ledger_sha1": "da783bf2d4262abbfe69900a4ac21424efe4c0a4",
         "ranges": [
           [
-            3412,
-            3412
+            3802,
+            3802
           ]
         ],
-        "range_sha256": "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
+        "range_sha256": "8938afcad21c3c997b722913f7e9eb51e64394c8f24987d8cace1c687e14fc27"
       },
       "equation": {
-        "ledger_sha1": "32e9f28d8e8a18ec3bf9493655819543cb9a65e7",
+        "ledger_sha1": "da783bf2d4262abbfe69900a4ac21424efe4c0a4",
         "ranges": [
           [
-            3412,
-            3412
+            3802,
+            3802
           ]
         ],
-        "range_sha256": "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
+        "range_sha256": "8938afcad21c3c997b722913f7e9eb51e64394c8f24987d8cace1c687e14fc27"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.Only",
+      "head": "Only",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∧",
+        "∀",
+        "λ",
+        "→",
+        "Among"
+      ],
+      "cases": [
+        "host-and-exclusion"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "775a738497f05cc03c34c47765fa5e65cca1d2c5",
+        "ranges": [
+          [
+            4293,
+            4301
+          ]
+        ],
+        "range_sha256": "0ea93b4382ce6ac689be43340f15895373a37a5cfa0118fb2b4ee6c7003b6644"
+      },
+      "equation": {
+        "ledger_sha1": "4b44c98bbfc65815b02c26851476df4e68831dad",
+        "ranges": [
+          [
+            4297,
+            4301
+          ]
+        ],
+        "range_sha256": "2432525fbe1f8a927f7b3ecdbc9af33afd77b10b8f8e2dff912a0ae1b1b9bcf4"
       },
       "supplement": null
     },
@@ -749,24 +949,121 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "985eab3a816f8583b31b3290613a45c278215adc",
+        "ledger_sha1": "cf6f928614e72db6a923a0b4495ae6e18e4c1661",
         "ranges": [
           [
-            3605,
-            3605
+            4050,
+            4050
           ]
         ],
-        "range_sha256": "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
+        "range_sha256": "418a1eb23b7b4ec98e38beafb17eaad99e49446ac878c49b74fc52d8c7c59f70"
       },
       "equation": {
-        "ledger_sha1": "985eab3a816f8583b31b3290613a45c278215adc",
+        "ledger_sha1": "cf6f928614e72db6a923a0b4495ae6e18e4c1661",
         "ranges": [
           [
-            3605,
-            3605
+            4050,
+            4050
           ]
         ],
-        "range_sha256": "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
+        "range_sha256": "418a1eb23b7b4ec98e38beafb17eaad99e49446ac878c49b74fc52d8c7c59f70"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.PluralNo",
+      "head": "PluralNo",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "¬",
+        "PluralSome"
+      ],
+      "cases": [
+        "negated-plural-exists"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "286c5ff2b5d449676ce0d027a173478d030c1d1d",
+        "ranges": [
+          [
+            3762,
+            3762
+          ],
+          [
+            3753,
+            3755
+          ],
+          [
+            3765,
+            3778
+          ]
+        ],
+        "range_sha256": "d011d98c6d33f4cc3b4964734cba87e61f86e0e3956101f0e5b600b95a829b5a"
+      },
+      "equation": {
+        "ledger_sha1": "5407b64792d8073634e89fb17da43255b4e0d0f9",
+        "ranges": [
+          [
+            3762,
+            3762
+          ]
+        ],
+        "range_sha256": "e9911442fb8e8962c6be286b438d0b0279d19aae7cc72f257693bc5588259b53"
+      },
+      "supplement": null
+    },
+    {
+      "id": "D12.PluralSome",
+      "head": "PluralSome",
+      "selection": "definition-port-state",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "dependencies": [
+        "∃",
+        "λ",
+        "∧"
+      ],
+      "cases": [
+        "plural-exists"
+      ],
+      "domains": [],
+      "selected_domains": [],
+      "spec": {
+        "ledger_sha1": "498d641d7515b62847abb352e3733ac884d0d5e2",
+        "ranges": [
+          [
+            3761,
+            3761
+          ],
+          [
+            3753,
+            3755
+          ],
+          [
+            3765,
+            3778
+          ]
+        ],
+        "range_sha256": "81c0d7ebd72be8017658f063827003869d3324323105ef6c25e3f323d45f01d3"
+      },
+      "equation": {
+        "ledger_sha1": "6a89a08abbcdfc70b6d43142d57d0147f7210b17",
+        "ranges": [
+          [
+            3761,
+            3761
+          ]
+        ],
+        "range_sha256": "0dce50e8c42b31f138328d9a990c60a4702e2afddec6ff31c75ac6d6a85fbeca"
       },
       "supplement": null
     },
@@ -789,24 +1086,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "ac3d3e1ca35d6741c60e4c023fd136c46ee0959f",
+        "ledger_sha1": "d1d434cfcde56955918cf761de91cedb6aa2f897",
         "ranges": [
           [
-            3406,
-            3406
+            3796,
+            3796
           ]
         ],
-        "range_sha256": "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
+        "range_sha256": "f46af1caa5f6f0a061e8caa23d80140bc87b53c217771c5bac5ee1251bd4fdfe"
       },
       "equation": {
-        "ledger_sha1": "ac3d3e1ca35d6741c60e4c023fd136c46ee0959f",
+        "ledger_sha1": "d1d434cfcde56955918cf761de91cedb6aa2f897",
         "ranges": [
           [
-            3406,
-            3406
+            3796,
+            3796
           ]
         ],
-        "range_sha256": "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
+        "range_sha256": "f46af1caa5f6f0a061e8caa23d80140bc87b53c217771c5bac5ee1251bd4fdfe"
       },
       "supplement": null
     },
@@ -832,24 +1129,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "7678eae3b6f1ecd07cb179c402e1b95cbfe45175",
+        "ledger_sha1": "ae9799c54c5a6ab0c6d56e118668c97836bfe53b",
         "ranges": [
           [
-            3477,
-            3479
+            3886,
+            3888
           ]
         ],
-        "range_sha256": "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
+        "range_sha256": "11033d42390cfa15456ff6853e814d6f0ea3b35571458bf93155bda0f9da0482"
       },
       "equation": {
-        "ledger_sha1": "7678eae3b6f1ecd07cb179c402e1b95cbfe45175",
+        "ledger_sha1": "ae9799c54c5a6ab0c6d56e118668c97836bfe53b",
         "ranges": [
           [
-            3477,
-            3479
+            3886,
+            3888
           ]
         ],
-        "range_sha256": "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
+        "range_sha256": "11033d42390cfa15456ff6853e814d6f0ea3b35571458bf93155bda0f9da0482"
       },
       "supplement": null
     },
@@ -893,24 +1190,24 @@
         }
       ],
       "spec": {
-        "ledger_sha1": "6f8a3495d09386006bfd112eed76082d1178a300",
+        "ledger_sha1": "aa7369a4a7c643f0ebf15f0d1cc039aa8723e0d0",
         "ranges": [
           [
-            3622,
-            3628
+            4071,
+            4073
           ]
         ],
-        "range_sha256": "2582167bdebae0b1a0da94a78d5ad356a9e74baa4da9ef5a3ab586f082360e28"
+        "range_sha256": "d3d60d566088d2f61dd085da1f07ed44ab360e4a7adeb5731eee21f108f9b828"
       },
       "equation": {
-        "ledger_sha1": "dadaca9429330518fbe548103617a553df31e001",
+        "ledger_sha1": "aa7369a4a7c643f0ebf15f0d1cc039aa8723e0d0",
         "ranges": [
           [
-            3626,
-            3628
+            4071,
+            4073
           ]
         ],
-        "range_sha256": "a5f3ab596f8a016c989b3015ae4da31c8f93253f2a192273b80fef204912c937"
+        "range_sha256": "d3d60d566088d2f61dd085da1f07ed44ab360e4a7adeb5731eee21f108f9b828"
       },
       "supplement": null
     },
@@ -932,24 +1229,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "f28dcd08c220e46b1e31801409157282d70d7680",
+        "ledger_sha1": "359463a1dce292f5e25bae88b199fbdfa080f831",
         "ranges": [
           [
-            613,
-            615
+            664,
+            664
           ]
         ],
-        "range_sha256": "05ef09f9d3e14436471ebbfb26eb4d37d0bce8fe0ade7576b3bcd75082ee10a2"
+        "range_sha256": "caa90671589303bdef8f130ae837530dd1b76b0dcb46ef5123abffb895c13afa"
       },
       "equation": {
-        "ledger_sha1": "cd475aba1b2351cc285df67e093358f82055aff6",
+        "ledger_sha1": "359463a1dce292f5e25bae88b199fbdfa080f831",
         "ranges": [
           [
-            615,
-            615
+            664,
+            664
           ]
         ],
-        "range_sha256": "1d05667b2a11b54d987a23c68a9a1fc4d757f0ae5ac6346e65f8e42966f5101d"
+        "range_sha256": "caa90671589303bdef8f130ae837530dd1b76b0dcb46ef5123abffb895c13afa"
       },
       "supplement": null
     },
@@ -976,32 +1273,32 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "479e81d19d4915cafff69e9deadd7d40c8b16d7a",
+        "ledger_sha1": "dbc57435b66b6bdb5a92fa5e466c3380b1df1f6b",
         "ranges": [
           [
-            699,
-            713
+            752,
+            761
           ]
         ],
-        "range_sha256": "925d6b638fe27aa1a1e06bff5bc2b75392c505a9596023bc8a17f77310d17476"
+        "range_sha256": "20dad3128fdf7cb8d71e50a377263f445fb50293e299a77cceb453b8944f6c17"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            703,
-            704
+            752,
+            753
           ],
           [
-            706,
-            709
+            755,
+            758
           ],
           [
-            711,
-            712
+            760,
+            761
           ]
         ],
-        "range_sha256": "1a5024f1978bfc8fc6866a776468db34eb74ea609468759e204504b89c6fd9c6"
+        "range_sha256": "17e1104b4571cfd5ef1fee6b464ac2d30fbb05c9983fadc626e262c391c0cf06"
       },
       "supplement": {
         "kind": "definition",
@@ -1031,21 +1328,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            652,
-            680
+            701,
+            729
           ]
         ],
-        "range_sha256": "312ceb30e7f4816c14b9cb4af08ae1ca3c1c708891eada707e5fc64e64b541a7"
+        "range_sha256": "6e0b033bfe6a956755593db3264e45e45455f8694af7c731560fccd36ac8d420"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            671,
-            674
+            720,
+            723
           ]
         ],
-        "range_sha256": "bdaa049d7b930b3957e0e435c38a481ba40c74953a820cdcb96ca6ee31148849"
+        "range_sha256": "89c677c026538a8a1adfaa50fcb4d8db90aca019669b3ede4d43e7d995674561"
       },
       "supplement": {
         "kind": "schema",
@@ -1077,24 +1374,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "151a19d670e9d6374eae4178f418d72591a9d097",
+        "ledger_sha1": "13fbff848b7b8397e5f3bdf15315286b620252cc",
         "ranges": [
           [
-            808,
-            817
+            868,
+            878
           ]
         ],
-        "range_sha256": "d274dd5d6df6cbe272866c81f5ff9552e648b52845f0902c55be66c9b10a5d86"
+        "range_sha256": "2d573abb7c312a1bf275c5e51afed6f55c546a47a5fd10cd0c36275c7aa51a84"
       },
       "equation": {
-        "ledger_sha1": "90142eae284856a8b91eec869c0a272d5faef32b",
+        "ledger_sha1": "468e6769d94c4a3acc7999c2bad4ad8ca002ca9c",
         "ranges": [
           [
-            812,
-            817
+            872,
+            878
           ]
         ],
-        "range_sha256": "119fa557a7a1fa02505e4a4852ed971dc1c77647ecd8bb4db3316a319730a0ce"
+        "range_sha256": "067ceb32a29e4afd23e5d382366f3fcd6405c94d196ca67d00aab23c7f020ed7"
       },
       "supplement": null
     },
@@ -1121,21 +1418,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            963,
-            977
+            1023,
+            1037
           ]
         ],
-        "range_sha256": "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+        "range_sha256": "b9e47ddebf51c17aa2479518bbee81c0b4d9282a5ea329a8187e37c707d02e7d"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            972,
-            974
+            1032,
+            1034
           ]
         ],
-        "range_sha256": "d44ad90034390d0f162e9167ab535d3cfc2188d3453410fc47ae994d611bd286"
+        "range_sha256": "d3d5c37dd6d3e13e9c6e02717ce5db5c30c9c90d97286ed9bf63d6b0e7e0458d"
       },
       "supplement": {
         "kind": "definition",
@@ -1165,21 +1462,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            963,
-            977
+            1023,
+            1037
           ]
         ],
-        "range_sha256": "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
+        "range_sha256": "b9e47ddebf51c17aa2479518bbee81c0b4d9282a5ea329a8187e37c707d02e7d"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            968,
-            970
+            1028,
+            1030
           ]
         ],
-        "range_sha256": "0d719677199b2a74789f78ff32c7da32f265a1d9f443b059d03d956ced96fe2f"
+        "range_sha256": "9f13ffa6c5e6b1dd8bebd75f914e2225e501de87dcbd8849186fdf5d5b5854b2"
       },
       "supplement": {
         "kind": "definition",
@@ -1207,21 +1504,21 @@
         "ledger_sha1": "none",
         "ranges": [
           [
-            1452,
-            1466
+            1582,
+            1596
           ]
         ],
-        "range_sha256": "9892b13a0fd9b39beaebcf098ad2ca6c45a124030c1f773ab50f8c057b28105f"
+        "range_sha256": "7167ed33858251d0a897e7d51c8061e22d411d3c80ec24c92eb97309fc25328b"
       },
       "equation": {
         "ledger_sha1": "none",
         "ranges": [
           [
-            1454,
-            1455
+            1584,
+            1585
           ]
         ],
-        "range_sha256": "5e8deb7adaccc5cee07a08ca2c3f66ef728a9b3151091c051b3162224f7c8d76"
+        "range_sha256": "63ed946675e4975cd747b1da1e8eff34d05561a8034b47671ec2e1ce622337e6"
       },
       "supplement": {
         "kind": "domain-overload",
@@ -1246,24 +1543,24 @@
       "domains": [],
       "selected_domains": [],
       "spec": {
-        "ledger_sha1": "0c89fe3d44d03d0f8b8c1b9898cf2e1e3e37eec9",
+        "ledger_sha1": "d987c2b372b1d3e1140ddb9a384e7129a71e7f9d",
         "ranges": [
           [
-            1563,
-            1566
+            1798,
+            1798
           ]
         ],
-        "range_sha256": "9b1b8b5abe9405f056667e083929a3d2933d2f4d9bafdaa9cf27db2eba51456c"
+        "range_sha256": "fc060d31efc96c719eb3eabc812aecbde01626355fee795e38e7a478107e0954"
       },
       "equation": {
-        "ledger_sha1": "2421413a8b8dba2d541068b80e5235ba71e5f0dd",
+        "ledger_sha1": "d987c2b372b1d3e1140ddb9a384e7129a71e7f9d",
         "ranges": [
           [
-            1566,
-            1566
+            1798,
+            1798
           ]
         ],
-        "range_sha256": "5ed705e778744900b30a691d7ece68d344ed55fc318f9eb8ecd10f45cdbd7a21"
+        "range_sha256": "fc060d31efc96c719eb3eabc812aecbde01626355fee795e38e7a478107e0954"
       },
       "supplement": null
     }
@@ -1279,17 +1576,6 @@
       "port_state": "none",
       "selected": true,
       "reason": "Its executable family has not yet reached the Redex port."
-    },
-    {
-      "id": "D12.Additive",
-      "head": "Additive",
-      "status": {
-        "kind": "executable",
-        "issue": null
-      },
-      "port_state": "none",
-      "selected": false,
-      "reason": "Its substitution schema awaits a typed executable family."
     },
     {
       "id": "D12.AtLeast",
@@ -1479,6 +1765,39 @@
       "reason": "Its performance family has not yet reached the Redex port."
     },
     {
+      "id": "D12.IndividualEvery",
+      "head": "IndividualEvery",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted ordinary closure equation; no outward reference introduction."
+    },
+    {
+      "id": "D12.IndividualNo",
+      "head": "IndividualNo",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted ordinary closure equation; no outward reference introduction."
+    },
+    {
+      "id": "D12.IndividualSome",
+      "head": "IndividualSome",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted ordinary closure equation; no outward reference introduction."
+    },
+    {
       "id": "D12.Interval",
       "head": "Interval",
       "status": {
@@ -1586,7 +1905,7 @@
       },
       "port_state": "a0",
       "selected": true,
-      "reason": "A0 ports the expected-type-directed canonical aggregate selection."
+      "reason": "E01 replaces cardinal selection by reference-level existential co-reference to one canonical aggregate, per current §12."
     },
     {
       "id": "D12.MaxRefer",
@@ -1694,9 +2013,9 @@
         "kind": "executable",
         "issue": null
       },
-      "port_state": "none",
-      "selected": false,
-      "reason": "Its substitution schema awaits a typed executable family."
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted pure host-and-exclusion formula. Effectful frames remain the §14 gap."
     },
     {
       "id": "D12.Overlap",
@@ -1708,6 +2027,28 @@
       "port_state": "ported",
       "selected": true,
       "reason": "B1 ports existential common-subreference overlap."
+    },
+    {
+      "id": "D12.PluralNo",
+      "head": "PluralNo",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted ordinary closure equation; no outward reference introduction."
+    },
+    {
+      "id": "D12.PluralSome",
+      "head": "PluralSome",
+      "status": {
+        "kind": "executable",
+        "issue": null
+      },
+      "port_state": "ported",
+      "selected": true,
+      "reason": "E01 ports the adopted ordinary closure equation; no outward reference introduction."
     },
     {
       "id": "D12.Realized",

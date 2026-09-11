@@ -1446,15 +1446,41 @@ reasoning under VC3 — one precisification per parameter per binding site —
 since a site that cannot depend on the comprehension variable has the same
 precisification at every instantiation. Introductions are not hoisted: a
 `Refer` or selection inside a comprehension would need a binder-width law
-no rule states, so such a scope has no pure form unless its reference is
-bound outside. A site that would depend on the comprehension's own
+no general hoisting rule states. Such a scope has no pure form unless its
+reference is bound outside or the explicit P45 negation-local qualification
+applies. A contextual/vague site that would depend on the comprehension's own
 variable makes the position ill-formed — the right verdict, since such a
 comprehension has no pure meaning. **Cost.** Hoisted terms are longer, and
 the corpus's bare displays (`{λ [$x :: Entity] (gerku $x)}`) are
 abbreviations relative to the assumed row — honest only because L0.1 says
 so and the samples book states its provisional row assumptions.
 
-**The one semantic choice.** `Close` inside L0.1 fixes the actual mode for
+**Negation's bounded qualification (P45).** The human explicitly confirmed
+the reviewed PR46/#13/B1 interpretation: a temporary reference consumed
+entirely inside a negative Content test need not make that enclosing property
+effectful. This does not move the reference outside a comprehension or choose
+its width by hoisting. A candidate-dependent restriction/nucleus stays under
+the negation where it is evaluated. Only the reference-introduction effect
+is removed; contextual, projective and opaque call effects and all obligation
+metadata remain. `Local` still returns a value under its existing effectful
+contract; other connectives are not revised by this pin.
+
+The literal internal-activity alternative would reject these current
+negated-selection expansions in pure positions and revise the previously
+reviewed admission of `No`, `AtMost 1`, `FewerThan 1` and `Exactly 0` in
+`SetOf`. It would require either a separately constructed pure replacement
+or an explicit unsupported route, not a claim of whole-core inexpressibility.
+P45 was chosen to preserve the argued prior interpretation and direct-versus-
+expansion typing while stating its previously missing prose qualification.
+The cost is an explicit operation-specific exception, not a proof that every
+non-exporting operator is pure. Double negation remains a test with no exported
+witness; truth equivalence alone does not establish full dynamic/event identity.
+Full model and other-connective effect completeness remain separate work.
+Spec References, **Negation-local purity: P45 reconciliation**, records the
+human approval and original August27–28 author/review arguments; neither
+the old code nor DPL terminology independently ratifies the pin.
+
+**Restrictor CAhA choice.** `Close` inside L0.1 fixes the actual mode for
 restrictor-internal predications: `lo bajra` describes actual runners
 whatever CAhA the host clause carries — `ka'e` on the main bridi does not
 turn its description's restrictor into a capability claim. The alternative,

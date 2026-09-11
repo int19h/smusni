@@ -1,8 +1,8 @@
-# base_head	892a7040d4f3786be42635089b6aac7743ba6b74
-# core_sha256	49febf9b1b0ea5fea795302cd89ca7e71eaa1fcc73a5310d725741b6d05c1150
-# definitions_sha256	91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc
-# a0_sha256	4c22c288b884c9f08045a204c660c48f9a0fa4183a3b87271dbf0e66d1d0b6cb
-# spec_sha256	19eab6dee2d4fe17c473287e5eba3e1d6b5d1e51c00d0c048751f35f8dc760b4
+# base_head	8bea3eadebaf4e942ff55e17d6b3a39ea4684862
+# core_sha256	794ec672dd0130a76d6f17fb82a9764d379f5b00c157688cf8b76a2a2d3b05c6
+# definitions_sha256	04b735fc2c9f88fa0d97909321c73d5b7fd5b58046d2f50af8438e62a9f532b8
+# a0_sha256	b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c
+# spec_sha256	55b7dda95bd6ec4b02403a521366c1b355e8f402ac254c1db39d785d74d79cab
 head	disposition	sources	evidence
 family:Select	gap-prose-only	spec-appendix	primitive family label; concrete Select constructors are separate
 metatheory:bind	gap-prose-only	spec-appendix	carrier sequencing operation denoted by term:Bind
@@ -40,12 +40,11 @@ term:$natural	primitive-core	a0-grammar	SmusniA0 atom n
 term:$string	primitive-core	spec-appendix	spec Appendix: the kernel
 term:$variable	primitive-core	a0-grammar	SmusniA0 atom x
 term:+	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.9
-term:<	primitive-core	spec-appendix	spec Appendix: the kernel
+term:<	primitive-core	a0-grammar,core,spec-appendix	SmusniA0 t grammar | spec Appendix: the kernel | spec §4.9
 term:=	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
 term:>	gap-prose-only	definitions	definition status blocked "#66"
 term:ActContent	primitive-core	spec-appendix	spec Appendix: the kernel
 term:ActualClause	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
-term:Additive	defined-surface	definitions	definition status executable
 term:AdmissibleCutoff	primitive-core	core	spec §6.4
 term:AdmissibleThreshold	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §6.4
 term:Aggregate	primitive-core	core	spec §4.9
@@ -120,6 +119,9 @@ term:Hearsay	primitive-core	core	spec §7.6
 term:Holds	primitive-core	core	spec §9.1
 term:Host	primitive-core	core	spec §7.1
 term:InContext	primitive-core	spec-appendix	spec Appendix: the kernel
+term:IndividualEvery	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; L5.1; P44
+term:IndividualNo	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; L5.2
+term:IndividualSome	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; L5.2
 term:InnatelyCapable	primitive-core	spec-appendix	spec Appendix: the kernel
 term:Intense	primitive-core	core	spec §7.6
 term:InterpretAct	primitive-core	spec-appendix	spec Appendix: the kernel
@@ -167,13 +169,15 @@ term:NiRel	primitive-core	core	spec §9.2
 term:No	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
 term:Now	primitive-core	core	spec §5.1
 term:Observation	primitive-core	core	spec §7.6
-term:Only	defined-surface	definitions	definition status executable
+term:Only	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; L11.10 pure fragment
 term:OpaqueQuote	primitive-core	core	spec §7.5
 term:OpenQ	primitive-core	core	spec §8.1
 term:OtherThan	primitive-core	core	spec §6.3
 term:Overlap	defined-surface	a0-grammar,definitions	SmusniA0 t grammar | definition status executable
 term:PeerUnitAt	primitive-core	core	spec §4.9
 term:Perform	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §7.1
+term:PluralNo	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; P22
+term:PluralSome	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
 term:Polar	primitive-core	core	spec §8.1
 term:Presuppose	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §5.5
 term:QuestionOf	primitive-core	spec-appendix	spec Appendix: the kernel
@@ -245,7 +249,7 @@ term:∈	primitive-core	core	spec §4.9
 term:−	primitive-core	core	spec §4.9
 term:∧	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §4.5
 term:∨	primitive-core	core	spec §4.5
-term:≤	primitive-core	spec-appendix	spec Appendix: the kernel
+term:≤	primitive-core	a0-grammar,core,spec-appendix	SmusniA0 t grammar | spec Appendix: the kernel | spec §4.9
 term:⊕	primitive-core	core	spec §4.5
 term:⊤	defined-surface	a0-grammar,spec-appendix	SmusniA0 constant grammar | spec Appendix: defined forms
 type-form:Act	type-index-data	a0-grammar,core	SmusniA0 type grammar | spec §3.4

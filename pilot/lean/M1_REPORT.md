@@ -1,5 +1,12 @@
 # Lean milestone 1 report — term, interchange, binders
 
+E02 refresh at input `18cd626`: current M1 check passes with 370 cases,
+51 primitive-core decodes/canonical round trips, 370 surface/text round trips,
+287 pending-M2 cases, 32 out-of-slice cases, and 303 generated round trips.
+The current rules/input migration is described in `M2_REPORT.md`.
+The remainder is the historical M1 report; its pre-E02 copy is preserved at
+`../history/pre-e02/M1_REPORT.md`. Historical counts below are not current results.
+
 ## Outcome — PASS
 
 M1 is implemented on the pinned Lean 4.33.1 / Lake 5.0.0 toolchain. It builds

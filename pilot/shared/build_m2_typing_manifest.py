@@ -216,8 +216,8 @@ def build() -> dict[str, Any]:
     lines = source.splitlines()
     required = string_list_block(source, "a0-required-rules")
     anchors = anchor_block(source)
-    if len(required) != 78 or len(set(required)) != 78:
-        raise ValueError(f"expected 78 unique required typing rules, got {len(required)}")
+    if len(required) != 81 or len(set(required)) != 81:
+        raise ValueError(f"expected 81 unique E01 typing rules, got {len(required)}")
     if set(required) != anchors.keys():
         raise ValueError(
             f"typing rule/anchor mismatch: missing={sorted(set(required)-anchors.keys())} "
@@ -257,7 +257,8 @@ def build() -> dict[str, Any]:
         })
 
     grammar = {}
-    for name in ("τ", "direction", "R", "t", "ρdecl", "dep", "role"):
+    for name in ("τ", "direction", "R", "t", "ρdecl", "dep", "role",
+                 "closure-head", "comparison"):
         start, end, raw = bracket_form_span(source, name)
         start_line = line_number(source, start)
         end_line = line_number(source, end - 1)

@@ -151,6 +151,43 @@ def expandNo {scope : Nat} (memberType : Ty)
   term := primitive .not [(expandSome memberType property nuclear).term]
   clauses := [.d56SelectSomeAtLeastOne, .d12SomeWitness, .d12NoNegatedSome] }
 
+def expandIndividualSome {scope : Nat} (memberType : Ty)
+    (property nuclear : Term scope) : Expansion scope := {
+  term := primitive .exists [.lambda memberType <| primitive .and [
+    apply (weaken property) [.bound 0], apply (weaken nuclear) [.bound 0]]]
+  clauses := [.d12IndividualSomeIndividualExists] }
+
+def expandIndividualNo {scope : Nat} (memberType : Ty)
+    (property nuclear : Term scope) : Expansion scope := {
+  term := primitive .not [(expandIndividualSome memberType property nuclear).term]
+  clauses := [.d12IndividualSomeIndividualExists, .d12IndividualNoNegatedIndividualExists] }
+
+def expandIndividualEvery {scope : Nat} (memberType : Ty)
+    (property nuclear : Term scope) : Expansion scope := {
+  term := primitive .forall [.lambda memberType <| primitive .implies [
+    apply (weaken property) [.bound 0], apply (weaken nuclear) [.bound 0]]]
+  clauses := [.d12IndividualEveryIndividualForall] }
+
+def expandPluralSome {scope : Nat} (referenceType : Ty)
+    (property nuclear : Term scope) : Expansion scope := {
+  term := primitive .exists [.lambda referenceType <| primitive .and [
+    apply (weaken property) [.bound 0], apply (weaken nuclear) [.bound 0]]]
+  clauses := [.d12PluralSomePluralExists] }
+
+def expandPluralNo {scope : Nat} (referenceType : Ty)
+    (property nuclear : Term scope) : Expansion scope := {
+  term := primitive .not [(expandPluralSome referenceType property nuclear).term]
+  clauses := [.d12PluralSomePluralExists, .d12PluralNoNegatedPluralExists] }
+
+def expandOnly {scope : Nat} (referenceType : Ty)
+    (alternatives host focus : Term scope) : Expansion scope := {
+  term := primitive .and [apply host [focus],
+    primitive .forall [.lambda referenceType <| primitive .implies [
+      primitive .and [apply (weaken alternatives) [.bound 0],
+        apply (weaken host) [.bound 0]],
+      primitive .among [.bound 0, weaken focus]]]]
+  clauses := [.d12OnlyHostAndExclusion] }
+
 def expandAtLeast {scope : Nat} (memberType : Ty)
     (count property nuclear : Term scope) : Expansion scope :=
   match count with
@@ -293,12 +330,15 @@ def expandCanonicalAggregateAt {scope : Nat} (componentType : Ty)
 def expandMassify {scope : Nat} (componentType : Ty)
     (basis cover : Term scope) : Expansion scope :=
   let canonical := expandCanonicalAggregateAt componentType
-    (weaken basis) (.bound 0) (weaken cover)
+    (weakenN 2 basis) (.bound 0) (weakenN 2 cover)
+  let sameGroup := expandCoRef (first := (.bound 1 : Term (scope + 2)))
+    (second := .bound 0)
   {
-    term := primitive .selectExactly [
-      .natural 1,
-      .lambda (Ty.group componentType) canonical.term]
-    clauses := canonical.clauses ++ [.d12MassifyCanonicalSelection] }
+    term := primitive .refer [
+      .lambda (Ty.referents (Ty.group componentType)) <| primitive .exists [
+        .lambda (Ty.group componentType) <| primitive .and [
+          canonical.term, sameGroup.term]]]
+    clauses := canonical.clauses ++ sameGroup.clauses ++ [.d12MassifyCanonicalReference] }
 
 def expandZipWith {scope : Nat} (function : Term scope)
     (left right : List (Term scope)) : Except String (Expansion scope) :=
