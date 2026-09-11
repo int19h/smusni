@@ -1,5 +1,10 @@
 # E02: one outer Assert context bridge
 
+Correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md) supersedes
+the successful typed-parity claim below. Four retained rejection ASTs had
+been counted; the strengthened consumer now reports them and fails M2.
+The 74 independent A0-typed oracle targets themselves remain unchanged.
+
 Implementation follows PM's obligation-preserving release
 `msg_20260911T015146004382Z_9b7abac205cc4cb29fc9097b64fba3c9`, recorded on #74.
 Base checkpoint: `3a7edfc`; semantic input remains `18cd626`.

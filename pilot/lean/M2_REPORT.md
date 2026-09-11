@@ -1,6 +1,10 @@
 # Lean pilot milestone 2 — E02 migration checkpoint
 
-Current follow-up: the PM-authorized one-Assert bridge is documented in
+Current correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md).
+The strengthened consumer now correctly fails four actual typed-outcome
+differences: prior 74/74 AST matches were not all successful typed Lean parity.
+
+Prior follow-up: the PM-authorized one-Assert bridge is documented in
 [`E02_ASSERT_BRIDGE.md`](E02_ASSERT_BRIDGE.md): 74 typed targets (54 whole-A0,
 20 bridge) from the unchanged 192 candidates. It preserves obligation
 metadata and requires independent source/target payload typings.

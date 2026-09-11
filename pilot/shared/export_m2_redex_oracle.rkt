@@ -17,6 +17,7 @@
 (define root (simplify-path relative-root))
 (define case-manifest-path (build-path root "pilot/shared/M2_CASE_MANIFEST.json"))
 (define output-path (build-path root "pilot/shared/M2_REDEX_ORACLE.sexp"))
+(define source-output-path (build-path root "pilot/shared/M2_ORACLE_SOURCES.sexp"))
 
 (struct exn:fail:oracle-domain exn:fail (category stage))
 (define (non-admission category stage format-string . arguments)
@@ -457,6 +458,46 @@
     (error 'assert-certificate "invalid wrapper/type/obligation witness"))
   #t)
 
+(struct admitted-source (payload environment bridge? witness) #:transparent)
+
+(define (prepare-source item)
+  (define raw (port-case-term item))
+  (define bridge? (and (pair? raw) (eq? (car raw) 'Assert)))
+  (when (and bridge? (not (and (list? raw) (= (length raw) 2))))
+    (non-admission 'malformed-input 'context "Assert requires exactly one payload"))
+  (define input (legacy-datum->a0 raw))
+  (define payload (if bridge? (second input) input))
+  (define environment (with-row-environment (port-environment (port-case-env item)) input))
+  (unless (redex-match? SmusniA0 Γ environment)
+    (non-admission 'malformed-input 'environment "environment outside the A0 type vocabulary: ~e" environment))
+  (require-declared-variables input environment)
+  (when (and bridge? (pair? payload) (eq? (car payload) 'Assert))
+    (unless (and (list? payload) (= (length payload) 2))
+      (non-admission 'malformed-input 'context "nested Assert has malformed arity"))
+    (non-admission 'type/domain-rejected 'assert-payload
+                   "nested Assert cannot supply Content; its valid result type is Act Assertion"))
+  (define unsupported (unsupported-context-in payload))
+  (when unsupported
+    (non-admission 'context-unsupported 'context
+                   "no independent context rule for ~a within ~a"
+                   unsupported (if bridge? 'Assert 'whole-source)))
+  (unless (redex-match? SmusniA0 t payload)
+    (non-admission 'grammar-unsupported 'source "outside frozen A0 payload grammar: ~e" payload))
+  (when (contains-member-refer? payload environment)
+    (domain-unavailable "Refer-member-lift has ledger port-state none; term oracle unavailable"))
+  ;; Source synthesis is intentionally the first bridge's conservative mode.
+  ;; Zero derivations are not evidence of semantic ill-typing.
+  (define source-typings (judgment-holds (a0-synth ,environment ,payload R) R))
+  (unless (= (length source-typings) 1)
+    (non-admission 'unclassified-non-admission 'source
+                   "source has ~a admitted A0 typings: ~e" (length source-typings) payload))
+  (define source-witness (first source-typings))
+  (define source-type (typing-type source-witness))
+  (when (and bridge? (not (equal? source-type 'Content)))
+    (non-admission 'type/domain-rejected 'assert-payload
+                   "Assert requires literal Content; payload synthesizes ~e" source-type))
+  (admitted-source payload environment bridge? source-witness))
+
 (define (oracle-case item #:expand [expander expand-term])
   (with-handlers ([exn:fail:oracle-domain?
                    (lambda (exception)
@@ -465,41 +506,9 @@
                             (category ,(exn:fail:oracle-domain-category exception))
                             (stage ,(exn:fail:oracle-domain-stage exception))
                             (reason ,(exn-message exception))))])
-    (define raw (port-case-term item))
-    (define bridge? (and (pair? raw) (eq? (car raw) 'Assert)))
-    (when (and bridge? (not (and (list? raw) (= (length raw) 2))))
-      (non-admission 'malformed-input 'context "Assert requires exactly one payload"))
-    (define input (legacy-datum->a0 raw))
-    (define payload (if bridge? (second input) input))
-    (define environment (with-row-environment (port-environment (port-case-env item)) input))
-    (unless (redex-match? SmusniA0 Γ environment)
-      (non-admission 'malformed-input 'environment "environment outside the A0 type vocabulary: ~e" environment))
-    (require-declared-variables input environment)
-    (when (and bridge? (pair? payload) (eq? (car payload) 'Assert))
-      (unless (and (list? payload) (= (length payload) 2))
-        (non-admission 'malformed-input 'context "nested Assert has malformed arity"))
-      (non-admission 'type/domain-rejected 'assert-payload
-                     "nested Assert cannot supply Content; its valid result type is Act Assertion"))
-    (define unsupported (unsupported-context-in payload))
-    (when unsupported
-      (non-admission 'context-unsupported 'context
-                     "no independent context rule for ~a within ~a"
-                     unsupported (if bridge? 'Assert 'whole-source)))
-    (unless (redex-match? SmusniA0 t payload)
-      (non-admission 'grammar-unsupported 'source "outside frozen A0 payload grammar: ~e" payload))
-    (when (contains-member-refer? payload environment)
-      (domain-unavailable "Refer-member-lift has ledger port-state none; term oracle unavailable"))
-    ;; Source synthesis is intentionally the first bridge's conservative mode.
-    ;; Zero derivations are not evidence of semantic ill-typing.
-    (define source-typings (judgment-holds (a0-synth ,environment ,payload R) R))
-    (unless (= (length source-typings) 1)
-      (non-admission 'unclassified-non-admission 'source
-                     "source has ~a admitted A0 typings: ~e" (length source-typings) payload))
-    (define source-witness (first source-typings))
+    (match-define (admitted-source payload environment bridge? source-witness)
+      (prepare-source item))
     (define source-type (typing-type source-witness))
-    (when (and bridge? (not (equal? source-type 'Content)))
-      (non-admission 'type/domain-rejected 'assert-payload
-                     "Assert requires literal Content; payload synthesizes ~e" source-type))
     (define expanded (expander payload environment))
     (define output-environment (with-row-environment environment expanded))
     (require-complete-expansion expanded output-environment)
@@ -533,18 +542,38 @@
               (source-typing ,source-witness) (target-typing ,target-witness)
               (term ,output))])))
 
-(define (build-oracle)
+(define (selected-corpus-cases)
   (define manifest (call-with-input-file case-manifest-path read-json))
   (define ids (hash-ref (hash-ref manifest 'cohorts) 'definition_parity))
   (define wanted (for/hash ([id (in-list ids)]) (values id #t)))
   (define cases
     (for/list ([item (in-list (load-port-corpus))]
                #:when (hash-has-key? wanted (port-case-id item)))
-      (oracle-case item)))
+      item))
   (unless (and (pair? ids) (= (length ids) (hash-count wanted))
                (= (length cases) (length ids)))
     (error 'm2-oracle "manifest/corpus join failed: ~a selected, ~a joined"
            (length ids) (length cases)))
+  cases)
+
+;; An independent source-only input to the consumer. This phase never reads
+;; the candidate oracle, runs candidate-target expansion, or consults any Lean outcome.
+(define (source-contract item)
+  (with-handlers ([exn:fail:oracle-domain?
+                   (lambda (_exception)
+                     `(case (id ,(port-case-id item)) (status unavailable)))])
+    (match-define (admitted-source _payload _environment bridge? witness) (prepare-source item))
+    `(case (id ,(port-case-id item)) (status typed-source)
+           (context ,(if bridge? 'assert-bridge 'whole-a0))
+           (source-typing ,(if bridge? (assert-witness witness) witness))
+           ,@(if bridge? `((payload-source-typing ,witness)) '()))))
+
+(define (build-source-contracts)
+  (define cases (map source-contract (selected-corpus-cases)))
+  `(smusni-m2-oracle-sources 1 (count ,(length cases)) (cases ,@cases)))
+
+(define (build-oracle)
+  (define cases (map oracle-case (selected-corpus-cases)))
   (unless (ormap (lambda (item) (member '(status available) item)) cases)
     (error 'm2-oracle "typed oracle is empty; refusing vacuous parity"))
   `(smusni-m2-redex-oracle 2 (count ,(length cases)) (cases ,@cases)))
@@ -555,21 +584,25 @@
 
 (module+ main
   (define write? #f)
+  (define sources? #f)
   (command-line
    #:program "export_m2_redex_oracle.rkt"
    #:once-each
+   [("--sources") "generate source-only typing contracts (no expansion/oracle/Lean input)" (set! sources? #t)]
    [("--write") "write the generated oracle" (set! write? #t)])
-  (define generated (build-oracle))
+  (define generated (if sources? (build-source-contracts) (build-oracle)))
+  (define destination (if sources? source-output-path output-path))
   (define result (render generated))
   (cond
     [write?
-     (call-with-output-file output-path
+     (call-with-output-file destination
        (lambda (out) (display result out)) #:exists 'truncate/replace)
-     (printf "wrote ~a\n" (find-relative-path root output-path))]
-    [(not (file-exists? output-path))
-     (error 'm2-oracle "missing ~a; run --write" output-path)]
-    [(not (string=? result (file->string output-path)))
-     (error 'm2-oracle "stale ~a; regenerate with --write" output-path)]
+     (printf "wrote ~a\n" (find-relative-path root destination))]
+    [(not (file-exists? destination))
+     (error 'm2-oracle "missing ~a; run --write" destination)]
+    [(not (string=? result (file->string destination)))
+     (error 'm2-oracle "stale ~a; regenerate with --write" destination)]
+    [sources? (printf "M2 independent source contracts: ok\n")]
     [else
      (define cases (match generated [`(,_ ,_ ,_ (cases ,cases ...)) cases]))
      (define available
@@ -608,6 +641,12 @@
     (oracle-case (port-case "mechanism-control" 'test source environment '())
                  #:expand expander))
   (define (get record key) (second (assoc key (cdr record))))
+  (define source-number
+    (source-contract (port-case "source-only-control" 'test '$number '(($number . Number)) '())))
+  (define source-natural
+    (source-contract (port-case "source-only-control" 'test '$number '(($number . Natural)) '())))
+  (check-equal? (get source-number 'source-typing) '(typing Number () ()))
+  (check-equal? (get source-natural 'source-typing) '(typing Natural () ()))
   (define (replace record key value)
     (cons (car record)
           (for/list ([entry (cdr record)])

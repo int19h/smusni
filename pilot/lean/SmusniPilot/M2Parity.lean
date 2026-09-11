@@ -143,6 +143,7 @@ structure RedexOracleCase where
   reason : Option String
   context : String
   category : Option String
+  evidence : List SExpr
   deriving Repr
 
 structure OracleTypingWitness where
@@ -212,8 +213,13 @@ def decodeRedexOracleCase : SExpr → Except String RedexOracleCase
           let some term := SExpr.field? "term" fields
             | .error s!"available Redex oracle case {id} lacks term"
           let context ← validateOracleEvidence fields term
-          pure { id, available := true, term := some term, reason := none, context, category := none }
+          let allowed := ["id", "status", "context", "source-type", "source-typing", "target-typing", "term"] ++
+            (if context == "assert-bridge" then ["payload-source-typing", "payload-target-typing"] else [])
+          if names.any fun name => !allowed.contains name then throw "unknown/forbidden oracle evidence field"
+          pure { id, available := true, term := some term, reason := none, context, category := none, evidence := fields }
       | .atom (.symbol "unavailable") =>
+          if names.any fun name => !["id", "status", "category", "stage", "reason"].contains name then
+            throw "unknown/forbidden non-admission evidence field"
           let some reason := (SExpr.field? "reason" fields).bind SExpr.stringValue?
             | throw "non-admission lacks evidence reason"
           let .atom (.symbol category) ← oracleField fields "category"
@@ -232,7 +238,8 @@ def decodeRedexOracleCase : SExpr → Except String RedexOracleCase
             term := none
             reason := some reason
             context := "unavailable"
-            category := some category }
+            category := some category
+            evidence := fields }
       | _ => .error s!"Redex oracle case {id} has bad status"
   | value => .error s!"malformed Redex oracle case: {repr value}"
 
@@ -252,6 +259,154 @@ def decodeRedexOracle : SExpr → Except String (List RedexOracleCase)
         if ids.length != ids.eraseDups.length then throw "duplicate oracle case"
         pure decoded
   | _ => .error "bad Redex oracle root/version"
+
+structure OracleSourceContract where
+  id : String
+  context : String
+  typing : Option OracleTypingWitness
+  payloadTyping : Option OracleTypingWitness := none
+  deriving Repr
+
+def decodeOracleSourceContract : SExpr → Except String OracleSourceContract
+  | .list _ (.atom (.symbol "case") :: fields) => do
+      let names ← fields.mapM fun
+        | .list _ [.atom (.symbol name), _] => pure name
+        | _ => throw "malformed source contract field"
+      if names.length != names.eraseDups.length then throw "duplicate source contract field"
+      let some id := (← oracleField fields "id").stringValue?
+        | throw "source contract lacks id"
+      match ← oracleField fields "status" with
+      | .atom (.symbol "unavailable") =>
+          if names.any fun name => !["id", "status"].contains name then
+            throw "unknown non-typed source contract field"
+          pure { id, context := "unavailable", typing := none }
+      | .atom (.symbol "typed-source") =>
+          let typing ← decodeOracleTyping (← oracleField fields "source-typing")
+          match ← oracleField fields "context" with
+          | .atom (.symbol "whole-a0") =>
+              if names.any fun name => !["id", "status", "context", "source-typing"].contains name then
+                throw "unknown ordinary source contract evidence"
+              pure { id, context := "whole-a0", typing := some typing }
+          | .atom (.symbol "assert-bridge") =>
+              if names.any fun name =>
+                  !["id", "status", "context", "source-typing", "payload-source-typing"].contains name then
+                throw "unknown bridge source contract evidence"
+              let payload ← decodeOracleTyping (← oracleField fields "payload-source-typing")
+              if typing != (← assertOracleWitness payload) then
+                throw "independent source contract violates Assert law"
+              pure { id, context := "assert-bridge", typing := some typing, payloadTyping := some payload }
+          | _ => throw "unknown source contract context"
+      | _ => throw "unknown source contract status"
+  | _ => throw "malformed source contract"
+
+def decodeOracleSourceContracts : SExpr → Except String (List OracleSourceContract)
+  | .list _ [.atom (.symbol "smusni-m2-oracle-sources"), .atom (.symbol "1"),
+      .list _ [.atom (.symbol "count"), .atom (.symbol count)],
+      .list _ (.atom (.symbol "cases") :: cases)] => do
+      if count.toNat? != some cases.length then throw "source contract count mismatch"
+      cases.mapM decodeOracleSourceContract
+  | _ => throw "malformed source contract root/version"
+
+def requireSameIds (label : String) (actual expected : List String) : Except String Unit := do
+  if actual.length != actual.eraseDups.length || expected.length != expected.eraseDups.length then
+    throw s!"{label}: duplicate IDs"
+  if expected.isEmpty || !(actual.all expected.contains) || !(expected.all actual.contains) then
+    throw s!"{label}: missing/extra IDs relative to independent selected cohort"
+
+def sourceContext (source : SExpr) : String :=
+  match source with
+  | .list _ [.atom (.symbol "Assert"), _] => "assert-bridge"
+  | _ => "whole-a0"
+
+def oracleWitnessType (witness : OracleTypingWitness) : Except String Ty :=
+  decodeTy (SurfaceTerm.ofSExpr witness.type)
+
+-- Surface type decoding represents force words as variables; the executable
+-- act constructors use closed indices. Reconcile only those declared index
+-- positions, then use the existing compatibility relation (including genuine
+-- checking refinements), not a new subtype rule or literal-type shortcut.
+def normalizeOracleType : Ty → Ty
+  | .named name arguments =>
+      let arguments := arguments.map normalizeOracleType
+      let arguments := if name == .typeFormAct || name == .typeFormActOccurrence then
+        arguments.map fun
+          | .variable "Assertion" => Ty.assertion
+          | .variable "Expressive" => Ty.expressive
+          | other => other
+        else arguments
+      .named name arguments
+  | .function effectful parameters result =>
+      .function effectful (parameters.map normalizeOracleType) (normalizeOracleType result)
+  | other => other
+
+def oracleCompatible (actual expected : Ty) : Bool :=
+  Ty.compatible (normalizeOracleType actual) (normalizeOracleType expected)
+
+def decodedLambdaType (effectful : Bool) (parameters : List Ty) (result : Ty) : Ty :=
+  match parameters with
+  | [] => .function effectful [] result
+  | [parameter] => .function effectful [parameter] result
+  | parameter :: rest => .function false [parameter] (decodedLambdaType effectful rest result)
+
+-- A0 keeps a joint source lambda's parameter vector; M1's actual decoder
+-- emits nested unary lambdas. Adapt that source syntax only. Do not identify
+-- arbitrary function-valued results or change the semantic compatibility law.
+partial def expectedTypeForDecodedSource (source : SurfaceTerm) (expected : Ty) : Except String Ty := do
+  match source, expected with
+  | .form _ (.primitive .lambda) [binders, body], .function effectful parameters result =>
+      let binders ← decodeBinderGroup binders
+      if binders.length != parameters.length then
+        throw "source binder group disagrees with independent A0 parameter vector"
+      let result ← expectedTypeForDecodedSource body result
+      pure (decodedLambdaType effectful parameters result)
+  | .form _ (.defined .let) [_, _, body], _ => expectedTypeForDecodedSource body expected
+  | .form _ (.primitive .bind) arguments, _ =>
+      let (_, body) ← decodeBindClauses arguments
+      expectedTypeForDecodedSource body expected
+  | _, _ => pure expected
+
+def validateJoinedOracle (oracle : RedexOracleCase) (source : CorpusCase)
+    (contract : OracleSourceContract) : Except String Ty := do
+  if oracle.context != sourceContext source.term || oracle.context != contract.context then
+    throw s!"{oracle.id}: oracle context disagrees with actual source"
+  let some sourceTyping := contract.typing
+    | throw s!"{oracle.id}: no independent source typing"
+  let expected ← oracleWitnessType sourceTyping
+  let declaredSource ← decodeOracleTyping (← oracleField oracle.evidence "source-typing")
+  let declaredTarget ← decodeOracleTyping (← oracleField oracle.evidence "target-typing")
+  if declaredSource != sourceTyping then
+    throw s!"{oracle.id}: source witness differs from independent source contract"
+  let targetType ← oracleWitnessType declaredTarget
+  if !oracleCompatible targetType expected then
+    throw s!"{oracle.id}: target witness is incompatible with independent expected type"
+  if oracle.context == "assert-bridge" then
+    let payload ← decodeOracleTyping (← oracleField oracle.evidence "payload-source-typing")
+    if contract.payloadTyping != some payload then
+      throw s!"{oracle.id}: bridge source payload witness changed"
+  pure expected
+
+def validateTypedParityOutcome (environment : Environment 0) (expected : Ty)
+    (outcome : CaseOutcome) : Except String (Term 0) := do
+  if outcome.disposition != .typedUnchanged && outcome.disposition != .typeDirectedExpansion then
+    throw s!"{outcome.id}: rejected/non-successful outcome is not typed parity"
+  if outcome.error.isSome || !outcome.outputTypingAvailable || !outcome.outputTraceSupported ||
+      outcome.typingTrace.isEmpty || !outcome.excludedTraceRules.isEmpty then
+    throw s!"{outcome.id}: missing/failed output typing evidence"
+  if outcome.disposition == .typedUnchanged &&
+      (!outcome.inputTypingAvailable || !outcome.inputTraceSupported) then
+    throw s!"{outcome.id}: unchanged outcome lacks input typing evidence"
+  let some type := outcome.type | throw s!"{outcome.id}: no output type"
+  let some term := outcome.term | throw s!"{outcome.id}: no successful output term"
+  -- Replay the actual existing checker, not a second typing relation or a
+  -- predicate that trusts flags attached to an AST retained for diagnostics.
+  let typed ← (synth environment term).mapError fun error =>
+    s!"{outcome.id}: output typing failed: {error.code}"
+  if typed.type != type || typed.effects != outcome.effects ||
+      typed.trace != outcome.typingTrace || !typingTraceSupported typed then
+    throw s!"{outcome.id}: outcome evidence disagrees with actual successful typing"
+  if !oracleCompatible type expected then
+    throw s!"{outcome.id}: output type {repr type} incompatible with independent expected {repr expected}"
+  pure term
 
 structure ParityDifference where
   id : String
@@ -372,38 +527,35 @@ def runM2ParityMutationGates : IO Unit := do
   if skippedAvailable.validate.isOk then
     throw <| IO.userError "available-but-uncompared parity target did not fail the gate"
 
-def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
-  let oracleSource ← IO.FS.readFile (root ++ "/pilot/shared/M2_REDEX_ORACLE.sexp")
-  let oracle ← IO.ofExcept (SExpr.parse oracleSource >>= decodeRedexOracle)
-  let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")
-  let manifest : S1Manifest ← IO.ofExcept (Json.parse manifestSource >>= fromJson?)
-  let corpusSource ← IO.FS.readFile (root ++ "/" ++ manifest.sources.port_corpus)
-  let corpus ← IO.ofExcept (SExpr.parse corpusSource >>= decodeCorpus)
-  let fixtureSource ← IO.FS.readFile (root ++ "/" ++ manifest.sources.fixtures)
-  let lexicalHeads ← IO.ofExcept (SExpr.parse fixtureSource >>= decodeLexicalHeads)
+def compareM2Parity (selected : List String) (sources : List OracleSourceContract)
+    (corpus : List CorpusCase) (manifestCases : Array S1CaseRecord)
+    (lexicalHeads : List String) (caseRun : CaseRun) (oracle : List RedexOracleCase) :
+    Except String ParityRun := do
+  requireSameIds "oracle/cohort" (oracle.map (·.id)) selected
+  requireSameIds "source-contract/cohort" (sources.map (·.id)) selected
+  requireSameIds "corpus/S1" (corpus.map (·.id)) (manifestCases.toList.map (·.id))
+  requireSameIds "outcomes/corpus" (caseRun.outcomes.map (·.id)) (corpus.map (·.id))
   let mut compared := 0
   let mut termMatches := 0
   let mut siteMatches := 0
   let mut differences : List ParityDifference := []
   for oracleCase in oracle do
+    let some corpusCase := corpus.find? fun item => item.id == oracleCase.id
+      | throw s!"oracle case {oracleCase.id} absent from corpus"
+    let some contract := sources.find? fun item => item.id == oracleCase.id
+      | throw s!"oracle case {oracleCase.id} lacks independent source contract"
+    let some outcome := caseRun.outcomes.find? fun item => item.id == oracleCase.id
+      | throw s!"oracle case {oracleCase.id} absent from M2 outcomes"
     if oracleCase.available then
-      let some rawOracle := oracleCase.term
-        | throw <| IO.userError s!"available oracle case {oracleCase.id} lacks term"
-      let some corpusCase := corpus.find? fun item => item.id == oracleCase.id
-        | throw <| IO.userError s!"oracle case {oracleCase.id} absent from corpus"
-      if oracleCase.context == "assert-bridge" then
-        match corpusCase.term with
-        | .list _ [.atom (.symbol "Assert"), _] => pure ()
-        | _ => throw <| IO.userError "Assert certificate attached to a different source context"
-      let some outcome := caseRun.outcomes.find? fun item => item.id == oracleCase.id
-        | throw <| IO.userError s!"oracle case {oracleCase.id} absent from M2 run"
-      match outcome.term with
-      | none =>
-          differences := differences ++ [{
-            id := oracleCase.id
-            part := "term"
-            detail := s!"Lean produced no term for an available oracle target ({repr outcome.disposition})" }]
-      | some leanTerm =>
+      let some rawOracle := oracleCase.term | throw "available oracle has no target"
+      let expected ← validateJoinedOracle oracleCase corpusCase contract
+      let expected ← expectedTypeForDecodedSource
+        (SurfaceTerm.ofSExprWithLexicon lexicalHeads corpusCase.term) expected
+      let environment ← environmentForCorpus corpusCase.environment
+      match validateTypedParityOutcome environment expected outcome with
+      | .error detail =>
+          differences := differences ++ [{ id := oracleCase.id, part := "typed-outcome", detail }]
+      | .ok leanTerm =>
           let surface := SurfaceTerm.ofSExprWithLexicon lexicalHeads rawOracle
           let freeNames := freeNamesFromEnvironment corpusCase.environment
           match Interchange.Bundle.ofSurfaceWith oracleCase.id lexicalHeads freeNames none surface with
@@ -460,6 +612,184 @@ def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
     unexplainedDifferences := differences.countP fun difference =>
       difference.knownIssue.isNone
     differences }
+
+def loadM2ParityData (root : String) : IO (List String × List OracleSourceContract × List CorpusCase × S1Manifest × List String × List RedexOracleCase) := do
+  let oracleSource ← IO.FS.readFile (root ++ "/pilot/shared/M2_REDEX_ORACLE.sexp")
+  let oracle ← IO.ofExcept (SExpr.parse oracleSource >>= decodeRedexOracle)
+  let manifestSource ← IO.FS.readFile (root ++ "/pilot/shared/M1_S1_MANIFEST.json")
+  let manifest : S1Manifest ← IO.ofExcept (Json.parse manifestSource >>= fromJson?)
+  let corpusSource ← IO.FS.readFile (root ++ "/" ++ manifest.sources.port_corpus)
+  let corpus ← IO.ofExcept (SExpr.parse corpusSource >>= decodeCorpus)
+  let fixtureSource ← IO.FS.readFile (root ++ "/" ++ manifest.sources.fixtures)
+  let lexicalHeads ← IO.ofExcept (SExpr.parse fixtureSource >>= decodeLexicalHeads)
+  let cohortSource ← IO.FS.readFile (root ++ "/pilot/shared/M2_CASE_MANIFEST.json")
+  let cohort ← IO.ofExcept (Json.parse cohortSource)
+  let schema ← IO.ofExcept (cohort.getObjValAs? String "schema")
+  let version ← IO.ofExcept (cohort.getObjValAs? Nat "version")
+  if schema != "smusni-lean-m2-case-manifest" || version != 1 then
+    throw <| IO.userError "unsupported independent cohort manifest"
+  let cohortSources ← IO.ofExcept (cohort.getObjVal? "sources")
+  let s1Digest ← IO.ofExcept (cohortSources.getObjValAs? String "s1_sha256")
+  let definitionDigest ← IO.ofExcept (cohortSources.getObjValAs? String "definitions_sha256")
+  if s1Digest != (← sha256File root "pilot/shared/M1_S1_MANIFEST.json") ||
+      definitionDigest != (← sha256File root "pilot/shared/M2_DEFINITION_MANIFEST.json") then
+    throw <| IO.userError "independent cohort source digests disagree with current inputs"
+  let selected ← IO.ofExcept <| do
+    let cohorts ← cohort.getObjVal? "cohorts"
+    fromJson? (← cohorts.getObjVal? "definition_parity")
+  let sourceContracts ← IO.FS.readFile (root ++ "/pilot/shared/M2_ORACLE_SOURCES.sexp")
+  let sources ← IO.ofExcept (SExpr.parse sourceContracts >>= decodeOracleSourceContracts)
+  let actualDigest ← sha256File root manifest.sources.port_corpus
+  if actualDigest != manifest.sources.port_corpus_sha256 then
+    throw <| IO.userError "parity source corpus digest mismatch"
+  pure (selected, sources, corpus, manifest, lexicalHeads, oracle)
+
+def oracleSymbol (name : String) : SExpr := .atom (.symbol name)
+
+def editOracleField (record : SExpr) (name : String) (value : SExpr) : SExpr :=
+  match record with
+  | .list b (head :: fields) => .list b (head :: fields.map fun field =>
+      match field with
+      | .list fb [.atom (.symbol key), _] =>
+          if key == name then .list fb [oracleSymbol key, value] else field
+      | _ => field)
+  | _ => record
+
+def dropOracleFields (record : SExpr) (names : List String) : SExpr :=
+  match record with
+  | .list b (head :: fields) => .list b (head :: fields.filter fun field =>
+      match field with
+      | .list _ [.atom (.symbol name), _] => !names.contains name
+      | _ => true)
+  | _ => record
+
+def runM2ConsumerMutationGates (selected : List String) (sources : List OracleSourceContract)
+    (corpus : List CorpusCase) (manifestCases : Array S1CaseRecord)
+    (lexicalHeads : List String) (caseRun : CaseRun) (oracle : List RedexOracleCase) : IO Unit := do
+  let rows := oracle.map fun item => SExpr.list .paren (oracleSymbol "case" :: item.evidence)
+  let encode := fun (records : List SExpr) => SExpr.list .paren [
+    oracleSymbol "smusni-m2-redex-oracle", oracleSymbol "2",
+    .list .paren [oracleSymbol "count", oracleSymbol (toString records.length)],
+    .list .paren (oracleSymbol "cases" :: records)]
+  let expectFailure := fun (name : String) (records : List SExpr) (outcomes : CaseRun) => do
+    let result : Except String ParityRun := do
+      let parsed ← decodeRedexOracle (encode records)
+      let compared ← compareM2Parity selected sources corpus manifestCases lexicalHeads outcomes parsed
+      compared.validate
+      pure compared
+    if result.isOk then throw <| IO.userError s!"production parity accepted mutation: {name}"
+  let some unavailable := oracle.find? fun item => !item.available
+    | throw <| IO.userError "consumer mutation requires a selected unavailable case"
+  let some bridge := oracle.find? fun item => item.available && item.context == "assert-bridge"
+    | throw <| IO.userError "consumer mutation requires a bridge case"
+  let some whole := oracle.find? fun item => item.available && item.context == "whole-a0" &&
+      SExpr.field? "source-type" item.evidence == some (oracleSymbol "Content")
+    | throw <| IO.userError "consumer mutation requires an ordinary Content case"
+  let some outside := corpus.find? fun item => !selected.contains item.id
+    | throw <| IO.userError "consumer mutation requires a known unselected source"
+  let row := fun (item : RedexOracleCase) => SExpr.list .paren (oracleSymbol "case" :: item.evidence)
+  let replace := fun (item : RedexOracleCase) (changed : SExpr) =>
+    rows.map fun original => if original == row item then changed else original
+  let wrongType ← IO.ofExcept (SExpr.parse "(typing (Act Assertion) () ())")
+  let wrongContext := dropOracleFields
+    (editOracleField (row bridge) "context" (oracleSymbol "whole-a0"))
+    ["payload-source-typing", "payload-target-typing"]
+  let unknownEvidence := SExpr.list .paren <| oracleSymbol "case" :: whole.evidence ++
+    [.list .paren [oracleSymbol "unknown-evidence", oracleSymbol "true"]]
+  let duplicateEvidence := SExpr.list .paren <| oracleSymbol "case" :: whole.evidence ++
+    [.list .paren [oracleSymbol "target-typing", wrongType]]
+  let sourceTypeMutation := editOracleField
+    (editOracleField (row whole) "source-type"
+      (.list .paren [oracleSymbol "Act", oracleSymbol "Assertion"]))
+    "source-typing" wrongType
+  let mutations := [
+    ("unknown-unavailable-join", replace unavailable <| editOracleField (row unavailable) "id"
+      (.atom (.string "not-a-selected-or-corpus-case"))),
+    ("missing-unavailable-adjusted-count", rows.filter fun item => item != row unavailable),
+    ("known-but-not-selected", replace unavailable <| editOracleField (row unavailable) "id"
+      (.atom (.string outside.id))),
+    ("duplicate-id", rows ++ [row unavailable]),
+    ("bridge-relabelled-whole-a0", replace bridge wrongContext),
+    ("whole-a0-wrong-target-type", replace whole <| editOracleField (row whole) "target-typing" wrongType),
+    ("self-consistent-wrong-source-type", replace whole sourceTypeMutation),
+    ("missing-source-evidence", replace whole <| dropOracleFields (row whole) ["source-typing"]),
+    ("unknown-evidence", replace whole unknownEvidence),
+    ("duplicate-evidence", replace whole duplicateEvidence)]
+  for (name, records) in mutations do expectFailure name records caseRun
+  let some original := caseRun.outcomes.find? fun item => item.id == whole.id
+    | throw <| IO.userError "consumer mutation lacks original classifier outcome"
+  let rejection : CaseOutcome := { original with
+    disposition := .typedRejection
+    decidingRule := "type-mismatch"
+    type := none
+    effects := []
+    error := some { code := "type-mismatch", detail := "classifier-shaped rejected output" }
+    inputTypingAvailable := false
+    inputTraceSupported := false
+    outputTypingAvailable := false
+    outputTraceSupported := false
+    typingTrace := []
+    excludedTraceRules := [] }
+  let outcomeMutations : List (String × CaseOutcome) := [
+    ("classifier-rejection-retains-AST", rejection),
+    ("rejection-label-retains-other-evidence", { original with disposition := .typedRejection }),
+    ("missing-type", { original with type := none }),
+    ("missing-output-typing", { original with outputTypingAvailable := false }),
+    ("failed-output-typing", { original with error := rejection.error }),
+    ("missing-trace", { original with typingTrace := [] }),
+    ("incompatible-type", { original with type := some (Ty.act Ty.assertion) }),
+    ("actually-ill-typed-retained-AST", { original with term := some (.apply (.natural 1) .nil) })]
+  for (name, changed) in outcomeMutations do
+    let mutated := CaseRun.ofOutcomes <| caseRun.outcomes.map fun item =>
+      if item.id == whole.id then changed else item
+    if name == "classifier-rejection-retains-AST" && !mutated.validateTypingCoverage.isOk then
+      throw <| IO.userError "classifier-shaped control no longer isolates the parity gate"
+    expectFailure name rows mutated
+
+  -- Positive checking refinement: actual Natural remains Natural while the
+  -- independent expected type is Number. This tests the real checker and
+  -- compatibility relation rather than weakening types to equality.
+  let typed ← IO.ofExcept <| (synth Environment.empty (.natural 417 : Term 0)).mapError (·.detail)
+  let refined : CaseOutcome := {
+    id := "checking-refinement"
+    originalTag := "primitive-core"
+    disposition := .typedUnchanged
+    decidingRule := "bidirectional typing"
+    type := some typed.type
+    effects := typed.effects
+    term := some (.natural 417)
+    inputTypingAvailable := true
+    inputTraceSupported := true
+    outputTypingAvailable := true
+    outputTraceSupported := true
+    typingTrace := typed.trace }
+  discard <| IO.ofExcept (validateTypedParityOutcome Environment.empty Ty.number refined)
+  let refinementRecord ← IO.ofExcept <| SExpr.parse
+    "(case (id \"checking-refinement\") (status available) (context whole-a0) (source-type Number) (source-typing (typing Number () ())) (target-typing (typing Natural () ())) (term 417))"
+  let refinementOracle ← IO.ofExcept (decodeRedexOracleCase refinementRecord)
+  let sourceTyping ← IO.ofExcept <| SExpr.parse "(typing Number () ())" >>= decodeOracleTyping
+  let source : CorpusCase := {
+    id := refined.id
+    provenance := oracleSymbol "test"
+    term := oracleSymbol "$number"
+    environment := .list .paren [.list .paren [oracleSymbol "$number", oracleSymbol "Number"]]
+    inventory := [] }
+  let contract : OracleSourceContract := { id := refined.id, context := "whole-a0", typing := some sourceTyping }
+  discard <| IO.ofExcept (validateJoinedOracle refinementOracle source contract)
+  let joint ← IO.ofExcept <| SExpr.parse "(λ (($x :: Entity) ($n :: Number)) (∧))"
+  let projected ← IO.ofExcept <| expectedTypeForDecodedSource (SurfaceTerm.ofSExpr joint)
+    (Ty.pureFn [Ty.entity, Ty.number] Ty.content)
+  if projected != Ty.pureFn [Ty.entity] (Ty.pureFn [Ty.number] Ty.content) then
+    throw <| IO.userError "joint source lambda did not use the decoder's unary grouping"
+  if !oracleCompatible (Ty.act Ty.assertion) (Ty.act (.variable "Assertion")) ||
+      oracleCompatible (Ty.act Ty.expressive) (Ty.act (.variable "Assertion")) then
+    throw <| IO.userError "closed force-index normalization changed force identity"
+  IO.println s!"M2 production consumer mutations={mutations.length + outcomeMutations.length} positive-refinements=2 PASS"
+
+def runM2Parity (root : String) (caseRun : CaseRun) : IO ParityRun := do
+  let (selected, sources, corpus, manifest, lexicalHeads, oracle) ← loadM2ParityData root
+  runM2ConsumerMutationGates selected sources corpus manifest.cases lexicalHeads caseRun oracle
+  IO.ofExcept <| compareM2Parity selected sources corpus manifest.cases lexicalHeads caseRun oracle
 
 end M2
 end SmusniPilot
