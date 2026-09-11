@@ -262,7 +262,7 @@
     "tools/smusni-redex/inventory/port-corpus.sexp": "80ad442971f4bb26e39e5f0e54c15d73a54e36ef8ffe60a4253669c18ef8147d",
     "pilot/shared/M1_S1_MANIFEST.json": "d2645419fe94b76907a2e8b21342a52bf41f140739c04183d99ecbf25163313d",
     "pilot/shared/M2_CASE_MANIFEST.json": "2b115981d6be45aeb469f64a7c62da81a48643f67f25d268c7eac22156558e84",
-    "pilot/shared/M2_REDEX_ORACLE.sexp": "09d484229bb515463fdbb96a0c3dbfc385fe2ea3dd0c9aa36ce8ef1cfd044730"
+    "pilot/shared/M2_REDEX_ORACLE.sexp": "d2325d4fc9145fd7daefb73b07f86e5017708ec0b8cfa5db91834279981dd21f"
   },
   "counts": {
     "old": 370,

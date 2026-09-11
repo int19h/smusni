@@ -271,6 +271,7 @@ structure OracleSourceContract where
   context : String
   typing : Option OracleTypingWitness
   payloadTyping : Option OracleTypingWitness := none
+  nonAdmission : Option RedexOracleCase := none
   deriving Repr
 
 def decodeOracleSourceContract : SExpr → Except String OracleSourceContract
@@ -283,9 +284,8 @@ def decodeOracleSourceContract : SExpr → Except String OracleSourceContract
         | throw "source contract lacks id"
       match ← oracleField fields "status" with
       | .atom (.symbol "unavailable") =>
-          if names.any fun name => !["id", "status"].contains name then
-            throw "unknown non-typed source contract field"
-          pure { id, context := "unavailable", typing := none }
+          let rejected ← decodeRedexOracleCase (.list .paren (.atom (.symbol "case") :: fields))
+          pure { id, context := "unavailable", typing := none, nonAdmission := some rejected }
       | .atom (.symbol "typed-source") =>
           let typing ← decodeOracleTyping (← oracleField fields "source-typing")
           match ← oracleField fields "context" with
@@ -306,7 +306,7 @@ def decodeOracleSourceContract : SExpr → Except String OracleSourceContract
   | _ => throw "malformed source contract"
 
 def decodeOracleSourceContracts : SExpr → Except String (List OracleSourceContract)
-  | .list _ [.atom (.symbol "smusni-m2-oracle-sources"), .atom (.symbol "1"),
+  | .list _ [.atom (.symbol "smusni-m2-oracle-sources"), .atom (.symbol "2"),
       .list _ [.atom (.symbol "count"), .atom (.symbol count)],
       .list _ (.atom (.symbol "cases") :: cases)] => do
       if count.toNat? != some cases.length then throw "source contract count mismatch"
@@ -485,9 +485,18 @@ def runM2ParityMutationGates : IO Unit := do
     let rejected ← IO.ofExcept (decodeRedexOracleCase parsed)
     if rejected.available || rejected.term.isSome then
       throw <| IO.userError s!"non-admission became available: {category}"
+    let contract ← IO.ofExcept (decodeOracleSourceContract parsed)
+    if contract.typing.isSome || contract.nonAdmission.isNone then
+      throw <| IO.userError "source contract lost independent non-admission evidence"
+    for name in ["category", "stage", "reason"] do
+      if (decodeOracleSourceContract (replaceField parsed name (.list .paren []))).isOk then
+        throw <| IO.userError s!"source contract accepted malformed {name}"
     let empty ← IO.ofExcept <| SExpr.parse s!"(smusni-m2-redex-oracle 2 (count 1) (cases {source}))"
     if (decodeRedexOracle empty).isOk then
       throw <| IO.userError "all-unavailable oracle passed the empty-oracle guard"
+  let legacySource ← IO.ofExcept (SExpr.parse "(smusni-m2-oracle-sources 1 (count 0) (cases))")
+  if (decodeOracleSourceContracts legacySource).isOk then
+    throw <| IO.userError "legacy source contracts without failure evidence were accepted"
   let some row := lookupLexicalRow "tavla"
     | throw <| IO.userError "parity swap probe lacks the tavla row"
   let speaker : Term 0 := .primitive .speaker .nil
@@ -552,6 +561,11 @@ def compareM2Parity (selected : List String) (sources : List OracleSourceContrac
       | throw s!"oracle case {oracleCase.id} lacks independent source contract"
     let some outcome := caseRun.outcomes.find? fun item => item.id == oracleCase.id
       | throw s!"oracle case {oracleCase.id} absent from M2 outcomes"
+    if let some sourceFailure := contract.nonAdmission then
+      if oracleCase.available || oracleCase.category != sourceFailure.category ||
+          oracleCase.reason != sourceFailure.reason ||
+          SExpr.field? "stage" oracleCase.evidence != SExpr.field? "stage" sourceFailure.evidence then
+        throw s!"oracle case {oracleCase.id} contradicts independent source non-admission evidence"
     if oracleCase.available then
       let some rawOracle := oracleCase.term | throw "available oracle has no target"
       let expected ← validateJoinedOracle oracleCase corpusCase contract
@@ -686,6 +700,9 @@ def runM2ConsumerMutationGates (selected : List String) (sources : List OracleSo
     if result.isOk then throw <| IO.userError s!"production parity accepted mutation: {name}"
   let some unavailable := oracle.find? fun item => !item.available
     | throw <| IO.userError "consumer mutation requires a selected unavailable case"
+  let some sourceUnavailable := oracle.find? fun item => !item.available &&
+      (sources.find? (·.id == item.id)).any (·.nonAdmission.isSome)
+    | throw <| IO.userError "consumer mutation requires independent source non-admission"
   let some bridge := oracle.find? fun item => item.available && item.context == "assert-bridge"
     | throw <| IO.userError "consumer mutation requires a bridge case"
   let some whole := oracle.find? fun item => item.available && item.context == "whole-a0" &&
@@ -709,6 +726,13 @@ def runM2ConsumerMutationGates (selected : List String) (sources : List OracleSo
       (.list .paren [oracleSymbol "Act", oracleSymbol "Assertion"]))
     "source-typing" wrongType
   let mutations := [
+    ("source-non-admission-category", replace sourceUnavailable <| editOracleField
+      (row sourceUnavailable) "category" (oracleSymbol
+        (if sourceUnavailable.category == some "context-unsupported" then "grammar-unsupported" else "context-unsupported"))),
+    ("source-non-admission-stage", replace sourceUnavailable <| editOracleField
+      (row sourceUnavailable) "stage" (oracleSymbol "test-mutation")),
+    ("source-non-admission-reason", replace sourceUnavailable <| editOracleField
+      (row sourceUnavailable) "reason" (.atom (.string "changed independent source evidence"))),
     ("unknown-unavailable-join", replace unavailable <| editOracleField (row unavailable) "id"
       (.atom (.string "not-a-selected-or-corpus-case"))),
     ("missing-unavailable-adjusted-count", rows.filter fun item => item != row unavailable),

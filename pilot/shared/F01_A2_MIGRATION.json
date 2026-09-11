@@ -1,0 +1,183 @@
+{
+  "schema": "smusni-f01-a2-evidence-migration",
+  "version": 1,
+  "reviewed_base": "8c14eaabdfca0866fefa253792b96fdf127b70b1",
+  "boundary": "Non-admission evidence correction only; no new independent oracle context or typed target.",
+  "counts": {
+    "cohort": 195,
+    "available_preserved": 74,
+    "changed_non_admissions": 3,
+    "source_failures_with_evidence": 113,
+    "before_categories": {
+      "available": 74,
+      "context-unsupported": 71,
+      "grammar-unsupported": 25,
+      "malformed-input": 3,
+      "unclassified-non-admission": 22
+    },
+    "after_categories": {
+      "available": 74,
+      "context-unsupported": 74,
+      "grammar-unsupported": 25,
+      "unclassified-non-admission": 22
+    }
+  },
+  "source_schema": {
+    "before": "1",
+    "after": "2"
+  },
+  "preserved": {
+    "tools/smusni-redex/inventory/port-corpus.sexp": "80ad442971f4bb26e39e5f0e54c15d73a54e36ef8ffe60a4253669c18ef8147d",
+    "pilot/shared/M2_CASE_MANIFEST.json": "2b115981d6be45aeb469f64a7c62da81a48643f67f25d268c7eac22156558e84",
+    "tools/smusni-redex/inventory/port-baseline.sexp": "86682cb567eb0932556a43855b1bb699e631a69b91185435f0dba5fbd4a6b645"
+  },
+  "changes": [
+    {
+      "id": "4601e0fc1cd98dda4396bef40b0909f12e3e35b0",
+      "before": [
+        "case",
+        [
+          "id",
+          "\"4601e0fc1cd98dda4396bef40b0909f12e3e35b0\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "malformed-input"
+        ],
+        [
+          "stage",
+          "environment"
+        ],
+        [
+          "reason",
+          "\"missing declaration for free variable $x\""
+        ]
+      ],
+      "after": [
+        "case",
+        [
+          "id",
+          "\"4601e0fc1cd98dda4396bef40b0909f12e3e35b0\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "context-unsupported"
+        ],
+        [
+          "stage",
+          "context"
+        ],
+        [
+          "reason",
+          "\"no independent context rule for PerformSource within whole-source\""
+        ]
+      ]
+    },
+    {
+      "id": "679a6c30ff1a50022b0318f997405b963275d5ec",
+      "before": [
+        "case",
+        [
+          "id",
+          "\"679a6c30ff1a50022b0318f997405b963275d5ec\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "malformed-input"
+        ],
+        [
+          "stage",
+          "environment"
+        ],
+        [
+          "reason",
+          "\"missing declaration for free variable $x\""
+        ]
+      ],
+      "after": [
+        "case",
+        [
+          "id",
+          "\"679a6c30ff1a50022b0318f997405b963275d5ec\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "context-unsupported"
+        ],
+        [
+          "stage",
+          "context"
+        ],
+        [
+          "reason",
+          "\"no independent context rule for PerformSource within whole-source\""
+        ]
+      ]
+    },
+    {
+      "id": "eb25b474d04d551d558e517f0248943c27c6712e",
+      "before": [
+        "case",
+        [
+          "id",
+          "\"eb25b474d04d551d558e517f0248943c27c6712e\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "malformed-input"
+        ],
+        [
+          "stage",
+          "environment"
+        ],
+        [
+          "reason",
+          "\"missing declaration for free variable $x\""
+        ]
+      ],
+      "after": [
+        "case",
+        [
+          "id",
+          "\"eb25b474d04d551d558e517f0248943c27c6712e\""
+        ],
+        [
+          "status",
+          "unavailable"
+        ],
+        [
+          "category",
+          "context-unsupported"
+        ],
+        [
+          "stage",
+          "context"
+        ],
+        [
+          "reason",
+          "\"no independent context rule for PerformSource within whole-source\""
+        ]
+      ]
+    }
+  ]
+}
