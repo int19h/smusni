@@ -883,7 +883,7 @@ run-event-quotient embedding. Failed-source replay is particularly explicit
 debt because no obtained-referent assignment remembers that source outcome.
 The bound source-linked payload is not the unfactored statement's complete
 source-reopening intension: its Empty fibre stays F at a different world where
-a newly evaluated source might succeed. C08 records that inequivalence, not
+a newly evaluated source might succeed. F01-C08 records that inequivalence, not
 a proof of complete GOhA coverage. No-return Bind event coordinates remain
 partial; an invented holding event would not complete EventOfContent's model.
 

@@ -1325,7 +1325,9 @@ that the full model already embeds failure-coordinate replay.
 
 These are constructed controls (F01-C01–09), not new corpus judgments.
 Whole-content denial examples additionally need the explicit Reify/jetnu
-standard and projection premises in spec §7.1.1's source record; the partial
+standard and projection premises in the [F01-C04 control record](https://github.com/int19h/smusni/issues/89#issuecomment-5625643989)
+cited in spec References, **Source-preserving assertions** (the general
+crossing is spec L8.9/§9.1); the partial
 no-return event coordinate does not automatically supply an event-valued
 crossing. General multi-source failure and other force cases remain gaps.
 

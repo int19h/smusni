@@ -642,8 +642,10 @@ S is RefComp<R>; only C1 sees x; only D sees read/o. Host omission is
 shorthand. S is independent of all three binders.
 
 **Meaning.** Prepare one permitted description source and perform one Host.
-One internal read preserves its original obtained/F/U result in the first
-payload; the later read returns the same obtained reference or U if absent.
+One internal read preserves the original source result: the first payload is
+F on an empty source and U on an unresolved one; on an obtained reference it
+runs the original assertion frame. The later read returns that same reference
+or U if absent.
 Each read preserves its caller's state and repeats no source effects. One
 shared Act and captured Content have interpretation-dependent denotations,
 not independently reselected references or separately selected projections.

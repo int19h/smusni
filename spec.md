@@ -1660,8 +1660,8 @@ not license a baseline surface export forbidden by §5.6/P43.
 
 | Form | Dynamic rule |
 |---|---|
-| `∧` | Left to right; each operand sees preceding successful introductions; successful introductions survive within their actual scope. Facet conjunctions over a shared event (tense/modal joining, §11 L6.2) are ordinary `∧`. Read-only Boolean statuses obey §7.1.1; general effectful aggregation remains §14 work. |
-| `Do` | Sequences returning performances. In §7.1.1's assertion fragment, every terminal T/F/U payload returns its occurrence, preserving incoming bindings, successful additions whose scope reaches the continuation, and reached legal sides; additions whose scope ends are projected. This does not restore rejected worlds to cumulative acceptance. |
+| `∧` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11 L6.2) are ordinary `∧`. Enclosing scope/P43 boundaries still apply. Read-only Boolean statuses obey §7.1.1; general effectful aggregation remains §14 work. |
+| `Do` | Left to right; each performance sees preceding successful introductions; introductions that escape their acts survive the sequence. In §7.1.1's assertion fragment, every terminal T/F/U payload returns its occurrence, preserving incoming bindings, successful additions whose scope reaches the continuation, and reached legal sides; additions whose scope ends are projected. This does not restore rejected worlds to cumulative acceptance or decide failure behavior of excluded forces. |
 | `PerformSource` | Its source sees the incoming scope; only the assertion frame sees the source-value binder. The discourse continuation sees the reusable read and occurrence handle, not a fictitious source value on failure. Existing scope premises govern successful prefix retention as in `Do`; no new source behind a P43 barrier escapes. The read introduces nothing and preserves the caller's state. |
 | `∨` | Operands each see the incoming state; branch-local introductions do not escape the disjunction. |
 | `¬` | Operand sees the incoming state; nothing escapes. |
@@ -2368,7 +2368,9 @@ later use needing its absent reference is U. An unanswered question slot is
 not thereby identified with an already completed empty description. This is
 the same partial-value-use principle, not a fresh reference/existence claim.
 
-Form once B = Bind x f C1(x), a = Assert B, and c = Cap_E(B). There is one
+Write Cap_E(B) for B's §7.4 occurrence capture under the entry context and
+resolver E. This is model shorthand, not a kernel operator or a source-state
+cache. Form once B = Bind x f C1(x), a = Assert B, and c = Cap_E(B). There is one
 Act a and one captured Content c for the selected actual Host, not one per
 source alternative. ActContent(a) = B; RealizedAct(u) = a and
 RealizedContent(u) = c when the ordinary unique-span/capture premises hold.
@@ -3778,7 +3780,7 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   independently bound reference sources, open question slots, and permitted
   quotation/incidental access. Correlation, dependencies, capture and partial
   evaluation remain explicit; this gap is not an obligation to restore the
-  superseded P42 numerical-group/family export or decide static access by truth.
+  superseded P42 numerical-group/family export or decide static access by actual truth.
 
 **Abstractions** (L9; §9, P13, P14).
 

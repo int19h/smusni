@@ -1077,7 +1077,7 @@ are distinct, with one shared reference on success. General source/force and
 multi-source failure laws remain explicit gaps. Open ma slots and later failed cardinality are not static
 scope errors, and no new weak selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P43.
+**See.** [Spec §5.6, §7.1.1, §11, §14](spec.md), pins P16/P43.
 
 ### ko'a … fo'u (KOhA)
 
