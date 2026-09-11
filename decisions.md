@@ -10,6 +10,16 @@ Lean/Redex remain derived until the three-stage authority transfer in the charte
 
 ## Settled distinctions
 
+- **F01: bounded source-preserving assertions.** The completed Astra-led
+  Fable/Kimi/Grok review supplies spec §7.1.1/L8.13's formation and bounded
+  laws under the human's settled-formalization instruction. One description
+  source, two read roles, one shared projected payload; terminal assertions
+  retain eligible prefixes/sides and return their occurrence even after F/U.
+  Later absent-value use is U, not a fresh existence assertion. Full carrier/
+  quotient and failed-source replay-coordinate embedding, coupled event
+  definedness, multi-source failure and excluded forces/guards remain work.
+  This document application is not an engine implementation or model proof.
+  [Review closure](https://github.com/int19h/smusni/issues/9#issuecomment-5625843464).
 - **P44: bare me'i defaults to ro.** Human-adopted September10: ordinary
   individual not-all is negated IndividualEvery, not an infinite-cardinality
   comparison. Explicit me'i n is unchanged; me'i pa is zero. No new source
@@ -22,7 +32,8 @@ Lean/Redex remain derived until the three-stage authority transfer in the charte
   independently bound references, open answer slots and permitted in-scope
   dependencies. No automatic outward numerical/universal groups or dependent
   families; static availability is not an actual-truth test. Typed source/
-  force/capture realization remains work. P42 is retired, with its evidence
+  force/capture realization is bounded by F01; the general case remains work.
+  P42 is retired, with its evidence
   and original selected-S rationale preserved as history in rationale §1.6a.
 - **Q02.a-b: ordinary finite individual global exactness.** Exact n counts all
   P-and-Q qualifiers in the fixed resolved domain; a fourth qualifying dog
@@ -75,7 +86,7 @@ coverage is distinguished from a policy the panel could not agree on.
 
 | ID | Settled extent | What remains | Tracker |
 |---|---|---|---|
-| Q01 | Individual `su'o`; ordinary existential/independent-reference continuity; P43 conservative barriers; in-scope P6 retained | Typed source/force/capture continuation, PA+KOhA/fragment/other-force mapping, permitted dependencies and experimental plural interfaces; not restoration of P42 group export | #9, #17, #36, #90 |
+| Q01 | Individual `su'o`; ordinary existential/independent-reference continuity; P43 conservative barriers; in-scope P6 retained; bounded F01 one-description assertion continuation | Full F01 carrier embedding; general source/force/capture, PA+KOhA/fragment/other-force mapping, permitted dependencies and experimental plural interfaces; not restoration of P42 group export | #9, #17, #36, #90 |
 | Q02 | Standard finite individual exact/range counting; exact three is false with four qualifiers; termset product is separate | Other numeric domains/effects, mixed termsets and coordinate policies; non-finite/definedness and generic outer-PA realization remain bounded work | #15, #87 |
 | Q03 | Non-importing bare/restricted individual ro; independently bound explicit descriptions retain their own reference requirements | General source/effect and experimental-profile interfaces; not a renewed import vote | #15, #35 |
 | Q04 | Fixed and dependent `lo` legitimate; binding respects dependencies; lambdas provide suspension, not an implemented delayed consumer | General dependency-profile factoring, pure-restrictor dependent description evaluation, typed de-dicto consumer/world/export interface | #62, #87 |
@@ -88,7 +99,7 @@ coverage is distinguished from a policy the panel could not agree on.
 | Q11 | Recovered criterion is the ordinary default; explicit/admissible existential readings remain distinct; comparison-chain sharing and same-standard nai | Lexical rows, admissibility, typed relata/nonassertive targets and sharing laws; nonunique recovery does not forbid the separately resolved existential reading | #14, #87 |
 | Q12 | Resolve occurrence/source indication's target, then retain it by Refer/CoRef; later repointing does not change it; no physical gesture required | Typed indication/source closure and RI mapping across ordinary, quoted and imagined contexts; ground shift alone does not change token | #87 |
 | Q13 | Equality-singleton admission and local least covered upper bounds; separate holding-state fusion and event composition; no global atomism/separation | Joint Henkin carrier/quotient, conditional consequences, admitted coverage and State/event inheritance; no unconditional comprehension or full-model claim | #10 |
-| Q14 | Strong-Kleene interpretation-failure statuses; guarded eligible prefix/independent-side retention; nearest legal consistent accommodation; checkpointed topic-return distinctions | Compose status, guards, force, capture and topic transitions; preserve total bivalence and P43 barriers, not excluded group/family recovery | #6, #11 |
+| Q14 | Strong-Kleene interpretation-failure statuses; eligible prefix/independent-side retention; F01 bounded assertion return; nearest legal consistent accommodation; checkpointed topic-return distinctions | Full carrier/quotient embedding and general guards, other forces, capture and topic transitions; preserve total bivalence and P43 barriers, not excluded group/family recovery | #6, #11 |
 | Q15 | Agreed force/quotation/topic/CAhA contracts; direct-reference and set-count mei, correspondence MOI, scalar/exclusion joi-nai, bounded one-object fractions and explicit-value kau | Typed rows, source/output and effect laws; genuinely uncovered lexical data, generic inference, mixed force, ju'e, wider MEX, numeric-jei and remaining subfamilies stay gaps | #6, #9, #12, #14, #23, #24, #37, #87 |
 
 No new survey result is asserted. Archive searches are bounded and not a

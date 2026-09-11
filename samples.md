@@ -1251,7 +1251,7 @@ convention; this is not a new general dependency or force-model construction.
 
 ## 12. Direct binding notation
 
-The three binder forms are part of the core syntax. By spec §2's
+The binder forms are part of the core syntax. By spec §2's
 convention a binder form is written `{…}` with its telescope in `[…]` and
 a bare body; the delimiters show scope and do not quote core code.
 
@@ -1283,6 +1283,51 @@ value-returning computation — reference/contextual or performance — and
 sequences its effects before the body. The
 linguistic quotation `lu mi klama li'u` remains a sign (§7.5); there is
 no baseline constructor for quoted core notation.
+
+### 12.1 A source-preserving pair of assertions
+
+The preceding ordinary `Bind` example is the successful-source route. This
+new §7.1.1/L8.13 term supplies failure continuation in the bounded fragment.
+It is a parameterized worked term: the three explicit function inputs are
+the resolved pure dog restriction and two resolved assertion frames for
+`lo gerku cu sipna .i ri cu xunre`. They include the actual lexical closure
+and context/dependency choices, rather than pretending an English gloss
+supplies them. The derived E01 engine does not yet encode this new former.
+
+```lisp
+{λ [[$dogs :: Fn ((Referents Entity)) Content]
+    [$sleep :: Fn ((Referents Entity)) Content]
+    [$red :: Fn ((Referents Entity)) Content]]
+  {PerformSource Host [$x :: Referents Entity] (Refer $dogs)
+    (Assert ($sleep $x))
+    [$read :: RefComp (Referents Entity)]
+    [$o1 :: ActOccurrence Assertion]
+    (Do (Perform Host
+      (Assert {Bind [$y :: Referents Entity] $read ($red $y)})))}}
+```
+
+Each actual entry supplies its own context/token. The internal first-payload
+read is distinct from `$read`. With no admitted dog reference the first
+payload is F, the second is U, and neither predicate is called with an
+invented dog. Both assertion occurrences exist. With a selected reference
+that does not sleep, that same reference is available to the second frame;
+its redness is not inferred. For admitted singleton alternatives a asleep/
+non-red and b awake/red, the two rows are (T,F) and (F,T): no row satisfies
+both claims. Repeated reads in a continuation must not switch a to b.
+
+For an independent second assertion G, replace the second assertion's
+read-dependent body by G. Its own truth is unchanged by a first F, while
+joint acceptance still fails. If the source was Empty at w0 but could
+succeed at w1, replay of the original first payload's Empty fibre remains
+F at w1; re-evaluating the whole source-containing statement is a different
+operation. The shared payload and its interpretation index are not a proof
+that the full model already embeds failure-coordinate replay.
+
+These are constructed controls (F01-C01–09), not new corpus judgments.
+Whole-content denial examples additionally need the explicit Reify/jetnu
+standard and projection premises in spec §7.1.1's source record; the partial
+no-return event coordinate does not automatically supply an event-valued
+crossing. General multi-source failure and other force cases remain gaps.
 
 ## 13. In-situ scope
 

@@ -28,7 +28,10 @@ before force closes it. Event-licensed lexical clauses use their lexical
 event directly; identity, mathematics, negation, quantified/generic claims,
 and compound claims use typed holding/joint states. This is what lets tense,
 CAhA, ROI, ZAhO, and `nu` apply uniformly while identity and mathematical
-functions retain their ordinary reusable signatures.
+functions retain their ordinary reusable signatures. The clause-event
+interface is explicitly partial where a computation supplies no continuation
+value; the specification records the remaining model/definedness obligation
+rather than inventing an event for that failed source.
 
 This is a *definition*, not a description:
 

@@ -143,7 +143,7 @@ witness is bound.
 **Informally.** An `Act<F>` value is a force-tagged content package —
 force `F` (Assertion, Question, Directive, Expressive, Address) plus
 the content computation — built inertly: constructing an act runs
-nothing. An act is a pure value, not a computation — only `Perform`
+nothing. An act is a pure value, not a computation — the `Perform` boundary
 (§1.36) injects it into the dynamic carrier. `Discourse` is performed
 discourse: sequences of performed
 acts and transitions. A document denotes one `Discourse`. The package stays
@@ -152,7 +152,8 @@ raw and reusable: performance-specific contextual capture belongs to the
 `ActContent`. `PerfComp<T>` is the performance computation category and
 `Discourse = PerfComp<Unit>`.
 **For.** Quotation and report: `mi cusku lu ko klama li'u` mentions a
-directive without issuing it, because only `Perform` executes.
+directive without issuing it, because only performance executes. The
+source-preparing `PerformSource` boundary is catalogued at §1.36a.
 **See.** [Spec §3.4, §7.1](spec.md); [primer ch. 6](primer.md);
 [rationale §1.11](rationale.md).
 
@@ -617,11 +618,45 @@ applying the force's commitment effects; its `PerfComp` result is the opaque
 occurrence handle, which `Bind` may name. At a `Discourse` position the handle
 is discarded through carrier `bind` and empty `Do`;
 `Do` sequences performed discourse (flattening, associative, with
-`∧`'s accessibility row; zero operands is the empty-discourse unit). Act boundaries close force segments:
+its own accessibility row; zero operands is the empty-discourse unit). Act boundaries close force segments:
 introductions inside an unperformed act do not escape. Re-performing an act
 creates another occurrence; it never changes the package.
+In spec §7.1.1's ordinary-assertion fragment, terminal T/F/U payloads all
+return the occurrence and reached scope-eligible state; the original status
+remains recorded. Local scope projection and cumulative acceptance are
+separate: later truth does not erase earlier falsity. The other-force,
+guard/accommodation and full-model exclusions remain explicit.
 **For.** The discourse spine; `.i` sequencing.
 **See.** [Spec §7.1, §5.4](spec.md); [primer ch. 6](primer.md).
+
+### 1.36a `PerformSource` — source-preserving assertion binder
+
+**Class and scope.** Lowering-only direct primitive; no ordinary term-language
+expansion is claimed. Its necessity is the combination of strict `Bind`, a
+possibly valueless source and a later actual assertion that still occurs.
+No new source-result/null-reference or world/lineage type is introduced.
+
+**Formation.** `PerformSource Host [x::R] S (Assert C1)
+[read::RefComp R] [o::ActOccurrence Assertion] D`, for R = Referents<T>:
+S is RefComp<R>; only C1 sees x; only D sees read/o. Host omission is
+shorthand. S is independent of all three binders.
+
+**Meaning.** Prepare one permitted description source and perform one Host.
+One internal read preserves its original obtained/F/U result in the first
+payload; the later read returns the same obtained reference or U if absent.
+Each read preserves its caller's state and repeats no source effects. One
+shared Act and captured Content have interpretation-dependent denotations,
+not independently reselected references or separately selected projections.
+The ordinary assertion-return law retains eligible prefixes and reached
+legal sides even after F/U; full-model embedding remains owed.
+
+**Bounds.** One exportable description; supplied pure restriction and finite
+source alternatives with established scope/side premises. Not general
+multi-source failure, stronger whole-source intension, other forces or a
+completed Comp/quotient model. A no-return Bind's event is partial, not an
+invented holding state. The existing engine is not evidence of this former.
+**See.** [Spec §7.1.1, L8.13, §14](spec.md), [rationale §1.14a](rationale.md),
+[samples §12.1](samples.md), [primer ch. 6](primer.md).
 
 ### 1.37 `NewTopic` and `Resume`
 
@@ -1538,13 +1573,15 @@ while pure `JoiPred` and generic `GunmaPredAt` are Class M infrastructure.
 
 Not term-language forms — the denotational metalanguage of
 [spec §5.1](spec.md), listed so no named symbol goes unaccounted:
-`Comp<A> = InformationState → P(InformationState × A × Obligations)`
-is the computation carrier (`ContentRun = Comp<Unit>`;
+The displayed `Comp<A> = InformationState → P(InformationState × A × Obligations)`
+is the successful-output carrier interface, not the full failure-aware model.
+Spec §7.1.1 adds bounded assertion observation/return laws and leaves their
+joint carrier/quotient embedding explicit. (`ContentRun = Comp<Unit>`;
 `ClauseEventIntension` is the defined world/assignment/precisification/branch-indexed event
 projection; `Content` pairs those two,
 `RefComp<T> = Comp<T>`; `PerfComp<T>` is that carrier at the performance
 effect vocabulary and `Discourse = PerfComp<Unit>`, while an act value is the pure force-tagged
-package only `Perform` injects; every such injection creates a model-level
+package the performance boundary injects; every such injection creates a model-level
 `ActOccurrence<F>` pairing that package with `CurrentToken` and an extensional
 capture of the performance context/resolver; `RealizedContent` projects the
 assertion member's captured Content without running it — spec §5.1,

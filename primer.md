@@ -436,6 +436,26 @@ counting, effects and other numerical domains retain their explicit gaps.
 
 ## 6. Doing things with words
 
+An assertion can fail without deleting the next thing said. In the bounded
+`lo gerku cu sipna .i ri cu xunre` reading, no dogs makes the first assertion
+false and the later dog-reference use undefined. It does not erase the second
+utterance or invent a dog. If the second assertion is independent—“I am
+leaving,” for example—it keeps its own meaning and truth; that does not make
+the first assertion true or make both claims jointly true.
+
+`PerformSource` is the typed bridge for this one-description case. It keeps
+the original source result for the first assertion and a separate reusable
+reference read for later uses. Those are different operations when there is
+no value. Successful references remain the same across uses, and reached
+bindings/side claims survive only where their existing scopes permit them.
+The rule does not give quantified groups a new way past P43's boundaries.
+
+This supplies a bounded construction, not a complete model or every kind of
+utterance. Multiple description failures, other forces and the full
+event/proposition model remain work. Replaying a saved source-linked assertion
+also differs from asking what a fresh evaluation of its description would
+select in another situation; the spec states that distinction explicitly.
+
 `Assert` from chapter 1 has siblings:
 
 ```
@@ -732,6 +752,7 @@ force interfaces remain the explicit work listed in the specification.
 | reference continuity | an accessible binding is reused | `lo ci gerku goi ko'a … .i ko'a` | §5.6 |
 | `Generic` | typical-talk without a specimen | `lo'e`/`le'e` | §5.8 |
 | `Act` / `ActOccurrence` / `Perform` | reusable speech-act package / one contextualized performance / doing it | quoted vs spoken, `go'i`/`ra'o` | §7.1–7.4 |
+| `PerformSource` | perform a description-bearing assertion and retain a reusable read even when the source has no value | bounded `lo … .i ri …` | §7.1.1, L8.13 |
 | `ActContent` / `RealizedContent` | raw package content / a performed assertion's captured content | quotation vs `la'e di'u` | §7.4 |
 | displayed content | shown, not claimed | UI family | §7.6 |
 | host-force profile | does the indicator's host stay claimed? | `.ui` vs `.au` | §7.6 |
