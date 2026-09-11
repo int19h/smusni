@@ -15,12 +15,18 @@ inductive M2DefinitionId where
   | d12FewerThan
   | d12GlobalExactly
   | d12Grade
+  | d12IndividualEvery
+  | d12IndividualNo
+  | d12IndividualSome
   | d12JaiRaise
   | d12Massify
   | d12MaxRefer
   | d12MoreThan
   | d12No
+  | d12Only
   | d12Overlap
+  | d12PluralNo
+  | d12PluralSome
   | d12Some
   | d12TooMany
   | d12ZipWith
@@ -46,12 +52,18 @@ def M2DefinitionId.name : M2DefinitionId → String
   | .d12FewerThan => "D12.FewerThan"
   | .d12GlobalExactly => "D12.GlobalExactly"
   | .d12Grade => "D12.Grade"
+  | .d12IndividualEvery => "D12.IndividualEvery"
+  | .d12IndividualNo => "D12.IndividualNo"
+  | .d12IndividualSome => "D12.IndividualSome"
   | .d12JaiRaise => "D12.JaiRaise"
   | .d12Massify => "D12.Massify"
   | .d12MaxRefer => "D12.MaxRefer"
   | .d12MoreThan => "D12.MoreThan"
   | .d12No => "D12.No"
+  | .d12Only => "D12.Only"
   | .d12Overlap => "D12.Overlap"
+  | .d12PluralNo => "D12.PluralNo"
+  | .d12PluralSome => "D12.PluralSome"
   | .d12Some => "D12.Some"
   | .d12TooMany => "D12.TooMany"
   | .d12ZipWith => "D12.ZipWith"
@@ -76,12 +88,18 @@ def M2DefinitionId.all : List M2DefinitionId := [
   .d12FewerThan,
   .d12GlobalExactly,
   .d12Grade,
+  .d12IndividualEvery,
+  .d12IndividualNo,
+  .d12IndividualSome,
   .d12JaiRaise,
   .d12Massify,
   .d12MaxRefer,
   .d12MoreThan,
   .d12No,
+  .d12Only,
   .d12Overlap,
+  .d12PluralNo,
+  .d12PluralSome,
   .d12Some,
   .d12TooMany,
   .d12ZipWith,
@@ -109,13 +127,19 @@ inductive M2ClauseId where
   | d12FewerThanNegatedAtLeast
   | d12GlobalExactlyComprehension
   | d12GradeRowDirected
+  | d12IndividualEveryIndividualForall
+  | d12IndividualNoNegatedIndividualExists
+  | d12IndividualSomeIndividualExists
   | d12JaiRaiseRaisedRole
   | d12JaiRaiseBareJaiMapping
-  | d12MassifyCanonicalSelection
+  | d12MassifyCanonicalReference
   | d12MaxReferInhabitedMaximalReference
   | d12MoreThanSuccessor
   | d12NoNegatedSome
+  | d12OnlyHostAndExclusion
   | d12OverlapCommonSubreference
+  | d12PluralNoNegatedPluralExists
+  | d12PluralSomePluralExists
   | d12SomeWitness
   | d12TooManyDependentThreshold
   | d12ZipWithEmpty
@@ -146,13 +170,19 @@ def M2ClauseId.name : M2ClauseId → String
   | .d12FewerThanNegatedAtLeast => "D12.FewerThan/negated-at-least"
   | .d12GlobalExactlyComprehension => "D12.GlobalExactly/comprehension"
   | .d12GradeRowDirected => "D12.Grade/row-directed"
+  | .d12IndividualEveryIndividualForall => "D12.IndividualEvery/individual-forall"
+  | .d12IndividualNoNegatedIndividualExists => "D12.IndividualNo/negated-individual-exists"
+  | .d12IndividualSomeIndividualExists => "D12.IndividualSome/individual-exists"
   | .d12JaiRaiseRaisedRole => "D12.JaiRaise/raised-role"
   | .d12JaiRaiseBareJaiMapping => "D12.JaiRaise/bare-jai-mapping"
-  | .d12MassifyCanonicalSelection => "D12.Massify/canonical-selection"
+  | .d12MassifyCanonicalReference => "D12.Massify/canonical-reference"
   | .d12MaxReferInhabitedMaximalReference => "D12.MaxRefer/inhabited-maximal-reference"
   | .d12MoreThanSuccessor => "D12.MoreThan/successor"
   | .d12NoNegatedSome => "D12.No/negated-some"
+  | .d12OnlyHostAndExclusion => "D12.Only/host-and-exclusion"
   | .d12OverlapCommonSubreference => "D12.Overlap/common-subreference"
+  | .d12PluralNoNegatedPluralExists => "D12.PluralNo/negated-plural-exists"
+  | .d12PluralSomePluralExists => "D12.PluralSome/plural-exists"
   | .d12SomeWitness => "D12.Some/witness"
   | .d12TooManyDependentThreshold => "D12.TooMany/dependent-threshold"
   | .d12ZipWithEmpty => "D12.ZipWith/empty"
@@ -182,13 +212,19 @@ def M2ClauseId.all : List M2ClauseId := [
   .d12FewerThanNegatedAtLeast,
   .d12GlobalExactlyComprehension,
   .d12GradeRowDirected,
+  .d12IndividualEveryIndividualForall,
+  .d12IndividualNoNegatedIndividualExists,
+  .d12IndividualSomeIndividualExists,
   .d12JaiRaiseRaisedRole,
   .d12JaiRaiseBareJaiMapping,
-  .d12MassifyCanonicalSelection,
+  .d12MassifyCanonicalReference,
   .d12MaxReferInhabitedMaximalReference,
   .d12MoreThanSuccessor,
   .d12NoNegatedSome,
+  .d12OnlyHostAndExclusion,
   .d12OverlapCommonSubreference,
+  .d12PluralNoNegatedPluralExists,
+  .d12PluralSomePluralExists,
   .d12SomeWitness,
   .d12TooManyDependentThreshold,
   .d12ZipWithEmpty,
@@ -219,13 +255,19 @@ def M2ClauseId.definition : M2ClauseId → M2DefinitionId
   | .d12FewerThanNegatedAtLeast => .d12FewerThan
   | .d12GlobalExactlyComprehension => .d12GlobalExactly
   | .d12GradeRowDirected => .d12Grade
+  | .d12IndividualEveryIndividualForall => .d12IndividualEvery
+  | .d12IndividualNoNegatedIndividualExists => .d12IndividualNo
+  | .d12IndividualSomeIndividualExists => .d12IndividualSome
   | .d12JaiRaiseRaisedRole => .d12JaiRaise
   | .d12JaiRaiseBareJaiMapping => .d12JaiRaise
-  | .d12MassifyCanonicalSelection => .d12Massify
+  | .d12MassifyCanonicalReference => .d12Massify
   | .d12MaxReferInhabitedMaximalReference => .d12MaxRefer
   | .d12MoreThanSuccessor => .d12MoreThan
   | .d12NoNegatedSome => .d12No
+  | .d12OnlyHostAndExclusion => .d12Only
   | .d12OverlapCommonSubreference => .d12Overlap
+  | .d12PluralNoNegatedPluralExists => .d12PluralNo
+  | .d12PluralSomePluralExists => .d12PluralSome
   | .d12SomeWitness => .d12Some
   | .d12TooManyDependentThreshold => .d12TooMany
   | .d12ZipWithEmpty => .d12ZipWith
@@ -320,6 +362,9 @@ inductive M2TypingRuleId where
   | b1TFewerThanZero
   | b1TFewerThanPositive
   | b1TFewerThanSymbolic
+  | e01TClosure
+  | e01TComparison
+  | e01TOnly
   | m2TString
   | m2TSubsort
   | m2TCoreConstant
@@ -430,6 +475,9 @@ def M2TypingRuleId.name : M2TypingRuleId → String
   | .b1TFewerThanZero => "B1-T-FewerThan-Zero"
   | .b1TFewerThanPositive => "B1-T-FewerThan-Positive"
   | .b1TFewerThanSymbolic => "B1-T-FewerThan-Symbolic"
+  | .e01TClosure => "E01-T-Closure"
+  | .e01TComparison => "E01-T-Comparison"
+  | .e01TOnly => "E01-T-Only"
   | .m2TString => "M2-T-String"
   | .m2TSubsort => "M2-T-Subsort"
   | .m2TCoreConstant => "M2-T-Core-Constant"
@@ -539,6 +587,9 @@ def M2TypingRuleId.all : List M2TypingRuleId := [
   .b1TFewerThanZero,
   .b1TFewerThanPositive,
   .b1TFewerThanSymbolic,
+  .e01TClosure,
+  .e01TComparison,
+  .e01TOnly,
   .m2TString,
   .m2TSubsort,
   .m2TCoreConstant,
@@ -578,6 +629,8 @@ inductive M2GrammarCategory where
   | rowDeclaration
   | dep
   | role
+  | closureHead
+  | comparison
   deriving Repr, DecidableEq, BEq
 
 def M2GrammarCategory.name : M2GrammarCategory → String
@@ -588,6 +641,8 @@ def M2GrammarCategory.name : M2GrammarCategory → String
   | .rowDeclaration => "ρdecl"
   | .dep => "dep"
   | .role => "role"
+  | .closureHead => "closure-head"
+  | .comparison => "comparison"
 
 def M2GrammarCategory.all : List M2GrammarCategory := [
   .type,
@@ -597,6 +652,8 @@ def M2GrammarCategory.all : List M2GrammarCategory := [
   .rowDeclaration,
   .dep,
   .role,
+  .closureHead,
+  .comparison,
 ]
 
 structure SourceRange where
@@ -634,10 +691,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["StateClause", "fasnu"]
       clauses := [.d12ActualClauseActualEvent]
       selectedDomains := []
-      specRanges := [{ start := 3728, stop := 3741 }]
-      equationRanges := [{ start := 3734, stop := 3735 }]
-      specDigest := "114ba3296c3329ea84daa83d1a6ed0d8077cfb9514f2ed539b6d7651da8beef2"
-      equationDigest := "01bc1f971b000f5b5b552524750498780991592d3e07059d24e3f62a22d48e1b"
+      specRanges := [{ start := 4158, stop := 4171 }]
+      equationRanges := [{ start := 4164, stop := 4165 }]
+      specDigest := "32654d89b748fb70feed941740c3ec2437dd928d586bd17f3938e8be739f9e54"
+      equationDigest := "90d08e22003943efc4ebc624e84b2189268c7910e6e35bfff94b7d598cb4e827"
       supplementKind := some "definition"
     }
   | .d12AtLeast => {
@@ -648,10 +705,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectAtLeast"]
       clauses := [.d12AtLeastPositive, .d12AtLeastZero]
       selectedDomains := []
-      specRanges := [{ start := 3405, stop := 3405 }, { start := 3422, stop := 3429 }]
-      equationRanges := [{ start := 3405, stop := 3405 }, { start := 3429, stop := 3429 }]
-      specDigest := "cad25d744a9f26b2788d2b5b352cf4a92f64ccff9df521654f415fd6b5418a44"
-      equationDigest := "678a2e02001dc873fed97c71ce33ab6267dfe0c47cc3045d0b72d3978d67ce99"
+      specRanges := [{ start := 3780, stop := 3780 }, { start := 3806, stop := 3806 }, { start := 3797, stop := 3803 }]
+      equationRanges := [{ start := 3780, stop := 3780 }, { start := 3806, stop := 3806 }]
+      specDigest := "375d4ab27fc3724784acbc8f8bdecc25d1584179263eb6ef588b9df66fd0e6db"
+      equationDigest := "5ac049f408ce4ac6114dd0969a41c6f6c93b20d9ea973dca9bf89f7659497318"
       supplementKind := none
     }
   | .d12AtMost => {
@@ -662,10 +719,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "AtLeast", "+"]
       clauses := [.d12AtMostNegatedSuccessor]
       selectedDomains := []
-      specRanges := [{ start := 3413, stop := 3413 }]
-      equationRanges := [{ start := 3413, stop := 3413 }]
-      specDigest := "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
-      equationDigest := "56d07487632f54b136f72dd54c6813031a74cb88b1213e323ded180face92404"
+      specRanges := [{ start := 3788, stop := 3788 }]
+      equationRanges := [{ start := 3788, stop := 3788 }]
+      specDigest := "56bb852b6fdefde5af86495b3b45fff9ad319ae0f3d86cdbb371de3ab5a08bdc"
+      equationDigest := "56bb852b6fdefde5af86495b3b45fff9ad319ae0f3d86cdbb371de3ab5a08bdc"
       supplementKind := none
     }
   | .d12CanonicalAggregateAt => {
@@ -676,10 +733,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Aggregate", "CompleteGunmaAt"]
       clauses := [.d12CanonicalAggregateAtAggregateAndCompleteGunma]
       selectedDomains := []
-      specRanges := [{ start := 3558, stop := 3571 }]
-      equationRanges := [{ start := 3562, stop := 3563 }]
-      specDigest := "d5efb742b3289b80fd49de807eec104dc0fbeafa69ac6523f25e7bc03d835bf1"
-      equationDigest := "15fda3225ab825817bea9675feece972c72157fc2cf80141d3b4e64a79cff21a"
+      specRanges := [{ start := 3967, stop := 3992 }]
+      equationRanges := [{ start := 3971, stop := 3972 }]
+      specDigest := "b943d21d1f1796d6f242a7a9e29899761c06526d81a45591c8b35de136982833"
+      equationDigest := "4d06e5d87ad07c16070a6fe6493377ab08ef3ee5914c1050b3f3a58e6addb3f0"
       supplementKind := some "definition"
     }
   | .d12CoRef => {
@@ -690,10 +747,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Among"]
       clauses := [.d12CoRefMutualAmong]
       selectedDomains := []
-      specRanges := [{ start := 3643, stop := 3650 }]
-      equationRanges := [{ start := 3646, stop := 3646 }]
-      specDigest := "28e8f0e85a1f67fb0feb12d656532547f4deb488199680f4d7989be9a83218ca"
-      equationDigest := "c35affe506631c01fae26c01dfbf7b2424c64085548820de272201af682f5fa7"
+      specRanges := [{ start := 4058, stop := 4065 }]
+      equationRanges := [{ start := 4061, stop := 4061 }]
+      specDigest := "6010f3ebefac0c9f337cd826db0e4ce898e21c8c0c2f9f07e610fb7a1a0a0671"
+      equationDigest := "e2b1e08300fed16ecccbaab484792872e17bff9667cc4be7a722073b850d9e47"
       supplementKind := some "definition"
     }
   | .d12Distrib => {
@@ -704,10 +761,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∀", "λ", "→", "Among"]
       clauses := [.d12DistribUniversalMembers]
       selectedDomains := []
-      specRanges := [{ start := 3417, stop := 3419 }]
-      equationRanges := [{ start := 3417, stop := 3417 }]
-      specDigest := "05fc1e6d340ee2201ea74c61bfbc97c4d0e7d33b6df12fdbf7a4ba2089e01506"
-      equationDigest := "7fb9ae1f51b7db97f144fd37539d0987e732c31e0dfe0df9d83e7e316672a7d4"
+      specRanges := [{ start := 3792, stop := 3792 }]
+      equationRanges := [{ start := 3792, stop := 3792 }]
+      specDigest := "483f9b9fbbca34ce43a3aa98fbaed4c6a90023267d94ba3f2e09764517acbd9d"
+      equationDigest := "483f9b9fbbca34ce43a3aa98fbaed4c6a90023267d94ba3f2e09764517acbd9d"
       supplementKind := none
     }
   | .d12Every => {
@@ -718,10 +775,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "MaxRefer", "Distrib"]
       clauses := [.d12EveryMaximalDistribution]
       selectedDomains := []
-      specRanges := [{ start := 3407, stop := 3411 }]
-      equationRanges := [{ start := 3407, stop := 3408 }]
-      specDigest := "2d405cfde7bc52a9e889716bfaf001e194a0cc8eb24aa35476dcfbb0de901e35"
-      equationDigest := "3e2a76a2e6860795c27e59225d45bb585dc17dec291463e95fd4c3c8e4f2c78a"
+      specRanges := [{ start := 3782, stop := 3783 }]
+      equationRanges := [{ start := 3782, stop := 3783 }]
+      specDigest := "4d3951273624eed30870084155db2d0ad07276a5a9a6785a20316f1e38f3eb63"
+      equationDigest := "4d3951273624eed30870084155db2d0ad07276a5a9a6785a20316f1e38f3eb63"
       supplementKind := none
     }
   | .d12Exactly => {
@@ -732,10 +789,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectExactly", "No"]
       clauses := [.d12ExactlyPositive, .d12ExactlyZero]
       selectedDomains := []
-      specRanges := [{ start := 3404, stop := 3404 }, { start := 3422, stop := 3430 }]
-      equationRanges := [{ start := 3404, stop := 3404 }, { start := 3430, stop := 3430 }]
-      specDigest := "1230d6330f6a1ae3b93503aaf55ad590393e50cfdb717b9945d982fecd834c48"
-      equationDigest := "0a6c858f8095b47b2683d608b94492814376d50822381f32f2ee8c43624e7613"
+      specRanges := [{ start := 3779, stop := 3779 }, { start := 3807, stop := 3807 }, { start := 3797, stop := 3803 }]
+      equationRanges := [{ start := 3779, stop := 3779 }, { start := 3807, stop := 3807 }]
+      specDigest := "fc7613fa10cd3734d9bcc627e32bc50cd7500a6a0e493a013e49f19f6b18444a"
+      equationDigest := "6cbfc30e0567ace7440c224898ace84fe711f4fa5a070470237863ae07e7d8f7"
       supplementKind := none
     }
   | .d12FewerThan => {
@@ -746,10 +803,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "AtLeast"]
       clauses := [.d12FewerThanNegatedAtLeast]
       selectedDomains := []
-      specRanges := [{ start := 3415, stop := 3415 }]
-      equationRanges := [{ start := 3415, stop := 3415 }]
-      specDigest := "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
-      equationDigest := "4e590662af30baeefec4c2f5369dd44fd0f38ac0f137a8f3dca4e3ed9eaabf8e"
+      specRanges := [{ start := 3790, stop := 3790 }]
+      equationRanges := [{ start := 3790, stop := 3790 }]
+      specDigest := "50a11eb2c34f0f55124447a5c8ac45523cf7fd9232353be7cf0d5d13e3f418ae"
+      equationDigest := "50a11eb2c34f0f55124447a5c8ac45523cf7fd9232353be7cf0d5d13e3f418ae"
       supplementKind := none
     }
   | .d12GlobalExactly => {
@@ -760,10 +817,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["=", "Card", "SetOf", "λ", "∧"]
       clauses := [.d12GlobalExactlyComprehension]
       selectedDomains := []
-      specRanges := [{ start := 3416, stop := 3416 }]
-      equationRanges := [{ start := 3416, stop := 3416 }]
-      specDigest := "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
-      equationDigest := "ca85dfdabba93858a3003958ac06565a244e5e5e666b36f53cd217e4c41649f4"
+      specRanges := [{ start := 3791, stop := 3791 }]
+      equationRanges := [{ start := 3791, stop := 3791 }]
+      specDigest := "b717eaf1e6cb4f46f8c1b82f03c2fd7ef20dd94d30530100a8d3222c47290b55"
+      equationDigest := "b717eaf1e6cb4f46f8c1b82f03c2fd7ef20dd94d30530100a8d3222c47290b55"
       supplementKind := none
     }
   | .d12Grade => {
@@ -774,11 +831,53 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["InRegion"]
       clauses := [.d12GradeRowDirected]
       selectedDomains := []
-      specRanges := [{ start := 1901, stop := 1917 }, { start := 3488, stop := 3509 }]
-      equationRanges := [{ start := 3504, stop := 3505 }]
-      specDigest := "3cf2dcc1f2468b7c33a14905b818154402e2da4d0c692ba1d9b0b3a1767203de"
-      equationDigest := "ba9e522eaf9f56cd6632f2137ba9398d29d00b1b8b023d0fbc7850daeef1635a"
+      specRanges := [{ start := 2096, stop := 2125 }, { start := 3878, stop := 3899 }]
+      equationRanges := [{ start := 3894, stop := 3895 }]
+      specDigest := "14fc8b17957d8a540381129bb159692f1990881d1e28873208d8dc7c1cabf618"
+      equationDigest := "ca15cd1676b1b6ee4844b7e0970c6bd4261c52591ff4cec23e05d07db9357904"
       supplementKind := some "schema"
+    }
+  | .d12IndividualEvery => {
+      id := .d12IndividualEvery
+      head := "IndividualEvery"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["∀", "λ", "→"]
+      clauses := [.d12IndividualEveryIndividualForall]
+      selectedDomains := []
+      specRanges := [{ start := 3745, stop := 3745 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
+      equationRanges := [{ start := 3745, stop := 3745 }]
+      specDigest := "507478b6e6c835ca0d444e99fb99ec4f727197c29db5937304e7db94e66adc7c"
+      equationDigest := "e3a0699bf900016a566bc4df56182d7a134320c4e7143f38f29b83362cc677d9"
+      supplementKind := none
+    }
+  | .d12IndividualNo => {
+      id := .d12IndividualNo
+      head := "IndividualNo"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["¬", "IndividualSome"]
+      clauses := [.d12IndividualNoNegatedIndividualExists]
+      selectedDomains := []
+      specRanges := [{ start := 3744, stop := 3744 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
+      equationRanges := [{ start := 3744, stop := 3744 }]
+      specDigest := "3f0423596cf1bce317f4fd2981981e33011cc0cce1eda08f5ee40301efa80f69"
+      equationDigest := "ad14c9bbb26d7c7fc367eb065d4957d263cff370904095210f122783ac5b28f9"
+      supplementKind := none
+    }
+  | .d12IndividualSome => {
+      id := .d12IndividualSome
+      head := "IndividualSome"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["∃", "λ", "∧"]
+      clauses := [.d12IndividualSomeIndividualExists]
+      selectedDomains := []
+      specRanges := [{ start := 3743, stop := 3743 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
+      equationRanges := [{ start := 3743, stop := 3743 }]
+      specDigest := "f73697e837182e23082a0cb073d12624f00b279695cadb3b6efcd4868d227b62"
+      equationDigest := "1c2ff69abf2735f9e9d9c1ee42b9050a6d5451ace7a02492f05018abe4e18c32"
+      supplementKind := none
     }
   | .d12JaiRaise => {
       id := .d12JaiRaise
@@ -788,10 +887,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["PredTerm", "JaiRoleAdmissible"]
       clauses := [.d12JaiRaiseRaisedRole, .d12JaiRaiseBareJaiMapping]
       selectedDomains := []
-      specRanges := [{ start := 3316, stop := 3321 }, { start := 3769, stop := 3808 }]
-      equationRanges := [{ start := 3785, stop := 3788 }, { start := 3795, stop := 3802 }]
-      specDigest := "57f43c30afdac7265c66a455499629e382b5d2b3044c78f800174863d1268b76"
-      equationDigest := "2330e0c3595d2a794df9d999a4cd5a40461f2a315a577874cd0e8bf108f1803f"
+      specRanges := [{ start := 3646, stop := 3651 }, { start := 4199, stop := 4238 }]
+      equationRanges := [{ start := 4215, stop := 4218 }, { start := 4225, stop := 4232 }]
+      specDigest := "eda546f1f0a96f9ec9f017e349fa7aed39f4fc099c590e368c89f956a0f9d6ae"
+      equationDigest := "9ede29913e74da1025d5270d0f84427bc58db2324c2e63a343c92392d57f1c8f"
       supplementKind := some "schema-mapping"
     }
   | .d12Massify => {
@@ -799,13 +898,13 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       head := "Massify"
       selection := .definitionPortState
       portState := "a0"
-      dependencies := ["SelectExactly", "λ", "CanonicalAggregateAt"]
-      clauses := [.d12MassifyCanonicalSelection]
+      dependencies := ["Refer", "λ", "∃", "∧", "CanonicalAggregateAt", "CoRef"]
+      clauses := [.d12MassifyCanonicalReference]
       selectedDomains := []
-      specRanges := [{ start := 3565, stop := 3567 }]
-      equationRanges := [{ start := 3565, stop := 3567 }]
-      specDigest := "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
-      equationDigest := "7d3a375f2b90878fde97d04b11e0585d2a78a7aa0a8486a1db9e3e88004b1b47"
+      specRanges := [{ start := 3974, stop := 3977 }]
+      equationRanges := [{ start := 3974, stop := 3977 }]
+      specDigest := "8d494f0d4e360999b13423ab2eda1fac156ed905db87b85787176164e20c41e3"
+      equationDigest := "8d494f0d4e360999b13423ab2eda1fac156ed905db87b85787176164e20c41e3"
       supplementKind := none
     }
   | .d12MaxRefer => {
@@ -816,10 +915,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Presuppose", "∃", "Refer", "λ", "∧", "CoveredBy", "∀", "→", "Among"]
       clauses := [.d12MaxReferInhabitedMaximalReference]
       selectedDomains := []
-      specRanges := [{ start := 3650, stop := 3661 }]
-      equationRanges := [{ start := 3650, stop := 3654 }]
-      specDigest := "a1dcc212677ff270f90b1f551996305450fff289faaccc631a0733f9dc4ba1df"
-      equationDigest := "938b551803291b47dedba24085ba223d908f3d54d26ee7d5a1f7a473c6360713"
+      specRanges := [{ start := 4065, stop := 4069 }]
+      equationRanges := [{ start := 4065, stop := 4069 }]
+      specDigest := "cfa8f84634b93868afa8261a0305a961d2cf1c51270f2ad86b4f6a6b4b4b7be8"
+      equationDigest := "cfa8f84634b93868afa8261a0305a961d2cf1c51270f2ad86b4f6a6b4b4b7be8"
       supplementKind := none
     }
   | .d12MoreThan => {
@@ -830,10 +929,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["AtLeast", "+"]
       clauses := [.d12MoreThanSuccessor]
       selectedDomains := []
-      specRanges := [{ start := 3414, stop := 3414 }]
-      equationRanges := [{ start := 3414, stop := 3414 }]
-      specDigest := "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
-      equationDigest := "3fb608e1fecd71d8cba57299d14d97ad9ba3a484364fc5c7cee4e8a1c0b0c4d8"
+      specRanges := [{ start := 3789, stop := 3789 }]
+      equationRanges := [{ start := 3789, stop := 3789 }]
+      specDigest := "02e3e86178e10dc50e8ef4203e92e3b431f4a166e9640d69a3ed3eb4582e8ef0"
+      equationDigest := "02e3e86178e10dc50e8ef4203e92e3b431f4a166e9640d69a3ed3eb4582e8ef0"
       supplementKind := none
     }
   | .d12No => {
@@ -844,10 +943,24 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "Some"]
       clauses := [.d12NoNegatedSome]
       selectedDomains := []
-      specRanges := [{ start := 3412, stop := 3412 }]
-      equationRanges := [{ start := 3412, stop := 3412 }]
-      specDigest := "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
-      equationDigest := "d5936bcde4883638b992c9fa92b81cb1bd278df971db4d3d29f9189ad951c59e"
+      specRanges := [{ start := 3787, stop := 3787 }]
+      equationRanges := [{ start := 3787, stop := 3787 }]
+      specDigest := "73c75f8a1d986e6b2e5278af078a1cc426330151c45aa24c30597a18bb655edf"
+      equationDigest := "73c75f8a1d986e6b2e5278af078a1cc426330151c45aa24c30597a18bb655edf"
+      supplementKind := none
+    }
+  | .d12Only => {
+      id := .d12Only
+      head := "Only"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["∧", "∀", "λ", "→", "Among"]
+      clauses := [.d12OnlyHostAndExclusion]
+      selectedDomains := []
+      specRanges := [{ start := 4263, stop := 4271 }]
+      equationRanges := [{ start := 4267, stop := 4271 }]
+      specDigest := "f3571ceb049a413b9e520d0049c349fda117733dc9707028f13aaa38d043b819"
+      equationDigest := "caaff43c85b2166221fcc6ca84b7cdb717cc6ed765f19d4571bfae657bce3277"
       supplementKind := none
     }
   | .d12Overlap => {
@@ -858,10 +971,38 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∃", "λ", "∧", "Among"]
       clauses := [.d12OverlapCommonSubreference]
       selectedDomains := []
-      specRanges := [{ start := 3605, stop := 3605 }]
-      equationRanges := [{ start := 3605, stop := 3605 }]
-      specDigest := "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
-      equationDigest := "98d11e3cc60624a2ed90c131d50912acb076abffbed198e77851f12e8cad0776"
+      specRanges := [{ start := 4020, stop := 4020 }]
+      equationRanges := [{ start := 4020, stop := 4020 }]
+      specDigest := "1925ba0200c5fb202470626b9826bc44c9f7e8a5dcde9f657da0fad69d017698"
+      equationDigest := "1925ba0200c5fb202470626b9826bc44c9f7e8a5dcde9f657da0fad69d017698"
+      supplementKind := none
+    }
+  | .d12PluralNo => {
+      id := .d12PluralNo
+      head := "PluralNo"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["¬", "PluralSome"]
+      clauses := [.d12PluralNoNegatedPluralExists]
+      selectedDomains := []
+      specRanges := [{ start := 3747, stop := 3747 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
+      equationRanges := [{ start := 3747, stop := 3747 }]
+      specDigest := "bdd17259ffb3a05b9e10ad441a15eb95116b88a9b1a07b94fc4eba2e5ce83fcc"
+      equationDigest := "402c7d25d602618674da55db98680256f9f60d4e9d568615154ede845fa4073e"
+      supplementKind := none
+    }
+  | .d12PluralSome => {
+      id := .d12PluralSome
+      head := "PluralSome"
+      selection := .definitionPortState
+      portState := "ported"
+      dependencies := ["∃", "λ", "∧"]
+      clauses := [.d12PluralSomePluralExists]
+      selectedDomains := []
+      specRanges := [{ start := 3746, stop := 3746 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
+      equationRanges := [{ start := 3746, stop := 3746 }]
+      specDigest := "03fdb7119c5a8043e4e1346e795a9cc87e2c2305963d2d91a93e63fac1ae7b5f"
+      equationDigest := "5a7d89b45d5a95fa7993f95df3f4c94d0e77e81b0b00a040a28b3bf14af416bb"
       supplementKind := none
     }
   | .d12Some => {
@@ -872,10 +1013,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectSome"]
       clauses := [.d12SomeWitness]
       selectedDomains := []
-      specRanges := [{ start := 3406, stop := 3406 }]
-      equationRanges := [{ start := 3406, stop := 3406 }]
-      specDigest := "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
-      equationDigest := "010ec8c5f2e90a24a2bf52925ba31025ee254ae167df69061de32507598ef82e"
+      specRanges := [{ start := 3781, stop := 3781 }]
+      equationRanges := [{ start := 3781, stop := 3781 }]
+      specDigest := "cee13f21f1beb4850bfa6a6298a27ba4d5b7531a3e9b3f1d9c42ce6d71b6c353"
+      equationDigest := "cee13f21f1beb4850bfa6a6298a27ba4d5b7531a3e9b3f1d9c42ce6d71b6c353"
       supplementKind := none
     }
   | .d12TooMany => {
@@ -886,10 +1027,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "Context", "Vague", "AdmissibleThreshold", "MoreThan"]
       clauses := [.d12TooManyDependentThreshold]
       selectedDomains := []
-      specRanges := [{ start := 3477, stop := 3479 }]
-      equationRanges := [{ start := 3477, stop := 3479 }]
-      specDigest := "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
-      equationDigest := "a9b7601d7bf15bbe59540873990be50c62cea2144ccab7ec82ac51f8c46e63b5"
+      specRanges := [{ start := 3856, stop := 3858 }]
+      equationRanges := [{ start := 3856, stop := 3858 }]
+      specDigest := "05cfdfe177cd8045c253acd34b3d131db462fbfea58eeab85bae6600c706431c"
+      equationDigest := "05cfdfe177cd8045c253acd34b3d131db462fbfea58eeab85bae6600c706431c"
       supplementKind := none
     }
   | .d12ZipWith => {
@@ -900,10 +1041,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∧", "List"]
       clauses := [.d12ZipWithEmpty, .d12ZipWithPairedStep]
       selectedDomains := ["equal-length"]
-      specRanges := [{ start := 3622, stop := 3628 }]
-      equationRanges := [{ start := 3626, stop := 3628 }]
-      specDigest := "2582167bdebae0b1a0da94a78d5ad356a9e74baa4da9ef5a3ab586f082360e28"
-      equationDigest := "a5f3ab596f8a016c989b3015ae4da31c8f93253f2a192273b80fef204912c937"
+      specRanges := [{ start := 4041, stop := 4043 }]
+      equationRanges := [{ start := 4041, stop := 4043 }]
+      specDigest := "e581473527ede4a8057638a1e0e9e0753cfaea1d4e7f4b2dbf1835670612b07b"
+      equationDigest := "e581473527ede4a8057638a1e0e9e0753cfaea1d4e7f4b2dbf1835670612b07b"
       supplementKind := none
     }
   | .d44Let => {
@@ -914,10 +1055,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["λ"]
       clauses := [.d44LetBeta]
       selectedDomains := []
-      specRanges := [{ start := 613, stop := 615 }]
-      equationRanges := [{ start := 615, stop := 615 }]
-      specDigest := "05ef09f9d3e14436471ebbfb26eb4d37d0bce8fe0ade7576b3bcd75082ee10a2"
-      equationDigest := "1d05667b2a11b54d987a23c68a9a1fc4d757f0ae5ac6346e65f8e42966f5101d"
+      specRanges := [{ start := 652, stop := 652 }]
+      equationRanges := [{ start := 652, stop := 652 }]
+      specDigest := "4df3a2a37963158ed2a903e116cdadc84c5d19180b08cf618ea45e485c141f31"
+      equationDigest := "4df3a2a37963158ed2a903e116cdadc84c5d19180b08cf618ea45e485c141f31"
       supplementKind := none
     }
   | .d46Close => {
@@ -928,10 +1069,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["CloseClause", "ActualClause", "DirectClause", "CoRef"]
       clauses := [.d46CloseDirectEventExplicit, .d46CloseDirectEventImplicit, .d46CloseHoldingState]
       selectedDomains := []
-      specRanges := [{ start := 699, stop := 713 }]
-      equationRanges := [{ start := 703, stop := 704 }, { start := 706, stop := 709 }, { start := 711, stop := 712 }]
-      specDigest := "925d6b638fe27aa1a1e06bff5bc2b75392c505a9596023bc8a17f77310d17476"
-      equationDigest := "1a5024f1978bfc8fc6866a776468db34eb74ea609468759e204504b89c6fd9c6"
+      specRanges := [{ start := 740, stop := 749 }]
+      equationRanges := [{ start := 740, stop := 741 }, { start := 743, stop := 746 }, { start := 748, stop := 749 }]
+      specDigest := "c0afd6131cde4f428f842183a76d9f653b9825d030d0c717c112c996acd51b39"
+      equationDigest := "1ac63b710a6f640e888553e6da8dc0805fbd37f3c37a6a49192591cde632933e"
       supplementKind := some "definition"
     }
   | .d46DirectClause => {
@@ -942,10 +1083,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "Context", "StateClause"]
       clauses := [.d46DirectClauseDefaultedEventProperty]
       selectedDomains := []
-      specRanges := [{ start := 652, stop := 680 }]
-      equationRanges := [{ start := 671, stop := 674 }]
-      specDigest := "312ceb30e7f4816c14b9cb4af08ae1ca3c1c708891eada707e5fc64e64b541a7"
-      equationDigest := "bdaa049d7b930b3957e0e435c38a481ba40c74953a820cdcb96ca6ee31148849"
+      specRanges := [{ start := 689, stop := 717 }]
+      equationRanges := [{ start := 708, stop := 711 }]
+      specDigest := "8a62a92a01fa418bed00c944361ce49d1c55478a726970c6b3d50596e3330a0e"
+      equationDigest := "c906de97c857b0e3edbcdd08570b05fb08b4b7b56f19884843cfd3fe6ac1c7b3"
       supplementKind := some "schema"
     }
   | .d48CoveredBy => {
@@ -956,10 +1097,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∧", "Distrib", "∀", "λ", "→", "Among", "∃", "Overlap"]
       clauses := [.d48CoveredByNoResidue]
       selectedDomains := []
-      specRanges := [{ start := 808, stop := 817 }]
-      equationRanges := [{ start := 812, stop := 817 }]
-      specDigest := "d274dd5d6df6cbe272866c81f5ff9552e648b52845f0902c55be66c9b10a5d86"
-      equationDigest := "119fa557a7a1fa02505e4a4852ed971dc1c77647ecd8bb4db3316a319730a0ce"
+      specRanges := [{ start := 856, stop := 866 }]
+      equationRanges := [{ start := 860, stop := 866 }]
+      specDigest := "55e0be52e65ae050f49eb2bbbda1c01f31cb1268a614fa65794426054d314449"
+      equationDigest := "80e75f0cbcaa26f28e290acd6492cbcd3c3af57fbbcbf127a6bf297ac13aab94"
       supplementKind := none
     }
   | .d49CompleteGunmaAt => {
@@ -970,10 +1111,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["GunmaAt", "PeerUnitAt", "BasisUnitAt"]
       clauses := [.d49CompleteGunmaAtCompletePeerCover]
       selectedDomains := []
-      specRanges := [{ start := 963, stop := 977 }]
-      equationRanges := [{ start := 972, stop := 974 }]
-      specDigest := "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
-      equationDigest := "d44ad90034390d0f162e9167ab535d3cfc2188d3453410fc47ae994d611bd286"
+      specRanges := [{ start := 1011, stop := 1025 }]
+      equationRanges := [{ start := 1020, stop := 1022 }]
+      specDigest := "e94d60f39de032e7c36ddc0352211b18eea42231f70ba31a6e88c5fdd9c53b38"
+      equationDigest := "c9303c64a310762900316d6941df88f6944fc0e9993646562b92edbd2dc96362"
       supplementKind := some "definition"
     }
   | .d49GunmaAt => {
@@ -984,10 +1125,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["PeerUnitAt", "BasisUnitAt", "CoRef"]
       clauses := [.d49GunmaAtBasisToPeerCover]
       selectedDomains := []
-      specRanges := [{ start := 963, stop := 977 }]
-      equationRanges := [{ start := 968, stop := 970 }]
-      specDigest := "9c0c9114c69d4ebb9cfbdb1716f0db4225b13259d4819aa1edd62bd06f57c6f3"
-      equationDigest := "0d719677199b2a74789f78ff32c7da32f265a1d9f443b059d03d956ced96fe2f"
+      specRanges := [{ start := 1011, stop := 1025 }]
+      equationRanges := [{ start := 1016, stop := 1018 }]
+      specDigest := "e94d60f39de032e7c36ddc0352211b18eea42231f70ba31a6e88c5fdd9c53b38"
+      equationDigest := "59b6ac0b52687e9402119f587da746707693f0bb3ed439ba4042ed027676ac63"
       supplementKind := some "definition"
     }
   | .d53ReferMemberLift => {
@@ -998,10 +1139,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["CoveredBy"]
       clauses := [.d53ReferMemberLiftMemberLift]
       selectedDomains := []
-      specRanges := [{ start := 1452, stop := 1466 }]
-      equationRanges := [{ start := 1454, stop := 1455 }]
-      specDigest := "9892b13a0fd9b39beaebcf098ad2ca6c45a124030c1f773ab50f8c057b28105f"
-      equationDigest := "5e8deb7adaccc5cee07a08ca2c3f66ef728a9b3151091c051b3162224f7c8d76"
+      specRanges := [{ start := 1570, stop := 1584 }]
+      equationRanges := [{ start := 1572, stop := 1573 }]
+      specDigest := "190432d06ae5db5bc80288483f6aea7958cd2573ea6c666506395ef523590e16"
+      equationDigest := "9d3cb87c155fe722ce5f5e1d6c33683fadde4fdd60bf17dd3c3ff5e4d46e0074"
       supplementKind := some "domain-overload"
     }
   | .d56SelectSome => {
@@ -1012,10 +1153,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["SelectAtLeast"]
       clauses := [.d56SelectSomeAtLeastOne]
       selectedDomains := []
-      specRanges := [{ start := 1563, stop := 1566 }]
-      equationRanges := [{ start := 1566, stop := 1566 }]
-      specDigest := "9b1b8b5abe9405f056667e083929a3d2933d2f4d9bafdaa9cf27db2eba51456c"
-      equationDigest := "5ed705e778744900b30a691d7ece68d344ed55fc318f9eb8ecd10f45cdbd7a21"
+      specRanges := [{ start := 1786, stop := 1786 }]
+      equationRanges := [{ start := 1786, stop := 1786 }]
+      specDigest := "672d0ca96788e188e6a790d7bfe7615d21151b5819c712ceea3bf9fd19face14"
+      equationDigest := "672d0ca96788e188e6a790d7bfe7615d21151b5819c712ceea3bf9fd19face14"
       supplementKind := none
     }
 
@@ -1034,7 +1175,6 @@ structure M2DefinitionDispositionRecord where
 
 def m2DefinitionDispositionRecords : List M2DefinitionDispositionRecord := [
   { id := "D12.ActualClause", head := "ActualClause", status := "executable", issue := none, portState := "none", selected := true, reason := "Its executable family has not yet reached the Redex port." },
-  { id := "D12.Additive", head := "Additive", status := "executable", issue := none, portState := "none", selected := false, reason := "Its substitution schema awaits a typed executable family." },
   { id := "D12.AtLeast", head := "AtLeast", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports the separate zero and provably-positive witness equations." },
   { id := "D12.AtMost", head := "AtMost", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports negated successor-strength AtLeast." },
   { id := "D12.COI-schemas-prose", head := "COI-schemas-prose", status := "not-a-definition", issue := none, portState := "none", selected := false, reason := "This prose introducer points to the following COIExpress schema and is not a separate equation." },
@@ -1052,6 +1192,9 @@ def m2DefinitionDispositionRecords : List M2DefinitionDispositionRecord := [
   { id := "D12.GlobalExactly", head := "GlobalExactly", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports the pure comprehension equation alongside the retained legacy path." },
   { id := "D12.Grade", head := "Grade", status := "executable", issue := none, portState := "none", selected := true, reason := "Its row-polymorphic executable family has not yet reached the Redex port." },
   { id := "D12.GroundedBy", head := "GroundedBy", status := "executable", issue := none, portState := "none", selected := false, reason := "Its performance family has not yet reached the Redex port." },
+  { id := "D12.IndividualEvery", head := "IndividualEvery", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted ordinary closure equation; no outward reference introduction." },
+  { id := "D12.IndividualNo", head := "IndividualNo", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted ordinary closure equation; no outward reference introduction." },
+  { id := "D12.IndividualSome", head := "IndividualSome", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted ordinary closure equation; no outward reference introduction." },
   { id := "D12.Interval", head := "Interval", status := "executable", issue := none, portState := "none", selected := false, reason := "Its endpoint-kind parameterized family has not yet reached the Redex port." },
   { id := "D12.JaiPromote", head := "JaiPromote", status := "executable", issue := none, portState := "none", selected := false, reason := "Its row-reconstruction schema has not yet reached the Redex port." },
   { id := "D12.JaiRaise", head := "JaiRaise", status := "executable", issue := none, portState := "none", selected := true, reason := "Its row-reconstruction schema has not yet reached the Redex port." },
@@ -1061,7 +1204,7 @@ def m2DefinitionDispositionRecords : List M2DefinitionDispositionRecord := [
   { id := "D12.JoiPred", head := "JoiPred", status := "executable", issue := none, portState := "none", selected := false, reason := "Its contribution-basis family has not yet reached the Redex port." },
   { id := "D12.JoiTanru", head := "JoiTanru", status := "executable", issue := none, portState := "none", selected := false, reason := "Its source-ordered link schema has not yet reached the Redex port." },
   { id := "D12.Many", head := "Many", status := "executable", issue := none, portState := "none", selected := false, reason := "Its effectful threshold family has not yet reached the Redex port." },
-  { id := "D12.Massify", head := "Massify", status := "executable", issue := none, portState := "a0", selected := true, reason := "A0 ports the expected-type-directed canonical aggregate selection." },
+  { id := "D12.Massify", head := "Massify", status := "executable", issue := none, portState := "a0", selected := true, reason := "E01 replaces cardinal selection by reference-level existential co-reference to one canonical aggregate, per current §12." },
   { id := "D12.MaxRefer", head := "MaxRefer", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports inhabited maximal reference construction with its projective obligation." },
   { id := "D12.MePred", head := "MePred", status := "executable", issue := none, portState := "none", selected := false, reason := "Its type-directed property expansion has not yet reached the Redex port." },
   { id := "D12.MemberCover", head := "MemberCover", status := "executable", issue := none, portState := "none", selected := false, reason := "Its positive-MEI helper expansion has not yet reached the Redex port." },
@@ -1071,8 +1214,10 @@ def m2DefinitionDispositionRecords : List M2DefinitionDispositionRecord := [
   { id := "D12.NahiObjection", head := "NahiObjection", status := "executable", issue := none, portState := "none", selected := false, reason := "Its act-occurrence family has not yet reached the Redex port." },
   { id := "D12.Named", head := "Named", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
   { id := "D12.No", head := "No", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports generic negation of Some." },
-  { id := "D12.Only", head := "Only", status := "executable", issue := none, portState := "none", selected := false, reason := "Its substitution schema awaits a typed executable family." },
+  { id := "D12.Only", head := "Only", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted pure host-and-exclusion formula. Effectful frames remain the §14 gap." },
   { id := "D12.Overlap", head := "Overlap", status := "executable", issue := none, portState := "ported", selected := true, reason := "B1 ports existential common-subreference overlap." },
+  { id := "D12.PluralNo", head := "PluralNo", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted ordinary closure equation; no outward reference introduction." },
+  { id := "D12.PluralSome", head := "PluralSome", status := "executable", issue := none, portState := "ported", selected := true, reason := "E01 ports the adopted ordinary closure equation; no outward reference introduction." },
   { id := "D12.Realized", head := "Realized", status := "executable", issue := none, portState := "none", selected := false, reason := "Its clause-event family has not yet reached the Redex port." },
   { id := "D12.Reciprocate", head := "Reciprocate", status := "executable", issue := none, portState := "none", selected := false, reason := "Its executable family has not yet reached the Redex port." },
   { id := "D12.RegionComplement", head := "RegionComplement", status := "executable", issue := none, portState := "none", selected := false, reason := "Its region family has not yet reached the Redex port." },
@@ -1139,8 +1284,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-Synth"
       anchor := "spec §1.6, §3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1837, stop := 1839 }]
-      sourceDigest := "79fb7f48c2fcfd065aa03bf25db94c8d828986b312cb40edcf7a9206f11482d4"
+      sourceRanges := [{ start := 1936, stop := 1938 }]
+      sourceDigest := "eae7c1ba30f9c8e41d08b836fb9318639c58bb7abcbbe24423f782bcda59630e"
       conclusion := "(a0-synth Γ t R)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1150,8 +1295,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-Check"
       anchor := "spec §1.6, §3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1844, stop := 1846 }]
-      sourceDigest := "19597c81fcb4f3b70d16ff73771cfa3bbe1147ed934a49853f3e09f3eec1cf92"
+      sourceRanges := [{ start := 1943, stop := 1945 }]
+      sourceDigest := "b1294258d3cd549d187348fd930d401e8189e920e56068e3a82c702d95f86c3a"
       conclusion := "(a0-check Γ t τ R)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1161,8 +1306,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Natural"
       anchor := "spec §3.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1038, stop := 1039 }]
-      sourceDigest := "eb9c649cd91df43382bfe6f2ef5d2ed0b97c5b9fb9af8e021cd266e3b72e82ef"
+      sourceRanges := [{ start := 1101, stop := 1102 }]
+      sourceDigest := "1fa44146e27a7be689d104561b994c62110047de7371a683ec93c30694612bf3"
       conclusion := "(a0-type synth Γ n (typing Natural () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1172,8 +1317,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Speaker"
       anchor := "spec §5.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1041, stop := 1042 }]
-      sourceDigest := "333e4b25f92d3f0acc92adac8e4cc7c6d07e5d55fae1c7fdf1e0618ad2ec28fb"
+      sourceRanges := [{ start := 1104, stop := 1105 }]
+      sourceDigest := "25957a89a7fed67b448510651377969f286f87c2b7d21a4668a6cbda7f0c73b1"
       conclusion := "(a0-type synth Γ Speaker (typing (Referents Entity) () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1183,8 +1328,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Audience"
       anchor := "spec §5.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1044, stop := 1045 }]
-      sourceDigest := "217f5ae7506e5e038ba31a2d84f113873b7d1b3a27c465155505efe50f534942"
+      sourceRanges := [{ start := 1107, stop := 1108 }]
+      sourceDigest := "9414b5f1e6964a9cd41ed8faaae4c0598ec99111573f6fdbdcac0719f4b1a348"
       conclusion := "(a0-type synth Γ Audience (typing (Referents Entity) () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1194,8 +1339,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ThresholdKind"
       anchor := "spec §6.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1047, stop := 1048 }]
-      sourceDigest := "d11c4ffd8f51adcc59c30dd222e8049b2801fb0d4957793d8ba359982dc2d682"
+      sourceRanges := [{ start := 1110, stop := 1111 }]
+      sourceDigest := "9f7aa5df47d4d1023faa1a846cb069c4921545f8adc6cdaf2215ea44520ef6c0"
       conclusion := "(a0-type synth Γ TooManyK (typing ThresholdKind () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1205,8 +1350,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Top"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1050, stop := 1051 }]
-      sourceDigest := "a7fd9bf1ff85bf3a88cae7e398996aa9afb580daa5f66afa00beabc6f432134b"
+      sourceRanges := [{ start := 1113, stop := 1114 }]
+      sourceDigest := "3dee28898774e25dd31981bf5e14e7c38e88a2255fbaf4bd09a008763be96da0"
       conclusion := "(a0-type synth Γ ⊤ (typing Content () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1216,8 +1361,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Variable"
       anchor := "spec §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1053, stop := 1055 }]
-      sourceDigest := "faddd276342fb6076b794bd29bfee5f50e275c9800198527fa378d93b10c2b11"
+      sourceRanges := [{ start := 1116, stop := 1118 }]
+      sourceDigest := "44fe1f6c5511da032c777baeb91c85d6d7df66afe72ae5c1cb4d52ce99c3fb2a"
       conclusion := "(a0-type synth Γ x (typing τ () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1227,8 +1372,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Lambda-Pure"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1057, stop := 1066 }]
-      sourceDigest := "6a1e314ac3cd6f2f0b90f447430ac8ccde818319425e6d7e777a76dfe9d5a459"
+      sourceRanges := [{ start := 1120, stop := 1129 }]
+      sourceDigest := "bfff7db52d91c6e1aa15e5aa817561a539f38bcbb3dd3ca2f3646c6664cb84c3"
       conclusion := "(a0-type synth Γ (λ ((x τ)) t_body) (typing (Fn (τ) τ_body) () (obligation_scoped ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1238,8 +1383,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Lambda-Effectful"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1068, stop := 1078 }]
-      sourceDigest := "262950e007af10f924d9c9cfe4bcbb3f96eb64a62ffe89cb339824ba3dd474cc"
+      sourceRanges := [{ start := 1131, stop := 1141 }]
+      sourceDigest := "548dd95352e24173c48cd4ea677f4bda1aa4e1e9ec63635138ea43931aed23cd"
       conclusion := "(a0-type synth Γ (λ ((x τ)) t_body) (typing (EFn (τ) τ_body) () (obligation_scoped ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1249,8 +1394,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Lambda-Multi-Pure"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1080, stop := 1093 }]
-      sourceDigest := "fa47ee1cd04923ec9e3c971b17088bbb8ccc9393e263cfd26a10dfd3378670f7"
+      sourceRanges := [{ start := 1143, stop := 1156 }]
+      sourceDigest := "5dac2bb8c9361e4cfa95d1bf7389a527e031d087e060f11bf94e7ab5e1406cca"
       conclusion := "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1260,8 +1405,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Lambda-Multi-Effectful"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1095, stop := 1109 }]
-      sourceDigest := "1bf0b21824adf3b3f24f665cc88159ab6552f2e8d444d737272c35a3fa0a59bf"
+      sourceRanges := [{ start := 1158, stop := 1172 }]
+      sourceDigest := "c9db9678dee4adfe208494420f9887925c2d070dc13983fc16a220cdeb81a6ce"
       conclusion := "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1271,8 +1416,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Let"
       anchor := "spec §4.4; §12 Let"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1111, stop := 1125 }]
-      sourceDigest := "1d31494889ba5ecbe9251b5c6b8398c3cb94d09169072de493de24ea88c36c6b"
+      sourceRanges := [{ start := 1174, stop := 1188 }]
+      sourceDigest := "02a8d253a9969b5c0c36de11ca18c1a5a017d0bde7dbcf2e70647f26ac696958"
       conclusion := "(a0-type synth Γ (Let (x τ) t_value t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1282,8 +1427,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Bind-Nest"
       anchor := "spec §4.4, §5.2"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1127, stop := 1133 }]
-      sourceDigest := "81e5e177bba17525207fdff7d89f75aa7dec36a12b4e4aec8c198548d44242c6"
+      sourceRanges := [{ start := 1190, stop := 1196 }]
+      sourceDigest := "c350e4950d3a2da3ba35a2f48e7b7fac5938c831338ba61eb8cfba41ea59351b"
       conclusion := "(a0-type synth Γ (Bind (binding_0 binding_1 binding_rest ...) t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1293,8 +1438,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Bind-Reference"
       anchor := "spec §5.2"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1135, stop := 1143 }]
-      sourceDigest := "e9a73b4625aa95855f2b7f2d265dabbf34b41ae58b4003ba41c076d431fcbd5d"
+      sourceRanges := [{ start := 1198, stop := 1206 }]
+      sourceDigest := "9022a93042b88464c1312d01b1181deb83d24ff4a978ce706da8fb1bcd56a996"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1304,8 +1449,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Bind-Performance-Act"
       anchor := "spec §5.2, §7.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1145, stop := 1159 }]
-      sourceDigest := "d9b39adf53c870e1af1d2433c5b4f54539dae3d10a4f71df01e2ce706e0a1204"
+      sourceRanges := [{ start := 1208, stop := 1222 }]
+      sourceDigest := "1f62e3b5bf5a246d6209296fde6b6945728f2ae825126342265fe7e95804158a"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1315,8 +1460,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Bind-Performance-Comp"
       anchor := "spec §5.2, §7.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1161, stop := 1176 }]
-      sourceDigest := "a2d6a983ef825a61881fb83aca33d3487fc54f40a0fd2530968ed93ece313f7a"
+      sourceRanges := [{ start := 1224, stop := 1239 }]
+      sourceDigest := "c7d0d1d088f480500c4d3e2e5f615a05b9a17a6dae44806ad1144940e8933ff5"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1326,8 +1471,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Bind-Performance-Discourse"
       anchor := "spec §5.2, §7.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1178, stop := 1192 }]
-      sourceDigest := "a018f94c9076ad5771415765802384ba10f35aa41bbb59e758e6607b1d9f9cfc"
+      sourceRanges := [{ start := 1241, stop := 1255 }]
+      sourceDigest := "b379f870baa8294dcd9c67e4ebceab5b6eb13ae4a2bed8f8130f75f6fa04ef13"
       conclusion := "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1337,8 +1482,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Check-Synth"
       anchor := "spec §1.6, §3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1194, stop := 1199 }]
-      sourceDigest := "9f7d98af84d383378a10aa874506b96eb9ec98b274b99b9d4a1c19e24b7c64f5"
+      sourceRanges := [{ start := 1257, stop := 1262 }]
+      sourceDigest := "f99d7d838084bed7049d15969b6194b4b41af6a5fcc1286e5b0d0bba5f4812d3"
       conclusion := "(a0-type (check τ_expected) Γ t_actual R_actual)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1348,8 +1493,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Context"
       anchor := "spec §5.3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1201, stop := 1205 }]
-      sourceDigest := "278ac9fb1bd918c57d29c31d0a3b8dd6b941ff52941acc0f869e8facc0e894ee"
+      sourceRanges := [{ start := 1264, stop := 1268 }]
+      sourceDigest := "e3a71668761f933c5c54f0f24912b19e2160538491d8c5feabab19c05ed8138d"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Context t_argument ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1359,8 +1504,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Vague"
       anchor := "spec §6.4–§6.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1207, stop := 1211 }]
-      sourceDigest := "b166b8514c074d043567a8a5710f6878d757b44ca239fcbcb4eab32561a06a3a"
+      sourceRanges := [{ start := 1270, stop := 1274 }]
+      sourceDigest := "e8ac233c6cbd607cc3632b5464e7ee242a759d92cb8a08fdc336244060b22033"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Vague t_property) (typing (RefComp τ) (context) (obligation ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1370,8 +1515,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Refer-Reference"
       anchor := "spec §5.3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1213, stop := 1223 }]
-      sourceDigest := "e0ae54cbc08b6c8f1ed6368c702f33606472718545338c2620654b59488c29e9"
+      sourceRanges := [{ start := 1276, stop := 1286 }]
+      sourceDigest := "38659d4a2849c3616483d5263134cf3f0092a3b16208e53a6413085f0bc2a8ec"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1381,8 +1526,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Refer-Member"
       anchor := "spec §5.3"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1225, stop := 1233 }]
-      sourceDigest := "89c802fd966e8c803a7663bb4ac5fbbf8418f72b17a7620a3d869a27c80446f5"
+      sourceRanges := [{ start := 1288, stop := 1296 }]
+      sourceDigest := "951a46fe74b5bcbd904dafddf90cd205eb7087de571d31e04ac9583ec61253c0"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1392,8 +1537,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-SelectExactly"
       anchor := "spec §5.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1235, stop := 1246 }]
-      sourceDigest := "e66e7de1f92240a3531b1744463b057b681ed2d7e9c2890a494fa88baca22690"
+      sourceRanges := [{ start := 1298, stop := 1309 }]
+      sourceDigest := "1535d5716b0f1852dd057326f3c258ea96617ed2bbb102fec314b1acd567354e"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectExactly t_count t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1403,8 +1548,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-SelectSome"
       anchor := "spec §5.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1248, stop := 1257 }]
-      sourceDigest := "30c30acd90b4351115534b56ea961a7a9d876685e355190a27c9e99d5f0414f3"
+      sourceRanges := [{ start := 1311, stop := 1320 }]
+      sourceDigest := "4f72f9ce967b2651bf6be242390a41a602e5c2d0ebff3aac1cad067f608cd0fb"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectSome t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1414,8 +1559,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Massify"
       anchor := "spec §4.8; §12 Massify"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1295, stop := 1308 }]
-      sourceDigest := "07de5aaa5ffc21426a131f1fe046fe499c457f14f861b968bdd510e05044cd6b"
+      sourceRanges := [{ start := 1358, stop := 1371 }]
+      sourceDigest := "2b754e0ea559eebc0162ab0df7c75bc5a2b09a40d22773e6552c61989fe8bc80"
       conclusion := "(a0-type (check (RefComp (Referents (Group τ)))) Γ (Massify t_basis t_cover) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1425,8 +1570,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Perform"
       anchor := "spec §7.1"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1310, stop := 1315 }]
-      sourceDigest := "6c1a5aeb46dc774d872a34402b46633e2ef45c0f411a0a48ebea3b3c7301ecf3"
+      sourceRanges := [{ start := 1373, stop := 1378 }]
+      sourceDigest := "7b5c321d854a7fdd7ba35ceceef86f1ba920abb9a73b1c8f81905d9232156d61"
       conclusion := "(a0-type synth Γ (Perform t_act) (typing (PerfComp (ActOccurrence force)) (performance) (obligation ...)))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1436,8 +1581,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Exactly-Zero"
       anchor := "spec §4.10; §12 Exactly"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1317, stop := 1326 }]
-      sourceDigest := "a5d433b531335c17b4f76a1bd2d7d1f9289dbbcce445f4c161c42319900edf36"
+      sourceRanges := [{ start := 1380, stop := 1389 }]
+      sourceDigest := "9c36805354b2188a79447b3e2f7bc1b4d0eb2d65d62f2f0cb5ffb9d499545a68"
       conclusion := "(a0-type synth Γ (Exactly 0 v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1447,8 +1592,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Exactly-Positive"
       anchor := "spec §4.10; §12 Exactly"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1328, stop := 1338 }]
-      sourceDigest := "e981ced3f1e762e285d4c52ea5b0613455504ee164afa2e92dabbada3ce525b6"
+      sourceRanges := [{ start := 1391, stop := 1401 }]
+      sourceDigest := "210c4a61f23b2d238de7451a25786b0d910defbd5569273bb0ce4fae1a5a3c08"
       conclusion := "(a0-type synth Γ (Exactly t_count v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1458,8 +1603,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-No"
       anchor := "spec §4.10; §12 No"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1397, stop := 1404 }]
-      sourceDigest := "6be7e700b0b5c44478d15b6bce0f434111708835c37cf04a4f99a0c186b369ce"
+      sourceRanges := [{ start := 1487, stop := 1494 }]
+      sourceDigest := "b8f414240e19b5619a370bc48520c5cd5bc38209758077227dac61d288e97990"
       conclusion := "(a0-type synth Γ (No v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1469,8 +1614,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-MoreThan"
       anchor := "spec §4.10; §12 MoreThan"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1417, stop := 1426 }]
-      sourceDigest := "8a1ebc75ca23ee3312187098a06375a54427f1a3ce9c6353198c5ff7b78b8d50"
+      sourceRanges := [{ start := 1507, stop := 1516 }]
+      sourceDigest := "6ec345d73de8469ef2ca8ab72dcdba51c39bfce2b438c028699de6558c7a0275"
       conclusion := "(a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1480,8 +1625,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-GlobalExactly"
       anchor := "spec §4.10; §12 GlobalExactly"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1460, stop := 1468 }]
-      sourceDigest := "8a0a4f9878674ac9c077f34365139b53d2aaa91914d58f81f7f90578cb77f93f"
+      sourceRanges := [{ start := 1550, stop := 1558 }]
+      sourceDigest := "506a069cb965989bd2e1f67b0f6bd23df376bd3fc8b7188a31a4d563903fab93"
       conclusion := "(a0-type synth Γ (GlobalExactly t_n t_P t_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1491,8 +1636,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-TooMany"
       anchor := "spec §6.4; §12 TooMany"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1470, stop := 1479 }]
-      sourceDigest := "ada743b2d2adc9de2fceb69fa1d851424a1031cb517a5dd0a5c412a31f825468"
+      sourceRanges := [{ start := 1560, stop := 1569 }]
+      sourceDigest := "7eb356e69ccb401a323f5dee17daf7e7bcc9f891fb73145ad411b09381d1fbaf"
       conclusion := "(a0-type synth Γ (TooMany t_P t_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1502,8 +1647,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-AdmissibleThreshold"
       anchor := "spec §6.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1481, stop := 1490 }]
-      sourceDigest := "f3a4521aeea0f422fb6835981a70ad2558cea8e910e8f4603f9cd70a32881e1a"
+      sourceRanges := [{ start := 1571, stop := 1580 }]
+      sourceDigest := "a66df474ef19c558aebaadad56ebfc064789b0165946cc6dbd67ff6a6f632ced"
       conclusion := "(a0-type synth Γ (AdmissibleThreshold t_kind t_P t_purpose) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1513,8 +1658,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CanonicalAggregateAt"
       anchor := "spec §4.8"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1492, stop := 1500 }]
-      sourceDigest := "f02589979ee46a9d9d219e86fd3e9fc9459e223cb7e8ba66c26bbf52e0a8e141"
+      sourceRanges := [{ start := 1582, stop := 1590 }]
+      sourceDigest := "27585be4e4ddea3aae599eff95e677653b900055e1044bd1fd03a364448f40ba"
       conclusion := "(a0-type synth Γ (CanonicalAggregateAt t_basis t_group t_cover) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1524,8 +1669,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-SetOf"
       anchor := "spec §4.9"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1502, stop := 1506 }]
-      sourceDigest := "73548af40a02b7dbdd37e9360d92ecbaf3aa832ab229152c6a9d8ecd63c6cadb"
+      sourceRanges := [{ start := 1592, stop := 1596 }]
+      sourceDigest := "df5c760534c0e0fb4c70c58b15dd3b9e98bb3f250d1175bf953f6b4a7b5f0bc0"
       conclusion := "(a0-type synth Γ (SetOf t_P) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1535,8 +1680,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Card"
       anchor := "spec §4.9"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1508, stop := 1514 }]
-      sourceDigest := "89e3abe80ee4c11bc75f2f785925d8724b4e89230a5b64e246ba506effa68c85"
+      sourceRanges := [{ start := 1598, stop := 1604 }]
+      sourceDigest := "4a1d6f16ae85cb5b10aa188d2d5d50b103cfdb0401e8ae5495745bf58198b0ff"
       conclusion := "(a0-type synth Γ (Card t_set) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1546,8 +1691,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Equality"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1516, stop := 1528 }]
-      sourceDigest := "3991b0c7916a1c2c44409c003231096cb6c6e31c68323c16230f144beaa0b36a"
+      sourceRanges := [{ start := 1606, stop := 1618 }]
+      sourceDigest := "b2759c6746789926f24606fc197b4e8b8ee0ae95531ccd39d04db7f40af36da9"
       conclusion := "(a0-type synth Γ (= t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1557,8 +1702,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-And"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1540, stop := 1544 }]
-      sourceDigest := "ebf5f4732973f26b370cbf106e1395e6839b0d91a73135d1da68b83bf91872de"
+      sourceRanges := [{ start := 1636, stop := 1640 }]
+      sourceDigest := "ccd7194b09fbc07a10a3faf575cae5935417f6f635b6e3f933a81e9788d3de05"
       conclusion := "(a0-type synth Γ (∧ t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1568,8 +1713,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CoRef"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1620, stop := 1624 }]
-      sourceDigest := "5f7ca35b31d07a0f65c5c54d9ac645b77790350d37c416aa9070bee654417c0d"
+      sourceRanges := [{ start := 1716, stop := 1723 }]
+      sourceDigest := "67f1aa65beaabd81e68404b56be170fe7ba0688f4db014a17876efa5e9649ac2"
       conclusion := "(a0-type synth Γ (CoRef t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1579,8 +1724,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-List-Check"
       anchor := "spec §4.9"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1664, stop := 1667 }]
-      sourceDigest := "5fb37a0a07d7fd8f11705a7053702b50432e23421cf22d243688c658319c5e53"
+      sourceRanges := [{ start := 1763, stop := 1766 }]
+      sourceDigest := "4ce2d6b103c950b59f18b54067cd3b7251236e016446e19bec31d434550d23f3"
       conclusion := "(a0-type (check (List τ)) Γ (List t_item ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1590,8 +1735,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ZipWith-Pure"
       anchor := "spec §4.9; §12 ZipWith"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1669, stop := 1681 }]
-      sourceDigest := "52d4e31ec1229236315294e3e8e431fa7b2d0e1faec3a680d1841bacf8818341"
+      sourceRanges := [{ start := 1768, stop := 1780 }]
+      sourceDigest := "1cab4a0aea3176f8da5890b7d9654db2a5e7bb15ebb6768742362cf676474919"
       conclusion := "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1601,8 +1746,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ZipWith-Empty-Effectful"
       anchor := "spec §4.9; §12 ZipWith empty"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1683, stop := 1692 }]
-      sourceDigest := "516bbe2b4a35e85689f6b9772904cd87ac2e9643eb2b58736f5447f4cc34385c"
+      sourceRanges := [{ start := 1782, stop := 1791 }]
+      sourceDigest := "e91350c6a1b4d7861e599eccd5c239f3853961099dcf4590b075c47720f455f5"
       conclusion := "(a0-type synth Γ (ZipWith v_f (List) (List)) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1612,8 +1757,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ZipWith-Effectful"
       anchor := "spec §4.9; §12 ZipWith"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1694, stop := 1709 }]
-      sourceDigest := "e451c9266808e1d928f1237ffbc4473e5a3d9348af91d113a5bbf7b3852cb27c"
+      sourceRanges := [{ start := 1793, stop := 1808 }]
+      sourceDigest := "86c18cbf3b02bc2e86688ba4e2dd6e19c9875db295ef1d107e7d64445ad13c10"
       conclusion := "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1623,8 +1768,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-StateClause"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1711, stop := 1714 }]
-      sourceDigest := "176d484b48bfa17875d7bd9cad5fe699da383a367c5260c1052f06c16da2308f"
+      sourceRanges := [{ start := 1810, stop := 1813 }]
+      sourceDigest := "019817491e8694736a6281f84ae328cde7839c317fa44aca8b549a49f262cf2e"
       conclusion := "(a0-type synth Γ (StateClause t_content) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1634,8 +1779,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-DirectClause-Pure"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1716, stop := 1726 }]
-      sourceDigest := "8583c33302800373b76acdaf8b07b5c3812f554157b95fe00f3fddad199c38fc"
+      sourceRanges := [{ start := 1815, stop := 1825 }]
+      sourceDigest := "b4c5c92b8706bf5e06dcf933eee081386236cdbc544d8a5d4ab1a3817893e869"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1645,8 +1790,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-DirectClause-Effectful"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1728, stop := 1738 }]
-      sourceDigest := "ab340d873d48af5bbb20ac2a3c51d4e06b382dbf5d56015e7b212f0306187c75"
+      sourceRanges := [{ start := 1827, stop := 1837 }]
+      sourceDigest := "e12660174bd378bcaf787c8e1040f5632ab3667d398c627c80e13b509737c32a"
       conclusion := "(a0-type synth Γ (DirectClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1656,8 +1801,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ActualClause-State"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1740, stop := 1748 }]
-      sourceDigest := "c5da08f7037872b42e257b6edd0bd85c2642e3bffcaafa4b8ceadbb8d13ac11f"
+      sourceRanges := [{ start := 1839, stop := 1847 }]
+      sourceDigest := "2d3f5830012a4e1c1a1e76d96f2fa85d2516367ad6599d3a41ad30cc2e1e1a7e"
       conclusion := "(a0-type synth Γ (ActualClause t_clause) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1667,8 +1812,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ActualClause-Event-Pure"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1750, stop := 1757 }]
-      sourceDigest := "18ef83fbef82e2ca52a5b12625dc35fb2736c313783ece9cf1522d3a4cbb22a5"
+      sourceRanges := [{ start := 1849, stop := 1856 }]
+      sourceDigest := "5b872b0d619f93cb9e140fc253250704b4eb85e895b46787dffe0ef9524dd305"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1678,8 +1823,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-ActualClause-Event-Effectful"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1759, stop := 1766 }]
-      sourceDigest := "212373aef05a92f7ed0a417f6c3e0b83b9f6ec7dbb6e43a10416f4bbd52671cb"
+      sourceRanges := [{ start := 1858, stop := 1865 }]
+      sourceDigest := "ebffdb82ddfc13799c5b6133bd7b4c770f7ba1fa0305fcbd6c53db9bca7a1a63"
       conclusion := "(a0-type synth Γ (ActualClause t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1689,8 +1834,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CloseClause"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1768, stop := 1775 }]
-      sourceDigest := "bb0c1debe8d1547f60e9d2373768edc32c43b6ad2877dc8daffc98f841bcc857"
+      sourceRanges := [{ start := 1867, stop := 1874 }]
+      sourceDigest := "d90d642b9141cf403e1f20fd46a88501d1a8bc3f4d065b964f4c3784e837ad35"
       conclusion := "(a0-type synth Γ (CloseClause t_clause) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1700,8 +1845,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-CloseWith"
       anchor := "spec §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1777, stop := 1790 }]
-      sourceDigest := "d80e58edb54c0cb1412da99830f978d52247025086f7c044671bc758f1a945fd"
+      sourceRanges := [{ start := 1876, stop := 1889 }]
+      sourceDigest := "3f4048bbc1d42e789ef4f910731966ca868fbeb6b376a358c83edeb970ba11c8"
       conclusion := "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1711,8 +1856,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-ClauseContent"
       anchor := "spec §3.4, §4.6"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1792, stop := 1804 }]
-      sourceDigest := "f8ae123d2c858c83d86dc1d4692a86352bd5c2340de3efebe29e272cf57002a0"
+      sourceRanges := [{ start := 1891, stop := 1903 }]
+      sourceDigest := "429036b2ac7d39af6c4cbddc49e531f6388dce7c5606eefe77ea7a0c78c276e6"
       conclusion := "(a0-type synth Γ (t_function t_argument) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1722,8 +1867,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-Pure"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1806, stop := 1818 }]
-      sourceDigest := "9d059f4fa93a5b58d1e289d4e64e37b95a1d2a39d780a3af9b31236afa739fe6"
+      sourceRanges := [{ start := 1905, stop := 1917 }]
+      sourceDigest := "d2c4afff67a2bed9096b6cd689331f5cdcb31ef9a350c1974a2f6ea6545bd4d8"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1733,8 +1878,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "A0-T-Apply-Effectful"
       anchor := "spec §3.3, §4.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1820, stop := 1832 }]
-      sourceDigest := "5226cbca5dd15635c8ae31dccefe1974b43fbbfa30edd8542363656ced9ef364"
+      sourceRanges := [{ start := 1919, stop := 1931 }]
+      sourceDigest := "8bb4ec0c092dcd97cf38c0a63d3b333263a4a581d18e4fab9340d94cb83ab19c"
       conclusion := "(a0-type synth Γ (t_function t_argument ...) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1744,8 +1889,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-SelectAtLeast"
       anchor := "spec §5.6; §12 selection floor"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1259, stop := 1270 }]
-      sourceDigest := "8080c4ffc1cbbbbf25e37bee08b9c76eddb0553e8db36f6b787c372eea30e9d9"
+      sourceRanges := [{ start := 1322, stop := 1333 }]
+      sourceDigest := "bbef2ae884f79a440feb956104f840fe6f9c86552c416ff60c460aa7cb61274e"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectAtLeast t_count t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1755,8 +1900,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-SelectAllBut"
       anchor := "spec §5.6; §12 SelectAllBut"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1272, stop := 1282 }]
-      sourceDigest := "73b2a78bf588309d4aa99eaa1bc1a46dea949389d35430f282766e0896dab771"
+      sourceRanges := [{ start := 1335, stop := 1345 }]
+      sourceDigest := "3f758874c334c30c6b86687f410b087ddd90280be505ccdb4e4d6d543b4ea000"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (SelectAllBut t_count t_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1766,8 +1911,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-MaxRefer"
       anchor := "spec §5.3; §12 MaxRefer"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1284, stop := 1293 }]
-      sourceDigest := "010982ba33e40f17badaae1e813ca56e0e6c2ab064cb6aab7aa8e0b069656a7e"
+      sourceRanges := [{ start := 1347, stop := 1356 }]
+      sourceDigest := "01dd1dbcfc860ad1fd58dc0e02dcd73877487d443044692d71be7d1864e58c09"
       conclusion := "(a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1777,8 +1922,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Implication"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1546, stop := 1550 }]
-      sourceDigest := "2ff77c16bc789d5d7f35f169cddad194745ba4aa8c8050041d25e16d6f6477c0"
+      sourceRanges := [{ start := 1642, stop := 1646 }]
+      sourceDigest := "c5b0fca154701d58f3b4c53a96e3a59e20a1691cc7c5baef46330142b307229d"
       conclusion := "(a0-type synth Γ (→ t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1788,8 +1933,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Negation"
       anchor := "spec §4.5, §5.4"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1552, stop := 1555 }]
-      sourceDigest := "fab4f6bc61eb0bd0538b4ab63f2889f1e5efe90e858d13fbb89bd1e2a4588eb2"
+      sourceRanges := [{ start := 1648, stop := 1651 }]
+      sourceDigest := "a6c4e0d42d1927dfa4f25a7f1eba8fec9672037a2e0aebad83d145b8bcbb5c4f"
       conclusion := "(a0-type synth Γ (¬ t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1799,8 +1944,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Forall"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1557, stop := 1572 }]
-      sourceDigest := "f8818c60aaa78a1aad8c509e8194628c68ec4c8c271723e01be65777535e8591"
+      sourceRanges := [{ start := 1653, stop := 1668 }]
+      sourceDigest := "8a6054b31d183b243d43cb868bd9076992dcff73ea5867bdbe22050f3290cb3f"
       conclusion := "(a0-type synth Γ (∀ v_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1810,8 +1955,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Exists"
       anchor := "spec §4.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1574, stop := 1589 }]
-      sourceDigest := "6e99e8921af6ab06d9c7304e533846d083eafaa49fc7483dcd98d0f1222a5026"
+      sourceRanges := [{ start := 1670, stop := 1685 }]
+      sourceDigest := "1d73dd78767d1d43db8f63a2cef611564acb8c81b48a950a76fc7144298b8ef0"
       conclusion := "(a0-type synth Γ (∃ v_property) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1821,8 +1966,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Among"
       anchor := "spec §4.8"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1591, stop := 1599 }]
-      sourceDigest := "f28f3c5727bced00c4c0d9d429ccc75ecb7a20c38188ed96df1b7fbe093ac260"
+      sourceRanges := [{ start := 1687, stop := 1695 }]
+      sourceDigest := "b7423e0204411b05c4167128f5171ba1ee8658c0b711e991337b611ebe4bc97b"
       conclusion := "(a0-type synth Γ (Among t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1832,8 +1977,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Presuppose-Synth"
       anchor := "spec §5.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1601, stop := 1608 }]
-      sourceDigest := "9f0c0ddccbed4305bd0ddeffa2c1fa58260be8af18ef7de8df98bf73a4a7f9ee"
+      sourceRanges := [{ start := 1697, stop := 1704 }]
+      sourceDigest := "b2a7f20bda9be38ea5fa46cdf977505550dd92e9cc76167d22d0c041c99d981c"
       conclusion := "(a0-type synth Γ (Presuppose t_condition t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1843,8 +1988,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Presuppose-Reference"
       anchor := "spec §5.5"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1610, stop := 1618 }]
-      sourceDigest := "76fc9f631f81ac6a387ed9964b0625ef1a18f0a28b221f196b3021d94eb579f8"
+      sourceRanges := [{ start := 1706, stop := 1714 }]
+      sourceDigest := "3ccccbd6251b9b53c0a3a5d96e96db43d19e7dde478c64d265f615e10d1fd1e2"
       conclusion := "(a0-type (check (RefComp τ)) Γ (Presuppose t_condition t_body) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1854,8 +1999,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Distrib"
       anchor := "spec §4.8; §12 Distrib"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1626, stop := 1640 }]
-      sourceDigest := "f7e4fc3091908743e8a722a9a5ccdb2f2fde59c647ad47a621eda7453b3caa11"
+      sourceRanges := [{ start := 1725, stop := 1739 }]
+      sourceDigest := "a7a28e602dc4006dde0f353508e82a5e83f1406e710fd9138dddf737b66034e9"
       conclusion := "(a0-type synth Γ (Distrib v_Q t_reference) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1865,8 +2010,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-CoveredBy"
       anchor := "spec §4.8"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1642, stop := 1652 }]
-      sourceDigest := "8834ce5c15c546d6b61a239f5697d7e3e16755ed79d315c7fc175e887c1c677b"
+      sourceRanges := [{ start := 1741, stop := 1751 }]
+      sourceDigest := "76ef1d99e87598e06b4abe21d3c1521ff9d9d337cf3625e45e9d9f04198e4227"
       conclusion := "(a0-type synth Γ (CoveredBy v_P t_reference) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1876,8 +2021,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Overlap"
       anchor := "spec §4.8; §12 Overlap"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1654, stop := 1662 }]
-      sourceDigest := "8503cf7645c1a1c1725e92236baef13b9721ed512362f4f1f120830880699386"
+      sourceRanges := [{ start := 1753, stop := 1761 }]
+      sourceDigest := "8e44cbec2515823738550120f81d6a9e35452da518bbbd4d07e532663f32d44c"
       conclusion := "(a0-type synth Γ (Overlap t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1887,8 +2032,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Addition"
       anchor := "spec §4.9"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1530, stop := 1538 }]
-      sourceDigest := "46e44db9225e7bd5340232ebc5dcb7873dac4ea307fd9a25cfe8c9d348decb54"
+      sourceRanges := [{ start := 1620, stop := 1628 }]
+      sourceDigest := "65e019e442bcc5acbf846be6d227cf32bc271ed765ef928aba58010e0b0ee888"
       conclusion := "(a0-type synth Γ (+ t_left t_right) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1898,8 +2043,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-AtLeast-Zero"
       anchor := "spec §4.10; §12 AtLeast zero"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1340, stop := 1343 }]
-      sourceDigest := "71b39a0487475847f92aca4e1b8b6d8cd8ec8bc7dba9cf8188b054e9a642e7e8"
+      sourceRanges := [{ start := 1403, stop := 1406 }]
+      sourceDigest := "c0874180037d4637cedc10a4b8b4910f310a268a76619496dc0aaddecfe924f1"
       conclusion := "(a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1909,8 +2054,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-AtLeast-Positive"
       anchor := "spec §4.10; §12 AtLeast"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1345, stop := 1355 }]
-      sourceDigest := "2363af25663fef06948dd7f7808051eb5f836acee391d2e73167c59592558b1f"
+      sourceRanges := [{ start := 1408, stop := 1418 }]
+      sourceDigest := "9a71b0edfcb9e4d14ab16e5ef5533075870a8a5b397f69f86506d78e8fce6ceb"
       conclusion := "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1920,8 +2065,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-AtLeast-Symbolic"
       anchor := "spec §4.10; §12 AtLeast totality"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1357, stop := 1370 }]
-      sourceDigest := "273e3153f6be5d403fd0e706bf1f04c26a49f6e8bfe710b86092bd06889bdbf2"
+      sourceRanges := [{ start := 1420, stop := 1433 }]
+      sourceDigest := "2cc7547fdfebf84371a5cf9bf2185cf68f21e5d0944b4a2a06f8f13fa3cc0278"
       conclusion := "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1931,8 +2076,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Some"
       anchor := "spec §4.10; §12 Some"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1372, stop := 1379 }]
-      sourceDigest := "3466ecc262a2d68cc08997529b4b324fa1e0fdcabe4d09a0320bb69e8b8be81c"
+      sourceRanges := [{ start := 1435, stop := 1442 }]
+      sourceDigest := "520ebfdaa2fc21224e66b6e81395c008c8d6d92f915d10e619069ff460f9dc5e"
       conclusion := "(a0-type synth Γ (Some v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1942,8 +2087,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-Every"
       anchor := "spec §4.10; §12 Every"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1381, stop := 1395 }]
-      sourceDigest := "5856412515792ea8e756d1819441dfe6501478f9d41cd77b3c8a256e5fd76a2c"
+      sourceRanges := [{ start := 1471, stop := 1485 }]
+      sourceDigest := "1cad9660456dccc5da1797f165983b7267c96c00e3cdc0cb7314c9643064b812"
       conclusion := "(a0-type synth Γ (Every v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1953,8 +2098,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-AtMost"
       anchor := "spec §4.10; §12 AtMost"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1406, stop := 1415 }]
-      sourceDigest := "288f1acdf35df2258e1c10cd653456d1eabc911db9e3a8c60fea51d82dd37f46"
+      sourceRanges := [{ start := 1496, stop := 1505 }]
+      sourceDigest := "9b15eecbd7c5b84f8224a127dbfca4efa049874b0f371f8a9a3cfdb3fcae0726"
       conclusion := "(a0-type synth Γ (AtMost t_n v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1964,8 +2109,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-FewerThan-Zero"
       anchor := "spec §4.10; §12 FewerThan zero"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1428, stop := 1431 }]
-      sourceDigest := "9de685c6611e560dd78e96aa26091eefddb81c9778181cea1fd9601328d2eddb"
+      sourceRanges := [{ start := 1518, stop := 1521 }]
+      sourceDigest := "1b89c5dec07bea3b4ba16db30cadf5986cee92ff8ab28cb634791ffbbd16e368"
       conclusion := "(a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1975,8 +2120,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-FewerThan-Positive"
       anchor := "spec §4.10; §12 FewerThan"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1433, stop := 1443 }]
-      sourceDigest := "c42276378bf7c0e1ff9c500b008c6941f10912175f5220020faf281209b0ff58"
+      sourceRanges := [{ start := 1523, stop := 1533 }]
+      sourceDigest := "89100d34e4a73759afbb38b3a3755c7f41e35b40e017546b4d892b0baa8ea3fd"
       conclusion := "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
@@ -1986,9 +2131,42 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "B1-T-FewerThan-Symbolic"
       anchor := "spec §4.10; §12 FewerThan totality"
       sourcePath := "tools/smusni-redex/port-a0.rkt"
-      sourceRanges := [{ start := 1445, stop := 1458 }]
-      sourceDigest := "e9e529b42363d72baf525f99991766e56847bc9311a700aecffd1d2613596478"
+      sourceRanges := [{ start := 1535, stop := 1548 }]
+      sourceDigest := "b99b4f99cee4ef7ae0a397633027f1a571caa022fe55b648adcdea00935d9f3c"
       conclusion := "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
+    }
+  | .e01TClosure => {
+      id := .e01TClosure
+      kind := "redex-rule"
+      subject := "E01-T-Closure"
+      anchor := "spec §12 individual and unrestricted plural existence"
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1444, stop := 1457 }]
+      sourceDigest := "d5dcdc4dcd759ea4b14a1469849c5c4e391c8eb29774f60b6139473c3c808ac6"
+      conclusion := "(a0-type synth Γ (closure-head v_P v_Q) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
+    }
+  | .e01TComparison => {
+      id := .e01TComparison
+      kind := "redex-rule"
+      subject := "E01-T-Comparison"
+      anchor := "spec §4.9 numeric comparisons"
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1630, stop := 1634 }]
+      sourceDigest := "de47b1024e9359780c4318922d2e5194137e0a5117632ddb9d902bce4edf148f"
+      conclusion := "(a0-type synth Γ (comparison t_left t_right) R_out)"
+      reason := "Generated from the frozen A0/B1 typing judgment."
+    }
+  | .e01TOnly => {
+      id := .e01TOnly
+      kind := "redex-rule"
+      subject := "E01-T-Only"
+      anchor := "spec §12 pure Only host and exclusion"
+      sourcePath := "tools/smusni-redex/port-a0.rkt"
+      sourceRanges := [{ start := 1459, stop := 1469 }]
+      sourceDigest := "1f301597d70d0b1da0c9f48e36af1de2018b6fba72bb9d010b89b5a3beaae81b"
+      conclusion := "(a0-type synth Γ (Only v_A v_H t_f) R_out)"
       reason := "Generated from the frozen A0/B1 typing judgment."
     }
   | .m2TString => {
@@ -1997,8 +2175,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Text"
       anchor := "spec §2; §3.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 263, stop := 264 }]
-      sourceDigest := "1ed6abda05e1215caf7b8885b3132350bc11d6a2794d1d40115215789ca374af"
+      sourceRanges := [{ start := 279, stop := 280 }]
+      sourceDigest := "d87ab3adef7dacc6f214c4ac4c6f9858397e20751fe861178b20c76202f5025f"
       conclusion := "Text literal -> Text"
       reason := "The Redex A0 slice omits Text literals, but the all-S1 primitive cohort contains sign constructors over Text."
     }
@@ -2008,8 +2186,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "first-order hierarchy"
       anchor := "spec §3.1–§3.2"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 300, stop := 360 }]
-      sourceDigest := "0b2eb1c9febfbdff80ce96e65b124d380cc85080ef239491673ebddec0aa35cd"
+      sourceRanges := [{ start := 316, stop := 376 }]
+      sourceDigest := "50c940d409901a3d0ec551c54fd0acf5438724732bf886a4e45ecbb40558939b"
       conclusion := "covariant declared subsorting plus singleton Referents lift"
       reason := "All-S1 typing must consume the live sort hierarchy instead of the numeric-only A0 compatibility fragment."
     }
@@ -2031,7 +2209,7 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       anchor := "spec §3.3; pilot fixture #12"
       sourcePath := "tools/smusni-redex/inventory/fixtures.sexp"
       sourceRanges := [{ start := 1, stop := 55 }]
-      sourceDigest := "7d386d0453457d359061d94866353cbc71d81b0d2aa308ad6638e57da2ee6624"
+      sourceDigest := "e90ffa6f0dd3d57e658368da639ef079c6a7a4a9be2791697193dbf77276e09f"
       conclusion := "row head plus arity/event mode -> typed residual PredTerm"
       reason := "The frozen corpus supplies lexical heads through the fixture; its row arity and event mode are consumed explicitly and remain pilot-only pending #12."
     }
@@ -2041,8 +2219,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "PredTerm"
       anchor := "spec §3.3"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 369, stop := 390 }]
-      sourceDigest := "992b3c7a02972ae9ccb52c4d3c1b5a020e64d79cd2dcc98576f12770d17f8ba8"
+      sourceRanges := [{ start := 389, stop := 410 }]
+      sourceDigest := "9f27848ea17738a135b516ebf5cf22b0c52edfc027dcc760dfd5f23d640657a6"
       conclusion := "fill typed residual row; exhausted row -> Content"
       reason := "Primitive cases apply bound and lexical PredTerms, including labelled Eventuality fills."
     }
@@ -2052,8 +2230,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Combine"
       anchor := "spec §3.2; §4.8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 352, stop := 362 }, { start := 785, stop := 793 }]
-      sourceDigest := "07c64e8ba756233833fe8616146ba240e6c36cc51ba46e4cce78174e97bb8262"
+      sourceRanges := [{ start := 368, stop := 378 }, { start := 823, stop := 831 }]
+      sourceDigest := "ead7a7816d271669659c783502a7a8aa847b846b677dce15c07cdbff9ff6bcf2"
       conclusion := "Referents<T> x Referents<U> -> Referents<join(T,U)>"
       reason := "The primitive baseline contains plural joins and singleton lifts."
     }
@@ -2063,8 +2241,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "membership"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 856, stop := 875 }]
-      sourceDigest := "e3f5048fb7ff69129c31f5ed9648feb0bf08b67c2550769c56a8d42f80d213dc"
+      sourceRanges := [{ start := 904, stop := 923 }]
+      sourceDigest := "e4c79f1cf1d0ea9062cad302ff5a27637054065531cc0c131f27e70b9552bd77"
       conclusion := "T x Set<T> -> Content"
       reason := "The primitive baseline contains set membership."
     }
@@ -2074,8 +2252,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Assert/Mention/Do"
       anchor := "spec §7.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1971, stop := 1990 }]
-      sourceDigest := "57b87684630e4e808f45c74c8492a9640df84122cbd6722c27aa495438c8cd24"
+      sourceRanges := [{ start := 2167, stop := 2186 }]
+      sourceDigest := "381d9c5838b6fba07a30a94b4ebc3a9a38de39340e3d2c59434788959aeda48e"
       conclusion := "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse"
       reason := "The primitive baseline exercises inert act construction and discourse sequencing."
     }
@@ -2085,8 +2263,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "LocutionOf"
       anchor := "spec §7.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2122, stop := 2155 }]
-      sourceDigest := "df4916e4d586ca58154fdafc58209e14818f161c67ed75650d541884330bd70e"
+      sourceRanges := [{ start := 2327, stop := 2360 }]
+      sourceDigest := "f8b554c059640ddf97293610ba17f2b86bf5cc6bdc36051350e8ca96ea30fe7e"
       conclusion := "Referents<UtteranceToken> x Referents<Locution> -> Content"
       reason := "Three primitive gates discriminate the two argument types."
     }
@@ -2096,8 +2274,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "sign constructors"
       anchor := "spec §7.5"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2203, stop := 2218 }]
-      sourceDigest := "11e8badf34d74bc549e7dc18ee085f421b2950c789ac3c5eb37c3a647ebfdf31"
+      sourceRanges := [{ start := 2408, stop := 2441 }]
+      sourceDigest := "547b7a475f5bef98b055a299e84436c281a3ec9b255fc7bf2c358386502550de"
       conclusion := "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>"
       reason := "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
     }
@@ -2107,8 +2285,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Reify"
       anchor := "spec §9.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2420, stop := 2439 }]
-      sourceDigest := "0d3bf83133c00f773e2c9151216d9587cdf590dfcb4f907e9f211bab5c0f54d9"
+      sourceRanges := [{ start := 2632, stop := 2651 }]
+      sourceDigest := "b1bbffbee0f7ee8851d354dfb53a6714c8483f5e7340a12d76261000a947bbb1"
       conclusion := "Content -> Proposition"
       reason := "Reification is inert and must not inherit the operand effects."
     }
@@ -2118,8 +2296,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "RealizedContent"
       anchor := "spec §7.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2141, stop := 2174 }]
-      sourceDigest := "2397103ac7163a0eb28f239ddd26e1bda91ce6420568188880fea9ec6d3018a4"
+      sourceRanges := [{ start := 2346, stop := 2379 }]
+      sourceDigest := "f821e177f4d661318115a7afbbded7ff1d4a2500877567e759920436ad0a6261"
       conclusion := "Referents<UtteranceToken> -> Content with projective definedness"
       reason := "The primitive baseline contains the token-to-captured-content projection."
     }
@@ -2129,8 +2307,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "DropPlace"
       anchor := "spec §4.3"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 592, stop := 599 }]
-      sourceDigest := "db78b5053e00ff9bd548d9bd594de12602df709bc6b35b341bea93f877c28a30"
+      sourceRanges := [{ start := 629, stop := 636 }]
+      sourceDigest := "37e88d33491cc94e213975d288aa711bb0002338e6dab2fea8280f37c77cc75d"
       conclusion := "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>"
       reason := "The primitive baseline contains one valid row deletion gate."
     }
@@ -2140,8 +2318,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "te'a"
       anchor := "spec §12 MEX"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 4176, stop := 4182 }]
-      sourceDigest := "fdd23b858f9da2f7d8b456c4525855a14f64cd6a9c4b6c88dfeacd7ee1431369"
+      sourceRanges := [{ start := 4637, stop := 4643 }]
+      sourceDigest := "dfc7b446205e98f418287310c799af49d6fedd6ab64cfe742e615acb00dc33b0"
       conclusion := "Number x Natural -> Number"
       reason := "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
     }
@@ -2151,8 +2329,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Aggregate"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 888, stop := 927 }, { start := 1007, stop := 1025 }]
-      sourceDigest := "4677b6ed21ea0c7186d2af4e1d43be29e9b44b8b573e1c4df42c97603d75ccd7"
+      sourceRanges := [{ start := 936, stop := 975 }, { start := 1055, stop := 1073 }]
+      sourceDigest := "8c27dcecabce1a8c10d4efbafe3b9a599b8011ac368911d3c2cba66e302b1775"
       conclusion := "DecompositionBasis<Group<T>,T> x Group<T> -> Content"
       reason := "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
     }
@@ -2162,8 +2340,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "BasisUnitAt"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 888, stop := 927 }]
-      sourceDigest := "2a69fb741c139d5c7a668863e4a552642cb9ffe62b2a1ac2736e530d1d7a8f62"
+      sourceRanges := [{ start := 936, stop := 975 }]
+      sourceDigest := "dc43c298a71b0e20ec8dbf4fcea0d6d5fd98aa22b84654b438eac7843f90b29d"
       conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content"
       reason := "Recursive expansion of GunmaAt reaches the basis interface."
     }
@@ -2173,8 +2351,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "PeerUnitAt"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 888, stop := 932 }]
-      sourceDigest := "68f9ad85ebb617eb7649340dd2bf73033e0daddc300311760a7495c2e2da4e9f"
+      sourceRanges := [{ start := 936, stop := 980 }]
+      sourceDigest := "0a8fab9c0f78c7f4013bfbc32efe7b692209989f975d51074fd0a784be8ab9c8"
       conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content"
       reason := "Recursive expansion of GunmaAt reaches the peer interface."
     }
@@ -2184,8 +2362,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "JaiRoleAdmissible"
       anchor := "spec §12 bare jai"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3769, stop := 3808 }]
-      sourceDigest := "4dbcb6cd346b2562013e9e60486a9ae2bb0b7a2cac946fcfea54f0c7e223b0f6"
+      sourceRanges := [{ start := 4199, stop := 4238 }]
+      sourceDigest := "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0"
       conclusion := "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content"
       reason := "The JaiRaise mapping's constrained Context must be typed and pure."
     }
@@ -2195,8 +2373,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "InRegion"
       anchor := "spec §6.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3488, stop := 3509 }]
-      sourceDigest := "0a2788e3edebaf607049c15b32ede522fc2979e4f6af533fe8d019d0f000918f"
+      sourceRanges := [{ start := 3878, stop := 3899 }]
+      sourceDigest := "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d"
       conclusion := "Amount x Region<Scale> -> Content"
       reason := "The pure row-directed Grade template reaches this declared interface."
     }
@@ -2206,8 +2384,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Grade"
       anchor := "spec §6.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3488, stop := 3509 }]
-      sourceDigest := "0a2788e3edebaf607049c15b32ede522fc2979e4f6af533fe8d019d0f000918f"
+      sourceRanges := [{ start := 3878, stop := 3899 }]
+      sourceDigest := "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d"
       conclusion := "row metadata -> pure PredTerm<row>"
       reason := "The schema consumes its relation's declared degree projection, scale, and region without a site."
     }
@@ -2217,8 +2395,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "JaiRaise"
       anchor := "spec §12 bare jai"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3769, stop := 3808 }]
-      sourceDigest := "4dbcb6cd346b2562013e9e60486a9ae2bb0b7a2cac946fcfea54f0c7e223b0f6"
+      sourceRanges := [{ start := 4199, stop := 4238 }]
+      sourceDigest := "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0"
       conclusion := "row remapping plus role -> pure PredTerm<raised-row>"
       reason := "The schema consumes row metadata rather than inspecting predicate syntax."
     }
@@ -2228,8 +2406,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "context and index constants"
       anchor := "spec §5.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1317, stop := 1359 }]
-      sourceDigest := "56877dc9c3dcde9ff68421c0e4631799e64f827200cfb5cb5ed312a6be224f91"
+      sourceRanges := [{ start := 1410, stop := 1462 }]
+      sourceDigest := "ccafa7855ecf9d2f9f673fa61bbbbcff2dd938709c7f24392aa4f732402d2f72"
       conclusion := "declared utterance-context projection -> declared type"
       reason := "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
     }
@@ -2239,8 +2417,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Polar/OpenQ/Ask"
       anchor := "spec §7.1; §8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1975, stop := 1990 }, { start := 2330, stop := 2418 }]
-      sourceDigest := "6fe53ac92d2c7cf8b3f178a2b3fa9184f3c3d4ab5c05e46b012787a2a12fe425"
+      sourceRanges := [{ start := 2171, stop := 2186 }, { start := 2542, stop := 2630 }]
+      sourceDigest := "f42a5b6929ffadd7a8450070af5e72a00e54729003254f28f13593d20b0257f7"
       conclusion := "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>"
       reason := "Selected Close cases occur beneath question constructors."
     }
@@ -2250,8 +2428,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Local"
       anchor := "spec §5.2"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1411, stop := 1429 }]
-      sourceDigest := "2d0ef2086235617f9ce11b6525ab9f10eb1e2d8183dbdea593c480041d10f0d9"
+      sourceRanges := [{ start := 1511, stop := 1529 }]
+      sourceDigest := "74201c66b7c7bc690f1588c95e14a674f4742cb51dc878626835eb5c4fbabd20"
       conclusion := "RefComp<A> -> RefComp<A> under expected mode"
       reason := "Collection and performance specimens use the accessibility delimiter."
     }
@@ -2261,8 +2439,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Perform"
       anchor := "spec §7.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1984, stop := 1995 }]
-      sourceDigest := "bb47ec9084a47ad471faefa2cf0c4d7da18efbfe841c47d7d5f4ad3e30b89220"
+      sourceRanges := [{ start := 2180, stop := 2191 }]
+      sourceDigest := "1e8a6402f7dd12a3caed7dcfbd460868b7249f2df31d292f156ef27409d752c4"
       conclusion := "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>"
       reason := "Selected discourse specimens spell the role explicitly."
     }
@@ -2272,8 +2450,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Generic"
       anchor := "spec §5.8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1690, stop := 1726 }]
-      sourceDigest := "a8ffc7f9f0412c9857fcc8d8c16c5bf989f0f8991f9ec1721ce3a537c747367f"
+      sourceRanges := [{ start := 1887, stop := 1903 }]
+      sourceDigest := "f439c967f1f057748ae22437e17022ebf010666f8b967631f0af267e1e50b48f"
       conclusion := "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content"
       reason := "Selected cases wrap supported Close expansions under generic quantification."
     }
@@ -2283,8 +2461,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Named/Holds/display relations"
       anchor := "spec §7.4–§7.6; §9.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2203, stop := 2228 }, { start := 2420, stop := 2439 }]
-      sourceDigest := "de1592acfe288040b7586e7587a15769ab8f45b08b0b38723ae40115b34eef57"
+      sourceRanges := [{ start := 2408, stop := 2458 }, { start := 2632, stop := 2651 }]
+      sourceDigest := "f3ab223a40382412e4b2cd8f5d485b450858810b9e25a3a02150c7f28c18d9f6"
       conclusion := "typed interface arguments -> Content"
       reason := "Selected cases use the declared content-level interface relations around the expansion slice."
     }
@@ -2294,8 +2472,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "subtraction/AmountValue/abstraction rows"
       anchor := "spec §4.9; §9.2"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 856, stop := 881 }, { start := 2505, stop := 2535 }]
-      sourceDigest := "d57a4f2082aeb04d3b58e58ec18f434098fedbcda9280cc047b974bdf3b995a3"
+      sourceRanges := [{ start := 904, stop := 929 }, { start := 2717, stop := 2747 }]
+      sourceDigest := "007c2fb4a6fcdda419dd44ffcc4ed5673967940d0f06a2f8fe836d2b96a6d4b6"
       conclusion := "Number operations and typed abstraction relation rows"
       reason := "Selected cases embed Close under the numeric abstraction interfaces."
     }
@@ -2305,8 +2483,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "bound and derived PredTerm rows"
       anchor := "spec §3.3"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 369, stop := 420 }]
-      sourceDigest := "4c7eeed870ba537128a60e9e4911a50429426e492fcd608b126b7a630bf084b7"
+      sourceRanges := [{ start := 389, stop := 440 }]
+      sourceDigest := "139429b72e5592895c517234127ea649568cadb91fe553f2a2070265fe099d7a"
       conclusion := "row-directed partial filling preserves the residual PredTerm row"
       reason := "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
     }
@@ -2360,7 +2538,7 @@ def m2LexicalRowRecords : List M2LexicalRowRecord := [
   { head := "bajra", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row: surface/limbs/gait (jbovlaste); pending #12" },
   { head := "balvi", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture binary tense-facet projection; pending #12" },
   { head := "barda", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
-  { head := "batci", ordinaryArity := 3, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
+  { head := "batci", ordinaryArity := 4, eventMode := .directEvent, provenance := "officialdata batci: biter, bitten, locus, tool; jbotci vlacku 2026-09-10; fixture pending full #12 adjudication" },
   { head := "bevri", ordinaryArity := 4, eventMode := .directEvent, provenance := "fixture; official row pending #12" },
   { head := "blabi", ordinaryArity := 1, eventMode := .holdingState, provenance := "fixture; official row pending #12" },
   { head := "cabna", ordinaryArity := 2, eventMode := .holdingState, provenance := "fixture binary tense-facet projection; pending #12" },
@@ -2419,54 +2597,66 @@ structure M2GrammarRecord where
 def M2GrammarCategory.record : M2GrammarCategory → M2GrammarRecord
   | .type => {
       category := .type
-      sourceRange := { start := 66, stop := 72 }
-      sourceDigest := "ddd5841444bed59674aab9de564f4a346a674cb6f30365246adfee62ae445bbe"
+      sourceRange := { start := 75, stop := 81 }
+      sourceDigest := "eb26a8c63deb8ea0c7f301b7ee07a2a0e8b891c09266ec2bed0f6e17f48f2c19"
       source := "[τ Entity Eventuality Number Natural Cardinal Content ClauseContent Discourse ThresholdKind (Referents τ) (Group τ) (List τ) (Set τ) (DecompositionBasis τ τ) (Act force) (ActOccurrence force) (Fn (τ ...) τ) (EFn (τ ...) τ) (RefComp τ) (PerfComp τ)]"
     }
   | .direction => {
       category := .direction
-      sourceRange := { start := 73, stop := 73 }
-      sourceDigest := "eb5ec310fab7e1459145cab7d8e95aa8fa6cfae2ce8982aa478725424f6dd55b"
+      sourceRange := { start := 82, stop := 82 }
+      sourceDigest := "374b9d5df554b386686f7f53a0b5e8364d7803de5254e23e595f70f862f97ad9"
       source := "[direction synth (check τ)]"
     }
   | .r => {
       category := .r
-      sourceRange := { start := 75, stop := 75 }
-      sourceDigest := "e9cc470d4fb06e2c0c6ec7ced8f6692ead4f0d4433c02abba7556104fa11af69"
+      sourceRange := { start := 84, stop := 84 }
+      sourceDigest := "e893ae29087ad151a107719caf6e234c6ae79fc58182ba740562da8b5d2bc1e5"
       source := "[R (typing τ (effect ...) (obligation ...))]"
     }
   | .t => {
       category := .t
-      sourceRange := { start := 81, stop := 133 }
-      sourceDigest := "b98defc81b5bded0c2151eb52ec085ab1382d07337db2d5510659657fcaa06f1"
-      source := "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
+      sourceRange := { start := 90, stop := 145 }
+      sourceDigest := "969132bb5431d22e434c40814384860cdf505b12b7296bcaa7646c9005aca3f4"
+      source := "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (closure-head t t) (Only t t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (comparison t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
     }
   | .rowDeclaration => {
       category := .rowDeclaration
-      sourceRange := { start := 134, stop := 134 }
-      sourceDigest := "53368971f7f0abc60f5107f981b6cf1e92d82b6eec8e9fc2d86bb8cbe26b6ba8"
+      sourceRange := { start := 146, stop := 146 }
+      sourceDigest := "538fac7127b5b053b6b550bbc7723f54f033f5cebe596b7b34adb5185dfe6b91"
       source := "[ρdecl (row variable-not-otherwise-mentioned n event-mode (label ...))]"
     }
   | .dep => {
       category := .dep
-      sourceRange := { start := 140, stop := 140 }
-      sourceDigest := "2a1dac01c6d9a2d75f8fe1bfe837364b5b522f108db0f8246b89044f1153b5e9"
+      sourceRange := { start := 152, stop := 152 }
+      sourceDigest := "1c3f1135d9c2b9e764bf9f757d4050c5deddb5733c81a1c0280a842760211acf"
       source := "[dep (site site-id) (outer x τ) (member)]"
     }
   | .role => {
       category := .role
-      sourceRange := { start := 141, stop := 141 }
-      sourceDigest := "71783de21e76648de58b32e193eb0f3cccf54207846901559657fe2dd6de2367"
+      sourceRange := { start := 153, stop := 153 }
+      sourceDigest := "b62ee5f5d82b2782fd074d60355196523d965159aba888f562e753c1425c80b7"
       source := "[role (context t ...) (vague t)]"
+    }
+  | .closureHead => {
+      category := .closureHead
+      sourceRange := { start := 66, stop := 66 }
+      sourceDigest := "319d71777fa22dc8d21a35f46d53e3b5c14c90f950c79fda333e8f64c0c0c9ff"
+      source := "[closure-head IndividualSome IndividualNo IndividualEvery PluralSome PluralNo]"
+    }
+  | .comparison => {
+      category := .comparison
+      sourceRange := { start := 67, stop := 67 }
+      sourceDigest := "660fe622afed90344449b602babfa25450574afa6d813281c83f1c47026bec23"
+      source := "[comparison < ≤]"
     }
 
 def m2GrammarRecords : List M2GrammarRecord :=
   M2GrammarCategory.all.map M2GrammarCategory.record
 
 def m2DefinitionManifestDigest : String :=
-  "91b5d6a86e493db27968edb4e88bcc1ef15ca10c4892c3389fb0aad6f5c437dc"
+  "908688498646163b25de9b88e3d5ee1e372e28685ef64964fc3f7d3b4d644764"
 
 def m2TypingManifestDigest : String :=
-  "4c22c288b884c9f08045a204c660c48f9a0fa4183a3b87271dbf0e66d1d0b6cb"
+  "b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c"
 
 end SmusniPilot

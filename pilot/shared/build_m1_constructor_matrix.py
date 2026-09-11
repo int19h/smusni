@@ -24,7 +24,7 @@ DEFINITIONS = ROOT / "tools/smusni-redex/inventory/definitions.sexp"
 A0 = ROOT / "tools/smusni-redex/port-a0.rkt"
 SPEC = ROOT / "spec.md"
 OUTPUT = ROOT / "pilot/shared/M1_CONSTRUCTOR_DISPOSITION.tsv"
-BASE_HEAD = "892a7040d4f3786be42635089b6aac7743ba6b74"
+BASE_HEAD = "18cd6267ad38abde8836a553f1531a4f05f339c6"
 
 PRIMITIVE = "primitive-core"
 DEFINED = "defined-surface"
@@ -312,7 +312,18 @@ def build_rows() -> dict[str, Row]:
     constant_rule = bracket_rule(grammar, "constant")
     type_rule = bracket_rule(grammar, "τ")
 
+    # These are grammar nonterminals, not semantic constructors. Expand their
+    # declared alternatives; never add a tool-only pseudo-head to the core.
+    head_families = {name: bracket_rule(grammar, name)[1:]
+                     for name in ("closure-head", "comparison")}
+    patterns = []
     for pattern in term_rule[1:]:
+        if isinstance(pattern, list) and pattern[0] in head_families:
+            patterns.extend([[head, *pattern[1:]]
+                             for head in head_families[pattern[0]]])
+        else:
+            patterns.append(pattern)
+    for pattern in patterns:
         if isinstance(pattern, list):
             head = pattern[0]
             if head == "t":

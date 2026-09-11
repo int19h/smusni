@@ -161,7 +161,100 @@ theorem unseen_actual_clause_relation_to_dispatch
     .d12ActualClause [unseenRelationClause] unseenRelationPayload
     ⟨unseen_actual_clause_template, certificate, typing⟩
 
+def runE02Gates : IO Unit := do
+  for member in [Ty.entity, Ty.eventuality, Ty.number] do
+    let p : FreeId := { domain := "$unseen-restrictor", serial := 7 }
+    let q : FreeId := { domain := "$unseen-nuclear", serial := 19 }
+    for referenceLevel in [false, true] do
+      let parameter := if referenceLevel then Ty.referents member else member
+      let environment : Environment 0 := { Environment.empty with free := [
+        (p, Ty.pureFn [parameter] Ty.content),
+        (q, Ty.effectfulFn [parameter] Ty.content)] }
+      let definitions := if referenceLevel then [.d12PluralSome, .d12PluralNo]
+        else [.d12IndividualSome, .d12IndividualNo, .d12IndividualEvery]
+      for definition in definitions do
+        let key : ExpansionKey := { document := "unseen-e02", occurrence := 17, definition }
+        let expanded ← IO.ofTyping <| dispatchDefinition environment key definition
+          [.free p, .free q]
+        let typed ← IO.ofTyping <| synth environment expanded.term
+        if typed.type != Ty.content || !typed.effects.contains .effectfulCall ||
+            typed.effects.contains .refer || !typingTraceSupported typed then
+          throw <| IO.userError "non-exporting closure lost its typed effect/domain contract"
+  let basis : FreeId := { domain := "$unseen-basis", serial := 11 }
+  let alternative : FreeId := { domain := "$unseen-alternative", serial := 1 }
+  let host : FreeId := { domain := "$unseen-host", serial := 2 }
+  let focus : FreeId := { domain := "$unseen-focus", serial := 3 }
+  let reference := Ty.referents Ty.eventuality
+  let focusEnvironment : Environment 0 := { Environment.empty with free := [
+    (alternative, Ty.pureFn [reference] Ty.content),
+    (host, Ty.pureFn [reference] Ty.content), (focus, reference)] }
+  let onlyKey : ExpansionKey := {
+    document := "unseen-only"
+    occurrence := 42
+    definition := .d12Only }
+  let only ← IO.ofTyping <| dispatchDefinition focusEnvironment onlyKey .d12Only
+    [.free alternative, .free host, .free focus]
+  let onlyTyped ← IO.ofTyping <| synth focusEnvironment only.term
+  if !onlyTyped.effects.isEmpty || !typingTraceSupported onlyTyped then
+    throw <| IO.userError "pure Only lost its typed nonprojective contract"
+  let effectfulHost := { focusEnvironment with free := [
+    (alternative, Ty.pureFn [reference] Ty.content),
+    (host, Ty.effectfulFn [reference] Ty.content), (focus, reference)] }
+  if (dispatchDefinition effectfulHost onlyKey .d12Only
+      [.free alternative, .free host, .free focus]).isOk then
+    throw <| IO.userError "Only silently admitted an effectful host"
+  let cover : FreeId := { domain := "$unseen-cover", serial := 12 }
+  let component := Ty.eventuality
+  let environment : Environment 0 := { Environment.empty with free := [
+    (basis, Ty.decompositionBasis (Ty.group component) component),
+    (cover, Ty.referents component)] }
+  let key : ExpansionKey := {
+    document := "unseen-massify"
+    occurrence := 23
+    definition := .d12Massify }
+  let expanded ← IO.ofTyping <| dispatchDefinition environment key .d12Massify
+    [.free basis, .free cover]
+  match expanded.term with
+  | .primitive .refer (.positional (.lambda referenceType
+      (.primitive .exists (.positional (.lambda groupType _) .nil))) .nil) =>
+      if referenceType != Ty.referents (Ty.group component) ||
+          groupType != Ty.group component then
+        throw <| IO.userError "Massify lost the canonical group/reference distinction"
+  | _ => throw <| IO.userError "Massify must use Refer/existential CoRef, not counted selection"
+  let typed ← IO.ofTyping <| checkBidirectional environment expanded.term
+    (Ty.refComp (Ty.referents (Ty.group component)))
+  if !typingTraceSupported typed then
+    throw <| IO.userError "new Massify output is outside the typing soundness domain"
+  let wrongBasis := { environment with free := [
+    (basis, Ty.decompositionBasis Ty.entity component),
+    (cover, Ty.referents component)] }
+  if (dispatchDefinition wrongBasis key .d12Massify [.free basis, .free cover]).isOk then
+    throw <| IO.userError "Massify ignored the basis whole type"
+  for comparison in [FirstOrderPrimitive.lessThan, .lessOrEqual] do
+    let typed ← IO.ofTyping <| synth Environment.empty
+      (primitive comparison [.natural 917, .natural 1203])
+    if !typed.trace.contains .e01TComparison || !typingTraceSupported typed then
+      throw <| IO.userError "comparison omitted its proved rule"
+    if (synth Environment.empty (primitive comparison [.string "wrong", .natural 1])).isOk then
+      throw <| IO.userError "comparison accepted a nonnumeric operand"
+  let profiles ← IO.ofExcept <| SExpr.parse "((17 (dependent (governors 3 8) (scope 8))))" >>=
+    decodeRRReferences
+  match profiles with
+  | [profile] =>
+      if profile.source != 17 || profile.governors != [3, 8] || profile.scope != some 8 then
+        throw <| IO.userError "dependent reference metadata was ignored or made invariant"
+  | _ => throw <| IO.userError "reference profile count changed"
+  for source in ["false", "((0 invariant) (0 invariant))",
+      "((1 (dependent (governors) (scope 0))))",
+      "((1 (dependent (governors 0 0) (scope 0))))",
+      "((1 (dependent (governors 1) (scope 1))))",
+      "((1 (dependent (governors 0) (scope 2))))"] do
+    let parsed ← IO.ofExcept (SExpr.parse source)
+    if (decodeRRReferences parsed).isOk then
+      throw <| IO.userError s!"malformed reference metadata accepted: {source}"
+
 def runM2TypingGates : IO Unit := do
+  runE02Gates
   let environment := Environment.empty
   IO.ofExcept validateExpectedOnlyClassifierMutation
   IO.ofExcept validatePredTermDuplicateEventRejection

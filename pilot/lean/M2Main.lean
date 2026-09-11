@@ -81,8 +81,8 @@ def main : IO Unit := do
     if ["definition-property", "definition-basis"].contains
         outcome.decidingRule then
       let anchor := if outcome.decidingRule == "definition-property" then
-        "spec §5.3:1457-1461; oracle not-in-domain/unavailable"
-      else "spec §12:3565-3567; Massify basis type"
+        "spec §5.3:1570-1584; oracle not-in-domain/unavailable"
+      else "spec §12:3967-3992; Massify basis type"
       IO.println <| s!"M2 semantic-typed-rejection {outcome.id} " ++
         s!"rule={outcome.decidingRule} anchor={anchor} " ++
         s!"expanded={repr outcome.expandedDefinitions}"

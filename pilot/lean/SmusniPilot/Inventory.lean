@@ -955,7 +955,6 @@ def FirstOrderPrimitive.all : List FirstOrderPrimitive := [
 
 inductive SurfaceHead where
   | actualClause
-  | additive
   | at
   | atLeast
   | atMost
@@ -991,6 +990,9 @@ inductive SurfaceHead where
   | groundedBy
   | gunmaAt
   | gunmaPredAt
+  | individualEvery
+  | individualNo
+  | individualSome
   | interval
   | jaiPromote
   | jaiRaise
@@ -1014,6 +1016,8 @@ inductive SurfaceHead where
   | no
   | only
   | overlap
+  | pluralNo
+  | pluralSome
   | realized
   | reciprocate
   | regionComplement
@@ -1042,7 +1046,6 @@ inductive SurfaceHead where
 
 def SurfaceHead.name : SurfaceHead → String
   | .actualClause => "term:ActualClause"
-  | .additive => "term:Additive"
   | .at => "term:At"
   | .atLeast => "term:AtLeast"
   | .atMost => "term:AtMost"
@@ -1078,6 +1081,9 @@ def SurfaceHead.name : SurfaceHead → String
   | .groundedBy => "term:GroundedBy"
   | .gunmaAt => "term:GunmaAt"
   | .gunmaPredAt => "term:GunmaPredAt"
+  | .individualEvery => "term:IndividualEvery"
+  | .individualNo => "term:IndividualNo"
+  | .individualSome => "term:IndividualSome"
   | .interval => "term:Interval"
   | .jaiPromote => "term:JaiPromote"
   | .jaiRaise => "term:JaiRaise"
@@ -1101,6 +1107,8 @@ def SurfaceHead.name : SurfaceHead → String
   | .no => "term:No"
   | .only => "term:Only"
   | .overlap => "term:Overlap"
+  | .pluralNo => "term:PluralNo"
+  | .pluralSome => "term:PluralSome"
   | .realized => "term:Realized"
   | .reciprocate => "term:Reciprocate"
   | .regionComplement => "term:RegionComplement"
@@ -1128,7 +1136,6 @@ def SurfaceHead.name : SurfaceHead → String
 
 def SurfaceHead.ofName : String → Option SurfaceHead
   | "term:ActualClause" => Option.some .actualClause
-  | "term:Additive" => Option.some .additive
   | "term:At" => Option.some .at
   | "term:AtLeast" => Option.some .atLeast
   | "term:AtMost" => Option.some .atMost
@@ -1164,6 +1171,9 @@ def SurfaceHead.ofName : String → Option SurfaceHead
   | "term:GroundedBy" => Option.some .groundedBy
   | "term:GunmaAt" => Option.some .gunmaAt
   | "term:GunmaPredAt" => Option.some .gunmaPredAt
+  | "term:IndividualEvery" => Option.some .individualEvery
+  | "term:IndividualNo" => Option.some .individualNo
+  | "term:IndividualSome" => Option.some .individualSome
   | "term:Interval" => Option.some .interval
   | "term:JaiPromote" => Option.some .jaiPromote
   | "term:JaiRaise" => Option.some .jaiRaise
@@ -1187,6 +1197,8 @@ def SurfaceHead.ofName : String → Option SurfaceHead
   | "term:No" => Option.some .no
   | "term:Only" => Option.some .only
   | "term:Overlap" => Option.some .overlap
+  | "term:PluralNo" => Option.some .pluralNo
+  | "term:PluralSome" => Option.some .pluralSome
   | "term:Realized" => Option.some .realized
   | "term:Reciprocate" => Option.some .reciprocate
   | "term:RegionComplement" => Option.some .regionComplement
@@ -1215,7 +1227,6 @@ def SurfaceHead.ofName : String → Option SurfaceHead
 
 def SurfaceHead.all : List SurfaceHead := [
   .actualClause,
-  .additive,
   .at,
   .atLeast,
   .atMost,
@@ -1251,6 +1262,9 @@ def SurfaceHead.all : List SurfaceHead := [
   .groundedBy,
   .gunmaAt,
   .gunmaPredAt,
+  .individualEvery,
+  .individualNo,
+  .individualSome,
   .interval,
   .jaiPromote,
   .jaiRaise,
@@ -1274,6 +1288,8 @@ def SurfaceHead.all : List SurfaceHead := [
   .no,
   .only,
   .overlap,
+  .pluralNo,
+  .pluralSome,
   .realized,
   .reciprocate,
   .regionComplement,

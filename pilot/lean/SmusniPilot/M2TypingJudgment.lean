@@ -721,6 +721,8 @@ mutual
   inductive BinaryCheckedPrimitiveRule : FirstOrderPrimitive → Ty → Ty → Prop where
     | implies : BinaryCheckedPrimitiveRule .implies Ty.content Ty.content
     | subtract : BinaryCheckedPrimitiveRule .subtract Ty.number Ty.number
+    | lessThan : BinaryCheckedPrimitiveRule .lessThan Ty.number Ty.content
+    | lessOrEqual : BinaryCheckedPrimitiveRule .lessOrEqual Ty.number Ty.content
 end
 
 @[simp] theorem observation_withRule (result : TypingResult)

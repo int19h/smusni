@@ -1221,6 +1221,7 @@ mutual
               |>.withRule .a0Synth
         | _ => failure "arity" "CloseClause expects one ClauseContent"
     | .perform => synthPerform environment arguments
+    | .lessThan | .lessOrEqual => binaryCheck .e01TComparison Ty.number Ty.content
     | .list => failure "expected-type" "List literals require an expected List<T>"
     | .refer | .selectExactly | .selectAtLeast | .selectAllBut | .local =>
         failure "expected-type" s!"{operator.name} requires an expected RefComp type"
@@ -1493,7 +1494,7 @@ def typingRuleImplemented (rule : M2TypingRuleId) : Bool :=
     .m2TPredTermApply, .m2TLexicalRow, .m2TString,
     .m2TCoreConstant, .m2TContextConstants, .m2TNumericInterfaces, .m2TLocal,
     .a0TSpeaker, .a0TAudience, .a0TThresholdKind, .a0TTop,
-    .a0TAnd, .b1TImplication, .b1TNegation, .a0TEquality,
+    .a0TAnd, .b1TImplication, .b1TNegation, .a0TEquality, .e01TComparison,
     .b1TAmong, .b1TAddition, .a0TStateClause,
     .b1TForall, .b1TExists, .b1TPresupposeReference,
     .a0TSetOf, .a0TCard, .a0TAdmissibleThreshold, .a0TCloseClause,

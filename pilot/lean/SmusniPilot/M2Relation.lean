@@ -122,7 +122,8 @@ inductive TemplateEquation {scope : Nat} (environment : Environment scope)
         (expandAtMost memberType count property nuclear).payload
   | canonicalAggregateAt (basis group cover : Term scope)
       (wholeType componentType : Ty)
-      (basisType : DecompositionBasisJudgment environment basis wholeType componentType) :
+      (basisType : DecompositionBasisJudgment environment basis wholeType componentType)
+      (groupBasis : wholeType = Ty.group componentType) :
       TemplateEquation environment key .d12CanonicalAggregateAt [basis, group, cover]
         (expandCanonicalAggregateAt componentType basis group cover).payload
   | coRef (first second : Term scope) :
@@ -149,8 +150,40 @@ inductive TemplateEquation {scope : Nat} (environment : Environment scope)
       (propertyType : PurePropertyJudgment environment property memberType) :
       TemplateEquation environment key .d12GlobalExactly [count, property, nuclear]
         (expandGlobalExactly memberType count property nuclear).payload
+  | individualSome (property nuclear : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment property parameter)
+      (domain : Ty.firstOrder parameter = true) :
+      TemplateEquation environment key .d12IndividualSome [property, nuclear]
+        (expandIndividualSome parameter property nuclear).payload
+  | individualNo (property nuclear : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment property parameter)
+      (domain : Ty.firstOrder parameter = true) :
+      TemplateEquation environment key .d12IndividualNo [property, nuclear]
+        (expandIndividualNo parameter property nuclear).payload
+  | individualEvery (property nuclear : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment property parameter)
+      (domain : Ty.firstOrder parameter = true) :
+      TemplateEquation environment key .d12IndividualEvery [property, nuclear]
+        (expandIndividualEvery parameter property nuclear).payload
+  | pluralSome (property nuclear : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment property parameter)
+      (domain : referenceClosureDomain parameter = true) :
+      TemplateEquation environment key .d12PluralSome [property, nuclear]
+        (expandPluralSome parameter property nuclear).payload
+  | pluralNo (property nuclear : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment property parameter)
+      (domain : referenceClosureDomain parameter = true) :
+      TemplateEquation environment key .d12PluralNo [property, nuclear]
+        (expandPluralNo parameter property nuclear).payload
+  | only (alternatives host focus : Term scope) (parameter : Ty)
+      (propertyType : PurePropertyJudgment environment alternatives parameter)
+      (hostType : PurePropertyJudgment environment host parameter)
+      (domain : referenceClosureDomain parameter = true) :
+      TemplateEquation environment key .d12Only [alternatives, host, focus]
+        (expandOnly parameter alternatives host focus).payload
   | massify (basis cover : Term scope) (wholeType componentType : Ty)
-      (basisType : DecompositionBasisJudgment environment basis wholeType componentType) :
+      (basisType : DecompositionBasisJudgment environment basis wholeType componentType)
+      (groupBasis : wholeType = Ty.group componentType) :
       TemplateEquation environment key .d12Massify [basis, cover]
         (expandMassify componentType basis cover).payload
   | maxRefer (property : Term scope) (memberType : Ty)
@@ -234,6 +267,11 @@ theorem declarative_dispatch_complete {scope : Nat}
     dispatchDefinition environment key definition arguments = .ok payload := by
   rcases derivation with ⟨equation, certificate, _typing⟩
   cases equation
+  case only alternatives host focus parameter propertyType hostType domain =>
+    have alternativesExecutable := pure_property_executable propertyType
+    have hostExecutable := pure_property_executable hostType
+    simp [dispatchDefinition, alternativesExecutable, hostExecutable, domain, certificate,
+      bne, Ty.beq_self]
   all_goals
     try have propertyExecutable :=
       pure_property_executable ‹PurePropertyJudgment _ _ _›
@@ -244,7 +282,7 @@ theorem declarative_dispatch_complete {scope : Nat}
   all_goals
     simp only [dispatchDefinition] <;>
     simp only [except_pure_eq_ok, except_ok_bind] <;>
-    simp_all [executableCount, isZeroTerm, pure_property_executable,
+    simp_all [executableCount, isZeroTerm, bne, Ty.beq_self, pure_property_executable,
       reference_member_executable, decomposition_basis_executable] <;>
     try rw [certificate] <;>
     try rfl
@@ -257,6 +295,7 @@ theorem declarative_sound {scope : Nat} (environment : Environment scope)
     TemplateEquation environment key definition arguments payload :=
   derivation.equation
 
+set_option maxHeartbeats 800000 in
 theorem dispatch_sound_against_template {scope : Nat}
     (environment : Environment scope) (key : ExpansionKey)
     (definition : M2DefinitionId) (arguments : List (Term scope))
@@ -268,6 +307,12 @@ theorem dispatch_sound_against_template {scope : Nat}
   rcases supported with ⟨expectedPayload, equation⟩
   have originalEquation := equation
   cases equation
+  case only alternatives host focus parameter propertyType hostType domain =>
+    have alternativesExecutable := pure_property_executable propertyType
+    have hostExecutable := pure_property_executable hostType
+    simp [dispatchDefinition, alternativesExecutable, hostExecutable, domain,
+      bne, Ty.beq_self] at success
+    split at success <;> simp_all [coreElaborationFailure]
   all_goals
     try have propertyExecutable :=
       pure_property_executable ‹PurePropertyJudgment _ _ _›
@@ -276,7 +321,7 @@ theorem dispatch_sound_against_template {scope : Nat}
     try have basisExecutable :=
       decomposition_basis_executable ‹DecompositionBasisJudgment _ _ _ _›
   all_goals
-    simp_all [dispatchDefinition, executableCount, isZeroTerm]
+    simp_all [dispatchDefinition, executableCount, isZeroTerm, bne, Ty.beq_self]
   all_goals
     repeat' split at success
     try simp_all

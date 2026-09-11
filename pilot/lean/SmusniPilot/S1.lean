@@ -7,7 +7,7 @@ namespace SmusniPilot
 open Lean
 
 def pinnedM1BaseHead : String :=
-  "892a7040d4f3786be42635089b6aac7743ba6b74"
+  "18cd6267ad38abde8836a553f1531a4f05f339c6"
 
 structure S1Counts where
   total_cases : Nat
@@ -66,13 +66,20 @@ structure CorpusCase where
   inventory : List String
   deriving Repr
 
+def decodeCorpusEnvironmentEntry : SExpr → Except String (String × SExpr)
+  | .list _ (.atom (.symbol name) :: types) => do
+      if !name.startsWith "$" then
+        throw s!"environment identity is not a variable: {name}"
+      match types with
+      | [] => throw "environment entry has no type"
+      | [type] => pure (name, type)
+      | _ => pure (name, .list .paren types)
+  | value => .error s!"malformed environment entry: {repr value}"
+
 def validateCorpusEnvironment : SExpr → Except String Unit
   | .list _ entries => do
-      let names ← entries.mapM fun
-        | .list _ [.atom (.symbol name), _] =>
-            if name.startsWith "$" then pure name
-            else .error s!"environment identity is not a variable: {name}"
-        | value => .error s!"malformed environment entry: {repr value}"
+      let names ← entries.mapM fun entry => do
+        pure (← decodeCorpusEnvironmentEntry entry).1
       if names.length != names.eraseDups.length then
         .error "environment has duplicate variable identities"
   | value => .error s!"environment is not a list: {repr value}"
@@ -297,7 +304,43 @@ def sha256File (root path : String) : IO String := do
 
 def rrFieldNames : List String :=
   ["parse", "attach", "readings", "rows", "stores", "sites", "anaphora",
-   "force"]
+   "force", "references"]
+
+structure RRReferenceProfile where
+  source : Nat
+  governors : List Nat
+  scope : Option Nat
+  deriving Repr, BEq
+
+def decodeRRNatural : SExpr → Except String Nat
+  | .atom (.symbol value) =>
+      match value.toNat? with
+      | some number => pure number
+      | none => .error "reference source location is not natural"
+  | _ => .error "reference source location is not a symbol"
+
+def decodeRRReferences : SExpr → Except String (List RRReferenceProfile)
+  | .list _ entries => do
+      let profiles ← entries.mapM fun
+        | .list _ [source, .atom (.symbol "invariant")] => do
+            pure { source := ← decodeRRNatural source, governors := [], scope := none }
+        | .list _ [source, .list _ [
+            .atom (.symbol "dependent"),
+            .list _ (.atom (.symbol "governors") :: governors),
+            .list _ [.atom (.symbol "scope"), scope]]] => do
+            let source ← decodeRRNatural source
+            let governors ← governors.mapM decodeRRNatural
+            let scope ← decodeRRNatural scope
+            if governors.isEmpty || governors.length != governors.eraseDups.length ||
+                governors.contains source || !governors.contains scope then
+              throw "reference dependency needs distinct governors and a governing scope"
+            pure { source, governors, scope := some scope }
+        | _ => throw "malformed explicit reference profile"
+      let locations := profiles.map (·.source)
+      if locations.length != locations.eraseDups.length then
+        throw "duplicate reference source location"
+      pure profiles
+  | _ => .error "RR.references must be an explicit list"
 
 def validateRRCase : SExpr → Except String Unit
   | .list _
@@ -313,7 +356,10 @@ def validateRRCase : SExpr → Except String Unit
         .error "RR case has an unknown field"
       else if rrFieldNames.any fun name => !names.contains name then
         .error "RR case is missing a required field"
-      else pure ()
+      else
+        let some references := SExpr.field? "references" fields
+          | .error "RR case is missing references"
+        discard <| decodeRRReferences references
   | _ => .error "malformed RR case"
 
 def validateRRFixture : SExpr → Except String Unit
@@ -355,7 +401,10 @@ def validateParseCase (ordinary : Bool) (value : Json) : Except String Unit := d
     validateJsonString (← value.getObjVal? "source_comment")
     match value.getObjVal? "unresolved" with
     | .ok (.bool _) => pure ()
-    | .ok _ => .error "parse case unresolved is not boolean"
+    | .ok (.str reason) =>
+        if reason.isEmpty then .error "parse case unresolved reason is empty"
+        else pure ()
+    | .ok _ => .error "parse case unresolved is neither boolean nor explicit reason"
     | .error _ => pure ()
 
 def validateParseFixture (value : Json) : Except String Unit := do
@@ -399,6 +448,9 @@ def validateTypedRecord (root : String) (record : S1TypedRecord) : IO Unit := do
     throw <| IO.userError s!"digest mismatch for {record.path}"
   let source ← IO.FS.readFile (root ++ "/" ++ record.path)
   match record.schema with
+  | "HistoricalRRFixture" =>
+      discard <| IO.ofExcept (SExpr.parse source)
+      IO.println s!"S1 historical RR {record.path}: not a current source input"
   | "RRFixture" =>
       let parsed ← IO.ofExcept <| (SExpr.parse source).mapError fun error =>
         s!"{record.path}: {error}"
@@ -561,14 +613,15 @@ def validateCorpusCase (lexicalHeads : List String) (manifest : S1Manifest)
     throw <| IO.userError s!"case {record.id}: inventory hash mismatch"
   if actualTag == "primitive-core" then
     let rrLink := (rrLinkFromProvenance record.provenance).bind fun candidate =>
-      if manifest.typed_records.any fun typed => typed.path == candidate
+      if manifest.typed_records.any fun typed =>
+          typed.path == candidate && typed.schema == "RRFixture"
       then some candidate else none
     let bundle ← IO.ofExcept <|
       Interchange.Bundle.ofSurfaceWith record.id lexicalHeads freeNames
         rrLink surface
     if bundle.sites.any fun site => site.rrLink != rrLink then
       throw <| IO.userError s!"case {record.id}: site RR linkage mismatch"
-    if record.id == "53f8d3bb7c342dc312a9a10e40de5ffbc8875ad4" then
+    if record.id == "3dcc6a7fd3cdc51e4a4478def6eaad15dad9fbe3" then
       match bundle.term with
       | .lambda (.function false [] _) (.apply (.bound _) .nil) => pure ()
       | _ => throw <| IO.userError <|

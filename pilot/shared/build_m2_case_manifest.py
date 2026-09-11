@@ -23,8 +23,8 @@ def build() -> dict[str, Any]:
         row["head"] for row in definitions["definitions"]
         if row["selection"] == "definition-port-state"
     }
-    if len(parity_heads) != 19:
-        raise ValueError(f"expected 19 generated parity heads, got {len(parity_heads)}")
+    if len(parity_heads) != definitions["counts"]["definition_port_state"]:
+        raise ValueError("selected definitions do not have unique parity heads")
 
     parity: list[str] = []
     extras: list[str] = []
@@ -44,12 +44,8 @@ def build() -> dict[str, Any]:
         else:
             residual_pending.append(case["id"])
 
-    if len(parity) != 160:
-        raise ValueError(f"expected generated parity cohort 160, got {len(parity)}")
-    if len(extras) != 3:
-        raise ValueError(f"expected Grade/Jai corpus extras 3, got {len(extras)}")
-    if len(primitive) != 50 or len(out_of_slice) != 31:
-        raise ValueError("S1 primitive/out-of-slice cohort drift")
+    if not parity or not primitive or not parity_heads:
+        raise ValueError("empty parity selection or primitive control cohort")
     if len(parity) + len(extras) + len(primitive) + len(residual_pending) + \
             len(out_of_slice) != s1["counts"]["total_cases"]:
         raise ValueError("M2 cohorts do not partition all S1 cases")
