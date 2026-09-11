@@ -2653,6 +2653,23 @@ private theorem primitive_card_handler {scope : Nat}
               (setSound setResult setEq (typing_manifest_drop_two setTrace))
               setType
 
+private theorem primitive_negation_handler {scope : Nat}
+    (environment : Environment scope) (body : Term scope)
+    (bodySound : CheckSoundMotive scope environment body Ty.content) :
+    PrimitiveSoundMotive scope environment .not (.positional body .nil) := by
+  intro result success supported
+  cases bodyEq : check environment body Ty.content with
+  | error error => simp [synthPrimitive, bodyEq] at success
+  | ok bodyResult =>
+      have resultEq : result = negateResult bodyResult := by
+        simpa [synthPrimitive, bodyEq] using success.symm
+      subst result
+      have bodyTrace : TypingManifestSupported bodyResult.trace :=
+        typing_manifest_drop_two (by simpa [negateResult] using supported)
+      simpa only [negateResult_observation, judgmentTermList] using
+        PrimitiveJudgment.negation environment body bodyResult.observation
+          (bodySound bodyResult bodyEq bodyTrace)
+
 private theorem primitive_stateClause_handler {scope : Nat}
     (environment : Environment scope) (content : Term scope)
     (contentSound : CheckSoundMotive scope environment content Ty.content) :
@@ -2660,12 +2677,12 @@ private theorem primitive_stateClause_handler {scope : Nat}
       (.positional content .nil) := by
   intro result success supported
   cases contentEq : check environment content Ty.content with
-  | error error => simp [synthPrimitive, contentEq] at success
+  | error error => simp [synthPrimitive, synthPrimitive.unaryCheck, contentEq] at success
   | ok contentResult =>
       have resultEq : result =
           (mergeResults Ty.clauseContent [contentResult] [] []
             .a0TStateClause).withRule .a0Synth := by
-        simpa [synthPrimitive, contentEq] using success.symm
+        simpa [synthPrimitive, synthPrimitive.unaryCheck, contentEq] using success.symm
       subst result
       have contentTrace : TypingManifestSupported
           (contentResult.trace ++ [.a0TStateClause, .a0Synth]) := by
@@ -4186,11 +4203,11 @@ theorem synth_execution_sound {scope : Nat} (environment : Environment scope)
     (motive7 := SynthSoundMotive)
     (motive8 := PrimitiveSoundMotive)
     (motive9 := PerformSoundMotive)
-    (motive10 := ThresholdSoundMotive)
-    (motive11 := PresupposeSoundMotive)
-    (motive12 := ReferenceBinarySoundMotive)
-    (motive13 := QuantifySoundMotive)
-    (motive14 := UnaryCheckSoundMotive)
+    (motive10 := UnaryCheckSoundMotive)
+    (motive11 := ThresholdSoundMotive)
+    (motive12 := PresupposeSoundMotive)
+    (motive13 := ReferenceBinarySoundMotive)
+    (motive14 := QuantifySoundMotive)
     (motive15 := BinaryCheckSoundMotive)
     (motive16 := BinarySynthSoundMotive)
     (motive17 := JaiRoleSoundMotive)
@@ -4427,18 +4444,18 @@ theorem synth_execution_sound {scope : Nat} (environment : Environment scope)
       binarySound .implies result (by
         simpa [synthPrimitive] using success) supported
   case case133 =>
-    exact fun _ environment arguments unarySound result success supported =>
-      unarySound .not result (by
-        simpa [synthPrimitive] using success) supported
-  case case138 =>
+    exact fun _ environment body bodySound =>
+      primitive_negation_handler environment body bodySound
+  case case139 =>
     exact fun _ environment property propertySound =>
       primitive_setOf_handler environment property propertySound
-  case case140 =>
+  case case141 =>
     exact fun _ environment setTerm setSound =>
       primitive_card_handler environment setTerm setSound
-  case case143 =>
-    exact fun _ environment content contentSound =>
-      primitive_stateClause_handler environment content contentSound
+  case case144 =>
+    exact fun _ environment arguments unarySound result success supported =>
+      unarySound .stateClause result (by
+        simpa [synthPrimitive] using success) supported
   case case145 =>
     exact fun _ environment clause clauseSound =>
       primitive_closeClause_handler environment clause clauseSound
@@ -4457,22 +4474,22 @@ theorem synth_execution_sound {scope : Nat} (environment : Environment scope)
     exact fun _ environment role act _roleSound _actSound =>
       synthPerform_excluded_handler environment
         (.positional role (.positional act .nil))
-  case case160 =>
+  case case162 =>
     exact fun _ environment kind property purpose kindSound propertySound
         purposeSound =>
       threshold_handler environment kind property purpose kindSound
         propertySound purposeSound
-  case case162 =>
+  case case164 =>
     exact fun _ environment condition body _conditionSound _bodySound =>
       synthPresuppose_excluded_handler environment condition body
-  case case164 =>
+  case case166 =>
     exact fun _ environment operator rule first second firstSound secondSound =>
       referenceBinary_handler environment operator rule first second firstSound
         secondSound
-  case case166 =>
+  case case168 =>
     exact fun _ environment operator rule property propertySound =>
       quantify_handler environment operator rule property propertySound
-  case case168 =>
+  case case160 =>
     exact fun _ environment operator rule expected resultType term termSound =>
       unaryCheck_handler environment operator rule term expected resultType termSound
   case case170 =>
@@ -4757,7 +4774,7 @@ theorem synth_execution_sound {scope : Nat} (environment : Environment scope)
       ConstantPrimitiveRule.miAOthers, ConstantPrimitiveRule.maAOthers,
       ConstantPrimitiveRule.doOOthers,
       BinaryPrimitiveRule.addition, BinaryPrimitiveRule.equality,
-      BinaryPrimitiveRule.among, UnaryCheckedPrimitiveRule.not,
+      BinaryPrimitiveRule.among, PrimitiveJudgment.negation,
       UnaryCheckedPrimitiveRule.stateClause,
       BinaryCheckedPrimitiveRule.implies, BinaryCheckedPrimitiveRule.subtract]
 

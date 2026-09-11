@@ -1005,6 +1005,18 @@ def runM2Cases (root : String) : IO CaseRun := do
     .typedRejection "refer-member-purity" []
   assertFrozen "d936f713fab6df3e8eadb5235a1215d7241c43ca"
     .typedUnchanged "bidirectional typing" []
+  -- Retain the four historical PR46/B1 discriminator inputs. These are
+  -- assertions about the general classifier, never dispatch keys for output.
+  for id in ["1de177f660bc3c934b18cd20087636c6dce7f837",
+      "63f5f18694818117743c94ef567a0a25cc148c8d",
+      "c3d5175b715643891982317b895cbad77bf79fed",
+      "d8116f10e6b587310e323677fb87af53a97c9546"] do
+    let some outcome := outcomes.find? (·.id == id)
+      | throw <| IO.userError s!"retained negation case missing: {id}"
+    if outcome.disposition != .typeDirectedExpansion || outcome.type != some (Ty.set Ty.entity) ||
+        !outcome.outputTypingAvailable || !outcome.outputTraceSupported ||
+        !outcome.typingTrace.contains .b1TNegation then
+      throw <| IO.userError s!"retained negation case lacks successful proved Set typing: {id}"
   pure <| CaseRun.ofOutcomes outcomes
 
 end M2

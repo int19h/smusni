@@ -1,6 +1,11 @@
 # Lean pilot milestone 2 — E02 migration checkpoint
 
-Current correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md).
+Current code correction: [`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md).
+Human approval now authorizes the generic refer-only negation law; the code
+and proof correction makes the four retained cases succeed. PM's separate
+P45 documentation integration and final integrated checks remain pending.
+
+Previous correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md).
 The strengthened consumer now correctly fails four actual typed-outcome
 differences: prior 74/74 AST matches were not all successful typed Lean parity.
 
