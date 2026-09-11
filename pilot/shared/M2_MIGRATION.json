@@ -1,12 +1,24 @@
 {
   "schema": "smusni-m2-source-migration",
   "version": 1,
-  "input_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+  "input_revision": "8bea3eadebaf4e942ff55e17d6b3a39ea4684862",
+  "frozen_redex_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+  "source_reconciliations": [
+    {
+      "pin": "P45",
+      "commits": [
+        "5db3548",
+        "8bea3ea"
+      ],
+      "approval": "https://github.com/int19h/smusni/issues/74#issuecomment-5630303444",
+      "change": "Human-confirmed refer-only negation effect mask; all other effects/obligations retained, Local/other connectives unchanged. Equations and corpus terms remain unchanged; identity transport is not a claim that the purity-policy prose did not change."
+    }
+  ],
   "criterion": "pending-M2 AND nonempty defined-head set wholly contained in current a0/ported heads; unchanged from pre-E02",
   "transport_boundary": "exact term/environment equality only; identity transport is not semantic equivalence; source/index joins are not equivalence; changed equation dependencies override identity-only classification",
   "retirement_boundary": "retired term/environment means absent from the current input set, not retired language meaning; E01 source-sync records numerical/P2/P43/threshold and description changes; no guessed pairing of rewritten terms",
   "old_corpus_sha256": "f230214a2ab6716a6683a96d9814f1a93d7a54227b8633db5bab21bb502ba659",
-  "current_corpus_sha256": "1898c033ea6b97a36a6ff02cbe5c372e9acbfba334c96fd1d19440d30db22c55",
+  "current_corpus_sha256": "38d1aeee7cc61c4a1d007b44e96449f1f5e8c0ffdde7df1ce1d1327d1d559791",
   "counts": {
     "old": 337,
     "current": 370,

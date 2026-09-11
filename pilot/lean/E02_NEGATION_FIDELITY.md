@@ -4,9 +4,11 @@ Decision: [human approval on #74](https://github.com/int19h/smusni/issues/74#iss
 released to this implementer by
 `msg_20260911T061553042583Z_3068de7987844c1b9769b1e757d4f156`.
 Base checkpoint `eb72540` remains distinct. This code follows that explicit
-decision; PM's separate P45 documentation commit must still be integrated
-before final review and final source-regeneration gates. No frozen Redex
-rule, semantic document, F01 draft or E03 lowering was changed here.
+decision. Code-only checkpoint `0f67c7c` is separate from PM's P45 documentation:
+exact commits `5db3548` and `8bea3ea` were integrated without conflict as
+`d451012` and `f4a7b01`. Semantic input is now `8bea3ea`; the frozen Redex
+rule remains unchanged from `18cd626`. No source edits beyond the supplied
+PM commits, F01 draft input, or E03 lowering were included.
 
 ## Generic rule and proofs
 
@@ -67,6 +69,41 @@ inside the independent soundness domain. Parity: unchanged 192 candidates,
 site matches, zero differences. Recorded rebuilding run: 37.46 s wall,
 1,729,524 KiB maximum RSS.
 
+## Combined source migration and validation
+
+P45 source ranges and their digests were rebased from the exact pre-integration
+spec, retaining the same equations and incorporating the new purity
+qualification where the cited source spans include it. Constructor, S1,
+definition, typing, case and Lean manifests were regenerated. The migration
+record names P45 separately from equation/identity transport.
+
+All 370 corpus case records (IDs, terms, environments and provenance) are
+identical to `0f67c7c`; the corpus case digest remains
+`0cd26d1d494f4b5d0312628ed54d1c2c02ecc7d4`. Each of the four retained
+case IDs in `E02_CONSUMER_BATCH01.md` maps to itself. Both the 74-target
+oracle and independent source-contract file are byte-identical. Generated
+fence headers move with source lines; no specimen is removed or relabelled.
+
+Combined checks:
+
+- `./pilot/lean/check-m2.sh`: PASS; the populations and 74/74 exact term/site
+  results above are unchanged. Rebuilding run: 138.43 s wall,
+  3,393,552 KiB maximum RSS.
+- `./pilot/lean/check-m1.sh`: PASS; 370 surface/text, 51 primitive-core and
+  303 generated round trips; 2.92 s wall, 1,668,936 KiB maximum RSS.
+- `tools/check-smusni`: PASS; 3,464 Racket and 8 Python tests; 370-case
+  identity and 114-case A0/B1 differentials with zero differences, 32 existing
+  field-scoped waivers unchanged; 157.32 s wall, 374,712 KiB maximum RSS.
+- Final public theorem axiom inspection: the standard-only results above.
+- Tracked document checker and `git diff --check`: PASS.
+- Final root inventory/fence and complete pilot/source-contract regeneration:
+  byte-identical after the source migration.
+
+The existing report-only full-gate performance trigger still fires:
+157,320 ms exceeds 107,985 ms (1.5 times the retained 71,990 ms baseline).
+No threshold or benchmark baseline was reset; no cause attribution or
+performance redesign is claimed.
+
 These are bounded encoding results, not all-S1 exact parity or a semantic
-authority transfer. Final PM-doc integration, regeneration, M1/M2/root checks,
-and Astra-first then panel review remain required. No push or merge.
+authority transfer. Astra-first and subsequent panel review remain required.
+No push or merge.

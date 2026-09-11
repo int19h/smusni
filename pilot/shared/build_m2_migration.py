@@ -10,7 +10,7 @@ from collections import Counter
 import json
 import subprocess
 
-from build_m1_constructor_matrix import ROOT, field, parse_sexp, sha256
+from build_m1_constructor_matrix import BASE_HEAD, ROOT, field, parse_sexp, sha256
 from build_m1_s1_manifest import canonical_hash
 
 HISTORY = ROOT / "pilot/history/pre-e02"
@@ -155,7 +155,14 @@ def build():
         raise ValueError("E02 frozen source populations drifted")
     return {
         "schema": "smusni-m2-source-migration", "version": 1,
-        "input_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+        "input_revision": BASE_HEAD,
+        "frozen_redex_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+        "source_reconciliations": [{
+            "pin": "P45",
+            "commits": ["5db3548", "8bea3ea"],
+            "approval": "https://github.com/int19h/smusni/issues/74#issuecomment-5630303444",
+            "change": "Human-confirmed refer-only negation effect mask; all other effects/obligations retained, Local/other connectives unchanged. Equations and corpus terms remain unchanged; identity transport is not a claim that the purity-policy prose did not change.",
+        }],
         "criterion": "pending-M2 AND nonempty defined-head set wholly contained in current a0/ported heads; unchanged from pre-E02",
         "transport_boundary": "exact term/environment equality only; identity transport is not semantic equivalence; source/index joins are not equivalence; changed equation dependencies override identity-only classification",
         "retirement_boundary": "retired term/environment means absent from the current input set, not retired language meaning; E01 source-sync records numerical/P2/P43/threshold and description changes; no guessed pairing of rewritten terms",

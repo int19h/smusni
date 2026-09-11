@@ -9,7 +9,7 @@
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
     "fixtures_sha256": "9bf6ad60e661e7b1a2890cf6fb683c45c8f45e488f3321645ef76afcdc831aaf",
     "supplement": "pilot/shared/M2_TYPING_SUPPLEMENT.tsv",
-    "supplement_sha256": "a882ff50ab7a483f273965c2b8cecd067fdf10dfccb8aff990d1a945ded0d709"
+    "supplement_sha256": "e12dc1ade4036b1098ab392a90a915568c41d091ca6e513cc045468343ea0a97"
   },
   "counts": {
     "required_redex_rules": 81,
@@ -1484,11 +1484,11 @@
           378
         ],
         [
-          823,
-          831
+          835,
+          843
         ]
       ],
-      "source_sha256": "ead7a7816d271669659c783502a7a8aa847b846b677dce15c07cdbff9ff6bcf2",
+      "source_sha256": "6073058a5351517d9c9e3ddb301704de524fcf51676514e3c022328566ce4e2f",
       "conclusion": "Referents<T> x Referents<U> -> Referents<join(T,U)>",
       "reason": "The primitive baseline contains plural joins and singleton lifts."
     },
@@ -1500,11 +1500,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          904,
-          923
+          916,
+          935
         ]
       ],
-      "source_sha256": "e4c79f1cf1d0ea9062cad302ff5a27637054065531cc0c131f27e70b9552bd77",
+      "source_sha256": "bc3e545e2067708239c110a6f71223f0585a15ebede88674da2e43498342a718",
       "conclusion": "T x Set<T> -> Content",
       "reason": "The primitive baseline contains set membership."
     },
@@ -1516,11 +1516,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2167,
-          2186
+          2179,
+          2198
         ]
       ],
-      "source_sha256": "381d9c5838b6fba07a30a94b4ebc3a9a38de39340e3d2c59434788959aeda48e",
+      "source_sha256": "162b614ed3aa986608c307fb7f9410312b46756df0caa4c6af54b568ce760733",
       "conclusion": "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse",
       "reason": "The primitive baseline exercises inert act construction and discourse sequencing."
     },
@@ -1532,11 +1532,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2327,
-          2360
+          2339,
+          2372
         ]
       ],
-      "source_sha256": "f8b554c059640ddf97293610ba17f2b86bf5cc6bdc36051350e8ca96ea30fe7e",
+      "source_sha256": "c1e6de38b7216416553888f89eddfd13ad06fa3355dbc7017115029d5cd93b57",
       "conclusion": "Referents<UtteranceToken> x Referents<Locution> -> Content",
       "reason": "Three primitive gates discriminate the two argument types."
     },
@@ -1548,11 +1548,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2408,
-          2441
+          2420,
+          2453
         ]
       ],
-      "source_sha256": "547b7a475f5bef98b055a299e84436c281a3ec9b255fc7bf2c358386502550de",
+      "source_sha256": "7451e4bda1454101b258c27db073ba1106e2ee7970254ddbe9876924c08f53db",
       "conclusion": "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>",
       "reason": "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
     },
@@ -1564,11 +1564,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2632,
-          2651
+          2644,
+          2663
         ]
       ],
-      "source_sha256": "b1bbffbee0f7ee8851d354dfb53a6714c8483f5e7340a12d76261000a947bbb1",
+      "source_sha256": "b51c2e7affade5f61f1dae8572508d45bc2868af6742cd27c7c15b9f4da116b3",
       "conclusion": "Content -> Proposition",
       "reason": "Reification is inert and must not inherit the operand effects."
     },
@@ -1580,11 +1580,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2346,
-          2379
+          2358,
+          2391
         ]
       ],
-      "source_sha256": "f821e177f4d661318115a7afbbded7ff1d4a2500877567e759920436ad0a6261",
+      "source_sha256": "0a95b86c80a8c5b00b278849eb35ef46205c90c7658e319905169df9c9a4ce2a",
       "conclusion": "Referents<UtteranceToken> -> Content with projective definedness",
       "reason": "The primitive baseline contains the token-to-captured-content projection."
     },
@@ -1596,11 +1596,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          629,
-          636
+          641,
+          648
         ]
       ],
-      "source_sha256": "37e88d33491cc94e213975d288aa711bb0002338e6dab2fea8280f37c77cc75d",
+      "source_sha256": "ab9ccd4bf03b23fbefdd439a0e4760a0dbfeae7d472fd438828f95909ca6c667",
       "conclusion": "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>",
       "reason": "The primitive baseline contains one valid row deletion gate."
     },
@@ -1612,11 +1612,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4637,
-          4643
+          4667,
+          4673
         ]
       ],
-      "source_sha256": "dfc7b446205e98f418287310c799af49d6fedd6ab64cfe742e615acb00dc33b0",
+      "source_sha256": "4e48da765bd7992b415ee9ae6bd148feb1421a4503abb21d34e2a23a3ea255f6",
       "conclusion": "Number x Natural -> Number",
       "reason": "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
     },
@@ -1628,15 +1628,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          936,
-          975
+          948,
+          987
         ],
         [
-          1055,
-          1073
+          1067,
+          1085
         ]
       ],
-      "source_sha256": "8c27dcecabce1a8c10d4efbafe3b9a599b8011ac368911d3c2cba66e302b1775",
+      "source_sha256": "14787bff2c9ddcdb493a1ad3100706f736613b52a895d77bc309a13fbe3ca6db",
       "conclusion": "DecompositionBasis<Group<T>,T> x Group<T> -> Content",
       "reason": "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
     },
@@ -1648,11 +1648,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          936,
-          975
+          948,
+          987
         ]
       ],
-      "source_sha256": "dc43c298a71b0e20ec8dbf4fcea0d6d5fd98aa22b84654b438eac7843f90b29d",
+      "source_sha256": "d4eb2c98d121843873bb468245dad340216b833d0e0ecdf48df89b2d25a3acaa",
       "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content",
       "reason": "Recursive expansion of GunmaAt reaches the basis interface."
     },
@@ -1664,11 +1664,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          936,
-          980
+          948,
+          992
         ]
       ],
-      "source_sha256": "0a8fab9c0f78c7f4013bfbc32efe7b692209989f975d51074fd0a784be8ab9c8",
+      "source_sha256": "e4bcb9bf7586a48658c22707a8de1c1dcb5112951b61251dd7d8aa30ed99c22b",
       "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content",
       "reason": "Recursive expansion of GunmaAt reaches the peer interface."
     },
@@ -1680,11 +1680,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4199,
-          4238
+          4229,
+          4268
         ]
       ],
-      "source_sha256": "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0",
+      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
       "conclusion": "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content",
       "reason": "The JaiRaise mapping's constrained Context must be typed and pure."
     },
@@ -1696,11 +1696,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          3878,
-          3899
+          3908,
+          3929
         ]
       ],
-      "source_sha256": "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d",
+      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
       "conclusion": "Amount x Region<Scale> -> Content",
       "reason": "The pure row-directed Grade template reaches this declared interface."
     },
@@ -1712,11 +1712,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          3878,
-          3899
+          3908,
+          3929
         ]
       ],
-      "source_sha256": "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d",
+      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
       "conclusion": "row metadata -> pure PredTerm<row>",
       "reason": "The schema consumes its relation's declared degree projection, scale, and region without a site."
     },
@@ -1728,11 +1728,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          4199,
-          4238
+          4229,
+          4268
         ]
       ],
-      "source_sha256": "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0",
+      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
       "conclusion": "row remapping plus role -> pure PredTerm<raised-row>",
       "reason": "The schema consumes row metadata rather than inspecting predicate syntax."
     },
@@ -1744,11 +1744,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1410,
-          1462
+          1422,
+          1474
         ]
       ],
-      "source_sha256": "ccafa7855ecf9d2f9f673fa61bbbbcff2dd938709c7f24392aa4f732402d2f72",
+      "source_sha256": "9cac0d2b4b1a76c414b9a5543c4236992225caab169f9c6e2b1efcc3d872bc59",
       "conclusion": "declared utterance-context projection -> declared type",
       "reason": "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
     },
@@ -1760,15 +1760,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2171,
-          2186
+          2183,
+          2198
         ],
         [
-          2542,
-          2630
+          2554,
+          2642
         ]
       ],
-      "source_sha256": "f42a5b6929ffadd7a8450070af5e72a00e54729003254f28f13593d20b0257f7",
+      "source_sha256": "33857ae050ea0ded250e663c8526f217e4e66f39b4379aa250e1b28d45500314",
       "conclusion": "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>",
       "reason": "Selected Close cases occur beneath question constructors."
     },
@@ -1780,11 +1780,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1511,
-          1529
+          1523,
+          1541
         ]
       ],
-      "source_sha256": "74201c66b7c7bc690f1588c95e14a674f4742cb51dc878626835eb5c4fbabd20",
+      "source_sha256": "19c1d97b828ab8d175607f2b1ca65a2806bf1b52870d3ae027760c5b93e87014",
       "conclusion": "RefComp<A> -> RefComp<A> under expected mode",
       "reason": "Collection and performance specimens use the accessibility delimiter."
     },
@@ -1796,11 +1796,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2180,
-          2191
+          2192,
+          2203
         ]
       ],
-      "source_sha256": "1e8a6402f7dd12a3caed7dcfbd460868b7249f2df31d292f156ef27409d752c4",
+      "source_sha256": "739c5473b10d4319adfc4924571180dedd9a14d9224459ca2dbaed33883e3cc1",
       "conclusion": "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>",
       "reason": "Selected discourse specimens spell the role explicitly."
     },
@@ -1812,11 +1812,11 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          1887,
-          1903
+          1899,
+          1915
         ]
       ],
-      "source_sha256": "f439c967f1f057748ae22437e17022ebf010666f8b967631f0af267e1e50b48f",
+      "source_sha256": "df41267ba57c6d9351ad3096cf484490ea81c7fa22a3676cde997cbfa4fca127",
       "conclusion": "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content",
       "reason": "Selected cases wrap supported Close expansions under generic quantification."
     },
@@ -1828,15 +1828,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          2408,
-          2458
+          2420,
+          2470
         ],
         [
-          2632,
-          2651
+          2644,
+          2663
         ]
       ],
-      "source_sha256": "f3ab223a40382412e4b2cd8f5d485b450858810b9e25a3a02150c7f28c18d9f6",
+      "source_sha256": "88d5eb357938073e4ba864af40eedc448de6e44bbfb43c1c542f070858bd5bb1",
       "conclusion": "typed interface arguments -> Content",
       "reason": "Selected cases use the declared content-level interface relations around the expansion slice."
     },
@@ -1848,15 +1848,15 @@
       "source_path": "spec.md",
       "source_ranges": [
         [
-          904,
-          929
+          916,
+          941
         ],
         [
-          2717,
-          2747
+          2729,
+          2759
         ]
       ],
-      "source_sha256": "007c2fb4a6fcdda419dd44ffcc4ed5673967940d0f06a2f8fe836d2b96a6d4b6",
+      "source_sha256": "808bd3ddec3311ce41cd60e2bf31b2a29a650d75e1c5e72104c07c45b2434f7a",
       "conclusion": "Number operations and typed abstraction relation rows",
       "reason": "Selected cases embed Close under the numeric abstraction interfaces."
     },
@@ -1869,10 +1869,10 @@
       "source_ranges": [
         [
           389,
-          440
+          452
         ]
       ],
-      "source_sha256": "139429b72e5592895c517234127ea649568cadb91fe553f2a2070265fe099d7a",
+      "source_sha256": "77c92eca14735c615736ee9b5e4a116d3d429ffdeef1dbc32ed437cbc45882e2",
       "conclusion": "row-directed partial filling preserves the residual PredTerm row",
       "reason": "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
     }

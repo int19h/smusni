@@ -1,5 +1,5 @@
 {
-  "base_head": "18cd6267ad38abde8836a553f1531a4f05f339c6",
+  "base_head": "8bea3eadebaf4e942ff55e17d6b3a39ea4684862",
   "cases": [
     {
       "defined_heads": [
@@ -9220,7 +9220,7 @@
   },
   "schema": "smusni-pilot-s1",
   "sources": {
-    "constructor_matrix_sha256": "e00c797231f2f268ce3924a787766e88f04abee3b27f81d498721b879c729c05",
+    "constructor_matrix_sha256": "e6e49643ece813e8ff8105a732a6ece15073a225ca8770c8b9566ba879df6358",
     "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
     "fixtures_sha256": "9bf6ad60e661e7b1a2890cf6fb683c45c8f45e488f3321645ef76afcdc831aaf",
     "inventory_hashes": [
@@ -9228,7 +9228,7 @@
       "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"
     ],
     "port_corpus": "tools/smusni-redex/inventory/port-corpus.sexp",
-    "port_corpus_sha256": "1898c033ea6b97a36a6ff02cbe5c372e9acbfba334c96fd1d19440d30db22c55",
+    "port_corpus_sha256": "38d1aeee7cc61c4a1d007b44e96449f1f5e8c0ffdde7df1ce1d1327d1d559791",
     "rr_syntax_normalization": "Current RR inputs require exact source ordinal and fence digest; stale RR files remain explicit historical records, not semantic joins."
   },
   "typed_records": [

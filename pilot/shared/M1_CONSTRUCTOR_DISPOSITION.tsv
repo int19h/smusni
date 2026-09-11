@@ -1,8 +1,8 @@
-# base_head	18cd6267ad38abde8836a553f1531a4f05f339c6
+# base_head	8bea3eadebaf4e942ff55e17d6b3a39ea4684862
 # core_sha256	794ec672dd0130a76d6f17fb82a9764d379f5b00c157688cf8b76a2a2d3b05c6
-# definitions_sha256	908688498646163b25de9b88e3d5ee1e372e28685ef64964fc3f7d3b4d644764
+# definitions_sha256	04b735fc2c9f88fa0d97909321c73d5b7fd5b58046d2f50af8438e62a9f532b8
 # a0_sha256	b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c
-# spec_sha256	d3253cfb77b8fe440751226bd046f9dbc49f798d2a8e15c433e4ac6e4c790511
+# spec_sha256	55b7dda95bd6ec4b02403a521366c1b355e8f402ac254c1db39d785d74d79cab
 head	disposition	sources	evidence
 family:Select	gap-prose-only	spec-appendix	primitive family label; concrete Select constructors are separate
 metatheory:bind	gap-prose-only	spec-appendix	carrier sequencing operation denoted by term:Bind

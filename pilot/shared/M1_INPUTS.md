@@ -1,6 +1,8 @@
 # Lean milestone 1 pinned inputs
 
-E02 current input revision: `18cd6267ad38abde8836a553f1531a4f05f339c6`.
+E02 current semantic input revision: `8bea3eadebaf4e942ff55e17d6b3a39ea4684862`
+(PM's P45 reconciliation). Frozen Redex remains `18cd626`; corpus identities
+and term/environment records are unchanged by this documentation integration.
 The current generated partition is 370 cases: 51 primitive, 287 pending M2,
 32 out of slice. There are 70 auxiliary records: 28 current RR fixtures,
 6 explicitly historical RR files, and 36 parse fixtures. A current RR join

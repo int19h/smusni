@@ -2,11 +2,12 @@
 
 Current code correction: [`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md).
 Human approval now authorizes the generic refer-only negation law; the code
-and proof correction makes the four retained cases succeed. PM's separate
-P45 documentation integration and final integrated checks remain pending.
+and proof correction makes the four retained cases succeed. PM's exact
+P45 commits are integrated; combined M1/M2/root checks pass. Review remains
+pending; see the current report for source lineage and bounded coverage.
 
 Previous correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md).
-The strengthened consumer now correctly fails four actual typed-outcome
+At checkpoint eb72540, the strengthened consumer correctly failed four actual typed-outcome
 differences: prior 74/74 AST matches were not all successful typed Lean parity.
 
 Prior follow-up: the PM-authorized one-Assert bridge is documented in

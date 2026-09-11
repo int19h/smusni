@@ -1,8 +1,12 @@
 # E02: one outer Assert context bridge
 
+Current P45 fidelity result: [`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md).
+The later generic negation correction resolves the four failures exposed by
+the strengthened consumer; all consumer gates remain in force.
+
 Correction: [`E02_CONSUMER_BATCH01.md`](E02_CONSUMER_BATCH01.md) supersedes
-the successful typed-parity claim below. Four retained rejection ASTs had
-been counted; the strengthened consumer now reports them and fails M2.
+the original successful typed-parity claim below. Four retained rejection ASTs
+had been counted; checkpoint eb72540 reported them and failed M2.
 The 74 independent A0-typed oracle targets themselves remain unchanged.
 
 Implementation follows PM's obligation-preserving release

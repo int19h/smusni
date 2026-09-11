@@ -1,5 +1,9 @@
 # E02 consumer correction batch 01
 
+Historical checkpoint report. The later human-approved P45 correction in
+[`E02_NEGATION_FIDELITY.md`](E02_NEGATION_FIDELITY.md) resolves the four retained
+failures without weakening these consumer gates or removing any target.
+
 Base: `22793be`. Authorized by PM message
 `msg_20260911T024507655252Z_5f4f1df827344d4f8bd9303a54b9b309`, accepting
 Astra findings A1/A2/A3. Consumer corrections are implemented; **the full M2

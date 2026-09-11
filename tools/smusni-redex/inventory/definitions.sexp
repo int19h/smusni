@@ -17,35 +17,45 @@
   (id "D12.AtLeast")
   (head AtLeast)
   (section "12")
-  (spec-source-sha1 "83e6149e06dcd50ee5fce994f07b4e582a15c55c")
-  (spec-source-ranges (3780 3780) (3806 3806) (3797 3803))
-  (equation-source-sha1 "2090f4964493355247d7f9e6ba9edcbc9882df75")
-  (equation-ranges (3780 3780) (3806 3806))
+  (spec-source-sha1 "76f7c0f017d60aad6103f05d5844caa47f41e4bc")
+  (spec-source-ranges (3795 3795) (3833 3833) (3824 3830))
+  (equation-source-sha1 "305d1d5a1d5d55369138269c4ba9077fec5c71b1")
+  (equation-ranges (3795 3795) (3833 3833))
   (status executable)
   (port-state ported)
   (dependencies Bind SelectAtLeast)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-at-least (cases zero positive)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-at-least
+    (cases zero positive)))
   (domains
    (domain
     symbolic-natural
     (status executable)
     (port-state none)
-    (reason "Direct typing is total, but the two-equation metafunction cannot choose zero or positive before a symbolic Natural is instantiated.")))
-  (reason "B1 ports the separate zero and provably-positive witness equations."))
+    (reason
+     "Direct typing is total, but the two-equation metafunction cannot choose zero or positive before a symbolic Natural is instantiated.")))
+  (reason
+   "B1 ports the separate zero and provably-positive witness equations."))
  (definition
   (id "D12.AtMost")
   (head AtMost)
   (section "12")
-  (spec-source-sha1 "29bf0ecc0b1001fe3ea9ce2129dfb7bdf308fbe2")
-  (spec-source-ranges (3788 3788))
-  (equation-source-sha1 "29bf0ecc0b1001fe3ea9ce2129dfb7bdf308fbe2")
-  (equation-ranges (3788 3788))
+  (spec-source-sha1 "ba5ca37a04a679e13253f0dbda3b7017315903e7")
+  (spec-source-ranges (3803 3803))
+  (equation-source-sha1 "ba5ca37a04a679e13253f0dbda3b7017315903e7")
+  (equation-ranges (3803 3803))
   (status executable)
   (port-state ported)
   (dependencies ¬ AtLeast +)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-at-most (cases negated-successor)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-at-most
+    (cases negated-successor)))
   (domains)
   (reason "B1 ports negated successor-strength AtLeast."))
  (definition
@@ -60,7 +70,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This prose introducer points to the following COIExpress schema and is not a separate equation."))
+  (reason
+   "This prose introducer points to the following COIExpress schema and is not a separate equation."))
  (definition
   (id "D12.COIExpress")
   (head COIExpress)
@@ -73,7 +84,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "The lexicon-parameterized performative schema awaits its executable family."))
+  (reason
+   "The lexicon-parameterized performative schema awaits its executable family."))
  (definition
   (id "D12.CanonicalAggregateAt")
   (head CanonicalAggregateAt)
@@ -130,15 +142,19 @@
   (id "D12.Distrib")
   (head Distrib)
   (section "12")
-  (spec-source-sha1 "9be666df1b35c37ca4e4ce5707f7ced8f24401f6")
-  (spec-source-ranges (3792 3792))
-  (equation-source-sha1 "9be666df1b35c37ca4e4ce5707f7ced8f24401f6")
-  (equation-ranges (3792 3792))
+  (spec-source-sha1 "416c89d5b45496813a6720dbeec2b370fac3af1e")
+  (spec-source-ranges (3807 3807))
+  (equation-source-sha1 "416c89d5b45496813a6720dbeec2b370fac3af1e")
+  (equation-ranges (3807 3807))
   (status executable)
   (port-state ported)
   (dependencies ∀ λ → Among)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-distrib (cases universal-members)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-distrib
+    (cases universal-members)))
   (domains)
   (reason "B1 ports universal member distribution over a plural reference."))
  (definition
@@ -153,35 +169,44 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its effectful threshold family has not yet reached the Redex port."))
+  (reason
+   "Its effectful threshold family has not yet reached the Redex port."))
  (definition
   (id "D12.Every")
   (head Every)
   (section "12")
-  (spec-source-sha1 "9a48cd58e2d1e77ede4614be8538c1a7d472321d")
-  (spec-source-ranges (3782 3783))
-  (equation-source-sha1 "9a48cd58e2d1e77ede4614be8538c1a7d472321d")
-  (equation-ranges (3782 3783))
+  (spec-source-sha1 "43d91f202246b5d926c85ccd67c93c776e38dd4f")
+  (spec-source-ranges (3797 3798))
+  (equation-source-sha1 "43d91f202246b5d926c85ccd67c93c776e38dd4f")
+  (equation-ranges (3797 3798))
   (status executable)
   (port-state ported)
   (dependencies Bind MaxRefer Distrib)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-every (cases maximal-distribution)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-every
+    (cases maximal-distribution)))
   (domains)
   (reason "B1 ports maximal witness import followed by member distribution."))
  (definition
   (id "D12.Exactly")
   (head Exactly)
   (section "12")
-  (spec-source-sha1 "358a0b2468c4f1965a8a9d0a2dbd4f570169f7e2")
-  (spec-source-ranges (3779 3779) (3807 3807) (3797 3803))
-  (equation-source-sha1 "ea31a0a2029761861f28883b28734aa38373d8bb")
-  (equation-ranges (3779 3779) (3807 3807))
+  (spec-source-sha1 "96fead33c47b804cdf4362a33f7b63315dd4fee5")
+  (spec-source-ranges (3794 3794) (3834 3834) (3824 3830))
+  (equation-source-sha1 "1767c6672a9637c95f285dc62057f4983fa359b3")
+  (equation-ranges (3794 3794) (3834 3834))
   (status executable)
   (port-state a0)
   (dependencies Bind SelectExactly No)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-exactly (cases zero positive)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-exactly
+    (cases zero positive)))
   (domains)
   (reason "A0 ports both the zero and positive witness-set equations."))
  (definition
@@ -196,37 +221,49 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its effectful threshold family has not yet reached the Redex port."))
+  (reason
+   "Its effectful threshold family has not yet reached the Redex port."))
  (definition
   (id "D12.FewerThan")
   (head FewerThan)
   (section "12")
-  (spec-source-sha1 "451221fd981f07040546bcf2ca5ab19fdf2456df")
-  (spec-source-ranges (3790 3790))
-  (equation-source-sha1 "451221fd981f07040546bcf2ca5ab19fdf2456df")
-  (equation-ranges (3790 3790))
+  (spec-source-sha1 "f424215f418759ddd444f811ee1622d755cacd76")
+  (spec-source-ranges (3805 3805))
+  (equation-source-sha1 "f424215f418759ddd444f811ee1622d755cacd76")
+  (equation-ranges (3805 3805))
   (status executable)
   (port-state ported)
   (dependencies ¬ AtLeast)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-fewer-than (cases negated-at-least)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-fewer-than
+    (cases negated-at-least)))
   (domains)
   (reason "B1 ports negated AtLeast, including the zero boundary."))
  (definition
   (id "D12.GlobalExactly")
   (head GlobalExactly)
   (section "12")
-  (spec-source-sha1 "5e8b3d84e1e88acab25481e67037aa72923b4e18")
-  (spec-source-ranges (3791 3791))
-  (equation-source-sha1 "5e8b3d84e1e88acab25481e67037aa72923b4e18")
-  (equation-ranges (3791 3791))
+  (spec-source-sha1 "42e64c6d1fa200eb622e11e74465356ada50bc68")
+  (spec-source-ranges (3806 3806))
+  (equation-source-sha1 "42e64c6d1fa200eb622e11e74465356ada50bc68")
+  (equation-ranges (3806 3806))
   (status executable)
   (port-state a0)
   (dependencies = Card SetOf λ ∧)
-  (legacy-implementations (binding "tools/smusni-redex/lower.rkt" expand-global-exactly-datum) (binding "tools/smusni-redex/lower.rkt" global-exactly-definition))
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-global-exactly (cases comprehension)))
+  (legacy-implementations
+   (binding "tools/smusni-redex/lower.rkt" expand-global-exactly-datum)
+   (binding "tools/smusni-redex/lower.rkt" global-exactly-definition))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-global-exactly
+    (cases comprehension)))
   (domains)
-  (reason "A0 ports the pure comprehension equation alongside the retained legacy path."))
+  (reason
+   "A0 ports the pure comprehension equation alongside the retained legacy path."))
  (definition
   (id "D12.Grade")
   (head Grade)
@@ -239,7 +276,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its row-polymorphic executable family has not yet reached the Redex port."))
+  (reason
+   "Its row-polymorphic executable family has not yet reached the Redex port."))
  (definition
   (id "D12.GroundedBy")
   (head GroundedBy)
@@ -265,7 +303,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its endpoint-kind parameterized family has not yet reached the Redex port."))
+  (reason
+   "Its endpoint-kind parameterized family has not yet reached the Redex port."))
  (definition
   (id "D12.JaiPromote")
   (head JaiPromote)
@@ -330,7 +369,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its expected-type-directed family has not yet reached the Redex port."))
+  (reason
+   "Its expected-type-directed family has not yet reached the Redex port."))
  (definition
   (id "D12.JoiPred")
   (head JoiPred)
@@ -356,7 +396,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its source-ordered link schema has not yet reached the Redex port."))
+  (reason
+   "Its source-ordered link schema has not yet reached the Redex port."))
  (definition
   (id "D12.Many")
   (head Many)
@@ -369,37 +410,48 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its effectful threshold family has not yet reached the Redex port."))
+  (reason
+   "Its effectful threshold family has not yet reached the Redex port."))
  (definition
   (id "D12.Massify")
   (head Massify)
   (section "12")
-  (spec-source-sha1 "a900c41033e1f798ad40bfdd64a99779fc60c334")
-  (spec-source-ranges (3974 3977))
-  (equation-source-sha1 "a900c41033e1f798ad40bfdd64a99779fc60c334")
-  (equation-ranges (3974 3977))
+  (spec-source-sha1 "0cceeea9a492994148d45e498f1c805e028ac67f")
+  (spec-source-ranges (4004 4007))
+  (equation-source-sha1 "0cceeea9a492994148d45e498f1c805e028ac67f")
+  (equation-ranges (4004 4007))
   (status executable)
   (port-state a0)
   (dependencies Refer λ ∃ ∧ CanonicalAggregateAt CoRef)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-massify (cases canonical-reference)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-massify
+    (cases canonical-reference)))
   (domains)
-  (reason "E01 replaces cardinal selection by reference-level existential co-reference to one canonical aggregate, per current §12."))
+  (reason
+   "E01 replaces cardinal selection by reference-level existential co-reference to one canonical aggregate, per current §12."))
  (definition
   (id "D12.MaxRefer")
   (head MaxRefer)
   (section "12")
-  (spec-source-sha1 "794fd021f1e8e85a454d99b598cb851a330e664f")
-  (spec-source-ranges (4065 4069))
-  (equation-source-sha1 "794fd021f1e8e85a454d99b598cb851a330e664f")
-  (equation-ranges (4065 4069))
+  (spec-source-sha1 "c3954a9903f836b918d804428b4315318b51e8ad")
+  (spec-source-ranges (4095 4099))
+  (equation-source-sha1 "c3954a9903f836b918d804428b4315318b51e8ad")
+  (equation-ranges (4095 4099))
   (status executable)
   (port-state ported)
   (dependencies Presuppose ∃ Refer λ ∧ CoveredBy ∀ → Among)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-max-refer (cases inhabited-maximal-reference)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-max-refer
+    (cases inhabited-maximal-reference)))
   (domains)
-  (reason "B1 ports inhabited maximal reference construction with its projective obligation."))
+  (reason
+   "B1 ports inhabited maximal reference construction with its projective obligation."))
  (definition
   (id "D12.MePred")
   (head MePred)
@@ -412,7 +464,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its type-directed property expansion has not yet reached the Redex port."))
+  (reason
+   "Its type-directed property expansion has not yet reached the Redex port."))
  (definition
   (id "D12.MemberCover")
   (head MemberCover)
@@ -425,7 +478,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its positive-MEI helper expansion has not yet reached the Redex port."))
+  (reason
+   "Its positive-MEI helper expansion has not yet reached the Redex port."))
  (definition
   (id "D12.MetricBall")
   (head MetricBall)
@@ -438,20 +492,25 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its endpoint-kind parameterized family has not yet reached the Redex port."))
+  (reason
+   "Its endpoint-kind parameterized family has not yet reached the Redex port."))
  (definition
   (id "D12.MoreThan")
   (head MoreThan)
   (section "12")
-  (spec-source-sha1 "7c2c17c29e54ec3a51860d09c4fea1b0fe0ddf3f")
-  (spec-source-ranges (3789 3789))
-  (equation-source-sha1 "7c2c17c29e54ec3a51860d09c4fea1b0fe0ddf3f")
-  (equation-ranges (3789 3789))
+  (spec-source-sha1 "8ea91779ec74102e06b1b5391c7a2fe328182aa3")
+  (spec-source-ranges (3804 3804))
+  (equation-source-sha1 "8ea91779ec74102e06b1b5391c7a2fe328182aa3")
+  (equation-ranges (3804 3804))
   (status executable)
   (port-state ported)
   (dependencies AtLeast +)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-more-than (cases successor)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-more-than
+    (cases successor)))
   (domains)
   (reason "B1 ports successor-strength AtLeast over a general Natural term."))
  (definition
@@ -466,7 +525,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its definition needs the separately scoped greater-than operator in issue #66."))
+  (reason
+   "Its definition needs the separately scoped greater-than operator in issue #66."))
  (definition
   (id "D12.NahiObjection")
   (head NahiObjection)
@@ -497,45 +557,58 @@
   (id "D12.No")
   (head No)
   (section "12")
-  (spec-source-sha1 "855ed2c0eaa36ca54ab1037ac8607d9c9d451843")
-  (spec-source-ranges (3787 3787))
-  (equation-source-sha1 "855ed2c0eaa36ca54ab1037ac8607d9c9d451843")
-  (equation-ranges (3787 3787))
+  (spec-source-sha1 "da783bf2d4262abbfe69900a4ac21424efe4c0a4")
+  (spec-source-ranges (3802 3802))
+  (equation-source-sha1 "da783bf2d4262abbfe69900a4ac21424efe4c0a4")
+  (equation-ranges (3802 3802))
   (status executable)
   (port-state ported)
   (dependencies ¬ Some)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-no (cases negated-some)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-no
+    (cases negated-some)))
   (domains)
   (reason "B1 ports generic negation of Some."))
  (definition
   (id "D12.Only")
   (head Only)
   (section "12")
-  (spec-source-sha1 "d64e6015126cc94b58997a52081af5da0db000ed")
-  (spec-source-ranges (4263 4271))
-  (equation-source-sha1 "2a90594e65597e7cbd4ebb937a72f99aae586488")
-  (equation-ranges (4267 4271))
+  (spec-source-sha1 "775a738497f05cc03c34c47765fa5e65cca1d2c5")
+  (spec-source-ranges (4293 4301))
+  (equation-source-sha1 "4b44c98bbfc65815b02c26851476df4e68831dad")
+  (equation-ranges (4297 4301))
   (status executable)
   (port-state ported)
   (dependencies ∧ ∀ λ → Among)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-only (cases host-and-exclusion)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-only
+    (cases host-and-exclusion)))
   (domains)
-  (reason "E01 ports the adopted pure host-and-exclusion formula. Effectful frames remain the §14 gap."))
+  (reason
+   "E01 ports the adopted pure host-and-exclusion formula. Effectful frames remain the §14 gap."))
  (definition
   (id "D12.Overlap")
   (head Overlap)
   (section "12")
-  (spec-source-sha1 "6731ae83cacd5ab03d1f010c6dbf66b89940ddba")
-  (spec-source-ranges (4020 4020))
-  (equation-source-sha1 "6731ae83cacd5ab03d1f010c6dbf66b89940ddba")
-  (equation-ranges (4020 4020))
+  (spec-source-sha1 "cf6f928614e72db6a923a0b4495ae6e18e4c1661")
+  (spec-source-ranges (4050 4050))
+  (equation-source-sha1 "cf6f928614e72db6a923a0b4495ae6e18e4c1661")
+  (equation-ranges (4050 4050))
   (status executable)
   (port-state ported)
   (dependencies ∃ λ ∧ Among)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-overlap (cases common-subreference)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-overlap
+    (cases common-subreference)))
   (domains)
   (reason "B1 ports existential common-subreference overlap."))
  (definition
@@ -594,15 +667,19 @@
   (id "D12.Some")
   (head Some)
   (section "12")
-  (spec-source-sha1 "e46e853ad9e1aef9140afd93136398674577400c")
-  (spec-source-ranges (3781 3781))
-  (equation-source-sha1 "e46e853ad9e1aef9140afd93136398674577400c")
-  (equation-ranges (3781 3781))
+  (spec-source-sha1 "d1d434cfcde56955918cf761de91cedb6aa2f897")
+  (spec-source-ranges (3796 3796))
+  (equation-source-sha1 "d1d434cfcde56955918cf761de91cedb6aa2f897")
+  (equation-ranges (3796 3796))
   (status executable)
   (port-state ported)
   (dependencies Bind SelectSome)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-some (cases witness)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-some
+    (cases witness)))
   (domains)
   (reason "B1 ports witness selection and export through SelectSome."))
  (definition
@@ -617,7 +694,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its endpoint-kind parameterized family has not yet reached the Redex port."))
+  (reason
+   "Its endpoint-kind parameterized family has not yet reached the Redex port."))
  (definition
   (id "D12.SpeakerDescribes")
   (head SpeakerDescribes)
@@ -656,7 +734,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its source-ordered connective schema has not yet reached the Redex port."))
+  (reason
+   "Its source-ordered connective schema has not yet reached the Redex port."))
  (definition
   (id "D12.TooFew")
   (head TooFew)
@@ -669,20 +748,25 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its effectful threshold family has not yet reached the Redex port."))
+  (reason
+   "Its effectful threshold family has not yet reached the Redex port."))
  (definition
   (id "D12.TooMany")
   (head TooMany)
   (section "12")
-  (spec-source-sha1 "3b0448e95c9f815f608aca8289b13d6994d9ece1")
-  (spec-source-ranges (3856 3858))
-  (equation-source-sha1 "3b0448e95c9f815f608aca8289b13d6994d9ece1")
-  (equation-ranges (3856 3858))
+  (spec-source-sha1 "ae9799c54c5a6ab0c6d56e118668c97836bfe53b")
+  (spec-source-ranges (3886 3888))
+  (equation-source-sha1 "ae9799c54c5a6ab0c6d56e118668c97836bfe53b")
+  (equation-ranges (3886 3888))
   (status executable)
   (port-state a0)
   (dependencies Bind Context Vague AdmissibleThreshold MoreThan)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-too-many (cases dependent-threshold)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-too-many
+    (cases dependent-threshold)))
   (domains)
   (reason "A0 ports the ordered purpose and dependent threshold expansion."))
  (definition
@@ -702,19 +786,33 @@
   (id "D12.ZipWith")
   (head ZipWith)
   (section "12")
-  (spec-source-sha1 "20f447be2ddbcbffe189bbd52b4782d762cc6fa4")
-  (spec-source-ranges (4041 4043))
-  (equation-source-sha1 "20f447be2ddbcbffe189bbd52b4782d762cc6fa4")
-  (equation-ranges (4041 4043))
+  (spec-source-sha1 "aa7369a4a7c643f0ebf15f0d1cc039aa8723e0d0")
+  (spec-source-ranges (4071 4073))
+  (equation-source-sha1 "aa7369a4a7c643f0ebf15f0d1cc039aa8723e0d0")
+  (equation-ranges (4071 4073))
   (status executable)
   (port-state a0)
   (dependencies ∧ List)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-zipwith (cases empty paired-step)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-zipwith
+    (cases empty paired-step)))
   (domains
-   (domain equal-length (status executable) (port-state a0) (reason "A0 ports the settled base and paired recursive equations."))
-   (domain unequal-length (status (blocked "#41")) (port-state none) (reason "Unequal-list behavior is human-partner-open in issue #41 item 6.")))
-  (reason "Its settled equal-length recursion awaits A0 while unequal length remains blocked."))
+   (domain
+    equal-length
+    (status executable)
+    (port-state a0)
+    (reason "A0 ports the settled base and paired recursive equations."))
+   (domain
+    unequal-length
+    (status (blocked "#41"))
+    (port-state none)
+    (reason
+     "Unequal-list behavior is human-partner-open in issue #41 item 6.")))
+  (reason
+   "Its settled equal-length recursion awaits A0 while unequal length remains blocked."))
  (definition
   (id "D12.gei")
   (head gei)
@@ -740,7 +838,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This prose lead-in announces the following NahiObjection equation and is not a separate definition."))
+  (reason
+   "This prose lead-in announces the following NahiObjection equation and is not a separate definition."))
  (definition
   (id "D12.te'a")
   (head |te'a|)
@@ -766,7 +865,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its recursive list-index family has not yet reached the Redex port."))
+  (reason
+   "Its recursive list-index family has not yet reached the Redex port."))
  (definition
   (id "D4.1.At")
   (head At)
@@ -792,20 +892,22 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "These two equations illustrate positional fill notation rather than define the klama lexical row."))
+  (reason
+   "These two equations illustrate positional fill notation rather than define the klama lexical row."))
  (definition
   (id "D4.4.Let")
   (head Let)
   (section "4.4")
-  (spec-source-sha1 "0ffb6383f6634d2c5ae4fa4898426e4d200421c1")
-  (spec-source-ranges (652 652))
-  (equation-source-sha1 "0ffb6383f6634d2c5ae4fa4898426e4d200421c1")
-  (equation-ranges (652 652))
+  (spec-source-sha1 "359463a1dce292f5e25bae88b199fbdfa080f831")
+  (spec-source-ranges (664 664))
+  (equation-source-sha1 "359463a1dce292f5e25bae88b199fbdfa080f831")
+  (equation-ranges (664 664))
   (status executable)
   (port-state a0)
   (dependencies λ)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-let (cases beta)))
+  (implementations
+   (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-let (cases beta)))
   (domains)
   (reason "A0 ports direct Let as immediate pure lambda application."))
  (definition
@@ -890,15 +992,22 @@
   (id "D4.6.Close")
   (head Close)
   (section "4.6")
-  (spec-source-sha1 "401f33051ec3cf4b438d32f63787d258458ee379")
-  (spec-source-ranges (740 749))
+  (spec-source-sha1 "dbc57435b66b6bdb5a92fa5e466c3380b1df1f6b")
+  (spec-source-ranges (752 761))
   (status executable)
   (port-state a0)
   (dependencies CloseClause ActualClause DirectClause)
-  (legacy-implementations (binding "tools/smusni-redex/lower.rkt" expand-close-datum) (binding "tools/smusni-redex/lower.rkt" close-out))
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" a0-expand-close (cases holding-state direct-event-implicit direct-event-explicit)))
+  (legacy-implementations
+   (binding "tools/smusni-redex/lower.rkt" expand-close-datum)
+   (binding "tools/smusni-redex/lower.rkt" close-out))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    a0-expand-close
+    (cases holding-state direct-event-implicit direct-event-explicit)))
   (domains)
-  (reason "A0 ports all three Close equations over an explicit adapter-supplied row declaration."))
+  (reason
+   "A0 ports all three Close equations over an explicit adapter-supplied row declaration."))
  (definition
   (id "D4.6.DirectClause")
   (head DirectClause)
@@ -911,7 +1020,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its row-aware direct-event family has not yet reached the Redex port."))
+  (reason
+   "Its row-aware direct-event family has not yet reached the Redex port."))
  (definition
   (id "D4.8.CardBasis")
   (head CardBasis)
@@ -929,15 +1039,19 @@
   (id "D4.8.CoveredBy")
   (head CoveredBy)
   (section "4.8")
-  (spec-source-sha1 "f82e52e81275bb967f63580035f77cdc93c609db")
-  (spec-source-ranges (856 866))
-  (equation-source-sha1 "329cf53d0a69bede1793597329eb31ed78d81c7d")
-  (equation-ranges (860 866))
+  (spec-source-sha1 "13fbff848b7b8397e5f3bdf15315286b620252cc")
+  (spec-source-ranges (868 878))
+  (equation-source-sha1 "468e6769d94c4a3acc7999c2bad4ad8ca002ca9c")
+  (equation-ranges (872 878))
   (status executable)
   (port-state ported)
   (dependencies ∧ Distrib ∀ λ → Among ∃ Overlap)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-covered-by (cases no-residue)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-covered-by
+    (cases no-residue)))
   (domains)
   (reason "B1 ports the no-residue plural coverage equation."))
  (definition
@@ -952,7 +1066,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "The greater-than derived comparison is separately scoped in issue #66."))
+  (reason
+   "The greater-than derived comparison is separately scoped in issue #66."))
  (definition
   (id "D4.9.CompleteGunmaAt")
   (head CompleteGunmaAt)
@@ -1004,7 +1119,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its compatible-predicate constitution family has not yet reached the Redex port."))
+  (reason
+   "Its compatible-predicate constitution family has not yet reached the Redex port."))
  (definition
   (id "D5.1.That")
   (head That)
@@ -1017,7 +1133,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This abbreviation projects the model context ground and is not a closed term rewrite."))
+  (reason
+   "This abbreviation projects the model context ground and is not a closed term rewrite."))
  (definition
   (id "D5.1.This")
   (head This)
@@ -1030,7 +1147,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This abbreviation projects the model context ground and is not a closed term rewrite."))
+  (reason
+   "This abbreviation projects the model context ground and is not a closed term rewrite."))
  (definition
   (id "D5.1.Yonder")
   (head Yonder)
@@ -1043,7 +1161,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This abbreviation projects the model context ground and is not a closed term rewrite."))
+  (reason
+   "This abbreviation projects the model context ground and is not a closed term rewrite."))
  (definition
   (id "D5.3.Refer-member-lift")
   (head Refer)
@@ -1061,15 +1180,19 @@
   (id "D5.6.SelectSome")
   (head SelectSome)
   (section "5.6")
-  (spec-source-sha1 "fbfda69ac27a52ccb33d37e97faf57821fba7337")
-  (spec-source-ranges (1786 1786))
-  (equation-source-sha1 "fbfda69ac27a52ccb33d37e97faf57821fba7337")
-  (equation-ranges (1786 1786))
+  (spec-source-sha1 "d987c2b372b1d3e1140ddb9a384e7129a71e7f9d")
+  (spec-source-ranges (1798 1798))
+  (equation-source-sha1 "d987c2b372b1d3e1140ddb9a384e7129a71e7f9d")
+  (equation-ranges (1798 1798))
   (status executable)
   (port-state ported)
   (dependencies SelectAtLeast)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" b1-expand-select-some (cases at-least-one)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    b1-expand-select-some
+    (cases at-least-one)))
   (domains)
   (reason "B1 ports SelectSome as SelectAtLeast one."))
  (definition
@@ -1084,7 +1207,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its fills-parameterized expansion is executable but has not yet reached the Redex port."))
+  (reason
+   "Its fills-parameterized expansion is executable but has not yet reached the Redex port."))
  (definition
   (id "D7.4.Utterance-entry")
   (head Utterance)
@@ -1097,7 +1221,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "This equation defines compact entry notation rather than an ordinary term former."))
+  (reason
+   "This equation defines compact entry notation rather than an ordinary term former."))
  (definition
   (id "D8.2.Answer-contextual")
   (head Answer)
@@ -1110,7 +1235,8 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its query-type-directed overload has not yet reached the Redex port."))
+  (reason
+   "Its query-type-directed overload has not yet reached the Redex port."))
  (definition
   (id "D9.1.Meau0")
   (head Meau0)
@@ -1136,79 +1262,105 @@
   (legacy-implementations)
   (implementations)
   (domains)
-  (reason "Its abstraction-relation family has not yet reached the Redex port."))
+  (reason
+   "Its abstraction-relation family has not yet reached the Redex port."))
  (definition
   (id "D12.IndividualSome")
   (head IndividualSome)
   (section "12")
-  (spec-source-sha1 "6ae9fb6f2194d923db61f086ff3ab630b52564b2")
-  (spec-source-ranges (3743 3743) (3738 3740) (3750 3763))
-  (equation-source-sha1 "090ac14d2f766dfda4fc27ed3f733e79ecc2c5e6")
-  (equation-ranges (3743 3743))
+  (spec-source-sha1 "2f1c53a6a08bfe95ae5e03bfa3001d27507fda61")
+  (spec-source-ranges (3758 3758) (3753 3755) (3765 3778))
+  (equation-source-sha1 "380f30e9e22cbadcdfd7b3ee6ef452408055cbbc")
+  (equation-ranges (3758 3758))
   (status executable)
   (port-state ported)
   (dependencies ∃ λ ∧)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-individual-some (cases individual-exists)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-individual-some
+    (cases individual-exists)))
   (domains)
-  (reason "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
+  (reason
+   "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
  (definition
   (id "D12.IndividualNo")
   (head IndividualNo)
   (section "12")
-  (spec-source-sha1 "d4310d290a2a5b8b5347509f52eae4bd6fa2c68b")
-  (spec-source-ranges (3744 3744) (3738 3740) (3750 3763))
-  (equation-source-sha1 "1c67fa427f45a65aa8f7c6d765b4da021fb23d75")
-  (equation-ranges (3744 3744))
+  (spec-source-sha1 "2c170d8212203de3c848618a631e8da2c97af718")
+  (spec-source-ranges (3759 3759) (3753 3755) (3765 3778))
+  (equation-source-sha1 "f3aee89491f15d5a7cd8b1c310cf68a4e32f97b7")
+  (equation-ranges (3759 3759))
   (status executable)
   (port-state ported)
   (dependencies ¬ IndividualSome)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-individual-no (cases negated-individual-exists)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-individual-no
+    (cases negated-individual-exists)))
   (domains)
-  (reason "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
+  (reason
+   "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
  (definition
   (id "D12.IndividualEvery")
   (head IndividualEvery)
   (section "12")
-  (spec-source-sha1 "db086d3bc21748eb386bb669e82ac48ea2d22d22")
-  (spec-source-ranges (3745 3745) (3738 3740) (3750 3763))
-  (equation-source-sha1 "f5069eb5523e84710d4bf9871e053b79151e2711")
-  (equation-ranges (3745 3745))
+  (spec-source-sha1 "1fb177fb72174fb305dce52f7e89d079aa6f2663")
+  (spec-source-ranges (3760 3760) (3753 3755) (3765 3778))
+  (equation-source-sha1 "06a8a28bfc6a21a6b23e719fb540053d2456e584")
+  (equation-ranges (3760 3760))
   (status executable)
   (port-state ported)
   (dependencies ∀ λ →)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-individual-every (cases individual-forall)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-individual-every
+    (cases individual-forall)))
   (domains)
-  (reason "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
+  (reason
+   "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
  (definition
   (id "D12.PluralSome")
   (head PluralSome)
   (section "12")
-  (spec-source-sha1 "944fde1e26f9c042b31e4e4f56672b0f59ba9c95")
-  (spec-source-ranges (3746 3746) (3738 3740) (3750 3763))
-  (equation-source-sha1 "fb6466f844ec80d397d31ec6bb363ad45ac18d7c")
-  (equation-ranges (3746 3746))
+  (spec-source-sha1 "498d641d7515b62847abb352e3733ac884d0d5e2")
+  (spec-source-ranges (3761 3761) (3753 3755) (3765 3778))
+  (equation-source-sha1 "6a89a08abbcdfc70b6d43142d57d0147f7210b17")
+  (equation-ranges (3761 3761))
   (status executable)
   (port-state ported)
   (dependencies ∃ λ ∧)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-plural-some (cases plural-exists)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-plural-some
+    (cases plural-exists)))
   (domains)
-  (reason "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
+  (reason
+   "E01 ports the adopted ordinary closure equation; no outward reference introduction."))
  (definition
   (id "D12.PluralNo")
   (head PluralNo)
   (section "12")
-  (spec-source-sha1 "17a1c655a83b38741622b88fa03a4cd8b7a3a570")
-  (spec-source-ranges (3747 3747) (3738 3740) (3750 3763))
-  (equation-source-sha1 "5ce719c24fccf8e5d56d5e66d8a52aaffac8c469")
-  (equation-ranges (3747 3747))
+  (spec-source-sha1 "286c5ff2b5d449676ce0d027a173478d030c1d1d")
+  (spec-source-ranges (3762 3762) (3753 3755) (3765 3778))
+  (equation-source-sha1 "5407b64792d8073634e89fb17da43255b4e0d0f9")
+  (equation-ranges (3762 3762))
   (status executable)
   (port-state ported)
   (dependencies ¬ PluralSome)
   (legacy-implementations)
-  (implementations (metafunction "tools/smusni-redex/port-a0.rkt" e01-expand-plural-no (cases negated-plural-exists)))
+  (implementations
+   (metafunction
+    "tools/smusni-redex/port-a0.rkt"
+    e01-expand-plural-no
+    (cases negated-plural-exists)))
   (domains)
-  (reason "E01 ports the adopted ordinary closure equation; no outward reference introduction.")))
+  (reason
+   "E01 ports the adopted ordinary closure equation; no outward reference introduction.")))

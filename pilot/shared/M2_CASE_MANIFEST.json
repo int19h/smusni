@@ -3,9 +3,9 @@
   "version": 1,
   "sources": {
     "s1": "pilot/shared/M1_S1_MANIFEST.json",
-    "s1_sha256": "f4f738ff7c5f88a32c52ef357b768562f1e6ee3bab490d7dc34866a99a780a91",
+    "s1_sha256": "8b7e6508361a3432cef1b68a7e198c2f9f3d9f6e5c47ae3e1270fa67860897b7",
     "definitions": "pilot/shared/M2_DEFINITION_MANIFEST.json",
-    "definitions_sha256": "98d414932492188a57b378616136ffcb03d265c6dae110c37f17aca980345b4d"
+    "definitions_sha256": "a168afe35e6395c281ae79443123dc796a8fed3a69036e4c7306f5c2f37f5e0e"
   },
   "parity_heads": [
     "AtLeast",

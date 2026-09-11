@@ -7,7 +7,7 @@ namespace SmusniPilot
 open Lean
 
 def pinnedM1BaseHead : String :=
-  "18cd6267ad38abde8836a553f1531a4f05f339c6"
+  "8bea3eadebaf4e942ff55e17d6b3a39ea4684862"
 
 structure S1Counts where
   total_cases : Nat

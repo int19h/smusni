@@ -691,10 +691,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["StateClause", "fasnu"]
       clauses := [.d12ActualClauseActualEvent]
       selectedDomains := []
-      specRanges := [{ start := 4158, stop := 4171 }]
-      equationRanges := [{ start := 4164, stop := 4165 }]
-      specDigest := "32654d89b748fb70feed941740c3ec2437dd928d586bd17f3938e8be739f9e54"
-      equationDigest := "90d08e22003943efc4ebc624e84b2189268c7910e6e35bfff94b7d598cb4e827"
+      specRanges := [{ start := 4188, stop := 4201 }]
+      equationRanges := [{ start := 4194, stop := 4195 }]
+      specDigest := "f4fd6853f8f14964b172a3f02923387b798ccdc4b706b0b53c6172903680d868"
+      equationDigest := "f4121984ed302d92a9ef738fa6467158af8e9955baf5d400bd04819e2653b959"
       supplementKind := some "definition"
     }
   | .d12AtLeast => {
@@ -705,10 +705,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectAtLeast"]
       clauses := [.d12AtLeastPositive, .d12AtLeastZero]
       selectedDomains := []
-      specRanges := [{ start := 3780, stop := 3780 }, { start := 3806, stop := 3806 }, { start := 3797, stop := 3803 }]
-      equationRanges := [{ start := 3780, stop := 3780 }, { start := 3806, stop := 3806 }]
-      specDigest := "375d4ab27fc3724784acbc8f8bdecc25d1584179263eb6ef588b9df66fd0e6db"
-      equationDigest := "5ac049f408ce4ac6114dd0969a41c6f6c93b20d9ea973dca9bf89f7659497318"
+      specRanges := [{ start := 3795, stop := 3795 }, { start := 3833, stop := 3833 }, { start := 3824, stop := 3830 }]
+      equationRanges := [{ start := 3795, stop := 3795 }, { start := 3833, stop := 3833 }]
+      specDigest := "5c4cb400639c6962fedb8f26e420eb57df9d59ed786148654df31b19a4595bd0"
+      equationDigest := "9b643652a11e07defef6194582849d621c4640c7197f825fed7619b84dc7e445"
       supplementKind := none
     }
   | .d12AtMost => {
@@ -719,10 +719,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "AtLeast", "+"]
       clauses := [.d12AtMostNegatedSuccessor]
       selectedDomains := []
-      specRanges := [{ start := 3788, stop := 3788 }]
-      equationRanges := [{ start := 3788, stop := 3788 }]
-      specDigest := "56bb852b6fdefde5af86495b3b45fff9ad319ae0f3d86cdbb371de3ab5a08bdc"
-      equationDigest := "56bb852b6fdefde5af86495b3b45fff9ad319ae0f3d86cdbb371de3ab5a08bdc"
+      specRanges := [{ start := 3803, stop := 3803 }]
+      equationRanges := [{ start := 3803, stop := 3803 }]
+      specDigest := "7b99cb830e59f63f5ee46674ff18e56436ae4221e41c51fbeabe6abc779d051b"
+      equationDigest := "7b99cb830e59f63f5ee46674ff18e56436ae4221e41c51fbeabe6abc779d051b"
       supplementKind := none
     }
   | .d12CanonicalAggregateAt => {
@@ -733,10 +733,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Aggregate", "CompleteGunmaAt"]
       clauses := [.d12CanonicalAggregateAtAggregateAndCompleteGunma]
       selectedDomains := []
-      specRanges := [{ start := 3967, stop := 3992 }]
-      equationRanges := [{ start := 3971, stop := 3972 }]
-      specDigest := "b943d21d1f1796d6f242a7a9e29899761c06526d81a45591c8b35de136982833"
-      equationDigest := "4d06e5d87ad07c16070a6fe6493377ab08ef3ee5914c1050b3f3a58e6addb3f0"
+      specRanges := [{ start := 3997, stop := 4022 }]
+      equationRanges := [{ start := 4001, stop := 4002 }]
+      specDigest := "85e633c9d3b1f9bc71ac6876278ec9476818ad0063b08dc0808649ec747e2d51"
+      equationDigest := "1d255a1f77280bab0dcb7b01001de9c984b857cc8da389590fda6015ba3411b7"
       supplementKind := some "definition"
     }
   | .d12CoRef => {
@@ -747,10 +747,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Among"]
       clauses := [.d12CoRefMutualAmong]
       selectedDomains := []
-      specRanges := [{ start := 4058, stop := 4065 }]
-      equationRanges := [{ start := 4061, stop := 4061 }]
-      specDigest := "6010f3ebefac0c9f337cd826db0e4ce898e21c8c0c2f9f07e610fb7a1a0a0671"
-      equationDigest := "e2b1e08300fed16ecccbaab484792872e17bff9667cc4be7a722073b850d9e47"
+      specRanges := [{ start := 4088, stop := 4095 }]
+      equationRanges := [{ start := 4091, stop := 4091 }]
+      specDigest := "2f40be0b23557afbcb4a72dee937aa7d1dba8bc844a50534bf1c78ab2e03734d"
+      equationDigest := "9cd2f7d9ed98da24960664a6af9dff7795da144bd968ede9c884919613c82d88"
       supplementKind := some "definition"
     }
   | .d12Distrib => {
@@ -761,10 +761,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∀", "λ", "→", "Among"]
       clauses := [.d12DistribUniversalMembers]
       selectedDomains := []
-      specRanges := [{ start := 3792, stop := 3792 }]
-      equationRanges := [{ start := 3792, stop := 3792 }]
-      specDigest := "483f9b9fbbca34ce43a3aa98fbaed4c6a90023267d94ba3f2e09764517acbd9d"
-      equationDigest := "483f9b9fbbca34ce43a3aa98fbaed4c6a90023267d94ba3f2e09764517acbd9d"
+      specRanges := [{ start := 3807, stop := 3807 }]
+      equationRanges := [{ start := 3807, stop := 3807 }]
+      specDigest := "3f9c03a3761a64c78fa0c53d4973efa93fc759e8671a3316be473dc1f3292c27"
+      equationDigest := "3f9c03a3761a64c78fa0c53d4973efa93fc759e8671a3316be473dc1f3292c27"
       supplementKind := none
     }
   | .d12Every => {
@@ -775,10 +775,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "MaxRefer", "Distrib"]
       clauses := [.d12EveryMaximalDistribution]
       selectedDomains := []
-      specRanges := [{ start := 3782, stop := 3783 }]
-      equationRanges := [{ start := 3782, stop := 3783 }]
-      specDigest := "4d3951273624eed30870084155db2d0ad07276a5a9a6785a20316f1e38f3eb63"
-      equationDigest := "4d3951273624eed30870084155db2d0ad07276a5a9a6785a20316f1e38f3eb63"
+      specRanges := [{ start := 3797, stop := 3798 }]
+      equationRanges := [{ start := 3797, stop := 3798 }]
+      specDigest := "8ab9ae1a3fad294c5a5e24d56049da57dae994c2531bf94cfde5ee77d80fc11c"
+      equationDigest := "8ab9ae1a3fad294c5a5e24d56049da57dae994c2531bf94cfde5ee77d80fc11c"
       supplementKind := none
     }
   | .d12Exactly => {
@@ -789,10 +789,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectExactly", "No"]
       clauses := [.d12ExactlyPositive, .d12ExactlyZero]
       selectedDomains := []
-      specRanges := [{ start := 3779, stop := 3779 }, { start := 3807, stop := 3807 }, { start := 3797, stop := 3803 }]
-      equationRanges := [{ start := 3779, stop := 3779 }, { start := 3807, stop := 3807 }]
-      specDigest := "fc7613fa10cd3734d9bcc627e32bc50cd7500a6a0e493a013e49f19f6b18444a"
-      equationDigest := "6cbfc30e0567ace7440c224898ace84fe711f4fa5a070470237863ae07e7d8f7"
+      specRanges := [{ start := 3794, stop := 3794 }, { start := 3834, stop := 3834 }, { start := 3824, stop := 3830 }]
+      equationRanges := [{ start := 3794, stop := 3794 }, { start := 3834, stop := 3834 }]
+      specDigest := "cef5987cac1f799c9e9777d575586df1d945128e44847f0ba332578060c87d40"
+      equationDigest := "c258ed4f78ed521babcc8d334871097faf964fcee1ad4224ff88e61735f3fa56"
       supplementKind := none
     }
   | .d12FewerThan => {
@@ -803,10 +803,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "AtLeast"]
       clauses := [.d12FewerThanNegatedAtLeast]
       selectedDomains := []
-      specRanges := [{ start := 3790, stop := 3790 }]
-      equationRanges := [{ start := 3790, stop := 3790 }]
-      specDigest := "50a11eb2c34f0f55124447a5c8ac45523cf7fd9232353be7cf0d5d13e3f418ae"
-      equationDigest := "50a11eb2c34f0f55124447a5c8ac45523cf7fd9232353be7cf0d5d13e3f418ae"
+      specRanges := [{ start := 3805, stop := 3805 }]
+      equationRanges := [{ start := 3805, stop := 3805 }]
+      specDigest := "16b576455129ed872358ccf93949d55641d089c7587ce61ac098b6cfc6ea8816"
+      equationDigest := "16b576455129ed872358ccf93949d55641d089c7587ce61ac098b6cfc6ea8816"
       supplementKind := none
     }
   | .d12GlobalExactly => {
@@ -817,10 +817,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["=", "Card", "SetOf", "λ", "∧"]
       clauses := [.d12GlobalExactlyComprehension]
       selectedDomains := []
-      specRanges := [{ start := 3791, stop := 3791 }]
-      equationRanges := [{ start := 3791, stop := 3791 }]
-      specDigest := "b717eaf1e6cb4f46f8c1b82f03c2fd7ef20dd94d30530100a8d3222c47290b55"
-      equationDigest := "b717eaf1e6cb4f46f8c1b82f03c2fd7ef20dd94d30530100a8d3222c47290b55"
+      specRanges := [{ start := 3806, stop := 3806 }]
+      equationRanges := [{ start := 3806, stop := 3806 }]
+      specDigest := "b312c08c3e73573f57f313963930214009a272487ecc7b0512a71028298700d7"
+      equationDigest := "b312c08c3e73573f57f313963930214009a272487ecc7b0512a71028298700d7"
       supplementKind := none
     }
   | .d12Grade => {
@@ -831,10 +831,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["InRegion"]
       clauses := [.d12GradeRowDirected]
       selectedDomains := []
-      specRanges := [{ start := 2096, stop := 2125 }, { start := 3878, stop := 3899 }]
-      equationRanges := [{ start := 3894, stop := 3895 }]
-      specDigest := "14fc8b17957d8a540381129bb159692f1990881d1e28873208d8dc7c1cabf618"
-      equationDigest := "ca15cd1676b1b6ee4844b7e0970c6bd4261c52591ff4cec23e05d07db9357904"
+      specRanges := [{ start := 2108, stop := 2137 }, { start := 3908, stop := 3929 }]
+      equationRanges := [{ start := 3924, stop := 3925 }]
+      specDigest := "6fd22ec40b35a62ebe8506eee06f97d36d5409ab1aca54b38142dd022e1a1f71"
+      equationDigest := "d5558ef6bb09957bf8836d88cf45188ac1651af19851743758c15da4a6e2e6a9"
       supplementKind := some "schema"
     }
   | .d12IndividualEvery => {
@@ -845,10 +845,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∀", "λ", "→"]
       clauses := [.d12IndividualEveryIndividualForall]
       selectedDomains := []
-      specRanges := [{ start := 3745, stop := 3745 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
-      equationRanges := [{ start := 3745, stop := 3745 }]
-      specDigest := "507478b6e6c835ca0d444e99fb99ec4f727197c29db5937304e7db94e66adc7c"
-      equationDigest := "e3a0699bf900016a566bc4df56182d7a134320c4e7143f38f29b83362cc677d9"
+      specRanges := [{ start := 3760, stop := 3760 }, { start := 3753, stop := 3755 }, { start := 3765, stop := 3778 }]
+      equationRanges := [{ start := 3760, stop := 3760 }]
+      specDigest := "357fe1c94f3013ee54c047d58cd8812cefb0892de3635e29f011f582941a7b42"
+      equationDigest := "6057ba3684666b691caa74a871983de6363482e1b0026c9a85e961a502c89791"
       supplementKind := none
     }
   | .d12IndividualNo => {
@@ -859,10 +859,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "IndividualSome"]
       clauses := [.d12IndividualNoNegatedIndividualExists]
       selectedDomains := []
-      specRanges := [{ start := 3744, stop := 3744 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
-      equationRanges := [{ start := 3744, stop := 3744 }]
-      specDigest := "3f0423596cf1bce317f4fd2981981e33011cc0cce1eda08f5ee40301efa80f69"
-      equationDigest := "ad14c9bbb26d7c7fc367eb065d4957d263cff370904095210f122783ac5b28f9"
+      specRanges := [{ start := 3759, stop := 3759 }, { start := 3753, stop := 3755 }, { start := 3765, stop := 3778 }]
+      equationRanges := [{ start := 3759, stop := 3759 }]
+      specDigest := "ee093c8ab7b28e3ed17bc5f4bf2b8423f89ee8ae385edfb82fe817a7ebb528cf"
+      equationDigest := "46dc10ccb234dc08f4c0f65dda48b9a138c887f1cac82a19f9fcb1b4f8d25621"
       supplementKind := none
     }
   | .d12IndividualSome => {
@@ -873,10 +873,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∃", "λ", "∧"]
       clauses := [.d12IndividualSomeIndividualExists]
       selectedDomains := []
-      specRanges := [{ start := 3743, stop := 3743 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
-      equationRanges := [{ start := 3743, stop := 3743 }]
-      specDigest := "f73697e837182e23082a0cb073d12624f00b279695cadb3b6efcd4868d227b62"
-      equationDigest := "1c2ff69abf2735f9e9d9c1ee42b9050a6d5451ace7a02492f05018abe4e18c32"
+      specRanges := [{ start := 3758, stop := 3758 }, { start := 3753, stop := 3755 }, { start := 3765, stop := 3778 }]
+      equationRanges := [{ start := 3758, stop := 3758 }]
+      specDigest := "4cbcf26cf996c94646dfea5e08bb35954213c5b7139491a90be986ba0a161a59"
+      equationDigest := "5d9f733e36c9395ecc8d5d36dc7f8affbdd092ce366cc7cb8e444cbb02aa047e"
       supplementKind := none
     }
   | .d12JaiRaise => {
@@ -887,10 +887,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["PredTerm", "JaiRoleAdmissible"]
       clauses := [.d12JaiRaiseRaisedRole, .d12JaiRaiseBareJaiMapping]
       selectedDomains := []
-      specRanges := [{ start := 3646, stop := 3651 }, { start := 4199, stop := 4238 }]
-      equationRanges := [{ start := 4215, stop := 4218 }, { start := 4225, stop := 4232 }]
-      specDigest := "eda546f1f0a96f9ec9f017e349fa7aed39f4fc099c590e368c89f956a0f9d6ae"
-      equationDigest := "9ede29913e74da1025d5270d0f84427bc58db2324c2e63a343c92392d57f1c8f"
+      specRanges := [{ start := 3661, stop := 3666 }, { start := 4229, stop := 4268 }]
+      equationRanges := [{ start := 4245, stop := 4248 }, { start := 4255, stop := 4262 }]
+      specDigest := "ffe28371b1a465499beb9425890e62bc046f82655580bba8a8aab014289d9a08"
+      equationDigest := "5c494200c2fc43fefd665077c494129047593c5fbb7ba01d4a5fae4d25622e95"
       supplementKind := some "schema-mapping"
     }
   | .d12Massify => {
@@ -901,10 +901,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Refer", "λ", "∃", "∧", "CanonicalAggregateAt", "CoRef"]
       clauses := [.d12MassifyCanonicalReference]
       selectedDomains := []
-      specRanges := [{ start := 3974, stop := 3977 }]
-      equationRanges := [{ start := 3974, stop := 3977 }]
-      specDigest := "8d494f0d4e360999b13423ab2eda1fac156ed905db87b85787176164e20c41e3"
-      equationDigest := "8d494f0d4e360999b13423ab2eda1fac156ed905db87b85787176164e20c41e3"
+      specRanges := [{ start := 4004, stop := 4007 }]
+      equationRanges := [{ start := 4004, stop := 4007 }]
+      specDigest := "494770f9a602b856adf824a91ede41c2a74c7ec6e9bb2978fd224e740cb015d0"
+      equationDigest := "494770f9a602b856adf824a91ede41c2a74c7ec6e9bb2978fd224e740cb015d0"
       supplementKind := none
     }
   | .d12MaxRefer => {
@@ -915,10 +915,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Presuppose", "∃", "Refer", "λ", "∧", "CoveredBy", "∀", "→", "Among"]
       clauses := [.d12MaxReferInhabitedMaximalReference]
       selectedDomains := []
-      specRanges := [{ start := 4065, stop := 4069 }]
-      equationRanges := [{ start := 4065, stop := 4069 }]
-      specDigest := "cfa8f84634b93868afa8261a0305a961d2cf1c51270f2ad86b4f6a6b4b4b7be8"
-      equationDigest := "cfa8f84634b93868afa8261a0305a961d2cf1c51270f2ad86b4f6a6b4b4b7be8"
+      specRanges := [{ start := 4095, stop := 4099 }]
+      equationRanges := [{ start := 4095, stop := 4099 }]
+      specDigest := "6811fefedfb408d5d14ca9f59e1b630a2d36ee1de3991ef50e95c0af6afaacee"
+      equationDigest := "6811fefedfb408d5d14ca9f59e1b630a2d36ee1de3991ef50e95c0af6afaacee"
       supplementKind := none
     }
   | .d12MoreThan => {
@@ -929,10 +929,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["AtLeast", "+"]
       clauses := [.d12MoreThanSuccessor]
       selectedDomains := []
-      specRanges := [{ start := 3789, stop := 3789 }]
-      equationRanges := [{ start := 3789, stop := 3789 }]
-      specDigest := "02e3e86178e10dc50e8ef4203e92e3b431f4a166e9640d69a3ed3eb4582e8ef0"
-      equationDigest := "02e3e86178e10dc50e8ef4203e92e3b431f4a166e9640d69a3ed3eb4582e8ef0"
+      specRanges := [{ start := 3804, stop := 3804 }]
+      equationRanges := [{ start := 3804, stop := 3804 }]
+      specDigest := "1e4c077f52edfcab3ec8450a2b985b080f29d8ead87b928e40a243585c3d728e"
+      equationDigest := "1e4c077f52edfcab3ec8450a2b985b080f29d8ead87b928e40a243585c3d728e"
       supplementKind := none
     }
   | .d12No => {
@@ -943,10 +943,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "Some"]
       clauses := [.d12NoNegatedSome]
       selectedDomains := []
-      specRanges := [{ start := 3787, stop := 3787 }]
-      equationRanges := [{ start := 3787, stop := 3787 }]
-      specDigest := "73c75f8a1d986e6b2e5278af078a1cc426330151c45aa24c30597a18bb655edf"
-      equationDigest := "73c75f8a1d986e6b2e5278af078a1cc426330151c45aa24c30597a18bb655edf"
+      specRanges := [{ start := 3802, stop := 3802 }]
+      equationRanges := [{ start := 3802, stop := 3802 }]
+      specDigest := "8938afcad21c3c997b722913f7e9eb51e64394c8f24987d8cace1c687e14fc27"
+      equationDigest := "8938afcad21c3c997b722913f7e9eb51e64394c8f24987d8cace1c687e14fc27"
       supplementKind := none
     }
   | .d12Only => {
@@ -957,10 +957,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∧", "∀", "λ", "→", "Among"]
       clauses := [.d12OnlyHostAndExclusion]
       selectedDomains := []
-      specRanges := [{ start := 4263, stop := 4271 }]
-      equationRanges := [{ start := 4267, stop := 4271 }]
-      specDigest := "f3571ceb049a413b9e520d0049c349fda117733dc9707028f13aaa38d043b819"
-      equationDigest := "caaff43c85b2166221fcc6ca84b7cdb717cc6ed765f19d4571bfae657bce3277"
+      specRanges := [{ start := 4293, stop := 4301 }]
+      equationRanges := [{ start := 4297, stop := 4301 }]
+      specDigest := "0ea93b4382ce6ac689be43340f15895373a37a5cfa0118fb2b4ee6c7003b6644"
+      equationDigest := "2432525fbe1f8a927f7b3ecdbc9af33afd77b10b8f8e2dff912a0ae1b1b9bcf4"
       supplementKind := none
     }
   | .d12Overlap => {
@@ -971,10 +971,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∃", "λ", "∧", "Among"]
       clauses := [.d12OverlapCommonSubreference]
       selectedDomains := []
-      specRanges := [{ start := 4020, stop := 4020 }]
-      equationRanges := [{ start := 4020, stop := 4020 }]
-      specDigest := "1925ba0200c5fb202470626b9826bc44c9f7e8a5dcde9f657da0fad69d017698"
-      equationDigest := "1925ba0200c5fb202470626b9826bc44c9f7e8a5dcde9f657da0fad69d017698"
+      specRanges := [{ start := 4050, stop := 4050 }]
+      equationRanges := [{ start := 4050, stop := 4050 }]
+      specDigest := "418a1eb23b7b4ec98e38beafb17eaad99e49446ac878c49b74fc52d8c7c59f70"
+      equationDigest := "418a1eb23b7b4ec98e38beafb17eaad99e49446ac878c49b74fc52d8c7c59f70"
       supplementKind := none
     }
   | .d12PluralNo => {
@@ -985,10 +985,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["¬", "PluralSome"]
       clauses := [.d12PluralNoNegatedPluralExists]
       selectedDomains := []
-      specRanges := [{ start := 3747, stop := 3747 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
-      equationRanges := [{ start := 3747, stop := 3747 }]
-      specDigest := "bdd17259ffb3a05b9e10ad441a15eb95116b88a9b1a07b94fc4eba2e5ce83fcc"
-      equationDigest := "402c7d25d602618674da55db98680256f9f60d4e9d568615154ede845fa4073e"
+      specRanges := [{ start := 3762, stop := 3762 }, { start := 3753, stop := 3755 }, { start := 3765, stop := 3778 }]
+      equationRanges := [{ start := 3762, stop := 3762 }]
+      specDigest := "d011d98c6d33f4cc3b4964734cba87e61f86e0e3956101f0e5b600b95a829b5a"
+      equationDigest := "e9911442fb8e8962c6be286b438d0b0279d19aae7cc72f257693bc5588259b53"
       supplementKind := none
     }
   | .d12PluralSome => {
@@ -999,10 +999,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∃", "λ", "∧"]
       clauses := [.d12PluralSomePluralExists]
       selectedDomains := []
-      specRanges := [{ start := 3746, stop := 3746 }, { start := 3738, stop := 3740 }, { start := 3750, stop := 3763 }]
-      equationRanges := [{ start := 3746, stop := 3746 }]
-      specDigest := "03fdb7119c5a8043e4e1346e795a9cc87e2c2305963d2d91a93e63fac1ae7b5f"
-      equationDigest := "5a7d89b45d5a95fa7993f95df3f4c94d0e77e81b0b00a040a28b3bf14af416bb"
+      specRanges := [{ start := 3761, stop := 3761 }, { start := 3753, stop := 3755 }, { start := 3765, stop := 3778 }]
+      equationRanges := [{ start := 3761, stop := 3761 }]
+      specDigest := "81c0d7ebd72be8017658f063827003869d3324323105ef6c25e3f323d45f01d3"
+      equationDigest := "0dce50e8c42b31f138328d9a990c60a4702e2afddec6ff31c75ac6d6a85fbeca"
       supplementKind := none
     }
   | .d12Some => {
@@ -1013,10 +1013,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "SelectSome"]
       clauses := [.d12SomeWitness]
       selectedDomains := []
-      specRanges := [{ start := 3781, stop := 3781 }]
-      equationRanges := [{ start := 3781, stop := 3781 }]
-      specDigest := "cee13f21f1beb4850bfa6a6298a27ba4d5b7531a3e9b3f1d9c42ce6d71b6c353"
-      equationDigest := "cee13f21f1beb4850bfa6a6298a27ba4d5b7531a3e9b3f1d9c42ce6d71b6c353"
+      specRanges := [{ start := 3796, stop := 3796 }]
+      equationRanges := [{ start := 3796, stop := 3796 }]
+      specDigest := "f46af1caa5f6f0a061e8caa23d80140bc87b53c217771c5bac5ee1251bd4fdfe"
+      equationDigest := "f46af1caa5f6f0a061e8caa23d80140bc87b53c217771c5bac5ee1251bd4fdfe"
       supplementKind := none
     }
   | .d12TooMany => {
@@ -1027,10 +1027,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "Context", "Vague", "AdmissibleThreshold", "MoreThan"]
       clauses := [.d12TooManyDependentThreshold]
       selectedDomains := []
-      specRanges := [{ start := 3856, stop := 3858 }]
-      equationRanges := [{ start := 3856, stop := 3858 }]
-      specDigest := "05cfdfe177cd8045c253acd34b3d131db462fbfea58eeab85bae6600c706431c"
-      equationDigest := "05cfdfe177cd8045c253acd34b3d131db462fbfea58eeab85bae6600c706431c"
+      specRanges := [{ start := 3886, stop := 3888 }]
+      equationRanges := [{ start := 3886, stop := 3888 }]
+      specDigest := "11033d42390cfa15456ff6853e814d6f0ea3b35571458bf93155bda0f9da0482"
+      equationDigest := "11033d42390cfa15456ff6853e814d6f0ea3b35571458bf93155bda0f9da0482"
       supplementKind := none
     }
   | .d12ZipWith => {
@@ -1041,10 +1041,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∧", "List"]
       clauses := [.d12ZipWithEmpty, .d12ZipWithPairedStep]
       selectedDomains := ["equal-length"]
-      specRanges := [{ start := 4041, stop := 4043 }]
-      equationRanges := [{ start := 4041, stop := 4043 }]
-      specDigest := "e581473527ede4a8057638a1e0e9e0753cfaea1d4e7f4b2dbf1835670612b07b"
-      equationDigest := "e581473527ede4a8057638a1e0e9e0753cfaea1d4e7f4b2dbf1835670612b07b"
+      specRanges := [{ start := 4071, stop := 4073 }]
+      equationRanges := [{ start := 4071, stop := 4073 }]
+      specDigest := "d3d60d566088d2f61dd085da1f07ed44ab360e4a7adeb5731eee21f108f9b828"
+      equationDigest := "d3d60d566088d2f61dd085da1f07ed44ab360e4a7adeb5731eee21f108f9b828"
       supplementKind := none
     }
   | .d44Let => {
@@ -1055,10 +1055,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["λ"]
       clauses := [.d44LetBeta]
       selectedDomains := []
-      specRanges := [{ start := 652, stop := 652 }]
-      equationRanges := [{ start := 652, stop := 652 }]
-      specDigest := "4df3a2a37963158ed2a903e116cdadc84c5d19180b08cf618ea45e485c141f31"
-      equationDigest := "4df3a2a37963158ed2a903e116cdadc84c5d19180b08cf618ea45e485c141f31"
+      specRanges := [{ start := 664, stop := 664 }]
+      equationRanges := [{ start := 664, stop := 664 }]
+      specDigest := "caa90671589303bdef8f130ae837530dd1b76b0dcb46ef5123abffb895c13afa"
+      equationDigest := "caa90671589303bdef8f130ae837530dd1b76b0dcb46ef5123abffb895c13afa"
       supplementKind := none
     }
   | .d46Close => {
@@ -1069,10 +1069,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["CloseClause", "ActualClause", "DirectClause", "CoRef"]
       clauses := [.d46CloseDirectEventExplicit, .d46CloseDirectEventImplicit, .d46CloseHoldingState]
       selectedDomains := []
-      specRanges := [{ start := 740, stop := 749 }]
-      equationRanges := [{ start := 740, stop := 741 }, { start := 743, stop := 746 }, { start := 748, stop := 749 }]
-      specDigest := "c0afd6131cde4f428f842183a76d9f653b9825d030d0c717c112c996acd51b39"
-      equationDigest := "1ac63b710a6f640e888553e6da8dc0805fbd37f3c37a6a49192591cde632933e"
+      specRanges := [{ start := 752, stop := 761 }]
+      equationRanges := [{ start := 752, stop := 753 }, { start := 755, stop := 758 }, { start := 760, stop := 761 }]
+      specDigest := "20dad3128fdf7cb8d71e50a377263f445fb50293e299a77cceb453b8944f6c17"
+      equationDigest := "17e1104b4571cfd5ef1fee6b464ac2d30fbb05c9983fadc626e262c391c0cf06"
       supplementKind := some "definition"
     }
   | .d46DirectClause => {
@@ -1083,10 +1083,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["Bind", "Context", "StateClause"]
       clauses := [.d46DirectClauseDefaultedEventProperty]
       selectedDomains := []
-      specRanges := [{ start := 689, stop := 717 }]
-      equationRanges := [{ start := 708, stop := 711 }]
-      specDigest := "8a62a92a01fa418bed00c944361ce49d1c55478a726970c6b3d50596e3330a0e"
-      equationDigest := "c906de97c857b0e3edbcdd08570b05fb08b4b7b56f19884843cfd3fe6ac1c7b3"
+      specRanges := [{ start := 701, stop := 729 }]
+      equationRanges := [{ start := 720, stop := 723 }]
+      specDigest := "6e0b033bfe6a956755593db3264e45e45455f8694af7c731560fccd36ac8d420"
+      equationDigest := "89c677c026538a8a1adfaa50fcb4d8db90aca019669b3ede4d43e7d995674561"
       supplementKind := some "schema"
     }
   | .d48CoveredBy => {
@@ -1097,10 +1097,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["∧", "Distrib", "∀", "λ", "→", "Among", "∃", "Overlap"]
       clauses := [.d48CoveredByNoResidue]
       selectedDomains := []
-      specRanges := [{ start := 856, stop := 866 }]
-      equationRanges := [{ start := 860, stop := 866 }]
-      specDigest := "55e0be52e65ae050f49eb2bbbda1c01f31cb1268a614fa65794426054d314449"
-      equationDigest := "80e75f0cbcaa26f28e290acd6492cbcd3c3af57fbbcbf127a6bf297ac13aab94"
+      specRanges := [{ start := 868, stop := 878 }]
+      equationRanges := [{ start := 872, stop := 878 }]
+      specDigest := "2d573abb7c312a1bf275c5e51afed6f55c546a47a5fd10cd0c36275c7aa51a84"
+      equationDigest := "067ceb32a29e4afd23e5d382366f3fcd6405c94d196ca67d00aab23c7f020ed7"
       supplementKind := none
     }
   | .d49CompleteGunmaAt => {
@@ -1111,10 +1111,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["GunmaAt", "PeerUnitAt", "BasisUnitAt"]
       clauses := [.d49CompleteGunmaAtCompletePeerCover]
       selectedDomains := []
-      specRanges := [{ start := 1011, stop := 1025 }]
-      equationRanges := [{ start := 1020, stop := 1022 }]
-      specDigest := "e94d60f39de032e7c36ddc0352211b18eea42231f70ba31a6e88c5fdd9c53b38"
-      equationDigest := "c9303c64a310762900316d6941df88f6944fc0e9993646562b92edbd2dc96362"
+      specRanges := [{ start := 1023, stop := 1037 }]
+      equationRanges := [{ start := 1032, stop := 1034 }]
+      specDigest := "b9e47ddebf51c17aa2479518bbee81c0b4d9282a5ea329a8187e37c707d02e7d"
+      equationDigest := "d3d5c37dd6d3e13e9c6e02717ce5db5c30c9c90d97286ed9bf63d6b0e7e0458d"
       supplementKind := some "definition"
     }
   | .d49GunmaAt => {
@@ -1125,10 +1125,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["PeerUnitAt", "BasisUnitAt", "CoRef"]
       clauses := [.d49GunmaAtBasisToPeerCover]
       selectedDomains := []
-      specRanges := [{ start := 1011, stop := 1025 }]
-      equationRanges := [{ start := 1016, stop := 1018 }]
-      specDigest := "e94d60f39de032e7c36ddc0352211b18eea42231f70ba31a6e88c5fdd9c53b38"
-      equationDigest := "59b6ac0b52687e9402119f587da746707693f0bb3ed439ba4042ed027676ac63"
+      specRanges := [{ start := 1023, stop := 1037 }]
+      equationRanges := [{ start := 1028, stop := 1030 }]
+      specDigest := "b9e47ddebf51c17aa2479518bbee81c0b4d9282a5ea329a8187e37c707d02e7d"
+      equationDigest := "9f13ffa6c5e6b1dd8bebd75f914e2225e501de87dcbd8849186fdf5d5b5854b2"
       supplementKind := some "definition"
     }
   | .d53ReferMemberLift => {
@@ -1139,10 +1139,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["CoveredBy"]
       clauses := [.d53ReferMemberLiftMemberLift]
       selectedDomains := []
-      specRanges := [{ start := 1570, stop := 1584 }]
-      equationRanges := [{ start := 1572, stop := 1573 }]
-      specDigest := "190432d06ae5db5bc80288483f6aea7958cd2573ea6c666506395ef523590e16"
-      equationDigest := "9d3cb87c155fe722ce5f5e1d6c33683fadde4fdd60bf17dd3c3ff5e4d46e0074"
+      specRanges := [{ start := 1582, stop := 1596 }]
+      equationRanges := [{ start := 1584, stop := 1585 }]
+      specDigest := "7167ed33858251d0a897e7d51c8061e22d411d3c80ec24c92eb97309fc25328b"
+      equationDigest := "63ed946675e4975cd747b1da1e8eff34d05561a8034b47671ec2e1ce622337e6"
       supplementKind := some "domain-overload"
     }
   | .d56SelectSome => {
@@ -1153,10 +1153,10 @@ def M2DefinitionId.record : M2DefinitionId → M2DefinitionRecord
       dependencies := ["SelectAtLeast"]
       clauses := [.d56SelectSomeAtLeastOne]
       selectedDomains := []
-      specRanges := [{ start := 1786, stop := 1786 }]
-      equationRanges := [{ start := 1786, stop := 1786 }]
-      specDigest := "672d0ca96788e188e6a790d7bfe7615d21151b5819c712ceea3bf9fd19face14"
-      equationDigest := "672d0ca96788e188e6a790d7bfe7615d21151b5819c712ceea3bf9fd19face14"
+      specRanges := [{ start := 1798, stop := 1798 }]
+      equationRanges := [{ start := 1798, stop := 1798 }]
+      specDigest := "fc060d31efc96c719eb3eabc812aecbde01626355fee795e38e7a478107e0954"
+      equationDigest := "fc060d31efc96c719eb3eabc812aecbde01626355fee795e38e7a478107e0954"
       supplementKind := none
     }
 
@@ -2230,8 +2230,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Combine"
       anchor := "spec §3.2; §4.8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 368, stop := 378 }, { start := 823, stop := 831 }]
-      sourceDigest := "ead7a7816d271669659c783502a7a8aa847b846b677dce15c07cdbff9ff6bcf2"
+      sourceRanges := [{ start := 368, stop := 378 }, { start := 835, stop := 843 }]
+      sourceDigest := "6073058a5351517d9c9e3ddb301704de524fcf51676514e3c022328566ce4e2f"
       conclusion := "Referents<T> x Referents<U> -> Referents<join(T,U)>"
       reason := "The primitive baseline contains plural joins and singleton lifts."
     }
@@ -2241,8 +2241,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "membership"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 904, stop := 923 }]
-      sourceDigest := "e4c79f1cf1d0ea9062cad302ff5a27637054065531cc0c131f27e70b9552bd77"
+      sourceRanges := [{ start := 916, stop := 935 }]
+      sourceDigest := "bc3e545e2067708239c110a6f71223f0585a15ebede88674da2e43498342a718"
       conclusion := "T x Set<T> -> Content"
       reason := "The primitive baseline contains set membership."
     }
@@ -2252,8 +2252,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Assert/Mention/Do"
       anchor := "spec §7.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2167, stop := 2186 }]
-      sourceDigest := "381d9c5838b6fba07a30a94b4ebc3a9a38de39340e3d2c59434788959aeda48e"
+      sourceRanges := [{ start := 2179, stop := 2198 }]
+      sourceDigest := "162b614ed3aa986608c307fb7f9410312b46756df0caa4c6af54b568ce760733"
       conclusion := "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse"
       reason := "The primitive baseline exercises inert act construction and discourse sequencing."
     }
@@ -2263,8 +2263,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "LocutionOf"
       anchor := "spec §7.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2327, stop := 2360 }]
-      sourceDigest := "f8b554c059640ddf97293610ba17f2b86bf5cc6bdc36051350e8ca96ea30fe7e"
+      sourceRanges := [{ start := 2339, stop := 2372 }]
+      sourceDigest := "c1e6de38b7216416553888f89eddfd13ad06fa3355dbc7017115029d5cd93b57"
       conclusion := "Referents<UtteranceToken> x Referents<Locution> -> Content"
       reason := "Three primitive gates discriminate the two argument types."
     }
@@ -2274,8 +2274,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "sign constructors"
       anchor := "spec §7.5"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2408, stop := 2441 }]
-      sourceDigest := "547b7a475f5bef98b055a299e84436c281a3ec9b255fc7bf2c358386502550de"
+      sourceRanges := [{ start := 2420, stop := 2453 }]
+      sourceDigest := "7451e4bda1454101b258c27db073ba1106e2ee7970254ddbe9876924c08f53db"
       conclusion := "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>"
       reason := "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
     }
@@ -2285,8 +2285,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Reify"
       anchor := "spec §9.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2632, stop := 2651 }]
-      sourceDigest := "b1bbffbee0f7ee8851d354dfb53a6714c8483f5e7340a12d76261000a947bbb1"
+      sourceRanges := [{ start := 2644, stop := 2663 }]
+      sourceDigest := "b51c2e7affade5f61f1dae8572508d45bc2868af6742cd27c7c15b9f4da116b3"
       conclusion := "Content -> Proposition"
       reason := "Reification is inert and must not inherit the operand effects."
     }
@@ -2296,8 +2296,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "RealizedContent"
       anchor := "spec §7.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2346, stop := 2379 }]
-      sourceDigest := "f821e177f4d661318115a7afbbded7ff1d4a2500877567e759920436ad0a6261"
+      sourceRanges := [{ start := 2358, stop := 2391 }]
+      sourceDigest := "0a95b86c80a8c5b00b278849eb35ef46205c90c7658e319905169df9c9a4ce2a"
       conclusion := "Referents<UtteranceToken> -> Content with projective definedness"
       reason := "The primitive baseline contains the token-to-captured-content projection."
     }
@@ -2307,8 +2307,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "DropPlace"
       anchor := "spec §4.3"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 629, stop := 636 }]
-      sourceDigest := "37e88d33491cc94e213975d288aa711bb0002338e6dab2fea8280f37c77cc75d"
+      sourceRanges := [{ start := 641, stop := 648 }]
+      sourceDigest := "ab9ccd4bf03b23fbefdd439a0e4760a0dbfeae7d472fd438828f95909ca6c667"
       conclusion := "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>"
       reason := "The primitive baseline contains one valid row deletion gate."
     }
@@ -2318,8 +2318,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "te'a"
       anchor := "spec §12 MEX"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 4637, stop := 4643 }]
-      sourceDigest := "dfc7b446205e98f418287310c799af49d6fedd6ab64cfe742e615acb00dc33b0"
+      sourceRanges := [{ start := 4667, stop := 4673 }]
+      sourceDigest := "4e48da765bd7992b415ee9ae6bd148feb1421a4503abb21d34e2a23a3ea255f6"
       conclusion := "Number x Natural -> Number"
       reason := "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
     }
@@ -2329,8 +2329,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Aggregate"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 936, stop := 975 }, { start := 1055, stop := 1073 }]
-      sourceDigest := "8c27dcecabce1a8c10d4efbafe3b9a599b8011ac368911d3c2cba66e302b1775"
+      sourceRanges := [{ start := 948, stop := 987 }, { start := 1067, stop := 1085 }]
+      sourceDigest := "14787bff2c9ddcdb493a1ad3100706f736613b52a895d77bc309a13fbe3ca6db"
       conclusion := "DecompositionBasis<Group<T>,T> x Group<T> -> Content"
       reason := "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
     }
@@ -2340,8 +2340,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "BasisUnitAt"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 936, stop := 975 }]
-      sourceDigest := "dc43c298a71b0e20ec8dbf4fcea0d6d5fd98aa22b84654b438eac7843f90b29d"
+      sourceRanges := [{ start := 948, stop := 987 }]
+      sourceDigest := "d4eb2c98d121843873bb468245dad340216b833d0e0ecdf48df89b2d25a3acaa"
       conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content"
       reason := "Recursive expansion of GunmaAt reaches the basis interface."
     }
@@ -2351,8 +2351,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "PeerUnitAt"
       anchor := "spec §4.9"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 936, stop := 980 }]
-      sourceDigest := "0a8fab9c0f78c7f4013bfbc32efe7b692209989f975d51074fd0a784be8ab9c8"
+      sourceRanges := [{ start := 948, stop := 992 }]
+      sourceDigest := "e4bcb9bf7586a48658c22707a8de1c1dcb5112951b61251dd7d8aa30ed99c22b"
       conclusion := "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content"
       reason := "Recursive expansion of GunmaAt reaches the peer interface."
     }
@@ -2362,8 +2362,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "JaiRoleAdmissible"
       anchor := "spec §12 bare jai"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 4199, stop := 4238 }]
-      sourceDigest := "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0"
+      sourceRanges := [{ start := 4229, stop := 4268 }]
+      sourceDigest := "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972"
       conclusion := "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content"
       reason := "The JaiRaise mapping's constrained Context must be typed and pure."
     }
@@ -2373,8 +2373,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "InRegion"
       anchor := "spec §6.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3878, stop := 3899 }]
-      sourceDigest := "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d"
+      sourceRanges := [{ start := 3908, stop := 3929 }]
+      sourceDigest := "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986"
       conclusion := "Amount x Region<Scale> -> Content"
       reason := "The pure row-directed Grade template reaches this declared interface."
     }
@@ -2384,8 +2384,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Grade"
       anchor := "spec §6.4"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 3878, stop := 3899 }]
-      sourceDigest := "3e10dbb99f8fea146cde00124472feffa3fc586390c7f630359f496c783a267d"
+      sourceRanges := [{ start := 3908, stop := 3929 }]
+      sourceDigest := "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986"
       conclusion := "row metadata -> pure PredTerm<row>"
       reason := "The schema consumes its relation's declared degree projection, scale, and region without a site."
     }
@@ -2395,8 +2395,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "JaiRaise"
       anchor := "spec §12 bare jai"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 4199, stop := 4238 }]
-      sourceDigest := "8d0a61465d888cc8ce9f90da35979abb96da30c23572b76fa8319b2e4e6c8cc0"
+      sourceRanges := [{ start := 4229, stop := 4268 }]
+      sourceDigest := "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972"
       conclusion := "row remapping plus role -> pure PredTerm<raised-row>"
       reason := "The schema consumes row metadata rather than inspecting predicate syntax."
     }
@@ -2406,8 +2406,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "context and index constants"
       anchor := "spec §5.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1410, stop := 1462 }]
-      sourceDigest := "ccafa7855ecf9d2f9f673fa61bbbbcff2dd938709c7f24392aa4f732402d2f72"
+      sourceRanges := [{ start := 1422, stop := 1474 }]
+      sourceDigest := "9cac0d2b4b1a76c414b9a5543c4236992225caab169f9c6e2b1efcc3d872bc59"
       conclusion := "declared utterance-context projection -> declared type"
       reason := "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
     }
@@ -2417,8 +2417,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Polar/OpenQ/Ask"
       anchor := "spec §7.1; §8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2171, stop := 2186 }, { start := 2542, stop := 2630 }]
-      sourceDigest := "f42a5b6929ffadd7a8450070af5e72a00e54729003254f28f13593d20b0257f7"
+      sourceRanges := [{ start := 2183, stop := 2198 }, { start := 2554, stop := 2642 }]
+      sourceDigest := "33857ae050ea0ded250e663c8526f217e4e66f39b4379aa250e1b28d45500314"
       conclusion := "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>"
       reason := "Selected Close cases occur beneath question constructors."
     }
@@ -2428,8 +2428,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Local"
       anchor := "spec §5.2"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1511, stop := 1529 }]
-      sourceDigest := "74201c66b7c7bc690f1588c95e14a674f4742cb51dc878626835eb5c4fbabd20"
+      sourceRanges := [{ start := 1523, stop := 1541 }]
+      sourceDigest := "19c1d97b828ab8d175607f2b1ca65a2806bf1b52870d3ae027760c5b93e87014"
       conclusion := "RefComp<A> -> RefComp<A> under expected mode"
       reason := "Collection and performance specimens use the accessibility delimiter."
     }
@@ -2439,8 +2439,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Perform"
       anchor := "spec §7.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2180, stop := 2191 }]
-      sourceDigest := "1e8a6402f7dd12a3caed7dcfbd460868b7249f2df31d292f156ef27409d752c4"
+      sourceRanges := [{ start := 2192, stop := 2203 }]
+      sourceDigest := "739c5473b10d4319adfc4924571180dedd9a14d9224459ca2dbaed33883e3cc1"
       conclusion := "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>"
       reason := "Selected discourse specimens spell the role explicitly."
     }
@@ -2450,8 +2450,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Generic"
       anchor := "spec §5.8"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 1887, stop := 1903 }]
-      sourceDigest := "f439c967f1f057748ae22437e17022ebf010666f8b967631f0af267e1e50b48f"
+      sourceRanges := [{ start := 1899, stop := 1915 }]
+      sourceDigest := "df41267ba57c6d9351ad3096cf484490ea81c7fa22a3676cde997cbfa4fca127"
       conclusion := "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content"
       reason := "Selected cases wrap supported Close expansions under generic quantification."
     }
@@ -2461,8 +2461,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "Named/Holds/display relations"
       anchor := "spec §7.4–§7.6; §9.1"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 2408, stop := 2458 }, { start := 2632, stop := 2651 }]
-      sourceDigest := "f3ab223a40382412e4b2cd8f5d485b450858810b9e25a3a02150c7f28c18d9f6"
+      sourceRanges := [{ start := 2420, stop := 2470 }, { start := 2644, stop := 2663 }]
+      sourceDigest := "88d5eb357938073e4ba864af40eedc448de6e44bbfb43c1c542f070858bd5bb1"
       conclusion := "typed interface arguments -> Content"
       reason := "Selected cases use the declared content-level interface relations around the expansion slice."
     }
@@ -2472,8 +2472,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "subtraction/AmountValue/abstraction rows"
       anchor := "spec §4.9; §9.2"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 904, stop := 929 }, { start := 2717, stop := 2747 }]
-      sourceDigest := "007c2fb4a6fcdda419dd44ffcc4ed5673967940d0f06a2f8fe836d2b96a6d4b6"
+      sourceRanges := [{ start := 916, stop := 941 }, { start := 2729, stop := 2759 }]
+      sourceDigest := "808bd3ddec3311ce41cd60e2bf31b2a29a650d75e1c5e72104c07c45b2434f7a"
       conclusion := "Number operations and typed abstraction relation rows"
       reason := "Selected cases embed Close under the numeric abstraction interfaces."
     }
@@ -2483,8 +2483,8 @@ def M2TypingRuleId.record : M2TypingRuleId → M2TypingRuleRecord
       subject := "bound and derived PredTerm rows"
       anchor := "spec §3.3"
       sourcePath := "spec.md"
-      sourceRanges := [{ start := 389, stop := 440 }]
-      sourceDigest := "139429b72e5592895c517234127ea649568cadb91fe553f2a2070265fe099d7a"
+      sourceRanges := [{ start := 389, stop := 452 }]
+      sourceDigest := "77c92eca14735c615736ee9b5e4a116d3d429ffdeef1dbc32ed437cbc45882e2"
       conclusion := "row-directed partial filling preserves the residual PredTerm row"
       reason := "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
     }
@@ -2654,7 +2654,7 @@ def m2GrammarRecords : List M2GrammarRecord :=
   M2GrammarCategory.all.map M2GrammarCategory.record
 
 def m2DefinitionManifestDigest : String :=
-  "908688498646163b25de9b88e3d5ee1e372e28685ef64964fc3f7d3b4d644764"
+  "04b735fc2c9f88fa0d97909321c73d5b7fd5b58046d2f50af8438e62a9f532b8"
 
 def m2TypingManifestDigest : String :=
   "b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c"
