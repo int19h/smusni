@@ -79,6 +79,7 @@ inductive Primitive where
   | otherThan
   | peerUnitAt
   | perform
+  | performSource
   | polar
   | presuppose
   | questionOf
@@ -203,6 +204,7 @@ def Primitive.name : Primitive → String
   | .otherThan => "term:OtherThan"
   | .peerUnitAt => "term:PeerUnitAt"
   | .perform => "term:Perform"
+  | .performSource => "term:PerformSource"
   | .polar => "term:Polar"
   | .presuppose => "term:Presuppose"
   | .questionOf => "term:QuestionOf"
@@ -326,6 +328,7 @@ def Primitive.ofName : String → Option Primitive
   | "term:OtherThan" => Option.some .otherThan
   | "term:PeerUnitAt" => Option.some .peerUnitAt
   | "term:Perform" => Option.some .perform
+  | "term:PerformSource" => Option.some .performSource
   | "term:Polar" => Option.some .polar
   | "term:Presuppose" => Option.some .presuppose
   | "term:QuestionOf" => Option.some .questionOf
@@ -450,6 +453,7 @@ def Primitive.all : List Primitive := [
   .otherThan,
   .peerUnitAt,
   .perform,
+  .performSource,
   .polar,
   .presuppose,
   .questionOf,

@@ -91,6 +91,27 @@ mutual
         (bodyTyping : SynthJudgment (environment.extend binderType) body bodyResult) :
         SynthJudgment environment (.bind binderType computation body)
           (mergeObservations bodyResult.type [computationResult, bodyResult])
+    | bindPerformance {scope : Nat} (environment : Environment scope)
+        (binderType : Ty) (computation : Term scope) (body : Term (scope + 1))
+        (computationResult bodyResult : TypingObservation)
+        (mode : PerformanceBody bodyResult.type)
+        (computationTyping : SynthJudgment environment computation computationResult)
+        (computationType : computationResult.type = Ty.perfComp binderType)
+        (bodyTyping : SynthJudgment (environment.extend binderType) body bodyResult) :
+        SynthJudgment environment (.bind binderType computation body)
+          (mergeObservations mode.outputType [computationResult, bodyResult] mode.effects)
+    | performSource {scope : Nat} (environment : Environment scope)
+        (reference : Ty) (source : Term scope) (content : Term (scope + 1))
+        (continuation : Term (scope + 2))
+        (sourceResult contentResult continuationResult : TypingObservation)
+        (referenceValid : sourceReferenceTypeValid reference = true)
+        (sourceTyping : CheckJudgment environment source (Ty.refComp reference) sourceResult)
+        (contentTyping : CheckJudgment (environment.extend reference) content Ty.content contentResult)
+        (continuationTyping : CheckJudgment
+          ((environment.extend (Ty.refComp reference)).extend (Ty.actOccurrence Ty.assertion))
+          continuation Ty.discourse continuationResult) :
+        SynthJudgment environment (.performSource reference source content continuation)
+          (mergeObservations Ty.discourse [sourceResult, contentResult, continuationResult] [.performance])
     | application {scope : Nat} (environment : Environment scope)
         (function : Term scope) (arguments : TermList scope)
         (functionResult result : TypingObservation)
@@ -520,6 +541,19 @@ mutual
         PrimitiveJudgment environment operator (judgmentTermList [content]) {
           type := Ty.act force
           obligations := contentResult.obligations }
+    | perform {scope : Nat} (environment : Environment scope)
+        (act : Term scope) (actResult : TypingObservation) (force : Ty)
+        (actTyping : SynthJudgment environment act actResult)
+        (actType : Ty.asUnary actResult.type .typeFormAct = some force) :
+        PrimitiveJudgment environment .perform (judgmentTermList [act])
+          (mergeObservations (Ty.perfComp (Ty.actOccurrence force)) [actResult] [.performance])
+    | performRole {scope : Nat} (environment : Environment scope)
+        (role act : Term scope) (roleResult actResult : TypingObservation) (force : Ty)
+        (roleTyping : CheckJudgment environment role Ty.occurrenceRole roleResult)
+        (actTyping : SynthJudgment environment act actResult)
+        (actType : Ty.asUnary actResult.type .typeFormAct = some force) :
+        PrimitiveJudgment environment .perform (judgmentTermList [role, act])
+          (mergeObservations (Ty.perfComp (Ty.actOccurrence force)) [roleResult, actResult] [.performance])
     | mention {scope : Nat} (environment : Environment scope)
         (value : Term scope) (valueResult : TypingObservation)
         (valueTyping : SynthJudgment environment value valueResult) :

@@ -82,6 +82,15 @@
     [`(Let (,variable ,type) ,value ,body)
      (walk value)
      (walk body (cons (list variable type) environment))]
+    [`(PerformSource (,first ,first-type) ,source ,content
+                     (,read ,read-type) (,occurrence ,occurrence-type) ,continuation)
+     ;; This is the grouped, Host/Assert-normalized adapter representation.
+     ;; Its descriptors are declarations, not free variable occurrences. Each
+     ;; arm starts from the incoming environment; none exports into a sibling.
+     (walk source)
+     (walk content (cons (list first first-type) environment))
+     (walk continuation (append (list (list read read-type)
+                                      (list occurrence occurrence-type)) environment))]
     [`(Bind ,bindings ,body)
      (define final-environment
        (for/fold ([env environment]) ([binding bindings])
@@ -97,7 +106,7 @@
 ;; zero derivations alone do not prove that symbol's type is wrong.
 (define unsupported-context-heads
   '(Assert Express Mention Ask Polar OpenQ SentenceSign NameSign WordSign
-           LetteralSign StructuredQuote OpaqueQuote Reify Do))
+           LetteralSign StructuredQuote OpaqueQuote Reify Do PerformSource))
 (define (unsupported-context-in datum)
   (match datum
     [`(,(? symbol? head) ,children ...)
@@ -560,8 +569,11 @@
 ;; the candidate oracle, runs candidate-target expansion, or consults any Lean outcome.
 (define (source-contract item)
   (with-handlers ([exn:fail:oracle-domain?
-                   (lambda (_exception)
-                     `(case (id ,(port-case-id item)) (status unavailable)))])
+                   (lambda (exception)
+                     `(case (id ,(port-case-id item)) (status unavailable)
+                            (category ,(exn:fail:oracle-domain-category exception))
+                            (stage ,(exn:fail:oracle-domain-stage exception))
+                            (reason ,(exn-message exception))))])
     (match-define (admitted-source _payload _environment bridge? witness) (prepare-source item))
     `(case (id ,(port-case-id item)) (status typed-source)
            (context ,(if bridge? 'assert-bridge 'whole-a0))
@@ -570,7 +582,7 @@
 
 (define (build-source-contracts)
   (define cases (map source-contract (selected-corpus-cases)))
-  `(smusni-m2-oracle-sources 1 (count ,(length cases)) (cases ,@cases)))
+  `(smusni-m2-oracle-sources 2 (count ,(length cases)) (cases ,@cases)))
 
 (define (build-oracle)
   (define cases (map oracle-case (selected-corpus-cases)))
@@ -622,7 +634,7 @@
                      `((,name (EFn (,type) Content)) ($r (Referents ,type)))))))
   (define actual-control
     (findf (lambda (item)
-             (equal? (port-case-id item) "9179373ca8c2e48ede6fe47086cebd79b7f61352"))
+             (equal? (port-case-id item) "2a00f8ca5df0ba140dbe29fa18c0acda9b274913"))
            (load-port-corpus)))
   (check-not-false actual-control "the transported actual #83 control must remain present")
   (check-not-false (member '(status unavailable) (oracle-case actual-control)))
@@ -641,6 +653,52 @@
     (oracle-case (port-case "mechanism-control" 'test source environment '())
                  #:expand expander))
   (define (get record key) (second (assoc key (cdr record))))
+  ;; F01-A2: actual producer boundaries, not a case-ID classification patch.
+  ;; Source-only contracts must retain the same independently obtained reason.
+  (define source-env '(($S RefComp (Referents Entity))
+                       ($P Fn ((Referents Entity)) Content)))
+  (define (source-form x read occurrence [source '$S] [content #f] [continuation #f])
+    `(PerformSource Host (,x :: Referents Entity) ,source
+       (Assert ,(or content `($P ,x)))
+       (,read :: RefComp (Referents Entity)) (,occurrence :: ActOccurrence Assertion)
+       ,(or continuation
+            `(Let ($saved :: ActOccurrence Assertion) ,occurrence
+               (Do (Perform Host (Assert (Bind ($y :: Referents Entity) ,read ($P $y)))))))))
+  (define (source-boundary! term env category stage reason-pattern)
+    (define item (port-case "source-boundary-control" 'test term env '()))
+    (define oracle (oracle-case item #:expand (lambda _ (error "unsupported source reached expansion"))))
+    (define contract (source-contract item))
+    (for ([record (list oracle contract)])
+      (check-equal? (get record 'status) 'unavailable)
+      (check-equal? (get record 'category) category)
+      (check-equal? (get record 'stage) stage)
+      (check-regexp-match reason-pattern (get record 'reason))
+      (check-false (assoc 'term (cdr record))))
+    (check-equal? contract oracle))
+  (for ([names '(($x $read $o) ($fresh $again $token))])
+    (match-define (list x read occurrence) names)
+    (define valid (source-form x read occurrence))
+    (source-boundary! valid source-env 'context-unsupported 'context #rx"PerformSource")
+    (source-boundary! (cons 'PerformSource (cddr valid)) source-env
+                      'context-unsupported 'context #rx"PerformSource")
+    (for ([illegal (list x read occurrence)])
+      (source-boundary! (source-form x read occurrence illegal) source-env
+                        'malformed-input 'environment #rx"missing declaration"))
+    (for ([illegal (list read occurrence)])
+      (source-boundary! (source-form x read occurrence '$S `($P ,illegal)) source-env
+                        'malformed-input 'environment #rx"missing declaration"))
+    (source-boundary! (source-form x read occurrence '$S #f `(Do (Assert ($P ,x)))) source-env
+                      'malformed-input 'environment #rx"missing declaration")
+    (source-boundary! (source-form x read occurrence '$missing) source-env
+                      'malformed-input 'environment #rx"missing declaration")
+    ;; Existing outer declarations remain accessible without leaking the
+    ;; newly introduced first-arm binder into S or D.
+    (source-boundary! (source-form x read occurrence x)
+                      (cons `(,x RefComp (Referents Entity)) source-env)
+                      'context-unsupported 'context #rx"PerformSource")
+    (source-boundary! (source-form x read occurrence '$S #f `(Do (Assert ($P ,x))))
+                      (cons `(,x Referents Entity) source-env)
+                      'context-unsupported 'context #rx"PerformSource"))
   (define source-number
     (source-contract (port-case "source-only-control" 'test '$number '(($number . Number)) '())))
   (define source-natural

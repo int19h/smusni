@@ -1,5 +1,10 @@
 # Lean milestone 1 report — term, interchange, binders
 
+F01 supersedes the current-status wording below. See
+[`F01_IMPLEMENTATION.md`](F01_IMPLEMENTATION.md) for the direct three-arm
+constructor, extended binding laws, current coverage and verification.
+The unchanged E02 report and inputs are preserved in `../history/pre-f01/`.
+
 E02 refresh at input `18cd626`: current M1 check passes with 370 cases,
 51 primitive-core decodes/canonical round trips, 370 surface/text round trips,
 287 pending-M2 cases, 32 out-of-slice cases, and 303 generated round trips.

@@ -1,7 +1,7 @@
 (smusni-port-baseline
  1
  (head "8af17e87d0a8c6832ba0bf724046b57cbfb26f3c")
- (corpus-sha1 "0cd26d1d494f4b5d0312628ed54d1c2c02ecc7d4")
+ (corpus-sha1 "352fdb84fe27bb454cf439a1b57bc88f0bdd5294")
  (terms 4)
  (runs 5)
  (full-gate-ms 71990)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Account for every old/current input without treating source joins as parity.
+"""Reproduce the historical E02 migration without treating joins as parity.
 
 Exact term AND environment equality is the only case transport used here.
 Removed terms are retained as retired inputs, not silently paired by fence
@@ -10,13 +10,18 @@ from collections import Counter
 import json
 import subprocess
 
-from build_m1_constructor_matrix import BASE_HEAD, ROOT, field, parse_sexp, sha256
+from build_m1_constructor_matrix import ROOT, field, parse_sexp, sha256
 from build_m1_s1_manifest import canonical_hash
 
 HISTORY = ROOT / "pilot/history/pre-e02"
 OLD_CORPUS = ROOT / "tools/smusni-redex/inventory/history/pre-e01-port-corpus.sexp"
-NEW_CORPUS = ROOT / "tools/smusni-redex/inventory/port-corpus.sexp"
+E02 = ROOT / "pilot/history/pre-f01"
+NEW_CORPUS = E02 / "port-corpus.sexp"
 OUTPUT = ROOT / "pilot/shared/M2_MIGRATION.json"
+
+
+def e02_source(path):
+    return subprocess.check_output(["git", "show", f"01759ba:{path}"], cwd=ROOT).decode()
 
 # Human-adopted equation changes, not inferred from case identifiers. The
 # remaining selected old equation bodies were checked against 138259e, whose
@@ -51,11 +56,11 @@ def heads(term):
 def build():
     old, new = corpus(OLD_CORPUS), corpus(NEW_CORPUS)
     old_s1 = json.loads((HISTORY / "M1_S1_MANIFEST.json").read_text())
-    new_s1 = json.loads((ROOT / "pilot/shared/M1_S1_MANIFEST.json").read_text())
+    new_s1 = json.loads((E02 / "M1_S1_MANIFEST.json").read_text())
     old_cohort = json.loads((HISTORY / "M2_CASE_MANIFEST.json").read_text())
-    new_cohort = json.loads((ROOT / "pilot/shared/M2_CASE_MANIFEST.json").read_text())
+    new_cohort = json.loads((E02 / "M2_CASE_MANIFEST.json").read_text())
     old_definitions = json.loads((HISTORY / "M2_DEFINITION_MANIFEST.json").read_text())
-    new_definitions = json.loads((ROOT / "pilot/shared/M2_DEFINITION_MANIFEST.json").read_text())
+    new_definitions = json.loads((E02 / "M2_DEFINITION_MANIFEST.json").read_text())
     old_oracle = parse_sexp((HISTORY / "M2_REDEX_ORACLE.sexp").read_text())
     oracle_entries = next(node[1:] for node in old_oracle
                           if isinstance(node, list) and node and node[0] == "cases")
@@ -77,7 +82,7 @@ def build():
     # Account for indirect changed dependencies even in out-of-slice inputs
     # (for example JoiGroup -> Massify), not only selected M2 definitions.
     all_dependencies = {}
-    ledger = parse_sexp((ROOT / "tools/smusni-redex/inventory/definitions.sexp").read_text())
+    ledger = parse_sexp(e02_source("tools/smusni-redex/inventory/definitions.sexp"))
     for entry in ledger[2:]:
         if isinstance(entry, list) and entry and entry[0] == "definition":
             dependencies = next(node[1:] for node in entry[1:]
@@ -129,14 +134,14 @@ def build():
                                    "old": before, "current": after,
                                    "semantic_change": CHANGED_DEFINITIONS.get(head)})
     old_typing = json.loads((HISTORY / "M2_TYPING_MANIFEST.json").read_text())
-    new_typing = json.loads((ROOT / "pilot/shared/M2_TYPING_MANIFEST.json").read_text())
+    new_typing = json.loads((E02 / "M2_TYPING_MANIFEST.json").read_text())
     old_source = subprocess.check_output([
         "git", "show", "a04cf29:tools/smusni-redex/port-a0.rkt"], cwd=ROOT)
     import hashlib
     if hashlib.sha256(old_source).hexdigest() != old_typing["sources"]["redex_sha256"]:
         raise ValueError("historical typing source revision does not match archived input")
     old_lines = old_source.decode().splitlines()
-    new_lines = (ROOT / new_typing["sources"]["redex"]).read_text().splitlines()
+    new_lines = e02_source(new_typing["sources"]["redex"]).splitlines()
     old_rules = {r["id"]: r for r in old_typing["rules"] if r["kind"] == "redex-rule"}
     rule_changes = []
     for rule in new_typing["rules"]:
@@ -155,7 +160,7 @@ def build():
         raise ValueError("E02 frozen source populations drifted")
     return {
         "schema": "smusni-m2-source-migration", "version": 1,
-        "input_revision": BASE_HEAD,
+        "input_revision": "8bea3eadebaf4e942ff55e17d6b3a39ea4684862",
         "frozen_redex_revision": "18cd6267ad38abde8836a553f1531a4f05f339c6",
         "source_reconciliations": [{
             "pin": "P45",

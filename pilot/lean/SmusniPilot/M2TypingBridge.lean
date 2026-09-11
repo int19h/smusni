@@ -219,6 +219,46 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     refine ⟨result, ?_, rfl⟩
     rw [synth.eq_7, bodySuccess, computationSuccess]
     rfl
+  case bindPerformance environment binderType computation body computationObservation
+      bodyObservation mode computationTyping computationType bodyTyping computationIH bodyIH =>
+    rcases computationIH with ⟨computationResult, computationSuccess, computationAgreement⟩
+    rcases bodyIH with ⟨bodyResult, bodySuccess, bodyAgreement⟩
+    cases computationAgreement
+    cases bodyAgreement
+    have computationTypeRaw : computationResult.type = Ty.perfComp binderType := computationType
+    have noReference : Ty.compatible computationResult.type (Ty.refComp binderType) = false := by
+      rw [computationTypeRaw]
+      have different : (Ty.perfComp binderType == Ty.refComp binderType) = false := rfl
+      have notClause : (Ty.perfComp binderType == Ty.clauseContent) = false := rfl
+      have refNotClause : (Ty.refComp binderType == Ty.clauseContent) = false := rfl
+      rw [Ty.compatible]
+      · simp only [different, notClause, refNotClause, Bool.false_eq_true, ↓reduceIte]
+      all_goals simp [Ty.perfComp, Ty.refComp]
+    have performance : Ty.compatible computationResult.type (Ty.perfComp binderType) = true := by
+      rw [computationTypeRaw]
+      rw [Ty.compatible]
+      · simp
+      all_goals simp [Ty.perfComp]
+    have modeFound : performanceBodyCertificate bodyResult.type = some mode :=
+      performanceBodyCertificate_complete mode
+    let checked : TypingResult := { computationResult with trace := computationResult.trace ++ [.a0TCheckSynth, .a0Check] }
+    refine ⟨(mergeResults mode.outputType [checked, bodyResult] mode.effects [] mode.rule).withRule .a0Synth, ?_, rfl⟩
+    simp [synth, check, bodySuccess, computationSuccess, noReference, performance,
+      modeFound, checked, failure]
+    rfl
+  case performSource environment reference source content continuation sourceObservation
+      contentObservation continuationObservation referenceValid sourceTyping contentTyping
+      continuationTyping sourceIH contentIH continuationIH =>
+    rcases sourceIH with ⟨sourceResult, sourceSuccess, sourceAgreement⟩
+    rcases contentIH with ⟨contentResult, contentSuccess, contentAgreement⟩
+    rcases continuationIH with ⟨continuationResult, continuationSuccess, continuationAgreement⟩
+    cases sourceAgreement
+    cases contentAgreement
+    cases continuationAgreement
+    refine ⟨(mergeResults Ty.discourse [sourceResult, contentResult, continuationResult]
+      [.performance] [] .f01TPerformSource).withRule .a0Synth, ?_, rfl⟩
+    simp [synth, validateSourceReferenceType, referenceValid,
+      sourceSuccess, contentSuccess, continuationSuccess]
   case application environment function arguments functionObservation resultObservation
       functionTyping applicationTyping functionIH applicationIH =>
     simp only [SynthCompleteMotive] at functionIH
@@ -870,6 +910,24 @@ theorem synth_judgment_complete {scope : Nat} {environment : Environment scope}
     rcases selected with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
       simp [synthPrimitive, judgmentTermList, contentSuccess,
         TypingResult.observation, failure]
+  case perform environment act actObservation force actTyping actType actIH =>
+    rcases actIH with ⟨actResult, actSuccess, actAgreement⟩
+    cases actAgreement
+    simp only [PrimitiveCompleteMotive]
+    refine ⟨(mergeResults (Ty.perfComp (Ty.actOccurrence force)) [actResult]
+      [.performance] [] .a0TPerform).withRule .a0Synth, ?_, rfl⟩
+    simp [synthPrimitive, synthPerform, judgmentTermList, actSuccess,
+      show Ty.asUnary actResult.type .typeFormAct = some force from actType]
+  case performRole environment role act roleObservation actObservation force roleTyping actTyping actType roleIH actIH =>
+    rcases roleIH with ⟨roleResult, roleSuccess, roleAgreement⟩
+    rcases actIH with ⟨actResult, actSuccess, actAgreement⟩
+    cases roleAgreement
+    cases actAgreement
+    simp only [PrimitiveCompleteMotive]
+    refine ⟨(mergeResults (Ty.perfComp (Ty.actOccurrence force)) [roleResult, actResult]
+      [.performance] [] .m2TPerformRole).withRule .a0Synth, ?_, rfl⟩
+    simp [synthPrimitive, synthPerform, judgmentTermList, roleSuccess, actSuccess,
+      show Ty.asUnary actResult.type .typeFormAct = some force from actType]
   case mention environment value valueObservation valueTyping valueIH =>
     simp only [SynthCompleteMotive] at valueIH
     simp only [PrimitiveCompleteMotive]

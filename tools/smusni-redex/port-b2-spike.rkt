@@ -247,6 +247,36 @@
   (values (make-list-node (list head bindings-node body-node) path)
           (+ 2 head-count entry-count body-count)))
 
+(define (compile-source-binder binder path scope next-group)
+  (match-define (list variable type) binder)
+  (define binding (b2-binding (fresh-binding-group! next-group) 0 variable))
+  (define-values (variable-node variable-count)
+    (compile-atom variable (append path '(0)) scope binding))
+  (define-values (type-node type-count)
+    (compile-datum type (append path '(1)) scope next-group))
+  (values (make-list-node (list variable-node type-node) path)
+          (+ 1 variable-count type-count) (cons variable binding)))
+
+(define (compile-perform-source datum path scope next-group)
+  (match-define (list 'PerformSource x source content read occurrence body) datum)
+  (define-values (head head-count) (compile-atom 'PerformSource (append path '(0)) scope))
+  (define-values (x-node x-count x-binding)
+    (compile-source-binder x (append path '(1)) scope next-group))
+  (define-values (source-node source-count)
+    (compile-datum source (append path '(2)) scope next-group))
+  (define-values (content-node content-count)
+    (compile-datum content (append path '(3)) (cons x-binding scope) next-group))
+  (define-values (read-node read-count read-binding)
+    (compile-source-binder read (append path '(4)) scope next-group))
+  (define-values (occurrence-node occurrence-count occurrence-binding)
+    (compile-source-binder occurrence (append path '(5)) scope next-group))
+  (define-values (body-node body-count)
+    (compile-datum body (append path '(6))
+                   (list* occurrence-binding read-binding scope) next-group))
+  (values (make-list-node
+           (list head x-node source-node content-node read-node occurrence-node body-node) path)
+          (+ 1 head-count x-count source-count content-count read-count occurrence-count body-count)))
+
 (define (compile-datum datum path scope next-group)
   (cond
     [(quoted-head? datum)
@@ -257,6 +287,8 @@
      (compile-let datum path scope next-group)]
     [(and (list? datum) (pair? datum) (eq? (first datum) 'Bind))
      (compile-bind datum path scope next-group)]
+    [(and (list? datum) (pair? datum) (eq? (first datum) 'PerformSource))
+     (compile-perform-source datum path scope next-group)]
     [(list? datum)
      (define-values (children child-count)
        (compile-sequence datum path scope next-group))

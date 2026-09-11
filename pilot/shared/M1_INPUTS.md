@@ -1,5 +1,11 @@
 # Lean milestone 1 pinned inputs
 
+Current F01 source input: `3e45db536c8523d023f70ae25878a3ecb9f79663`.
+The E02 input rationale and counts below are historical and preserved in
+`../history/pre-f01/`. `F01_MIGRATION.json` accounts for every E02/current
+term/environment input; `M2_MIGRATION.json` remains the reproduced historical
+E02 migration. See `../lean/F01_IMPLEMENTATION.md` for current boundaries.
+
 E02 current semantic input revision: `8bea3eadebaf4e942ff55e17d6b3a39ea4684862`
 (PM's P45 reconciliation). Frozen Redex remains `18cd626`; corpus identities
 and term/environment records are unchanged by this documentation integration.

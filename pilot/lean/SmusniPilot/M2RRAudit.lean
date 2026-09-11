@@ -109,6 +109,12 @@ mutual
     | .bind _ computation body =>
         rrDependencyGraphTerm origins computation ++
           rrDependencyGraphTerm (origins.extend computation.siteIds) body
+    | .performSource _ source content continuation =>
+        -- Syntactic dependency provenance, not executable source factoring or
+        -- a model of occurrence capture. No fresh site is minted by a binder.
+        rrDependencyGraphTerm origins source ++
+          rrDependencyGraphTerm (origins.extend source.siteIds) content ++
+          rrDependencyGraphTerm ((origins.extend source.siteIds).extend []) continuation
     | .apply function arguments =>
         rrDependencyGraphTerm origins function ++
           rrDependencyGraphList origins arguments

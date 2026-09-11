@@ -1,0 +1,2290 @@
+{
+  "schema": "smusni-lean-m2-typing-manifest",
+  "version": 2,
+  "sources": {
+    "redex": "tools/smusni-redex/port-a0.rkt",
+    "redex_sha256": "b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c",
+    "core": "tools/smusni-redex/inventory/core.sexp",
+    "core_sha256": "794ec672dd0130a76d6f17fb82a9764d379f5b00c157688cf8b76a2a2d3b05c6",
+    "fixtures": "tools/smusni-redex/inventory/fixtures.sexp",
+    "fixtures_sha256": "9bf6ad60e661e7b1a2890cf6fb683c45c8f45e488f3321645ef76afcdc831aaf",
+    "supplement": "pilot/shared/M2_TYPING_SUPPLEMENT.tsv",
+    "supplement_sha256": "e12dc1ade4036b1098ab392a90a915568c41d091ca6e513cc045468343ea0a97"
+  },
+  "counts": {
+    "required_redex_rules": 81,
+    "supplemental_rules": 29,
+    "required_rules": 110,
+    "supported_rules": 110,
+    "unsupported_rules": 0,
+    "grammar_categories": 9,
+    "core_constants": 21,
+    "lexical_rows": 50
+  },
+  "grammar": {
+    "τ": {
+      "source_range": [
+        75,
+        81
+      ],
+      "source_sha256": "eb26a8c63deb8ea0c7f301b7ee07a2a0e8b891c09266ec2bed0f6e17f48f2c19",
+      "source": "[τ Entity Eventuality Number Natural Cardinal Content ClauseContent Discourse ThresholdKind (Referents τ) (Group τ) (List τ) (Set τ) (DecompositionBasis τ τ) (Act force) (ActOccurrence force) (Fn (τ ...) τ) (EFn (τ ...) τ) (RefComp τ) (PerfComp τ)]"
+    },
+    "direction": {
+      "source_range": [
+        82,
+        82
+      ],
+      "source_sha256": "374b9d5df554b386686f7f53a0b5e8364d7803de5254e23e595f70f862f97ad9",
+      "source": "[direction synth (check τ)]"
+    },
+    "R": {
+      "source_range": [
+        84,
+        84
+      ],
+      "source_sha256": "e893ae29087ad151a107719caf6e234c6ae79fc58182ba740562da8b5d2bc1e5",
+      "source": "[R (typing τ (effect ...) (obligation ...))]"
+    },
+    "t": {
+      "source_range": [
+        90,
+        145
+      ],
+      "source_sha256": "969132bb5431d22e434c40814384860cdf505b12b7296bcaa7646c9005aca3f4",
+      "source": "[t x n constant (λ ((x τ) ...) t) (Let (x τ) t t) (Bind ((x τ t) ...) t) (Context t ...) (Vague t) (Refer t) (SelectExactly t t) (SelectAtLeast t t) (SelectSome t) (SelectAllBut t t) (Exactly t t t) (AtLeast t t t) (Some t t) (Every t t) (No t t) (closure-head t t) (Only t t t) (AtMost t t t) (GlobalExactly t t t) (TooMany t t) (MoreThan t t t) (FewerThan t t t) (Distrib t t) (MaxRefer t) (CoveredBy t t) (Overlap t t) (Among t t) (∀ t) (∃ t) (→ t t) (¬ t) (Presuppose t t) (Massify t t) (Perform t) (CanonicalAggregateAt t t t) (AdmissibleThreshold t t t) (SetOf t) (Card t) (= t t) (comparison t t) (+ t t) (∧ t t) (List t ...) (ZipWith t t t) (CoRef t t) (CloseClause t) (ActualClause t) (DirectClause t) (StateClause t) (Quote t) (Syntax t) (CloseWith ρdecl fills) (Site variable-not-otherwise-mentioned) (SiteValue variable-not-otherwise-mentioned) (t t ...)]"
+    },
+    "ρdecl": {
+      "source_range": [
+        146,
+        146
+      ],
+      "source_sha256": "538fac7127b5b053b6b550bbc7723f54f033f5cebe596b7b34adb5185dfe6b91",
+      "source": "[ρdecl (row variable-not-otherwise-mentioned n event-mode (label ...))]"
+    },
+    "dep": {
+      "source_range": [
+        152,
+        152
+      ],
+      "source_sha256": "1c3f1135d9c2b9e764bf9f757d4050c5deddb5733c81a1c0280a842760211acf",
+      "source": "[dep (site site-id) (outer x τ) (member)]"
+    },
+    "role": {
+      "source_range": [
+        153,
+        153
+      ],
+      "source_sha256": "b62ee5f5d82b2782fd074d60355196523d965159aba888f562e753c1425c80b7",
+      "source": "[role (context t ...) (vague t)]"
+    },
+    "closure-head": {
+      "source_range": [
+        66,
+        66
+      ],
+      "source_sha256": "319d71777fa22dc8d21a35f46d53e3b5c14c90f950c79fda333e8f64c0c0c9ff",
+      "source": "[closure-head IndividualSome IndividualNo IndividualEvery PluralSome PluralNo]"
+    },
+    "comparison": {
+      "source_range": [
+        67,
+        67
+      ],
+      "source_sha256": "660fe622afed90344449b602babfa25450574afa6d813281c83f1c47026bec23",
+      "source": "[comparison < ≤]"
+    }
+  },
+  "rules": [
+    {
+      "id": "A0-Synth",
+      "kind": "redex-rule",
+      "subject": "A0-Synth",
+      "anchor": "spec §1.6, §3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1936,
+          1938
+        ]
+      ],
+      "source_sha256": "eae7c1ba30f9c8e41d08b836fb9318639c58bb7abcbbe24423f782bcda59630e",
+      "conclusion": "(a0-synth Γ t R)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-Check",
+      "kind": "redex-rule",
+      "subject": "A0-Check",
+      "anchor": "spec §1.6, §3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1943,
+          1945
+        ]
+      ],
+      "source_sha256": "b1294258d3cd549d187348fd930d401e8189e920e56068e3a82c702d95f86c3a",
+      "conclusion": "(a0-check Γ t τ R)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Natural",
+      "kind": "redex-rule",
+      "subject": "A0-T-Natural",
+      "anchor": "spec §3.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1101,
+          1102
+        ]
+      ],
+      "source_sha256": "1fa44146e27a7be689d104561b994c62110047de7371a683ec93c30694612bf3",
+      "conclusion": "(a0-type synth Γ n (typing Natural () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Speaker",
+      "kind": "redex-rule",
+      "subject": "A0-T-Speaker",
+      "anchor": "spec §5.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1104,
+          1105
+        ]
+      ],
+      "source_sha256": "25957a89a7fed67b448510651377969f286f87c2b7d21a4668a6cbda7f0c73b1",
+      "conclusion": "(a0-type synth Γ Speaker (typing (Referents Entity) () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Audience",
+      "kind": "redex-rule",
+      "subject": "A0-T-Audience",
+      "anchor": "spec §5.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1107,
+          1108
+        ]
+      ],
+      "source_sha256": "9414b5f1e6964a9cd41ed8faaae4c0598ec99111573f6fdbdcac0719f4b1a348",
+      "conclusion": "(a0-type synth Γ Audience (typing (Referents Entity) () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ThresholdKind",
+      "kind": "redex-rule",
+      "subject": "A0-T-ThresholdKind",
+      "anchor": "spec §6.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1110,
+          1111
+        ]
+      ],
+      "source_sha256": "9f7aa5df47d4d1023faa1a846cb069c4921545f8adc6cdaf2215ea44520ef6c0",
+      "conclusion": "(a0-type synth Γ TooManyK (typing ThresholdKind () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Top",
+      "kind": "redex-rule",
+      "subject": "A0-T-Top",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1113,
+          1114
+        ]
+      ],
+      "source_sha256": "3dee28898774e25dd31981bf5e14e7c38e88a2255fbaf4bd09a008763be96da0",
+      "conclusion": "(a0-type synth Γ ⊤ (typing Content () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Variable",
+      "kind": "redex-rule",
+      "subject": "A0-T-Variable",
+      "anchor": "spec §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1116,
+          1118
+        ]
+      ],
+      "source_sha256": "44fe1f6c5511da032c777baeb91c85d6d7df66afe72ae5c1cb4d52ce99c3fb2a",
+      "conclusion": "(a0-type synth Γ x (typing τ () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Lambda-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-Lambda-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1120,
+          1129
+        ]
+      ],
+      "source_sha256": "bfff7db52d91c6e1aa15e5aa817561a539f38bcbb3dd3ca2f3646c6664cb84c3",
+      "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (Fn (τ) τ_body) () (obligation_scoped ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Lambda-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-Lambda-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1131,
+          1141
+        ]
+      ],
+      "source_sha256": "548dd95352e24173c48cd4ea677f4bda1aa4e1e9ec63635138ea43931aed23cd",
+      "conclusion": "(a0-type synth Γ (λ ((x τ)) t_body) (typing (EFn (τ) τ_body) () (obligation_scoped ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Lambda-Multi-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-Lambda-Multi-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1143,
+          1156
+        ]
+      ],
+      "source_sha256": "5dac2bb8c9361e4cfa95d1bf7389a527e031d087e060f11bf94e7ab5e1406cca",
+      "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (Fn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Lambda-Multi-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-Lambda-Multi-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1158,
+          1172
+        ]
+      ],
+      "source_sha256": "c9db9678dee4adfe208494420f9887925c2d070dc13983fc16a220cdeb81a6ce",
+      "conclusion": "(a0-type synth Γ (λ ((x_0 τ_0) (x_1 τ_1) (x_rest τ_rest) ...) t_body) (typing (EFn (τ_0 τ_1 τ_rest ...) τ_body) () (obligation_scoped ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Let",
+      "kind": "redex-rule",
+      "subject": "A0-T-Let",
+      "anchor": "spec §4.4; §12 Let",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1174,
+          1188
+        ]
+      ],
+      "source_sha256": "02a8d253a9969b5c0c36de11ca18c1a5a017d0bde7dbcf2e70647f26ac696958",
+      "conclusion": "(a0-type synth Γ (Let (x τ) t_value t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Bind-Nest",
+      "kind": "redex-rule",
+      "subject": "A0-T-Bind-Nest",
+      "anchor": "spec §4.4, §5.2",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1190,
+          1196
+        ]
+      ],
+      "source_sha256": "c350e4950d3a2da3ba35a2f48e7b7fac5938c831338ba61eb8cfba41ea59351b",
+      "conclusion": "(a0-type synth Γ (Bind (binding_0 binding_1 binding_rest ...) t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Bind-Reference",
+      "kind": "redex-rule",
+      "subject": "A0-T-Bind-Reference",
+      "anchor": "spec §5.2",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1198,
+          1206
+        ]
+      ],
+      "source_sha256": "9022a93042b88464c1312d01b1181deb83d24ff4a978ce706da8fb1bcd56a996",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Bind-Performance-Act",
+      "kind": "redex-rule",
+      "subject": "A0-T-Bind-Performance-Act",
+      "anchor": "spec §5.2, §7.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1208,
+          1222
+        ]
+      ],
+      "source_sha256": "1f62e3b5bf5a246d6209296fde6b6945728f2ae825126342265fe7e95804158a",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Bind-Performance-Comp",
+      "kind": "redex-rule",
+      "subject": "A0-T-Bind-Performance-Comp",
+      "anchor": "spec §5.2, §7.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1224,
+          1239
+        ]
+      ],
+      "source_sha256": "c7d0d1d088f480500c4d3e2e5f615a05b9a17a6dae44806ad1144940e8933ff5",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Bind-Performance-Discourse",
+      "kind": "redex-rule",
+      "subject": "A0-T-Bind-Performance-Discourse",
+      "anchor": "spec §5.2, §7.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1241,
+          1255
+        ]
+      ],
+      "source_sha256": "b379f870baa8294dcd9c67e4ebceab5b6eb13ae4a2bed8f8130f75f6fa04ef13",
+      "conclusion": "(a0-type synth Γ (Bind ((x τ t_comp)) t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Check-Synth",
+      "kind": "redex-rule",
+      "subject": "A0-T-Check-Synth",
+      "anchor": "spec §1.6, §3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1257,
+          1262
+        ]
+      ],
+      "source_sha256": "f99d7d838084bed7049d15969b6194b4b41af6a5fcc1286e5b0d0bba5f4812d3",
+      "conclusion": "(a0-type (check τ_expected) Γ t_actual R_actual)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Context",
+      "kind": "redex-rule",
+      "subject": "A0-T-Context",
+      "anchor": "spec §5.3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1264,
+          1268
+        ]
+      ],
+      "source_sha256": "e3a71668761f933c5c54f0f24912b19e2160538491d8c5feabab19c05ed8138d",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Context t_argument ...) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Vague",
+      "kind": "redex-rule",
+      "subject": "A0-T-Vague",
+      "anchor": "spec §6.4–§6.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1270,
+          1274
+        ]
+      ],
+      "source_sha256": "e8ac233c6cbd607cc3632b5464e7ee242a759d92cb8a08fdc336244060b22033",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Vague t_property) (typing (RefComp τ) (context) (obligation ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Refer-Reference",
+      "kind": "redex-rule",
+      "subject": "A0-T-Refer-Reference",
+      "anchor": "spec §5.3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1276,
+          1286
+        ]
+      ],
+      "source_sha256": "38659d4a2849c3616483d5263134cf3f0092a3b16208e53a6413085f0bc2a8ec",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Refer-Member",
+      "kind": "redex-rule",
+      "subject": "A0-T-Refer-Member",
+      "anchor": "spec §5.3",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1288,
+          1296
+        ]
+      ],
+      "source_sha256": "951a46fe74b5bcbd904dafddf90cd205eb7087de571d31e04ac9583ec61253c0",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (Refer t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-SelectExactly",
+      "kind": "redex-rule",
+      "subject": "A0-T-SelectExactly",
+      "anchor": "spec §5.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1298,
+          1309
+        ]
+      ],
+      "source_sha256": "1535d5716b0f1852dd057326f3c258ea96617ed2bbb102fec314b1acd567354e",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectExactly t_count t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-SelectSome",
+      "kind": "redex-rule",
+      "subject": "A0-T-SelectSome",
+      "anchor": "spec §5.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1311,
+          1320
+        ]
+      ],
+      "source_sha256": "4f72f9ce967b2651bf6be242390a41a602e5c2d0ebff3aac1cad067f608cd0fb",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectSome t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Massify",
+      "kind": "redex-rule",
+      "subject": "A0-T-Massify",
+      "anchor": "spec §4.8; §12 Massify",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1358,
+          1371
+        ]
+      ],
+      "source_sha256": "2b754e0ea559eebc0162ab0df7c75bc5a2b09a40d22773e6552c61989fe8bc80",
+      "conclusion": "(a0-type (check (RefComp (Referents (Group τ)))) Γ (Massify t_basis t_cover) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Perform",
+      "kind": "redex-rule",
+      "subject": "A0-T-Perform",
+      "anchor": "spec §7.1",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1373,
+          1378
+        ]
+      ],
+      "source_sha256": "7b5c321d854a7fdd7ba35ceceef86f1ba920abb9a73b1c8f81905d9232156d61",
+      "conclusion": "(a0-type synth Γ (Perform t_act) (typing (PerfComp (ActOccurrence force)) (performance) (obligation ...)))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Exactly-Zero",
+      "kind": "redex-rule",
+      "subject": "A0-T-Exactly-Zero",
+      "anchor": "spec §4.10; §12 Exactly",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1380,
+          1389
+        ]
+      ],
+      "source_sha256": "9c36805354b2188a79447b3e2f7bc1b4d0eb2d65d62f2f0cb5ffb9d499545a68",
+      "conclusion": "(a0-type synth Γ (Exactly 0 v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Exactly-Positive",
+      "kind": "redex-rule",
+      "subject": "A0-T-Exactly-Positive",
+      "anchor": "spec §4.10; §12 Exactly",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1391,
+          1401
+        ]
+      ],
+      "source_sha256": "210c4a61f23b2d238de7451a25786b0d910defbd5569273bb0ce4fae1a5a3c08",
+      "conclusion": "(a0-type synth Γ (Exactly t_count v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-No",
+      "kind": "redex-rule",
+      "subject": "A0-T-No",
+      "anchor": "spec §4.10; §12 No",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1487,
+          1494
+        ]
+      ],
+      "source_sha256": "b8f414240e19b5619a370bc48520c5cd5bc38209758077227dac61d288e97990",
+      "conclusion": "(a0-type synth Γ (No v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-MoreThan",
+      "kind": "redex-rule",
+      "subject": "A0-T-MoreThan",
+      "anchor": "spec §4.10; §12 MoreThan",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1507,
+          1516
+        ]
+      ],
+      "source_sha256": "6ec345d73de8469ef2ca8ab72dcdba51c39bfce2b438c028699de6558c7a0275",
+      "conclusion": "(a0-type synth Γ (MoreThan t_n v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-GlobalExactly",
+      "kind": "redex-rule",
+      "subject": "A0-T-GlobalExactly",
+      "anchor": "spec §4.10; §12 GlobalExactly",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1550,
+          1558
+        ]
+      ],
+      "source_sha256": "506a069cb965989bd2e1f67b0f6bd23df376bd3fc8b7188a31a4d563903fab93",
+      "conclusion": "(a0-type synth Γ (GlobalExactly t_n t_P t_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-TooMany",
+      "kind": "redex-rule",
+      "subject": "A0-T-TooMany",
+      "anchor": "spec §6.4; §12 TooMany",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1560,
+          1569
+        ]
+      ],
+      "source_sha256": "7eb356e69ccb401a323f5dee17daf7e7bcc9f891fb73145ad411b09381d1fbaf",
+      "conclusion": "(a0-type synth Γ (TooMany t_P t_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-AdmissibleThreshold",
+      "kind": "redex-rule",
+      "subject": "A0-T-AdmissibleThreshold",
+      "anchor": "spec §6.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1571,
+          1580
+        ]
+      ],
+      "source_sha256": "a66df474ef19c558aebaadad56ebfc064789b0165946cc6dbd67ff6a6f632ced",
+      "conclusion": "(a0-type synth Γ (AdmissibleThreshold t_kind t_P t_purpose) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-CanonicalAggregateAt",
+      "kind": "redex-rule",
+      "subject": "A0-T-CanonicalAggregateAt",
+      "anchor": "spec §4.8",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1582,
+          1590
+        ]
+      ],
+      "source_sha256": "27585be4e4ddea3aae599eff95e677653b900055e1044bd1fd03a364448f40ba",
+      "conclusion": "(a0-type synth Γ (CanonicalAggregateAt t_basis t_group t_cover) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-SetOf",
+      "kind": "redex-rule",
+      "subject": "A0-T-SetOf",
+      "anchor": "spec §4.9",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1592,
+          1596
+        ]
+      ],
+      "source_sha256": "df5c760534c0e0fb4c70c58b15dd3b9e98bb3f250d1175bf953f6b4a7b5f0bc0",
+      "conclusion": "(a0-type synth Γ (SetOf t_P) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Card",
+      "kind": "redex-rule",
+      "subject": "A0-T-Card",
+      "anchor": "spec §4.9",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1598,
+          1604
+        ]
+      ],
+      "source_sha256": "4a1d6f16ae85cb5b10aa188d2d5d50b103cfdb0401e8ae5495745bf58198b0ff",
+      "conclusion": "(a0-type synth Γ (Card t_set) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Equality",
+      "kind": "redex-rule",
+      "subject": "A0-T-Equality",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1606,
+          1618
+        ]
+      ],
+      "source_sha256": "b2759c6746789926f24606fc197b4e8b8ee0ae95531ccd39d04db7f40af36da9",
+      "conclusion": "(a0-type synth Γ (= t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-And",
+      "kind": "redex-rule",
+      "subject": "A0-T-And",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1636,
+          1640
+        ]
+      ],
+      "source_sha256": "ccd7194b09fbc07a10a3faf575cae5935417f6f635b6e3f933a81e9788d3de05",
+      "conclusion": "(a0-type synth Γ (∧ t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-CoRef",
+      "kind": "redex-rule",
+      "subject": "A0-T-CoRef",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1716,
+          1723
+        ]
+      ],
+      "source_sha256": "67f1aa65beaabd81e68404b56be170fe7ba0688f4db014a17876efa5e9649ac2",
+      "conclusion": "(a0-type synth Γ (CoRef t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-List-Check",
+      "kind": "redex-rule",
+      "subject": "A0-T-List-Check",
+      "anchor": "spec §4.9",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1763,
+          1766
+        ]
+      ],
+      "source_sha256": "4ce2d6b103c950b59f18b54067cd3b7251236e016446e19bec31d434550d23f3",
+      "conclusion": "(a0-type (check (List τ)) Γ (List t_item ...) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ZipWith-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-ZipWith-Pure",
+      "anchor": "spec §4.9; §12 ZipWith",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1768,
+          1780
+        ]
+      ],
+      "source_sha256": "1cab4a0aea3176f8da5890b7d9654db2a5e7bb15ebb6768742362cf676474919",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ZipWith-Empty-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-ZipWith-Empty-Effectful",
+      "anchor": "spec §4.9; §12 ZipWith empty",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1782,
+          1791
+        ]
+      ],
+      "source_sha256": "e91350c6a1b4d7861e599eccd5c239f3853961099dcf4590b075c47720f455f5",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f (List) (List)) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ZipWith-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-ZipWith-Effectful",
+      "anchor": "spec §4.9; §12 ZipWith",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1793,
+          1808
+        ]
+      ],
+      "source_sha256": "86c18cbf3b02bc2e86688ba4e2dd6e19c9875db295ef1d107e7d64445ad13c10",
+      "conclusion": "(a0-type synth Γ (ZipWith v_f t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-StateClause",
+      "kind": "redex-rule",
+      "subject": "A0-T-StateClause",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1810,
+          1813
+        ]
+      ],
+      "source_sha256": "019817491e8694736a6281f84ae328cde7839c317fa44aca8b549a49f262cf2e",
+      "conclusion": "(a0-type synth Γ (StateClause t_content) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-DirectClause-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-DirectClause-Pure",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1815,
+          1825
+        ]
+      ],
+      "source_sha256": "b4c5c92b8706bf5e06dcf933eee081386236cdbc544d8a5d4ab1a3817893e869",
+      "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-DirectClause-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-DirectClause-Effectful",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1827,
+          1837
+        ]
+      ],
+      "source_sha256": "e12660174bd378bcaf787c8e1040f5632ab3667d398c627c80e13b509737c32a",
+      "conclusion": "(a0-type synth Γ (DirectClause t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ActualClause-State",
+      "kind": "redex-rule",
+      "subject": "A0-T-ActualClause-State",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1839,
+          1847
+        ]
+      ],
+      "source_sha256": "2d3f5830012a4e1c1a1e76d96f2fa85d2516367ad6599d3a41ad30cc2e1e1a7e",
+      "conclusion": "(a0-type synth Γ (ActualClause t_clause) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ActualClause-Event-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-ActualClause-Event-Pure",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1849,
+          1856
+        ]
+      ],
+      "source_sha256": "5b872b0d619f93cb9e140fc253250704b4eb85e895b46787dffe0ef9524dd305",
+      "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-ActualClause-Event-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-ActualClause-Event-Effectful",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1858,
+          1865
+        ]
+      ],
+      "source_sha256": "ebffdb82ddfc13799c5b6133bd7b4c770f7ba1fa0305fcbd6c53db9bca7a1a63",
+      "conclusion": "(a0-type synth Γ (ActualClause t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-CloseClause",
+      "kind": "redex-rule",
+      "subject": "A0-T-CloseClause",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1867,
+          1874
+        ]
+      ],
+      "source_sha256": "d90d642b9141cf403e1f20fd46a88501d1a8bc3f4d065b964f4c3784e837ad35",
+      "conclusion": "(a0-type synth Γ (CloseClause t_clause) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-CloseWith",
+      "kind": "redex-rule",
+      "subject": "A0-T-CloseWith",
+      "anchor": "spec §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1876,
+          1889
+        ]
+      ],
+      "source_sha256": "3f4048bbc1d42e789ef4f910731966ca868fbeb6b376a358c83edeb970ba11c8",
+      "conclusion": "(a0-type synth Γ (CloseWith (row x_predicate n event-mode (label ...)) fills) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Apply-ClauseContent",
+      "kind": "redex-rule",
+      "subject": "A0-T-Apply-ClauseContent",
+      "anchor": "spec §3.4, §4.6",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1891,
+          1903
+        ]
+      ],
+      "source_sha256": "429036b2ac7d39af6c4cbddc49e531f6388dce7c5606eefe77ea7a0c78c276e6",
+      "conclusion": "(a0-type synth Γ (t_function t_argument) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Apply-Pure",
+      "kind": "redex-rule",
+      "subject": "A0-T-Apply-Pure",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1905,
+          1917
+        ]
+      ],
+      "source_sha256": "d2c4afff67a2bed9096b6cd689331f5cdcb31ef9a350c1974a2f6ea6545bd4d8",
+      "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "A0-T-Apply-Effectful",
+      "kind": "redex-rule",
+      "subject": "A0-T-Apply-Effectful",
+      "anchor": "spec §3.3, §4.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1919,
+          1931
+        ]
+      ],
+      "source_sha256": "8bb4ec0c092dcd97cf38c0a63d3b333263a4a581d18e4fab9340d94cb83ab19c",
+      "conclusion": "(a0-type synth Γ (t_function t_argument ...) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-SelectAtLeast",
+      "kind": "redex-rule",
+      "subject": "B1-T-SelectAtLeast",
+      "anchor": "spec §5.6; §12 selection floor",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1322,
+          1333
+        ]
+      ],
+      "source_sha256": "bbef2ae884f79a440feb956104f840fe6f9c86552c416ff60c460aa7cb61274e",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAtLeast t_count t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-SelectAllBut",
+      "kind": "redex-rule",
+      "subject": "B1-T-SelectAllBut",
+      "anchor": "spec §5.6; §12 SelectAllBut",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1335,
+          1345
+        ]
+      ],
+      "source_sha256": "3f758874c334c30c6b86687f410b087ddd90280be505ccdb4e4d6d543b4ea000",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (SelectAllBut t_count t_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-MaxRefer",
+      "kind": "redex-rule",
+      "subject": "B1-T-MaxRefer",
+      "anchor": "spec §5.3; §12 MaxRefer",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1347,
+          1356
+        ]
+      ],
+      "source_sha256": "01dd1dbcfc860ad1fd58dc0e02dcd73877487d443044692d71be7d1864e58c09",
+      "conclusion": "(a0-type (check (RefComp (Referents τ))) Γ (MaxRefer v_P) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Implication",
+      "kind": "redex-rule",
+      "subject": "B1-T-Implication",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1642,
+          1646
+        ]
+      ],
+      "source_sha256": "c5b0fca154701d58f3b4c53a96e3a59e20a1691cc7c5baef46330142b307229d",
+      "conclusion": "(a0-type synth Γ (→ t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Negation",
+      "kind": "redex-rule",
+      "subject": "B1-T-Negation",
+      "anchor": "spec §4.5, §5.4",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1648,
+          1651
+        ]
+      ],
+      "source_sha256": "a6c4e0d42d1927dfa4f25a7f1eba8fec9672037a2e0aebad83d145b8bcbb5c4f",
+      "conclusion": "(a0-type synth Γ (¬ t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Forall",
+      "kind": "redex-rule",
+      "subject": "B1-T-Forall",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1653,
+          1668
+        ]
+      ],
+      "source_sha256": "8a6054b31d183b243d43cb868bd9076992dcff73ea5867bdbe22050f3290cb3f",
+      "conclusion": "(a0-type synth Γ (∀ v_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Exists",
+      "kind": "redex-rule",
+      "subject": "B1-T-Exists",
+      "anchor": "spec §4.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1670,
+          1685
+        ]
+      ],
+      "source_sha256": "1d73dd78767d1d43db8f63a2cef611564acb8c81b48a950a76fc7144298b8ef0",
+      "conclusion": "(a0-type synth Γ (∃ v_property) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Among",
+      "kind": "redex-rule",
+      "subject": "B1-T-Among",
+      "anchor": "spec §4.8",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1687,
+          1695
+        ]
+      ],
+      "source_sha256": "b7423e0204411b05c4167128f5171ba1ee8658c0b711e991337b611ebe4bc97b",
+      "conclusion": "(a0-type synth Γ (Among t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Presuppose-Synth",
+      "kind": "redex-rule",
+      "subject": "B1-T-Presuppose-Synth",
+      "anchor": "spec §5.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1697,
+          1704
+        ]
+      ],
+      "source_sha256": "b2a7f20bda9be38ea5fa46cdf977505550dd92e9cc76167d22d0c041c99d981c",
+      "conclusion": "(a0-type synth Γ (Presuppose t_condition t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Presuppose-Reference",
+      "kind": "redex-rule",
+      "subject": "B1-T-Presuppose-Reference",
+      "anchor": "spec §5.5",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1706,
+          1714
+        ]
+      ],
+      "source_sha256": "3ccccbd6251b9b53c0a3a5d96e96db43d19e7dde478c64d265f615e10d1fd1e2",
+      "conclusion": "(a0-type (check (RefComp τ)) Γ (Presuppose t_condition t_body) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Distrib",
+      "kind": "redex-rule",
+      "subject": "B1-T-Distrib",
+      "anchor": "spec §4.8; §12 Distrib",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1725,
+          1739
+        ]
+      ],
+      "source_sha256": "a7a28e602dc4006dde0f353508e82a5e83f1406e710fd9138dddf737b66034e9",
+      "conclusion": "(a0-type synth Γ (Distrib v_Q t_reference) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-CoveredBy",
+      "kind": "redex-rule",
+      "subject": "B1-T-CoveredBy",
+      "anchor": "spec §4.8",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1741,
+          1751
+        ]
+      ],
+      "source_sha256": "76ef1d99e87598e06b4abe21d3c1521ff9d9d337cf3625e45e9d9f04198e4227",
+      "conclusion": "(a0-type synth Γ (CoveredBy v_P t_reference) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Overlap",
+      "kind": "redex-rule",
+      "subject": "B1-T-Overlap",
+      "anchor": "spec §4.8; §12 Overlap",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1753,
+          1761
+        ]
+      ],
+      "source_sha256": "8e44cbec2515823738550120f81d6a9e35452da518bbbd4d07e532663f32d44c",
+      "conclusion": "(a0-type synth Γ (Overlap t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Addition",
+      "kind": "redex-rule",
+      "subject": "B1-T-Addition",
+      "anchor": "spec §4.9",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1620,
+          1628
+        ]
+      ],
+      "source_sha256": "65e019e442bcc5acbf846be6d227cf32bc271ed765ef928aba58010e0b0ee888",
+      "conclusion": "(a0-type synth Γ (+ t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-AtLeast-Zero",
+      "kind": "redex-rule",
+      "subject": "B1-T-AtLeast-Zero",
+      "anchor": "spec §4.10; §12 AtLeast zero",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1403,
+          1406
+        ]
+      ],
+      "source_sha256": "c0874180037d4637cedc10a4b8b4910f310a268a76619496dc0aaddecfe924f1",
+      "conclusion": "(a0-type synth Γ (AtLeast 0 v_P v_Q) (typing Content () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-AtLeast-Positive",
+      "kind": "redex-rule",
+      "subject": "B1-T-AtLeast-Positive",
+      "anchor": "spec §4.10; §12 AtLeast",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1408,
+          1418
+        ]
+      ],
+      "source_sha256": "9a71b0edfcb9e4d14ab16e5ef5533075870a8a5b397f69f86506d78e8fce6ceb",
+      "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-AtLeast-Symbolic",
+      "kind": "redex-rule",
+      "subject": "B1-T-AtLeast-Symbolic",
+      "anchor": "spec §4.10; §12 AtLeast totality",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1420,
+          1433
+        ]
+      ],
+      "source_sha256": "2cc7547fdfebf84371a5cf9bf2185cf68f21e5d0944b4a2a06f8f13fa3cc0278",
+      "conclusion": "(a0-type synth Γ (AtLeast t_count v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Some",
+      "kind": "redex-rule",
+      "subject": "B1-T-Some",
+      "anchor": "spec §4.10; §12 Some",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1435,
+          1442
+        ]
+      ],
+      "source_sha256": "520ebfdaa2fc21224e66b6e81395c008c8d6d92f915d10e619069ff460f9dc5e",
+      "conclusion": "(a0-type synth Γ (Some v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-Every",
+      "kind": "redex-rule",
+      "subject": "B1-T-Every",
+      "anchor": "spec §4.10; §12 Every",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1471,
+          1485
+        ]
+      ],
+      "source_sha256": "1cad9660456dccc5da1797f165983b7267c96c00e3cdc0cb7314c9643064b812",
+      "conclusion": "(a0-type synth Γ (Every v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-AtMost",
+      "kind": "redex-rule",
+      "subject": "B1-T-AtMost",
+      "anchor": "spec §4.10; §12 AtMost",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1496,
+          1505
+        ]
+      ],
+      "source_sha256": "9b15eecbd7c5b84f8224a127dbfca4efa049874b0f371f8a9a3cfdb3fcae0726",
+      "conclusion": "(a0-type synth Γ (AtMost t_n v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-FewerThan-Zero",
+      "kind": "redex-rule",
+      "subject": "B1-T-FewerThan-Zero",
+      "anchor": "spec §4.10; §12 FewerThan zero",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1518,
+          1521
+        ]
+      ],
+      "source_sha256": "1b89c5dec07bea3b4ba16db30cadf5986cee92ff8ab28cb634791ffbbd16e368",
+      "conclusion": "(a0-type synth Γ (FewerThan 0 v_P v_Q) (typing Content () ()))",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-FewerThan-Positive",
+      "kind": "redex-rule",
+      "subject": "B1-T-FewerThan-Positive",
+      "anchor": "spec §4.10; §12 FewerThan",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1523,
+          1533
+        ]
+      ],
+      "source_sha256": "89100d34e4a73759afbb38b3a3755c7f41e35b40e017546b4d892b0baa8ea3fd",
+      "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "B1-T-FewerThan-Symbolic",
+      "kind": "redex-rule",
+      "subject": "B1-T-FewerThan-Symbolic",
+      "anchor": "spec §4.10; §12 FewerThan totality",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1535,
+          1548
+        ]
+      ],
+      "source_sha256": "b99b4f99cee4ef7ae0a397633027f1a571caa022fe55b648adcdea00935d9f3c",
+      "conclusion": "(a0-type synth Γ (FewerThan t_count v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "E01-T-Closure",
+      "kind": "redex-rule",
+      "subject": "E01-T-Closure",
+      "anchor": "spec §12 individual and unrestricted plural existence",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1444,
+          1457
+        ]
+      ],
+      "source_sha256": "d5dcdc4dcd759ea4b14a1469849c5c4e391c8eb29774f60b6139473c3c808ac6",
+      "conclusion": "(a0-type synth Γ (closure-head v_P v_Q) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "E01-T-Comparison",
+      "kind": "redex-rule",
+      "subject": "E01-T-Comparison",
+      "anchor": "spec §4.9 numeric comparisons",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1630,
+          1634
+        ]
+      ],
+      "source_sha256": "de47b1024e9359780c4318922d2e5194137e0a5117632ddb9d902bce4edf148f",
+      "conclusion": "(a0-type synth Γ (comparison t_left t_right) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "E01-T-Only",
+      "kind": "redex-rule",
+      "subject": "E01-T-Only",
+      "anchor": "spec §12 pure Only host and exclusion",
+      "source_path": "tools/smusni-redex/port-a0.rkt",
+      "source_ranges": [
+        [
+          1459,
+          1469
+        ]
+      ],
+      "source_sha256": "1f301597d70d0b1da0c9f48e36af1de2018b6fba72bb9d010b89b5a3beaae81b",
+      "conclusion": "(a0-type synth Γ (Only v_A v_H t_f) R_out)",
+      "reason": "Generated from the frozen A0/B1 typing judgment."
+    },
+    {
+      "id": "M2-T-String",
+      "kind": "literal",
+      "subject": "Text",
+      "anchor": "spec §2; §3.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          279,
+          280
+        ]
+      ],
+      "source_sha256": "d87ab3adef7dacc6f214c4ac4c6f9858397e20751fe861178b20c76202f5025f",
+      "conclusion": "Text literal -> Text",
+      "reason": "The Redex A0 slice omits Text literals, but the all-S1 primitive cohort contains sign constructors over Text."
+    },
+    {
+      "id": "M2-T-Subsort",
+      "kind": "compatibility",
+      "subject": "first-order hierarchy",
+      "anchor": "spec §3.1–§3.2",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          316,
+          376
+        ]
+      ],
+      "source_sha256": "50c940d409901a3d0ec551c54fd0acf5438724732bf886a4e45ecbb40558939b",
+      "conclusion": "covariant declared subsorting plus singleton Referents lift",
+      "reason": "All-S1 typing must consume the live sort hierarchy instead of the numeric-only A0 compatibility fragment."
+    },
+    {
+      "id": "M2-T-Core-Constant",
+      "kind": "constant",
+      "subject": "core inventory",
+      "anchor": "spec anchors embedded in core.sexp",
+      "source_path": "tools/smusni-redex/inventory/core.sexp",
+      "source_ranges": [
+        [
+          79,
+          99
+        ]
+      ],
+      "source_sha256": "b0a85df28ab305d66fd17a0b3a9a5bd29b538250c82385f43e0cabc518312122",
+      "conclusion": "declared constant -> declared type",
+      "reason": "The all-S1 primitive cohort reaches CurrentToken and the projective others constants in addition to A0's Speaker/Audience/TooManyK."
+    },
+    {
+      "id": "M2-T-Lexical-Row",
+      "kind": "row",
+      "subject": "fixture lexical rows",
+      "anchor": "spec §3.3; pilot fixture #12",
+      "source_path": "tools/smusni-redex/inventory/fixtures.sexp",
+      "source_ranges": [
+        [
+          1,
+          55
+        ]
+      ],
+      "source_sha256": "e90ffa6f0dd3d57e658368da639ef079c6a7a4a9be2791697193dbf77276e09f",
+      "conclusion": "row head plus arity/event mode -> typed residual PredTerm",
+      "reason": "The frozen corpus supplies lexical heads through the fixture; its row arity and event mode are consumed explicitly and remain pilot-only pending #12."
+    },
+    {
+      "id": "M2-T-PredTerm-Apply",
+      "kind": "application",
+      "subject": "PredTerm",
+      "anchor": "spec §3.3",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          389,
+          410
+        ]
+      ],
+      "source_sha256": "9f27848ea17738a135b516ebf5cf22b0c52edfc027dcc760dfd5f23d640657a6",
+      "conclusion": "fill typed residual row; exhausted row -> Content",
+      "reason": "Primitive cases apply bound and lexical PredTerms, including labelled Eventuality fills."
+    },
+    {
+      "id": "M2-T-Combine",
+      "kind": "primitive",
+      "subject": "Combine",
+      "anchor": "spec §3.2; §4.8",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          368,
+          378
+        ],
+        [
+          835,
+          843
+        ]
+      ],
+      "source_sha256": "6073058a5351517d9c9e3ddb301704de524fcf51676514e3c022328566ce4e2f",
+      "conclusion": "Referents<T> x Referents<U> -> Referents<join(T,U)>",
+      "reason": "The primitive baseline contains plural joins and singleton lifts."
+    },
+    {
+      "id": "M2-T-MemberOf",
+      "kind": "primitive",
+      "subject": "membership",
+      "anchor": "spec §4.9",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          916,
+          935
+        ]
+      ],
+      "source_sha256": "bc3e545e2067708239c110a6f71223f0585a15ebede88674da2e43498342a718",
+      "conclusion": "T x Set<T> -> Content",
+      "reason": "The primitive baseline contains set membership."
+    },
+    {
+      "id": "M2-T-Force",
+      "kind": "primitive",
+      "subject": "Assert/Mention/Do",
+      "anchor": "spec §7.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2179,
+          2198
+        ]
+      ],
+      "source_sha256": "162b614ed3aa986608c307fb7f9410312b46756df0caa4c6af54b568ce760733",
+      "conclusion": "Assert Content -> Act Assertion; Mention T -> Act Expressive; Do acts/performance/discourse -> Discourse",
+      "reason": "The primitive baseline exercises inert act construction and discourse sequencing."
+    },
+    {
+      "id": "M2-T-LocutionOf",
+      "kind": "primitive",
+      "subject": "LocutionOf",
+      "anchor": "spec §7.4",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2339,
+          2372
+        ]
+      ],
+      "source_sha256": "c1e6de38b7216416553888f89eddfd13ad06fa3355dbc7017115029d5cd93b57",
+      "conclusion": "Referents<UtteranceToken> x Referents<Locution> -> Content",
+      "reason": "Three primitive gates discriminate the two argument types."
+    },
+    {
+      "id": "M2-T-Sign",
+      "kind": "primitive",
+      "subject": "sign constructors",
+      "anchor": "spec §7.5",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2420,
+          2453
+        ]
+      ],
+      "source_sha256": "7451e4bda1454101b258c27db073ba1106e2ee7970254ddbe9876924c08f53db",
+      "conclusion": "Text -> Sign<K>; SentenceSign Content -> Sign<Sentence>",
+      "reason": "Primitive gates cover valid Text signs and wrong Text/reference/content operands."
+    },
+    {
+      "id": "M2-T-Reify",
+      "kind": "primitive",
+      "subject": "Reify",
+      "anchor": "spec §9.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2644,
+          2663
+        ]
+      ],
+      "source_sha256": "b51c2e7affade5f61f1dae8572508d45bc2868af6742cd27c7c15b9f4da116b3",
+      "conclusion": "Content -> Proposition",
+      "reason": "Reification is inert and must not inherit the operand effects."
+    },
+    {
+      "id": "M2-T-RealizedContent",
+      "kind": "primitive",
+      "subject": "RealizedContent",
+      "anchor": "spec §7.4",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2358,
+          2391
+        ]
+      ],
+      "source_sha256": "0a95b86c80a8c5b00b278849eb35ef46205c90c7658e319905169df9c9a4ce2a",
+      "conclusion": "Referents<UtteranceToken> -> Content with projective definedness",
+      "reason": "The primitive baseline contains the token-to-captured-content projection."
+    },
+    {
+      "id": "M2-T-DropPlace",
+      "kind": "primitive",
+      "subject": "DropPlace",
+      "anchor": "spec §4.3",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          641,
+          648
+        ]
+      ],
+      "source_sha256": "ab9ccd4bf03b23fbefdd439a0e4760a0dbfeae7d472fd438828f95909ca6c667",
+      "conclusion": "PredTerm<row> x Label<row> -> PredTerm<RowMinus row label>",
+      "reason": "The primitive baseline contains one valid row deletion gate."
+    },
+    {
+      "id": "M2-T-Teha",
+      "kind": "primitive",
+      "subject": "te'a",
+      "anchor": "spec §12 MEX",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          4667,
+          4673
+        ]
+      ],
+      "source_sha256": "4e48da765bd7992b415ee9ae6bd148feb1421a4503abb21d34e2a23a3ea255f6",
+      "conclusion": "Number x Natural -> Number",
+      "reason": "The primitive baseline contains an exponentiation/equality gate while the recursive expansion remains post-M2."
+    },
+    {
+      "id": "M2-T-Aggregate",
+      "kind": "primitive",
+      "subject": "Aggregate",
+      "anchor": "spec §4.9",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          948,
+          987
+        ],
+        [
+          1067,
+          1085
+        ]
+      ],
+      "source_sha256": "14787bff2c9ddcdb493a1ad3100706f736613b52a895d77bc309a13fbe3ca6db",
+      "conclusion": "DecompositionBasis<Group<T>,T> x Group<T> -> Content",
+      "reason": "Recursive expansion of CanonicalAggregateAt reaches Aggregate."
+    },
+    {
+      "id": "M2-T-BasisUnitAt",
+      "kind": "primitive",
+      "subject": "BasisUnitAt",
+      "anchor": "spec §4.9",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          948,
+          987
+        ]
+      ],
+      "source_sha256": "d4eb2c98d121843873bb468245dad340216b833d0e0ecdf48df89b2d25a3acaa",
+      "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<C> -> Content",
+      "reason": "Recursive expansion of GunmaAt reaches the basis interface."
+    },
+    {
+      "id": "M2-T-PeerUnitAt",
+      "kind": "primitive",
+      "subject": "PeerUnitAt",
+      "anchor": "spec §4.9",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          948,
+          992
+        ]
+      ],
+      "source_sha256": "e4bcb9bf7586a48658c22707a8de1c1dcb5112951b61251dd7d8aa30ed99c22b",
+      "conclusion": "DecompositionBasis<W,C> x Referents<C> x Referents<W> -> Content",
+      "reason": "Recursive expansion of GunmaAt reaches the peer interface."
+    },
+    {
+      "id": "M2-T-JaiRoleAdmissible",
+      "kind": "primitive",
+      "subject": "JaiRoleAdmissible",
+      "anchor": "spec §12 bare jai",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          4229,
+          4268
+        ]
+      ],
+      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
+      "conclusion": "PredTerm<row> x Fn<(Referents<T>,Referents<A>),Content> -> Content",
+      "reason": "The JaiRaise mapping's constrained Context must be typed and pure."
+    },
+    {
+      "id": "M2-T-InRegion",
+      "kind": "lexical-interface",
+      "subject": "InRegion",
+      "anchor": "spec §6.4",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          3908,
+          3929
+        ]
+      ],
+      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
+      "conclusion": "Amount x Region<Scale> -> Content",
+      "reason": "The pure row-directed Grade template reaches this declared interface."
+    },
+    {
+      "id": "M2-T-Grade-Row",
+      "kind": "schema",
+      "subject": "Grade",
+      "anchor": "spec §6.4",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          3908,
+          3929
+        ]
+      ],
+      "source_sha256": "0d1e129c798f0c1376f39167638a5406dda10b993f831e9f96ae4027a7395986",
+      "conclusion": "row metadata -> pure PredTerm<row>",
+      "reason": "The schema consumes its relation's declared degree projection, scale, and region without a site."
+    },
+    {
+      "id": "M2-T-JaiRaise-Row",
+      "kind": "schema",
+      "subject": "JaiRaise",
+      "anchor": "spec §12 bare jai",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          4229,
+          4268
+        ]
+      ],
+      "source_sha256": "17b652de9bc20111dce08d48cf8fd35f46e3cd781e27705cd1e524e159d4c972",
+      "conclusion": "row remapping plus role -> pure PredTerm<raised-row>",
+      "reason": "The schema consumes row metadata rather than inspecting predicate syntax."
+    },
+    {
+      "id": "M2-T-Context-Constants",
+      "kind": "constant",
+      "subject": "context and index constants",
+      "anchor": "spec §5.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          1422,
+          1474
+        ]
+      ],
+      "source_sha256": "9cac0d2b4b1a76c414b9a5543c4236992225caab169f9c6e2b1efcc3d872bc59",
+      "conclusion": "declared utterance-context projection -> declared type",
+      "reason": "Selected cases reach Host/attachment roles, generic modes, intensities, and evidential constants."
+    },
+    {
+      "id": "M2-T-Query",
+      "kind": "primitive",
+      "subject": "Polar/OpenQ/Ask",
+      "anchor": "spec §7.1; §8",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2183,
+          2198
+        ],
+        [
+          2554,
+          2642
+        ]
+      ],
+      "source_sha256": "33857ae050ea0ded250e663c8526f217e4e66f39b4379aa250e1b28d45500314",
+      "conclusion": "Content -> Query<Bool>; Content-valued function -> Query<A>; Query<A> -> Act<Question>",
+      "reason": "Selected Close cases occur beneath question constructors."
+    },
+    {
+      "id": "M2-T-Local",
+      "kind": "primitive",
+      "subject": "Local",
+      "anchor": "spec §5.2",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          1523,
+          1541
+        ]
+      ],
+      "source_sha256": "19c1d97b828ab8d175607f2b1ca65a2806bf1b52870d3ae027760c5b93e87014",
+      "conclusion": "RefComp<A> -> RefComp<A> under expected mode",
+      "reason": "Collection and performance specimens use the accessibility delimiter."
+    },
+    {
+      "id": "M2-T-Perform-Role",
+      "kind": "primitive",
+      "subject": "Perform",
+      "anchor": "spec §7.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2192,
+          2203
+        ]
+      ],
+      "source_sha256": "739c5473b10d4319adfc4924571180dedd9a14d9224459ca2dbaed33883e3cc1",
+      "conclusion": "OccurrenceRole x Act<F> -> PerfComp<ActOccurrence<F>>",
+      "reason": "Selected discourse specimens spell the role explicitly."
+    },
+    {
+      "id": "M2-T-Generic",
+      "kind": "primitive",
+      "subject": "Generic",
+      "anchor": "spec §5.8",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          1899,
+          1915
+        ]
+      ],
+      "source_sha256": "df41267ba57c6d9351ad3096cf484490ea81c7fa22a3676cde997cbfa4fca127",
+      "conclusion": "GenericMode x Fn<T,Content> x EFn<T,Content> -> Content",
+      "reason": "Selected cases wrap supported Close expansions under generic quantification."
+    },
+    {
+      "id": "M2-T-Content-Interfaces",
+      "kind": "primitive",
+      "subject": "Named/Holds/display relations",
+      "anchor": "spec §7.4–§7.6; §9.1",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          2420,
+          2470
+        ],
+        [
+          2644,
+          2663
+        ]
+      ],
+      "source_sha256": "88d5eb357938073e4ba864af40eedc448de6e44bbfb43c1c542f070858bd5bb1",
+      "conclusion": "typed interface arguments -> Content",
+      "reason": "Selected cases use the declared content-level interface relations around the expansion slice."
+    },
+    {
+      "id": "M2-T-Numeric-Interfaces",
+      "kind": "primitive",
+      "subject": "subtraction/AmountValue/abstraction rows",
+      "anchor": "spec §4.9; §9.2",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          916,
+          941
+        ],
+        [
+          2729,
+          2759
+        ]
+      ],
+      "source_sha256": "808bd3ddec3311ce41cd60e2bf31b2a29a650d75e1c5e72104c07c45b2434f7a",
+      "conclusion": "Number operations and typed abstraction relation rows",
+      "reason": "Selected cases embed Close under the numeric abstraction interfaces."
+    },
+    {
+      "id": "M2-T-Residual-Row",
+      "kind": "row",
+      "subject": "bound and derived PredTerm rows",
+      "anchor": "spec §3.3",
+      "source_path": "spec.md",
+      "source_ranges": [
+        [
+          389,
+          452
+        ]
+      ],
+      "source_sha256": "77c92eca14735c615736ee9b5e4a116d3d429ffdeef1dbc32ed437cbc45882e2",
+      "conclusion": "row-directed partial filling preserves the residual PredTerm row",
+      "reason": "Close must consume typed bound and derived relation rows, not only fixture lexical heads."
+    }
+  ],
+  "constants": [
+    {
+      "name": "Speaker",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "Audience",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "MiAOthers",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1, P40"
+    },
+    {
+      "name": "MaAOthers",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1, P40"
+    },
+    {
+      "name": "DoOOthers",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1, P40"
+    },
+    {
+      "name": "This",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "That",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "Yonder",
+      "type": "(Referents Entity)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "Now",
+      "type": "(Referents Time)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "CurrentToken",
+      "type": "(Referents UtteranceToken)",
+      "anchor": "spec §5.1"
+    },
+    {
+      "name": "Host",
+      "type": "OccurrenceRole",
+      "anchor": "spec §7.1"
+    },
+    {
+      "name": "AttachedDisplay",
+      "type": "OccurrenceRole",
+      "anchor": "spec §7.1"
+    },
+    {
+      "name": "AttachedAddress",
+      "type": "OccurrenceRole",
+      "anchor": "spec §7.1"
+    },
+    {
+      "name": "Typical",
+      "type": "GenericMode",
+      "anchor": "spec §5.8"
+    },
+    {
+      "name": "OtherThan",
+      "type": "ScalarMode",
+      "anchor": "spec §6.3"
+    },
+    {
+      "name": "Moderate",
+      "type": "Intensity",
+      "anchor": "spec §7.6"
+    },
+    {
+      "name": "Intense",
+      "type": "Intensity",
+      "anchor": "spec §7.6"
+    },
+    {
+      "name": "Observation",
+      "type": "Epistemology",
+      "anchor": "spec §7.6"
+    },
+    {
+      "name": "Hearsay",
+      "type": "Epistemology",
+      "anchor": "spec §7.6"
+    },
+    {
+      "name": "TooManyK",
+      "type": "ThresholdKind",
+      "anchor": "spec §6.4"
+    },
+    {
+      "name": "ManyK",
+      "type": "ThresholdKind",
+      "anchor": "spec §6.4"
+    }
+  ],
+  "lexical_rows": [
+    {
+      "head": "bajra",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row: surface/limbs/gait (jbovlaste); pending #12"
+    },
+    {
+      "head": "balvi",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture binary tense-facet projection; pending #12"
+    },
+    {
+      "head": "barda",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "batci",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "officialdata batci: biter, bitten, locus, tool; jbotci vlacku 2026-09-10; fixture pending full #12 adjudication"
+    },
+    {
+      "head": "bevri",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "blabi",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "cabna",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture binary tense-facet projection; pending #12"
+    },
+    {
+      "head": "cadzu",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "cinri",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "citka",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "cukta",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture unary description-head projection; pending #12"
+    },
+    {
+      "head": "cusku",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "darxi",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "datka",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "djica",
+      "ordinary_arity": 3,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "dansu",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "djuno",
+      "ordinary_arity": 4,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "fasnu",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "flulimna",
+      "ordinary_arity": 1,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "gerku",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "jbena",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "jbopre",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "jinvi",
+      "ordinary_arity": 4,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "jmaji",
+      "ordinary_arity": 1,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "klama",
+      "ordinary_arity": 5,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "melbi",
+      "ordinary_arity": 2,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "mlatu",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "morsi",
+      "ordinary_arity": 1,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "nelci",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "pendo",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "pilno",
+      "ordinary_arity": 3,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "pipno",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "ponse",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "prami",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "prenu",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "remna",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "purci",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "rinka",
+      "ordinary_arity": 3,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "sanga",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "selcmi",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "sipna",
+      "ordinary_arity": 1,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "skicu",
+      "ordinary_arity": 4,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "srana",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "stali",
+      "ordinary_arity": 1,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "sutra",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "tatpi",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "tavla",
+      "ordinary_arity": 3,
+      "event_mode": "direct-event",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "valsi",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "xasli",
+      "ordinary_arity": 1,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    },
+    {
+      "head": "zdani",
+      "ordinary_arity": 2,
+      "event_mode": "holding-state",
+      "provenance": "fixture; official row pending #12"
+    }
+  ],
+  "unsupported": []
+}

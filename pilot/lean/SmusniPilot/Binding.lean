@@ -46,6 +46,10 @@ mutual
           (body.rename (Renaming.lift ρ))
     | .apply function arguments =>
         .apply (function.rename ρ) (arguments.rename ρ)
+    | .performSource reference source content continuation =>
+        .performSource reference (source.rename ρ)
+          (content.rename (Renaming.lift ρ))
+          (continuation.rename (Renaming.lift (Renaming.lift ρ)))
     | .lexical predicate arguments =>
         .lexical predicate (arguments.rename ρ)
     | .context site arguments => .context site (arguments.rename ρ)
@@ -75,6 +79,9 @@ mutual
     | .lambda _ body => body.dependencies.filterMap Dependency.lower
     | .bind _ computation body =>
         computation.dependencies ++ body.dependencies.filterMap Dependency.lower
+    | .performSource _ source content continuation =>
+        source.dependencies ++ content.dependencies.filterMap Dependency.lower ++
+          (continuation.dependencies.filterMap Dependency.lower).filterMap Dependency.lower
     | .apply function arguments => function.dependencies ++ arguments.dependencies
     | .lexical _ arguments => arguments.dependencies
     | .context _ arguments => arguments.dependencies
@@ -94,6 +101,8 @@ mutual
     | .lambda _ body => body.siteOccurrences
     | .bind _ computation body =>
         computation.siteOccurrences ++ body.siteOccurrences
+    | .performSource _ source content continuation =>
+        source.siteOccurrences ++ content.siteOccurrences ++ continuation.siteOccurrences
     | .apply function arguments =>
         function.siteOccurrences ++ arguments.siteOccurrences
     | .lexical _ arguments | .primitive _ arguments =>
@@ -176,6 +185,10 @@ mutual
     | .apply function arguments =>
         .apply (function.substitute substitution)
           (arguments.substitute substitution)
+    | .performSource reference source content continuation =>
+        .performSource reference (source.substitute substitution)
+          (content.substitute (Substitution.lift substitution))
+          (continuation.substitute (Substitution.lift (Substitution.lift substitution)))
     | .lexical predicate arguments =>
         .lexical predicate (arguments.substitute substitution)
     | .context site arguments =>

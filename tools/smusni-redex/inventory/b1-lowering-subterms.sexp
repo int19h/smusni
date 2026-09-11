@@ -1,7 +1,7 @@
 (smusni-b1-lowering-subterms
  1
  (count 32)
- (outputs-sha1 "eac72b64f3eae5dbd441cc7ee53c914cabd774ca")
+ (outputs-sha1 "6a99ee61a99c5b1acd28753970cf5e6f251c2c0c")
  (outputs
   (output
    (key "samples.md#1.1")
@@ -207,14 +207,14 @@
    (offending)
    (subterms))
   (output
-   (key "samples.md#72.1")
-   (source "samples.md" 72 1)
+   (key "samples.md#73.1")
+   (source "samples.md" 73 1)
    (rules "L5.30" "L3.1" "L1.2" "L5.1" "L0.1" "L1.3" "L1.6" "L1.1")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "668ac22896455289")
+     (id "49efe161ccee6531")
      (path 3 1)
      (term
       (CloseClause
@@ -232,14 +232,14 @@
                  (tavla :1 $x :2 $r :3 $ctx3 :Eventuality $event)))))))))))
      (env (($r Referents Entity))))))
   (output
-   (key "samples.md#73.1")
-   (source "samples.md" 73 1)
+   (key "samples.md#74.1")
+   (source "samples.md" 74 1)
    (rules "L5.30" "L1.2" "L5.1" "L0.1" "L5.2" "L1.3" "L1.6" "L1.1")
    (disposition selected)
    (offending)
    (subterms
     (subterm
-     (id "9a4b45a97730a6c7")
+     (id "070f5fba29ef5fc0")
      (path 1)
      (term
       (CloseClause

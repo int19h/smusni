@@ -3,6 +3,7 @@
 (require racket/list
          racket/match
          "inventory.rkt"
+         "types.rkt"
          "syntax.rkt")
 
 (provide (struct-out site-id)
@@ -56,7 +57,7 @@
   (walk ast)
   (reverse found))
 
-(define (elaborate-core ast [inv (load-inventory)])
+(define (elaborate-core ast [inv (load-inventory)] #:environment [env #f])
   (define choices '())
   (define (record! node kind detail)
     (set! choices
@@ -69,7 +70,21 @@
       [else
        (define elements (core-list-elements node))
        (define head (head-of node))
-       (define walked (map walk elements))
+       (define walked
+         (if (eq? head 'PerformSource)
+             (let* ([offset (if (and (>= (length elements) 2)
+                                     (core-atom? (second elements))
+                                     (eq? (core-atom-value (second elements)) 'Host)) 1 0)]
+                    [assert-index (+ 3 offset)])
+               (perform-source-parts (core->plain-datum node))
+               (for/list ([element (in-list elements)] [index (in-naturals)])
+                 (if (= index assert-index)
+                     ;; The entire C1 subtree is already resolved, including
+                     ;; any inert nested Act values. Do not re-elaborate its
+                     ;; internal Assert constructors as force shorthands.
+                     element
+                     (walk element))))
+             (map walk elements)))
        (define rebuilt (struct-copy core-list node [elements walked]))
        (cond
          [(and (eq? head 'Close) (= (length walked) 2))
@@ -99,4 +114,7 @@
          [else rebuilt])]))
   (define sites (collect-sites ast))
   (define result (walk ast))
-  (elaboration result (reverse choices) sites))
+  ;; Open terms without a supplied environment defer typed notation lowering
+  ;; to infer-core. Callers needing the canonical source AST supply the env.
+  (elaboration (if env (normalize-source-core result env inv) result)
+               (reverse choices) sites))

@@ -1,8 +1,8 @@
-# base_head	8bea3eadebaf4e942ff55e17d6b3a39ea4684862
-# core_sha256	794ec672dd0130a76d6f17fb82a9764d379f5b00c157688cf8b76a2a2d3b05c6
-# definitions_sha256	04b735fc2c9f88fa0d97909321c73d5b7fd5b58046d2f50af8438e62a9f532b8
-# a0_sha256	b2733e8f9058663a9c4c6190b88b188e2910ad119f264abffbfdb76d3121ee0c
-# spec_sha256	55b7dda95bd6ec4b02403a521366c1b355e8f402ac254c1db39d785d74d79cab
+# base_head	3e45db536c8523d023f70ae25878a3ecb9f79663
+# core_sha256	78d5337a0a4c233ea98c0e8d2e8130118e7ac58d4ceb5e1a50516bebe696bee3
+# definitions_sha256	06988f61bcbfb55243f86e5adef86c9d662a57763e4cc4f579500031d6af1072
+# a0_sha256	01c4fb99fe0776c0d146d7c53db5d27f06eeba0e2a19e3f14b7ebda96fb7afba
+# spec_sha256	6b863989fedb3827fe29460ea33ba77aa346a2ca29f7370eede602d59a75d411
 head	disposition	sources	evidence
 family:Select	gap-prose-only	spec-appendix	primitive family label; concrete Select constructors are separate
 metatheory:bind	gap-prose-only	spec-appendix	carrier sequencing operation denoted by term:Bind
@@ -176,6 +176,7 @@ term:OtherThan	primitive-core	core	spec §6.3
 term:Overlap	defined-surface	a0-grammar,definitions	SmusniA0 t grammar | definition status executable
 term:PeerUnitAt	primitive-core	core	spec §4.9
 term:Perform	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §7.1
+term:PerformSource	primitive-core	a0-grammar,core	SmusniA0 t grammar | spec §7.1.1
 term:PluralNo	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12; P22
 term:PluralSome	defined-surface	a0-grammar,core,definitions	SmusniA0 t grammar | definition status executable | spec §12
 term:Polar	primitive-core	core	spec §8.1

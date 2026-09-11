@@ -1077,11 +1077,13 @@ The bare-ri skip rule alone does not decide whether a complete `ro ri` sumti
 can be the source of a later ri.
 P6's supported in-scope strong reading remains; the former retroactive
 cross-sentence joint-locus rescue is not a baseline exception to P43.
-The plural-information-state extension and other missing source/force laws
-remain explicit. Open ma slots and later failed cardinality are not static
+The one-exportable-description assertion route now uses `PerformSource`
+(spec §7.1.1/L8.13): the first source's F/U and the later partial read's U
+are distinct, with one shared reference on success. General source/force and
+multi-source failure laws remain explicit gaps. Open ma slots and later failed cardinality are not static
 scope errors, and no new weak selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §11, §14](spec.md), pins P16/P43.
+**See.** [Spec §5.6, §7.1.1, §11, §14](spec.md), pins P16/P43.
 
 ### ko'a … fo'u (KOhA)
 

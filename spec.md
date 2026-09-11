@@ -243,7 +243,8 @@ Core terms are written as S-expressions:
   denote the same list term, as they do in Redex. A special form is
   recognized by its reserved head atom and positional operands, never by
   delimiter shape: `(λ binders body)`, `(Let binder value body)`, and
-  `(Bind binder computation … body)`. The style convention — not a
+  `(Bind binder computation … body)`, and the source-performing binder
+  `PerformSource` of §7.1.1. The style convention — not a
   formation condition — writes applications/predications with `(...)`,
   special forms with `{...}`, and binder/type syntax with `[...]`, e.g.
   `{Let [$x :: Referents Entity] $y (klama $x $y)}`.
@@ -278,9 +279,9 @@ Core terms are written as S-expressions:
   convention a specimen's first comment line is its Lojban source.
 - `"…"` — `Text` literals (used by name signs, quoted text, and sign
   facts).
-- The term grammar has atoms and list forms. `λ`, `Let`, and `Bind` are
+- The term grammar has atoms and list forms. `λ`, `Let`, `Bind`, and `PerformSource` are
   direct special forms, syntactically distinct from ordinary application
-  by their reserved head atoms and governed by §4.4/§5.2. `Bind` remains
+  by their reserved head atoms and governed by §4.4/§5.2/§7.1.1. `Bind` remains
   variadic by alternation: `{Bind [$x :: T] c1 [$y :: S] c2 … body}`.
   Bodies are bare term operands; delimiter shape never adds a wrapper or
   quotation.
@@ -482,10 +483,13 @@ the term language. `Act<F>`
 values are first-class: constructing an act and performing it are
 different things (§7.1), which is what keeps quotation and reported speech
 from performing their contents. An act is a pure *value*, not a
-computation: only `Perform` injects it into the dynamic carrier and returns an
+computation: `Perform` injects it into the dynamic carrier and returns an
 opaque `ActOccurrence<F>` handle (§5.1, §7.1). The handle exposes no
 capture or evaluator state; it exists so occurrence-relative display can
 target the performance it modifies.
+`PerformSource` (§7.1.1) combines source preparation with that assertion
+performance boundary and binds its handle and a reusable `RefComp` read.
+It adds no source-result, optional-reference, world or lineage sort.
 
 `ClauseContent` is a transparent effectful-function alias, not a first-order
 sort and not a second proposition type. It is the stage at which one
@@ -493,7 +497,9 @@ distinguished clause eventuality remains available to tense, aspect, tags,
 CAhA, ROI, and event abstraction. A consumer that needs ordinary `Content`
 uses `CloseClause` (§4.6). Thus every declarative clause has an eventuality
 while `=` and mathematical functions retain their reusable non-clausal
-signatures.
+signatures. This is the clause-event interface, not a total event witness
+on no-return computation coordinates: §9.3 specifies their partiality and
+§14 records the remaining coupled EventOfContent model obligation.
 
 ### 3.5 Index and composite types
 
@@ -1299,7 +1305,10 @@ A model supplies a set of worlds W, sorted domains, world-indexed lexical
 interpretations, and **information states**: sets of world–assignment
 pairs. The dynamic layer is built over one algebraic computation carrier;
 Content additionally carries the semantically required clause-event
-intension:
+intension. The displayed equation is the successful-output projection of the
+carrier interface, not a completed failure-aware model: §7.1.1 supplies the
+bounded assertion observation/return laws; their joint embedding with the
+full effect algebra and Content quotient remains explicit §14 work.
 
 ```text
 Comp<A>    =  InformationState → P( InformationState × A × Obligations )
@@ -1312,7 +1321,8 @@ PerfComp<A> = Comp<A> at the performance level (its effect vocabulary
               adds commitment/performance operations)
 Discourse  =  PerfComp<Unit>
 Act<F>      =  the pure force-tagged package of §7.1, NOT a
-              computation; it enters PerfComp only through Perform
+              computation; Perform supplies its performance boundary
+              (including the source-preparing form of §7.1.1)
 bind       :  Comp<A> × (A → Comp<B>) → Comp<B>   (the carrier's
               sequencing operation — the direct `Bind` form of §5.2
               supplies its scoped continuation)
@@ -1368,7 +1378,8 @@ neither performance mutates a or changes `(ActContent a)`. Section 7.1 fixes
 the performance law and §7.4 exposes only the partial `RealizedContent`
 projection needed by Lojban anaphora. The occurrence handle is lowering-only
 generic infrastructure: it may be passed as an indicator `Target`, but no term
-constructs one except `Perform` or inspects its act, token, or capture.
+constructs one except the performance boundaries `Perform`/`PerformSource`,
+or inspects its act, token, or capture.
 
 The displayed `ContentRun` equation is the **run projection** of content. A
 conforming Content algebra supplies the clause-event projection
@@ -1518,7 +1529,11 @@ what lets a description or
 selection introduced before an act sequence remain bound across it
 (`{Bind [$x :: Referents T] (Refer P) (Do a₁ a₂)}` — the ordinary
 spelling of
-cross-sentence reference).
+cross-sentence reference on successful source selection). Ordinary `Bind`
+remains strict: a source returning no value cannot enter its continuation.
+The separately formed assertion boundary `PerformSource` (§7.1.1) supplies
+the bounded source-failure continuation; it does not make ordinary `Bind`
+return a fabricated value.
 
 `(Local comp) : RefComp<A>` is the reference-level accessibility delimiter.
 It runs `comp : RefComp<A>` once and returns the same branch value, preserves
@@ -1657,7 +1672,9 @@ not license a baseline surface export forbidden by §5.6/P43.
 
 | Form | Dynamic rule |
 |---|---|
-| `∧`, `Do` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11 L6.2) are ordinary `∧`. |
+| `∧` | Left to right; each operand sees all preceding successful introductions; introductions of both survive. Facet conjunctions over a shared event (tense/modal joining, §11 L6.2) are ordinary `∧`. Enclosing scope/P43 boundaries still apply. Read-only Boolean statuses obey §7.1.1; general effectful aggregation remains §14 work. |
+| `Do` | Left to right; each performance sees preceding successful introductions; introductions that escape their acts survive the sequence. In §7.1.1's assertion fragment, every terminal T/F/U payload returns its occurrence, preserving incoming bindings, successful additions whose scope reaches the continuation, and reached legal sides; additions whose scope ends are projected. This does not restore rejected worlds to cumulative acceptance or decide failure behavior of excluded forces. |
+| `PerformSource` | Its source sees the incoming scope; only the assertion frame sees the source-value binder. The discourse continuation sees the reusable read and occurrence handle, not a fictitious source value on failure. Existing scope premises govern successful prefix retention as in `Do`; no new source behind a P43 barrier escapes. The read introduces nothing and preserves the caller's state. |
 | `∨` | Operands each see the incoming state; branch-local introductions do not escape the disjunction. |
 | `¬` | Operand sees the incoming state; nothing escapes. P45 specifies the corresponding reference-only closure in the purity judgment; other effects and all obligation records are retained. |
 | `→` | Antecedent sees the incoming state; consequent sees the antecedent's successful introductions; nothing escapes the conditional. The joint-locus reading selection of §5.6 applies when the resolved reading binds a consequent anaphor to an antecedent introduction. |
@@ -1739,7 +1756,8 @@ An unanswered `ma` may stay open, with later `ri` sharing its eventual
 designation. No answer value is invented at construction. Likewise a
 resolved `ci ri` does not retarget a two-member reference to satisfy three.
 Exact question/command/fragment source rules, PA+KOhA eligibility/recency,
-and source/force-preserving continuation are explicit L8.13–14 obligations.
+and general source/force-preserving continuation remain L8.14–15 obligations
+beyond §7.1.1's one-description assertion construction.
 
 Ordinary `su'o` and its unabbreviated `su'o pa` have the same retained
 continuity policy. A choice of core count notation cannot split their
@@ -2233,7 +2251,9 @@ later cannot substitute the caller's speaker, time, ground, or contextual
 answers. `Vague` remains the same profile-indexed family — capture does not
 choose a sharpening — and dynamic `Refer`/selection outcomes are not silently
 frozen. A referent meant to survive into a reusable act remains visibly bound
-outside that act, as the mapping and samples already require.
+outside that act, as the mapping and samples already require; §7.1.1 instead
+binds a shared source-read value outside the internally formed assertion.
+Its source result is not silently added to the occurrence capture.
 
 The transcript role is semantic because it determines attachment and partial
 projection: the ordinary performed clause is `Host`; a UI/COI/vocative act
@@ -2254,13 +2274,15 @@ attach to and is therefore its entry's `Host`; `AttachedDisplay` and
 payload, handles its presuppositions and supplements, and only then applies
 the force update on each surviving lineage; its ordinary result is the same
 opaque occurrence handle for a `Bind` continuation. This fixes relative
-phasing without deciding #11's branch/Undef, occurrence-only continuation,
-and accommodation policies. An uttered but contextually uninterpretable
+phasing. Section 7.1.1 supplies terminal T/F/U return for its ordinary
+assertion fragment; other forces, attached UI/grounding, general branch/guard
+aggregation and accommodation remain #11 obligations. An uttered but contextually uninterpretable
 act can therefore have a performance occurrence while lacking a defined
 realized Content. Two executions of one act value always create distinct
 occurrences, even when their captures happen to agree. Capture has no
 object-language inspector, and `ActOccurrence` has no pure constructor:
-only `Perform` effectfully produces a handle, which may be `Bind`-bound and
+only a performance boundary (`Perform`, or §7.1.1's source-preparing form)
+effectfully produces a handle, which may be `Bind`-bound and
 passed as a `Target`. They factor performance identity and support the token projection
 of §7.4 without exposing evaluator state.
 
@@ -2283,17 +2305,172 @@ called the **spine**; an `Act` written directly in a `Do` operand —
 or anywhere a `Discourse` is required, a `Bind` body included — is
 notation for its `Perform` (the coercion is notational, §2, never
 semantic), and a specimen displayed as a bare act denotes the one-act
-discourse performing it. `Do` sequences with the `∧`-row's accessibility. `Discourse`
+discourse performing it. `Do` has its own returning-performance row in §5.4. `Discourse`
 never embeds where `Content` is required — in particular never under
 `Reify`. Reported speech mentions constructed acts (`mi cusku lu ko klama
-li'u` describes a directive without issuing it); only `Perform` executes.
+li'u` describes a directive without issuing it); only a performance boundary
+executes (including the source-preparing boundary below).
 
 Closing a force segment does not erase an enclosing lexical `Bind` whose
 continuation spans a `Do`. The cat bound before two Assert acts in samples §12
 is the same argument in both; no re-selection or mutable last-reference lookup
-is needed. An unperformed act creates no such accessible introduction. Behavior
-after a false/Undef host remains the separate #11 obligation, not inferred from
-fixed reference identity.
+is needed. An unperformed act creates no such accessible introduction.
+Continuation after a false/Undef ordinary assertion is supplied in the
+following bounded fragment, not inferred from fixed reference identity alone.
+
+#### 7.1.1 Source-preserving assertion continuation
+
+This construction formalizes the settled P43/C25/Q14 distinction between
+source introduction, use of a reference, and performance of a subsequent
+assertion (References, **Source-preserving assertions**). Its formation and
+bounded laws are specified here; the finite construction witness is not a
+replacement for the full §5.1 carrier or a proof of its joint model.
+
+**Fragment and formation.** Admit one independently resolved exportable
+description, with a supplied pure total restriction and finite admitted source
+alternatives. Straight-line preparation/nuclei may contain successful prefixes
+and reached pure total sides with already established scope, anchors and legal
+handlers. Scope eligibility is a premise from §5.4, never inferred from truth.
+Arbitrary effectful restrictors, branching/failing guards, accommodation,
+other forces, attached UI/grounding and topic transitions are outside this
+fragment. Preparation may not introduce a second independently exportable
+description in the same Host. All required governors must already be in scope.
+
+The direct form has exactly these operands, with R = Referents<T>:
+
+```text
+{PerformSource Host [$x :: R] S (Assert C1)
+  [$read :: RefComp R] [$o :: ActOccurrence Assertion] D}
+
+Γ ⊢ S : RefComp<R>
+Γ,x:R ⊢ C1 : Content
+Γ,read:RefComp<R>,o:ActOccurrence<Assertion> ⊢ D : Discourse
+----------------------------------------------------------------
+Γ ⊢ PerformSource Host [x::R] S (Assert C1) [read::RefComp R]
+                   [o::ActOccurrence Assertion] D : Discourse
+```
+
+Omitting `Host` is defined Host shorthand. S sees none of x/read/o; C1 sees
+x only; D sees read/o, not x. The internal first-payload read is not exposed
+to D. No performance is embedded in Content, and no pure occurrence constructor
+is introduced. Source preparation is acyclic and cannot inspect its own
+not-yet-completed act/content projection. The supplied transcript entries
+provide their own contexts and token identities as for ordinary `Perform`.
+
+**One pair of reads and one projected payload.** At model interpretation
+coordinate i (source world/assignment, profile and inherited source lineage),
+the source result K(i) is Obtained(r), Empty or Unresolved.
+These are metalanguage result classes, not kernel values. Construct one
+first-payload computation f and one later-value computation v over the whole
+admitted source family. For any current caller state s:
+
+| K(i) | run(f;i,s) | run(v;i,s) |
+|---|---|---|
+| Obtained(r) | Live(s,r) | Live(s,r) |
+| Empty | Dead(s) | Undef(s) |
+| Unresolved | Undef(s) | Undef(s) |
+
+Both reads preserve s exactly and add no slot, side or obligation. They retain
+source results, not source-time states or a callback that reruns S. Every
+descendant interpretation restricts to the same inherited source coordinate:
+repeated successful reads give (r,r,…), not independent choices. The profile
+family remains pointwise; a single sharpening is never broadcast to all
+profiles. In particular, an empty source's first assertion is F while a
+later use needing its absent reference is U. An unanswered question slot is
+not thereby identified with an already completed empty description. This is
+the same partial-value-use principle, not a fresh reference/existence claim.
+
+Write Cap_E(B) for B's §7.4 occurrence capture under the entry context and
+resolver E. This is model shorthand, not a kernel operator or a source-state
+cache. Form once B = Bind x f C1(x), a = Assert B, and c = Cap_E(B). There is one
+Act a and one captured Content c for the selected actual Host, not one per
+source alternative. ActContent(a) = B; RealizedAct(u) = a and
+RealizedContent(u) = c when the ordinary unique-span/capture premises hold.
+Only denotation is interpretation-indexed. A syntactically shared schema
+alone would not establish these shared-value and diagonal-use laws.
+
+At source coordinate i and current evaluation index j, run(B;i,j) is
+run(C1(r);j) on Obtained(r), Dead(s_j) on Empty, and Undef(s_j) on
+Unresolved. A later Bind y v C2(y) instead returns Undef(s_j) in either
+no-value case. No C1/C2 body is called with an invented r. On success the
+unit law preserves the complete body's run, effects and event; on no return
+the Bind event row is partial (§9.3). A false obtained nucleus does not lose
+its described event merely for being false. A determined c executing U is
+different from failure to obtain any determined projected Content.
+
+Capture still fixes only original context projections and the whole declared
+partial resolver, not a source-time world/state or another Refer's outcomes.
+Raw re-performance can use a new context; captured reuse retains E. Both keep
+the bound source read. Reinterpreting the enclosing source form at another
+source world/profile computes that interpretation's result. Replaying its
+closed payload keeps its inherited source coordinate while evaluating the
+nucleus at j. These are different operations: B need not equal the unfactored
+Φ = Bind x S C1(x) as a full source-reopening intension. If P(a) is false at
+w0 and true at w1 and C1(a) is true at both, Φ is F/T, while the Empty-source
+fibre of B stays F when replayed at w1. No stronger whole-source/GOhA equality
+is supplied by this construction.
+
+**Reached state and assertion return.** In the bounded observation carrier,
+ordinary bind is strict: Live(s,a) passes s/a to its continuation; Dead(s)
+and Undef(s) preserve the reached s and do not run it. Empty selection is
+not a successful reference result. An observation state records reached
+bindings and legal sides separately from joint acceptance of claims.
+
+For an assertion with entry state s0 and terminal payload state se, let
+keep_h(s0,se) perform exactly §5.4's scope projection: retain incoming
+bindings and successful additions eligible at the continuation; project
+new locals; preserve reached legally closed sides in order. Each of
+Live(se,unit), Dead(se), Undef(se) returns Live(keep_h(s0,se),o), with the
+original T/F/U payload and side statuses recorded for that occurrence.
+It neither rolls back an eligible successful prefix nor creates a value for
+the failed step. Scope/side legality is supplied, not computed by this law.
+
+For ordinary Perform Host (Assert C), create the occurrence/capture, run C
+once, handle the fragment's already legal/satisfied projectives, and apply
+that return law. PerformSource first allocates its one occurrence/context,
+runs S once per incoming world/assignment/profile to obtain terminal source
+lineages with their se-source and K, forms the shared f/v/a/c, and runs c
+from se-source at each source lineage.
+Finalize against the original entry state and pass the reached result, v
+and o to D. Source sides already precede nucleus sides: never prepend them
+again. Later Hosts receive their immediate predecessor's returned state and
+their own utterance context. Source-failed candidate trials do not become
+extra Empty alternatives alongside valid selected witnesses. Divergence is
+not classified as Empty.
+
+Let τh and σh be a Host's at-issue and legally reached side statuses.
+Local acceptance at h requires τh = σh = T. Cumulative compatibility uses
+κ0 = χ0 = T, κh = κh−1 ∧SK τh, χh = χh−1 ∧SK σh; only rows with
+κh = χh = T jointly support the prefix. A later independent true assertion
+can be locally T after an earlier F without restoring any jointly rejected
+world. For a fixed total pure source family C, two linked assertions require
+∃r∈C.(C1(r) ∧ C2(r)), not the product of their separate existential verdicts.
+No social hearer-acceptance rule is asserted.
+
+Read-only Boolean operands with no introductions/emissions are each evaluated
+once at the same incoming state, which is returned unchanged. Their statuses
+use strong Kleene negation and min/max conjunction/disjunction under F < U < T;
+implication is max(¬p,q), with the corresponding ↔/⊕ tables. This does not
+identify general effectful conjunction with strict bind or close the excluded
+guard/force cases of #11.
+
+**Necessity and remaining model work.** This lowering-only former factors
+source preparation, one actual assertion and a value-independent continuation.
+Strict Bind alone loses the continuation on Empty; moving S inside Assert
+alone cannot bind later uses. The two ordinary RefComp values distinguish
+source-result representation from partial reference use without a new kernel
+sort. The full information-state/effect/run-event-quotient embedding remains
+required, especially preservation of the failed-source coordinate under replay
+when no referent assignment exists. The finite shared-family witness is not
+that proof, nor proof that all obtained/profile cases already embed. Coupled
+EventOfContent definedness, general source factoring, multi-description failure
+continuation and stronger whole-source projection remain §14 obligations.
+
+More than one exportable description retains the existing nested outer-Bind
+route on successful selection, with both bindings scoping the continuation
+and one first Host. Its earlier source-failure absorption is not rescued by
+the new one-source rule. Do not bury a second source in C1 or manufacture two
+first Hosts to claim coverage of that extension.
 
 ### 7.2 Discourse structure
 
@@ -2388,7 +2565,11 @@ description with a `Realizes` fact has no performance occurrence and therefore
 no `RealizedContent`, even though its raw `RealizedAct`/`ActContent` route may
 be defined. Conversely, two tokens/spans may realize the same act value while
 their two `RealizedContent` values differ because the performances resolved
-speaker/deixis/`Context` sites differently.
+speaker/deixis/`Context` sites differently. Section 7.1.1 preserves one
+projected Content value across source alternatives; those alternatives vary
+its denotation, not the selected value. Its failure-coordinate embedding debt
+is explicit there. A projected Content's runtime U is not by itself absence
+of the projection.
 
 The capture boundary is deliberately narrower than a replay log. It fixes
 utterance-context projections and `Context` resolution, including the
@@ -2828,7 +3009,7 @@ wins:
 |---|---|
 | `(CloseClause C)` | On each candidate/event branch, the locally bound witness `$e` used to evaluate `(C $e)`. Truth filtering may reject the branch; it does not replace its described event. |
 | `((StateClause c) e)` | `$e` on the sole possible satisfying co-reference class; a non-`hold_M(c)` candidate has no satisfying lineage and does not evaluate `c`. |
-| `{Bind [$x] computation body}` when the body returns Content | The event of the selected continuation body on that outcome branch. `Let` is already covered by ordinary application/β. |
+| `{Bind [$x] computation body}` with Content-typed body | The event of the selected continuation body on that outcome branch; explicitly undefined-partial where the computation returns no value. This row applies also on no-return coordinates: it does not fall through to the default holding-state row. `Let` is already covered by ordinary application/β. |
 | `(Presuppose π body)`; `(Supplement anchor side body)` when the body is Content | The at-issue body's event. Projective conditions and side commitments remain part of Content identity but do not replace the at-issue eventuality. |
 | `(InContext c g)` | `event(c)` evaluated with the same shifted utterance ground `g`; this shifts the projection rather than constructing a new holding state. |
 | `(Holds p)`; `(ActContent a)`; `(RealizedContent u)`; `(InterpretContent s)` | The event of the represented, raw-packaged, occurrence-captured, or interpreted Content. This preservation is required respectively by the `Reify` round trip and by the content-projection clauses of §7; none of these projections constructs a new holding state. |
@@ -2848,7 +3029,9 @@ the locally selected clause witness becomes the event of the closed Content.
 
 The table assigns each form a row; model completion still owes the holding-
 situation/State ontology obligations in §14. The following laws constrain its
-nontrivial rows:
+nontrivial rows. The no-return refinement does not complete the reconciliation
+of the term-level EventOfContent signature with the partial intension domain;
+that remains §14/#10 work, not an invented event or holding-state fallback:
 
 1. **Closure witness / no double indexing.** On each live evaluation lineage
    of `(CloseClause C)`, `EventOfContent (CloseClause C)` co-refers with that
@@ -3300,7 +3483,7 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   freshly constructed maximal P-reference. P43 permits no new outward
   universal group or family. `Every/MaxRefer` retain their explicit importing
   library meanings, not the default bare-ro mapping. General effectful/source
-  realization remains bounded by L8.13–14 and §14.
+  realization remains bounded by L8.13–15 and §14.
 - **L5.2** Ordinary `su'o P Q` → individual existential closure
   `IndividualSome P Q`; `su'o pa` has that same reading and source policy;
   ordinary `no` → `IndividualNo P Q`. For standard finite counts with pure
@@ -3590,12 +3773,16 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   dropped along with the suspended frame — never a destructive `da'o` alias
   (CLL 7.13, 19.3).
 
-- **L8.13** *(gap)* General source/introduction realization and force-preserving
-  continuation for permitted ordinary existential and independently bound
-  reference sources, open question slots, and permitted quotation/incidental
-  access. Correlation, dependencies, capture and partial evaluation remain
-  explicit; this gap is not an obligation to restore the superseded P42
-  numerical-group/family export or decide static access by actual truth.
+- **L8.13** In §7.1.1's one-exportable-description assertion fragment, RR
+  supplies S, the first frame C1(x), permitted later links and the original
+  entry contexts/dependencies. Lower the first assertion plus continuation D
+  to PerformSource Host [x::R] S (Assert C1) [read::RefComp R]
+  [o::ActOccurrence Assertion] D, replacing each later linked value use
+  with Bind y read C2(y). Independent later assertions need no read.
+  Each entry keeps its own Perform/context. The finite pure source and
+  scope/side premises, no-reselection and failed-use laws are exactly §7.1.1's.
+  This is a bounded construction with full carrier embedding still owed,
+  not the general source-factorization or executable-lowering claim.
 - **L8.14** *(gap)* General outer PA over a resolved reference (`PA lo ...`,
   `PA ri`, `PA ko'a`) beyond L3.9/L5.2's pure member-lift/count rule needs its
   effect/dependency handling, local output and introduction/
@@ -3603,6 +3790,12 @@ adequacy claim quantifies over constituents in F₀ after `RR` resolution.
   complete quantified sumti `ro ri` is an eligible antecedent for a later ri.
   The input reference stays fixed; numerical witness selection alone must not
   erase the separate count condition. L5.30 scope is unchanged.
+- **L8.15** *(gap)* Beyond L8.13, general source/introduction realization and
+  force-preserving continuation for permitted ordinary existential and
+  independently bound reference sources, open question slots, and permitted
+  quotation/incidental access. Correlation, dependencies, capture and partial
+  evaluation remain explicit; this gap is not an obligation to restore the
+  superseded P42 numerical-group/family export or decide static access by actual truth.
 
 **Abstractions** (L9; §9, P13, P14).
 
@@ -4981,7 +5174,7 @@ them. (Deliberate vagueness is never pinned; it is classified in §6.1.)
   This policy does not complete the typed source/force/capture machinery,
   complete P2's general source/effect interfaces, or make all experimental readings supported.
   Sources: References, **Conservative profile adoption and ordinary exactness**,
-  **RI witness-policy record**; §5.6 and L8.13–14 state the live obligations.
+  **RI witness-policy record**; §5.6 and L8.13–15 state the live coverage/obligations.
 - **P44** Bare me'i defaults to me'i ro, meaning not-all in ordinary
   individual quantification; use negated IndividualEvery on pure resolved
   P/Q. Explicit me'i n still means fewer-than-n, including zero for me'i pa.
@@ -5021,13 +5214,20 @@ later P43. A named contract does not supply its missing term or model.
 evidence and status in [decisions.md](decisions.md). They supersede older blanket
 coverage claims, not the supported fragments of the named interfaces.
 
+- **Source-preserving assertions (F01).** Section7.1.1/L8.13 supplies the
+  bounded source/read/assertion/continuation laws and one unique projected
+  payload. It does not supply the full carrier/quotient embedding, particularly
+  failed-source replay coordinates, or coupled EventOfContent definedness.
+  General source factoring, multi-description failure, stronger whole-source
+  intension and the excluded force/guard/topic cases remain L8.15 work.
+
 - **Individual/plural quantifier interfaces (Q01/Q02).** The individual truth
   condition of ordinary su'o and the bounded standard finite exact/range
   count policy are fixed; permitted ordinary positive existential continuity
   still owes its general mapping. P43 excludes extra numerical/universal
   groups and governor-external families, not arbitrary plural reference or
   in-scope P6. Source/force/capture correlation, PA+KOhA's member/count and
-  whole-sumti recency rules remain L8.13–14 work. A core helper's explicit
+  whole-sumti recency rules remain L8.14–15 work beyond bounded L8.13. A core helper's explicit
   witness binding does not reopen the excluded standard export.
   Upper-bound truth can hold with no satisfier, so no nonempty export follows.
   Experimental plural quantifiers need their actual reference-property domain
@@ -5132,7 +5332,8 @@ coverage claims, not the supported fragments of the named interfaces.
   numerical/group/family recovery contrary to P43, nor accomplished by ordinary
   bind over an empty result. Accommodation is nearest legal and consistent,
   not global or a way to inhabit an actually empty restriction. Actual utterance
-  attempts may exist without a successful payload update. Full force/status/
+  attempts may exist without a successful payload update. Section7.1.1 supplies
+  the bounded ordinary-assertion return/state law; full force/status/
   retention composition remains work. Topic return preserves checkpointed
   label/depth/back-index and medium/reset distinctions; repeated no'i changes
   depth, not recency. Resume restores eligible state, not old computations.
@@ -5369,9 +5570,9 @@ yet, and the header's every-utterance-denotes claim holds exactly over
 | tense/aspect/space, BAI, CAhA | §11 L6 | clause-event facets, `MotionVector`, CAhA clause formers | ZAhO contours, TAhE, state-episode/non-cardinal ROI interfaces | §2 |
 | gadri, descriptions, `lo'e`/`le'e` | §11 L3 | `Named`, `MaxRefer`, `Generic` at §5.8 | generic anaphora, general dependent/pure-restrictor description hookup | §3 |
 | relative clauses, `goi`, `voi` | §11 L4 | `SpeakerDescribesUnaddressed` (P10; #49) | — | §4 |
-| quantifiers, termsets, negation scope | §11 L5, L8.13–14 | Stable GQ helpers; finite individual exact/range/complement counts; non-importing P2; bare me'i not-all via negated IndividualEvery (P44); P43 conservative scope | Permitted source/force continuation, PA+KOhA beyond L3.9, general P2 effects, threshold adaptation, mixed/coordinate termsets, non-finite/effectful counts and experimental mappings | §5 |
+| quantifiers, termsets, negation scope | §11 L5, L8.13–15 | Stable GQ helpers; finite individual exact/range/complement counts; non-importing P2; bare me'i not-all via negated IndividualEvery (P44); P43 conservative scope | General source/force continuation and full carrier embedding beyond bounded L8.13, PA+KOhA beyond L3.9, general P2 effects, threshold adaptation, mixed/coordinate termsets, non-finite/effectful counts and experimental mappings | §5, §12.1 |
 | vague quantities, gradables | §6.3–6.4, §11 L5.28–L5.29 | `Grade`; reference-level degree helpers as comparisons only | Standard threshold count/source adaptation (L5.28), P37 constraint/profile/arithmetic/cardinal realization, dependency-indexed profiles and no'e admissibility/composition | §5, §8 |
-| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8 | `Combine` plus the partial “others” context projections | exotic donkeys, nonactual continuation, occurrence-sensitive demonstratives | §3–§5 |
+| anaphora, KOhA, composite personal pro-sumti, `ra'o` | §11 L7–L8; §7.1.1 one-description assertion construction | `Combine` plus the partial “others” context projections | full F01 carrier/quotient embedding, multi-source failure, exotic donkeys, nonactual continuation, occurrence-sensitive demonstratives | §3–§5, §12.1 |
 | abstractions, `tu'a`, `jai`, `mo'e` | §11 L9 | `EventOfContent`, abstraction relations, `AmountValue`, `JaiPromote`, `JaiRaise` | Delayed/de-dicto consumer and dependent/pure-restrictor hookup; reified predicates; non-`ka`/`du'u` `ce'u` cases (§14) | §8–§10 |
 | questions, answers, `kau` | §11 L10 | domain-enumeration schemas and implicit contextual-answer route | Xu focus, open answer-source/continuation realization, explicit-value kau's typed/effect/query-aware consumers | §6 |
 | indicators, evidentials, discursives, COI, `na'i` | §11 L11 | discourse relations, pure `Only`, objection, COI schemas | Effectful host/frame focus and Additive adaptation, full discursive lexical/target definitions, SEI/TO/ti'o | §7 |
@@ -5408,7 +5609,8 @@ defined, §6.2), `JaiRoleAdmissible` (with `JaiRaise` defined in §12),
 `Aggregate`;
 `StateClause`, `CloseClause`, and the constrained
 `EventOfContent` projection (§9.3); the
-force constructors, `Perform`, `Do`, `NewTopic`, `Resume`; the linguistic
+force constructors, `Perform`, the lowering-only direct `PerformSource`
+boundary (§7.1.1; no term-language expansion claimed), `Do`, `NewTopic`, `Resume`; the linguistic
 sign constructors (where quotation's opacity lives);
 `InterpretContent`/`InterpretAct<F>`, the partial
 `RealizedAct<F>`/`RealizedDiscourse`/`RealizedContent` projections with the
@@ -5575,7 +5777,7 @@ perform:
 | effect sequencing | ordering introductions, contextual retrievals, and projective emissions is an operation on computations, not a truth condition |
 | accessibility and effect-flow policy | whether an introduction escapes, a sign is inert, or an obligation projects is part of composition, not an extra claim |
 | local introduction projection | `Local` preserves a computation's semantic filtering/value while hiding only its internal discourse slots; a predicate can describe neither that state projection nor which syntactic base is non-surface |
-| force performance | describing or quoting an assertion must not assert it; only `Perform` executes an act package |
+| force performance | describing or quoting an assertion must not assert it; `Perform` supplies the performance boundary, with source-preparing `PerformSource` for §7.1.1's bounded assertion fragment |
 | typing and formation judgments | ill-formed combinations have no denotation; turning well-formedness into a predicate would make failure merely false |
 | reading resolution | anaphora, erasure, template expansion, and dependency selection determine the resolved term upstream; predicates may describe their results but do not run the resolver |
 
@@ -5705,6 +5907,18 @@ The BPFK Highlight Discursives page and dated IRC examples motivate these
 candidates, not ratify a final expansion. See rationale §1.12a and decisions Q11.
 
 ## References
+
+- **Source-preserving assertions (F01, September10,2026).**
+  [Astra's revised construction](https://github.com/int19h/smusni/issues/9#issuecomment-5625641793)
+  and [control derivations](https://github.com/int19h/smusni/issues/89#issuecomment-5625643989),
+  critically amended by Fable, Kimi and Grok, formalize the human's prior
+  null-reference/structural-accessibility decisions under the
+  [settled-formalization commission](https://github.com/int19h/smusni/issues/90#issuecomment-5624015595).
+  [Named review closure and limits](https://github.com/int19h/smusni/issues/9#issuecomment-5625843464)
+  distinguishes the supplied bounded laws from full model embedding. The
+  result is a project construction, not a newly attributed CLL/xorlo rule.
+  Source history for P43/C25 and ordinary continuity remains in its own
+  references below; the constructed controls are not corpus judgments.
 
 - **Negation-local purity: P45 reconciliation.** The human's
   [explicit approval, September11,2026 UTC](https://github.com/int19h/smusni/issues/74#issuecomment-5630303444)

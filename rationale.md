@@ -244,7 +244,8 @@ choice. This is not a new run object, retrieval operator or general primitive.
 The September8 version of spec §5.6 stated that conditional profile, with
 then-current L8.13–14 recording its construction debt. The historical
 [RI RESULT-v2](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813)
-preserves the policy; current §5.6/L8.13–14 instead state P43 and its remaining work.
+preserves the policy; current §5.6/L8.13–15 instead state P43, the bounded
+assertion construction and its remaining work.
 
 **Why this default.** The reported human judgment for `su'o re gerku cu sipna
 .i ri cu cimei`, with four sleepers, was odd but not false. It supports the
@@ -845,6 +846,53 @@ deliberately continuation-typed. Eberban has no `Bind` because it has
 no distinct computation type to eliminate — see §2.4. **Cost.** Two binder forms
 (`Let`/`Bind`) where one calculus habit expects one; the distinction
 is load-bearing and must be taught.
+
+### 1.14a `PerformSource`: failure is not absence of a later utterance
+
+**Job.** Preserve an actual assertion and its later discourse when a permitted
+description source supplies no referent, without making strict `Bind` return
+a value it did not obtain. This is the bounded §7.1.1/L8.13 construction,
+not a new exception to P43's scope rules. See spec References,
+**Source-preserving assertions**, for the author/panel derivation and controls.
+
+**Witness and factorization.** In `lo gerku cu sipna .i ri cu xunre`, an
+empty dog source makes the first assertion false and the later value use
+undefined. Replacing `ri` by a fresh `Refer` incorrectly reasserts existence;
+placing the only `Refer` before an ordinary `Bind`-scoped discourse loses
+the later assertion entirely on failure. Placing it only inside the first
+assertion cannot bind its value into the second. `PerformSource` factors
+source preparation, one actual Host and a continuation with a reusable read.
+Its two ordinary RefComp values distinguish the original source result from
+later partial value use. They add no optional-reference/null-entity sort.
+
+**What the review rejected.** An absent Act on source failure loses ordinary
+content projection. A first payload that is always U on failure loses the
+source assertion's F. One closed Act per alternative source value does not
+by itself give a unique projected Content. Restoring the assertion's entry
+state on failure erases earlier successful scope-eligible prefixes. The
+adopted bounded laws instead retain one shared Act/Content, correlated reads,
+reached eligible prefixes and legally closed sides, while projecting locals.
+They preserve strict ordinary binding and do not make later true claims
+restore worlds rejected by an earlier false claim.
+
+**Cost and remaining proof.** Sharing a schema is not enough: the read's
+denotation must inherit the same source coordinate across later uses and
+replay, with profiles pointwise rather than existentially merged. The finite
+witness supplies this construction, not the full information-state/effect/
+run-event-quotient embedding. Failed-source replay is particularly explicit
+debt because no obtained-referent assignment remembers that source outcome.
+The bound source-linked payload is not the unfactored statement's complete
+source-reopening intension: its Empty fibre stays F at a different world where
+a newly evaluated source might succeed. F01-C08 records that inequivalence, not
+a proof of complete GOhA coverage. No-return Bind event coordinates remain
+partial; an invented holding event would not complete EventOfContent's model.
+
+**Boundary.** One exportable description per Host; successful existing
+multi-description outer-Bind routes remain, but multi-source failure
+continuation, arbitrary effects/guards, other forces and full model closure
+are not supplied. This is a lowering-only primitive with a semantic
+factorization argument, not a processor registry or a promise that the
+current derived engine already implements it.
 
 ### 1.15 `ClauseContent`, `StateClause`, and `EventOfContent`
 

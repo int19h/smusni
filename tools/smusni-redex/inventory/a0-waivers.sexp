@@ -74,127 +74,127 @@
   (reason
    "The corrected explicit-event Close template keeps omitted-place retrieval inside the lexical event property and exposes it as an effectful call."))
  (waiver
-  (case "0361b7fdaa1fd90b87b97a7934892d93cf982dcd")
+  (case "7bcd8dc2f4961a8b551b2d2258b1c8e26d59a3bc")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this Every domain-mismatch mutation."))
  (waiver
-  (case "068cb85ec8ecb3ccc509a1792f79f631c2f91654")
+  (case "62ef9d2abb3071b0cc188c169d027c46b0ce41fd")
   (fields effects)
   (finding "#13:issuecomment-5458243084")
   (reason
    "The A0 equation executes its effectful function at each paired step; the legacy pass-through omits that application effect."))
  (waiver
-  (case "17e08cbac8f779bc4f04b2b480bce8f5a7774d46")
+  (case "b9fc9816e545772460d20961c1932bbf3e7ae53c")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this newly eligible negative pure-position case."))
  (waiver
-  (case "1ae8d66b81c220f5f975851d5f78bfa701a2156a")
+  (case "09f0948ce98ba5c5c10172f02e84d769c77fc947")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "228ea135aca439f8a9037357f905d482636fa1c2")
+  (case "74d0212bae121f9f6f818fd874766bf175e0fc4b")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this CoveredBy domain-mismatch mutation."))
  (waiver
-  (case "37db005424979d116e258427722bcee539b3f4e4")
+  (case "c7c22c1e196d02ebc70afdc94b4dae9476772913")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "41639ddaaa12f66e8b6030f81fedc3c3f957080a")
+  (case "2b338049c10e9453426315140e2d00875af639d9")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "41661471fc45cb1b6566ad38c641091bc7bf9e96")
+  (case "4981a00f42ced6494624933b2573328a83445aed")
   (fields type)
   (finding "#81")
   (reason
    "CloseClause now exposes the EFn refinement of an effectful event property; the legacy checker incorrectly classified the enclosing lambda as pure."))
  (waiver
-  (case "569ded40de1611196c7100eaf0a94b84d2a5324d")
+  (case "05bb8ad1ae173cc81f1f84b69b295fff82b9c9f2")
   (fields effects)
   (finding "#13:issuecomment-5458243084")
   (reason
    "The A0 equation executes its effectful function at each paired step; the legacy pass-through omits that application effect."))
  (waiver
-  (case "6db1c4b791f0854fe7956e9eaa47adf625c5027d")
+  (case "059ad6f2adf9d4a2cf81693ee14b6f3b5ea49562")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this newly eligible negative pure-position case."))
  (waiver
-  (case "79f753ce71d86adc8a504da89297f9a3bf973028")
+  (case "dea28886c2b9a331b99bd06cbdbf0f84f8a18d7a")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this newly eligible negative pure-position case."))
  (waiver
-  (case "9179373ca8c2e48ede6fe47086cebd79b7f61352")
+  (case "2a00f8ca5df0ba140dbe29fa18c0acda9b274913")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this newly eligible CoveredBy purity rejection."))
  (waiver
-  (case "bdd3d191b2cdc13f93625cd4ad2b8bfdcbc997f0")
+  (case "a7dc745e8ebce5f8e1e04767521823f6cdbdbc7c")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "bf9cba2101fca4330c7878635e3eade3cd1d6894")
+  (case "2272d4a81ceb6bc5583cc03cc024895db0d0ac62")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this invalid quantifier-domain mutation."))
  (waiver
-  (case "ca3ded71dd1e695cfba61b2e74339866dbf5b8a7")
+  (case "010a22f419f0e4714289ac20673998b765002c77")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "B1 preserves the no-diagnostics judgment boundary for this newly eligible negative pure-position case."))
  (waiver
-  (case "dca2591716f1bddade1e6b1d76605a84e2b5157f")
+  (case "84dfb76d571acff8ff6909c051c6b8221a347eb3")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "e2ac359a95a348da47b2f9e9763c8f8739435ea8")
+  (case "d3636a7baf7c40fc35eb5863a56c40cc33b5e59a")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "f7526f02968c2d0f940554bf7559692e5e9de6ea")
+  (case "42171935390224ab5042ee63543b3d03e33f6009")
   (fields effects)
   (finding "#81")
   (reason
    "DirectClause defaults now remain inside the event property, so Close reports the conservative effectful-call rather than the stale outer context effect."))
  (waiver
-  (case "fecc256bfaacdc51a22517ddaf899499179207f8")
+  (case "2350ec46a860b191ed7dfc8805106543d00813c7")
   (fields failure-class)
   (finding "#52:issuecomment-5458132092")
   (reason
    "A0 keeps diagnostics outside its Redex judgment, so this rejected in-bank mutation has no Phase B failure classification yet."))
  (waiver
-  (case "b1-lowering-668ac22896455289")
+   (case "b1-lowering-49efe161ccee6531")
   (fields effects)
   (finding "#81")
   (reason
    "The lowering-derived ClauseContent now preserves the latent EFn call from its corrected inner DirectClause defaults."))
  (waiver
-  (case "b1-lowering-9a4b45a97730a6c7")
+   (case "b1-lowering-070f5fba29ef5fc0")
   (fields effects)
   (finding "#81")
   (reason

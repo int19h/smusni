@@ -1,7 +1,7 @@
 (smusni-port-corpus
  1
- (count 370)
- (cases-sha1 "0cd26d1d494f4b5d0312628ed54d1c2c02ecc7d4")
+ (count 421)
+ (cases-sha1 "352fdb84fe27bb454cf439a1b57bc88f0bdd5294")
  (fence-sources
   ("samples.md" 1 "738f3c4cc9a19d8708f73af84f65571286474905")
   ("samples.md" 2 "4dafb267405c206fcd2cfc26056b51d6d3940054")
@@ -74,11 +74,12 @@
   ("samples.md" 69 "b680c5cf6698f14202dd1390bd5081016fd617df")
   ("samples.md" 70 "589adfc4e176dc6ab1035fd0a48e93ba2dbe6ef1")
   ("samples.md" 71 "cee1f11c30a4f8541a7f8e567642de3453389bbb")
-  ("samples.md" 72 "4890c0005f7c7eca9bd4ea5fe9a8eaffc08c4b38")
-  ("samples.md" 73 "61de1cdcc879bf59408a075914889e684113c681")
-  ("samples.md" 74 "9f96043bd01fe3c20d5c5f8fc8ebf7bbb62c627b")
-  ("samples.md" 75 "e8d065dc136052444d446128d5d3978d68393e60")
-  ("samples.md" 76 "f504ad67c71bc8b8beec3c88b73547faa75fec58")
+  ("samples.md" 72 "8a0b52f4154b7714316a8a653626e38ef8ba3102")
+  ("samples.md" 73 "4890c0005f7c7eca9bd4ea5fe9a8eaffc08c4b38")
+  ("samples.md" 74 "61de1cdcc879bf59408a075914889e684113c681")
+  ("samples.md" 75 "9f96043bd01fe3c20d5c5f8fc8ebf7bbb62c627b")
+  ("samples.md" 76 "e8d065dc136052444d446128d5d3978d68393e60")
+  ("samples.md" 77 "f504ad67c71bc8b8beec3c88b73547faa75fec58")
   ("spec.md" 1 "e11b80722140960fac027e32c07ce60254e32614")
   ("spec.md" 2 "621187d74d9d9df8953e2e731ea712bb08a6e111")
   ("spec.md" 3 "bc4fa1b042bc8238d2dc1d8eab2354bc87acbe05")
@@ -99,95 +100,95 @@
   ("spec.md" 18 "088f873f9baadcb7a2c547adb7d6a6b08e8ac344")
   ("spec.md" 19 "16c662212db5ad904d77249c4d23942e60514087"))
  (definition-sources
-  (ActualClause "12" "b615d50dc76b27d25a485fc7cb10b5f80d46734b")
-  (AtLeast "12" "76f7c0f017d60aad6103f05d5844caa47f41e4bc")
-  (AtMost "12" "ba5ca37a04a679e13253f0dbda3b7017315903e7")
-  (COI-schemas-prose "12" "515342b10357ac66d9deac8944225f0fcf34ff76")
-  (COIExpress "12" "45a6d18d0c397b65c06d6bd74607661d1fbfce37")
-  (CanonicalAggregateAt "12" "307f46fabff5d2d1df790f7abc5f2d2faf30d417")
-  (CapableClause "12" "9bf1516904f0bfabac25c68060ce34aa0c70ff61")
-  (CoRef "12" "01214401451382d4bf65bc2787b68fa58307de27")
-  (DemonstratedClause "12" "cc94bb1273b5d657cfa2a33cd34541ad65721cf1")
-  (Distrib "12" "416c89d5b45496813a6720dbeec2b370fac3af1e")
-  (Enough "12" "f71042048dcbfc4482ff5dd621a439a3387d097b")
-  (Every "12" "43d91f202246b5d926c85ccd67c93c776e38dd4f")
-  (Exactly "12" "96fead33c47b804cdf4362a33f7b63315dd4fee5")
-  (Few "12" "bebad537b31d69366ff55c9402cfe6581007a8fb")
-  (FewerThan "12" "f424215f418759ddd444f811ee1622d755cacd76")
-  (GlobalExactly "12" "42e64c6d1fa200eb622e11e74465356ada50bc68")
-  (Grade "12" "c411c8be87e8ef29aa1d0115d58848986a6729f1")
-  (GroundedBy "12" "6a120f5b4947286550d17477ba05af5e40652779")
-  (Interval "12" "65dedbf19f1b0ebff7a6b7c4235fd2d774922a35")
-  (JaiPromote "12" "fd98a516273901e322ef1a2a7ca4e46643021aa6")
-  (JaiRaise "12" "3fa8e13d83439aa85e5b240cb54a530cae0ced51")
-  (JoiClause "12" "fb6f23cf73f27ffd9e96e0de10a11242e086bc2b")
-  (JoiEvent "12" "34884e0ba2fb0049e6410c50758b79d934317e58")
-  (JoiGroup "12" "f9adffb92e82cc9429a47562e888979359526221")
-  (JoiPred "12" "4302a1eccf91d8ec7cfa78e0a027f20a323dcd8b")
-  (JoiTanru "12" "78408c5a7f913ec94f477888f5730cbbf0a8c37a")
-  (Many "12" "c57b57a62ece1702279de60206b43ba500dd7116")
-  (Massify "12" "0cceeea9a492994148d45e498f1c805e028ac67f")
-  (MaxRefer "12" "c3954a9903f836b918d804428b4315318b51e8ad")
-  (MePred "12" "fdf6097167970cdf227a6202cddfd49b59adfe76")
-  (MemberCover "12" "689fde123d2bea37fff41eea0f5269a9d00c498d")
-  (MetricBall "12" "f38104e4fee9d31f875cd2b77b78e3433dfa2e78")
-  (MoreThan "12" "8ea91779ec74102e06b1b5391c7a2fe328182aa3")
-  (Most "12" "ae9914d8a4dd7737d8abbbe9480dd1f0a21923af")
-  (NahiObjection "12" "2fae51fe8d23ff66c55fd1ba754adbbc4f459fed")
-  (Named "12" "17f30a5087e81362dfbd98722a26fdaf81e8c3cc")
-  (No "12" "da783bf2d4262abbfe69900a4ac21424efe4c0a4")
-  (Only "12" "775a738497f05cc03c34c47765fa5e65cca1d2c5")
-  (Overlap "12" "cf6f928614e72db6a923a0b4495ae6e18e4c1661")
-  (Realized "12" "9603ed4883efa588138406c778ab0d93e4b57fe4")
-  (Reciprocate "12" "6673c1a1fafaab9c76e5bcedbd1894d72aaac681")
-  (RegionComplement "12" "fa8f2dad08cc59f6d1a654b649113b7cfd2b5b02")
-  (RoiClause "12" "79f0daf70e578d525eb6e7fb30898343cd441d82")
-  (Some "12" "d1d434cfcde56955918cf761de91cedb6aa2f897")
-  (SpanRegion "12" "b54e680cfe889a79d721121aceb663addb8936be")
-  (SpeakerDescribes "12" "6f4e9295a6a1873f403f216a34386d31b0644ff5")
-  (SpeakerDescribesUnaddressed "12" "c2a7407498feba7856ccb83422018a1117c6be8b")
-  (TanruLinkConnect "12" "921ed435c3651a3188b956bf26b3544a4b4a1b4a")
-  (TooFew "12" "5a6b816f775e6cfc62065bc8f86e8ee13218769a")
-  (TooMany "12" "ae9799c54c5a6ab0c6d56e118668c97836bfe53b")
-  (UnrealizedClause "12" "567413923e7ee35d3911cf6ca3dd68f215e5397e")
-  (ZipWith "12" "aa7369a4a7c643f0ebf15f0d1cc039aa8723e0d0")
-  (gei "12" "024dcd030ef7380a7fb3a57e5e627b248146f62b")
-  (|na'i-objection-prose| "12" "073ac8dbdd6eaddc0ac40dcff26cfd2859eae5f4")
-  (|te'a| "12" "3acd867cc421aeecf01817dca3801e9c6f5b3231")
-  (xi "12" "e135dffa6b00192d0d2213433a0f767b47dd142b")
-  (At "4.1" "809b6ba04a4e16ec2e2b0bd707487263e81f48c2")
-  (klama "4.1" "479b592ac962c73a3a6ba9e269ec37935aa71b15")
-  (Let "4.4" "359463a1dce292f5e25bae88b199fbdfa080f831")
-  (ClauseAnd "4.6" "09398faa1c3c5b7c391ce068bce456582f36839f")
-  (ClauseIff "4.6" "274f8a9a8c6c4688f2f3e117ebf5afcc8a2e826d")
-  (ClauseImp "4.6" "85f11e10d14b6796f70e7c0973afe82bb9b4e4ac")
-  (ClauseNot "4.6" "c51e176d09f76e76de34849b65e2e22c9dd53b2d")
-  (ClauseOr "4.6" "54875957fb82c2f6b5081f9f296c9aa221608319")
-  (ClauseXor "4.6" "ce40bb5c2a41e679260d380fc18a1c34d44fa36e")
-  (Close "4.6" "dbc57435b66b6bdb5a92fa5e466c3380b1df1f6b")
-  (DirectClause "4.6" "d6f7a9f37e8ac33288288c726966db5a505ac36a")
-  (CardBasis "4.8" "af642588fdffb4c17f169aadc62ba22f73f4021b")
-  (CoveredBy "4.8" "13fbff848b7b8397e5f3bdf15315286b620252cc")
-  (> "4.9" "374ca983ea8a7d65074e70410412677ef8a2919e")
-  (CompleteGunmaAt "4.9" "78ce2eb9580a07529f213f22aac20e715a7ce559")
-  (ComponentAt "4.9" "9a1c23334ddb8fdd5e3100cb8c2a27c2f0adf0ad")
-  (GunmaAt "4.9" "36fdb9753624919d220e8d32432d1f37047086e1")
-  (GunmaPredAt "4.9" "5f17750fc9353e5d2ef65bf55acd4d0ad865c6bf")
-  (That "5.1" "5953c6013e25dafd278939fdd707ca6a39622d35")
-  (This "5.1" "5953c6013e25dafd278939fdd707ca6a39622d35")
-  (Yonder "5.1" "06a465c60e511a31e2420c3ad1d55bafefa16b23")
-  (Refer "5.3" "e24cc2179a926b40a84da4f5c0f3df29c9c5717b")
-  (SelectSome "5.6" "d987c2b372b1d3e1140ddb9a384e7129a71e7f9d")
-  (Tanru "6.2" "3fb7ff8596673fbe77fc3809385da6c02047470f")
-  (Utterance "7.4" "92bd0238a3c39c97ce0fc91bb7fb4abc5e2f9618")
-  (Answer "8.2" "f1e4d85485f981ba603669c8dd8b7799d7538ac8")
-  (Meau0 "9.1" "b107f4903bb435a6ae1bc7d3a7955f7ebd47f1f4")
-  (DuhuRel "9.2" "0972d2ae49ba57e447d599f8931bf74bebd1f285")
-  (IndividualSome "12" "2f1c53a6a08bfe95ae5e03bfa3001d27507fda61")
-  (IndividualNo "12" "2c170d8212203de3c848618a631e8da2c97af718")
-  (IndividualEvery "12" "1fb177fb72174fb305dce52f7e89d079aa6f2663")
-  (PluralSome "12" "498d641d7515b62847abb352e3733ac884d0d5e2")
-  (PluralNo "12" "286c5ff2b5d449676ce0d027a173478d030c1d1d"))
+  (ActualClause "12" "1207146c55894387ed9568226f09be5308bf6663")
+  (AtLeast "12" "4026c00fa18334539654e1cbde90ffc13f1db4de")
+  (AtMost "12" "395259cc7f0b9a527920cc654389dc40a0e8cdc9")
+  (COI-schemas-prose "12" "4d0e518223a46427d569f8d990aef0e9234048d2")
+  (COIExpress "12" "882c785954cee108f42809e5dd55e1caa33a3eea")
+  (CanonicalAggregateAt "12" "37d36083e743b49ca79e9f323f30c9370e840f78")
+  (CapableClause "12" "9c4d1728c9dc0ba8be1dabd88fa1a0f7793f98c5")
+  (CoRef "12" "90857475a46d7c63a1f9bc74560c8427de6b7592")
+  (DemonstratedClause "12" "36b7fbee4b9d01205b73a3b4534148624a7e3b09")
+  (Distrib "12" "ad77f4330fbaaab045e3532dc58f26b9d13ff8da")
+  (Enough "12" "0eab0ccc1ab2b68963dd65735958c78beeafcd0f")
+  (Every "12" "5ec682630f66f59cb473f55d512fdeb89b7ba13c")
+  (Exactly "12" "2b097cd43a3cf09b150a309ec9eba914c1f1f626")
+  (Few "12" "5deffb4afbd8b0a5361dd2eaf7238a50844ae572")
+  (FewerThan "12" "8fbc4c45c21360a7a5ab96582af161a5f4c4af92")
+  (GlobalExactly "12" "c4ae9a48d10eb4b3bb0847e07684c6b5ff7ecdb2")
+  (Grade "12" "4fa709cda38f7c3275cacdc4c68f87da1e93551c")
+  (GroundedBy "12" "23905cc95e83ed95e0600f3efd31f0ac18bcdef2")
+  (Interval "12" "e4817521a27a9df7121da50130aa0317a40895d3")
+  (JaiPromote "12" "b40746a6c12f1c9f5ed375235ab394deb88c0e3b")
+  (JaiRaise "12" "8d02dd7a34e6b55921dd093502fed16f8a924137")
+  (JoiClause "12" "82fc9b9af6ed3f28e3fe5754731502ea5f11930f")
+  (JoiEvent "12" "2387ace1c32e4cace0d2a5fee9fa65308e901f25")
+  (JoiGroup "12" "4769de30702f01c7bc6235e33ee1f4fb309d8590")
+  (JoiPred "12" "8a775dd535cf45a3867fce21b0872a05bcd94612")
+  (JoiTanru "12" "3f026e2c503299bebc21365220a677331732248d")
+  (Many "12" "b184c0e6369d416096591b65cf09f989e3b8e47c")
+  (Massify "12" "aefa779891a5d6cd2146a54b1ee993dcb7364665")
+  (MaxRefer "12" "9eaac47b3da74a76ff3da59c42fd66566bb96593")
+  (MePred "12" "c79f426d14d1f2c11b5dd2e406b742150f4fc087")
+  (MemberCover "12" "707dec8a630b5fe96e1fb523d6b25f2ef69fbe7b")
+  (MetricBall "12" "6a7be9e206f8713affa66ee18ecfc8bec1332d72")
+  (MoreThan "12" "9fe1dcc8d2c3d9fedc8938a1e537e178541ae5dd")
+  (Most "12" "d1d1ba1e216b68ded67ebf278301f8097db026db")
+  (NahiObjection "12" "aa340e93e1edc479e1738827cc76adfe5a10579b")
+  (Named "12" "ff4ae8cea6aaeb60fd4a45297430b37f680b24a4")
+  (No "12" "e193fac451d35a116a77ddfc601a688f788c105b")
+  (Only "12" "25b04eaf92b1b04cdcff925f645cf70c4144c2ca")
+  (Overlap "12" "4a52180d9ffd1ee0a50f1bf421faba9856d38bbe")
+  (Realized "12" "9bbff1c4262da41c9573db0e7f0a472457c6c94d")
+  (Reciprocate "12" "258edac0aa3b663946b559cb8bd4d2b12cece8d6")
+  (RegionComplement "12" "826f49f6976b8bb8b2651f3f920a6e661931c87f")
+  (RoiClause "12" "ccee60536cf39ef442c7bfa619f99f045338900c")
+  (Some "12" "b23591d67116e34bcc5ec141faf44fc9fd470299")
+  (SpanRegion "12" "e09e69aa00dca8dc34f3de8222154c02860b4c51")
+  (SpeakerDescribes "12" "3fcf541f1deca9b39d0b01b03187026a6c658460")
+  (SpeakerDescribesUnaddressed "12" "030ea2f9c5196e839aa24593a5cee148b58b6dc2")
+  (TanruLinkConnect "12" "f5578b346b33cb3c0f684498494e1d231767f2cd")
+  (TooFew "12" "257d8d65370a13f50fa2e14044a7102725b1481d")
+  (TooMany "12" "2f3d2b455613201536c597382bb6871479fd958e")
+  (UnrealizedClause "12" "2d422c93160049c74a9a2960d6d2f7a94070a484")
+  (ZipWith "12" "46a0b234c63ca75b7b903f1d4b24201ee86ba901")
+  (gei "12" "4fc72c6cbaf2e1edd7af865029daec056b5e8d22")
+  (|na'i-objection-prose| "12" "9f1a6eae17b03a054725b7b69c549ae43abb99f7")
+  (|te'a| "12" "6532dc0c46d3355b340bd481aae5ce3cc6a7403b")
+  (xi "12" "505534bb832446007295c9ab7f120c7497a5c5eb")
+  (At "4.1" "0c9e07d8ea1597f42965286ce30e3bf06ba03c2f")
+  (klama "4.1" "654d790c327f537b8b92e8acb33046041dfd7187")
+  (Let "4.4" "6cda88c48e68c7b2e04b1ffdfd5dca90ede0bc45")
+  (ClauseAnd "4.6" "72f226b2257455e3298c71fc6e8278839da165dd")
+  (ClauseIff "4.6" "c2008fb58c7de309990e32885fbc3dce724139a6")
+  (ClauseImp "4.6" "54ca4cff8824f2997edbc69792cfaebad60e14ed")
+  (ClauseNot "4.6" "7a8b855e7b08bb38a35410ca26ba0ceb92057a34")
+  (ClauseOr "4.6" "84b36b4a84a8c03f68b32a26e2760d9b0aa27441")
+  (ClauseXor "4.6" "74a7134a5c56e4bc4894019d07cbf0c47316e3b8")
+  (Close "4.6" "8615fe59057c0aa23214649715854f981416c7b7")
+  (DirectClause "4.6" "daecd2eb93b75600a9016b6529ef392fd2c0eccf")
+  (CardBasis "4.8" "623e50e440a2ac185cde9c16acc52cac381c3c45")
+  (CoveredBy "4.8" "4c110e0635ef993cfe19421ad803215af782b555")
+  (> "4.9" "4415539c5f54148e26f752862a7708c2092239d2")
+  (CompleteGunmaAt "4.9" "db55c45ce34621b37dd48f5dcb7b5962c46f3fc2")
+  (ComponentAt "4.9" "a84b78513e23f1cba875c7d6e30b93cf4f961363")
+  (GunmaAt "4.9" "0841b1be2ac139999e1afcfe599e2b530adfc84e")
+  (GunmaPredAt "4.9" "5a7bd52d0f94c74ecfbf67c17335008d0a253ced")
+  (That "5.1" "aae50734e62ecad817332b7d1f57d456a52c7156")
+  (This "5.1" "aae50734e62ecad817332b7d1f57d456a52c7156")
+  (Yonder "5.1" "407942e5c805a288c59052d1869a35fac0b205f0")
+  (Refer "5.3" "52b4be7a32abc3512e18304004f94f614f8e4286")
+  (SelectSome "5.6" "2b7ddcae052b39cd3146a361657eb64914baebe6")
+  (Tanru "6.2" "6e4a2f1803b03aac5d064daab8879f48410c3113")
+  (Utterance "7.4" "869cda0686fd97727735f578305dc650c08edc49")
+  (Answer "8.2" "060744fb605bf30e9cafe2df40351a42543b9cdf")
+  (Meau0 "9.1" "21afc90a4734507330a107bf1ad1bf38209b8599")
+  (DuhuRel "9.2" "8eb03b16bf91356fafed054e53e78d8e3160e032")
+  (IndividualSome "12" "ecb2bb2c6ba30dbdc9361197b2da00355c29f265")
+  (IndividualNo "12" "6eed32a75a5e5639cc0f6fd56d1df7419b2e88a2")
+  (IndividualEvery "12" "ef9b40002b6b6a59c40e3be0137ae341ce8a9c7a")
+  (PluralSome "12" "fa5bc6f854d7ec630a3f16b7e2662e4bd722f333")
+  (PluralNo "12" "0fa601ba7bb7f1b20a574bef55cd3a3ffe79b8f2"))
  (test-sources
   ("tools/smusni-redex/tests/a0-test.rkt"
    "e90506fa0e4d47f2b9b893fce10ab30a9aa34625")
@@ -200,17 +201,19 @@
   ("tools/smusni-redex/tests/elaborate-test.rkt"
    "eba3b38d9c963350f1341b4561e8a8bf32767683")
   ("tools/smusni-redex/tests/extract-syntax-test.rkt"
-   "919f556b6dc6b54f8c7456317db7ee46aba06ca3")
+   "af758c606249976273bbc2a27de2ec0d1aeee9be")
   ("tools/smusni-redex/tests/individual-lowering-test.rkt"
    "75b4197e8accec6647055ee6a47d2f89a798a3dd")
   ("tools/smusni-redex/tests/inner-pa-test.rkt"
    "00b577fe4442a023c455e66b1fbad57c01b69c44")
   ("tools/smusni-redex/tests/lower-test.rkt"
-   "bd06de516d3511331a6b3f75527db60edf2f57dd")
+   "7d1cb0838fd501e125cef5ecbc3ba39382d42fe9")
   ("tools/smusni-redex/tests/models-test.rkt"
    "d00c8deab0592b0056fcfd0f6ba0f5e81eeb559e")
   ("tools/smusni-redex/tests/notation-test.rkt"
    "3ff1225f99e8113d61f737ac79f0028138fd828b")
+  ("tools/smusni-redex/tests/perform-source-test.rkt"
+   "afdfc03b8882c69215c7d4eb26b5768437fd75e2")
   ("tools/smusni-redex/tests/reference-scopes-test.rkt"
    "2793ef06eb079303f4e5f5508bba6ae978cbd789")
   ("tools/smusni-redex/tests/rules-test.rkt"
@@ -220,417 +223,234 @@
   ("tools/smusni-redex/tests/types-test.rkt"
    "18acf44168f763f61949cb42b2119f78c34a9de1"))
  (cases
-  (case (id "00f285c20c1d4c97eb6bcbc5cdb7326f5ddebe9c")
+  (case (id "001387765e509fe487e7c355464631bb66e96719")
     (provenance (test "lower-test.rkt"))
     (term
-     (Assert
-      (PluralNo
-       (λ ($r :: Referents Entity) (gerku $r))
-       (λ ($w :: Referents Entity) (Close (tavla Speaker $w))))))
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+      (Assert (Close (klama $r)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "01c20951319ae0cbb87def8c229044b9c8b09df7")
+  (case (id "010a22f419f0e4714289ac20673998b765002c77")
     (provenance (test "types-test.rkt"))
     (term
-     (StructuredQuote
-      (Utterance
-       ($u :: UtteranceToken)
-       ((Realizes $u (Assert (Close (gerku Speaker))))))))
+     (SetOf
+      (λ ($z :: Entity)
+        (Every
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($x :: Entity) (Close (jmaji $x)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "01e7d0c79ab6dcf6fefc887563acc054518095c7")
-    (provenance (fence "samples.md" 37 specimen 1))
-    (term
-     (Bind
-      ($cat :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (∧ (mlatu $x) (blabi $x))))
-      (Assert (Close (jbena $cat)))))
+  (case (id "011b7658e2a2aefa07aa2d0eab41435b7f353d67")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($g :: Group (PredTerm R)) (Mention $g)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0298272aa8ac278e5f0f71e73a81ae56463248da")
+  (case (id "012afd6c32c46dcee1603d23f36997b574ef46fd")
     (provenance (test "lower-test.rkt"))
     (term
      (Mention
       (IndividualSome
        (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (tavla $w Speaker))))))
+       (λ ($w :: Entity) (Close (tavla Speaker $w))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0325a882e54766a92866417b067a7d7694280900")
+  (case (id "016b7619aaf22e90e1eb9f41d503e7c84eba25a1")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $D))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "01ed54bf0632d769a3773419353f2a880d3b9e21")
     (provenance (test "types-test.rkt"))
     (term
      (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
-      (Mention $r)))
+      ($w :: Referents Entity)
+      (SelectAtLeast 1 (λ ($x :: Entity) (gerku $x)))
+      (Mention $w)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0361b7fdaa1fd90b87b97a7934892d93cf982dcd")
+  (case (id "056127c40eba32ecf0c586256bd9292d40f756c1")
     (provenance (test "types-test.rkt"))
     (term
-     (Every
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+     (SetOf
+      (λ ($z :: Entity)
+        (AtMost
+         1
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "038b8fcbab5676b23e7c9404352cb5726b47a3f4")
-    (provenance (fence "samples.md" 43 specimen 1))
-    (term
-     (Assert
-      (∀
-       (λ (($p :: Entity) ($d :: Entity))
-         (→
-          (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-          (Close (darxi $p $d)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "05e54e427ff653c10e224c813b9388e0bba55aaa")
+  (case (id "059ad6f2adf9d4a2cf81693ee14b6f3b5ea49562")
     (provenance (test "types-test.rkt"))
     (term
-     (λ (($k :: DecompositionBasis (Group Entity) Entity) ($g :: Group Entity))
-       (components_κ $k $g)))
+     (SetOf
+      (λ ($z :: Entity)
+        (Some
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0672883cccb798b7ca5c2983340853cc7c915a94")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($f :: Fn ((Referents Entity) (Referents Entity)) Content)
-       ($f Speaker Audience)))
-    (env ())
+  (case (id "05b101808826fe671ef1e2155db3629a01cc099d")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralNo $x $r))
+    (env
+     (($r Fn ((Referents Number)) Content)
+      ($x Fn ((Referents Number)) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "067c27387e8a98bd2b881758153df0608a28b679")
-    (provenance (test "types-test.rkt"))
-    (term (λ ($x :: Entity) (Combine $x Speaker)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "068cb85ec8ecb3ccc509a1792f79f631c2f91654")
-    (provenance (test "lower-test.rkt"))
+  (case (id "05bb8ad1ae173cc81f1f84b69b295fff82b9c9f2")
+    (provenance (fence "spec.md" 17 specimen 1))
     (term
      (ZipWith
-      (λ ($left $right :: Referents Entity) (Close (tavla $left $right)))
+      (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
       (List Speaker Audience)
       (List Audience Speaker)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "06c29dd187aaa9c84e49f72b56a8994331ce358a")
+  (case (id "062e70d730d4c6054876c1953ea1d303f8474efb")
     (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectExactly
-       1
-       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
-      (Mention $w)))
+    (term (LocutionOf CurrentToken Speaker))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "06f586c55e74376156ae79cd85dda5169a1e02ef")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralSome $x $r))
-    (env
-     (($r Fn ((Referents Entity)) Content)
-      ($x Fn ((Referents Entity)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "078157eb65184191ef0b23c478b1f6ef49ce5b5a")
-    (provenance (fence "samples.md" 24 specimen 1))
-    (term (Assert (Close (remna (Combine Speaker Audience)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "07d6915bb6753a202b5855ac23575df1ae03f964")
-    (provenance (fence "samples.md" 60 specimen 1) (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($d :: ContrastDomain (RowOf melbi))
-      (Context)
-      (Assert (Close ((Scalar OtherThan $d melbi) That)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "08eddca2756cf8f0c81d55982e8bc825d85ca200")
-    (provenance (fence "samples.md" 58 specimen 1))
-    (term
-     (Let
-      ($prior :: Act Assertion)
-      (Assert (Close (klama Audience)))
-      (Bind
-       ($prioro :: ActOccurrence Assertion)
-       (Perform Host $prior)
-       (Bind
-        ($defect :: DefectKind)
-        (Context)
-        (Express (Close (MetalinguisticallyDefective $prioro $defect)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "09b5d3ac43d7ed1f79a5d7a2eb7010874be177c6")
+  (case (id "0632c0c9bdc1807f6fd0b03fa1168ad4cf78e860")
     (provenance (test "lower-test.rkt"))
-    (term
-     (Let
-      ($description1 :: EFn ((Referents Entity)) Content)
-      (λ ($y :: Referents Entity) (prenu $y))
-      (Bind
-       ($r :: Referents Entity)
-       (Refer
-        (λ ($reference :: Referents Entity)
-          (∧
-           (SpeakerDescribes $reference $description1)
-           (=
-            (CardBasis
-             $reference
-             (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
-            3))))
-       (Assert (Close (tavla $r Speaker))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0ae10fc13e1a3271b1c51c7a1f0c877736111c75")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0d601ed905f846a1cd7cf233d21969f42dcafb9c")
-    (provenance (fence "spec.md" 9 specimen 1))
-    (term
-     (Bind
-      ($surface :: Referents Entity)
-      (Context)
-      ($limbs :: Referents Entity)
-      (Context)
-      ($gait :: Referents Entity)
-      (Context)
-      (=
-       (Card
-        (SetOf
-         (λ ($x :: Entity)
-           (∧ (gerku $x) (Close (bajra $x $surface $limbs $gait))))))
-       3)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0d97dcc8b5e3c3e7189269dfad906496df765d67")
-    (provenance (test "inner-pa-test.rkt") (test "lower-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)
-      (Refer
-       (λ ($reference :: Referents Entity)
-         (∧
-          (gerku $reference)
-          (= (CardBasis $reference (λ ($unit :: Entity) (gerku $unit))) 3))))
-      (Assert (Close (tavla Speaker $r)))))
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Assert (Close (tavla $r Speaker)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0e8103eb94c4a8646b0920ed545468f0880753a7")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
-       ($r Speaker Audience This)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0ea7c313940eae86ceb12813bc4423199e7618db")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectAtLeast
-       1
-       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
-      (Mention $w)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "0edbb902bffee19f55a28f1cf6c8496afc9fb228")
-    (provenance (test "types-test.rkt"))
-    (term (At klama 9 This))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "10e172fe2b4ae74dcee850b13b1f74c32a0743ca")
-    (provenance (test "types-test.rkt"))
-    (term
-     (FewerThan
-      1
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1295d698d7e5dde87a9ff70aac55181c6d22a38a")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (=
-      (Card
-       (SetOf
-        (λ ($global_member :: Entity)
-          (∧ (prenu $global_member) (blabi $global_member)))))
-      2))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1299f9cc2fe8dc65a6dfe9de5469460e971fadf5")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($s :: Scale)
-      (Context)
-      ($reg :: Region Scale)
-      (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
-      (Mention (Close ((Grade barda $s $reg) That)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "154d686d5635acce953b66d13f2b43aab1017114")
-    (provenance (fence "samples.md" 11 specimen 1))
+  (case (id "068724c9a54251d6377d0d43108017882de23600")
+    (provenance (fence "samples.md" 26 specimen 1))
     (term
      (Assert
-      (Bind
-       ($occ :: Time)
-       (Context)
-       (CloseClause
-        (λ ($e :: Referents Eventuality)
-          (∧
-           ((ActualClause (DirectClause (citka Speaker))) $e)
-           (cabna $e $occ)))))))
+      (CloseClause
+       (ClauseAnd
+        (DirectClause (jmaji Speaker))
+        (DirectClause (jmaji Audience))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "15943360d70a6840bd3f7714fe325cb454d8a2ae")
+  (case (id "071474864f90f451041cdad186b5bb50f4ff6750")
     (provenance (test "types-test.rkt"))
-    (term
-     (λ ($g :: Referents (Group Entity))
-       (SpeakerDescribes $g (λ ($y :: Referents Entity) (mlatu $y)))))
+    (term (OpaqueQuote "mi klama"))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1631e8e93e47ba3eaf96c343df197ed5a589a24f")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Most
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "163f9eb77e8852c86feb74b030f5c1347945843d")
+  (case (id "081bf3ebb40093123fb70a19bafce14c89b215b2")
     (provenance (test "lower-test.rkt"))
     (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-       (Assert (Close (tavla $r $r1))))))
+     (ZipWith
+      (λ ($left $right :: Referents Entity) (Close (tavla $left $right)))
+      (List This Audience)
+      (List Audience Speaker)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1771854fd6d70d93aecd11e841af249e06b036c6")
+  (case (id "081d6e7115deb76869d85bb5dedd5334a78f62d2")
+    (provenance (fence "samples.md" 64 specimen 2))
+    (term
+     (Bind
+      ($purpose :: Referents Entity)
+      (Context)
+      ($n :: Natural)
+      (Vague
+       (AdmissibleThreshold TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
+      (Assert
+       (MoreThan
+        $n
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($w :: Referents Entity) (Close (klama $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "089f290c0767f26cf35164e687a9cd64cc6b05de")
+    (provenance (fence "samples.md" 67 specimen 1))
+    (term
+     (Mention
+      (StructuredQuote
+       (Utterance
+        ($u :: UtteranceToken)
+        ((Realizes $u (Assert (Close (klama Speaker)))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "09092a7c0e700c4c33d8fbefc0745553cf953fc5")
     (provenance (test "types-test.rkt"))
     (term
      (Utterance
-      ($u :: Referents UtteranceToken)
-      ((Realizes $u (Assert (Close (gerku Speaker)))))))
+      ($u :: UtteranceToken)
+      ((Bind
+        ($x :: Entity)
+        (Context)
+        (Realizes $u (Assert (Close (gerku $x))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1788384a10572872f34e4e1c72e71e0d03b35696")
-    (provenance (fence "samples.md" 14 schema 1))
+  (case (id "0985603525b8aac62815498534fc4c9088dc0aed")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (CloseClause
-      (ActualClause
-       (ClauseAnd
-        (λ ($s :: Referents Eventuality)
-          (∧ ((StateClause (= ($valueOf $alpha) $x)) $s) (cabna $s Now)))
-        (λ ($t :: Referents Eventuality)
-          (∧
-           ((StateClause (¬ (= ($valueOf $alpha) $x))) $t)
-           (balvi $t Now)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "17cc65b0c20a2318c724a843bdd60cb0bd1ee0c0")
-    (provenance (test "types-test.rkt"))
-    (term (DropPlace klama 3))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "17e08cbac8f779bc4f04b2b480bce8f5a7774d46")
-    (provenance (test "types-test.rkt"))
-    (term (SetOf (λ ($x :: Entity) (Presuppose (gerku $x) (gerku $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1a3f5fdf1ea9c89e3c5f501e40925679e903b085")
-    (provenance (test "types-test.rkt"))
-    (term
-     (AtLeast
-      1
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1a4e6e5501397b319459f53492a14a0f5876ad5b")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Context $x)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
     (env
-     (($r Fn ((Referents Entity)) Content)
-      ($x Fn ((Referents Entity)) Content)))
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1ae8d66b81c220f5f975851d5f78bfa701a2156a")
+  (case (id "09f0948ce98ba5c5c10172f02e84d769c77fc947")
     (provenance (test "types-test.rkt"))
     (term
      (SetOf
@@ -641,62 +461,266 @@
          (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1bc3ffcfed26a4c93c12726e1a0c984617e92d4f")
+  (case (id "09fc95fdb0d521827abc465ef8941b72b090c8e1")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Assert (CloseClause (ActualClause (StateClause ($P Speaker))))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0a33e1a1815fb2640ffa77469a9a835d9c0a21e8")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (PluralNo
+       (λ ($r :: Referents Entity) (gerku $r))
+       (λ ($w :: Referents Entity) (Close (tavla $w Speaker))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0b831859fb8c84d39cc9b3a484d12960f6b31d5a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do ((λ ($identity :: Act Assertion) $identity) $A))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0bf331ccff8f436775a1a65f87d2e1848278fe82")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+      (Assert (Close (tavla $r Speaker)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0d3d9d3ab4d065e4e09924149cb6db5c3151a2d0")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (IndividualSome
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Entity) (Close (tavla Speaker $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0d44666e092973917c9e50fa73018c73869aa437")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $read
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0dab71feedd4197bd2c9c1f8fce828fe2e3e4ea9")
+    (provenance (fence "samples.md" 7 specimen 1))
+    (term
+     (Assert
+      (CloseClause
+       (ActualClause
+        (λ ($e :: Referents Eventuality)
+          (∧ ((DirectClause (citka Speaker)) $e) (purci $e Now)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0e13ef5fccb371aaf16273ca7d827a1702bf19cd")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (GlobalExactly
+       3
+       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+       (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0eda064a8642a42cd964e30f31bd02f268536aa2")
+    (provenance (fence "spec.md" 19 expansion 1))
+    (term (JoiClause κ C D))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "0f492a2b0ffcc960f80e6ee89d562a64a1eb6987")
     (provenance (test "types-test.rkt"))
     (term
      (λ ($x :: Referents Entity)
        (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1c2ab7c93bcd012ac149f040ac9d6b01090ab999")
+  (case (id "101b2a2783517ee43d13d1b6f3896db9daecbc0f")
     (provenance (test "lower-test.rkt"))
     (term
-     (IndividualSome
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Entity) (Close (tavla $w Speaker)))))
+     (Bind
+      ($restrictor_klama_2 :: Referents Entity)
+      (Context)
+      ($restrictor_klama_3 :: Referents Entity)
+      (Context)
+      ($restrictor_klama_4 :: Referents Entity)
+      (Context)
+      ($restrictor_klama_5 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_2 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_3 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_4 :: Referents Entity)
+      (Context)
+      (GlobalExactly
+       3
+       (λ ($restrictor_member :: Entity)
+         (Close
+          (klama
+           $restrictor_member
+           $restrictor_klama_2
+           $restrictor_klama_3
+           $restrictor_klama_4
+           $restrictor_klama_5)))
+       (λ ($nuclear_member :: Entity)
+         (Close
+          (bajra
+           $nuclear_member
+           $nuclear_bajra_2
+           $nuclear_bajra_3
+           $nuclear_bajra_4))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1c584ece802cf5eeeb22e0806f65553d4ce57751")
-    (provenance
-     (fence "samples.md" 41 specimen 1)
-     (fence "spec.md" 11 specimen 1))
+  (case (id "103264a57f7ca7ff58fa615bbf76f0ac2d29985f")
+    (provenance (test "substitution-test.rkt"))
+    (term
+     (≤
+      2
+      (Card
+       (SetOf
+        (λ ($individual :: Entity)
+          (∧
+           (∃ (λ (($x :: Entity) ($y :: Entity)) (∧ (gerku $x) (prenu $y))))
+           (= $individual $individual)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "10a3e607e717ae2d4fd67757b03c070265f5673d")
+    (provenance (test "types-test.rkt"))
+    (term (LetteralSign "by"))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "1118b5772e65cdec9dfa2d52bad043bdb8a79e87")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralSome $x $r))
+    (env
+     (($r Fn ((Referents Entity)) Content)
+      ($x Fn ((Referents Entity)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "1138ed0548a554660ae38acc0d17953c10674590")
+    (provenance (fence "samples.md" 37 specimen 1))
     (term
      (Bind
-      ($dogs :: Referents Entity)
-      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-      (Do (Assert (Close (bajra $dogs))) (Assert (Close (tatpi $dogs))))))
+      ($cat :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (∧ (mlatu $x) (blabi $x))))
+      (Assert (Close (jbena $cat)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1cdeb2331917ac3fc16b0059367689396360d1bd")
+  (case (id "115612e112a0b295df8d9d81027b7f2084b551e7")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($x :: Entity) (Close (tavla Speaker $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "11d95e9a19ce22e7a2da5e864740ad69981705ec")
+    (provenance (fence "samples.md" 28 specimen 1))
+    (term
+     (Bind
+      ($to :: Referents Entity)
+      (Context)
+      (Assert (Close (klama (Combine Speaker Audience) :2 $to)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "13ef338566a4c549539b0f110831c08de69f2f9f")
+    (provenance (fence "samples.md" 45 specimen 1))
+    (term
+     (Assert
+      (¬
+       (IndividualEvery
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($x :: Entity) (Close (blabi $x)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "14667cca69d8d91c18974e32e9e7b23ed92e9514")
     (provenance (test "types-test.rkt"))
     (term
-     (λ (($p :: Fn (Entity) Content) ($r :: Referents Entity))
-       (CoveredBy $p $r)))
+     (λ (($k :: DecompositionBasis (Group Entity) Entity) ($g :: Group Entity))
+       (components_κ $k $g)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1de177f660bc3c934b18cd20087636c6dce7f837")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (No
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1dfbc27add2be28e1d2390636f0b092f0885c5c8")
+  (case (id "147dc07c99cc7289ed59b13740442a860eeb59b9")
     (provenance (test "types-test.rkt"))
     (term
      (λ (($k :: DecompositionBasis (Group Entity) Entity)
@@ -704,166 +728,152 @@
        (components_κ $k $groups)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1e05ef5a146ff8ff8a93bc52f8f344b8bb3fcedc")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Every
-      (λ ($x :: Entity) (datka $x))
-      (λ ($duck :: Entity)
-        (CloseClause (CapableClause (DirectClause (flulimna $duck)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1eabd5cd4ccc8cb1631befe3dbbb6c93419cce39")
-    (provenance (fence "samples.md" 35 specimen 1))
-    (term
-     (λ (($κ :: DecompositionBasis (Group Entity) Entity)
-         ($group :: Group Entity))
-       (Mention (components_κ $κ $group))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1f230961b78eba4c32fa85357a53872d5f42e8b2")
+  (case (id "14dc45f6fcb104cae08ce81c7d9ff9a0efe9dede")
     (provenance (test "closures-test.rkt"))
-    (term (PluralSome $x $r))
+    (term (IndividualNo $x $r))
+    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "156de5e2948e1c8c11fa68d9f757850ba8e801e0")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
     (env
-     (($r EFn ((Referents Eventuality)) Content)
-      ($x Fn ((Referents Eventuality)) Content)))
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1faa3d381d7a55a274d312d2b4440b20c7a83fbc")
-    (provenance (test "lower-test.rkt") (test "reference-scopes-test.rkt"))
+  (case (id "158178fa5e79ce1efb48dbcfcf4eeb873eb71763")
+    (provenance (fence "samples.md" 53 specimen 1))
     (term
      (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-       (Assert (Close (tavla $r $r1))))))
+      ($u :: Referents UtteranceToken)
+      (Context)
+      (Mention (Reify (RealizedContent $u)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "1fb47ec4549697c6390c3acd1b868c08a4a351a6")
-    (provenance (fence "samples.md" 31 schema 1))
+  (case (id "160eb30d5bdf8d53b6bbbe1a8ac29091561e7d51")
+    (provenance (test "types-test.rkt"))
+    (term (DropPlace klama 3))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "1867f772a83bedef278eb16628b29786241f5704")
+    (provenance (test "types-test.rkt"))
+    (term
+     (AtLeast
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "195dbd61b277d0041b57830565980e9d335f7456")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (IndividualSome
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Entity) (Close (tavla $w Speaker)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "19b62e61b2055fa3f338e604d248baa63f1330c2")
+    (provenance (fence "samples.md" 39 specimen 1))
     (term
      (Bind
-      ($base :: Referents Entity)
-      (Local (Refer (λ ($x :: Entity) (gerku $x))))
-      (Bind
-       ($κ :: GroupBasis Entity)
-       (Context (GroupBasisConstraint loi Entity) deps…)
-       (Bind
-        ($groups :: Referents (Group Entity))
-        (Refer (λ ($g :: Group Entity) (CompleteGunmaAt $κ $g $base)))
-        (Mention $groups)))))
+      ($dog :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (gerku $x)))
+      (Assert
+       (Supplement
+        $dog
+        (Close (blabi $dog))
+        (CloseClause (ClauseNot (DirectClause (melbi $dog))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "216e96290862badbcf9b88b4d89bff8a355fd525")
-    (provenance (fence "samples.md" 62 schema 1))
+  (case (id "19d0fd223542ee5a00fae081d0847a7df3b7f181")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (Bind
-      ($v :: T)
-      (Context P deps…)
-      (Bind ($v :: T) (Context P deps…) (C $v))
-      (¬ (C $v))))
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform (Assert ($Q $x))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "1c418a22a3c6ba1584e7e470209396b770827d38")
+    (provenance (fence "spec.md" 8 schema 1))
+    (term (∨ (∧ (= $p ℓ1) (C (At R ℓ1 v))) … (∧ (= $p ℓn) (C (At R ℓn v)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "21da108926061352ea8a96e6d3407b1c2b103291")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($k :: DecompositionBasis (Group Entity) Entity)
-       (Bind
-        ($g :: Referents (Group Entity))
-        (JoiGroup $k Speaker Audience)
-        (Mention $g))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "225e7d353ded74a470710a349dcda7f28dc1521f")
-    (provenance (test "individual-lowering-test.rkt"))
-    (term
-     (Assert
-      (≤
-       (Card
-        (SetOf
-         (λ ($individual :: Entity)
-           (∧ (gerku $individual) (Close (blabi $individual))))))
-       1)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "228ea135aca439f8a9037357f905d482636fa1c2")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ (($p :: Fn (Eventuality) Content) ($r :: Referents Entity))
-       (CoveredBy $p $r)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2297a9f1838329374a54c08b2bc3b139383cc675")
-    (provenance (fence "samples.md" 23 specimen 1))
-    (term
-     (Bind
-      ($alis :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
-      (Assert (Close (klama $alis)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "233f30fdf32b22f321e491ab24823f0ed16cb7a2")
-    (provenance
-     (fence "spec.md" 2 specimen 1)
-     (fence "spec.md" 3 expansion 1)
-     (test "lower-test.rkt"))
-    (term (klama :2 This Yonder))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "24279f7a1ff4995e76054e3cdb51cc8ac50b47da")
-    (provenance (test "types-test.rkt"))
-    (term (λ ($f :: Fn Entity Content) ($f Speaker)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "25ae6c669a708e9b5f806ace45bab6857e7790cd")
-    (provenance (test "types-test.rkt"))
-    (term (WordSign Speaker))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "26621cc9a7405cfc3f9153a08e71bb0278b96fdd")
+  (case (id "1d0f6a701fee3d78f3253fab11fe08d880a958eb")
     (provenance (test "closures-test.rkt"))
-    (term (IndividualEvery $x $r))
-    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
+    (term (PluralNo $x $r))
+    (env
+     (($r EFn ((Referents Entity)) Content)
+      ($x Fn ((Referents Entity)) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2674c959b1316b976f7fd51ff62e90f4720aa8c4")
-    (provenance (fence "samples.md" 1 specimen 1) (test "lower-test.rkt"))
-    (term (Assert (Close (klama Speaker))))
-    (env ())
+  (case (id "1dcbe5c8dba58c09f99864c619c89f155fb2b76e")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $x
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2757f9aa38695594324eab3ca598b7830568d6d4")
+  (case (id "1e28492206cbc7c52192f9dc12976d9c59978dec")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "1e8650994ae35bad5739933d2dea6ce038fd5cfa")
     (provenance (fence "spec.md" 10 schema 1))
     (term
      (Bind
@@ -882,16 +892,1349 @@
       …))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "27cdf5893955ad4fa755df6d94fa3e038a96f786")
+  (case (id "1f588b7da2a44d6342b0cfbe0c063edc29b07d9b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Generic
+      Typical
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "201b5ef8c0a84c736c03fdc65a88f50cdc20aac9")
+    (provenance (fence "samples.md" 65 specimen 5))
+    (term
+     (Bind
+      ($ev :: Referents Eventuality)
+      (Refer
+       (ActualClause
+        (λ ($e :: Referents Eventuality)
+          (∧ ((DirectClause (klama Speaker)) $e) (purci $e Now)))))
+      (Mention $ev)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "214203ae1c9fc4028fbd556ac7047d703e7082ee")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Let
+      ($a :: Act Assertion)
+      (Assert (Close (gerku Speaker)))
+      (Do (Perform $a) (Perform $a))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "21d15b6f6c4de2ea6b47a73f9640f3c3bf2ccf93")
+    (provenance (test "types-test.rkt"))
+    (term (At klama 2 This))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2272d4a81ceb6bc5583cc03cc024895db0d0ac62")
+    (provenance (test "types-test.rkt"))
+    (term (∃ (λ ($c :: Content) $c)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2350ec46a860b191ed7dfc8805106543d00813c7")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($x :: Entity)
+        (Bind
+         ($r :: Referents Entity)
+         (SelectSome (λ ($y :: Entity) (gerku $y)))
+         (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "24fce7e820a814fed0454d3d9316bc0a6b95beab")
+    (provenance (test "types-test.rkt"))
+    (term (SetOf (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "26f1c944a99b33a700914e37542483394829d333")
+    (provenance (test "types-test.rkt"))
+    (term
+     (GlobalExactly
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "277c687168048661b7487b29e65cfe1d261affd8")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Some
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "29593043ae4aabd06aa0edb4521996bda3b34a82")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectAtLeast
+       1
+       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "29b68fefa2ce78a0bbce1a5c1f66cb3e956a59b5")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Assert (CloseClause (ActualClause (StateClause ($P Speaker)))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "29bf44bac72a5633b69d8eb81dc6702a6e17bbbb")
+    (provenance (fence "samples.md" 56 specimen 1))
+    (term
+     (Let
+      ($a :: Act Assertion)
+      (Assert (Close (cadzu Audience)))
+      (Bind
+       ($o :: ActOccurrence Assertion)
+       (Perform Host $a)
+       (Do
+        (Perform
+         AttachedDisplay
+         (Express (Close (EvidentialBasis Speaker $o Observation))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2a00f8ca5df0ba140dbe29fa18c0acda9b274913")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ (($p :: EFn (Entity) Content) ($r :: Referents Entity))
+       (CoveredBy $p $r)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2b338049c10e9453426315140e2d00875af639d9")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (MoreThan
+         0
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2ba4f999ea724091045ddc204cbf6851ca7b2d35")
+    (provenance (test "types-test.rkt"))
+    (term
+     (GlobalExactly
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "2ce8aceec49bf51a88c3bb7a5973f1f8ff8c8528")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($s :: Scale)
+      (Context)
+      ($reg :: Region Scale)
+      (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
+      (Mention (Close ((Grade barda $s $reg) That)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "304422c80d6314f63fa20beed0d3e9823577a6f9")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (IndividualSome
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Entity) (Close (tavla $w Speaker))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "31ae43a8a09873c20b5cfa795dcf9ea2e0cb6321")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Context $x)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3229a0d0fc9430764e5adc20575e827d5d53dcc6")
+    (provenance
+     (fence "spec.md" 13 expansion 2)
+     (fence "spec.md" 14 expansion 2)
+     (fence "spec.md" 18 expansion 2)
+     (fence "spec.md" 19 expansion 2)
+     (fence "spec.md" 3 expansion 2)
+     (fence "spec.md" 3 expansion 5)
+     (fence "spec.md" 6 expansion 2))
+    (term ≝)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "32d39da9bdb3c99facf9f284953736cb8300427e")
+    (provenance (fence "samples.md" 32 schema 1))
+    (term
+     (Bind
+      ($κ :: GroupBasis Entity)
+      (Context (GroupBasisConstraint joi Entity) deps…)
+      (Bind
+       ($g :: Referents (Group Entity))
+       (JoiGroup $κ Speaker Audience)
+       (Bind
+        ($p :: Referents Entity)
+        (Refer (λ ($r :: Referents Entity) (pipno $r)))
+        (Close (bevri $g $p))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "338a33f9d92c5a24e6ec646efeba232758f1a03e")
+    (provenance (fence "spec.md" 6 expansion 1))
+    (term (DirectClause P))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "33cb8f8dd15af7286c07ceff96c9c45613658e95")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert (Close (blabi $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3432a74a7ca9f39983552bd63f8c7423f1af69e6")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($x :: Referents Entity)
+       (SpeakerDescribes $x (λ ($y :: Referents Eventuality) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "352a489bb8b6a76622a78e09991c14af379cb0a7")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (IndividualSome
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Entity) (Close (blabi $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "356837155ec5d15971bf168c66836f7b664728f7")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (AtLeast
+         0
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity)
+           (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3571f9f6eab279bf80ddc1df9128a3e587ee5914")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert (CloseClause (ClauseNot (DirectClause (jbena $r)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "35741cc5305e673f449ef386e696af7fb97877fe")
+    (provenance (fence "spec.md" 13 expansion 3))
+    (term
+     (Bind
+      ($link :: PredTerm (RowOf H))
+      (Context (λ ($r :: PredTerm (RowOf H)) (TanruAdmissible M H $r)) deps…)
+      (∧ (H fills…) ($link fills…))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "357f2d152d35d5d6cc1d86c6018dd733a38de1c7")
+    (provenance (fence "samples.md" 72 specimen 1))
+    (term
+     (λ (($dogs :: Fn ((Referents Entity)) Content)
+         ($sleep :: Fn ((Referents Entity)) Content)
+         ($red :: Fn ((Referents Entity)) Content))
+       (PerformSource
+        Host
+        ($x :: Referents Entity)
+        (Refer $dogs)
+        (Assert ($sleep $x))
+        ($read :: RefComp (Referents Entity))
+        ($o1 :: ActOccurrence Assertion)
+        (Do
+         (Perform
+          Host
+          (Assert (Bind ($y :: Referents Entity) $read ($red $y))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "35a56aaa36ce88058ebe3d81d15eac5d42c28414")
+    (provenance (fence "samples.md" 38 specimen 1) (test "types-test.rkt"))
+    (term
+     (Bind
+      ($dog :: Referents Entity)
+      (Refer
+       (λ ($x :: Referents Entity)
+         (∧
+          (SpeakerDescribes $x (λ ($y :: Referents Entity) (gerku $y)))
+          (SpeakerDescribesUnaddressed
+           $x
+           (λ ($y :: Referents Entity) (blabi $y))))))
+      (Assert (Close (jbena $dog)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "361a294c5db62cdbd2b35d436af41c0197631032")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (PluralNo
+       (λ ($r :: Referents Entity) (prenu $r))
+       (λ ($w :: Referents Entity) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3657ebce791adb9d4f0295ad992547c8799c7ab2")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Question)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "36bf5e378589d3a4b7a85d89d3e571370ce1622c")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $x
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $D))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))
+      ($x RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3795a2a2758c058d64b6fb4b6b4903451aeb1974")
+    (provenance (fence "samples.md" 61 specimen 1))
+    (term
+     (Bind
+      ($book :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (cukta $x)))
+      (Bind
+       ($a :: Referents Eventuality)
+       (Context
+        (λ ($v :: Referents Eventuality)
+          (∧
+           (∃ (λ ($p :: Proposition) (CoRef $v (EventOfContent (Holds $p)))))
+           (Close (srana $v $book))))
+        $book)
+       (Assert (Close (djica Speaker $a))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "387dfd07a6ebc6a3d19b054f498cff4f379330cf")
+    (provenance (test "types-test.rkt"))
+    (term (SentenceSign (Bind ($x :: Entity) (Context) (Close (klama $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "39938bfeab71c80a6d4de1c62b83a053b075309c")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($basis :: DecompositionBasis (Group Entity) Entity)
+      (Context (GroupBasisConstraint joi Entity) deps…)
+      (Bind
+       ($group :: Referents (Group Entity))
+       (JoiGroup $basis Speaker Audience)
+       (Mention $group))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3a3cadb49384c27db6a6a21decdc1a9fdd9d176c")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralSome $x $r))
+    (env
+     (($r EFn ((Referents Number)) Content)
+      ($x Fn ((Referents Number)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3a620a59a0f72ddc80081fabc2fb5e4fd2d38d43")
+    (provenance (fence "spec.md" 5 schema 1))
+    (term (∀ (λ ($x $y :: Entity) …)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3ae1d25ae39772469efc3b8caa937241917cb06b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Exactly
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3d34cb0f4f289a63dace2aedc2a86e684759baee")
+    (provenance (test "types-test.rkt"))
+    (term
+     (No
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3e20c1451de1e24477c2c9c376eafbd7a8be2150")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($left :: Referents Entity)
+      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+      ($right :: Referents Entity)
+      (SelectExactly 2 (λ ($x1 :: Entity) (prenu $x1)))
+      (Mention
+       (Distrib
+        (λ ($l :: Entity)
+          (Distrib (λ ($r :: Entity) (Close (nelci $l $r))) $right))
+        $left))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3e2bc26981287529b8d7ddc426dc8fba4458fb06")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualEvery $x $r))
+    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3e6f8f03508d88611b66ff4352f806310204e98b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Most
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3f832f695b663a6fa5d39a2336404b96c4854603")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Mention
+      (IndividualSome
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Entity) (Close (tavla $w Speaker))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "3f8eb9f0362cf06b2a5e7ccd87597e54763b23d0")
+    (provenance (fence "samples.md" 35 specimen 1))
+    (term
+     (λ (($κ :: DecompositionBasis (Group Entity) Entity)
+         ($group :: Group Entity))
+       (Mention (components_κ $κ $group))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "41354da416e736280e6ae37f353604dad4b680be")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualEvery $x $r))
+    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "42171935390224ab5042ee63543b3d03e33f6009")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Close (tavla Speaker $r))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "42c9d9ff87974e6c60bfdade0803e1d4e9b31e30")
+    (provenance (test "individual-lowering-test.rkt") (test "lower-test.rkt"))
+    (term
+     (Assert
+      (¬
+       (IndividualEvery
+        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+        (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "42e1de0676e90f481baa037dec37f5d9e54dbf4c")
+    (provenance (fence "spec.md" 18 expansion 3))
+    (term
+     (Bind
+      ($d :: DefectKind)
+      (Context)
+      (Express (Close (MetalinguisticallyDefective t $d)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "449dacc388c3ff41007df114bfb46fc0f2dc5201")
+    (provenance (fence "spec.md" 14 expansion 1))
+    (term (Utterance ($u :: UtteranceToken) (fact…)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "454f3b65f45625acb91aca24cce72013b3ac3c0e")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Assert (Close ((Tanru sutra klama) $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4601e0fc1cd98dda4396bef40b0909f12e3e35b0")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host (Let ($saved :: Act Assertion) $A $saved)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "461e7d7ad9466fa7f5ace614d71b37fa8e8d0df1")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+      (Assert (Close (tavla Speaker $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "46aa50ddf4c3dfe8ae551fe795b739337bf72d66")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($nuclear_bajra_2 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_3 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_4 :: Referents Entity)
+      (Context)
+      (GlobalExactly
+       3
+       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+       (λ ($nuclear_member :: Entity)
+         (Close
+          (bajra
+           $nuclear_member
+           $nuclear_bajra_2
+           $nuclear_bajra_3
+           $nuclear_bajra_4))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "474d678ccb329b5010fd93cb2483fc170ba04644")
+    (provenance (fence "samples.md" 73 specimen 1))
+    (term
+     (Bind
+      ($cats :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+      (Assert
+       (IndividualEvery
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($dog :: Entity) (Close (tavla $dog $cats)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "47c74d3e5cc04fb221ad5be388eab58b4cc90600")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($nuclear_bajra_2 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_3 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_4 :: Referents Entity)
+      (Context)
+      (Assert
+       (GlobalExactly
+        3
+        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+        (λ ($nuclear_member :: Entity)
+          (Close
+           (bajra
+            $nuclear_member
+            $nuclear_bajra_2
+            $nuclear_bajra_3
+            $nuclear_bajra_4)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "47ddf6c9ffa7dad9c2ae2ea4815d172fe016f48e")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($e :: Referents Eventuality)
+       (SpeakerDescribes $e (λ ($y :: Referents Entity) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "481f86e20ab343e109fcffe651c67511af512e05")
+    (provenance (test "types-test.rkt"))
+    (term (Assert (λ ($e :: Referents Eventuality) (gerku Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4883dd348a25edfc04d749568701a9a28cea250a")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($g :: Referents (Group Entity))
+       (SpeakerDescribes $g (λ ($y :: Referents (Group Entity)) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "48f8ddd3eed7e9f370f83decd47ee8253b5dd8df")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4981a00f42ced6494624933b2573328a83445aed")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($c :: EFn ((Referents Eventuality)) Content) (CloseClause $c)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "49f7e5d6a09f08997aa5d6dac72396e38260cda0")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (PluralNo
+       (λ ($r :: Referents Entity)
+         (SpeakerDescribes $r (λ ($y :: Referents Entity) (mlatu $y))))
+       (λ ($w :: Referents Entity) (Close (blabi $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "49fdcd451a4d10a0253b25faf9b8589f92911cc4")
+    (provenance (fence "spec.md" 9 specimen 1))
+    (term
+     (Bind
+      ($surface :: Referents Entity)
+      (Context)
+      ($limbs :: Referents Entity)
+      (Context)
+      ($gait :: Referents Entity)
+      (Context)
+      (=
+       (Card
+        (SetOf
+         (λ ($x :: Entity)
+           (∧ (gerku $x) (Close (bajra $x $surface $limbs $gait))))))
+       3)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4ac136045a9a033b204e1d994844d4bea899f991")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($x :: Entity) (gerku $x)))
+      (Mention $r)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4bbdc01b216b68a64ad02598ae36f223a699883c")
+    (provenance (fence "samples.md" 31 schema 1))
+    (term
+     (Bind
+      ($base :: Referents Entity)
+      (Local (Refer (λ ($x :: Entity) (gerku $x))))
+      (Bind
+       ($κ :: GroupBasis Entity)
+       (Context (GroupBasisConstraint loi Entity) deps…)
+       (Bind
+        ($groups :: Referents (Group Entity))
+        (Refer (λ ($g :: Group Entity) (CompleteGunmaAt $κ $g $base)))
+        (Mention $groups)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4c4a5fe56227b87a8c28fb5e541daf540108236a")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Let
+      ($description1 :: EFn ((Referents Entity)) Content)
+      (λ ($y :: Referents Entity) (mlatu $y))
+      (Bind
+       ($r :: Referents Entity)
+       (Refer
+        (λ ($reference :: Referents Entity)
+          (∧
+           (SpeakerDescribes $reference $description1)
+           (=
+            (CardBasis
+             $reference
+             (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
+            3))))
+       (Assert (Close (blabi $r))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4d227a1aeabe5caf0ec07097143646d55611ab35")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4d482e180986050b07345abfbe7a787a7cc17b5f")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($p :: PredTerm (RowOf zzzz)) (Close $p)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4d9423ca0957656f9622e3e40d2e8d2164ae9f73")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Some
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4ddba40634e2b11950d9614d88d55401df7bb472")
+    (provenance (test "types-test.rkt"))
+    (term (Let ($a :: Act Assertion) (Mention Speaker) (Mention $a)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4e5fd5ea85ec36e00cc8028b583b491ca32f444f")
+    (provenance (test "types-test.rkt"))
+    (term (Combine Speaker (Close (gerku Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4f65542ee367f12bbff7605b6bf2b22f731d6299")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Most
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "4fd6da45fde0a6917e1470be1aacdff6f9855e12")
+    (provenance (test "types-test.rkt"))
+    (term (WordSign Speaker))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "50ca908a100dd34a3274e35618bee99c2f274749")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($x :: Referents Entity)
+       (SpeakerDescribesUnaddressed
+        $x
+        (λ ($y :: Referents Entity) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "515d77014d591e60474fd4ba23f716adc54c1d54")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit1 :: Referents Entity) (mlatu $unit1)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+       (Assert (Close (klama :1 $r1 :3 $r))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "51b12bba942f386e3adc18e4be5d10ff94726176")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Most
+      (λ ($p :: Entity)
+        (CloseClause (ActualClause (StateClause (prenu :1 $p)))))
+      (λ ($q :: Entity)
+        (CloseClause (ActualClause (StateClause (blabi :1 $q)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5216f757d47aaf3edde74d99cd37204869308eca")
+    (provenance (fence "samples.md" 43 specimen 1))
+    (term
+     (Assert
+      (∀
+       (λ (($p :: Entity) ($d :: Entity))
+         (→
+          (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+          (Close (darxi $p $d)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "521ea6a0036941b13eb668102d0cd8b4bec6a43e")
+    (provenance (test "types-test.rkt"))
+    (term
+     (FewerThan
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "523e425947aa0ddfa54cb39bc0bef6c05c4cab27")
+    (provenance (fence "spec.md" 7 declaration 2))
+    (term :)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "53630773f8538fd688f7404388201a709de9d070")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+       (Assert (Close (tavla $r1 $r))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "53e5d95179510a1e5ade046217f39500ca0fa102")
+    (provenance (fence "samples.md" 48 specimen 1))
+    (term
+     (Bind
+      ($trio :: Referents Entity)
+      (SelectExactly 3 (λ ($x :: Entity) (jbopre $x)))
+      (Assert
+       (Reciprocate
+        $trio
+        (λ ($a $b :: Referents Entity) (Close (tavla $a $b)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5462f8d255c5064d81beb8f7e57ca3f08db6350a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Context $read)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5582b85ea562d59c2ebd06a69cf97193debb83ee")
+    (provenance (fence "samples.md" 40 specimen 1))
+    (term
+     (Bind
+      ($friend :: Referents Entity)
+      (Refer
+       (λ ($x :: Referents Entity)
+         (SpeakerDescribes
+          $x
+          (λ ($y :: Referents Entity) (Close (pendo $y))))))
+      (Assert (Close (tavla Speaker $friend)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "56c1239cece3b6f1ed91bbb65e0d34f4181a9dc7")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $o
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "56e48659ffe3a0f86bfe26991cbd947cccb0cd1e")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (IndividualNo
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($w :: Entity) (Close (blabi $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "588862c224b66667eb8bc4056d58a732be2051a8")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (Exactly
+         0
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "598a6a4cee81dd36989b9a36fbc3e064bbc1cf04")
+    (provenance (fence "samples.md" 18 schema 1))
+    (term
+     (JoiClause
+      $κ
+      (DirectClause (sanga Speaker))
+      (DirectClause (dansu Audience))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5cba856daa1faad059e927e4a418a12581f9b0ac")
+    (provenance (fence "samples.md" 29 specimen 1))
+    (term
+     (Do
+      (Mention (Combine Speaker MiAOthers))
+      (Mention (Combine Audience DoOOthers))
+      (Mention (Combine (Combine Speaker Audience) MaAOthers))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5f033e85563b3f7d682f766ab1b3d150f1e78e98")
+    (provenance (test "types-test.rkt"))
+    (term (λ (($k :: Number) ($g :: Group Entity)) (components_κ $k $g)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5f459508fcab184100333c021fb16de6fd0bac49")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf (λ ($x :: Entity) (Bind ($n :: Natural) (Vague P) (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5fc4cb3d66cfc99d2326c91c02477ace9fd6873d")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit2 :: Referents Entity) (prenu $unit2)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
+       (Bind
+        ($r2 :: Referents Entity)
+        (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+        (Assert (Close (klama $r $r1 $r2)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "5ff051197263d7f1448751e14ff74ada2789534f")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($k :: Number)
+       (Bind
+        ($g :: Referents (Group Entity))
+        (Massify $k Speaker)
+        (Mention $g))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "60fc87759bed60e4d6ddaa460b108229363b260f")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualNo $x $r))
+    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "61a36c12148e6183447961908904a02999e8c657")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (=
+      (Card
+       (SetOf
+        (λ ($global_member :: Entity)
+          (∧ (prenu $global_member) (blabi $global_member)))))
+      2))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "61cf1593994da5db92de0016c1e60bea615086b5")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($o :: ActOccurrence Assertion)
+      (Local (Perform (Assert (Close (gerku Speaker)))))
+      (Mention $o)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "62693f12acbca1a4bbb4a631f81b0d892bd90795")
+    (provenance (test "types-test.rkt"))
+    (term (SetOf (λ ($x :: Entity) (Bind ($n :: Natural) (Vague) (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "628cc3997e5381c2f37e8fed5db3a47685fed3e5")
+    (provenance (fence "samples.md" 59 specimen 1) (test "lower-test.rkt"))
+    (term (Assert (Close ((Tanru sutra klama) Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "628ed4155930424010be2d2a196dd040b96b23d7")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectExactly 1 (λ ($x :: Entity) (gerku $x)))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "62ef9d2abb3071b0cc188c169d027c46b0ce41fd")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (ZipWith
+      (λ ($left $right :: Referents Entity) (Close (tavla $left $right)))
+      (List Speaker Audience)
+      (List Audience Speaker)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "637a4cc637a83276ab5c18e850d2c647064f47c8")
+    (provenance (fence "samples.md" 30 specimen 1) (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($base :: Referents Entity)
+      (Local (Refer (λ ($x :: Entity) (gerku $x))))
+      (Bind
+       ($sets :: Referents (Set Entity))
+       (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
+       (Mention $sets))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "64dff58ebc8029173fd6c37d9e453f3cf0b91e31")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralNo $x $r))
+    (env
+     (($r EFn ((Referents Number)) Content)
+      ($x Fn ((Referents Number)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "64f0d760d098d3686252530ce87fae12cba760b0")
+    (provenance (test "types-test.rkt"))
+    (term (SpeakerDescribesUnaddressed Speaker))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6535d8b6add07035ebe6d764114833ff161e828c")
+    (provenance (test "types-test.rkt"))
+    (term (SentenceSign (Close (gerku Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "65427b676a4b735cac9fe7e62663f124cc51b1b7")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Let
+      ($description1 :: EFn ((Referents Entity)) Content)
+      (λ ($y :: Referents Entity) (prenu $y))
+      (Bind
+       ($people :: Referents Entity)
+       (Local
+        (Refer
+         (λ ($reference :: Referents Entity)
+           (∧
+            (SpeakerDescribes $reference $description1)
+            (=
+             (CardBasis
+              $reference
+              (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
+             3)))))
+       (Bind
+        ($κ :: DecompositionBasis (Group Entity) Entity)
+        (Context (GroupBasisConstraint |lu'o| Entity) deps…)
+        (Bind
+         ($aggregate :: Referents (Group Entity))
+         (Massify $κ $people)
+         (Mention $aggregate))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6630372bac3c65a1d2efd1ebe62e5f48f285f61a")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (FewerThan
+         1
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "665e54d5ae4c63ea62677e01ca6a42d6f25fac78")
+    (provenance (fence "samples.md" 67 specimen 6))
+    (term
+     (Bind
+      ($scale :: Referents Scale)
+      (Context)
+      (Bind
+       ($amt :: Referents Amount)
+       (Refer
+        (λ ($a :: Referents Amount)
+          ((NiRel (Close (klama Speaker))) $a $scale)))
+       (Mention (− 1 (AmountValue $amt $scale))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "66d020121167148ef905c438f17b9e08279c8c41")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($nuclear_bajra_2 :: Referents Entity)
+      (Context)
+      ($nuclear_bajra_3 :: Referents Entity)
+      (Context $nuclear_bajra_2)
+      ($nuclear_bajra_4 :: Referents Entity)
+      (Context)
+      (GlobalExactly
+       3
+       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+       (λ ($nuclear_member :: Entity)
+         (Close
+          (bajra
+           $nuclear_member
+           $nuclear_bajra_2
+           $nuclear_bajra_3
+           $nuclear_bajra_4))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "679a6c30ff1a50022b0318f997405b963275d5ec")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Let ($saved :: Act Assertion) $A $saved)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "68256ed991f01e36f74061e40828823d71c2fb80")
     (provenance (fence "samples.md" 15 specimen 1))
     (term (Assert (CloseClause (ActualClause (StateClause (= (+ 2 2) 4))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2ae03060ef75f54562b55d53c50ed510111e4d71")
+  (case (id "686b8a01e259b902a68c4bf25a21c829e47c5f2b")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (PluralNo
+       (λ ($r :: Referents Entity) (gerku $r))
+       (λ ($w :: Referents Entity) (Close (tavla Speaker $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "695621c9fd6768ad692d49c8fe908e1dffe0e552")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
@@ -920,49 +2263,1314 @@
           (Close (tavla $nuclear_member Speaker $nuclear_tavla_3)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2dca33406b91729974a2ed175a5f99fa545431bf")
-    (provenance (fence "samples.md" 26 specimen 1))
+  (case (id "6964e1d3ba0bef78d774d795a84a8dd7c8343a77")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (No
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6b5219e18cc5d5e4018ab5d365ff12e80bf22a63")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectAllBut 1 (λ ($x :: Entity) (gerku $x)))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6bb9a9d112af8c788db60a146139be5bdf24ed50")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ (($p :: Fn (Eventuality) Content) ($c :: ClauseContent))
+       (Exactly 1 $p $c)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6c7456962dddeb38b3f49a3714d3b163328ed97b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($e :: Referents Eventuality)
+       (Close (klama Speaker This That Yonder Audience :Eventuality $e))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6d99ce06d21108698d3e07c185def4ad7282819a")
+    (provenance (test "types-test.rkt"))
+    (term
+     (MoreThan
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6e7397942012252890600e7b517c81060e63c54c")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      Speaker
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "6fce7056f266517b258e0231123c4b11d8026cec")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($d :: ContrastDomain (RowOf melbi))
+      (Context)
+      (Mention (Close ((Scalar OtherThan $d melbi) That)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7018932048d70db90a00f9517739c57b1d12bd59")
+    (provenance (fence "samples.md" 57 specimen 1))
+    (term
+     (Let
+      ($a1 :: Act Assertion)
+      (Assert (Close (klama Speaker)))
+      (Bind
+       ($o1 :: ActOccurrence Assertion)
+       (Perform Host $a1)
+       (Let
+        ($a2 :: Act Assertion)
+        (Assert (Close (stali Audience)))
+        (Bind
+         ($o2 :: ActOccurrence Assertion)
+         (Perform Host $a2)
+         (Do
+          (Perform AttachedDisplay (Express (Close (Contrast $o2 $o1))))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7111ccf3ee66a9a8da066e83054410be8605a6d7")
+    (provenance (fence "samples.md" 65 specimen 3))
+    (term
+     (Bind
+      ($a :: Referents Amount)
+      (Refer
+       (λ ($x :: Referents Amount)
+         (Close ((NiRel (Close (klama Speaker))) $x))))
+      (Mention $a)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7154b4784b28f7f02d6b57ef34cd4e165e266cf4")
+    (provenance (fence "samples.md" 21 specimen 1))
+    (term
+     (Bind
+      ($cat :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+      (Assert (CloseClause (ClauseNot (DirectClause (jbena $cat)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "719eba94ea1aabac7200c2ae58a23147eb8e5a5a")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ (($k :: DecompositionBasis (Group Entity) Entity) ($g :: Group Entity))
+       (SetOf (λ ($x :: Referents Entity) (Among $x (components_κ $k $g))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7209d79984216ee8ba54c1d2425c75236b585f12")
+    (provenance (fence "samples.md" 65 specimen 2))
+    (term
+     (Let
+      ($p :: Proposition)
+      (Reify (Close (klama Speaker)))
+      (Bind
+       ($s :: Referents (Sign Sentence))
+       (Refer
+        (λ ($x :: Referents (Sign Sentence)) ((DuhuRel (Holds $p)) $p :2 $x)))
+       (Mention $s))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "725e77e96feb447d09cb70f969d5069d52657462")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform (Assert ($Q $x))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))
+      ($x Referents Entity)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "72e93912f2016a568813fa3bef711f2c86ec965d")
+    (provenance (fence "samples.md" 51 specimen 1))
+    (term
+     (Assert
+      (Close
+       (cusku
+        Speaker
+        (StructuredQuote
+         (Utterance
+          ($u :: UtteranceToken)
+          ((∧
+            (SpeakerOf $u Speaker)
+            (Realizes $u (Assert (Close (klama Speaker))))))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "73990142c280664ee4318f19c642fea7ed0cf18b")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralNo $x $r))
+    (env
+     (($r Fn ((Referents Eventuality)) Content)
+      ($x Fn ((Referents Eventuality)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "739de8a39637c6299dd8e53717e5685843dcb882")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert $read)
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "74bc5e0563b15b08c28181fcbc53cac0a5e795c6")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert (Bind ($z :: Referents Entity) (Context $read) ($P $z)))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "74d0212bae121f9f6f818fd874766bf175e0fc4b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ (($p :: Fn (Eventuality) Content) ($r :: Referents Entity))
+       (CoveredBy $p $r)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7586717f0570667cd0cc8d184c30dc0cdb459374")
+    (provenance (fence "spec.md" 7 declaration 5))
+    (term Content)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "75eb387e70dbbed079b664aaf53271db18e5d154")
+    (provenance (test "types-test.rkt"))
+    (term (Mention MiAOthers))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "75fdd6b3f45028ff897a064b0ee217128bdb263e")
+    (provenance (fence "samples.md" 4 specimen 1) (test "lower-test.rkt"))
+    (term (Assert (Close ((DropPlace klama 3) Speaker This This This))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7611cc8cb7ce1a802c515748fb22e9c3be81fe04")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (IndividualSome
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Entity) (Close (tavla Speaker $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7655ec02b11364593202ec22de00f879a1416a71")
+    (provenance (fence "samples.md" 67 specimen 2))
+    (term (Mention (OpaqueQuote "mi klama")))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "783b376d3c5823e1456b7ccaa080c0b763e1f202")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert $o)
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "78838d7257dd8fbb6ed52d74abd09a02b651f2e6")
+    (provenance (fence "samples.md" 76 specimen 1))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($person :: Entity)
+         (∧
+          (prenu $person)
+          (IndividualSome
+           (λ ($dog :: Entity) (gerku $dog))
+           (λ ($dog :: Entity) (Close (ponse $person $dog))))))
+       (λ ($person :: Entity) (Close (blabi $person))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "78eb28d388df392801eebdb6b05b520d78dd8683")
+    (provenance (fence "samples.md" 75 specimen 1))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($dog :: Entity)
+         (Bind
+          ($cats :: Referents Entity)
+          (Refer (λ ($r :: Referents Entity) (mlatu $r)))
+          (Close (tavla $dog $cats)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7a6b26e312c0e428559a730a99225ef2ff7be1d0")
+    (provenance (fence "samples.md" 3 specimen 1) (test "lower-test.rkt"))
+    (term (Assert (Close (klama :2 This Yonder))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7a9252b6a87cfaf94507e361e0df3f7cf72e97a3")
+    (provenance (fence "samples.md" 55 specimen 3))
+    (term
+     (Let
+      ($a :: Act Assertion)
+      (Assert (Close (klama Audience)))
+      (Bind
+       ($o :: ActOccurrence Assertion)
+       (Perform Host $a)
+       (Do
+        (Perform
+         AttachedDisplay
+         (Express (Close (Unhappiness Speaker $o Intense))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7aafddcb18d6cb44d141cc604b2b06187cc8bb58")
+    (provenance (fence "samples.md" 5 specimen 1) (test "lower-test.rkt"))
+    (term (Assert (Close (klama Speaker This))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7ac09351fa2cb0f2184d0234ccc6da29f06c7b94")
+    (provenance (fence "samples.md" 50 specimen 3))
+    (term
+     (Ask
+      (OpenQ
+       (λ ($r :: PredTerm (Row (1 (Referents Entity)))) (Close ($r This))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7b0c1ecd94ca77a389a1a2193e10af1b538bc15a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7bcd8dc2f4961a8b551b2d2258b1c8e26d59a3bc")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Every
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7c191d9763138b3416250ae6f5bf49521055400f")
+    (provenance (test "types-test.rkt"))
+    (term
+     (AtMost
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7c3231951eebcc70f2418f75754bf7e1274f988a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Assert ($Q Speaker))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7ca8ef9d963163fbd4cd8b8a33d7b1c3934c30af")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Assert (Close (blabi $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7d4d458a9d04dd3ba6bae430d4816057d4c3d3cd")
+    (provenance
+     (fence "samples.md" 44 specimen 1)
+     (test "individual-lowering-test.rkt")
+     (test "lower-test.rkt"))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($x :: Entity) (Close (blabi $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7d55d9ccb1beb10ebdd4aebc87c0f9fcab25868a")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Assert ($P Speaker)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7d6d1b399643fefc13f71f5d9fd4023d04478cde")
+    (provenance (fence "spec.md" 19 expansion 3))
+    (term
+     (λ ($j :: Referents Eventuality)
+       (∃
+        (λ ($e1 :: Referents Eventuality)
+          (∧
+           (C $e1)
+           (∃
+            (λ ($e2 :: Referents Eventuality)
+              (∧
+               (D $e2)
+               (CompleteGunmaAt κ $j (Combine $e1 $e2))
+               (fasnu $j)))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7e1f848a9b2b5d077ec1fbc5cda0ebdd13052676")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($f :: Fn () Content) ($f)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7e7774c08881251aefae55712ff98d6c2e1b59b5")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Context $o)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7ef04e3462482691720f786a78861276ec47c356")
+    (provenance (fence "samples.md" 2 specimen 1))
+    (term
+     (Assert
+      (Bind
+       ($to :: Referents Entity)
+       (Context)
+       ($from :: Referents Entity)
+       (Context)
+       ($via :: Referents Entity)
+       (Context)
+       ($by :: Referents Entity)
+       (Context)
+       (CloseClause
+        (λ ($e :: Referents Eventuality)
+          (∧
+           (klama Speaker $to $from $via $by :Eventuality $e)
+           (fasnu $e)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7f780f0566da970a43f8e1eed8160f12bdf06c0e")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($x :: Entity)
+         (IndividualSome
+          (λ ($x :: Entity) (mlatu $x))
+          (λ ($w :: Entity) (Close (tavla $x $w))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "7f96a0ab593a3601eeeb783cd16bf0ab90df986e")
+    (provenance (fence "samples.md" 47 specimen 1))
+    (term
+     (Bind
+      ($dogs :: Referents Entity)
+      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+      ($people :: Referents Entity)
+      (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
+      (Assert
+       (Distrib
+        (λ ($d :: Entity)
+          (Distrib (λ ($p :: Entity) (Close (nelci $d $p))) $people))
+        $dogs))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8008e573ab90756120c85af7f5475026d5a7f928")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($people :: Referents Entity)
+      (Local
+       (SelectExactly
+        3
+        (λ ($x :: Entity)
+          (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y))))))
+      (Mention $people)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "80c6e631b6edf4591a01368fc0e93a527ffe8960")
+    (provenance (fence "samples.md" 27 specimen 1))
+    (term
+     (Bind
+      ($κ :: DecompositionBasis (Group Entity) Entity)
+      (Context (GroupBasisConstraint joi Entity) deps…)
+      (Bind
+       ($group :: Referents (Group Entity))
+       (JoiGroup $κ Speaker Audience)
+       (Mention $group))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8106a9b54255c646e0c8751116d4d886509934b9")
+    (provenance (fence "samples.md" 70 specimen 1))
+    (term
+     (Bind
+      ($cat :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+      (Do (Assert (Close (blabi $cat))) (Assert (Close (jbena $cat))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "815f427cdb5d8ee126c4ff8a59a33bd6448b4526")
+    (provenance (fence "samples.md" 22 specimen 1))
+    (term
+     (Bind
+      ($it :: Referents Entity)
+      (Refer
+       (λ ($x :: Referents Entity)
+         (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y)))))
+      (Assert (Close (blabi $it)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8163cfa0e248843355957879bd8cbcc51dd7e65f")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+       (Assert (Close (tavla $r $r1))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "81f9b07efa324d80f1c0bae6616345355a483493")
+    (provenance (test "types-test.rkt"))
+    (term
+     (AtLeast
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "823f81460a1611321ed58295e69bf0ff3fa830e8")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualEvery $x $r))
+    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8362ace9244dc7cb190360a5d729233b657404ae")
+    (provenance (fence "samples.md" 63 specimen 1))
+    (term
+     (Bind
+      ($death :: Referents Eventuality)
+      (Refer
+       (λ ($e :: Referents Eventuality)
+         (Close (morsi :1 Audience :Eventuality $e))))
+      (Bind
+       ($role :: Fn ((Referents Entity) (Referents Eventuality)) Content)
+       (Context
+        (λ ($k :: Fn ((Referents Entity) (Referents Eventuality)) Content)
+          (JaiRoleAdmissible rinka $k)))
+       (Assert (Close ((JaiRaise rinka $role) :1 Speaker :2 $death))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "84dfb76d571acff8ff6909c051c6b8221a347eb3")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($x :: Entity)
+        (Bind
+         ($r :: Referents Entity)
+         (Refer (λ ($y :: Entity) (gerku $y)))
+         (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "85ea9b541f5e6e09092dcbdec5f36229a2d2706f")
+    (provenance (fence "samples.md" 65 specimen 4))
+    (term
+     (Bind
+      ($kind :: Referents Eventuality)
+      (Refer (λ ($k :: Referents Eventuality) (fasnu $k)))
+      (Bind
+       ($a :: Referents AbstractNature)
+       (Refer
+        (λ ($x :: Referents AbstractNature)
+          (Close ((SuhuRel (Close (klama Speaker))) $x $kind))))
+       (Mention $a))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "86b1cb84a2388cd620c361462da252c3750359df")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Exactly
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "87c2718ed127f4ec8251d80779f405dabeb6b1fb")
+    (provenance (fence "samples.md" 19 specimen 1))
+    (term
+     (Bind
+      ($cat :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
+      (Assert (Close (blabi $cat)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8801716d1dbf3f38b400bb505bec61a25663a874")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (Bind
+      ($x :: Referents Entity)
+      $S
+      ($y :: Referents Entity)
+      $S
+      (Do (Perform (Assert ($P $x))) (Perform (Assert ($Q $y))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8844fb5c7eb3a5a6ce9d3e52df6875fe170e5dd4")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualEvery $x $r))
+    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "88e70cc0c9a9eafa133a8d66f5bfdf7dd57668f5")
+    (provenance (test "types-test.rkt"))
+    (term (Mention Speaker))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "892fd70ba536901bcce73f4fe1df29035b464860")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (Exactly
+         0
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity)
+           (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "89b40210a2103ac2c256a69ee20dd6401ebe2aae")
+    (provenance (fence "samples.md" 50 specimen 1))
+    (term (Ask (Polar (Close (klama Speaker)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "89bed8669f76968d634ba91ca7ce730d27b5e93b")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Assert (CloseClause (λ ($e :: Referents Eventuality) (gerku Speaker)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8a3919e7b6057f09b8ff2577cc49a0cc569b06e9")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Utterance
+      ($u :: UtteranceToken)
+      ((Realizes $u (Assert (Close (gerku Speaker)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8b6a55434dc83acc61f988b62540cb0891124658")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert (Bind ($z :: Referents Entity) (Context $o) ($P $z)))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8cb7eee7664a04dab103d7c12b5ac81b779495eb")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (IndividualEvery
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($x :: Entity) (Close (tavla $r $x)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8d11f552382c491acc4eb953b1dec298e1b102d4")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Let
+      ($description1 :: EFn ((Referents Entity)) Content)
+      (λ ($y :: Referents Entity) (prenu $y))
+      (Bind
+       ($r :: Referents Entity)
+       (Refer
+        (λ ($reference :: Referents Entity)
+          (∧
+           (SpeakerDescribes $reference $description1)
+           (=
+            (CardBasis
+             $reference
+             (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
+            3))))
+       (Assert (Close (tavla $r Speaker))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8da7d02eafb4d49c334c666a6bda1022651cb4b3")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualEvery $x $r))
+    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8db96ab4a45ea52d61cd595879a5f5910b74187c")
+    (provenance (test "types-test.rkt"))
+    (term (Combine Speaker Audience))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8e012ea90e7b6ca85d4acbc70a40ee52d729f74c")
+    (provenance (fence "spec.md" 4 specimen 1) (test "lower-test.rkt"))
+    (term (λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8e251e2449e938fab084751d0a47b168a35f09c0")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Assert (Close (tavla Speaker $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8ee772ea90969da159b32de133af285ee54b3b08")
+    (provenance (test "types-test.rkt"))
+    (term
+     (MoreThan
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8effe3e017d4fa5c0f7e876a29dc85c492b798dd")
+    (provenance (test "perform-source-test.rkt"))
+    (term (Perform 3 (Assert ($P Speaker))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8f1c82306360b91dcf555dd1bdd22fa812ceafc3")
+    (provenance (fence "samples.md" 52 specimen 1))
+    (term
+     (Let
+      ($a :: Act Assertion)
+      (Assert (Close (klama Speaker)))
+      (Do (Perform $a) (Perform $a))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8f45e6958948fa1f1c5e9390d489e7a8bc3c091c")
+    (provenance (test "lower-test.rkt"))
+    (term (Mention (Close (klama Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "8fe348271de720ebbd487eac07279aa26dd72a3f")
+    (provenance (fence "spec.md" 7 declaration 1))
+    (term CloseClause)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "90317723a61af10ca62b2ac02eb4e161615454ca")
+    (provenance (fence "samples.md" 9 specimen 1))
     (term
      (Assert
       (CloseClause
-       (ClauseAnd
-        (DirectClause (jmaji Speaker))
-        (DirectClause (jmaji Audience))))))
+       (ActualClause
+        (λ ($e :: Referents Eventuality)
+          (∧
+           ((DirectClause (klama Speaker This)) $e)
+           (Close (pilno :2 This :3 $e))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2df594eb652eeff97414edc08a6c3b6dd3362aa6")
+  (case (id "904ddf2e16203e7c0d11f38ceed3e4df46ed56bb")
+    (provenance (fence "samples.md" 65 specimen 1))
+    (term
+     (Bind
+      ($p :: Referents Proposition)
+      (Refer
+       (λ ($q :: Referents Proposition)
+         (CoRef $q (Reify (Close (klama Speaker))))))
+      (Assert (Close (djuno Audience $p)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9100ac2ba8c22f1d3f21a197cf4cc25f62afb978")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (PluralNo
+        (λ ($r :: Referents Entity) (gerku $r))
+        (λ ($w :: Referents Entity) (Close (tavla $w $r)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "91e734c8cc712b20008b7270ed9241dd870bd83f")
     (provenance (test "types-test.rkt"))
-    (term (SentenceSign (Close (gerku Speaker))))
+    (term
+     (λ (($p :: Fn (Entity) Content) ($r :: Referents Entity))
+       (CoveredBy $p $r)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2e201b96a49b39319af3a98efa71e286ae4c1742")
+  (case (id "925b1a64ed5237b2d6dc1312849292e8ac28b41b")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9321744e93f7036a53463bf36d4072cc74f2b8fb")
+    (provenance (fence "spec.md" 12 specimen 1))
+    (term
+     (∀
+      (λ (($p :: Entity) ($d :: Entity))
+        (→
+         (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
+         (Close (darxi $p $d))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "933ed459ec2709af28c10938d6d15c37d6780e60")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualNo $x $r))
+    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "93840201365a510ccf7bbae834fc5f41cdb61e61")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform
+        Host
+        (Assert (CloseClause (ActualClause (StateClause ($P Speaker)))))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "93915ae660093006fa258db1d4f1d0e763b556ce")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
+       ($r Speaker Audience This)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "93f412d4c8e70f45ef7f289f6c554ad2a0a70387")
+    (provenance (test "lower-test.rkt") (test "reference-scopes-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+       (Assert (Close (tavla $r $r1))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9409829c3b83eebc889300dce0774caf1f35e73f")
+    (provenance (fence "samples.md" 14 schema 1))
+    (term
+     (CloseClause
+      (ActualClause
+       (ClauseAnd
+        (λ ($s :: Referents Eventuality)
+          (∧ ((StateClause (= ($valueOf $alpha) $x)) $s) (cabna $s Now)))
+        (λ ($t :: Referents Eventuality)
+          (∧
+           ((StateClause (¬ (= ($valueOf $alpha) $x))) $t)
+           (balvi $t Now)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9441e9406a7fb5c08427c9958b5813ae110c9064")
+    (provenance (test "individual-lowering-test.rkt") (test "lower-test.rkt"))
+    (term
+     (Assert
+      (¬
+       (≤
+        1
+        (Card
+         (SetOf
+          (λ ($individual :: Entity)
+            (∧ (gerku $individual) (Close (blabi $individual))))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "946a465ec808c5654934a63f0bf9207ce8ba694b")
+    (provenance (test "types-test.rkt"))
+    (term (NameSign "djan"))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "957473e725e0452ad222ec181edfc10ef50790a1")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($g :: Referents (Group Entity))
+       (SpeakerDescribes $g (λ ($y :: Referents Entity) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "967f02bb11989565f32b421b49e15ecbd566bb2e")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Most
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "96c63eca0cc32f385adc22285387f7ea9cf02813")
+    (provenance (fence "samples.md" 42 specimen 1))
+    (term
+     (Presuppose
+      (∃ (λ ($x :: Entity) (prenu $x)))
+      (∧
+       (∀
+        (λ ($p :: Entity)
+          (→
+           (prenu $p)
+           (∃
+            (λ ($d :: Referents Entity)
+              (∧
+               (CoveredBy (λ ($x :: Entity) (gerku $x)) $d)
+               (= (CardBasis $d (λ ($x :: Entity) (gerku $x))) 3)
+               (Close (ponse $p $d))))))))
+       (∀
+        (λ (($p :: Entity) ($d :: Referents Entity))
+          (→
+           (∧
+            (prenu $p)
+            (CoveredBy (λ ($x :: Entity) (gerku $x)) $d)
+            (= (CardBasis $d (λ ($x :: Entity) (gerku $x))) 3)
+            (Close (ponse $p $d)))
+           (Close (tatpi $d))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "96e93d97016dd645070b670068a4827536451100")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (IndividualSome
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($w :: Entity) (Close (tavla $r $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "972e82229346aa87c422923226084119a70dc6ab")
+    (provenance (fence "samples.md" 8 specimen 1))
+    (term
+     (Assert
+      (CloseClause
+       (ActualClause
+        (λ ($e :: Referents Eventuality)
+          (∃
+           (λ ($m :: Referents Eventuality)
+             (∧
+              ((DirectClause (citka Speaker)) $e)
+              (purci $m Now)
+              (purci $e $m)))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "97437724c3bee94e6b423f9c73c31b239417dc45")
     (provenance (test "individual-lowering-test.rkt"))
     (term
      (Assert
       (GlobalExactly
-       3
+       1
        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-       (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member))))))
+       (λ ($individual :: Entity) (¬ (Close (blabi $individual)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2f4f686f45b42fd8c7f3977c7f22f3fc2159a7eb")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralSome $x $r))
-    (env
-     (($r EFn ((Referents Number)) Content)
-      ($x Fn ((Referents Number)) Content)))
+  (case (id "996711d3b3763703ae18426e5dbfd66ce5b4ec91")
+    (provenance (test "types-test.rkt"))
+    (term (LocutionOf (λ ($e :: Referents Locution) (mlatu $e)) CurrentToken))
+    (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2f6f72b4075986be93027f581ec3ff9a40467c58")
+  (case (id "9a3d9b551c3ac1553da45cfd95cb258a6cb36a13")
+    (provenance (fence "samples.md" 36 specimen 1) (test "lower-test.rkt"))
+    (term
+     (Assert
+      (Generic
+       Typical
+       (λ ($x :: Entity) (mlatu $x))
+       (λ ($x :: Entity) (Close (cinri $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9a7acc1a00231c256073bb1164e60dcc65e2fccc")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectSome (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9aa8e3d9adee41cece118f80551eee2d5211caad")
+    (provenance (test "types-test.rkt"))
+    (term (At klama 9 This))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9c2755813fa230bef2c71056e5b45f497e27ef2c")
+    (provenance (fence "samples.md" 6 specimen 1))
+    (term (Mention (λ ($x :: Referents Entity) (Close (klama :2 $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9cca10f7ac6d4a3a12d946eab9b6d108e8855277")
+    (provenance (fence "samples.md" 17 specimen 1) (test "lower-test.rkt"))
+    (term
+     (Assert
+      (CloseClause
+       (ActualClause
+        (ClauseAnd
+         (DirectClause (klama Speaker))
+         (DirectClause (stali Audience)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "9e410285ceb918074344ad528bcd79e037212ee8")
+    (provenance (fence "samples.md" 24 specimen 1))
+    (term (Assert (Close (remna (Combine Speaker Audience)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a0273d82445c5b29ef169d61c09e0c293caf7e31")
+    (provenance (test "types-test.rkt"))
+    (term (Card (SetOf (λ ($x :: Entity) (gerku $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a17146c82dc8fa4349226527b5d484a8ec9b9f26")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Every
+      (λ ($x :: Entity) (datka $x))
+      (λ ($duck :: Entity)
+        (CloseClause (CapableClause (DirectClause (flulimna $duck)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a20453c0f87771a2d424e6298bc34a5398e76169")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer
+       (λ ($described :: Referents Entity)
+         (SpeakerDescribes
+          $described
+          (λ ($unit :: Referents Entity) (mlatu $unit)))))
+      (Assert (Close (blabi $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a3c0c4aaec7ccef15f25fae0a9a840cef1cab8fc")
+    (provenance (fence "samples.md" 74 specimen 1))
+    (term
+     (Assert
+      (IndividualEvery
+       (λ ($x :: Entity) (gerku $x))
+       (λ ($dog :: Entity)
+         (IndividualSome
+          (λ ($y :: Entity) (mlatu $y))
+          (λ ($cat :: Entity) (Close (tavla $dog $cat))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a3c12cc87e39c2d0aaa2675dafcd4d8009fdf513")
     (provenance (test "lower-test.rkt"))
     (term
      (Assert
@@ -979,177 +3587,98 @@
              (Close (tavla $x $nuclear_member $nuclear_tavla_3)))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2f99adcc1ee02fe5c13f7cba5115517a8b9d35cd")
-    (provenance (test "types-test.rkt"))
-    (term (λ (($x3 :: Referents Entity) ($s :: Set Entity)) (∈ $x3 $s)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "2fa405b6aa500b4c03e7851595792fca30324da2")
+  (case (id "a420add01889181f8bacb04f9f9c30f61b41dcae")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
-      ($nuclear_bajra_2 :: Referents Entity)
+      ($restrictor_klama_2 :: Referents Entity)
       (Context)
-      ($nuclear_bajra_3 :: Referents Entity)
-      (Context $nuclear_bajra_2)
-      ($nuclear_bajra_4 :: Referents Entity)
+      ($restrictor_klama_3 :: Referents Entity)
+      (Context)
+      ($restrictor_klama_4 :: Referents Entity)
+      (Context)
+      ($restrictor_klama_5 :: Referents Entity)
+      (Context)
+      ($nuclear_klama_2 :: Referents Entity)
+      (Context)
+      ($nuclear_klama_3 :: Referents Entity)
+      (Context)
+      ($nuclear_klama_4 :: Referents Entity)
+      (Context)
+      ($nuclear_klama_5 :: Referents Entity)
       (Context)
       (GlobalExactly
        3
-       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+       (λ ($restrictor_member :: Entity)
+         (Close
+          (klama
+           $restrictor_member
+           $restrictor_klama_2
+           $restrictor_klama_3
+           $restrictor_klama_4
+           $restrictor_klama_5)))
        (λ ($nuclear_member :: Entity)
          (Close
-          (bajra
+          (klama
            $nuclear_member
-           $nuclear_bajra_2
-           $nuclear_bajra_3
-           $nuclear_bajra_4))))))
+           $nuclear_klama_2
+           $nuclear_klama_3
+           $nuclear_klama_4
+           $nuclear_klama_5))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "30d2975027dd33918e02066cc068654abe8594a7")
-    (provenance (test "lower-test.rkt"))
+  (case (id "a4dae63d4bb6943d08964c8a65a7c28c1ed6503d")
+    (provenance (test "types-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Assert (Close (blabi $r)))))
+      (Refer
+       (λ ($x :: Referents Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
+      (Mention $r)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "31f30df1941533a44aaa94f1ac12546b608cdfe4")
-    (provenance (fence "spec.md" 8 schema 1))
-    (term (∨ (∧ (= $p ℓ1) (C (At R ℓ1 v))) … (∧ (= $p ℓn) (C (At R ℓn v)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3259b1b0992184bf9bc77a2fb0e559c5431eda11")
-    (provenance (fence "samples.md" 5 specimen 1) (test "lower-test.rkt"))
-    (term (Assert (Close (klama Speaker This))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3298383f5c347cc467e7b207779c065cdf0e07e1")
-    (provenance (fence "samples.md" 29 specimen 1))
-    (term
-     (Do
-      (Mention (Combine Speaker MiAOthers))
-      (Mention (Combine Audience DoOOthers))
-      (Mention (Combine (Combine Speaker Audience) MaAOthers))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3306bf521fa1bc3710990343bc13d0ab345caaa8")
+  (case (id "a53979585fdf1029a8bfa37131a12510e59198c6")
     (provenance (test "types-test.rkt"))
     (term
-     (Some
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+     (λ ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
+       ($r Speaker Audience)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "333f8420d03ff060cde03088a5a12c17f2f5734c")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Let
-      ($description1 :: EFn ((Referents Entity)) Content)
-      (λ ($y :: Referents Entity) (prenu $y))
-      (Bind
-       ($people :: Referents Entity)
-       (Local
-        (Refer
-         (λ ($reference :: Referents Entity)
-           (∧
-            (SpeakerDescribes $reference $description1)
-            (=
-             (CardBasis
-              $reference
-              (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
-             3)))))
-       (Bind
-        ($κ :: DecompositionBasis (Group Entity) Entity)
-        (Context (GroupBasisConstraint |lu'o| Entity) deps…)
-        (Bind
-         ($aggregate :: Referents (Group Entity))
-         (Massify $κ $people)
-         (Mention $aggregate))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "33a747abb406fff7f7d382d4f0ec7db512166050")
-    (provenance (fence "samples.md" 67 specimen 5))
-    (term (Assert (= (|te'a| 2 3) 8)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "34e7caeada24d56f55f27c9529136cc5c10131d8")
-    (provenance (test "types-test.rkt"))
-    (term (Sign ($s :: SignToken MathExpression) ((TextOf $s "re te'a ci"))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "35098685acdf2649ac62f161849255287c79376d")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
-    (env
-     (($r Fn ((Referents Eventuality)) Content)
-      ($x Fn ((Referents Eventuality)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "35b770c2f189e0c8203b4851276705b9762635cd")
+  (case (id "a5461929596862d8a2ccb077317df5cbe1b78118")
     (provenance (fence "spec.md" 18 expansion 1))
     (term (NahiObjection t))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "36078ecc1351881046536faeaab110dade727ce7")
-    (provenance (fence "spec.md" 15 schema 1))
+  (case (id "a60180665536b1bbe893649c327e183fe2e3682e")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (Let
-      ($p :: Proposition)
-      (Reify c)
-      (Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p))))
-    (env ())
+     (PerformSource
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "37db005424979d116e258427722bcee539b3f4e4")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($f :: EFn ((Referents Entity)) Content)
-       (SetOf (λ ($x :: Entity) ($f $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "37e0504b5a61407b1de93761e6cd8ed4e0bc15e9")
-    (provenance (fence "samples.md" 52 specimen 1))
-    (term
-     (Let
-      ($a :: Act Assertion)
-      (Assert (Close (klama Speaker)))
-      (Do (Perform $a) (Perform $a))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3800c312509274326019e9d34421c1bb5c948ffb")
+  (case (id "a6b67772465a0276af377d33d98d102d7e3bddff")
     (provenance (fence "samples.md" 55 specimen 1))
     (term
      (Let
@@ -1164,431 +3693,183 @@
          (Express (Close (Happiness Speaker $o Moderate))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "388b2bd2be5915f794953884c247c7c1e1043da5")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf (λ ($x :: Entity) (Bind ($n :: Natural) (Vague P) (gerku $x)))))
+  (case (id "a775b8e3f58f9179318bb0ad8ab5a686965bfe81")
+    (provenance
+     (fence "spec.md" 1 specimen 1)
+     (fence "spec.md" 3 expansion 4)
+     (test "lower-test.rkt"))
+    (term (klama Speaker This))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "38ef4156842002f5d07d21dffdce6e3c2bf5ead5")
-    (provenance (test "types-test.rkt"))
-    (term (WordSign "klama"))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "38fb67dc9ca0c92e5b196987b2e15cf7289da5d2")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Utterance
-      ($u :: UtteranceToken)
-      ((Bind
-        ($x :: Entity)
-        (Context)
-        (Realizes $u (Assert (Close (gerku $x))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3945ffc8a81358ba3de498b020e825ded20ae2fb")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($left :: Referents Entity)
-      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-      ($right :: Referents Entity)
-      (SelectExactly 2 (λ ($x1 :: Entity) (prenu $x1)))
-      (Mention
-       (Distrib
-        (λ ($l :: Entity)
-          (Distrib (λ ($r :: Entity) (Close (nelci $l $r))) $right))
-        $left))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3a1e3ff26b6a1c46ced1e59f18300093129a4be5")
-    (provenance (fence "spec.md" 7 declaration 5))
-    (term Content)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3aaf82695f9e64d04893f5876cae6f5c8f6dca5d")
-    (provenance (fence "spec.md" 4 specimen 1) (test "lower-test.rkt"))
-    (term (λ ($new1 $new2 :: Referents Entity) (tavla $new2 $new1)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3b82adef07c8c05ddd494791b294d70c71554893")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($people :: Referents Entity)
-      (Local
-       (SelectExactly
-        3
-        (λ ($x :: Entity)
-          (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y))))))
-      (Mention $people)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3c6e76459fb6e51496d660ddf53d065d17487511")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3d4c01783fbef8bf7c1aa4d914bd9373e6a92998")
-    (provenance (fence "samples.md" 75 specimen 1))
-    (term
-     (Assert
-      (IndividualEvery
-       (λ ($person :: Entity)
-         (∧
-          (prenu $person)
-          (IndividualSome
-           (λ ($dog :: Entity) (gerku $dog))
-           (λ ($dog :: Entity) (Close (ponse $person $dog))))))
-       (λ ($person :: Entity) (Close (blabi $person))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3dcc6a7fd3cdc51e4a4478def6eaad15dad9fbe3")
-    (provenance (test "types-test.rkt"))
-    (term (λ ($f :: Fn () Content) ($f)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3e382008dbd76314c637d4769638b692e5b543dc")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Mention
-      (IndividualSome
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (tavla Speaker $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3e642703fcfb45e21133d7a47598bb0ac8e3395f")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer
-       (λ ($described :: Referents Entity)
-         (SpeakerDescribes
-          $described
-          (λ ($unit :: Referents Entity) (mlatu $unit)))))
-      (Assert (Close (tavla Speaker $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "3e931c7625e91205aa0e47ea2844bf7972c4007c")
-    (provenance (test "types-test.rkt"))
-    (term (Assert (λ ($e :: Referents Eventuality) (gerku Speaker))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4006ae98ff2969b73b9f56cda088f668931b4535")
-    (provenance (fence "samples.md" 50 specimen 3))
-    (term
-     (Ask
-      (OpenQ
-       (λ ($r :: PredTerm (Row (1 (Referents Entity)))) (Close ($r This))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "401b48e04fe0414f92ae23cce34be57bd8153108")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit2 :: Referents Entity) (prenu $unit2)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
-       (Bind
-        ($r2 :: Referents Entity)
-        (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-        (Assert (Close (klama $r $r1 $r2)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "40957306957dffc2ec18d22c7b12d289efacf970")
-    (provenance (test "types-test.rkt"))
-    (term (Combine Speaker Audience))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "40a1654462687b76c351cb89e95c346ab9ac80cd")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectExactly 1 (λ ($x :: Entity) (gerku $x)))
-      (Mention $w)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "40ad3544727c866dc86d6a3e10c48888773f3703")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "41639ddaaa12f66e8b6030f81fedc3c3f957080a")
+  (case (id "a7dc745e8ebce5f8e1e04767521823f6cdbdbc7c")
     (provenance (test "types-test.rkt"))
     (term
      (SetOf
       (λ ($z :: Entity)
-        (MoreThan
-         0
+        (GlobalExactly
+         1
          (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+         (λ ($x :: Entity) (Close (jmaji $x)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "41661471fc45cb1b6566ad38c641091bc7bf9e96")
+  (case (id "a8c46a9f79ff1163e2ef962861674bfa08dc564f")
     (provenance (test "types-test.rkt"))
-    (term (λ ($c :: EFn ((Referents Eventuality)) Content) (CloseClause $c)))
+    (term
+     (λ (($k :: ContributionBasis R1) ($p :: PredTerm R1) ($q :: PredTerm R2))
+       (JoiPred $k $p $q)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "42512cb6c1feb1992c7275ad3b5e27a2aa828242")
+  (case (id "a90859565ec0462fd34ba74cea3fb0f69ee30977")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralNo $x $r))
+    (env
+     (($r Fn ((Referents Entity)) Content)
+      ($x Fn ((Referents Entity)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a9257c311a5624d7a353f3e4930ce411e5a02dc9")
+    (provenance (test "types-test.rkt"))
+    (term (gerku Speaker Audience This That))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a99847a240454c1a50605422e0369038b77f03a3")
+    (provenance (fence "samples.md" 50 specimen 2))
+    (term (Ask (OpenQ (λ ($x :: Referents Entity) (Close (klama $x))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "a9ae4648219cfb5d4f9112988cab9fb1c0839648")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)
-      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
-      (Assert (Close (tavla $r Speaker)))))
+      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+       (Assert (CloseClause (ClauseNot (DirectClause (tavla $r $r1))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4279b031e39014df46d1b9a3cfe6b6b5ad121e12")
+  (case (id "aa4382f5b9940be8d33a0772054bee6eff77bbaf")
     (provenance (test "types-test.rkt"))
     (term
-     (MoreThan
-      1
+     (λ (($x3 :: Referents Entity) ($r :: Referents Entity)) (Among $x3 $r)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ad0b3ca3e04a0512d7c2dfe2a31ae8109ec82060")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($f :: Fn ((Referents Entity) (Referents Entity)) Content)
+       ($f Speaker Audience)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "aef2d7cb00a5866e752137b3a5717ef6bb3a025d")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Some
       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "44408e6b8a3465152be1939443fdeaba8c75692c")
-    (provenance (fence "samples.md" 32 schema 1))
+  (case (id "b0e4a45f4ad7ac6d8c133c67d3162c20f6ee1416")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (Bind
-      ($κ :: GroupBasis Entity)
-      (Context (GroupBasisConstraint joi Entity) deps…)
-      (Bind
-       ($g :: Referents (Group Entity))
-       (JoiGroup $κ Speaker Audience)
-       (Bind
-        ($p :: Referents Entity)
-        (Refer (λ ($r :: Referents Entity) (pipno $r)))
-        (Close (bevri $g $p))))))
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "b2a7660c071348d28b39d31b758ff0660dda018d")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $read))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $D))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))
+      ($read Referents Entity)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "b39ed47422c8096877414b5fa7bd9572c229c275")
+    (provenance (fence "spec.md" 13 expansion 1))
+    (term ((Tanru M H) fills…))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "456266a00796914d921a0a47817fe86f7664cd19")
+  (case (id "b40eea04da4fdffdbce331b1814fcaf0d259cba4")
+    (provenance (fence "samples.md" 67 specimen 8))
+    (term
+     (Bind
+      ($bob :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (Named "bab" $x)))
+      (Do (Assert (Close (klama $bob))) (Assert (Close (prami $bob))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "b45f5f1e3c64a0ae5b25571470837b2fa287771f")
     (provenance (test "lower-test.rkt"))
     (term
-     (IndividualSome
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Entity) (Close (tavla Speaker $w)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "45fcd83ef1415d87f8822026b81b777d8debbca9")
-    (provenance (fence "samples.md" 28 specimen 1))
-    (term
      (Bind
-      ($to :: Referents Entity)
+      ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
       (Context)
-      (Assert (Close (klama (Combine Speaker Audience) :2 $to)))))
+      (Mention (Close ($r Speaker Audience)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4601f3c7a705a3838395d3c1c8ff149509c87798")
-    (provenance (fence "samples.md" 40 specimen 1))
-    (term
-     (Bind
-      ($friend :: Referents Entity)
-      (Refer
-       (λ ($x :: Referents Entity)
-         (SpeakerDescribes
-          $x
-          (λ ($y :: Referents Entity) (Close (pendo $y))))))
-      (Assert (Close (tavla Speaker $friend)))))
-    (env ())
+  (case (id "b48cd52864e981629d5094f9f34a257d7c5c9113")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralSome $x $r))
+    (env
+     (($r Fn ((Referents Eventuality)) Content)
+      ($x Fn ((Referents Eventuality)) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "46084d66c526ed3f7497ebad490c103b32621df4")
-    (provenance (test "individual-lowering-test.rkt") (test "lower-test.rkt"))
-    (term
-     (Assert
-      (¬
-       (≤
-        1
-        (Card
-         (SetOf
-          (λ ($individual :: Entity)
-            (∧ (gerku $individual) (Close (blabi $individual))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4692cb7402b77f3b082f50021486b4278e76c158")
-    (provenance (fence "samples.md" 21 specimen 1))
-    (term
-     (Bind
-      ($cat :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-      (Assert (CloseClause (ClauseNot (DirectClause (jbena $cat)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4693781ea7971501c44683ecc4312308652aad49")
-    (provenance (fence "spec.md" 14 expansion 1))
-    (term (Utterance ($u :: UtteranceToken) (fact…)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "46f05a081d57652f9c8c803e2b93791cd7f34d21")
-    (provenance (fence "samples.md" 66 specimen 1))
-    (term
-     (Bind
-      ($home :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (zdani $x Speaker)))
-      (Bind
-       ($state :: Referents Eventuality)
-       (Refer (StateClause (CoRef That $home)))
-       (Mention $state))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4707e46c4d30caad4926e4549bbf0f7911abb47b")
-    (provenance (fence "samples.md" 65 specimen 4))
-    (term
-     (Bind
-      ($kind :: Referents Eventuality)
-      (Refer (λ ($k :: Referents Eventuality) (fasnu $k)))
-      (Bind
-       ($a :: Referents AbstractNature)
-       (Refer
-        (λ ($x :: Referents AbstractNature)
-          (Close ((SuhuRel (Close (klama Speaker))) $x $kind))))
-       (Mention $a))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "471367c17c1cffbe1697a78fdc06be3838fd5537")
-    (provenance (fence "samples.md" 12 specimen 1))
-    (term
-     (Assert
-      (CloseClause
-       (StateClause
-        (IndividualEvery
-         (λ ($x :: Entity) (datka $x))
-         (λ ($duck :: Entity)
-           (CloseClause (CapableClause (DirectClause (flulimna $duck))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "47c9e0def2abefa02da6b74f0039b54cc5d643f5")
-    (provenance (test "types-test.rkt"))
-    (term (λ (($p :: PredTerm R1) ($q :: PredTerm R1)) (JoiPred $p $q $q)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "485fe7ce41eddd7c43145e5e07989fb328734221")
-    (provenance (fence "spec.md" 7 declaration 1))
-    (term CloseClause)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "499ca9118e3fa447ad93f6fd8674a7b4cf35db8e")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Bind
-       ($nuclear_tavla_3 :: Referents Entity)
-       (Context)
-       (Assert
-        (GlobalExactly
-         3
-         (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-         (λ ($nuclear_member :: Entity)
-           (Close (tavla $r $nuclear_member $nuclear_tavla_3))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4a46786294e9b949ea3e90effc906e344be6ac37")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert
-       (PluralNo
-        (λ ($r :: Referents Entity) (gerku $r))
-        (λ ($w :: Referents Entity) (Close (tavla $r $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4af8c202663ac76f67ae27897812c9c9969b08db")
-    (provenance (fence "spec.md" 5 schema 1))
-    (term (∀ (λ ($x $y :: Entity) …)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4b1eeb31d823a23323cb20f2089e3acf783aa686")
-    (provenance (fence "spec.md" 7 declaration 2))
-    (term :)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4be95c40e5eec70ddb8119e00b72b57f745e3891")
+  (case (id "b4c9c158c0d572c883bef161a9c3d052588a8cbd")
     (provenance (fence "samples.md" 68 specimen 1))
     (term
      (Bind
@@ -1643,251 +3924,174 @@
             (Express (Close (Unhappiness Speaker $o2 Intense)))))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4cbeb73b7f2601a5d7c7e08d15756541c7ee65cf")
-    (provenance (test "types-test.rkt"))
-    (term (LocutionOf (λ ($e :: Referents Locution) (mlatu $e)) CurrentToken))
-    (env ())
+  (case (id "b546ecc02b029c93d9cbe6d396c040d593a904cc")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host ((λ ($identity :: Act Assertion) $identity) $A)))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4cf782da0ef70b9999054c6ba2dba51bdfec46ce")
+  (case (id "b6fdf53c940c0fbfddd3982d10ccb1b9444ce6ae")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
       ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert
-       (PluralNo
-        (λ ($r :: Referents Entity) (gerku $r))
-        (λ ($w :: Referents Entity) (Close (tavla $w $r)))))))
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Bind
+       ($r1 :: Referents Entity)
+       (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
+       (Assert (Close (tavla $r $r1))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4e4307d894d33acaf6b5be977d46ceee889a6e60")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ (($x3 :: Referents Entity) ($r :: Referents Entity)) (Among $x3 $r)))
-    (env ())
+  (case (id "b7243031b806f2fb8895ebd30e470e492903db57")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "4fae1a44c52bc975f920f450334b28bc8cb65efe")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Assert (CloseClause (λ ($e :: Referents Eventuality) (gerku Speaker)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "50a75aca04046920befd79b5cb1b1bf064e02017")
-    (provenance (test "lower-test.rkt"))
+  (case (id "b73980caf6a6c2e5dfc322f62d51872309a07d3b")
+    (provenance (fence "samples.md" 60 specimen 1) (test "lower-test.rkt"))
     (term
      (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert (CloseClause (ClauseNot (DirectClause (jbena $r)))))))
+      ($d :: ContrastDomain (RowOf melbi))
+      (Context)
+      (Assert (Close ((Scalar OtherThan $d melbi) That)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5310a80dc550833859428eeb575349da99d34b2e")
+  (case (id "b752f970017058ba2398ccb252755f38145365d6")
     (provenance (test "lower-test.rkt"))
     (term
      (Assert
       (PluralNo
-       (λ ($r :: Referents Entity) (prenu $r))
-       (λ ($w :: Referents Entity) (Close (jmaji $w))))))
+       (λ ($r :: Referents Entity)
+         (SpeakerDescribes $r (λ ($y :: Referents Entity) (gerku $y))))
+       (λ ($w :: Referents Entity) (Close (tavla Speaker $w))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "53cfc8b8616410d10f35805a4d7a6a65ce2087f2")
-    (provenance (fence "samples.md" 22 specimen 1))
-    (term
-     (Bind
-      ($it :: Referents Entity)
-      (Refer
-       (λ ($x :: Referents Entity)
-         (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y)))))
-      (Assert (Close (blabi $it)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "547e90e37c2df298496260997e566714cb9f98b5")
-    (provenance (fence "spec.md" 13 expansion 3))
-    (term
-     (Bind
-      ($link :: PredTerm (RowOf H))
-      (Context (λ ($r :: PredTerm (RowOf H)) (TanruAdmissible M H $r)) deps…)
-      (∧ (H fills…) ($link fills…))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "54b558f812a6d48cbad80f8161ed051bb4d04d8c")
-    (provenance (fence "samples.md" 3 specimen 1) (test "lower-test.rkt"))
-    (term (Assert (Close (klama :2 This Yonder))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "56850bfe9375afc3abc8efd5fe19a85f6741e889")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-       (Assert (Close (tavla $r1 $r))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "569ded40de1611196c7100eaf0a94b84d2a5324d")
-    (provenance (fence "spec.md" 17 specimen 1))
-    (term
-     (ZipWith
-      (λ ($s $l :: Referents Entity) (Close (tavla $s $l)))
-      (List Speaker Audience)
-      (List Audience Speaker)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "576ba763f088640884adc0f271b4e53c7e2c1f40")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Most
-      (λ ($p :: Entity)
-        (CloseClause (ActualClause (StateClause (prenu :1 $p)))))
-      (λ ($q :: Entity)
-        (CloseClause (ActualClause (StateClause (blabi :1 $q)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "57a3f3b4bf979adb1958ec742ef08de24ea05dbb")
-    (provenance (test "types-test.rkt"))
-    (term (λ ($p :: PredTerm (RowOf zzzz)) (Close $p)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "57a89e559a2ff888312fcdf59573cd74beeb6b2b")
-    (provenance (fence "samples.md" 67 specimen 1))
-    (term
-     (Mention
-      (StructuredQuote
-       (Utterance
-        ($u :: UtteranceToken)
-        ((Realizes $u (Assert (Close (klama Speaker)))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "584d2b9b8176244b8fb87599463e7d45ea325be0")
+  (case (id "b7c361bf3ce652c761d68c33ce87b7f5169e4eb7")
     (provenance (test "closures-test.rkt"))
-    (term (IndividualEvery $x $r))
-    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
+    (term (PluralSome $x $r))
+    (env
+     (($r EFn ((Referents Entity)) Content)
+      ($x Fn ((Referents Entity)) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "58f295284d03c9933f8a15b05bfde1c7fafed92e")
+  (case (id "b8c355f86a0a95f9fa205ca74b6fe21167143e31")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualNo $x $r))
+    (env (($r EFn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "b997bc69435444a314ad43a5133a7b4c6121608b")
     (provenance (test "types-test.rkt"))
-    (term
-     (Some
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (term (Sign ($s :: SignToken MathExpression) ((TextOf $s "re te'a ci"))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5b1369a8cd48a0b63e30fe3a58af9e4e81df4210")
+  (case (id "b9fc9816e545772460d20961c1932bbf3e7ae53c")
     (provenance (test "types-test.rkt"))
-    (term (OpaqueQuote "mi klama"))
+    (term (SetOf (λ ($x :: Entity) (Presuppose (gerku $x) (gerku $x)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5b8f50f94ab9c5cf73e6c63c620a2da5e577d645")
-    (provenance (fence "samples.md" 71 specimen 1))
+  (case (id "ba9b07c19b8f985477d9ac1d8afd15700fa988d7")
+    (provenance (fence "samples.md" 50 specimen 4))
     (term
-     (Let
-      ($a :: Act Assertion)
-      (Assert (Close (klama Speaker)))
-      (Bind
-       ($o :: ActOccurrence Assertion)
-       (Perform Host $a)
-       (Do
-        (Perform
-         AttachedDisplay
-         (Express (Close (Happiness Speaker $o Moderate))))))))
+     (Ask
+      (OpenQ
+       (λ ($p :: CompatibleLabel (RowOf klama) (Referents Entity))
+         (Close (At klama $p This))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5bd6a197f9bf48e049ee70edc51fb6c9ec626bd8")
-    (provenance (fence "samples.md" 27 specimen 1))
-    (term
-     (Bind
-      ($κ :: DecompositionBasis (Group Entity) Entity)
-      (Context (GroupBasisConstraint joi Entity) deps…)
-      (Bind
-       ($group :: Referents (Group Entity))
-       (JoiGroup $κ Speaker Audience)
-       (Mention $group))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5c28920f4680f966965e1bc31c49f52f686d9f14")
-    (provenance (test "individual-lowering-test.rkt"))
+  (case (id "bb5a31420e23dca522099a310f5e5940c7c4d646")
+    (provenance (fence "samples.md" 45 specimen 2))
     (term
      (Assert
-      (≤
-       2
-       (Card
-        (SetOf
-         (λ ($individual :: Entity)
-           (∧ (gerku $individual) (Close (blabi $individual)))))))))
+      (¬
+       (≤
+        1
+        (Card (SetOf (λ ($x :: Entity) (∧ (gerku $x) (Close (blabi $x))))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5c4fa3efcb05afef484334fd42f97c7dc3836742")
-    (provenance (test "lower-test.rkt"))
+  (case (id "bc52a6b27123d4274aa7951e558cde77e9bf703a")
+    (provenance (test "types-test.rkt"))
     (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert
-       (IndividualSome
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($w :: Entity) (Close (tavla $w $r)))))))
+     (StructuredQuote
+      (Utterance
+       ($u :: UtteranceToken)
+       ((Realizes $u (Assert (Close (gerku Speaker))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5cbf7b7051d37a67666f647ed53fd7d16d4a5169")
-    (provenance (fence "samples.md" 17 specimen 1) (test "lower-test.rkt"))
+  (case (id "bc919c6ebc40037be37a33bc6e082f3746325b7b")
+    (provenance (fence "samples.md" 77 specimen 1))
     (term
      (Assert
-      (CloseClause
-       (ActualClause
-        (ClauseAnd
-         (DirectClause (klama Speaker))
-         (DirectClause (stali Audience)))))))
+      (∃
+       (λ (($dog :: Entity) ($person :: Entity))
+         (∧ (gerku $dog) (prenu $person) (Close (nelci $dog $person)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5d5e9465192f02b7a9c6e6adc49a3511886fe6cc")
+  (case (id "be4a0a839ce8bb6db3073a6b43c602172c3e7faa")
+    (provenance (test "types-test.rkt"))
+    (term (SpeakerDescribes Speaker Audience))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "bfee36bde0327c1eea74d72a2f8abb23c876e962")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($x :: Referents Entity)
+       (∃
+        (λ ($e :: Referents Locution)
+          (∧
+           (LocutionOf CurrentToken $e)
+           (skicu
+            Speaker
+            $x
+            Audience
+            (λ ($y :: Referents Entity) (mlatu $y))
+            :Eventuality
+            $e))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c0e41a9613b287bfe9fa8a063c7d8efc19655cd0")
     (provenance (fence "samples.md" 20 specimen 1))
     (term
      (λ (($bread :: Referents Entity) ($breadUnit :: Fn (Entity) Content))
@@ -1902,513 +4106,9 @@
                (∧ (Among $s $r) (¬ (Among $r $s)))))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5e733e8cd5911c7c96c6a824e4d9a6fc430ebea9")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "5e83d7a5f51758bf22dc589083fa84ef44b2d2ae")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert (Close (blabi $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "609a723c6e01ff803d936b0a5dabaa91fdcddc8f")
-    (provenance (fence "samples.md" 67 specimen 8))
-    (term
-     (Bind
-      ($bob :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (Named "bab" $x)))
-      (Do (Assert (Close (klama $bob))) (Assert (Close (prami $bob))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "613827a28e0a41ef129ee1be93f65a68ebf9cf80")
-    (provenance (fence "samples.md" 25 specimen 1))
-    (term (Assert (Close (jmaji (Combine Speaker Audience)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "61a1dd198c94c8175c03a8d6433590480efbf6b7")
-    (provenance (fence "samples.md" 4 specimen 1) (test "lower-test.rkt"))
-    (term (Assert (Close ((DropPlace klama 3) Speaker This This This))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6242de14558c53c1d15569892f10b0d3cbc0e3f0")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer
-       (λ ($described :: Referents Entity)
-         (SpeakerDescribes
-          $described
-          (λ ($unit :: Referents Entity) (mlatu $unit)))))
-      (Assert (Close (blabi $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "62c9731b6142ee5a91ec7dcc8e2d11a2109ba40d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($e :: Referents Eventuality)
-       (Close (klama Speaker This That Yonder Audience :Eventuality $e))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "63f5f18694818117743c94ef567a0a25cc148c8d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (AtMost
-         1
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "65325e3e4bef79ef24aae7f433ccdfbc1631068a")
-    (provenance (fence "samples.md" 55 specimen 3))
-    (term
-     (Let
-      ($a :: Act Assertion)
-      (Assert (Close (klama Audience)))
-      (Bind
-       ($o :: ActOccurrence Assertion)
-       (Perform Host $a)
-       (Do
-        (Perform
-         AttachedDisplay
-         (Express (Close (Unhappiness Speaker $o Intense))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "664df3e8556e0a62f97819ff67a3f97ddf3d2fbb")
-    (provenance (fence "samples.md" 74 specimen 1))
-    (term
-     (Assert
-      (IndividualEvery
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($dog :: Entity)
-         (Bind
-          ($cats :: Referents Entity)
-          (Refer (λ ($r :: Referents Entity) (mlatu $r)))
-          (Close (tavla $dog $cats)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "67db3f5159b58d293de3605a0688d8a9513641d4")
-    (provenance (fence "spec.md" 14 expansion 3))
-    (term (λ ($u :: Referents UtteranceToken) (∧ fact…)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "67ff470133d903644f177769fbc5561854e7e6dc")
-    (provenance (fence "samples.md" 49 specimen 1))
-    (term
-     (Bind
-      ($n :: Natural)
-      (Vague (AdmissibleThreshold ManyK (λ ($x :: Entity) (prenu $x))))
-      (Assert
-       (AtLeast
-        $n
-        (λ ($x :: Entity) (prenu $x))
-        (λ ($w :: Referents Entity) (Close (klama $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "687a6d0240b3fdedcb03323c66df8542d314a9d4")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($d :: ContrastDomain (RowOf melbi))
-      (Context)
-      (Mention (Close ((Scalar OtherThan $d melbi) That)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "688ba4db95ac4d4b239dd48568fd2fc0181f4e21")
-    (provenance (fence "samples.md" 73 specimen 1))
-    (term
-     (Assert
-      (IndividualEvery
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($dog :: Entity)
-         (IndividualSome
-          (λ ($y :: Entity) (mlatu $y))
-          (λ ($cat :: Entity) (Close (tavla $dog $cat))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "68e9f826ac01fd29bbc1302829b5432dbcb2bcbf")
-    (provenance (fence "samples.md" 39 specimen 1))
-    (term
-     (Bind
-      ($dog :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (gerku $x)))
-      (Assert
-       (Supplement
-        $dog
-        (Close (blabi $dog))
-        (CloseClause (ClauseNot (DirectClause (melbi $dog))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6940326e73cc2626530b4f2451e6a510ba5ea576")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Assert (Close ((Tanru sutra klama) $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6a043d6309c1781f3ebb6498a04b58eb4c803ab2")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($k :: DecompositionBasis (Group Entity) Entity)
-       (Bind
-        ($g :: Referents (Group Entity))
-        (Massify $k Speaker)
-        (Mention $g))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6a326a033f94a8c232bf498d79936d87614ff3d2")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (PluralNo
-       (λ ($r :: Referents Entity)
-         (SpeakerDescribes $r (λ ($y :: Referents Entity) (gerku $y))))
-       (λ ($w :: Referents Entity) (Close (tavla Speaker $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6ab64782fe6c4b31505dc1c68d1f765103cd72d1")
-    (provenance (fence "samples.md" 59 specimen 1) (test "lower-test.rkt"))
-    (term (Assert (Close ((Tanru sutra klama) Speaker))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6abf77640d191b879fe6dd6ee20495fe92cb184c")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
-    (env
-     (($r EFn ((Referents Number)) Content)
-      ($x Fn ((Referents Number)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6b6a74d53949b42f13a305eb8a433ff35b1306e1")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($restrictor_klama_2 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_3 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_4 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_5 :: Referents Entity)
-      (Context)
-      ($nuclear_klama_2 :: Referents Entity)
-      (Context)
-      ($nuclear_klama_3 :: Referents Entity)
-      (Context)
-      ($nuclear_klama_4 :: Referents Entity)
-      (Context)
-      ($nuclear_klama_5 :: Referents Entity)
-      (Context)
-      (GlobalExactly
-       3
-       (λ ($restrictor_member :: Entity)
-         (Close
-          (klama
-           $restrictor_member
-           $restrictor_klama_2
-           $restrictor_klama_3
-           $restrictor_klama_4
-           $restrictor_klama_5)))
-       (λ ($nuclear_member :: Entity)
-         (Close
-          (klama
-           $nuclear_member
-           $nuclear_klama_2
-           $nuclear_klama_3
-           $nuclear_klama_4
-           $nuclear_klama_5))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6b7cd4795ca590f2940d074bdd8b2f97572670dc")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r EFn (Entity) Content) ($x Fn (Entity) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6c09f8d93e046865894afbb3f3c1929a429f40ab")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualEvery $x $r))
-    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6c0a9d6bc8870f8f2143b708abe9ca66a40581c7")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($p :: PredTerm (RowMinus (RowOf klama) 3))
-       (Close ($p Speaker This That Yonder))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6c7e4991a958113de57aecb1f41e4f78d5edb10b")
-    (provenance (test "types-test.rkt"))
-    (term
-     (FewerThan
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6d4269259fb6b242a09098db55f5081796fcd4a4")
-    (provenance (test "individual-lowering-test.rkt"))
-    (term
-     (Assert
-      (IndividualSome
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (blabi $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6d4b6f744f5602a81df7b29ecb1ae8b85c712d46")
-    (provenance (fence "samples.md" 36 specimen 1) (test "lower-test.rkt"))
-    (term
-     (Assert
-      (Generic
-       Typical
-       (λ ($x :: Entity) (mlatu $x))
-       (λ ($x :: Entity) (Close (cinri $x))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6d6e4fc010cfc8be4c51fbba0ed518c258d0f25d")
-    (provenance (fence "spec.md" 3 expansion 6))
-    (term (At (At klama 1 Speaker) 2 This))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6db1c4b791f0854fe7956e9eaa47adf625c5027d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (Some
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6e510d94cddf3ab35ae9238795d05791272da040")
-    (provenance (test "types-test.rkt"))
-    (term (SpeakerDescribes Speaker Audience))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "6f18ac81af320dab5911b6de30643059b54a8272")
-    (provenance (fence "samples.md" 67 specimen 4))
-    (term
-     (Mention
-      (InterpretContent
-       (StructuredQuote
-        (Utterance
-         ($u :: UtteranceToken)
-         ((Realizes $u (Assert (Close (klama Speaker))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "728f0d3f41d5d72fac367555d0c675c48620c6b2")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "72fb3cb79181a1791be16f47a654afc00f904d37")
-    (provenance (fence "samples.md" 57 specimen 1))
-    (term
-     (Let
-      ($a1 :: Act Assertion)
-      (Assert (Close (klama Speaker)))
-      (Bind
-       ($o1 :: ActOccurrence Assertion)
-       (Perform Host $a1)
-       (Let
-        ($a2 :: Act Assertion)
-        (Assert (Close (stali Audience)))
-        (Bind
-         ($o2 :: ActOccurrence Assertion)
-         (Perform Host $a2)
-         (Do
-          (Perform AttachedDisplay (Express (Close (Contrast $o2 $o1))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7347f150d8d6766f2f9f63d09617b3c25bc4430b")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Generic
-      Typical
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "74a417577427efd188fd6769f54813962d552da7")
-    (provenance (fence "samples.md" 6 specimen 1))
-    (term (Mention (λ ($x :: Referents Entity) (Close (klama :2 $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7890a198199f8111dca56eefe4c4729213acafdf")
-    (provenance (fence "spec.md" 19 expansion 1))
-    (term (JoiClause κ C D))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "797ad849c1240e52d6b5505f215c77aaafb5e3a2")
-    (provenance (test "types-test.rkt"))
-    (term (Combine Speaker (Close (gerku Speaker))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "79f753ce71d86adc8a504da89297f9a3bf973028")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (AtLeast
-         1
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7a9cc1adb495a95d66e6324566d64f487f012c33")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($x :: Referents Entity)
-       (SpeakerDescribes $x (λ ($y :: Referents Eventuality) (mlatu $y)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7aa2e6942653e073da8cf8eef66f12c87be59028")
-    (provenance (fence "samples.md" 50 specimen 2))
-    (term (Ask (OpenQ (λ ($x :: Referents Entity) (Close (klama $x))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7b1d5e60e23f16d48067b556539b444b6b936ff7")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Assert (Close (tavla $r Speaker)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7c8f2f67bf1093f2628eb0b721c214f13be28d20")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralSome $x $r))
-    (env
-     (($r EFn ((Referents Entity)) Content)
-      ($x Fn ((Referents Entity)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7d3ddb69a4968454e52e2e9e81af26e67288b50f")
-    (provenance (test "substitution-test.rkt"))
-    (term
-     (≤
-      2
-      (Card
-       (SetOf
-        (λ ($individual :: Entity)
-          (∧
-           (∃ (λ (($x :: Entity) ($y :: Entity)) (∧ (gerku $x) (prenu $y))))
-           (= $individual $individual)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "7dd4fd57c29aef5f48f4a103bca8ce417222bd29")
-    (provenance (test "types-test.rkt"))
-    (term (At klama x2 This))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8063565f8a490905803bc6c8fff99697f49d2702")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
-    (env
-     (($r EFn ((Referents Eventuality)) Content)
-      ($x Fn ((Referents Eventuality)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "807a23c31d918818a5751f1c352e4944de814c4f")
+  (case (id "c18dc58b0dde6be8f1ceb1833862b75f8b60e860")
     (provenance (fence "samples.md" 33 specimen 1))
     (term
      (λ (($κ :: DecompositionBasis (Group Entity) Entity)
@@ -2432,23 +4132,368 @@
           (Assert (CoRef $described $committee)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "807d60a1b251490207d2b0419efe76156ba3ce3e")
-    (provenance (test "types-test.rkt"))
+  (case (id "c2b13aeac1d028b6008fcaa99d4139867212c0df")
+    (provenance (test "lower-test.rkt"))
     (term
-     (SetOf
-      (λ ($z :: Entity)
-        (Exactly
-         0
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity)
-           (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))))
+     (GlobalExactly
+      2
+      (λ ($p :: Entity) (prenu $p))
+      (λ ($q :: Entity) (blabi $q))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "81349321bfa76f86f03f424f7459097fa6dc3e65")
+  (case (id "c3291137702643fd841cafa8321485ae9b437fe5")
+    (provenance (fence "samples.md" 62 schema 1))
+    (term
+     (Bind
+      ($v :: T)
+      (Context P deps…)
+      (Bind ($v :: T) (Context P deps…) (C $v))
+      (¬ (C $v))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c54dd176664a86c75329961b591747dbe1c6efbd")
+    (provenance (fence "spec.md" 15 schema 1))
+    (term
+     (Let
+      ($p :: Proposition)
+      (Reify c)
+      (Supplement $p (Close (i-rel Speaker $p degree)) (Holds $p))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c61fea65b729393fd03a82a76e843fc61ca630b6")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectAllBut
+       1
+       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c658e1bdbf6185dfa2c674fc4216f49eac18f2e5")
+    (provenance (test "types-test.rkt"))
+    (term (λ (($x3 :: Referents Entity) ($s :: Set Entity)) (∈ $x3 $s)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c70197f1f6d145c786be1e68e5809ada589d0305")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $unknown))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c7387efbff0854a92d3ebeadbb69dc704affe9f6")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (PluralNo
+        (λ ($r :: Referents Entity) (gerku $r))
+        (λ ($w :: Referents Entity) (Close (tavla $r $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c79a72c52ff10713883c608523ba5537b893c258")
+    (provenance (fence "spec.md" 16 schema 1))
+    (term
+     (Bind
+      ($κ :: GroupBasis T)
+      (Context (GroupBasisConstraint gunma T) deps…)
+      (GunmaAt $κ g Cs)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c7c22c1e196d02ebc70afdc94b4dae9476772913")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($f :: EFn ((Referents Entity)) Content)
+       (SetOf (λ ($x :: Entity) ($f $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c7d4919b24c88919dda77d438875a3f6f53b453c")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($w :: Referents Entity)
+      (SelectSome (λ ($x :: Entity) (gerku $x)))
+      (Mention $w)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c92bfd5d1f2d869b13d6aa49b9a5989472a7fec1")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralSome $x $r))
+    (env
+     (($r EFn ((Referents Eventuality)) Content)
+      ($x Fn ((Referents Eventuality)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c95543d005238c8dabd2975103cda6cfb1cde15b")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualNo $x $r))
+    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "c9ad164deb21012d70b3d6c5b7c44768613c6a12")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $read))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      $A))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cb9c05180bbeb02ee544ff40f769963287864ed2")
+    (provenance (fence "spec.md" 3 expansion 6))
+    (term (At (At klama 1 Speaker) 2 This))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cb9ec898c0ebd3ce8c2c1fb4ac7eb701cf81a772")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($k :: DecompositionBasis (Group Entity) Entity)
+       (Bind
+        ($g :: Referents (Group Entity))
+        (Massify $k Speaker)
+        (Mention $g))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cbb9660225117dd4ba3eef4fbc0ad0cdf5f159eb")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp Entity)
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cbeb7069823bd300b05864e10b2322bee39b8eb8")
+    (provenance (fence "samples.md" 49 specimen 1))
+    (term
+     (Bind
+      ($n :: Natural)
+      (Vague (AdmissibleThreshold ManyK (λ ($x :: Entity) (prenu $x))))
+      (Assert
+       (AtLeast
+        $n
+        (λ ($x :: Entity) (prenu $x))
+        (λ ($w :: Referents Entity) (Close (klama $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ccea9269c7541c54ac9d584fb1c92503dda6436f")
+    (provenance (fence "samples.md" 17 specimen 2) (test "lower-test.rkt"))
+    (term
+     (Assert
+      (CloseClause
+       (ActualClause
+        (ClauseOr
+         (DirectClause (klama Speaker))
+         (DirectClause (stali Audience)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cd741d0aaeffd4cb3f43c7acc40813ca13768fc1")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (¬
+       (≤
+        (Card
+         (SetOf
+          (λ ($individual :: Entity)
+            (∧ (gerku $individual) (Close (blabi $individual))))))
+        1))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cdbed9ae8889cb9857ce42ffdc440282aab47518")
+    (provenance (test "types-test.rkt"))
+    (term
+     (FewerThan
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($w :: Referents Entity)
+        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ce2e74aeaf3b69f1783b0d85db11d9f809c74f9e")
+    (provenance (fence "samples.md" 67 specimen 4))
+    (term
+     (Mention
+      (InterpretContent
+       (StructuredQuote
+        (Utterance
+         ($u :: UtteranceToken)
+         ((Realizes $u (Assert (Close (klama Speaker))))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ce43a481ac305f9f67651385fc4bbc37f8f62b3f")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($p :: PredTerm (RowMinus (RowOf klama) 3))
+       (Close ($p Speaker This That Yonder))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ce45bfa25171aa37e87244fa29f6af160fb4f9a3")
+    (provenance (fence "samples.md" 67 specimen 7))
+    (term
+     (Bind
+      ($ep :: Referents Epistemology)
+      (Context)
+      (Bind
+       ($tv :: Referents TruthValue)
+       (Refer
+        (λ ($v :: Referents TruthValue)
+          ((JeiRel (Close (klama Speaker))) $v $ep)))
+       (Mention $tv))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ce5f54409233f87a06f40fa7162207b7719ed949")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Every
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cf406a6137e6d29f89dcd8771e3315a2f8370045")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($nuclear_tavla_3 :: Referents Entity)
+      (Context)
+      (Assert
+       (GlobalExactly
+        3
+        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+        (λ ($nuclear_member :: Entity)
+          (Close (tavla Speaker $nuclear_member $nuclear_tavla_3)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cf4d92656bda690acd276e9203d0f63d15050c58")
+    (provenance (fence "samples.md" 67 specimen 3))
+    (term (Assert (Close (valsi (WordSign "klama")))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "cfc47377bc2085921fcfae6f9da1e72c07a9a4e1")
+    (provenance (fence "samples.md" 10 specimen 1))
+    (term (Assert (CloseClause (ActualClause (DirectClause (citka Speaker))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d016b310c1d28d264ca6647095e8d554f57e2728")
+    (provenance (fence "samples.md" 13 specimen 1))
+    (term
+     (Assert
+      (CloseClause
+       (ActualClause
+        (λ ($s :: Referents Eventuality)
+          (∧
+           ((StateClause
+             (Bind
+              ($home :: Referents Entity)
+              (Refer (λ ($x :: Referents Entity) (zdani $x Speaker)))
+              (CoRef That $home)))
+            $s)
+           (purci $s Now)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d0308d8ab7f6f7dcdf1d2135e8efac2d29a85433")
+    (provenance (fence "spec.md" 7 declaration 4))
+    (term →)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d084d12d0457f88284843f62db0c3c8f2b9c1f17")
+    (provenance (fence "spec.md" 14 expansion 3))
+    (term (λ ($u :: Referents UtteranceToken) (∧ fact…)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d103efa745d8dcc95fb559cf6977b2bc36a6d277")
     (provenance (fence "samples.md" 34 specimen 1))
     (term
      (Let
@@ -2473,156 +4518,9 @@
          (Mention $aggregate))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "813d8052746e26663e22c54dde235ac1d850ee45")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (Most
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($x :: Entity) (Close (jmaji $x)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8195a6c9965e94753ece460fc0b472ef955eaa36")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (PluralNo
-       (λ ($r :: Referents Entity) (gerku $r))
-       (λ ($w :: Referents Entity) (Close (tavla $w Speaker))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "83c28a399ba2d060a09394adff67de5b8251d810")
-    (provenance (test "types-test.rkt"))
-    (term
-     (GlobalExactly
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8469afa019d92a7909049b50368f82d82e314825")
-    (provenance (fence "samples.md" 64 specimen 3) (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
-      (Context)
-      (Assert (Close ($r Speaker Audience)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "872bf001f3256de9276dfbba12f31abd7e1d7fdb")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
-       ($r Speaker Audience)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "886e105400c86d6f1a5b22877e21662be739caf3")
-    (provenance (fence "samples.md" 72 specimen 1))
-    (term
-     (Bind
-      ($cats :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-      (Assert
-       (IndividualEvery
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($dog :: Entity) (Close (tavla $dog $cats)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "88eb52819e95cc4d3d1534850587820a1a68c0fd")
-    (provenance (fence "samples.md" 65 specimen 1))
-    (term
-     (Bind
-      ($p :: Referents Proposition)
-      (Refer
-       (λ ($q :: Referents Proposition)
-         (CoRef $q (Reify (Close (klama Speaker))))))
-      (Assert (Close (djuno Audience $p)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "893d4618f7c9e82d98d5ac9467976c4026dcde0d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (GlobalExactly
-      1
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "899e766795f1120c2768faedab8df28da6dcc76a")
-    (provenance (test "individual-lowering-test.rkt") (test "lower-test.rkt"))
-    (term
-     (Assert
-      (¬
-       (IndividualEvery
-        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-        (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8a9bfb4826dce0c6dc9b1bb486b6080c86aaed67")
-    (provenance (test "types-test.rkt"))
-    (term (Mention MiAOthers))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8b86e0d58a4e8af2aa93b9c1f2873d53f0a5be4d")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (IndividualEvery
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($x :: Entity)
-         (IndividualSome
-          (λ ($x :: Entity) (mlatu $x))
-          (λ ($w :: Entity) (Close (tavla $x $w))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8bbacf2e3a9cb171e3d8b04c3009595b354491bd")
-    (provenance (test "types-test.rkt"))
-    (term
-     (AtLeast
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8c077aa8abcc5913e0f9c80eaff0d719acb27ef8")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Most
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8d32c8d7fec7d302f00972f460ae9f7846b3d6bb")
+  (case (id "d24ef9e5137b6e3c3f454642b780d1f08649a13c")
     (provenance (fence "samples.md" 54 specimen 1))
     (term
      (Assert
@@ -2635,30 +4533,631 @@
           ContextualAnswer))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8de4c5f85e68470abc96866823afd74f3e074775")
+  (case (id "d3636a7baf7c40fc35eb5863a56c40cc33b5e59a")
+    (provenance (test "types-test.rkt"))
+    (term (SetOf (λ ($x :: Entity) (Context))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d41a79a05eaa9b893290fceedc31bc3777e695b6")
+    (provenance (test "types-test.rkt"))
+    (term
+     (AtMost
+      1
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
+      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d468ca7025a0e019262841aaa082558d377ff1ef")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer
+       (λ ($described :: Referents Entity)
+         (SpeakerDescribes
+          $described
+          (λ ($unit :: Referents Entity) (mlatu $unit)))))
+      (Assert (Close (tavla Speaker $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d4b74f424d70945396466ff26553ae4d8104277c")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (IndividualEvery
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($x :: Entity) (Close (tavla $x $r)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d4c465b8692516568de2970f2551fd42d645bf65")
     (provenance
-     (fence "samples.md" 44 specimen 1)
-     (test "individual-lowering-test.rkt")
-     (test "lower-test.rkt"))
+     (fence "samples.md" 41 specimen 1)
+     (fence "spec.md" 11 specimen 1))
+    (term
+     (Bind
+      ($dogs :: Referents Entity)
+      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+      (Do (Assert (Close (bajra $dogs))) (Assert (Close (tatpi $dogs))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d5f0097712d072633c284511e374e17fbf02466b")
+    (provenance (test "perform-source-test.rkt"))
+    (term (Perform $unknown (Assert ($P Speaker))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d709d31f7caea3d669d21a63c22d61121d8157b3")
+    (provenance (test "types-test.rkt"))
+    (term (λ (($p :: PredTerm R1) ($q :: PredTerm R1)) (JoiPred $p $q $q)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d798ee6fb108c5f8ac37c643a64a5c901f387086")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Assert ($P Speaker))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d815bd2bd0ebfc57c5d13a0712c6d6bd10c8ed6d")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert $unknown)
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "d887cfaa552f0e9243a8f032ecacbef42963fa68")
+    (provenance (test "types-test.rkt"))
+    (term (SpeakerDescribes Speaker))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dae7a1015747372b9d2a5e5cb0430b250a2c6199")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      (Assert
+       (IndividualSome
+        (λ ($x :: Entity) (gerku $x))
+        (λ ($w :: Entity) (Close (tavla $w $r)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "db99e064d93b8df5c24af457599bd2c9e9b10990")
+    (provenance (fence "samples.md" 64 specimen 1) (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($s :: Scale)
+      (Context)
+      ($reg :: Region Scale)
+      (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
+      (Assert (Close ((Grade barda $s $reg) That)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dc6b2ae3a00c5ff575c7e9880e0dc03bc4c54e83")
+    (provenance (fence "samples.md" 46 specimen 1))
     (term
      (Assert
-      (IndividualEvery
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($x :: Entity) (Close (blabi $x))))))
+      (PluralNo
+       (λ ($x :: Referents Entity) (prenu $x))
+       (λ ($w :: Referents Entity) (Close (jmaji $w))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8e5ae4e5cd3397362d20e4605936c155944be4d8")
+  (case (id "dd60726d8e42d9d819aef5b9e98b0cde8a55d3eb")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualNo $x $r))
+    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dde028c6c9b5af33587ffdda1198a0609e68dbdc")
+    (provenance (test "inner-pa-test.rkt") (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer
+       (λ ($reference :: Referents Entity)
+         (∧
+          (gerku $reference)
+          (= (CardBasis $reference (λ ($unit :: Entity) (gerku $unit))) 3))))
+      (Assert (Close (tavla Speaker $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dde772c1f4f3af472a4782b6b8d20c08e389f989")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host $A))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ddfcec347f67b854dcdbc59b01ea61e976c0f311")
     (provenance (test "types-test.rkt"))
-    (term (gerku Speaker Audience This That))
+    (term
+     (Generic
+      Typical
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "8ee5ad764ef5db64e852018b1434d359006e2ed9")
+  (case (id "de09fe952701f7f98b6a64e2b45dfc36fbb21ed8")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Utterance
+      ($u :: UtteranceToken)
+      ((Realizes $u (Assert (Close (klama Speaker)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "de67ce0413819ee2090e81a49ec285c91d157249")
+    (provenance (test "types-test.rkt"))
+    (term (λ (($c :: ClauseContent) ($e :: Referents Eventuality)) ($c $e)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "de82c92e7a0eed5d59d3530c120655cd1b1ff6e0")
+    (provenance (test "types-test.rkt"))
+    (term (SentenceSign "mi klama"))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "dea28886c2b9a331b99bd06cbdbf0f84f8a18d7a")
+    (provenance (test "types-test.rkt"))
+    (term
+     (SetOf
+      (λ ($z :: Entity)
+        (AtLeast
+         1
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e015326497484cfe14f0ccf0d90e044c2f7cee1f")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Assert
+      (PluralNo
+       (λ ($r :: Referents Entity) (mlatu $r))
+       (λ ($w :: Referents Entity) (Close (blabi $w))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e194c86c0027f59a5b2e08633b91eeb9d4905dde")
+    (provenance (fence "samples.md" 64 specimen 3) (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
+      (Context)
+      (Assert (Close ($r Speaker Audience)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e1cedd19b71bc7ecb8fec33659e3a31369900fa7")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      ($Q Speaker)))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e26df6afd87bb7d08a980c37d548afe89cda0150")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($x :: Entity)
+       (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e2719f18d3e98e9243107359767a817c43c1967a")
+    (provenance (fence "spec.md" 7 declaration 3))
+    (term ClauseContent)
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e27b89902cf19905e25962cac3cd93cae5a7be76")
+    (provenance (fence "samples.md" 16 specimen 1) (test "lower-test.rkt"))
+    (term
+     (Assert
+      (CloseClause (ActualClause (ClauseNot (DirectClause (klama Speaker)))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e2d793fbfb39dff9a96fadd7712f2782748b2307")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (GlobalExactly
+       25
+       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+       (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e308057746367a87f89a460965019412eb9b513f")
+    (provenance (test "individual-lowering-test.rkt"))
+    (term
+     (Assert
+      (≤
+       (Card
+        (SetOf
+         (λ ($individual :: Entity)
+           (∧ (gerku $individual) (Close (blabi $individual))))))
+       1)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e319c178b99588bd94b79a0ad69a0f691679f1c3")
+    (provenance (test "lower-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
+      (Mention (Close (tavla Speaker $r)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e364bb91b4106910ac77758a99ec2401f16fa7a1")
+    (provenance (fence "samples.md" 1 specimen 1) (test "lower-test.rkt"))
+    (term (Assert (Close (klama Speaker))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e3cc58ea58d18b15852ecce37d7b52f277312ef6")
+    (provenance (fence "samples.md" 69 specimen 1))
+    (term (λ ($x :: Referents Entity) (Close (klama :2 $x))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e40d3b5e85345cdd2b6b089c0f694b3ed9c8f557")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($x :: Entity) (Combine $x Speaker)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e55cffd7d7554ba61469ae786d1b03caefd78850")
+    (provenance (fence "samples.md" 66 specimen 1))
+    (term
+     (Bind
+      ($home :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (zdani $x Speaker)))
+      (Bind
+       ($state :: Referents Eventuality)
+       (Refer (StateClause (CoRef That $home)))
+       (Mention $state))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e588d35763d895a68934c732a8ff3c3e78edb5b6")
+    (provenance (fence "samples.md" 71 specimen 1))
+    (term
+     (Let
+      ($a :: Act Assertion)
+      (Assert (Close (klama Speaker)))
+      (Bind
+       ($o :: ActOccurrence Assertion)
+       (Perform Host $a)
+       (Do
+        (Perform
+         AttachedDisplay
+         (Express (Close (Happiness Speaker $o Moderate))))))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e58c78854c138024e50609666b91b4f15df00d8a")
+    (provenance (test "closures-test.rkt"))
+    (term (PluralNo $x $r))
+    (env
+     (($r EFn ((Referents Eventuality)) Content)
+      ($x Fn ((Referents Eventuality)) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e71ca0bf54f0f025feecd43fd1c7649be1f552c9")
+    (provenance (test "types-test.rkt"))
+    (term (At klama x2 This))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e7e656efe864d196906f4ebb1bd70bcf12bb4f46")
+    (provenance (test "types-test.rkt"))
+    (term (λ ($k :: DecompositionBasis (Group Entity) Entity) (MeiRel $k 0)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e8d6ca6fb906db02315ea94de625d4ef26918d26")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (PerformSource
+       Host
+       ($x :: Referents Entity)
+       $read
+       (Assert ($P $x))
+       ($read :: RefComp (Referents Entity))
+       ($o :: ActOccurrence Assertion)
+       (Do
+        (Perform
+         Host
+         (Assert (Bind ($y :: Referents Entity) $read ($Q $y))))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e9be9fe64e49c1115b978ea22472b221b6e8287c")
+    (provenance (test "types-test.rkt"))
+    (term
+     (Bind
+      ($r :: Referents Entity)
+      (Refer (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
+      (Mention $r)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "e9d786c6eeb92a0f74a7853885f198e91d1abf23")
+    (provenance (test "types-test.rkt"))
+    (term
+     (GlobalExactly
+      1
+      (λ ($x :: Entity) (gerku $x))
+      (λ ($x :: Entity) (Close (jmaji $x)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ea72087a9954bb6b413035442975c44dc230ba44")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do $A)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ea91643d11339c87a832cf5f32fe66d40940c958")
+    (provenance (test "types-test.rkt"))
+    (term (LocutionOf CurrentToken CurrentToken))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "eb25b474d04d551d558e517f0248943c27c6712e")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Let ($saved :: Act Assertion) $A $saved))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "eb60425fbf22adad2049661f4833cc9196ce2225")
+    (provenance
+     (fence "spec.md" 2 specimen 1)
+     (fence "spec.md" 3 expansion 1)
+     (test "lower-test.rkt"))
+    (term (klama :2 This Yonder))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ecd3e63825096900e735dd185583ac4ad06e7d15")
+    (provenance (fence "spec.md" 6 expansion 3))
+    (term
+     (λ ($e :: Referents Eventuality)
+       (Bind
+        ($v1 :: T1)
+        (Context)
+        …
+        ($vk :: Tk)
+        (Context)
+        (P :p1 $v1 … :pk $vk :Eventuality $e))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ed6c0ca5f15da49ed075b3e6ac99eec15d2d5ccc")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert Speaker)
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ed9b04034814200f58fddbdec548f99a038bc428")
+    (provenance (test "closures-test.rkt"))
+    (term (IndividualSome $x $r))
+    (env (($r EFn (Entity) Content) ($x Fn (Entity) Content)))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "eecc4625fc5ffae42cb3bb60deb92d444a28cf62")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($e :: Referents Eventuality) (Close (klama Speaker :Eventuality $e))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "eef4cb9e9fa0f340c01ad4510fed32f6c6771cc2")
+    (provenance (test "types-test.rkt"))
+    (term (SetOf (λ ($x :: Entity) (gerku $x))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ef6283fe4e32d05057010ec975be3074b878a6eb")
+    (provenance (test "types-test.rkt"))
+    (term
+     (λ ($k :: DecompositionBasis (Group Entity) Entity)
+       (Bind
+        ($g :: Referents (Group Entity))
+        (JoiGroup $k Speaker Audience)
+        (Mention $g))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "ef9ab33a1c7bb78947a92e8c4920fc8671771b1b")
+    (provenance (fence "samples.md" 67 specimen 5))
+    (term (Assert (= (|te'a| 2 3) 8)))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "f026a59d9e758b1e1ac454aa60394c49f3f4697f")
+    (provenance (fence "spec.md" 3 expansion 3))
+    (term (At (At klama 2 This) 3 Yonder))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "f05f4d8d6f8900dcf9f2bbc1ff278a93023e2e11")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
@@ -2683,647 +5182,214 @@
            $nuclear_klama_5))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9022041a57c37926cc637d38693ada4bf78a7777")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9179373ca8c2e48ede6fe47086cebd79b7f61352")
+  (case (id "f0922c786cf1932a6bbf42179e54df4e558ec456")
     (provenance (test "types-test.rkt"))
     (term
-     (λ (($p :: EFn (Entity) Content) ($r :: Referents Entity))
-       (CoveredBy $p $r)))
+     (SetOf
+      (λ ($z :: Entity)
+        (Most
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($x :: Entity) (Close (jmaji $x)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9214edec93adde0ffbc49a2d2b57dd697d4e4a63")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Utterance
-      ($u :: UtteranceToken)
-      ((Realizes $u (Assert (Close (gerku Speaker)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "927827bd0eb63e94871641a79be5e180d4ea708b")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Let
-      ($a :: Act Assertion)
-      (Assert (Close (gerku Speaker)))
-      (Do (Perform $a) (Perform $a))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "92d4b7cb59345610a7003d6430c1d0cea49a3b3d")
-    (provenance (fence "samples.md" 47 specimen 1))
+  (case (id "f0b03ab446bef9c36ea48ddf799f5e935ab0d235")
+    (provenance (test "lower-test.rkt"))
     (term
      (Bind
-      ($dogs :: Referents Entity)
-      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-      ($people :: Referents Entity)
-      (SelectExactly 2 (λ ($x :: Entity) (prenu $x)))
-      (Assert
-       (Distrib
-        (λ ($d :: Entity)
-          (Distrib (λ ($p :: Entity) (Close (nelci $d $p))) $people))
-        $dogs))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "93343abb3be77f900c4f01056ef1b304a64a9617")
-    (provenance (fence "samples.md" 56 specimen 1))
-    (term
-     (Let
-      ($a :: Act Assertion)
-      (Assert (Close (cadzu Audience)))
+      ($r :: Referents Entity)
+      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
       (Bind
-       ($o :: ActOccurrence Assertion)
-       (Perform Host $a)
-       (Do
-        (Perform
-         AttachedDisplay
-         (Express (Close (EvidentialBasis Speaker $o Observation))))))))
+       ($nuclear_tavla_3 :: Referents Entity)
+       (Context)
+       (Assert
+        (GlobalExactly
+         3
+         (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
+         (λ ($nuclear_member :: Entity)
+           (Close (tavla $nuclear_member $r $nuclear_tavla_3))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "96d33f95f4b33a7dba184ccf0fb550a5fff0da64")
-    (provenance (fence "spec.md" 18 expansion 3))
+  (case (id "f101c6a9288cad70c0a75945dcb661d1a87fd5a7")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (Bind
-      ($d :: DefectKind)
-      (Context)
-      (Express (Close (MetalinguisticallyDefective t $d)))))
-    (env ())
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $unknown
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "97357f261644577c1d46b7a290b77c7bba6036f3")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($k :: Number)
-       (Bind
-        ($g :: Referents (Group Entity))
-        (Massify $k Speaker)
-        (Mention $g))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "977660f15daa38c8411915d0adda06cb5a8d0840")
-    (provenance (test "types-test.rkt"))
-    (term
-     (No
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "98277acc169bb0347d621f9493d0627322d73f09")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r Fn (Entity) Content) ($x Fn (Entity) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "989c13b50ca50ed37a7932b1309361c2d28527ad")
-    (provenance (fence "samples.md" 51 specimen 1))
-    (term
-     (Assert
-      (Close
-       (cusku
-        Speaker
-        (StructuredQuote
-         (Utterance
-          ($u :: UtteranceToken)
-          ((∧
-            (SpeakerOf $u Speaker)
-            (Realizes $u (Assert (Close (klama Speaker))))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "994764bf6b5e8953f65161d7013645dbd610834d")
-    (provenance (fence "samples.md" 55 specimen 2))
-    (term
-     (Express
-      (Close (Desire Speaker (Reify (Close (sipna Speaker))) Moderate))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9a109bb39c927ec2d955da251ed7cac22d735f7b")
+  (case (id "f1beb4ef6a10acf370224865716485f80c21195f")
     (provenance (test "closures-test.rkt"))
     (term (PluralSome $x $r))
     (env
      (($r Fn ((Referents Number)) Content)
       ($x Fn ((Referents Number)) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9a5f9039e30a3c0f62c6dffe896447f940263dee")
-    (provenance (test "lower-test.rkt"))
+  (case (id "f1fc1d56a889c979e74bb8a6482d05ec43eca7ca")
+    (provenance (fence "samples.md" 23 specimen 1))
     (term
      (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert
-       (IndividualEvery
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($x :: Entity) (Close (tavla $r $x)))))))
+      ($alis :: Referents Entity)
+      (Refer (λ ($x :: Referents Entity) (Named "alis" $x)))
+      (Assert (Close (klama $alis)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9a980ead40a2b6ea97d8d541fb5902b8d38efe34")
-    (provenance (fence "samples.md" 45 specimen 1))
-    (term
-     (Assert
-      (¬
-       (IndividualEvery
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($x :: Entity) (Close (blabi $x)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9ae1fcf6b3c4296c14e99e6a239f7e14e3b14305")
+  (case (id "f21f3fcd8c55f6c2d3addd868d0f2ae3c46c4760")
     (provenance (test "types-test.rkt"))
     (term
      (Bind
       ($w :: Referents Entity)
-      (SelectSome (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
-      (Mention $w)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9b0069c6c532ffc53730fca1df4cbe883668cc96")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
-       (Assert (Close (tavla $r $r1))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9b1ee3acd12ffd1632396e19b9b8fa6460ee5851")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($x :: Referents Entity)
-       (SpeakerDescribesUnaddressed
-        $x
-        (λ ($y :: Referents Entity) (mlatu $y)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9cba52ed754afd08fa1798d5069cb2dd2d84b50f")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectAllBut
+      (SelectExactly
        1
        (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
       (Mention $w)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9d01bf3ff1a894bc21f6f52bbab08ecdac046100")
+  (case (id "f22dc2c71a8db9ef57a2d76317b88ce0b6e1a466")
+    (provenance (test "perform-source-test.rkt"))
+    (term
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      ((λ ($identity :: Act Assertion) $identity) $A)))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "f3a97e4e6e32594eeccdbb5201a1fe0fb4edc8c5")
     (provenance (test "types-test.rkt"))
     (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectSome (λ ($x :: Entity) (gerku $x)))
-      (Mention $w)))
+     (Utterance
+      ($u :: Referents UtteranceToken)
+      ((Realizes $u (Assert (Close (gerku Speaker)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9d724572812a95f17d64c56a83d5ce683cb8937b")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ (($k :: DecompositionBasis (Group Entity) Entity) ($g :: Group Entity))
-       (SetOf (λ ($x :: Referents Entity) (Among $x (components_κ $k $g))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9d91fea6fcbe1660a2d589b0f22508984dffdb96")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($g :: Referents (Group Entity))
-       (SpeakerDescribes $g (λ ($y :: Referents (Group Entity)) (mlatu $y)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9e75541a32177df4862921c0a1e173badf2597d9")
-    (provenance (fence "samples.md" 50 specimen 1))
-    (term (Ask (Polar (Close (klama Speaker)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9f1e72b01f378d60e029a011259c7afc27b3d192")
-    (provenance (fence "samples.md" 10 specimen 1))
-    (term (Assert (CloseClause (ActualClause (DirectClause (citka Speaker))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9fb4680bf9dbd347233d965bb1b51398121b28dd")
-    (provenance (fence "spec.md" 7 declaration 4))
-    (term →)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "9ff01861c7cef08a385d5748b306921770112a11")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Exactly
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a08a43b483737e5d77bab8fa6e9b4027590b823f")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit1 :: Referents Entity) (gerku $unit1)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-       (Assert (CloseClause (ClauseNot (DirectClause (tavla $r $r1))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a10b9fd74a7d32a3eba73e41fd5a11b687c3f994")
-    (provenance (test "types-test.rkt"))
-    (term (λ (($k :: Number) ($g :: Group Entity)) (components_κ $k $g)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a19797ec0be1e15a91b43d4432293fa86867ea57")
-    (provenance (test "types-test.rkt"))
-    (term (λ (($c :: ClauseContent) ($e :: Referents Eventuality)) ($c $e)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a1c7d55a2ff59af7ec34acd0391a8adc1a605153")
-    (provenance (fence "samples.md" 9 specimen 1))
-    (term
-     (Assert
-      (CloseClause
-       (ActualClause
-        (λ ($e :: Referents Eventuality)
-          (∧
-           ((DirectClause (klama Speaker This)) $e)
-           (Close (pilno :2 This :3 $e))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a302c8338df5aad613878b9d502a427f75599292")
-    (provenance (test "types-test.rkt"))
-    (term
-     (GlobalExactly
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a486484078764cf41d751170780eead1a343b1b5")
-    (provenance (test "types-test.rkt"))
-    (term (SpeakerDescribes Speaker))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a542c608466463f07a7ed0c98b750951ccd7c225")
-    (provenance (fence "samples.md" 45 specimen 2))
-    (term
-     (Assert
-      (¬
-       (≤
-        1
-        (Card (SetOf (λ ($x :: Entity) (∧ (gerku $x) (Close (blabi $x))))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a5b627375f35efc198d39b5a865d6de2b5ae61c5")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit1 :: Referents Entity) (mlatu $unit1)))
-      (Bind
-       ($r1 :: Referents Entity)
-       (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-       (Assert (Close (klama :1 $r1 :3 $r))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a699eaf9278071f7f3dda4451a176d55681645c2")
-    (provenance (test "types-test.rkt"))
-    (term (LocutionOf CurrentToken CurrentToken))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "a91759210f0b915f0ee06f4eb6011f93866bd93c")
+  (case (id "f5c36a172141b3fb8059c45bbce69ea115f5ea70")
     (provenance (test "closures-test.rkt"))
     (term (IndividualEvery $x $r))
     (env (($r EFn (Entity) Content) ($x Fn (Entity) Content)))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "aa0d49a4044cadfc1409c1a412bdbdf807654f49")
+  (case (id "f5f5cfdff7573d6b916bd354cb7b6a7e98da15e4")
     (provenance (test "types-test.rkt"))
-    (term (SetOf (λ ($x :: Entity) (Bind ($n :: Natural) (Vague) (gerku $x)))))
+    (term (WordSign "klama"))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "aa64269e83bd0a1273b03d95d593de19a1cbe0c9")
-    (provenance (test "types-test.rkt"))
-    (term (LetteralSign "by"))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "aa84ff3c8b6312ed818a899455117f59892ec52d")
-    (provenance (test "individual-lowering-test.rkt"))
+  (case (id "f6a1859a73ab6ac1a6946904e2c8c6c3109c2bb9")
+    (provenance (fence "samples.md" 11 specimen 1))
     (term
      (Assert
-      (GlobalExactly
-       1
-       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-       (λ ($individual :: Entity) (¬ (Close (blabi $individual)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "aa9e327b8b124c679e98ce58171b233532adf2d9")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($nuclear_bajra_2 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_3 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_4 :: Referents Entity)
-      (Context)
-      (GlobalExactly
-       3
-       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-       (λ ($nuclear_member :: Entity)
-         (Close
-          (bajra
-           $nuclear_member
-           $nuclear_bajra_2
-           $nuclear_bajra_3
-           $nuclear_bajra_4))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ab7546612728acf1a987d65423916703302ad024")
-    (provenance (test "types-test.rkt"))
-    (term (Mention Speaker))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ababc36bfa4482062755bb7b6da170cc37fffdde")
-    (provenance (fence "spec.md" 6 expansion 3))
-    (term
-     (λ ($e :: Referents Eventuality)
-       (Bind
-        ($v1 :: T1)
-        (Context)
-        …
-        ($vk :: Tk)
-        (Context)
-        (P :p1 $v1 … :pk $vk :Eventuality $e))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "abff55d67e307c4c442096bbb892c482f083bae2")
-    (provenance (test "types-test.rkt"))
-    (term
-     (AtMost
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "aca8badfbc5ae8903bc68929e5d1c2390f1cf1fc")
-    (provenance (test "individual-lowering-test.rkt"))
-    (term
-     (Assert
-      (¬
-       (≤
-        (Card
-         (SetOf
-          (λ ($individual :: Entity)
-            (∧ (gerku $individual) (Close (blabi $individual))))))
-        1))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ad222350f350226bed10be1ec876400bbc2c2241")
-    (provenance (fence "samples.md" 17 specimen 2) (test "lower-test.rkt"))
-    (term
-     (Assert
-      (CloseClause
-       (ActualClause
-        (ClauseOr
-         (DirectClause (klama Speaker))
-         (DirectClause (stali Audience)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ad6d1c1cbff26a4a4cc7b92e1d26dd108d6c0cb0")
-    (provenance (fence "samples.md" 30 specimen 1) (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($base :: Referents Entity)
-      (Local (Refer (λ ($x :: Entity) (gerku $x))))
       (Bind
-       ($sets :: Referents (Set Entity))
-       (Refer (λ ($s :: Set Entity) (Close (selcmi $s $base))))
-       (Mention $sets))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b12e3e06321a1d9c05fd3d5648a73688cb4dff9c")
-    (provenance (fence "samples.md" 19 specimen 1))
-    (term
-     (Bind
-      ($cat :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-      (Assert (Close (blabi $cat)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b1e2c2a9ab82f7f6d2d8cfca6a39b451ad8553c3")
-    (provenance (fence "samples.md" 70 specimen 1))
-    (term
-     (Bind
-      ($cat :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (mlatu $x)))
-      (Do (Assert (Close (blabi $cat))) (Assert (Close (jbena $cat))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b2501d03e5778a5466a75e9d99fbd0cf7ea1f273")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualSome $x $r))
-    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b2c08b72b4b178f52bc0e452a04465d14bfbdce1")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($left :: Referents Entity)
-      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
-      ($right :: Referents Entity)
-      (SelectExactly 2 (λ ($x1 :: Entity) (prenu $x1)))
-      (Assert
-       (Distrib
-        (λ ($l :: Entity)
-          (Distrib (λ ($r :: Entity) (Close (nelci $l $r))) $right))
-        $left))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b3a2e56a91b1b5b1c29dcff04ae6ad60c565f3d6")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Utterance
-      ($u :: UtteranceToken)
-      ((Realizes $u (Assert (Close (klama Speaker)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b3c3520e7413a19e1fe56c52ea37449224943f5e")
-    (provenance (fence "samples.md" 8 specimen 1))
-    (term
-     (Assert
-      (CloseClause
-       (ActualClause
+       ($occ :: Time)
+       (Context)
+       (CloseClause
         (λ ($e :: Referents Eventuality)
-          (∃
-           (λ ($m :: Referents Eventuality)
-             (∧
-              ((DirectClause (citka Speaker)) $e)
-              (purci $m Now)
-              (purci $e $m)))))))))
+          (∧
+           ((ActualClause (DirectClause (citka Speaker))) $e)
+           (cabna $e $occ)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b4842086f1b7aca328d967227d306e69e18fbfdd")
-    (provenance (fence "spec.md" 12 specimen 1))
-    (term
-     (∀
-      (λ (($p :: Entity) ($d :: Entity))
-        (→
-         (∧ (prenu $p) (xasli $d) (Close (ponse $p $d)))
-         (Close (darxi $p $d))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b5b2cdded5db6db2f43a575b770cb7ca99fb9ea2")
-    (provenance (test "lower-test.rkt"))
-    (term (Assert (Close (tavla Speaker))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b66d1b9582dc2ddf2e5204a1821cbf73c41dc96d")
+  (case (id "f81721a81e71a0cdd44c85ca033688999c619143")
     (provenance (test "types-test.rkt"))
     (term
-     (λ ($e :: Referents Eventuality) (Close (klama Speaker :Eventuality $e))))
+     (SetOf
+      (λ ($z :: Entity)
+        (AtLeast
+         0
+         (λ ($x :: Entity) (gerku $x))
+         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b821a02c794ea3dae310afa75da8e693de0f6520")
-    (provenance (test "lower-test.rkt"))
+  (case (id "f8873a8612082ff11b8991e0095ad03f9eb68f4d")
+    (provenance (test "perform-source-test.rkt"))
+    (term (Perform AttachedDisplay (Assert ($P Speaker))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "f936005a958fa8d65abcdae0294b1a92329fef37")
+    (provenance (fence "samples.md" 58 specimen 1))
     (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Assert (Close (tavla Speaker $r)))))
+     (Let
+      ($prior :: Act Assertion)
+      (Assert (Close (klama Audience)))
+      (Bind
+       ($prioro :: ActOccurrence Assertion)
+       (Perform Host $prior)
+       (Bind
+        ($defect :: DefectKind)
+        (Context)
+        (Express (Close (MetalinguisticallyDefective $prioro $defect)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "b83b1d8e9b75b8bd54a83ba0338c495c98018201")
-    (provenance (test "types-test.rkt"))
-    (term (NameSign "djan"))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ba57bd6a43e5bf1a1c30edd7d59243129da613b3")
-    (provenance (test "types-test.rkt"))
+  (case (id "f9721fd8b2158d3df4188872aabf77e2c325a71c")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (AtMost
-      1
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
-    (env ())
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      (Refer $P)
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do
+       (Perform Host (Assert (Bind ($y :: Referents Entity) $read ($Q $y)))))))
+    (env
+     (($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ba8d386ae6848940b60f704e4629b05464b4c0b3")
+  (case (id "f981106111772906ed7d014fef60df1a3705b00b")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
@@ -3346,363 +5412,16 @@
             $nuclear_bajra_4)))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bad283f11b5754d9e03bfa113666277ec920f32a")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($x :: Referents Entity)
-       (∃
-        (λ ($e :: Referents Locution)
-          (∧
-           (LocutionOf CurrentToken $e)
-           (skicu
-            Speaker
-            $x
-            Audience
-            (λ ($y :: Referents Entity) (mlatu $y))
-            :Eventuality
-            $e))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bc109a29c300f54a9a026d5ca4701dbd96c8cd53")
-    (provenance (test "individual-lowering-test.rkt"))
-    (term
-     (Assert
-      (IndividualNo
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (blabi $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bcff362502a0710daee4004eb9dcb572b5172cfb")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (AtLeast
-         0
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bd4eef45e064c4737c1e0654f2707c154e3a1d4f")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r EFn (Number) Content) ($x Fn (Number) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bdb5ebe380387306a08f9a4622821a13e6c8f304")
-    (provenance (test "types-test.rkt"))
-    (term (SentenceSign "mi klama"))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bdd3d191b2cdc13f93625cd4ad2b8bfdcbc997f0")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (GlobalExactly
-         1
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($x :: Entity) (Close (jmaji $x)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bf9cba2101fca4330c7878635e3eade3cd1d6894")
-    (provenance (test "types-test.rkt"))
-    (term (∃ (λ ($c :: Content) $c)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "bfbea82538c52a0614b24010dbbfef6b97128d95")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Some
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity) (Close (jmaji $w)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c1c2b0ef79f5f36576e29b16620a3691c14c73d9")
-    (provenance (fence "samples.md" 65 specimen 3))
-    (term
-     (Bind
-      ($a :: Referents Amount)
-      (Refer
-       (λ ($x :: Referents Amount)
-         (Close ((NiRel (Close (klama Speaker))) $x))))
-      (Mention $a)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c224ce9bf417716f65f0929f616785a351c2cd3f")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralSome $x $r))
-    (env
-     (($r Fn ((Referents Eventuality)) Content)
-      ($x Fn ((Referents Eventuality)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c24a1af570ffb841a098379501c032be94c0377d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectAllBut 1 (λ ($x :: Entity) (gerku $x)))
-      (Mention $w)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c250c2d917ba413bd1cff7f8e06e7ca3d3292020")
-    (provenance (fence "samples.md" 13 specimen 1))
-    (term
-     (Assert
-      (CloseClause
-       (ActualClause
-        (λ ($s :: Referents Eventuality)
-          (∧
-           ((StateClause
-             (Bind
-              ($home :: Referents Entity)
-              (Refer (λ ($x :: Referents Entity) (zdani $x Speaker)))
-              (CoRef That $home)))
-            $s)
-           (purci $s Now)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c27edda4114ef35690169b876f3211f4d7c1555c")
-    (provenance (test "types-test.rkt"))
-    (term (Let ($a :: Act Assertion) (Mention Speaker) (Mention $a)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c34cc0743e85a8dd39494ac349a3c23c8929fd2e")
-    (provenance (fence "samples.md" 46 specimen 1))
-    (term
-     (Assert
-      (PluralNo
-       (λ ($x :: Referents Entity) (prenu $x))
-       (λ ($w :: Referents Entity) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c3d5175b715643891982317b895cbad77bf79fed")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (FewerThan
-         1
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c4b59979b8901ac9d0994fd722de01317baf2859")
+  (case (id "fa6884c0879ec08bcff75b679deb65edac523a4f")
     (provenance (test "lower-test.rkt"))
-    (term
-     (ZipWith
-      (λ ($left $right :: Referents Entity) (Close (tavla $left $right)))
-      (List This Audience)
-      (List Audience Speaker)))
+    (term (Assert (Close (tavla Speaker))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c4debe5a04113791d00af097e623479a93f66c37")
-    (provenance (fence "samples.md" 69 specimen 1))
-    (term (λ ($x :: Referents Entity) (Close (klama :2 $x))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c6db5cb9d90db2818278a71db753c656777cf096")
-    (provenance (fence "samples.md" 61 specimen 1))
-    (term
-     (Bind
-      ($book :: Referents Entity)
-      (Refer (λ ($x :: Referents Entity) (cukta $x)))
-      (Bind
-       ($a :: Referents Eventuality)
-       (Context
-        (λ ($v :: Referents Eventuality)
-          (∧
-           (∃ (λ ($p :: Proposition) (CoRef $v (EventOfContent (Holds $p)))))
-           (Close (srana $v $book))))
-        $book)
-       (Assert (Close (djica Speaker $a))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c6df5810e743d1c33b69f3a07532317d8e8adcd8")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
-    (env
-     (($r EFn ((Referents Entity)) Content)
-      ($x Fn ((Referents Entity)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c6ec1066b1a76fb7e728f361771be9f231996015")
-    (provenance (fence "spec.md" 16 schema 1))
-    (term
-     (Bind
-      ($κ :: GroupBasis T)
-      (Context (GroupBasisConstraint gunma T) deps…)
-      (GunmaAt $κ g Cs)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c6fe437f0775a9c797d1d01aac783ed9f6b963cb")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($nuclear_bajra_2 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_3 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_4 :: Referents Entity)
-      (Context)
-      (Assert
-       (GlobalExactly
-        3
-        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-        (λ ($nuclear_member :: Entity)
-          (Close
-           (bajra
-            $nuclear_member
-            $nuclear_bajra_2
-            $nuclear_bajra_3
-            $nuclear_bajra_4)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c7be97f9041d3add7091958afba1d7b0e634440f")
-    (provenance (fence "samples.md" 16 specimen 1) (test "lower-test.rkt"))
-    (term
-     (Assert
-      (CloseClause (ActualClause (ClauseNot (DirectClause (klama Speaker)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c887d890fa61b6e067452e9b0c0180deaec36883")
-    (provenance (fence "samples.md" 67 specimen 2))
-    (term (Mention (OpaqueQuote "mi klama")))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c8ca016b1559d11288d2c8b805e1d00131b759ae")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualEvery $x $r))
-    (env (($r EFn (Eventuality) Content) ($x Fn (Eventuality) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c8f984b21757cf93810b590206492c92022ae554")
-    (provenance (test "types-test.rkt"))
-    (term (SetOf (λ ($x :: Entity) (gerku $x))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c997a78089666f4b1d4c249f0894774dada51af1")
-    (provenance (fence "samples.md" 67 specimen 7))
-    (term
-     (Bind
-      ($ep :: Referents Epistemology)
-      (Context)
-      (Bind
-       ($tv :: Referents TruthValue)
-       (Refer
-        (λ ($v :: Referents TruthValue)
-          ((JeiRel (Close (klama Speaker))) $v $ep)))
-       (Mention $tv))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "c9eaacec932674eba5782744957fe45d08c20c3b")
-    (provenance (fence "samples.md" 65 specimen 2))
-    (term
-     (Let
-      ($p :: Proposition)
-      (Reify (Close (klama Speaker)))
-      (Bind
-       ($s :: Referents (Sign Sentence))
-       (Refer
-        (λ ($x :: Referents (Sign Sentence)) ((DuhuRel (Holds $p)) $p :2 $x)))
-       (Mention $s))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ca3ded71dd1e695cfba61b2e74339866dbf5b8a7")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (Every
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($x :: Entity) (Close (jmaji $x)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "cb59863b454b6e7a9a6795c1e2e0bea7bcc0153b")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (GlobalExactly
-      2
-      (λ ($p :: Entity) (prenu $p))
-      (λ ($q :: Entity) (blabi $q))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "cc26b9d3a5a7be71c84d4b961305f5e0152aafd8")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($x :: Entity) (gerku $x)))
-      (Mention $r)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ccb69a67724bccfc27c3af468710451a11f0867e")
-    (provenance (test "types-test.rkt"))
-    (term (At klama 2 This))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ce45699d7eb9e11016049b21298002a2705d5d5c")
+  (case (id "fb2133f70e88f14bfbe2a052739d1ed5c5f3c859")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
@@ -3716,340 +5435,12 @@
          3
          (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
          (λ ($nuclear_member :: Entity)
-           (Close (tavla $nuclear_member $r $nuclear_tavla_3))))))))
+           (Close (tavla $r $nuclear_member $nuclear_tavla_3))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d01eb068230f1e80e3c3ed7d9c796631ce69cc5f")
-    (provenance (test "types-test.rkt"))
-    (term
-     (MoreThan
-      1
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d0cc53280e4d91b835ce82836376e405354417d1")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r EFn (Entity) Content) ($x Fn (Entity) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d243efa10a933217771fb5782dbd0b624eddebef")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Most
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d3626289a937e7099a973d515c1d2e2d454c6228")
-    (provenance (test "types-test.rkt"))
-    (term (SetOf (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d3cc2d63421b372fa9706846714eae4e84e0c92e")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: PredTerm (Row (1 (Referents Entity)) (2 (Referents Entity))))
-      (Context)
-      (Mention (Close ($r Speaker Audience)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d3db8cca2e347d84559a5e333fde1b593af2eca3")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($e :: Referents Eventuality)
-       (SpeakerDescribes $e (λ ($y :: Referents Entity) (mlatu $y)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d42033b8feb6bcccec442aa349723161a42e35a6")
-    (provenance (fence "samples.md" 42 specimen 1))
-    (term
-     (Presuppose
-      (∃ (λ ($x :: Entity) (prenu $x)))
-      (∧
-       (∀
-        (λ ($p :: Entity)
-          (→
-           (prenu $p)
-           (∃
-            (λ ($d :: Referents Entity)
-              (∧
-               (CoveredBy (λ ($x :: Entity) (gerku $x)) $d)
-               (= (CardBasis $d (λ ($x :: Entity) (gerku $x))) 3)
-               (Close (ponse $p $d))))))))
-       (∀
-        (λ (($p :: Entity) ($d :: Referents Entity))
-          (→
-           (∧
-            (prenu $p)
-            (CoveredBy (λ ($x :: Entity) (gerku $x)) $d)
-            (= (CardBasis $d (λ ($x :: Entity) (gerku $x))) 3)
-            (Close (ponse $p $d)))
-           (Close (tatpi $d))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d48f50d33981b976d025f2f9cc46b6003cdf286f")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($basis :: DecompositionBasis (Group Entity) Entity)
-      (Context (GroupBasisConstraint joi Entity) deps…)
-      (Bind
-       ($group :: Referents (Group Entity))
-       (JoiGroup $basis Speaker Audience)
-       (Mention $group))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d65220123db3801bf1df9efbe18153f04d2ece2d")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (IndividualSome
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (tavla Speaker $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d8116f10e6b587310e323677fb87af53a97c9546")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (Exactly
-         0
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity) (Close (jmaji $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d84b84348667a15176f60135c1841dea24c6a725")
-    (provenance (fence "samples.md" 38 specimen 1) (test "types-test.rkt"))
-    (term
-     (Bind
-      ($dog :: Referents Entity)
-      (Refer
-       (λ ($x :: Referents Entity)
-         (∧
-          (SpeakerDescribes $x (λ ($y :: Referents Entity) (gerku $y)))
-          (SpeakerDescribesUnaddressed
-           $x
-           (λ ($y :: Referents Entity) (blabi $y))))))
-      (Assert (Close (jbena $dog)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d8b36b937fefa5a941b54d815d584a63cb6b29bd")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
-      (Assert (Close (klama $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d924a1aa7f4bc1039efb2dd64206d0a1b24ff115")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Mention (Close (tavla Speaker $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d936f713fab6df3e8eadb5235a1215d7241c43ca")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer
-       (λ ($x :: Referents Entity) (Bind ($s :: Scale) (Context) (gerku $x))))
-      (Mention $r)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "d9df2233ecd2ee2c27d319998d42b84537e39553")
-    (provenance (test "lower-test.rkt"))
-    (term (Mention (Close (klama Speaker))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dc12fd8dacfd4b1dfa96f655e71d7d9814fb582b")
-    (provenance (fence "samples.md" 64 specimen 2))
-    (term
-     (Bind
-      ($purpose :: Referents Entity)
-      (Context)
-      ($n :: Natural)
-      (Vague
-       (AdmissibleThreshold TooManyK (λ ($x :: Entity) (gerku $x)) $purpose))
-      (Assert
-       (MoreThan
-        $n
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($w :: Referents Entity) (Close (klama $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dca2591716f1bddade1e6b1d76605a84e2b5157f")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($x :: Entity)
-        (Bind
-         ($r :: Referents Entity)
-         (Refer (λ ($y :: Entity) (gerku $y)))
-         (gerku $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dccf6a3cccec3ff3d46f75547336c59fe338009f")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Every
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
-      (λ ($x :: Entity) (Close (jmaji $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dce09fec959b5e2380b211d4b944876b906644f9")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Let
-      ($description1 :: EFn ((Referents Entity)) Content)
-      (λ ($y :: Referents Entity) (mlatu $y))
-      (Bind
-       ($r :: Referents Entity)
-       (Refer
-        (λ ($reference :: Referents Entity)
-          (∧
-           (SpeakerDescribes $reference $description1)
-           (=
-            (CardBasis
-             $reference
-             (λ ($unit :: Entity) (SpeakerDescribes $unit $description1)))
-            3))))
-       (Assert (Close (blabi $r))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dd4056e0b54dd158ab721f1a460cde415a259a0a")
-    (provenance (fence "spec.md" 19 expansion 3))
-    (term
-     (λ ($j :: Referents Eventuality)
-       (∃
-        (λ ($e1 :: Referents Eventuality)
-          (∧
-           (C $e1)
-           (∃
-            (λ ($e2 :: Referents Eventuality)
-              (∧
-               (D $e2)
-               (CompleteGunmaAt κ $j (Combine $e1 $e2))
-               (fasnu $j)))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "de705159d1bc8755c9a5d72c09869d9782f53df3")
-    (provenance (test "types-test.rkt"))
-    (term (SentenceSign (Bind ($x :: Entity) (Context) (Close (klama $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "df1f703e377aa73cc702e694e251fb6d3c12e6ba")
-    (provenance (fence "samples.md" 63 specimen 1))
-    (term
-     (Bind
-      ($death :: Referents Eventuality)
-      (Refer
-       (λ ($e :: Referents Eventuality)
-         (Close (morsi :1 Audience :Eventuality $e))))
-      (Bind
-       ($role :: Fn ((Referents Entity) (Referents Eventuality)) Content)
-       (Context
-        (λ ($k :: Fn ((Referents Entity) (Referents Eventuality)) Content)
-          (JaiRoleAdmissible rinka $k)))
-       (Assert (Close ((JaiRaise rinka $role) :1 Speaker :2 $death))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "df4f2627324fad0cadd5b8c5d47900f980e68cfb")
-    (provenance (test "types-test.rkt"))
-    (term (Card (SetOf (λ ($x :: Entity) (gerku $x)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "df6312da5076de25af993b3a5aee963c6d7b45d2")
-    (provenance (fence "spec.md" 13 expansion 1))
-    (term ((Tanru M H) fills…))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "dfb4b58226460bc533a9327ff4b5ba4b038ce1a0")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (IndividualSome
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($w :: Entity) (Close (tavla $w Speaker))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e05cc572fd6b6b840840cd9fbbdbabd9e4e62950")
-    (provenance (fence "samples.md" 67 specimen 6))
-    (term
-     (Bind
-      ($scale :: Referents Scale)
-      (Context)
-      (Bind
-       ($amt :: Referents Amount)
-       (Refer
-        (λ ($a :: Referents Amount)
-          ((NiRel (Close (klama Speaker))) $a $scale)))
-       (Mention (− 1 (AmountValue $amt $scale))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e288e76dfd7af14ee2627dc6fc09e39e7f18a6e0")
+  (case (id "fbbb637dc453cc3d364bd7f5627a2beb516c760d")
     (provenance (fence "samples.md" 56 specimen 2))
     (term
      (Assert
@@ -4066,494 +5457,103 @@
            (Holds $p))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e2ac359a95a348da47b2f9e9763c8f8739435ea8")
-    (provenance (test "types-test.rkt"))
-    (term (SetOf (λ ($x :: Entity) (Context))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e2ce0e1799ea8cf4c18d5b74d032a8994ba97f2d")
-    (provenance (test "types-test.rkt"))
+  (case (id "fcfec738ee302d719f6254efbc77ccde936c7721")
+    (provenance (fence "samples.md" 55 specimen 2))
     (term
-     (Generic
-      Typical
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (Close (jmaji $x))))))
+     (Express
+      (Close (Desire Speaker (Reify (Close (sipna Speaker))) Moderate))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e34ee1f435bac0f38afb4efe894e2f4e636f8354")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (IndividualEvery
-       (λ ($x :: Entity) (gerku $x))
-       (λ ($x :: Entity) (Close (tavla Speaker $x))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e43145a4695ab86bb60b7464604518c59d45bb8b")
-    (provenance (fence "samples.md" 53 specimen 1))
-    (term
-     (Bind
-      ($u :: Referents UtteranceToken)
-      (Context)
-      (Mention (Reify (RealizedContent $u)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e43b82156f2e82e2a40f8eb016ad8a3f4beec054")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ ($x :: Entity)
-       (SpeakerDescribes $x (λ ($y :: Referents Entity) (mlatu $y)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e533292c6c297bc2c73568b993d2f258643b3cdf")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualEvery $x $r))
-    (env (($r Fn (Number) Content) ($x Fn (Number) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e61080c82b790cbb7d97bcf55133eade01154657")
+  (case (id "fd31e7bdcbe48333bfd275db7175d0574cc58dce")
     (provenance (test "lower-test.rkt"))
     (term
      (Bind
-      ($restrictor_klama_2 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_3 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_4 :: Referents Entity)
-      (Context)
-      ($restrictor_klama_5 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_2 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_3 :: Referents Entity)
-      (Context)
-      ($nuclear_bajra_4 :: Referents Entity)
-      (Context)
-      (GlobalExactly
-       3
-       (λ ($restrictor_member :: Entity)
-         (Close
-          (klama
-           $restrictor_member
-           $restrictor_klama_2
-           $restrictor_klama_3
-           $restrictor_klama_4
-           $restrictor_klama_5)))
-       (λ ($nuclear_member :: Entity)
-         (Close
-          (bajra
-           $nuclear_member
-           $nuclear_bajra_2
-           $nuclear_bajra_3
-           $nuclear_bajra_4))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e7741842e2c111d58b9f8805ed75f7c87aa04aef")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ (($p :: Fn (Eventuality) Content) ($c :: ClauseContent))
-       (Exactly 1 $p $c)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e7e8047acd858d3e76a63fb551fcf866ba531aa4")
-    (provenance (test "closures-test.rkt"))
-    (term (PluralNo $x $r))
-    (env
-     (($r Fn ((Referents Number)) Content)
-      ($x Fn ((Referents Number)) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e8a0239b42ef566f905c40378bba09e5d4ccc32e")
-    (provenance
-     (fence "spec.md" 13 expansion 2)
-     (fence "spec.md" 14 expansion 2)
-     (fence "spec.md" 18 expansion 2)
-     (fence "spec.md" 19 expansion 2)
-     (fence "spec.md" 3 expansion 2)
-     (fence "spec.md" 3 expansion 5)
-     (fence "spec.md" 6 expansion 2))
-    (term ≝)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e8b59917bcea981a6b70ee3821dd0a3176aeb930")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
+      ($left :: Referents Entity)
+      (SelectExactly 3 (λ ($x :: Entity) (gerku $x)))
+      ($right :: Referents Entity)
+      (SelectExactly 2 (λ ($x1 :: Entity) (prenu $x1)))
       (Assert
-       (IndividualEvery
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($x :: Entity) (Close (tavla $x $r)))))))
+       (Distrib
+        (λ ($l :: Entity)
+          (Distrib (λ ($r :: Entity) (Close (nelci $l $r))) $right))
+        $left))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e8f9508e9d41a3a5a9382735368e6e0980471303")
-    (provenance (test "individual-lowering-test.rkt"))
-    (term
-     (Assert
-      (GlobalExactly
-       25
-       (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-       (λ ($nuclear_member :: Entity) (Close (blabi $nuclear_member))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "e8fa4566be53e4853bd96e0d83696d8f79177394")
-    (provenance (fence "samples.md" 18 schema 1))
-    (term
-     (JoiClause
-      $κ
-      (DirectClause (sanga Speaker))
-      (DirectClause (dansu Audience))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ea11ee301fbff77623c9b012811e5f574f665074")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($named :: Referents Entity) (Named "alis" $named)))
-      (Assert (Close (tavla Speaker $r)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "eb22c48de228d7b1bd803d63f25294008e766f5f")
-    (provenance
-     (fence "spec.md" 1 specimen 1)
-     (fence "spec.md" 3 expansion 4)
-     (test "lower-test.rkt"))
-    (term (klama Speaker This))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ed3d10bab935e3974118d4b5cc126cd56d9e5f60")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($o :: ActOccurrence Assertion)
-      (Local (Perform (Assert (Close (gerku Speaker)))))
-      (Mention $o)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "eddc3cb90bc2f8696261c3a03042b2ee8dfc120b")
-    (provenance (fence "samples.md" 50 specimen 4))
-    (term
-     (Ask
-      (OpenQ
-       (λ ($p :: CompatibleLabel (RowOf klama) (Referents Entity))
-         (Close (At klama $p This))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ee4a39edab1a4e38533c3477cf23e58f4a9cb21f")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (mlatu $unit)))
-      (Assert
-       (IndividualSome
-        (λ ($x :: Entity) (gerku $x))
-        (λ ($w :: Entity) (Close (tavla $r $w)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "eef381e4d2a2e11454e82a88ed9b45e11eb44a2e")
-    (provenance (test "types-test.rkt"))
-    (term (SpeakerDescribesUnaddressed Speaker))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f2070fefc08a6749997cac57fa972f059122f4a3")
-    (provenance (test "types-test.rkt"))
-    (term
-     (λ (($k :: ContributionBasis R1) ($p :: PredTerm R1) ($q :: PredTerm R2))
-       (JoiPred $k $p $q)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f2176a3e13345a2c4234e3725e4b96b5f6e8ac4f")
-    (provenance (test "types-test.rkt"))
-    (term (λ ($k :: DecompositionBasis (Group Entity) Entity) (MeiRel $k 0)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f29e422ad827d5455bf1be36b35acc0fb042cd90")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (PluralNo
-       (λ ($r :: Referents Entity)
-         (SpeakerDescribes $r (λ ($y :: Referents Entity) (mlatu $y))))
-       (λ ($w :: Referents Entity) (Close (blabi $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f2d3a1f9613461766ce72aedd362e91bf0b95c99")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Bind
-      ($w :: Referents Entity)
-      (SelectAtLeast 1 (λ ($x :: Entity) (gerku $x)))
-      (Mention $w)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f421ce619f4f1cebed311b7b93951081a5e3a6e6")
-    (provenance (fence "samples.md" 67 specimen 3))
-    (term (Assert (Close (valsi (WordSign "klama")))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f4bcdb67903c9e7ac86abc443d87c07d7210f8c9")
-    (provenance (fence "spec.md" 3 expansion 3))
-    (term (At (At klama 2 This) 3 Yonder))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f566bf37fc9a3102b31aed410f3e01537afc7736")
-    (provenance (fence "samples.md" 64 specimen 1) (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($s :: Scale)
-      (Context)
-      ($reg :: Region Scale)
-      (Vague (λ ($r :: Region Scale) (AdmissibleCutoff $s $r)))
-      (Assert (Close ((Grade barda $s $reg) That)))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f6498bb7efdc7200a7b9552f37988219d625fe9a")
-    (provenance (fence "samples.md" 65 specimen 5))
-    (term
-     (Bind
-      ($ev :: Referents Eventuality)
-      (Refer
-       (ActualClause
-        (λ ($e :: Referents Eventuality)
-          (∧ ((DirectClause (klama Speaker)) $e) (purci $e Now)))))
-      (Mention $ev)))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f7526f02968c2d0f940554bf7559692e5e9de6ea")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Bind
-      ($r :: Referents Entity)
-      (Refer (λ ($unit :: Referents Entity) (gerku $unit)))
-      (Close (tavla Speaker $r))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f7b57a186d048408b4a8db5c6a3acbb04f158fe6")
-    (provenance (fence "spec.md" 7 declaration 3))
-    (term ClauseContent)
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f7dad8b4f0992d634141ee234ec2fa08d7437659")
-    (provenance (test "types-test.rkt"))
-    (term
-     (SetOf
-      (λ ($z :: Entity)
-        (AtLeast
-         0
-         (λ ($x :: Entity) (gerku $x))
-         (λ ($w :: Referents Entity)
-           (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f83a3cb539fa4ffb35fd3404d7de53734705b247")
-    (provenance (test "lower-test.rkt"))
-    (term
-     (Assert
-      (PluralNo
-       (λ ($r :: Referents Entity) (mlatu $r))
-       (λ ($w :: Referents Entity) (Close (blabi $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f984888f3dfa5d45a25f80cd93a6f12e06c9e6b0")
-    (provenance (fence "samples.md" 7 specimen 1))
-    (term
-     (Assert
-      (CloseClause
-       (ActualClause
-        (λ ($e :: Referents Eventuality)
-          (∧ ((DirectClause (citka Speaker)) $e) (purci $e Now)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "f9e7a3b9c2ff4e32c7bda88c9debc8c183a1c77e")
+  (case (id "fd8b93e752f590a5d2be231e39afeb3cbcfa85a1")
     (provenance (test "types-test.rkt"))
     (term
      (No
-      (λ ($x :: Entity) (gerku $x))
-      (λ ($w :: Referents Entity)
-        (Bind ($s :: Scale) (Context) (Close (jmaji $w))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fa36c67624595b523badca669db669b73c81e421")
-    (provenance (test "types-test.rkt"))
-    (term (LocutionOf CurrentToken Speaker))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fabd9a0bea782051af01405eb4257baffd590a1f")
-    (provenance (fence "samples.md" 2 specimen 1))
-    (term
-     (Assert
-      (Bind
-       ($to :: Referents Entity)
-       (Context)
-       ($from :: Referents Entity)
-       (Context)
-       ($via :: Referents Entity)
-       (Context)
-       ($by :: Referents Entity)
-       (Context)
-       (CloseClause
-        (λ ($e :: Referents Eventuality)
-          (∧
-           (klama Speaker $to $from $via $by :Eventuality $e)
-           (fasnu $e)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fb1e18d79b7a5c5c1f8a1d55d6cf15c664f717b4")
-    (provenance (fence "samples.md" 76 specimen 1))
-    (term
-     (Assert
-      (∃
-       (λ (($dog :: Entity) ($person :: Entity))
-         (∧ (gerku $dog) (prenu $person) (Close (nelci $dog $person)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fb729c3627516053e68c9938a30a77203c8dc38b")
-    (provenance (fence "samples.md" 48 specimen 1))
-    (term
-     (Bind
-      ($trio :: Referents Entity)
-      (SelectExactly 3 (λ ($x :: Entity) (jbopre $x)))
-      (Assert
-       (Reciprocate
-        $trio
-        (λ ($a $b :: Referents Entity) (Close (tavla $a $b)))))))
-    (env ())
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fb8f890ec4d851fb95e63bdb4520c30235ec48e1")
-    (provenance (test "closures-test.rkt"))
-    (term (IndividualNo $x $r))
-    (env (($r Fn (Eventuality) Content) ($x Fn (Eventuality) Content)))
-    (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
-     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fc68ab58b773d78fe0fa1fbb15ee3ac08fd02f9d")
-    (provenance (test "types-test.rkt"))
-    (term
-     (Exactly
-      1
       (λ ($x :: Entity) (Bind ($s :: Scale) (Context) (gerku $x)))
       (λ ($w :: Referents Entity) (Close (jmaji $w)))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fe01240855163a34b5041257f889b84065187aa4")
+  (case (id "fdf6a466b6ff4021955160318d9bfaf8c6b42f44")
+    (provenance (fence "samples.md" 25 specimen 1))
+    (term (Assert (Close (jmaji (Combine Speaker Audience)))))
+    (env ())
+    (inventory
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
+     "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
+  (case (id "fe82d9fa4d8b6f4028626dc97ad7fa45109a2f72")
     (provenance (test "types-test.rkt"))
-    (term (λ ($g :: Group (PredTerm R)) (Mention $g)))
+    (term (λ ($f :: Fn Entity Content) ($f Speaker)))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fe4c9cd43ed9c80b57164c94ce440ae2326d0998")
-    (provenance (test "lower-test.rkt"))
+  (case (id "ff514347491377c35c8c785510b288646f816241")
+    (provenance (test "perform-source-test.rkt"))
     (term
-     (Bind
-      ($nuclear_tavla_3 :: Referents Entity)
-      (Context)
-      (Assert
-       (GlobalExactly
-        3
-        (λ ($restrictor_member :: Entity) (gerku $restrictor_member))
-        (λ ($nuclear_member :: Entity)
-          (Close (tavla Speaker $nuclear_member $nuclear_tavla_3)))))))
-    (env ())
+     (PerformSource
+      Host
+      ($x :: Referents Entity)
+      $S
+      (Assert ($P $x))
+      ($read :: RefComp (Referents Entity))
+      ($o :: ActOccurrence Assertion)
+      (Do (Perform Host (Assert ($P Speaker))))))
+    (env
+     (($A Act Assertion)
+      ($D . Discourse)
+      ($P Fn ((Referents Entity)) Content)
+      ($Q Fn ((Referents Entity)) Content)
+      ($S RefComp (Referents Entity))))
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "fecc256bfaacdc51a22517ddaf899499179207f8")
-    (provenance (test "types-test.rkt"))
+  (case (id "ff7e9c879bf10b8f0decbc44815aaebc5f02807b")
+    (provenance (test "individual-lowering-test.rkt"))
     (term
-     (SetOf
-      (λ ($x :: Entity)
-        (Bind
-         ($r :: Referents Entity)
-         (SelectSome (λ ($y :: Entity) (gerku $y)))
-         (gerku $x)))))
+     (Assert
+      (≤
+       2
+       (Card
+        (SetOf
+         (λ ($individual :: Entity)
+           (∧ (gerku $individual) (Close (blabi $individual)))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))
-  (case (id "ff4b832d1548081e81ff5e56e3e04f80b8034793")
-    (provenance (fence "spec.md" 6 expansion 1))
-    (term (DirectClause P))
+  (case (id "fff5dedbfb1d5d4725cd6336d796f3f71773ff85")
+    (provenance (fence "samples.md" 12 specimen 1))
+    (term
+     (Assert
+      (CloseClause
+       (StateClause
+        (IndividualEvery
+         (λ ($x :: Entity) (datka $x))
+         (λ ($duck :: Entity)
+           (CloseClause (CapableClause (DirectClause (flulimna $duck))))))))))
     (env ())
     (inventory
-     "31e1a4dacf8b4ab4a9938482282a8be305a4f0a5"
+     "0d5b36fe11b794c93d7be78e7d342a8b82ee876d"
      "c2b1a5b22706c8e21e05c81e272217863b0a7cc1"))))

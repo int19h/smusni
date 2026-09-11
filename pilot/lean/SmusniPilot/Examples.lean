@@ -95,7 +95,12 @@ def generatedCoreTerms : List (Term 0) :=
       (.positional (.natural ordinal) .nil)
   let binderTerms := (List.range 64).map fun literal =>
     .lambda entityTy (.apply (.bound 0) (.positional (.natural literal) .nil))
-  primitiveTerms ++ siteTerms ++ binderTerms
+  -- Formation/interchange controls deliberately include ill-typed arms, as
+  -- the rest of this generator does. M2, not serialization, checks typing.
+  let sourceTerms := (List.range 64).map fun literal =>
+    .performSource (.named .typeFormReferents [entityTy]) (.natural literal)
+      (.bound 0) (.apply (.bound 1) (.positional (.bound 0) .nil))
+  primitiveTerms ++ siteTerms ++ binderTerms ++ sourceTerms
 
 def generatedBundle (term : Term 0) : Interchange.Bundle 0 :=
   let sites := term.siteIds.eraseDups.map fun identity =>

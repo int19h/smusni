@@ -22,6 +22,9 @@ mutual
     | bind {scope : Nat} (binderType : Ty)
         (computation : TermDatum scope)
         (body : TermDatum (scope + 1)) : TermDatum scope
+    | performSource {scope : Nat} (referenceType : Ty)
+        (source : TermDatum scope) (content : TermDatum (scope + 1))
+        (continuation : TermDatum (scope + 2)) : TermDatum scope
     | apply {scope : Nat} (function : TermDatum scope)
         (arguments : TermDatumList scope) : TermDatum scope
     | lexical {scope : Nat} (predicate : String)
@@ -55,6 +58,9 @@ mutual
         .bind binderType (TermDatum.ofTerm computation) (TermDatum.ofTerm body)
     | .apply function arguments =>
         .apply (TermDatum.ofTerm function) (TermDatumList.ofTerms arguments)
+    | .performSource reference source content continuation =>
+        .performSource reference (TermDatum.ofTerm source)
+          (TermDatum.ofTerm content) (TermDatum.ofTerm continuation)
     | .lexical predicate arguments =>
         .lexical predicate (TermDatumList.ofTerms arguments)
     | .context site arguments =>
@@ -84,6 +90,9 @@ mutual
         .bind binderType (TermDatum.toTerm computation) (TermDatum.toTerm body)
     | .apply function arguments =>
         .apply (TermDatum.toTerm function) (TermDatumList.toTerms arguments)
+    | .performSource reference source content continuation =>
+        .performSource reference (TermDatum.toTerm source)
+          (TermDatum.toTerm content) (TermDatum.toTerm continuation)
     | .lexical predicate arguments =>
         .lexical predicate (TermDatumList.toTerms arguments)
     | .context site arguments =>

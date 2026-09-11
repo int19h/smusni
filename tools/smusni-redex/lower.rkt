@@ -3935,6 +3935,12 @@
           (define-values (new-binder new-body) (under-binder binder body))
           `(Let ,new-binder ,(walk rhs) ,new-body)]
          [`(Bind . ,pieces) (bindings pieces)]
+         [`(PerformSource . ,_)
+          (match-define (list b s c r o d) (perform-source-parts value))
+          (define-values (new-b new-c) (under-binder b c))
+          (define-values (new-ro new-d) (under-binder (list r o) d))
+          `(PerformSource Host ,new-b ,(walk s) (Assert ,new-c)
+                          ,(first new-ro) ,(second new-ro) ,new-d)]
          [_ (map walk value)])]))
   (if (eq? old replacement) datum (walk datum)))
 
@@ -3948,7 +3954,7 @@
 
 (define effectful-definition-heads
   '(Context Vague Refer SelectExactly SelectAtLeast SelectSome SelectAllBut
-            MaxRefer Bind Let Perform))
+            MaxRefer Bind Let Perform PerformSource))
 
 (define (syntactically-pure-definition-operand? datum)
   (define components (property-components datum))
@@ -4097,6 +4103,11 @@
            [`(Let ,binder ,rhs ,body)
             (scan rhs scope)
             (scan body (extend scope (binder-variables binder) #f))]
+           [`(PerformSource . ,_)
+            (match-define (list b s c r o d) (perform-source-parts value))
+            (scan s scope)
+            (scan c (extend scope (binder-variables b) #f))
+            (scan d (extend scope (append (binder-variables r) (binder-variables o)) #f))]
            [`(Bind . ,pieces)
             (define body (last pieces))
             (define alternating (drop-right pieces 1))
@@ -4125,6 +4136,11 @@
         [`(Let ,binder ,rhs ,body)
          (walk rhs env)
          (walk body (extend env (binder-variables binder)))]
+        [`(PerformSource . ,_)
+         (match-define (list b s c r o d) (perform-source-parts node))
+         (walk s env)
+         (walk c (extend env (binder-variables b)))
+         (walk d (extend env (append (binder-variables r) (binder-variables o))))]
         [`(Bind . ,pieces)
          (define body (last pieces))
          (define alternating (drop-right pieces 1))

@@ -7,7 +7,7 @@
         "gentufa",
         "--format",
         "json",
-        "ro gerku cu tavla su'o mlatu"
+        "ro gerku cu tavla lo mlatu"
       ],
       "index": 1,
       "parse": {
@@ -73,45 +73,46 @@
                                                             "SimpleSumti": {
                                                               "base_sumti": {
                                                                 "SumtiBase": {
-                                                                  "DescriptorWithoutGadriSumti": {
-                                                                    "quantifier": {
-                                                                      "PaRunQuantifier": {
-                                                                        "number": {
-                                                                          "first_number": {
-                                                                            "Plain": {
-                                                                              "PlainWord": {
-                                                                                "Cmavo": {
-                                                                                  "phonemes": "su'o",
-                                                                                  "span": [
-                                                                                    18,
-                                                                                    22
-                                                                                  ]
-                                                                                }
-                                                                              }
-                                                                            }
+                                                                  "DescriptorWithGadriSumti": {
+                                                                    "description": {
+                                                                      "Plain": {
+                                                                        "PlainWord": {
+                                                                          "Cmavo": {
+                                                                            "phonemes": "lo",
+                                                                            "span": [
+                                                                              18,
+                                                                              20
+                                                                            ]
                                                                           }
                                                                         }
                                                                       }
                                                                     },
-                                                                    "selbri": {
-                                                                      "UntaggedSelbri": {
-                                                                        "CoSelbri": {
-                                                                          "leading_selbri": {
-                                                                            "leading_selbri": {
-                                                                              "first_unit": {
-                                                                                "first": {
-                                                                                  "LinkedTanruUnit": {
-                                                                                    "base": {
-                                                                                      "base": {
-                                                                                        "WordTanruUnit": {
-                                                                                          "Plain": {
-                                                                                            "PlainWord": {
-                                                                                              "Gismu": {
-                                                                                                "phonemes": "mlátu",
-                                                                                                "span": [
-                                                                                                  23,
-                                                                                                  28
-                                                                                                ]
+                                                                    "tail": {
+                                                                      "leading_tail_elements": {},
+                                                                      "tail": {
+                                                                        "RelationDescriptionTail": {
+                                                                          "selbri": {
+                                                                            "UntaggedSelbri": {
+                                                                              "CoSelbri": {
+                                                                                "leading_selbri": {
+                                                                                  "leading_selbri": {
+                                                                                    "first_unit": {
+                                                                                      "first": {
+                                                                                        "LinkedTanruUnit": {
+                                                                                          "base": {
+                                                                                            "base": {
+                                                                                              "WordTanruUnit": {
+                                                                                                "Plain": {
+                                                                                                  "PlainWord": {
+                                                                                                    "Gismu": {
+                                                                                                      "phonemes": "mlátu",
+                                                                                                      "span": [
+                                                                                                        21,
+                                                                                                        26
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
                                                                                               }
                                                                                             }
                                                                                           }
@@ -248,12 +249,12 @@
           }
         }
       },
-      "source_comment": "ro gerku cu tavla su'o mlatu — two quantifiers: surface order is scope",
-      "surface": "ro gerku cu tavla su'o mlatu",
+      "source_comment": "ro gerku cu tavla lo mlatu — the cats are one contextual plurality;",
+      "surface": "ro gerku cu tavla lo mlatu",
       "unresolved": false
     }
   ],
-  "fence_sha1": "61de1cdcc879bf59408a075914889e684113c681",
+  "fence_sha1": "4890c0005f7c7eca9bd4ea5fe9a8eaffc08c4b38",
   "jbotci_version": "jbotci 0.1.0",
   "ordinal": 73,
   "schema": "smusni-gentufa-parse-fixture-1",
