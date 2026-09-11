@@ -3812,8 +3812,8 @@ or widen a quantifier's scope. Their definitions are:
 P45 applies to the negation-closed reference effects of `No`, `AtMost`,
 `FewerThan` and `Exactly 0` via their definitions. With otherwise pure
 operands and satisfied existing domain/definedness conditions, these forms
-may occur inside a pure property, including a
-comprehension whose candidate is an argument of the nuclear property. Their
+may occur inside a pure property, including a comprehension whose pure
+restriction or nuclear property depends on its candidate. Their
 positive selecting counterparts do not acquire that permission. This is
 the reference-counted helper family, not a change to ordinary surface `no`
 or `su'o`. `Exactly 0 = No` still evaluates Q under negation and retains
@@ -3842,8 +3842,11 @@ arithmetic demands.
 **both operands must be pure there**: the mapping hoists a nuclear
 scope's `Context`/`Vague` sites out of the comprehension first (L0.1), and a
 nuclear scope that would introduce a referent has no global reading unless
-that reference is already bound outside the comprehension — introductions
-are not hoisted.
+P45's negation-local qualification applies or that reference is already bound
+outside the comprehension. Introductions are not hoisted, and P45 removes no
+other effect. The enclosing `Card` keeps its own projective finiteness effect;
+the qualification concerns the operand's purity, not purification of the
+whole count.
 
 Ordinary `no prenu cu jmaji` uses `IndividualNo` and tests individuals.
 The collective negative associated with P22 uses `PluralNo` instead; neither
