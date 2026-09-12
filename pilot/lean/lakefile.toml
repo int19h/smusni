@@ -21,3 +21,9 @@ root = "M1Main"
 [[lean_exe]]
 name = "m2"
 root = "M2Main"
+
+[[lean_lib]]
+name = "SmusniF02"
+
+[[lean_lib]]
+name = "F02AuditSupport"
