@@ -169,13 +169,13 @@ theorem X05_profiles_not_alternatives (s : S) :
     rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
 
 def emittingNucleus (r : Nat) : Content Nat (fun _ => Bool) Bool Bool S Bool Nat where
-  run _ _ e _ s := NEFin.singleton (.live {s with sides := s.sides ++ [⟨r, e⟩]} ())
+  run _ _ e _ s := NEFin.singleton (.live {s with sides := s.sides ++ [⟨r + 100, e⟩]} ())
   event _ _ _ _ beta := some (if beta then 20 else 10)
 
 theorem X06_capture_caller_and_sides (s : S) :
     (Content.capture true (sourcePayload .first toySource inherited emittingNucleus)).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s =
-        NEFin.singleton (.live {s with sides := s.sides ++ [⟨0, true⟩]} ()) := by
+        NEFin.singleton (.live {s with sides := s.sides ++ [⟨100, true⟩]} ()) := by
   change (sourcePayload .first toySource inherited emittingNucleus).run
     1 (obtainedOrigin 0 (Or.inl rfl)) true false s = _
   rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
@@ -232,7 +232,7 @@ noncomputable def nextAlternatives (p : Nat) (i : I p) : Terminal S Nat :=
   (firstHost p i).unionMap (fun z => nextSource z.state)
 
 def afterNucleus (n : Nat) : S :=
-  { reachedPrefix n with sides := (reachedPrefix n).sides ++ [⟨n, true⟩] }
+  { reachedPrefix n with sides := (reachedPrefix n).sides ++ [⟨n + 100, true⟩] }
 def returned (n : Nat) : S := Host.finalizeState initial (fun _ => true) 100
   (.live (afterNucleus n) () : Outcome S Unit)
 
@@ -245,7 +245,7 @@ theorem firstHost_obtained (n : Nat) (hn : n = 0 ∨ n = 1) :
 
 theorem X06_first_source_side_once (n : Nat) (hn : n = 0 ∨ n = 1) :
     firstHost 1 (obtainedOrigin n hn) = NEFin.singleton (.live (returned n) 100) ∧
-    (returned n).sides = [⟨n, true⟩, ⟨n, true⟩] := by
+    (returned n).sides = [⟨n, true⟩, ⟨n + 100, true⟩] := by
   exact ⟨firstHost_obtained n hn, rfl⟩
 
 theorem X07_dependent_one_two :
