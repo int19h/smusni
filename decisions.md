@@ -1,99 +1,110 @@
 # Current decisions and remaining work
 
-Post-full-pass-3 synchronization, with conservative trajectory application
-and ordinary exact-count clarification on 2026-09-10.
-`spec.md` remains the semantic
-authority; this ledger records its current decisions, bounded coverage and work
-status. It replaces older review queues as a current-status guide, not the
-immutable reports as historical evidence. GitHub #20 and #87 record execution.
-Lean/Redex remain derived until the three-stage authority transfer in the charter.
+This ledger summarizes adopted rules, bounded coverage, and remaining work.
+`spec.md` is normative. Earlier review queues and reports preserve design
+history but do not determine current status. GitHub
+[#20](https://github.com/int19h/smusni/issues/20) and
+[#87](https://github.com/int19h/smusni/issues/87) track the corresponding
+synchronization work.
+
+Lean and Redex remain derived artifacts until the charter's three-stage
+authority transfer. An adopted semantic contract, its implementation, and
+a model satisfying it are distinct results. The ledger records all three
+where available.
 
 ## Settled distinctions
 
-- **F01: bounded source-preserving assertions.** The completed Astra-led
-  Fable/Kimi/Grok review supplies spec §7.1.1/L8.13's formation and bounded
-  laws under the human's settled-formalization instruction. One description
-  source, two read roles, one shared projected payload; terminal assertions
-  retain eligible prefixes/sides and return their occurrence even after F/U.
-  Later absent-value use is U, not a fresh existence assertion. Full carrier/
-  quotient and failed-source replay-coordinate embedding, coupled event
-  definedness, multi-source failure and excluded forces/guards remain work.
-  This document application is not an engine implementation or model proof.
-  [Review closure](https://github.com/int19h/smusni/issues/9#issuecomment-5625843464).
-- **P45: negation-local reference purity.** Human-confirmed September11,2026
-  UTC: retain the previously reviewed PR46/#13/B1 behavior. A reference
-  introduced and consumed solely inside negation does not count against the
-  enclosing `Fn` purity judgment. All other effects and every obligation stay;
-  `Local` and other connectives are unchanged. This explicitly reconciles
-  §3.3/L0.1's stricter wording. It is not a general non-export-implies-purity
-  theorem or full model proof. The strict internal-activity alternative and
-  provenance are recorded in rationale §2.11 and spec References.
-  [Approval](https://github.com/int19h/smusni/issues/74#issuecomment-5630303444).
-  Lean typing/proof alignment and the four retained E02 cases are implementation
-  work, not another undecided policy or grounds to weaken the consumer gate.
-- **P44: bare me'i defaults to ro.** Human-adopted September10: ordinary
-  individual not-all is negated IndividualEvery, not an infinite-cardinality
-  comparison. Explicit me'i n is unchanged; me'i pa is zero. No new source
-  export, positive-satisfier requirement or larger-construction mapping follows.
-  The BPFK definition overrides CLLv1.1's blanket omitted-pa convention with
-  the cost, original sources and separate ratification limit recorded.
-- **P43: conservative baseline accessibility.** The human adopts the
-  conservative xorlo/shared plural-capable trajectory on September10 and
-  authorizes direct application. Retain ordinary existential continuity,
-  independently bound references, open answer slots and permitted in-scope
-  dependencies. No automatic outward numerical/universal groups or dependent
-  families; static availability is not an actual-truth test. Typed source/
-  force/capture realization is bounded by F01; the general case remains work.
-  P42 is retired, with its evidence
-  and original selected-S rationale preserved as history in rationale §1.6a.
-- **Q02.a-b: ordinary finite individual global exactness.** Exact n counts all
-  P-and-Q qualifiers in the fixed resolved domain; a fourth qualifying dog
-  falsifies ci gerku cu sipna. September7's panel already agreed and contrary
-  witness-local claims were withdrawn; the residual P17 text had not applied
-  that conclusion. The human confirms the result with the September10
-  application instruction. Finite exact/range policy is spec §4.10; P17 is
-  not a fallback for a missing individual lowering. Other numerical domains,
-  effects and termset interactions remain separate; no whole-R2/model claim.
-- **Q03/P2: non-importing individual ro.** Bare/restricted universals are
-  true on empty restrictions; explicit descriptions retain their separate
-  reference requirements. Importing Every/MaxRefer remain library forms,
-  not the ordinary bare-ro route. The later source/history clarification
-  corrects the earlier unapplied/open label; no new three-way vote is needed.
-- Ordinary `su'o` quantifies over individuals, not neutral plural witnesses.
-  No contradiction met the human's condition for a plural reform. At least one
-  satisfier is not exactly one; export is a separate issue. `Some`/`SelectSome`
-  remain counted plural core helpers; they are not ordinary `su'o`.
-  Status: the SUHO-v2 recommendation satisfies the human's conditional criterion
-  and is applied under the September7 document-synchronization authorization.
-- `lo` may depend on bound variables (Skolem-like reference). Invariant
-  descriptions are a special case. The question is no longer whether dependent
-  `lo` is legitimate. P41 now distinguishes dependency placement from reference
-  persistence; a description does not become an existential quantifier.
-  Status: September7 clarification, followed by authorization to reconcile the
-  documents; the exact turns are recorded below. This is not inferred solely
-  from a panel vote or from July13's cross-project decision.
-- C25 preserves description bindings under `na`; failure of an empty Refer is
-  ordinary falsity at its actual scope. No special negation-induced reselection.
-  Status: explicit human adoption on September6, not a newly inferred pin.
-- `lo ro`/`lo su'o` can supply ordinary collective arguments. They do not replace
-  universal/existential plural quantification in embeddings. The gathering poll
-  additionally depends on `jmaji`'s lexical singleton and location/episode reading.
-- A first-order lift need not be an Among-atom. Atomlessness does not imply zero
-  counted units; nonempty references and positive CardBasis are different.
-- Source history is not self-ratification: solpahi's plural PA is a reform;
-  P2's presuppositional refinement is project-authored; earlier P41 approval was
-  presented with a faulty invariance rationale. Correct intellectual provenance
-  is retained even where the resulting policy remains provisional.
-- Existing display/force machinery can express a discourse relation claim
-  without the translator deciding its truth. Gismu reuse is viable; a mnemonic
-  or a model graph alone is not a complete core-term definition.
+- F01 provides bounded source-preserving assertion formation and laws in
+  spec §7.1.1/L8.13. One description source supplies the first assertion and
+  a reusable later read. An obtained reference is shared; an absent later
+  value gives U rather than a new existence claim. Terminal assertions retain
+  eligible prefixes and reached sides and return their occurrence after
+  F or U. The combined carrier/quotient embedding, failed-source replay
+  coordinates, event definedness, multiple failures, and excluded
+  forces/guards remain incomplete.
+  [Design review closure](https://github.com/int19h/smusni/issues/9#issuecomment-5625843464).
+- P45 permits a reference introduced and consumed wholly within a negative
+  Content test without that introduction making the enclosing function
+  impure. All other effects and obligation records remain; `Local` and
+  other connectives are unchanged. This is a specific rule, not a theorem
+  that every non-exporting computation is pure. The human confirmed it on
+  September 11, 2026, retaining the earlier PR46/#13/B1 behavior.
+  [Approval](https://github.com/int19h/smusni/issues/74#issuecomment-5630303444);
+  rationale §2.11 and spec References record the rejected alternative.
+- P44 makes bare `me'i` default to `ro`. Its ordinary individual
+  meaning is not-all, expressed by negated `IndividualEvery`. Explicit
+  bounds are unchanged; `me'i pa` means zero. No positive-satisfier
+  requirement, new reference export, or infinite-cardinality comparison
+  follows. This human-adopted BPFK-aligned rule departs from CLL v1.1's
+  general omitted-`pa` convention.
+- P43 adopts conservative accessibility over a plural-capable core.
+  Ordinary existential continuity, independently bound references, open
+  answer slots, and supported in-scope dependencies remain. Quantification
+  does not automatically export numerical or universal groups or dependent
+  families beyond their scopes. Static accessibility does not depend on
+  computing actual truth. Rationale §1.6a compares P42's rejected recovery
+  policy with this rule and states its compatibility cost. General source/force
+  construction beyond F01 remains incomplete.
+- Q02.a–b uses global exactness for ordinary finite individual counts.
+  Exact n counts all P-and-Q qualifiers in the fixed resolved domain:
+  a fourth qualifying dog makes `ci gerku cu sipna` false. The September 7
+  agreement was confirmed by the human's September 10 application instruction.
+  Spec §4.10 states finite exact and range rules. Plural helpers and P17's
+  provisional termset policy do not fill missing individual-count mappings.
+  Other numerical domains, effects, and termset interactions remain work.
+- Q03/P2 makes bare and restricted individual `ro` non-importing:
+  universals are true on empty restrictions. Explicit descriptions retain
+  their reference requirements. Importing `Every` and `MaxRefer` remain
+  library forms, not the ordinary bare-`ro` mapping.
+- Ordinary `su'o` quantifies over individuals. At least one satisfier is
+  not exactly one, and reference export is a separate question.
+  `Some`/`SelectSome` are counted plural helpers, not ordinary `su'o`.
+  The SUHO-v2 recommendation met the human's conditional criterion and was
+  applied under the September 7 synchronization authorization.
+- P41 permits Skolem-like dependencies for `lo`. Invariant descriptions
+  are a special case. A dependent description remains referential and must
+  be bound within the scope of its dependencies; it does not become an
+  existential quantifier. The September 7 clarification and synchronization
+  instruction establish this decision.
+- C25 preserves description bindings under `na`. An empty reference source
+  fails at its actual scope; negation does not reselect its referents.
+  The human adopted this behavior on September 6.
+- `lo ro` and `lo su'o` can supply collective arguments but do not
+  replace plural universal or existential quantification under arbitrary
+  embeddings. The gathering examples also depend on `jmaji`'s lexical
+  singleton, location, and episode readings.
+- A first-order lift need not be an Among-atom. Nonempty reference does not
+  imply positive counted units; atomlessness alone does not imply zero units.
+- Existing display/force machinery can express a discursive relation without
+  deciding its truth during translation. Candidate gismu and model graphs
+  do not, by themselves, supply complete core definitions.
+
+Source status remains explicit. Solpahi's plural PA analysis proposes a
+reform; the earlier presuppositional `ro` wording was project-authored;
+and the first P41 invariance argument misread guskant. These facts belong
+to the decision history and cannot independently ratify the current rules.
+
+## Derived artifact status
+
+The following merged results do not transfer semantic authority:
+
+- [PR92](https://github.com/int19h/smusni/pull/92) aligns the Lean pilot with
+  E01 and implements the adopted P45 negation-purity rule.
+- [PR91](https://github.com/int19h/smusni/pull/91) structurally encodes F01's
+  source-preserving assertion construction.
+- [PR93](https://github.com/int19h/smusni/pull/93) adds bounded auxiliary F02
+  ground-model proofs and a safety audit.
+
+These results do not establish the full carrier, event, Proposition,
+quotient, general source/force, or surface-coverage model. That work remains
+separate from the current documentation rewrite.
 
 ## Agreed directions and remaining application/coverage work
 
-This is not a failed-consensus list. The completed round's sole compatibility
-disagreement was Q03, now resolved. A selected contract can still lack its
-formation, model, lexical or surface implementation; genuinely unexamined
-coverage is distinguished from a policy the panel could not agree on.
+The completed round's remaining compatibility disagreement, Q03, is resolved.
+The table distinguishes adopted behavior from missing formation rules, model
+constructions, lexical definitions, and surface mappings. An unfinished
+construction is not necessarily an unresolved semantic choice.
 
 | ID | Settled extent | What remains | Tracker |
 |---|---|---|---|
@@ -117,29 +128,26 @@ No new survey result is asserted. Archive searches are bounded and not a
 representative population sample. Speaker prompts should separate truth,
 felicity, projection, comprehension and production, with date/experience recorded.
 
-**Current work:** apply and formalize the agreed contracts and complete bounded
-coverage. No established failed-consensus tie-break remains from the completed
-round. Compound-count individual uptake remains an explicitly unprovided source
-reading, not proved impossible; bare me'i is now adopted under P44.
-There is no pending vote on that default. RD-C05a and the old C/V
-competition are historical evaluation questions, not a construction-time gate.
-See References, **Round2 agreed contracts**, for the final record and its
-participation/confirmation limits.
+The remaining semantic work is to formalize the adopted contracts and complete
+their stated coverage. Compound-count individual uptake remains unsupported,
+not proved impossible. Bare me'i is settled by P44. RD-C05a and the former
+candidate-versus-verified recovery debate are historical evaluation questions,
+not construction-time gates. See spec References, “Round2 agreed contracts,”
+for the final record and participation limits. This inventory does not itself
+authorize execution of every remaining task.
 
-**Me'i source comparison closed by human adoption:** the explicit September10
-instruction adopts the BPFK ro/not-all default as P44. The earlier unanimous
-recommendation was not itself adoption. The researcher traced explicit 2002
-advocacy, the 2004 BPFK definition/default and the 2010 gloss/example; no
-separate ratification act was located. That historical limit does not defer
-the human's decision. [Adoption](https://github.com/int19h/smusni/issues/15#issuecomment-5623520624),
+The me'i research traced explicit 2002 advocacy, the 2004 BPFK definition and
+default, and the 2010 gloss/example. No separate ratification act was located.
+The human's September 10 adoption of P44 does not depend on finding one.
+[Adoption](https://github.com/int19h/smusni/issues/15#issuecomment-5623520624),
 [completed provenance trace](https://github.com/int19h/smusni/issues/15#issuecomment-5623520912).
 [Full comparison, source/default limits and corrected peer arguments](https://github.com/int19h/smusni/issues/15#issuecomment-5622385624).
 
 ## Full-pass disposition map
 
-Each C identifier from FP3 has a current disposition; later corrections override
-its historical wording. “Recorded” means an honest open obligation, not a hidden
-implementation or a completed conformance claim.
+Each FP3 finding has a current disposition below. Later corrections supersede
+the original report. An open obligation records work still required, not
+implemented or verified behavior.
 
 | FP3 | Current disposition |
 |---|---|
@@ -241,7 +249,7 @@ as still open, followed by authorization for this document synchronization.
 Older panel confirmations were recommendations, not authority transfers; their
 former open/adopted labels must be read in that temporal order.
 
-Exact local provenance: native PM transcript
+For the exact local provenance, see the native PM transcript
 `~/.codex/sessions/2026/09/05/rollout-2026-09-05T03-11-56-01a0710d-ab22-7a22-9269-9e2d67e6769f.jsonl`:
 user line6887, 2026-09-07T06:44:09.066Z, asks why Skolemization is still treated
 as unsettled; PM line6890, 06:44:21.548Z, corrects the status and identifies

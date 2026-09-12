@@ -1,7 +1,7 @@
 (smusni-assembled-inventory
  1
  (core-sha1 "0d5b36fe11b794c93d7be78e7d342a8b82ee876d")
- (fixture-sha1 "c2b1a5b22706c8e21e05c81e272217863b0a7cc1")
+ (fixture-sha1 "83a9f78610263e3ec1ef18f8158586b62e8da418")
  (sorts
   AbstractNature
   Achievement
@@ -227,6 +227,7 @@
   cadzu
   cinri
   citka
+  ctigau
   cukta
   cusku
   dansu

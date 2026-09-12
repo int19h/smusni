@@ -1,13 +1,12 @@
 # Samples
 
-Worked specimens for [the specification](spec.md): Lojban sources, their
-core terms, and — where a reading is contested territory — the pinned
-reading in plain language and a nearby contrast. Each specimen's first
-comment line is its Lojban source; specimens exercising a pin cite it.
-These are design specimens: alpha-equivalent terms and transparent library
-expansions are the same meaning, and no spelling here is "canonical".
+This document gives worked Lojban readings, core terms, and contrast cases
+for [the specification](spec.md). Examples identify the source expression,
+selected reading, and relevant pins. They are semantic tests, not a normative
+authority or a canonical serialization. Alpha-equivalent terms and
+transparent library expansions preserve meaning.
 
-The decision ledger distinguishes actual lowerings from candidate acceptance
+[The decision ledger](decisions.md) distinguishes supported lowerings from candidate acceptance
 cases. Standard finite numerical counts are individual and globally exact;
 P43 retires P42's extra ordinary quantified-group export. Counted-plural core
 specimens are explicitly labelled library/full-plural comparisons, not baseline
@@ -15,9 +14,9 @@ surface lowerings or a claim that the experimental mapping is complete.
 A `Mention` wrapper below is an
 illustrative display act, not an automatic force assigned to every bare sumti.
 
-Fragments (terms meant to appear inside a document) are marked; everything
-else is a complete meaning, with `Assert`/`Ask` and closure written out
-where they matter and elided (per spec §2 notation) where they don't.
+Fragments are marked. Other examples use complete terms under spec §2's
+notation conventions; force and closure are expanded where relevant to the
+example and otherwise may use the permitted abbreviations.
 A specimen displayed as a bare act denotes the one-act discourse
 performing it (spec §7.1). Where a description's referent is never
 referred back to, specimens abbreviate `lo du'u c` to its object former
@@ -33,12 +32,13 @@ actual-reading shorthand for
 clause-event or CAhA choice matters expand it.
 CLL and dictionary citations follow the editions listed in the
 specification's References section.
-Displays carry provisional row assumptions pending #12's official rows — a
-specimen reads each predicate with the arity its display uses — and the
-checker's fixture lexicon (`tools/smusni-redex/inventory/fixtures.sexp`)
-mirrors those assumptions rather than authorizing them; a lexical
-predicate written bare in a pure position — `{λ [$x :: Entity] (gerku $x)}`
-— abbreviates L0.1's hoisted form for the assumed row (spec §11).
+Examples use the displayed predicate arities as provisional row assumptions;
+the lexical audit remains tracked in #12. The fixture lexicon at
+`tools/smusni-redex/inventory/fixtures.sexp` mirrors these assumptions but
+does not authorize them. A bare lexical predicate in a pure position, such
+as `{λ [$x :: Entity] (gerku $x)}`, abbreviates L0.1's hoisted form for the
+assumed row. Its contextual sites are bound outside the pure position under L0.1;
+this does not require resolving their values during lowering.
 
 ## 1. Predication and closure
 
@@ -51,8 +51,8 @@ predicate written bare in a pure position — `{λ [$x :: Entity] (gerku $x)}`
 ; core composition; not a default imposed on the surface.
 ```
 
-Expanded once to the primitive closure boundary, so the notation convention
-is grounded (spec §4.6) — four contextual places and the event:
+Expanding closure exposes four contextual places and the event parameter
+under spec §4.6:
 
 ```lisp
 ; mi klama — Close expanded
@@ -99,9 +99,8 @@ denies the going-to-the-contextual-place, and is not `¬∃destination…`
 
 ## 2. Events, tense, facets
 
-Facet joining is dynamic conjunction over a shared event — there is no
-dedicated joining operator, because plain `∧` over the shared event
-variable already says everything one would say:
+The analyzed facet-joining cases use dynamic conjunction over a shared event.
+No additional joining operator is required for these examples:
 
 ```lisp
 ; mi pu citka
@@ -139,8 +138,8 @@ variable already says everything one would say:
 
 Contrast (`nai` on the tag): `mi klama ti sepi'onai ti` negates only the
 instrumental conjunct — `(∧ (klama …) (¬ (pilno …)))` — while bridi `na`
-negates the whole conjunction. Both fall out of `∧` placement; nothing is
-stipulated (rationale §1.13, the facet-decomposition entry).
+negates the whole conjunction. These differences follow from the selected
+scope and conjunction rules; rationale §1.13 explains the decomposition.
 
 ```lisp
 ; mi ca'a citka — actuality as a facet
@@ -149,8 +148,8 @@ stipulated (rationale §1.13, the facet-decomposition entry).
     (ActualClause (DirectClause (citka Speaker)))))
 ```
 
-Tenseless `mi citka` is **reading-multiple** (pin P8), never a default
-present. Its episodic reading carries a `Context`-anchored occasion —
+Tenseless `mi citka` permits several readings under P8, with no default
+present tense. Its episodic reading has a contextually anchored occasion:
 
 ```lisp
 ; mi citka — the episodic reading: at the contextually relevant occasion
@@ -162,8 +161,8 @@ present. Its episodic reading carries a `Context`-anchored occasion —
            (cabna $e $occ))})})
 ```
 
-— while the habitual/gnomic reading carries no temporal conjunct at
-all. Which reading was meant is resolved upstream, like any ambiguity.
+The habitual or gnomic reading instead has no temporal conjunct. The
+text-to-reading stage selects the intended reading.
 
 Missing CAhA is independently reading-multiple (P24, CLL 10.19): the
 episodic specimen selected `ActualClause`; a capability reading selects
@@ -277,11 +276,11 @@ and UI/span targeting is the remaining `ConnectionPlan` gap, not part of
   (Assert (Close (blabi $cat)))}
 ```
 
-Pinned reading: a new referent — one or more real cats, number-neutral,
-no quantifier. Contrast: `su'o mlatu cu blabi` quantifies (positive
-continuation is attested; its general export interface is Q01); `lo` introduces with no
-quantificational force at all. Ordinary su'o's general export policy remains
-separate from its individual truth condition (decisions Q01).
+The description introduces a number-neutral reference satisfying `mlatu`,
+without quantificational force. In contrast, `su'o mlatu cu blabi` uses
+individual existential quantification. Positive existential continuation is
+attested, but its general source interface remains Q01 work, separate from
+the anaphor-free truth condition.
 
 `lo R` remains literally `Refer R`; where R's resolved lexical mode declares
 a unit profile, its plural extension already includes `CoveredBy`. The
@@ -323,15 +322,12 @@ distributed.
   (Assert (Close (blabi $it)))}
 ```
 
-Pinned reading: reference through the speaker's identifying description —
-non-veridical (the "cat" may be a raccoon), speaker-specific — lowered
-through `skicu` itself (official x4 is the description property;
-guskant's own `le` expansion is this term in Lojban), with the describing
-event anchored to this very utterance's locution by the mapping clause:
-saying `le mlatu` *is* the describing. (`SpeakerDescribes` is §12's
-defined form, displayed as itself: its definition identifies the
-describing event with the utterance token's locution, §7.4, rather than
-closing it existentially — #41.)
+The reference is selected through the speaker's description, which need not
+be accurate: the described cat could be a raccoon. Following guskant's `le`
+expansion, `SpeakerDescribes` uses `skicu` with its official description
+place x4. The project additionally anchors the describing event to this
+utterance's locution. This is the defined form in §12, not an abbreviation
+for existentially closing an arbitrary describing event; see spec §7.4 and #41.
 
 ```lisp
 ; la .alis. klama
@@ -545,13 +541,13 @@ plural-`MeiRel` instance needed for the right-hand form.
     {λ [$x :: Entity] (Close (cinri $x))}))
 ```
 
-Pinned reading: a generic claim through a normality ordering — no
-"typical cat" specimen exists in the term. `le'e` adds the Speaker as
-stereotype-holder. Contrast (the witness that killed specimen theories):
+The generic claim uses a normality ordering, not a typical-cat referent.
+`le'e` fixes Speaker as the stereotype holder. The comparison in rationale
+§1.9 considers
 `lo'e cinfo cu se kerfa lo clani` (maned — normal adult males) and
 `lo'e cinfo cu se jbena lo cinfo` (bears young — normal adult females)
-are both fine and generically true — supported by different normality
-classes, which no single referent could verify (rationale §1.9).
+under their intended generic readings. They use different normality classes,
+so a single fixed specimen does not represent both generalizations.
 
 ## 4. Relative clauses and supplements
 
@@ -612,7 +608,7 @@ value per key, so `ko'a du ko'a` is reflexively true.
 
 ## 5. Quantifiers, witnesses, anaphora
 
-**P45 pure-position controls (core schemata, not new surface judgments).**
+P45 pure-position controls (core schemata, not new surface judgments).
 For pure member restriction P and pure reference-level nuclear property Q,
 the properties using `No P Q`, `AtMost 1 P Q`, `FewerThan 1 P Q` or
 `Exactly 0 P Q` may enter `SetOf`: their defined negations close the local
@@ -625,11 +621,11 @@ retrieval, projective effects or an opaque effectful Q remain impure when
 evaluated under negation; obligation metadata is retained. `AtLeast 0`
 does not evaluate Q, whereas `Exactly 0 = No` does. `Local` remains
 effectful, and double negation exports no witness. These are the four
-retained E02 cases and their required controls, not a claim that the pending
-Lean correction or full model proof has already passed. See spec P45 and
-References, **Negation-local purity: P45 reconciliation**.
+retained E02 cases and their required controls. PR92 implements the adopted
+Lean correction; it does not prove the full semantic model. See decisions.md's
+artifact status and spec References, “Negation-local purity: P45 reconciliation.”
 
-**Adopted standard profile (P43; finite pure count comparison).** Fix a
+Adopted standard profile (P43; finite pure count comparison). Fix a
 resolved domain with four sleeping dogs, two red and two not red. Count truth
 does not create an outward quantified group. These rows state semantic
 expectations, not completed general source/force lowerings:
@@ -646,11 +642,11 @@ The lo-su'o-n route keeps the inner lower bound n and the original binding.
 It is not a universal substitution under other scopes or collective readings.
 PA+KOhA recency, the intended direct-reference mei bridge and complete
 force-preserving continuation remain explicit mapping obligations. No row
-claims those interfaces implemented. The earlier P42 examples and reported
-human judgments remain in rationale §1.6a and spec References, **RI
-witness-policy record**; their compatibility pressure is not erased.
+claims those interfaces implemented. Rationale §1.6a compares the P42 examples
+and reported judgments with the current rule; spec References gives the RI
+witness-policy record; their compatibility pressure is not erased.
 
-**Explicit plural/library comparisons (not baseline surface lowerings).**
+Explicit plural/library comparisons (not baseline surface lowerings).
 The following binding pattern illustrates the counted helper's defined behavior, not standard bare-PA
 anaphora or a complete full-plural source/force construction.
 
@@ -705,18 +701,18 @@ with retroactive strengthening; plural-information states remain extension
 work, while the weak selected-witness comparison is not a baseline Lojban
 reading without a surface selector.
 
-This displayed Content does not collapse the two written sentences into one
-performance: the discourse mapping retains two `Host` occurrences and uses
-the artifact to state the selected cross-sentence truth constraint.
+In that historical proposal, the displayed Content stated a cross-sentence
+truth constraint rather than replacing the two utterances with one Host.
+It does not supply a current baseline discourse mapping.
 
 ```lisp
-; ro prenu poi ponse su'o xasli cu darxi ri — donkey   [pin P6]
+; ro prenu poi ponse su'o xasli cu ctigau ri — feeding (spec References, ctigau) [pin P6]
 (Assert
   (∀ {λ [[$p :: Entity] [$d :: Entity]]
     (→ (∧ (prenu $p)
           (xasli $d)
           (Close (ponse $p $d)))
-       (Close (darxi $p $d)))}))
+       (Close (ctigau $p $d)))}))
 ; individual-pair strong fragment for ordinary su'o and P2's non-importing
 ; universal. This does not make every ri singleton-only. Other collection
 ; readings must obey P43 and have their own source mapping.
@@ -787,16 +783,17 @@ No later RI source follows merely from a true counterexample claim.
 ; is the full product
 ```
 
-Pinned reading (CLL ch. 16 §7's own gloss): two picked witness sets,
-full product —
-every one of the three dogs likes each of the two people. **No
-maximality**: a fourth dog also liking them does not falsify this. The
-coordinate-closed strengthening ("and they are exactly the participating
-dogs/people") is a distinct, marked meaning, never the
-default. Referential termsets (`le ci gerku ce'e
-le re prenu`) need no termset semantics at all: constants take no part
-in scope distinctions (CLL 16.7), so the members predicate neutrally —
-the full product there needs explicit `ro…ro` (CLL Example 16.46).
+The provisional P17 reading uses the full product: every selected dog likes
+each selected person, following the gloss in CLL 16.7. It does not require
+coordinate maximality; an additional dog liking the same people does not
+falsify this selected-witness condition. Restricting each coordinate to all
+participating individuals would be a stronger policy.
+
+For independently bound referential coordinates such as
+`le ci gerku ce'e le re prenu`, no additional quantifier scope is introduced.
+Predication remains neutral; the full distributive product requires explicit
+`ro…ro`, as in CLL Example 16.46. This observation about bound values does
+not make dependent descriptions invariant under P41.
 
 ```lisp
 ; Explicit plural/core comparison — not standard ci jbopre quantification.
@@ -910,9 +907,9 @@ defined and projective undefinedness otherwise, never fresh caller resolution.
           ContextualAnswer)))))
 ```
 
-Pinned reading: answerhood committed; the exhaustivity slot is *absent* —
-the weakest reading, with any completeness demand coming from `djuno`'s
-own lexical presupposition, never from `kau`.
+P9 supplies answerhood without an exhaustivity marker. Any additional
+completeness requirement needs lexical or explicit support; this example
+does not establish the complete lexical semantics of `djuno`.
 
 ## 7. Indicators
 
@@ -1252,7 +1249,7 @@ other dependency readings require their own mapping.
             (Express (Close (Unhappiness Speaker $o2 Intense)))))}}})}
 ```
 
-The first assertion denies **exactly two individually bitten people** at
+The first assertion denies exactly two individually bitten people at
 the recovered occasion. With exactly three qualifying people that denial
 is true; with exactly two it is false. No two-person plurality is passed
 to the nuclear predicate. Dog plurality remains neutral under P4; the
@@ -1303,13 +1300,13 @@ no baseline constructor for quoted core notation.
 
 ### 12.1 A source-preserving pair of assertions
 
-The preceding ordinary `Bind` example is the successful-source route. This
-new §7.1.1/L8.13 term supplies failure continuation in the bounded fragment.
-It is a parameterized worked term: the three explicit function inputs are
-the resolved pure dog restriction and two resolved assertion frames for
-`lo gerku cu sipna .i ri cu xunre`. They include the actual lexical closure
-and context/dependency choices, rather than pretending an English gloss
-supplies them. The derived E01 engine does not yet encode this new former.
+The preceding ordinary `Bind` example covers successful sources. The
+§7.1.1/L8.13 term below also supplies failure continuation within the bounded
+fragment. Its three inputs are a resolved pure dog restriction and two
+resolved assertion frames for `lo gerku cu sipna .i ri cu xunre`. The inputs
+include lexical closure and context/dependency choices; the Lojban gloss alone
+does not supply them. PR91 structurally encodes the former. General model and
+runtime coverage remain separate; see decisions.md's artifact status.
 
 ```lisp
 {λ [[$dogs :: Fn ((Referents Entity)) Content]
@@ -1343,7 +1340,7 @@ that the full model already embeds failure-coordinate replay.
 These are constructed controls (F01-C01–09), not new corpus judgments.
 Whole-content denial examples additionally need the explicit Reify/jetnu
 standard and projection premises in the [F01-C04 control record](https://github.com/int19h/smusni/issues/89#issuecomment-5625643989)
-cited in spec References, **Source-preserving assertions** (the general
+cited in spec References, Source-preserving assertions (the general
 crossing is spec L8.9/§9.1); the partial
 no-return event coordinate does not automatically supply an event-valued
 crossing. General multi-source failure and other force cases remain gaps.
@@ -1422,8 +1419,8 @@ explicit pure consumer.
 
 ## 14. Meanings without analyses
 
-Gap-register illustrations (spec §14) — sentences the core deliberately
-does not yet analyze, kept as obligations:
+These examples illustrate unsupported readings or incomplete constructions
+from spec §14:
 
 ```text
 da'i mi ricfu .i da'i mi citka lo nobli
@@ -1455,8 +1452,8 @@ li pa joi re du li ci
 
 ## 15. New acceptance cases and scoped non-equivalences
 
-These are evidence-backed tests for the remaining interfaces, not invented
-finished lowerings. Exact source attribution is in spec References/decisions.
+These cases constrain remaining interfaces; they are not completed lowerings.
+Spec References and decisions.md identify their evidence and adoption status.
 
 | Case | Required reading / boundary |
 |---|---|

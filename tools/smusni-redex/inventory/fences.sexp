@@ -299,7 +299,7 @@
   "samples.md"
   43
   specimen
-  "b4c0409302ce681c90a9aa11963a01def594057c"
+  "e9cc55c27aa41898f0935c72bc00fa97ca65c405"
   (origin "surface")
   (rules "L5.1" "L4.1" "L8.1"))
  (fence
@@ -597,7 +597,7 @@
   "spec.md"
   12
   specimen
-  "359a98c71303f56b83052b5c4ca6209662f43571"
+  "3e35817cf46a4e9db74e9aba5f198cc3fd8d07e1"
   (origin "core"))
  (fence "spec.md" 13 expansion "860aec4e62adaf9863bcfc60e57482447a77fb11")
  (fence "spec.md" 14 expansion "e23c95652100b56ceeb9e5c738d1eaf820569e8c")

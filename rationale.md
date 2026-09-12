@@ -1,140 +1,136 @@
 # Rationale for the Lojban semantic core
 
-Why each piece of [the specification](spec.md) exists, why it is shaped as
-it is, and what was tried and rejected. The [samples](samples.md) supply
-the worked specimens cited here. Sources — CLL (and the edition whose
-section numbering is used), the official dictionary, the baselined gismu
-list, the xorlo page, guskant's commentary, Brismu, solpahi's articles,
-the Eberban and Toaq reference materials, and the plural-logic
-literature — are cited inline by name and section; full citations with
-URLs are collected in the specification's References section.
-Current settled/open boundaries are in [decisions.md](decisions.md); historical
-alternatives below do not override the corrected spec.
+This document explains the constructions and decisions in [the specification](spec.md):
+their purposes, alternatives, costs, and supporting evidence. Example links
+identify worked terms or the source records used in the comparison.
+Hypothetical model counterexamples are not presented as corpus evidence. Worked examples
+are in [samples.md](samples.md). Sources are cited by author or title and
+section; full citations and edition information are in the specification's
+References section. [The decision ledger](decisions.md) distinguishes adopted
+rules from unfinished work. This rationale is explanatory, not normative;
+historical alternatives do not override the current specification.
 
 ## 0. Method
 
-A construct earns a place in the kernel only by a **necessity witness**: a
-Lojban meaning that the rest of the core cannot express. A construct that
-merely *helps* is defined in the library, where its definition is its
-specification. Each entry below follows one template:
+A primitive requires a necessity or factorization argument. A necessity
+argument identifies a supported meaning for which the remaining core has no
+adequate construction. A factorization argument identifies shared semantic
+structure that a generic form represents more simply or consistently. Such
+forms need not have a direct Lojban spelling. Derivable operations remain
+library definitions. These criteria follow spec §1.1; convenience alone does
+not justify a primitive.
 
-1. **Job** — the contrast the construct represents.
-2. **Witness** — the shortest Lojban that requires it.
-3. **Why not …?** — the plausible reductions, each with the exact
-   sentence that kills it.
-4. **Shape** — why this signature rather than the neighbors.
-5. **Cost** — what the choice makes awkward, honestly.
+The construct discussions state the semantic contrast, examples, candidate
+reductions, reasons for the chosen signature, and costs. A counterexample to
+one reduction is not a proof that every alternative architecture fails.
+Where no general impossibility result is established, the argument is a
+comparison of the stated alternatives.
 
-Pins (rulings on accidental underspecification) follow a different
-standard — CLL/xorlo evidence rather than necessity — and are argued in
-§3. The global design essays (§2) cover the choices that cut across
-constructs.
+Pins select among readings permitted by incomplete or conflicting evidence.
+Their justification combines source evidence, compatibility with competent
+usage, and formal consequences. Sources do not determine the decision by
+themselves. Section 2 discusses cross-cutting design choices; §3 records the
+reasons for individual pins.
 
 ## 1. The constructs
 
 ### 1.1 Labelled place rows
 
-**Job.** Lojban predicates have named, reorderable, deletable places;
-functions have positions. **Witness.** `klama fe ti tu` (out-of-order
-fill), `mi klama ti zi'o` (place deletion), `klama fi'a ti` (a question
-*about places*). **Why not plain curried functions?** Position-only
-application cannot state "x2, whichever argument position that ends up
-being" — FA reordering, `zi'o`, and `fi'a` all speak in labels, so labels
-must exist semantically. **Why not a primitive relation type distinct
-from functions?** No witness separates two extensionally equal
-row-functions, so `PredTerm<ρ>` is a *transparent alias* for
-`Record ρ → Content`: the name and machinery of labels with the ontology
-of functions. **Shape of filling.** One former: the single-place `At`
-(itself record partial application), with all multi-fill notation
-desugaring to nested single fills (spec §4.1). Fills are values, so
-distinct-label fills commute — which is the semantic fact that makes
-FA reordering and `se`-conversion pure notation: the order of fills
-never was part of the meaning. **Cost.** The type theory needs
-labelled records — which it needs for `fi'a` anyway.
+Lojban operations address places by label. Examples include
+`klama fe ti tu`, with an explicit x2 fill; `mi klama ti zi'o`, with
+place deletion; and `klama fi'a ti`, which asks which place receives a
+fill. A representation using positional functions would still need a mapping
+from these labels to argument positions.
+
+The core uses labelled records for that mapping. `PredTerm<ρ>` is a
+transparent alias for a row-function, `Record ρ → Content`, rather than
+an additional primitive relation type. No analyzed distinction requires
+separating relations with the same denotation at every complete row record.
+
+`At` fills one labelled place by partial application; multi-place notation
+expands to nested fills. Fills at distinct labels commute because their
+operands are already values. This does not assert that effectful computations
+producing those values commute. The type theory must support labelled records
+and the compatible-label domain used by `fi'a` (spec §4.1 and §4.7).
+
+Worked examples: [place filling and deletion](samples.md#1-predication-and-closure).
 
 ### 1.2 Clause formation and `Close`
 
-**Job.** An unmarked bridi with omitted places still makes a complete claim,
-while tense and abstraction must see the clause eventuality before it closes.
-**Witnesses.** `mi klama` needs a contextually recoverable destination and a
-going event; `ta pu du lo mi zdani` needs a past state although `du` has no
-lexical event place. **Why not existential closure of omitted ordinary
-places?** Negation: `mi na klama` does not mean “there is no destination I go
-to”; the contextual destination stays fixed under negation. **Why not add an
-event/situation place to every row?** That is a coherent alternative, not a
-category error. It loses the factorization test here: binary `=` is also used
-in case splits, label guards, definitions, and proofs, and `+` is a
-value-producing function rather than a clause. Those ordinary signatures
-must remain, so event-indexing their declarative uses would add lifted twins
-rather than eliminate machinery; those twins do exactly the job
-`StateClause` factors once. It would also duplicate lexical events on ordinary
-brivla unless it retained the same direct-vs-holding distinction. The type
-`ClauseContent = EFn<(Referents<Eventuality>), Content>` instead leaves one
-event open:
-`DirectClause` uses the lexical event, `StateClause` supplies a holding state
-only when no single lexical event survives, and `CloseClause` closes the
-common interface with the same run as existential closure while retaining the
-selected witness as the structured Content's event. `Close` is the convenient
-actual-CAhA composition of these steps; it is a core form for that reading,
-not a claim that surface omission defaults to actual. **Why are
-`StateClause` and `CloseClause` primitive?** No existing operation constructs
-a state of arbitrary complete content holding, so `StateClause` is primitive.
-Plain ∃ reproduces `CloseClause`'s run but loses which local witness is the
-closed Content's event. Making every application at the transparent
-`ClauseContent` function alias overwrite the result's event would instead
-break ordinary β-equality: `((λ e. ⊤) x)` must equal `⊤`, not acquire x as
-extra structured identity. `CloseClause` is the one semantically meaningful
-constructor that records the closure witness. **Cost.** Logical and quantified
-composition must say whether it preserves, joins, branches, or replaces
-component events; §9.3 states that ledger rather than hiding it.
-This argument assumes neither that every `du` claim is true nor that every
-mathematical sentence is necessary. The ordinary equality/arithmetic axioms
-decide each claim; a true mathematical holding State may be unbounded, and a
-false one remains described but nonactual.
-Reopen this factorization if a uniform situation-argument calculus can derive
-ordinary binary equality/value functions and every clause-event law from one
-signature family without duplicating the non-clausal operations.
+A resolved bridi can be complete despite omitted arguments. Tense and
+abstraction also need access to its eventuality before clause closure.
+For example, `mi klama` needs contextual ordinary arguments and a going
+event, while `ta pu du lo mi zdani` needs a past holding state even though
+identity has no lexical event place.
+
+Existentially closing every omitted ordinary argument would change negation:
+`mi na klama` would say that there is no destination to which the speaker
+goes. The selected reading instead denies going to the contextual destination.
+Contextual closure therefore remains distinct from event closure.
+
+Adding an event or situation argument to every relation is a coherent
+alternative. It would nevertheless need to preserve ordinary binary equality
+for guards and definitions, and value-producing functions such as addition.
+Smusni uses `StateClause` to factor their declarative event interface instead
+of introducing separate lifted versions for each operation.
+
+`ClauseContent = EFn<(Referents<Eventuality>), Content>` leaves one
+eventuality parameter open. `DirectClause` uses a lexical event;
+`StateClause` supplies a holding state where required; `CloseClause`
+closes the parameter while retaining its selected value as the closed
+Content's event. `Close` abbreviates their actual-CAhA composition, not
+a universal default for surface omission.
+
+The existing operations do not supply the same holding-state construction.
+Ordinary existential closure matches `CloseClause`'s run but does not
+retain its local witness as the event intension. Nor can ordinary function
+application overwrite that intension: `((λ e. ⊤) x)` must remain equal
+to `⊤`, not acquire x as additional structured content. These distinctions
+motivate the selected primitives.
+
+The cost is an explicit composition policy for direct, joint, branch, and
+holding events in spec §9.3. Equality and arithmetic still determine each
+claim's truth. A mathematical holding state may be unbounded; its actuality
+still follows the truth of the claim. Reconsider the factorization if
+a uniform situation-argument design derives these same interfaces without
+duplicating non-clausal operations.
+
+Worked examples: [expanded closure](samples.md#1-predication-and-closure) and
+[event and tense composition](samples.md#2-events-tense-facets).
 
 ### 1.3 The specificity triad: `Refer`, `Context`, `Vague`
 
-The single most consequential design decision. Three constructs, because
-Lojban distinguishes three ways of not spelling something out, and
-collapsing any two produces wrong meanings:
+The selected model distinguishes introduction, contextual retrieval, and
+soritical vagueness. Their scope and truth behavior motivates separate
+operations:
 
-- **`Refer`** — *introduce*. Witness: `lo mlatu cu blabi .i ri jbena` —
-  the cat outlives its sentence. Why not `∃`? An existential's witness is
-  inaccessible after its scope closes and re-quantifies under negation
-  (`lo mlatu na jbena` keeps *the* cat; `∃` would not). Why not ι (the
-  definite)? xorlo `lo` claims no uniqueness. This is the dynamic
-  indefinite of DRT/DPL, plural from birth. Its restrictor is a property of
-  the plurality (`EFn`, effects sequenced under `Refer`); a member-level
-  property enters only through the pure `CoveredBy` lift (§1.7b).
-- **`Context`** — *intend and recover*. Witness: `mi klama`
-  (destination), `co'e` (the relation meant here), `zu'i` (the usual
-  value), `sutra klama` (the occurrence's intended modification link), and
-  `tu'a lo cukta` (the book-related abstraction meant but not spelled out).
-  Why not `Refer`? Nothing is introduced or described — `mi na dunda`
-  denies the giving of the contextual thing, not the existence of a
-  describable gift. Why not a free variable? Free variables have no
-  discipline: `Context` declares its type, admissibility constraint,
-  dependency profile, and site/key identity. Why not require exact recovery?
-  A speaker may be unable or unwilling to articulate the intended relation
-  more finely; successful communication requires only a recovered value whose
-  differences are irrelevant to the discourse. The resolved term still uses
-  one exact value, so this pragmatic tolerance adds no semantic branching.
-- **`Vague`** — *leave a soritical boundary unfixed*. Witness: `so'i`
-  (no fact fixes where "many" starts), a gradable cutoff, or `ji'i`'s
-  tolerance edge. Why not `Context`? There is no intended cutoff to recover,
-  even approximately. Why not use the same device for discrete tanru/topic
-  alternatives? Supertruth would require the fish to eat and be eaten and a
-  tanru to satisfy every admissible link. Existential choice fares no better
-  at intended-value constructs: an unintended link can make the positive true,
-  while negation denies all links. The composition law (spec §6.5) therefore
-  applies only to sharpenings of one soritical concept: pointwise lifting,
-  consistent precisification per site, and supertruth where invoked.
+- Refer introduces a reference, as in `lo mlatu cu blabi .i ri jbena`.
+  A sentence-local existential does not by itself retain a binding for the
+  second sentence; a quantified encoding would need the same scope and
+  continuity rules. A definite-description operator with uniqueness would
+  add a condition xorlo lo does not require. The comparison with DRT/DPL is
+  a dynamic indefinite at plural-reference type. Its reference-level
+  restrictor may be effectful; a member-level property uses the pure
+  CoveredBy lift (§1.7b).
+- Context retrieves an intended value without introducing a new descriptive
+  reference. Examples include omitted destinations, `co'e`, `zu'i`,
+  tanru links, and `tu'a` abstractions. A free-variable encoding would still
+  need the declared type, admissibility condition, dependencies, and site/key
+  identity supplied by this interface. Recovery need only preserve differences
+  relevant to the discourse; the resolved meaning nevertheless uses one value,
+  not a disjunction of listener guesses.
+- Vague represents sharpenings of one soritical concept or boundary, such as
+  a “many” threshold, gradable cutoff, or approximate tolerance. There is no
+  intended exact cutoff to retrieve. Treating unrelated topic or tanru
+  resolutions as a supervaluated family would require all admissible
+  resolutions, not the one intended. Existential choice would instead allow
+  an unintended alternative to make a positive claim true and would deny all
+  alternatives under negation. Neither gives the selected intended-value
+  behavior. The VC law therefore applies to sharpenings of one concept,
+  with correlated site values and supertruth where invoked.
 
 The classification of each Lojban construct into this triad (or into
-**absence** — no machinery at all) is itself normative (spec §6.1), with
+absence — no machinery at all) is itself normative (spec §6.1), with
 the recovery test printed as the decision rule. The disputed entries settle
 coherently: `co'e`/`do'e`, tanru, `tu'a`, bare `jai`, and topic links all
 convey occurrence-specific intended values through constrained `Context`;
@@ -142,7 +138,7 @@ conventionality changes resolver priors, not semantic type. Gradable
 predication splits — *which scale/domain* is `Context` (say the wrong one and
 you have misunderstood), *where a soritical cutoff sits* is `Vague`; scalar
 `OtherThan` directly denotes the complement region, not a hidden finer choice;
-and unmarked distributivity is **absence**, not a parameter (see §2.5).
+and unmarked distributivity is absence, not a parameter (see §2.5).
 No analyzed construction requires the possible `SomeAdmissible` existential
 choice former. Official `ju'e`, explicitly glossed as a vague non-logical
 connective but left without compositional truth conditions, is the concrete
@@ -150,168 +146,243 @@ gap-level candidate; its source and usage adjudication must establish whether
 it has genuinely no particular intended connection before that former can
 enter the baseline.
 
+Worked examples: [descriptive reference](samples.md#3-reference-and-descriptions) and
+[contextual and vague values](samples.md#8-intended-underspecification-and-soritical-vagueness).
+
 ### 1.4 Projective content: `Presuppose` and `Supplement`
 
-**Job.** Some commitments escape the operators wrapped around them.
-**Witnesses.** An explicit `MaxRefer P` construction carries its nonemptiness
-condition even when its result is used by a negated predicate (`Presuppose`);
-bare `naku ro gerku cu blabi` does not carry that import under P2.
-`xu lo gerku noi blabi cu melbi` questions beauty, never whiteness
-(`Supplement`). **Why not conjunction?** `∧` puts
-both conjuncts under the negation/question — flatly wrong truth
-conditions in both witnesses. **Why two constructs and not one?**
-Presuppositions can be *satisfied* by prior context (no new commitment);
-supplements always commit anew. Conflating them loses accommodation.
-**Shape.** `Supplement` carries an explicit anchor, and a side that
-depends on a quantified variable commits per instantiation inside the
-binder — `ro gerku noi ke'a se cmene cu bajra`-type dependencies would
-otherwise have no coherent projection site. **Cost.** A handler
-discipline in the dynamics; the accessibility table carries it.
+Projective commitments behave differently from at-issue conjunction.
+An explicit `MaxRefer P` carries an inhabitedness condition even when
+its result is used by a negated predicate. Ordinary bare `ro` has no
+such import under P2. In `xu lo gerku noi blabi cu melbi`, the question
+concerns beauty while whiteness remains a side commitment.
+
+Putting each condition in an ordinary conjunction under negation or question
+force would give it the wrong scope. `Presuppose` and `Supplement`
+therefore have separate projection rules. They also differ from each other:
+a presupposition may be satisfied by existing context, whereas a supplement
+contributes a commitment anew.
+
+`Supplement` has an explicit anchor. A side depending on a quantified
+variable commits per instantiation within that binder, as in the relevant
+reading of `ro gerku noi ke'a se cmene cu bajra`. The model must supply
+the corresponding handlers and accessibility rules; an unscoped global side
+condition would not preserve those dependencies.
+
+Worked examples: [relative clauses and supplements](samples.md#4-relative-clauses-and-supplements).
 
 ### 1.5 The accessibility table
 
-**Job.** State, once, what each operator lets subsequent discourse see.
-**Witness.** The `ganai da mlatu gi da ciska` conditional (antecedent
-feeds consequent) versus `.ija` (branch-local) versus `naku` (nothing
-escapes) — three connectives, three policies, none derivable from truth
-tables. **Why a table rather than derived behavior?** Because the
-policies *are* the connectives' dynamic meanings; deriving them from an
-effect algebra is possible (and the model theory does — spec §5.1), but
-the table is the single normative statement, so surface and model can
-never drift apart. **Why are `↔`/`⊕` primitive?** Their classical
-rewrites evaluate operands twice; under effects, twice-evaluated
-introductions and supplements are real differences, not stylistic ones.
-**Why not share the operands instead of duplicating them?** No sharing
-route exists. The classical rewrite `(A → B) ∧ (B → A)` *textually
-copies* each operand: two syntactic occurrences are two `Context` sites
-(site identity is per occurrence, spec §5.3), two supplement handlers
-committing the side twice (handler placement is a fact about term
-structure — VC4), and a reshaped evaluation structure. The first conditional exports nothing,
-so it does not feed introductions to the second conjunct; that earlier claimed
-counterexample was false. Repeated evaluation and changed site/handler structure
-remain real costs. Sharing a formed inert content/function can preserve sites, but does not share
-its evaluation. `Let` shares values, not effectful results; that distinction is
-the surviving obstacle, not a claim that no inert sharing is possible. `Bind` shares an evaluation but shares
-its *returned value*: Content's run returns unit, not a Boolean to reuse.
-Its separate event intension also survives and must be preserved by any
-expansion (spec §16.3). The derivation
-could be forced through by minting a truth-capture operator
-(`TruthOf : Content → RefComp<Bool>` — run once, reify the truth
-outcome), but that is not a reduction: it is a general
-**dynamic-to-static reflection**, strictly more powerful than the two
-connectives it would replace, usable anywhere as an escape hatch
-(testing content in a restrictor without its effects), and needed by no
-Lojban construct. `↔` and `⊕` are that same once-per-operand evaluation
-confined to two closed truth-functional shapes with stated accessibility
-rows — capabilities minimized, not operator names. In a pure,
-effect-free logic both would be derivable; they are primitive *given*
-effects and given the deliberate absence of any reflection operator to
-route the sharing through.
+Truth conditions alone do not determine accessibility. The consequent of
+`ganai da mlatu gi da ciska` can use the antecedent's variable;
+disjunction keeps branch introductions local; negation exports no internal
+introduction. Spec §5.4 states these dynamic rules. A model must realize
+them; the table is the normative contract, not proof that the combined model
+has already been constructed.
 
-### 1.6 Witness export without run objects
+Biconditional and exclusive-or are primitive because no expansion in the
+remaining core has been shown to preserve their once-per-operand evaluation,
+accessibility, projective behavior, and event intension. In an effect-free
+logic the usual truth-functional expansions suffice. With effects,
+`(A → B) ∧ (B → A)` can evaluate each operand twice. Copying source text
+also creates distinct contextual sites and can change handler placement.
 
-**Job.** Explicitly bound references can stay referable. Binding the same
-reference once suffices for later uses within its scope; no term-level run
-identity or witness-retrieval registry is required. The full-plural/library
-`ci gerku cu bajra .i ri tatpi` comparison illustrates that core pattern,
-not a current standard-language lowering of the bare continuation.
+Sharing a formed Content or function value can preserve its sites. It does
+not, however, share the result of evaluating that value. `Let` shares inert
+values; `Bind` shares a computation's returned value. Content's run returns
+Unit, not a reusable truth value. Any proposed reduction must also preserve
+the separate event intension. Each implication keeps its introductions local;
+neither supplies new references to the other. This does not establish the
+expansion's equivalence: its evaluation, site, projective, and event behavior
+still has to match the primitive.
 
-The dependent case `ro prenu cu ponse ci gerku .i ri tatpi` does not
-compositionally export witnesses beyond the governor. Its former strong
-cross-sentence extension selected a joint locus upstream and paid a
-retroactive-strengthening cost. P43 no longer admits that rescue for
-baseline out-of-scope anaphora. The plural-information-state alternative
-remains extension work, not a prerequisite to the conservative baseline.
-Supported in-scope P6 readings and declared description dependencies remain.
+A proposed `TruthOf : Content → RefComp<Bool>` would add an explicit
+truth-observation facility. Its typing, effect retention, and use outside
+these two connectives would require their own semantics. It is not an
+expansion using existing forms, and no supported Lojban construction has
+established a need for it. The project therefore retains the two restricted
+connectives instead of adding this general facility solely to derive them.
+This is a comparison within the chosen calculus, not a general
+inexpressibility theorem for effectful logic.
 
-### 1.6a The bounded lower-bound witness policy (P42)
+### 1.6 Reference continuity within scope
 
-**Historical policy, retired 2026-09-10.** This section records why the
-September8 selected-group policy was adopted. The human subsequently chose
-P43's conservative baseline, accepting bare-form compatibility costs where an
-explicit lo-su'o-n description preserves the positive reading. The former
-policy is not a fallback or current construction obligation. Its evidence
-and alternatives remain history, not retrospective endorsement of the ban.
-See spec References, **Conservative profile adoption and ordinary exactness**.
+A reference introduced once can be shared by later uses within its scope.
+For example, `lo mlatu cu blabi .i ri jbena` uses one cat reference for
+both assertions, not independent selections for whiteness and birth.
+The binding supplies this correlation without a term-level run identifier
+or a witness-retrieval registry. The [binding and continuation examples](samples.md#12-direct-binding-notation)
+distinguish the successful-reference route from the bounded route that also
+preserves later assertions when a source fails.
 
-**Former adopted meaning, unfinished realization.** In the fixed finite, total, pure
-individual profile for a positive plural lower bound, the count says how many
-individuals qualify; later `ri` need not receive the complete population.
-P42 permits any clean selected S of an admissible size, keeps that same S
-through its continuation, and closes over witness assignments inside a fixed
-interpretation. It requires neither a prior salient group nor an exactly-minimum
-choice. This is not a new run object, retrieval operator or general primitive.
-The September8 version of spec §5.6 stated that conditional profile, with
-then-current L8.13–14 recording its construction debt. The historical
-[RI RESULT-v2](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813)
-preserves the policy; current §5.6/L8.13–15 instead state P43, the bounded
-assertion construction and its remaining work.
+This mechanism does not decide which surface constructions introduce a
+reference that can survive into another sentence. Smusni retains ordinary
+positive existential continuity, independently bound descriptions, and
+supported in-scope dependent references. A numerical or universal quantifier
+does not additionally construct an outward group or family merely because
+a later anaphor asks for one. Section 1.6a explains this boundary; §1.14a
+explains the source and performance machinery that remains necessary.
 
-**Why this default.** The reported human judgment for `su'o re gerku cu sipna
-.i ri cu cimei`, with four sleepers, was odd but not false. It supports the
-availability of the intended three-dog witness reading; choosing it as the
-ordinary default adds the modest economy/compatibility judgment that no prior
-salience or extra description-reading exception should be needed. The fragment
-contrast `su'o re gerku .i ro ri cu xunre` adds similar pressure: a fragment/
-bridi distinction permits different reference rules, but supplies no necessity
-for exhaustivity when `cu sipna` is added. Neither the fragment's complete
-meaning nor its answer-completion rule is thereby supplied.
+### 1.6a Why reference recovery stops at scope boundaries
 
-**What this does not prove.** Ri identity and the absence of an overt all
-do not by themselves choose a reference policy. Published CLL v1.1 §7.6
-supports reference preservation; §16.14 supplies exact-count later-variable
-uptake, where selected and complete references coincide. BPFK's approved
-PA-da-poi expansion does not specify a dynamic export construction. The
-2011/2014 discussions are relevant arguments with their own scope, not a
-ratified lower-bound rule. One discussion-elicited judgment is not a community
-pattern, and its gloss is not an elicited explanation of oddness. References,
-**RI witness-policy record**, preserves authors, dates, locators and roles.
+We considered recovering references beyond their original scopes so that
+ordinary quantified expressions could support more later anaphora. The
+attraction is practical: a speaker can introduce several dogs with a count
+and then want to say something about those dogs. The difficulty is not
+binding an available group once and reusing it. It is determining which
+group a quantifier supplies, when an embedded source can supply anything
+outside its scope, and how dependent references remain correlated.
 
-**Costs and alternatives.** Complete H gives a model-relative complete target
-without an extra subgroup choice; it remains coherent, but P42 does not require
-it. Selection can itself choose H, so it lacks guaranteed exhaustivity rather
-than forbidding complete reference. Exactly-minimum uptake is coherent but adds
-an unjustified size default; context-required uptake adds a salience condition;
-an H-default/subgroup hybrid decides a default and owes its reading trigger.
-Categorical no-reference remains a historical alternative, not a consequence
-of an unfinished interface. None is silently adopted as P42's ordinary default.
+The current policy keeps ordinary reference continuity but declines these
+additional group and family exports. This is a compatibility–complexity
+choice, not a proof that richer dynamic semantics is impossible. The
+[profile comparison](https://github.com/int19h/smusni/issues/90#issuecomment-5619006450)
+distinguishes shared binding from reconstruction and records the limits of
+the simplicity claim. Spec §5.6 states the current rule.
 
-Reference assignment is not prior hearer identifiability. Compatible later
-conditions can filter the same witness assignments; separate red/non-red
-discourses may succeed through different witnesses, while their joint condition
-cannot. A failed longer conjunction does not falsify its earlier satisfiable
-prefix. The scope/force realization and K's correlation lifetime remain #17
-work. The conditional clean-cover premise is not global C_fin comprehension
-or a proof of the full model. R2's broader numeric/definedness changes remain
-separate: witness anaphora never licenses deleting exact-count truth's upper
-bound. The former reopening criterion was stronger contrary speaker/source
-evidence or a specific compositional failure, not merely a missing implementation;
-it is historical, not a veto on the later adopted P43 trajectory.
+#### What recovery would provide
+
+Consider the elicited example `su'o re gerku cu sipna .i ri cu cimei`
+in a situation with four sleeping dogs. A reported judgment found the intended
+three-dog continuation odd but not false. This supports the
+possibility of a selected-group reading. It does not establish a community
+usage pattern or explain the judgment of oddness. The [witness-policy
+record](https://github.com/int19h/smusni/issues/15#issuecomment-5593166813)
+retains the example and evidence; the [worked comparisons](samples.md#5-quantifiers-witnesses-anaphora)
+separate such extensions from baseline lowerings. The direct-reference
+`mei` bridge remains a mapping obligation; this is not a complete `cimei` lowering.
+
+A recovery rule could associate the lower-bound antecedent with a reference
+to selected individuals S, at least two dogs, and preserve it through the continuation.
+S could contain two, three, or all four sleepers. A later predication would
+constrain that same assignment, not choose a fresh red or tired group.
+That is a coherent design target. It requires neither an exactly-minimum
+choice nor prior salience as an additional premise. S and H below are sets
+in the comparison, not additional Set or Group objects introduced by the Lojban.
+
+The fragment contrast `su'o re gerku .i ro ri cu xunre` reinforces one
+point: adding a predicate does not by itself explain why a selection should
+become exhaustive. It does not supply a complete fragment interpretation or
+a general export rule. Likewise, CLL v1.1 §7.6's same-referent rule constrains
+reuse after a reference has been established; it does not uniquely specify
+the output of every quantified antecedent. The source limitations and the
+Bays/Llambías/Selpa'i discussions are recorded in spec References under
+“RI witness-policy record,” “BPFK anaphora/variable notes,” and
+“Quantified-reference discussions used in P42.”
+
+#### The choices added by generalization
+
+A reference-recovery extension must answer several distinct questions.
+
+- Output of a count. The truth of a lower-bound claim does not select
+  between a subgroup S and the complete qualifying population H. Exactly
+  the minimum size, a contextually salient group, and a default H with
+  optional subgroups are further coherent policies, each with its own
+  additional rule. Exact counts must still exclude extra qualifiers;
+  witness recovery cannot remove their truth-conditional upper bound.
+- Support across logical boundaries. A true `A or B` need not establish
+  a witness internal to A. Recovering an object that merely satisfies A's
+  noun restriction can discard the relation that made it relevant;
+  requiring a verifying witness can add commitment to A. Under exclusive-or
+  that commitment also rules out B. Such readings may be coherent, but
+  require more than preserving an already available reference. Negation
+  presents the same distinction between an outside reference and a new
+  source created inside the negative content.
+- Dependent families. In `ro prenu cu ponse ci gerku .i ri tatpi`,
+  an intended “each person's dogs” continuation needs more than an
+  unstructured collection of dogs. It must preserve which dogs belong to
+  which person and how later predication uses those dependencies. A joint
+  quantifier spanning both sentences can express a stronger combined
+  condition, but does not by itself export the first sentence's witnesses
+  compositionally or preserve the two assertion occurrences. The
+  [dependent-reference comparison](samples.md#5-quantifiers-witnesses-anaphora)
+  displays that distinction.
+- Reference realization. A proposed selected group must have a suitable
+  representative in the plural carrier. Finite joins alone do not prove
+  every desired clean group is admitted on a nonminimal carrier. This is
+  a conditional coverage obligation, not an established need for a new
+  universal comprehension axiom.
+- Correlation and continuation. The group has to remain the same across
+  uses, including when later claims fail. Reconstructing a previous S from
+  the original noun and predicate alone need not recover S. Defining one
+  source and sharing it can avoid that reconstruction problem, but still
+  needs scope and performance laws. The [correlation controls](https://github.com/int19h/smusni/issues/89#issuecomment-5616741210)
+  distinguish shared selection from independent reselection.
+
+These questions do not form one unavoidable package: a language can permit
+some extra exports and reject others. The concern is that a local rescue
+for a numerical example does not determine a uniform policy for other
+quantifiers, logical embeddings, dependencies, and later utterances.
+The source record supplies arguments and examples, but not one complete,
+uniform extension that the baseline can simply adopt.
+
+#### Why the scope-based boundary is preferable here
+
+The current rule determines availability from the resolved structure and
+binder scope, without first computing whether the speaker's assertion is
+true. New sources inside negation, disjunction, exclusive-or, or a closed
+governor do not escape. Already available references remain available under
+their existing scope rules. Supported in-scope dependencies, including the
+[feeding-donkey example](samples.md#5-quantifiers-witnesses-anaphora), do not
+require an additional outward family.
+
+For a common positive use, a description can supply the group directly:
+
+`lo su'o re gerku cu sipna .i ro ri cu xunre`.
+
+On the stated finite, clean member-count and memberwise reading, this introduces one reference containing
+at least two dog units and predicates redness of every member of that same
+reference. The [description alternative and its limits](https://github.com/int19h/smusni/issues/89#issuecomment-5617191105)
+show why much of the intended content remains expressible. This is not
+a substitution theorem: collective predication, negation, and dependencies
+can distinguish the description from an outer count.
+
+The cost is therefore real bare-form incompatibility, not unrestricted
+equivalence with the more permissive proposal. The advantage is a smaller
+baseline export contract while retaining ordinary descriptions and a
+plural-capable core. Explicit plural quantification and other richer profiles
+can be developed without silently changing standard numerical quantifiers.
+
+#### What this choice does not remove
+
+Scope-based accessibility still needs reference introduction, plural carriers,
+ordinary existential continuity, open answer sources, permitted quotation
+crossings, and source/force association. A structurally available source can
+lack a value; that is not an out-of-scope reference. Descriptions and inner
+zero also retain their carrier and admission obligations.
+
+In particular, `lo gerku cu sipna .i ri cu xunre` still requires a shared
+source whose empty result makes the first assertion false and the later use
+undefined. Preserving that distinction through captured content, replay, and
+the event/proposition model remains the work discussed in §1.14a and the
+[bounded continuation example](samples.md#121-a-source-preserving-pair-of-assertions).
+It is not complexity eliminated by rejecting quantified-group recovery.
+
+A richer export policy should be reconsidered if stronger usage evidence
+or a compositional construction justifies its additional permissions and
+costs. Merely lacking an implementation does not prove a reading impossible;
+conversely, binding a selected reference in a prototype does not settle the
+language's general accessibility rule.
 
 ### 1.7 The plural algebra, without covers
 
-**Job.** Number-neutral reference with subreference and join. **Witness.**
-`mi jo'u do bevri lo pipno` (a plurality acts; no set object exists to
-act), `ko'a me ko'e` (subreference predication). Outer `re lo mu plise`
-is instead an individual count over an independently bound description,
-not a neutral selected-pair argument (L3.9). **Why not sets?** In
-the nonempty, atomistic, member-wise fragment the two designs are
-intertranslatable — the honest answer is an equivalence-plus-choice,
-argued in full in §2.8. The short form: sets used the way a set-typed
-lexicon actually uses them (nonempty, predication reading the members,
-never the set-object) are a plurality wearing set-notation clothing, and the
-clothing costs more than it carries — the plural axioms return as
-side conditions, the member-wise/object-wise distinction moves from
-the type system into per-place convention, and coverage is lost where
-Lojban is deliberately non-atomistic — a boundary motivated in part by
-guskant's Condition₁ not-individuals proof and cut-bread interpretation (see
-References). (The familiar objection — "the
-crowd can be large while the set is abstract" — attacks set-*object*
-predication, which no serious set-typed design proposes; this document
-does not lean on it.) **Why no distributivity/cover
-parameter?** See §2.5 — the strongest single "less is more" decision in
-the core. **Cost.** Marked readings need marks (`lu'a`, `Distrib`,
-group gadri) — which Lojban has.
+`Combine` and `Among` represent number-neutral reference, join, and
+subreference. `mi jo'u do bevri lo pipno` predicates carrying of a plurality;
+`ko'a me ko'e` expresses subreference. Outer `re lo mu plise` instead
+counts individuals within an independently bound description; it is not a
+neutral selected-pair argument under L3.9.
+
+A set representation is equivalent within the fragment satisfying discipline
+D in spec §4.8. Section 2.8 states all its premises and compares the designs.
+The selected plural algebra does not assume atomistic generation, a boundary
+motivated by guskant's Condition₁ proof and cut-bread interpretation. The
+atomistic equivalence does not establish coverage of that case.
+
+Both designs need to distinguish member-directed predication from predication
+of set objects. The objection that a mathematical set cannot act does not
+address a set representation used only to denote its members. Section 2.5
+explains why unmarked predication has no covert distributivity parameter.
+Explicit readings use `lu'a`, `Distrib`, and group gadri.
 
 Collection gadri do not silently maximize their base. Bare `loi P`/`lo'i P`
 first use the same ordinary non-maximal `Refer P` as `lo P`, under `Local`,
@@ -320,9 +391,12 @@ needed, not decorative: without projection of the hidden introduction,
 CLL Example 6.52's `lo'i ratcu … .i ku'i lu'a ri …` would leave both the rats and the
 set in the discourse store, while the text has introduced only the set sumti.
 It retains the selected base as a lexical `Bind` value and all truth/
-projective effects, hiding only its anaphoric slot. This matches CLL's
-contextual `lo'i ratcu` discussion and preserves P1's selection while making
-the surface boundary honest. The outer restriction is singular-object-valued:
+projective effects, hiding only its anaphoric slot. This preserves P1's
+ordinary selection and the antecedent distinction in
+CLL Example 6.52. The relevant support is xorlo plus that example, not the
+maintained CLL's project-authored non-maximality wording; see the P5 discussion
+in §3. The surface eligibility boundary remains explicit.
+The outer restriction is singular-object-valued:
 bare outer reference remains number-neutral, but each selected group/set must
 individually have the complete base. The all-P base remains available through
 explicit inner/descriptive `ro`, the library `MaxRefer`, or a context that
@@ -330,23 +404,25 @@ genuinely selects it; bare outer `ro` does not build that base. The cost is
 only that mathematical users must state maximality when the context does not
 already make it clear.
 
+Worked examples: [plural references, groups and sets](samples.md#3-reference-and-descriptions).
+
 ### 1.7a Constitution: why `joi` is not another plural join
 
-**Decision.** `joi` forms a constituted whole (`joi1`); `jo'u` remains the
+Decision. `joi` forms a constituted whole (`joi1`); `jo'u` remains the
 plain plural join. The official dictionary calls `joi` “mixed together,
 forming a mass” and `gunma` a whole composed of x2, while current CLL 14.14
 contrasts a group that acts as one object with `jo'u`'s still-plural result.
 The BPFK record is internally revealing: its English proposal describes
 unchanged referents plus non-distributivity (`joi2`), but its formal equation
-is `X joi Y = lo gunma be X .e Y` (`joi1`). The latter wins because the former
-adds no semantic content this core permits: `Combine` plus P4 already leaves
+is `X joi Y = lo gunma be X .e Y` (`joi1`). Smusni uses the whole-forming reading because unchanged referents plus
+non-distributivity add no content under the selected predication policy: `Combine` plus P4 already leaves
 collective/distributive behavior to the lexical predicate. A covert
 “do not distribute” flag would make `joi` a redundant `jo'u` plus the very
 reading parameter P4 rejects. Contrast `mi joi do bevri lo pipno` (a group
 whole carries) with `mi jo'u do bevri lo pipno` (the plural argument is
 neutral; `bevri` decides what configurations satisfy it).
 
-One universal mass constructor would be smaller on paper and wrong in type:
+One type-preserving mass constructor would not cover the required result types:
 a group of cats is not a cat, while a mass of events must remain an
 Eventuality and a mixed property must remain a common-row predicate. The
 indexed programme therefore has a `Group<T>` result, an Eventuality result,
@@ -359,7 +435,7 @@ carrier. At a shared-head tanru locus `JoiTanru` keeps the head outside that
 family and asserts it once; mixing two already-head-conjoined predicates would
 wrongly make the head itself a duplicated contribution.
 
-**Why the layers.** Official `gunma` now glosses itself as partially
+Why the layers. Official `gunma` is glossed as partially
 specified, the community `mulgunma` entry explicitly supplies the complete
 contrast, and actual IRC usage has `mi se gunma le mi lanzu` when the speaker
 is merely one family member (2010-08-14, `lojban-disc/irc/all_logs.txt`
@@ -371,7 +447,7 @@ never special `se` semantics. `joi`, group descriptors, and `MeiRel` use the
 complete layer because allowing an extra peer would make “X mixed with Y” or
 “the group of P” silently include Z. Free `gunma` remains partial-friendly.
 
-**Why a basis.** Components are not atoms. People may be team members;
+Why a basis. Components are not atoms. People may be team members;
 eventualities may have phases; a hybrid's lion/tiger contribution is by
 origin, not lion-only and tiger-only body parts; desire and fear can blend as
 aspects without pure subevents. `DecompositionBasis` therefore supplies
@@ -387,29 +463,32 @@ for the term to become false. No component property inherits automatically: the 
 mailing-list critique's reductio (`lei mlatu` would be a tail, or have been in
 the sun, because some material part was) is decisive.
 
-**Cross-locus payoff.** The same event instance gives `.i joi` its compound
+Cross-locus payoff. The same event instance gives `.i joi` its compound
 event and gives ordinary conjunction its model-level `joint_M`. The canonical
 conjunction basis is associative, transparent to its own nested wholes, and
-treats `hold_M(⊤)` as null, so the old event interface and the new connective
-do not proliferate rival “joint” objects. `JoiClause` supplies content but
+treats `hold_M(⊤)` as null, so the clause-event interface and the connective
+share one composition of joint events. `JoiClause` supplies content but
 does not settle performance roles, UI targeting, or transcript spans; those
 remain #6. Property rows with no declared contribution basis, `pe'e joi`, and
-`joi nai` likewise remain honest bounded gaps.
+`joi nai` likewise remain bounded gaps.
 
-**Canonical aggregate identity versus organizations.** Explicit `joi` and
+Canonical aggregate identity versus organizations. Explicit `joi` and
 `lu'o` must succeed for arbitrary nonempty components and must not select one
 of several rival “bare aggregates” accidentally supplied by a model. The
 adopted answer is a primitive, rigid `Aggregate κ g` classification plus
 one-way rigidity (R), existence (E), within-class uniqueness (A), and local
-complete-cover functionality (F). `Massify` now explicitly restricts its result reference to co-refer with the
-canonical aggregate's lift. The former one-count selection did not entail that
-contract on a nonminimal carrier. The local repair runs at the construction's
-governing scope and is not a new invariant-description hoist. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
+complete-cover functionality (F). `Massify` restricts its result reference to co-refer with the
+canonical aggregate's lift. Selecting a reference with count one does not
+entail that contract on a nonminimal carrier. This reference constraint
+applies at the construction's governing scope, not through an invariant-
+description hoist. Descriptors remain descriptions: `loi`/`lei`/`lai` may refer
 to the canonical aggregate or to an independently individuated team, family,
 body, committee, or other organization whose complete current cover happens
 to be the same.
 
-Two countermodels fix the boundary. First, budget and ethics committees may
+<a id="example-coincident-organizations"></a>
+
+Two constructed countermodels fix the boundary. First, budget and ethics committees may
 have the same three members at one time and later diverge. Unrestricted
 same-cover uniqueness would identify them rigidly at the first time; after
 divergence one object would have two non-`CoRef` complete covers, contradicting
@@ -431,7 +510,7 @@ identity likewise remains model-given.
 The historical record genuinely splits. Protin's 1991 aggregate/organism
 distinction inspired the organization boundary; LeChevalier's same-day
 universal-massifiability argument motivates (E), while his `lai lojbab.` body
-example supports persistent **described** wholes rather than mutable bare
+example supports persistent described wholes rather than mutable bare
 constructor outputs. The 1994 sumti-paper draft states the extensional
 candidate; Clifford's 2002 “intensional, with all the horrors” response exposes
 its identity/anaphora costs. Llambías' 1995 `re loi broda` puzzle exposes the
@@ -442,7 +521,7 @@ the need for first-order group objects when groups are quantified over. These
 sources motivate and test the project law; none independently ratifies it.
 
 Rejected alternatives are therefore: global or situation-local uniqueness
-over **all** groups (organization collapse); fully model-given manufacture
+over all groups (organization collapse); fully model-given manufacture
 (no success or identity guarantee for `joi`/`lu'o`); no group objects (loses
 outer counting, equality, anaphora, and nested partitions); distinct group
 sorts for aggregates and organizations (makes their possible identity
@@ -451,7 +530,7 @@ organizations). The cost of the adopted primitive classification is explicit
 model structure, but it is exactly the distinction the surface constructors
 need and is factored by both `joi` and `lu'o`.
 
-**Costs and source limits.** Contemporary CLL's clean group prose is partly
+Costs and source limits. Contemporary CLL's clean group prose is partly
 this project's own amendment and cannot ratify the choice by itself. Original
 CLL supplies the blue/red and joint-cause phenomena but not a coherent
 polymorphic model; the 2018 wiki proposals likewise assume the hard event/
@@ -462,9 +541,17 @@ relative to the selected base; P39 now makes the base's own no-residue
 behavior part of its resolved lexical extension, without imposing a count
 profile on mass terms.
 
+Worked example: [group constitution](samples.md#3-reference-and-descriptions).
+The [event/property mixture examples](samples.md#14-meanings-without-analyses)
+are explicitly marked as lacking complete analyses.
+The [coincident-organization countermodels](#example-coincident-organizations)
+above test the identity laws; they are not corpus observations.
+
 ### 1.7b Count and mass coverage: lexical extension, not descriptor repair
 
-The original defect was real: if `gerku(r)` at plural type were left wholly
+<a id="example-dog-plus-cat"></a>
+
+The no-residue condition is needed because if `gerku(r)` at plural type were left wholly
 unconstrained, a model could make it true of three dogs plus a cat, while
 `CardBasis r gerku = 3` simply ignored the residue. `CoveredBy` closes that
 hole and remains meaningful without atoms: every subreference must overlap a
@@ -472,9 +559,9 @@ P-unit, but a P-unit may itself be indefinitely divisible. Guskant's
 Condition₁ proof and cut-bread interpretation are the motivating witness for
 that second conjunct, not a proof of the project's lexical placement.
 
-Two placements were coherent. The rejected descriptor-specific repair made
+Two placements are coherent. The rejected descriptor-specific repair made
 `lo R` select only `R(r) ∧ CoveredBy(unit_Rℓ,r)` while leaving nuclear
-`R(r)` weaker. The adopted lexical-extension repair makes the resolved `R_p`
+`R(r)` weaker. The selected lexical-extension rule makes the resolved `R_p`
 itself obey that equation wherever its lexicon place/reference mode declares
 a unit profile; `lo R` stays literally `Refer R_p`. The official dictionary
 and the BPFK gadri table both say `lo broda = zo'e noi broda`, so the
@@ -485,7 +572,7 @@ plural condition under either design. Adding a descriptor layer on top merely
 duplicates the per-row distinction.
 
 The same point blocks a lexeme-wide count/mass Boolean. Official `nanba`
-means a quantity of **or container of** bread; substance portions can be
+means a quantity of or container of bread; substance portions can be
 cumulative and divisible, while container and kind modes have different
 units or direct plural conditions. The schema is therefore per place and
 resolved reference mode. Count profiles, cumulative substance profiles,
@@ -493,7 +580,7 @@ singleton-container profiles, and direct collective/kind conditions are
 lexical alternatives, never a covert choice at application time. Actual row
 values remain #12 work.
 
-The factorization dividends are exact rather than rhetorical. All exporting
+The same no-residue condition is shared by the other relevant operations. All exporting
 cardinal selections use `CoveredBy` plus `CardBasis`, so dog-plus-cat and
 dog-plus-pack witnesses fail without forcing their nuclear predicate to be
 distributive. `MaxRefer` is inhabitedness plus `CoveredBy` plus the
@@ -508,8 +595,7 @@ description-only placement reopens only if speakers accept the same resolved
 `R_p(r)` as nuclear predication while forbidding r specifically as a `lo R`
 referent. No such witness survived the design audit.
 
-**The member-level lift (#33/#34; human-adopted 2026-08-26).** The same
-no-residue law closes the one seam P39 left open: a `Refer` restrictor
+The member-level lift uses the same no-residue law for a `Refer` restrictor
 written over the *member* sort — the hidden `lo'i`/`loi` base `λx. gerku x`,
 or the outer collection property `λg. CompleteGunmaAt κ g base`, which has
 no lexical row to supply a plural extension. Its denotation is the defined
@@ -547,9 +633,12 @@ the literature's two halves of the same equation, the atomistic and the
 lexical one. Cost: the two spellings of one restrictor coincide only for
 count-profile rows, so a specimen should write each row at one level.
 
+Worked examples: [description restrictions](samples.md#3-reference-and-descriptions) and
+[counted-reference comparisons](samples.md#5-quantifiers-witnesses-anaphora).
+
 ### 1.7c Composite personal pro-sumti are plural, not constituted groups
 
-**Decision.** `mi'o` is `Combine Speaker Audience`: the same neutral plural
+Decision. `mi'o` is `Combine Speaker Audience`: the same neutral plural
 argument as `mi jo'u do`. The sibling forms use the same construction with
 their token-relative “others” projections; the context constraints spell out
 the inclusion and exclusion facts instead of relying on English “we”. P4 then
@@ -584,158 +673,200 @@ does not distribute the clause into speaker/listener journeys or pair each
 member with a separately recovered destination. That contrast belongs to the
 surface structure, not pragmatic pairing.
 
-**Cost and reopening.** This diverges from original CLL and requires three
+Cost and reopening. This diverges from original CLL and requires three
 explicit “others” context projections. It does not solve positive `mi'o …
 mei`: #24 must add or reject a plural carrier instance without changing the
 pronoun. Reopen P40 only for ordinary unmarked uses that require properties of
 a constituted group which its members lack; collective or reciprocal plural
 predication and cardinality alone do not qualify.
 
+Worked examples: [composite personal references](samples.md#3-reference-and-descriptions).
+The dated usage sources and their limits are in spec References under the
+composite-personal-pro-sumti discussion.
+
 ### 1.8 `DropPlace`, `Tanru`, `Scalar`
 
-Three relation formers, three witnesses: `mi klama ti zi'o` (a relation
-with the role *gone* — neither `zo'e` nor closure can remove a role);
-`sutra klama` (an intended but underspecified modification link — §1.3);
-`ta na'e
-melbi` (scalar otherness is not `¬` — it is *stronger*: CLL 15.4, a
-selbri negation "asserts that a relationship exists other than that
-stated" and "remains an assertion of some specific truth", so `na'e P`
-denies P's stated region *and* positively asserts the complementary coarse
-region of the recovered `ContrastDomain`; `to'e` asserts the antipode,
-`no'e` the midpoint. No hidden fine alternative is selected. An earlier
-analysis had `na'e` weaker than
-`¬`; the primary text overruled it, and the King-of-France passage of
-CLL 15.4 — selbri negations "still make affirmative claims" — is the
-decisive witness). Why not lexicalize scalar forms per predicate? The
-operators are productive across the whole lexicon; three formers beat
-thousands of entries.
+The three relation formers represent different operations. In
+`mi klama ti zi'o`, DropPlace removes a role rather than filling it.
+Tanru retains an intended modification link, as in `sutra klama`.
+Scalar contrast, as in `ta na'e melbi`, denies the predicate's region
+and asserts membership in a contrasting region of the resolved domain.
 
-The `Tanru` analysis has independent lexical corroboration: the gismu
-`tanru`'s official row gives the compound its "meaning ⟨4⟩ in
-usage/instance ⟨5⟩" — occasion-specific intended resolution as a dictionary
-fact, adopted as the operator's shadow relation in spec §16.5. CLL 5.2's
-warning that a speaker risks being misunderstood likewise presupposes a
-speaker-side intention and fallible recovery; it does not make every listed
-link true at once.
+CLL15.4's account of selbri negation as an affirmative alternative relation
+motivates the stronger-than-denial analysis. A weaker-than-negation
+analysis would not preserve that contrast. OtherThan denotes the domain-relative
+complement, Opposite its antipodal region, and Neutral its between-region;
+the latter is not necessarily an arithmetic midpoint. No finer alternative is
+silently selected. Shared formers state these productive patterns while
+lexical entries supply the domains and scales.
+
+The official tanru row provides meaning at x4 and usage/instance at x5.
+This supports an occurrence-specific interpretation without itself proving
+the complete operator semantics. CLL5.2's warning about misunderstanding
+also supports intended but fallibly recovered links; it does not require
+every listed link to be true simultaneously.
+
+Worked examples: [place deletion](samples.md#1-predication-and-closure) and
+[tanru and scalar contrast](samples.md#8-intended-underspecification-and-soritical-vagueness).
 
 ### 1.9 `Generic`
 
-**Job.** `lo'e`/`le'e` talk about typicality without a specimen.
-**Witness (against every specimen theory).** `lo'e cinfo cu se kerfa lo
-clani` (maned — normal *males*) with `lo'e cinfo cu se jbena lo cinfo`
-(bears young — normal *females*): no single typical lion verifies both,
-so a fixed "typical-lion reference" gives wrong conjunctions under
-referential transparency. **Why not `∀`/`∃`/`Refer`?** Generics tolerate
-exceptions (`∀` fails), claim more than instances (`∃` fails), and
-introduce nothing anaphorically stable (`Refer` fails — generic anaphora
-is honestly gap-registered instead). **Shape.** One operator, mode
-Typical/Stereotypical, holder fixed to Speaker for `le'e` (a grammatical
-fact, so it lives in the operator, not the lexicon). **Cost.** The
-normality ordering is constrained, not defined — the operator is
-*frankly axiomatic*, because genericity is an open problem in semantics
-at large and pretending otherwise would be false precision.
+`lo'e` and `le'e` express generalizations rather than reference to a
+particular specimen. The intended generic readings of
+`lo'e cinfo cu se kerfa lo clani` and
+`lo'e cinfo cu se jbena lo cinfo` use different normality classes:
+maned males and females giving birth. A single fixed typical-lion referent
+does not represent both generalizations under those interpretations.
+
+An ordinary universal would exclude exceptions, while an existential would
+state only the existence of an instance. The selected operator instead
+relates a pure restrictor and a nuclear predicate through a
+predicate-sensitive normality ordering. Its modes are Typical and
+Stereotypical; the latter fixes Speaker as holder for `le'e`.
+
+The cost is an axiomatic normality interface, not a derivation from the
+other core forms. Generic anaphora and further inference remain gaps.
+A lexical relation such as `fadni` may inform a future account, but its
+place structure alone does not define this operator.
+
+Worked examples: [generic descriptions](samples.md#3-reference-and-descriptions).
 
 ### 1.10 `Reify` and the abstraction relations
 
-**Job.** Lojban predicates select different abstraction sorts. **Witness.**
-`lo du'u mi klama cu se djuno do` (knowledge takes propositions) against
-`lo ni mi klama cu barda` (bigness takes amounts): swap them and both are
-gibberish — the sorts are real. **Why is the `Reify`/`Holds` pair primitive?**
-Because `du'u` is the one genuine Proposition↔Content crossing —
-`Reify` inward, its axiomatized inverse `Holds` outward — while the
-others — `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, `zu'o` — are
-abstractors to which CLL itself assigns place structures (CLL 11.3, 11.5,
-11.6, 11.9: "x1 is the amount of … on scale x2"), so the core renders
-them as named abstraction relations and
-lets reference apply outside: `lo ni …` and `le ni …` then differ exactly
-as `lo` and `le` always differ, outer quantifiers and relative clauses
-work unchanged, and the omitted x2 (`su'u`'s "type", `ni`'s scale) is
-ordinary contextual closure. A family of primitive
-`Content × operand → sort` constructors was rejected because it would
-re-derive all of that machinery, worse, per sort. **Cost.** Terms are a
-little longer; uniformity pays for it.
+The core distinguishes proposition, amount, experience, concept, and other
+abstraction sorts. For example, the selected readings of
+`lo du'u mi klama cu se djuno do` and `lo ni mi klama cu barda` use a
+Proposition and an Amount respectively. Substituting one sort for the other
+does not preserve those typed readings. This is not a claim that every
+alternative lexical use is meaningless; such a use needs its own supported
+row and, where necessary, an explicit crossing.
 
-`jei` stops at its epistemology-relative `TruthValue` object. CLL 11.6's
-numeric [0,1] treatment is explicitly a proposal whose conventions were never
-worked out and whose number-valued reading never became established. P38
-therefore removes `TruthValueDegree` from the normative crossing inventory and
-keeps its exact signature only as a gap proposal. This is prescriptive rather
-than optional-per-reading: a future evidence-backed pin may add the crossing;
-the current surface never chooses between two hidden type-changing readings.
+`Reify` and `Holds` provide the Proposition–Content interface. They are
+primitive because the remaining forms do not supply that representation and
+evaluation pair with the required round trips. Section 2.10 compares this
+choice with the analysis of propositions as nullary relations.
+
+For `ni`, `jei`, `li'i`, `si'o`, `su'u`, `pu'u`, and `zu'o`,
+CLL supplies place structures, including scale, experiencer, or conceptualizer
+places (CLL 11.3, 11.5, 11.6, 11.9). Smusni represents these as relations
+parameterized by content. Reference then applies outside the relation:
+`lo ni …` and `le ni …` use the ordinary gadri distinction, relative clauses
+restrict or supplement the resulting reference, and omitted places receive
+contextual fills.
+
+Separate object constructors for every abstractor would need corresponding
+rules for these operations. The relational treatment reuses the existing
+rules at the cost of longer terms. This is a factorization argument, not a
+proof that constructor-based alternatives cannot be defined.
+
+`jei` yields an epistemology-relative TruthValue object. CLL 11.6 presents
+a possible numeric [0,1] treatment without establishing its conventions.
+Under P38, the baseline therefore has no `TruthValueDegree` crossing.
+Its proposed signature remains in spec §14 for future evidence-backed
+adjudication. The current mapping does not silently alternate between
+TruthValue and Number results.
+
+Worked examples: [abstractions](samples.md#9-abstractions).
 
 ### 1.11 Acts, performance, tokens, signs
 
-**Job.** Force, quotation, and reported speech. **Witnesses.** One content
-under four forces (`do klama` / `xu` / `ko` / displayed); `mi cusku lu ko
-klama li'u` (a directive described, not issued — construction ≠
-performance); `lo'u mi do du le'u` (quoting the unparseable — signs carry
-text, not meaning); `la'e lu mi klama li'u` (a sign and what it expresses
-are different things, and Lojban crosses between them explicitly).
-**Why opaque quotation boundaries?** Anaphora and presupposition must not
-leak out of mentioned material, or quotation collapses into use.
-**Why three performance layers?** A reusable act package cannot contain one
-performance's resolved speaker, deixis, or omitted-place values: the same
-`Act` may be quoted without performance and may be performed twice in two
-contexts. `ActContent` must therefore remain the raw package projection.
-Conversely, cross-performance default `go'i` and assertion-content `la'e di'u` must not run that
-raw package against the later caller's context; they need the content as
-resolved at the selected utterance. `RealizedContent` supplies that partial
-token-to-content crossing, while the `ActOccurrence` record/opaque handle is the semantic
-join point between one `Perform`, its token/span, its extensional context
-capture, and occurrence-relative grounding. `Perform` returns only an opaque
-handle to this record, so a UI can target one of two performances of the same
-act without inspecting the capture. Putting the capture inside the
-act would make repeat performance impossible; relying only on a
-hoist-before-construction convention would leave arbitrary deictic or
-`Context`-bearing packages undefined. The occurrence layer factors both
-problems once. **Why not target only the utterance token?** One token/span may
-realize a host plus displays/vocatives, or future compound components; the
-token does not identify which act was performed. The occurrence handle pairs
-token, act, and capture, while transcript attachment supplies its role,
-without identifying any two of them. **Why not
-target only the raw act?** Re-performing one package would make the two
-targets identical. It freezes contextual interpretation, not dynamic truth,
-reference outcomes, projective discharge, or a `Vague` sharpening.
-The resolver capture is likewise extensional rather than historical: at each
-captured site it retains the original partial function on the entire declared
-dependency domain. A later override that reaches a tuple not traversed in the
-antecedent therefore uses the original captured answer when defined and is
-projectively undefined otherwise; fresh caller-context resolution would break
-the very capture default this layer exists to state.
-CLL 7.6 independently supplies the key minimal pair: ordinary GOhA keeps the
-antecedent pro-sumti meanings, whereas `ra'o` reinterprets them in the new
-context. That source does **not** license reopening every omitted place or
-tanru link. The mapping therefore merges the raw template with the occurrence
-capture: only the marked pro-assign sites are rebuilt, while unrelated
-`Context` values remain captured. A wholesale raw `ActContent` replay was
-considered and rejected as an overgeneralization of `ra'o`.
-**Cost.** Tokens and signs enlarge the ontology; the model also carries
-performance occurrences and semantic closures. None exposes resolver state
-to terms, and every element is independently witnessed.
+The same content can be asserted, questioned, commanded, or displayed.
+Quotation also distinguishes an act from its performance:
+`mi cusku lu ko klama li'u` reports a directive without issuing it.
+`lo'u mi do du le'u` quotes text without requiring a grammatical analysis,
+and `la'e lu mi klama li'u` explicitly crosses from a sign to its content.
+
+The core separates three objects: a reusable act package, one performance
+occurrence, and the utterance token or span associated with that occurrence.
+Constructing or quoting a package does not perform it. `ActContent`
+projects the raw assertion payload; `RealizedContent` projects content
+under a selected performance's captured context.
+
+This separation supports repeated performance and occurrence-specific
+indicators. Two performances of one act have the same package but different
+occurrence handles. A raw-act target would not distinguish them. A token
+alone is also insufficient when the token or span is associated with a host,
+attached displays, or other components. `ActOccurrence` associates the act,
+token, role, and semantic capture; terms receive an opaque handle rather
+than access to that record's fields.
+
+The capture preserves utterance-context resolution, not a fixed truth result,
+reference-selection outcome, projective discharge, or precisification.
+At each captured site it retains the original partial resolver over every
+declared dependency tuple. A later override reaching a new tuple uses that
+resolver or yields projective undefinedness; it does not switch to the new
+speaker's resolution.
+
+CLL 7.6 distinguishes ordinary GOhA reuse from `ra'o` reinterpretation of
+antecedent pro-sumti. It does not require every omitted place or tanru link
+to be resolved again. Smusni therefore combines the raw template with the
+occurrence capture: marked pro-assign sites are rebuilt under `ra'o`,
+while unrelated captured sites remain unchanged. Wholesale raw replay was
+rejected as a broader rule than that source supports.
+
+Other representations of packages and captures are possible, but must
+preserve these distinctions. The selected interface costs additional token,
+occurrence, and capture structure while keeping that structure separate
+from an evaluator log.
+
+Worked examples: [acts and questions](samples.md#6-acts-questions-answers),
+[quotation](samples.md#10-signs-and-mention), and
+[performance binding](samples.md#12-direct-binding-notation).
+
+### 1.11a Queries, answerhood, and question objects
+
+The Query interface factors a typed answer domain and its answer-content
+function across polar, entity, relation, place-label, and other questions.
+Ask uses a query to construct a question act; Answer selects Content from
+its answer-content function; QuestionOf represents the query as a first-order
+Question object. This separates a query, an answer's content, and an object
+representing the query. In a du'u answerhood construction, Reify supplies the
+additional Content-to-Proposition crossing.
+
+This is a factorization argument for the shared interface, not proof that
+every individual constructor must be primitive. Polar, OpenQ, Answer, and
+QuestionOf retain their declared primitive status. A lambda formulation need not duplicate contextual sites:
+one inert Content value can be shared. Sharing that value must
+not be confused with evaluating it once or with combining its evaluations.
+
+A reduction comparison remains required. For example, a Boolean case split
+using dynamic conjunction and disjunction must preserve accessibility,
+projective behavior, definedness, and the complete event intension, not merely
+its answer-wise truth conditions. No such equivalence is asserted here.
+Likewise, a first-order Question representation is part of the selected
+interface, not a complete lexical analysis of every question-selecting word.
+The outstanding necessity/factorization comparison is recorded in spec §14;
+documenting it does not add an expansion or change the language's behavior.
+
+Worked examples: [questions and answerhood](samples.md#6-acts-questions-answers).
 
 ### 1.12 Indicators: displayed content with lexicon discipline
 
-**Job.** `.ui nai cai`, evidentials, discursives — meaning that is shown.
-**Witnesses**, one per design decision: `.au mi sipna` (host
-*subordinated* — no sleeping asserted: host-force profiles are real and
-lexical); `.uinai cai` (intense *unhappiness* — `nai` selects the paired
-emotion, then degree applies: pairing must precede degree, so pairing is
-lexical, with `Scalar Opposite` only as documented fallback — CLL 15.7's
-opposite-end rule); `mi jinvi
-lo du'u ti'e do klama` (hearsay marked on *embedded* content — so
-evidentials cannot be an operand on assertion force; they are targeted
-display whose force-grounding effect fires when the target is the
-enclosing act's content); `pei` (attitudes are questionable — so they are
-first-class relations, not wrappers). **Why not a closed generated
-inventory?** The UI lexicon is open; the core supplies the *shape*
-(relation, target, degree, pair, profile) and the dictionary supplies the
-instances. **Cost.** The lexicon carries real semantic load — by design
-(§2.6).
+Indicators require a relation, target, intensity, polarity policy, and
+host-force profile. The examples separate these components:
+
+- `.au mi sipna` expresses desire without asserting sleep. The lexical
+  host-force profile determines whether the host remains asserted.
+- `.uinai cai` displays intense unhappiness. The lexical pairing selects
+  the opposite emotion before degree applies. `Scalar Opposite` is only
+  the documented fallback under CLL15.7.
+- `mi jinvi lo du'u ti'e do klama` targets hearsay at embedded content.
+  An assertion-only annotation would not supply this use; the display
+  interface must also support content-level targets.
+- `pei` questions the attitude. Its typed query domain must therefore
+  expose the relevant attitude alternatives.
+
+The core supplies the shared interface and the lexicon supplies its
+instances. Lexical entries carry the corresponding semantic obligations;
+a generated list of labels would not define their target, pairing, or force
+behavior. This division follows the lexical discipline in §2.6.
+
+Worked examples: [indicators and their targets](samples.md#7-indicators).
 
 ### 1.12a Discursives: reuse without an invented primitive tally
 
-The post-FP3 DISC/ARCHIVE reviews support defining discourse relations from
-existing lexical relations where the actual rows fit. `mintu` for `mi'u` retains
+Discourse relations can reuse existing lexical relations where their rows
+and meanings fit the required comparison. `mintu` for `mi'u` retains
 its standard place; `drata` is the same-standard otherness candidate; `simsa`
 offers similarity (its third place is a respect/property, not automatically the
 same type as mintu's standard). `frica` and `jmina` are plausible ingredients for
@@ -744,8 +875,12 @@ and adding a token is not automatically argumentative addition.
 
 An existential standard is coherent unless its admitted domain makes sameness
 trivial; the dictionary does not say that every imaginable property is admitted.
-Independent existential sameness need not chain: red circle matches red square
-in color; red square matches blue square in shape; the endpoints match in
+
+<a id="example-comparison-standards"></a>
+
+As a constructed comparison, independent existential sameness need not chain:
+a red circle matches a red square in color; that square matches a blue square
+in shape; the endpoints match in
 neither. Sharing a standard, or restricting to standards agreeing on the
 relevant entries, can preserve chaining. The adjudicated ordinary default is
 recovered criteria, with sharing keyed to the comparison chain and a recoverably
@@ -753,7 +888,7 @@ new criterion allowed. Explicit and admissible existential readings remain
 distinct alternatives, not silently replaced by Context. Nai complements at
 the same bound standard; changing existential scope would express a different
 claim. Exact rows, admissibility and nonassertive target adaptation remain work
-(spec References, **Round2 agreed contracts**, Q11).
+(spec References, Round2 agreed contracts, Q11).
 
 “Me too” can compare distinct propositions under a role-aligning standard;
 it need not force a new Case sort or property-object reification. Occurrence
@@ -779,721 +914,643 @@ The broader CLL13.12 inventory is a candidate ledger, not certified reductions:
 | ke'u | krefu | Recurrence of content/case versus words/event. |
 | po'o | logical/comparison machinery | Same-level alternatives, own-subpart exclusion, overlap and projection. |
 
+Worked examples: [discourse-relation displays](samples.md#7-indicators).
+The [changing-standard comparison](#example-comparison-standards) above is a
+constructed test of the proposed relation, not an attested exchange.
+
 ### 1.13 Why facet joining is plain conjunction
 
-**Why not a dedicated operator.** A dedicated non-logical joining
-operator for tense/modal facets sharing an event might look necessary
-— surely "same locus" needs a connector — but no witness separates it
-from dynamic `∧`: the shared event is an explicit variable, so locus
-identity is carried by binding, not by a connector; and the
-tag-negation paradigm *derives* from `∧`-placement what a dedicated
-operator would have to stipulate — `mi klama ti
-sepi'onai ti` negates just the instrument conjunct (`klama ∧ ¬pilno`)
-while bridi `na` negates the whole (`¬(klama ∧ pilno)`), and tense
-chains (`pu pu`) need precisely `∧`'s left-to-right accessibility for
-their anchor anaphora. The one settled job in this neighborhood is exact
-facet conjunction. Constitution-bearing sumti/property/event `joi` instead
-uses the indexed §4.9 programme; no generic `Vague` connector fills its
-remaining per-row/performance gaps (spec §6.1, §14). **Cost.** A use needs a
-declared result kind and basis, and unmapped loci stay gaps rather than
-borrowing facet conjunction.
+The analyzed tense and modal facets conjoin predicates of a shared event.
+Binding identifies the event; a separate connective is not needed solely
+to establish a common locus.
+
+The placement of negation distinguishes
+`mi klama ti sepi'onai ti`, which denies the instrumental conjunct,
+from bridi negation of the whole conjunction. The respective structures are
+`klama ∧ ¬pilno` and `¬(klama ∧ pilno)`. Tense chains such as
+`pu pu` also use conjunction's left-to-right accessibility for their
+anchors.
+
+This analysis is limited to exact facet conjunction. Constitution-bearing
+sumti, property, and event `joi` use the indexed interface of spec §4.9.
+Those uses require a declared result type and basis. Missing row or performance
+rules remain gaps; neither ordinary conjunction nor a generic Vague connector
+supplies them.
+
+Worked examples: [tense and facet joining](samples.md#2-events-tense-facets).
 
 ### 1.14 `Bind`
 
-**Job.** Run an effectful computation once and use its result under a
-binder — the seam between the pure λ-fragment and the dynamics.
-**Witness.** `lo mlatu cu blabi .i ri jbena`: the introduction must run
-*once*, with its witness reused across two performed acts —
-`{Bind [$cat :: Referents Entity] (Refer P) (Do a₁ a₂)}`. **Why not
-ordinary λ-application?** In the calculus as typed, application simply
-*cannot* consume a computation where a value is demanded — `Bind` is the
-value-returning computation eliminator (`RefComp` and `PerfComp`), and that
-type mismatch is the primary
-necessity witness. The effect join is load-bearing: a performance operand
-keeps the result in `PerfComp`, so binding its occurrence handle cannot smuggle
-a performed act into `Content`. The live alternative is a different calculus: a
-direct-style call-by-value core where application itself sequences
-effectful arguments. There the two would coincide — the honest gloss
-is that `Bind` *is* application under mandatory call-by-value at
-computation types, made visible — but the direct-style calculus pays
-with a value-restricted β-law: substitution copies the argument's
-*text*, so β-equality would hold only for value arguments, with every
-effectful application node an unmarked sequencing point. The core
-prefers the discipline visible: β holds unconditionally in the pure
-fragment, and every sequencing point is a `Bind` node the
-accessibility table can name (witness-export width is stated in terms
-of it). **Why not the CPS/state encoding?** `Bind` is famously
-λ-definable if `RefComp<T>` is spelled as its *transparent*
-state-threading function type — but then information states and
-continuations become first-class term values, and the term language
-acquires meanings no Lojban sentence has: state inspection, double-shot
-continuations (backtracking), and truth-capture-without-effects — the
-reflection operator §1.5 deliberately refuses — all free of charge and
-all requiring ban-conditions to re-exclude. (An *abstract* or
-linearity-disciplined encoding avoids the junk exactly by reimposing
-the monadic interface — which concedes the point.) The transparent
-encoding also freezes §5.1's carrier into the definition (any carrier
-refinement — the `da'i` gap entry already commits to extending it
-with a world-shift operation — would rewrite the type of every term
-ever written) and turns the definition
-from an interface with many models into a description of one machine.
-**Comparative note.** Kuna — the loglang implementation nearest this
-territory — makes the same choice: its expression language is a typed
-λ-calculus plus named effect constructors and named combinators
-(`and_then` — monadic bind — among its built-in constants), not a CPS
-expansion; exactly one of its effects (`Cont`, scope-taking) is
-deliberately continuation-typed. Eberban has no `Bind` because it has
-no distinct computation type to eliminate — see §2.4. **Cost.** Two binder forms
-(`Let`/`Bind`) where one calculus habit expects one; the distinction
-is load-bearing and must be taught.
+`Bind` sequences a value-returning computation with a scoped body. For
+example, the successful-source pattern for
+`lo mlatu cu blabi .i ri jbena` binds one reference across two acts:
+
+`{Bind [$cat :: Referents Entity] (Refer P) (Do a₁ a₂)}`.
+
+The body supplies a continuation, of model-level shape `λcat. Do a₁ a₂`.
+It can use an already available function by applying it to `$cat`.
+Ordinary functions here are not captured evaluator continuations; passing
+one explicitly would not inherently add hidden control behavior. The
+direct notation is retained because respelling this continuation alone
+would not simplify the semantic account.
+
+`Let` is immediate value application. Both forms use ordinary lexical
+naming; `Bind` additionally passes the source result to its body with
+the corresponding state and obligations. Applying a function to a
+computation value does not implicitly substitute that computation's result.
+The effect join keeps a performance operand at the performance level.
+
+An alternative effectful `Run` could supply the same sequencing through
+evaluation rules, with ordinary `Let` following from call-by-value
+application. Spec §5.2 gives a hypothetical spelling. This does not
+inherently sacrifice pure β-laws: substituting an already obtained value
+differs from copying the effectful expression that obtains it. The useful
+comparison is the complete value, evaluation, scope and effect contract,
+not the number of binder spellings. No new `Run` form is adopted here.
+
+Explicit state/outcome operations offer a different possible simplification:
+they could make sequencing and some scoped boundaries definitions over shared
+operations. The cost includes the state/outcome interface, its laws, and
+restrictions on which observations ordinary terms may use. An opaque state
+type prevents inspection but does not alone prevent discarding or reusing
+a state argument. Neither mathematical state nor a restricted function
+encoding is inherently processor residue. Actual factoring and interface
+coupling must be compared; a carrier change need not rewrite every term.
+
+Kuna illustrates both named sequencing for `Dx`/`Act` and lambda-built
+sequencing for `Cont`; its named `Bind`/`Ref` effects concern discourse
+keys, not that sequencing operation. A named AST constant is not evidence
+of mathematical irreducibility. Eberban's context operations and ordinary
+anaphora provide another architecture (§2.3–§2.4). These comparisons
+identify alternatives; they do not establish a uniquely minimal calculus.
 
 ### 1.14a `PerformSource`: failure is not absence of a later utterance
 
-**Job.** Preserve an actual assertion and its later discourse when a permitted
-description source supplies no referent, without making strict `Bind` return
-a value it did not obtain. This is the bounded §7.1.1/L8.13 construction,
-not a new exception to P43's scope rules. See spec References,
-**Source-preserving assertions**, for the author/panel derivation and controls.
+`PerformSource` preserves an assertion and its continuation when a permitted
+description source yields no referent, without making strict Bind return a
+value it did not obtain. Its bounded formation and laws are in spec §7.1.1
+and L8.13; spec References, “Source-preserving assertions,” records their
+derivation and controls. It adds no exception to P43.
 
-**Witness and factorization.** In `lo gerku cu sipna .i ri cu xunre`, an
-empty dog source makes the first assertion false and the later value use
-undefined. Replacing `ri` by a fresh `Refer` incorrectly reasserts existence;
-placing the only `Refer` before an ordinary `Bind`-scoped discourse loses
-the later assertion entirely on failure. Placing it only inside the first
-assertion cannot bind its value into the second. `PerformSource` factors
-source preparation, one actual Host and a continuation with a reusable read.
-Its two ordinary RefComp values distinguish the original source result from
-later partial value use. They add no optional-reference/null-entity sort.
+In `lo gerku cu sipna .i ri cu xunre`, an empty dog source makes the
+first assertion false and the later reference use undefined. A fresh Refer
+for the second use would assert existence again and could choose a different
+reference. Putting the source before an ordinary Bind-scoped discourse would
+instead suppress the continuation on failure. A source bound only within
+the first assertion does not by itself scope the second.
 
-**What the review rejected.** An absent Act on source failure loses ordinary
-content projection. A first payload that is always U on failure loses the
-source assertion's F. One closed Act per alternative source value does not
-by itself give a unique projected Content. Restoring the assertion's entry
-state on failure erases earlier successful scope-eligible prefixes. The
-adopted bounded laws instead retain one shared Act/Content, correlated reads,
-reached eligible prefixes and legally closed sides, while projecting locals.
-They preserve strict ordinary binding and do not make later true claims
-restore worlds rejected by an earlier false claim.
+The selected construction factors source preparation, one actual Host, and
+a reusable read in its continuation. The first assertion and later read use
+different failure behavior but share the original reference when one is
+obtained. No optional-reference or null-entity sort is introduced.
 
-**Cost and remaining proof.** Sharing a schema is not enough: the read's
-denotation must inherit the same source coordinate across later uses and
-replay, with profiles pointwise rather than existentially merged. The finite
-witness supplies this construction, not the full information-state/effect/
-run-event-quotient embedding. Failed-source replay is particularly explicit
-debt because no obtained-referent assignment remembers that source outcome.
-The bound source-linked payload is not the unfactored statement's complete
-source-reopening intension: its Empty fibre stays F at a different world where
-a newly evaluated source might succeed. F01-C08 records that inequivalence, not
-a proof of complete GOhA coverage. No-return Bind event coordinates remain
-partial; an invented holding event would not complete EventOfContent's model.
+The retained laws also distinguish the rejected alternatives. Removing the
+Act on source failure loses its content projection; making every first
+failure U loses ordinary F; one closed Act per source alternative does not
+supply one shared projected Content. Restoring the entry state would erase
+earlier eligible prefixes. The selected laws instead retain reached,
+scope-eligible prefixes and legally closed sides while projecting locals.
+Later true assertions do not erase earlier falsity.
 
-**Boundary.** One exportable description per Host; successful existing
-multi-description outer-Bind routes remain, but multi-source failure
-continuation, arbitrary effects/guards, other forces and full model closure
-are not supplied. This is a lowering-only primitive with a semantic
-factorization argument, not a processor registry or a promise that the
-current derived engine already implements it.
+A finite witness construction is not the full information-state, effect,
+run/event, and quotient model. The reusable read must preserve source
+coordinates across later uses and replay. In particular, the Empty fibre of
+a captured payload remains F at a world where evaluating the whole source
+anew might succeed. F01-C08 records this difference, not complete GOhA coverage.
+No-return Bind coordinates retain partial event intensions.
+
+The fragment permits one exportable description per Host. Existing successful
+multi-description Bind routes remain, but multiple source failures, arbitrary
+effects or guards, other forces, and full model closure are not supplied.
+The [implementation-status ledger](decisions.md#derived-artifact-status)
+distinguishes structural encoding from general source execution and model proof.
+
+Worked example: [source-preserving assertion continuation](samples.md#121-a-source-preserving-pair-of-assertions).
 
 ### 1.15 `ClauseContent`, `StateClause`, and `EventOfContent`
 
-**Job.** Give every declarative clause one available eventuality without
-pretending every predicate lexically has an event argument. **Coverage
-witnesses.** `ta pu du lo mi zdani`, `lo nu ta du lo mi zdani`, and `li re
-su'i re ca'a du li vo` are grammatical: tense, event abstraction, and CAhA
-all apply to equality, whose core meaning is plain `=`. The former model could
-not lower any of them. **Why not wrap every eventive clause in a state of its
-event occurring?** That double-indexes `mi klama`: tense and BAI should target
-the going itself, not a second state. `DirectClause` therefore preserves the
-lexical event; only eventless or scope-composed content uses `StateClause`.
-**Why not leave compounds untyped?** Quantifiers cannot share one event among
-all instantiations, conjunction needs both components, disjunction may be true
-through either, and negation has no positive component event. The clause
-forms make those decisions explicit: quantified and conjunctive claims take
-holding/joint states, disjunction is branch-relative, and negation takes a
-negative state.
+The clause-event interface supports tense, event abstraction, and CAhA on
+both lexical events and eventless predications. Examples include
+`ta pu du lo mi zdani`, `lo nu ta du lo mi zdani`, and
+`li re su'i re ca'a du li vo`. Identity keeps its ordinary binary meaning;
+StateClause supplies its declarative holding-state interface.
 
-**Why this model interface?** `StateClause` is a content-to-event-open
-constructor, `CloseClause` binds that interface while retaining the branch
-witness, and `EventOfContent` is the inert object projection; none is a
-truth-capture operator. `CloseClause` has the run of ordinary existential
-closure but is not reducible to it because Content identity also contains the
-event intension. The operand runs only when the clause is evaluated, no
-`Bool` is returned, and no syntax is exposed. `Reify` already
-provides the only route from content to a first-order proposition and `Holds`
-the route back, so the event projection adds no hidden evaluation power.
-Fine's truthmaker semantics is a useful comparative model here: conjunctive
-verification fuses component states, disjunctive verification takes an
-alternative, and negation requires an explicit policy. It does not decide
-Lojban. This project chooses negative holding states because the
-human-adopted coverage includes negative clauses, and §4.9 identifies
-conjunctive joint
-states with the canonical complete event `GunmaAt` constitution rather than
-proliferating notions of “joint.”
+Direct lexical clauses retain their own event. Wrapping every going in a
+second state of that event's occurrence would redirect tense and BAI away
+from the going itself. Composed clauses have explicit policies: quantified
+claims use a holding state, ClauseAnd uses a holding-state joint, disjunction
+is branch-relative, and negation uses a negative holding state. Bare Content
+conjunction has the separate event-composition law in spec §9.3; it does not
+make every joint event a State.
 
-**Actuality cost and repair.** The domain contains described nonactual
-eventualities; `fasnu` says which occur at a world. A direct episode is actual
-at its evaluation world, while `ka'e` evaluates its event property in
-capability worlds. Missing CAhA cannot simply mean actual: CLL 10.19 explicitly
-uses bare `ro datka cu flulimna` and `ta jelca` for capability and says context
-disambiguates an omitted CAhA. P24 therefore makes omission reading-multiple
-among the four overt CAhA modes, with no default. Explicit `ca'a` fixes the
-actual reading and is overtly contrastive even where its `fasnu` conjunct is
-extensionally redundant. A holding State need not be bounded: a mathematical
-truth may occupy an all-time/all-space state, after which `purci`/`cabna` have
-their ordinary relation-specific results rather than failing to type.
+StateClause creates event-open content, CloseClause closes its parameter
+while retaining the selected witness, and EventOfContent projects the event
+intension without running the content. Ordinary existential closure matches
+the run but does not by itself preserve the structured event component.
+None of these operations returns a Boolean or exposes syntax. Reify and
+Holds retain their distinct Proposition–Content interface.
 
-**State-relative values.** Keeping binary identity does not force every
-quantity to be rigid. “The fine-structure parameter's value is X now and may
-differ later” either uses an explicit value-of relation, or forms the
-state-sensitive value description/projection *inside* each `StateClause`.
-Binding the quantity/value outside gives the de re reading; binding/evaluating
-it inside gives the state-relative reading. Arithmetic constants and `+`
-remain rigid, while the physical value interface may vary by time, location,
-world, or scale. **Cost.** Content denotations carry an event
-intension in addition to their dynamic run, and model construction must honor
-that congruence; issue #10 must include it in the term-model exercise.
+Fine's truthmaker semantics provides a comparison for conjunctive fusion,
+disjunctive alternatives, and explicit negation policies. It does not decide
+the Lojban mapping. Smusni's adopted negative-clause coverage requires a
+negative-state treatment; its separate event and holding-fusion laws still
+owe the combined model and inheritance checks in spec §14.
+
+Described eventualities need not be actual; fasnu records occurrence at a
+world. Under P24, missing CAhA permits the four resolved modes rather than
+defaulting to actuality. CLL10.19's bare duck-swimming and burning examples
+motivate retaining capability readings. Explicit ca'a fixes actual mode.
+A mathematical holding state may be temporally or spatially unbounded;
+ordinary temporal and spatial relations determine the resulting claims.
+
+Binary identity also permits state-sensitive descriptions without itself
+varying. A physical quantity's value may differ across times or worlds when
+its value-description is evaluated within each StateClause. Binding that
+value outside gives the de re reading. Arithmetic constants and operators
+remain rigid. The additional event intension must participate in Content
+identity and in the model construction tracked by issue #10.
+
+Worked examples: [event and state clauses](samples.md#2-events-tense-facets) and
+[the complete two-assertion example](samples.md#11-the-spiral-sentence-with-an-explicit-alias).
 
 ## 2. Design essays
 
-### 2.1 Why not plain predicate logic
+### 2.1 Limits of a truth-conditional first-order translation
 
-FOL loses, in order: cross-sentence anaphora (no discourse referents —
-spec §5.6), donkey readings (no compositional dynamic binding — the
-truth conditions are classically statable, the anaphoric route to them
-is not; §5.6), projective
-content (one dimension of meaning — §5.5), force (assertion only —
-§7.1), plurals (singular terms — §3.2/§4.8), vagueness-as-meaning
-(bivalent atoms only — §6), and use/mention (no signs — §7.5).
-Each loss above is a witnessed Lojban phenomenon. The core is exactly
-FOL's spine — typed λ, connectives, quantifiers — plus the
-disciplined extensions those witnesses force.
+A translation assigning only a closed first-order truth condition to each
+sentence does not by itself specify discourse accessibility, projective
+commitments, or speech-act force. For example, an existential witness closed
+inside one sentence is unavailable to a separately translated continuation.
+The truth conditions of the supported strong donkey reading can be stated
+classically, but its anaphoric composition needs a rule.
 
-### 2.2 Why two truth values (against Eberban's three)
+This does not make the relevant phenomena inexpressible in first-order
+modeling. One can encode states, pluralities, signs, forces, and operations
+on them as additional domains and relations. Such an encoding must still
+define their semantic behavior. Smusni instead exposes the relevant types
+and compositional operations directly. Its additions to a truth-conditional
+calculus are justified individually, not by claiming that first-order logic
+cannot represent their models.
 
-Eberban builds true/false/unknown into its logic. The phenomena "unknown"
-covers split, in Lojban, into things the core keeps apart: contextually
-unresolved values (`Context`), unasserted content (force), presupposition
-failure (projective definedness), and unanswered questions (`Query`
-values). Bundling them into a truth value forfeits those distinctions —
-e.g. negation treats presupposition failure and plain falsity
-differently, which strong-Kleene tables cannot see. Two values plus
-projection recovers every honest use of "unknown" with none of the
-collateral.
+### 2.2 Truth, definedness, and uncertainty
 
-### 2.3 Why explicit context (against the threaded context argument)
+Eberban's logical framework includes true, false, and unknown. Smusni
+distinguishes several phenomena that should not be identified merely by
+calling them unknown: listener ignorance, contextual resolution failure,
+projective definedness, unanswered questions, and content not asserted under
+its current force.
 
-Eberban threads a hidden context parameter through every predicate —
-elegant, and it makes tense and deixis nearly free. The core declines it:
-a definition optimizes for *auditability*, and a hidden argument on every
-relation is the single largest source of "where did that reading come
-from?". Instead the utterance context is one explicit record, deictics
-are its projections, `Context` computations consult it per site, and
-`InContext`/`ShiftedGround` shift it visibly — so `ra'o`-style shifts,
-which the threaded design gets for free, cost one visible operator here,
-and everything else stays inspectable. The trade is verbosity for
-transparency, which is this project's trade everywhere.
+Total at-issue claims are bivalent. The adopted interpretation-status rules
+also use T, F, and U, with strong-Kleene composition for genuine undefinedness:
+T-or-U is T, F-and-U is F, and unresolved p-or-not-p is U
+(spec §7.1.1 and §14 Q14). U is not a third truth value of an otherwise total
+claim and is not a measure of what a listener knows.
 
-### 2.4 Why worlds live only in the model (and effects only in the model)
+A three-valued table does distinguish undefinedness from ordinary falsity.
+What it does not supply alone is the project's separate projection,
+accommodation, force, and reference-retention rules. The choice is therefore
+not that two values eliminate all uses of unknown. It is to represent truth,
+partial interpretation, and other semantic dimensions separately, with
+explicit rules for their interaction. The combined construction remains
+incomplete.
 
-De re/de dicto and opacity are real (`mi djica lo nu mi pilno lo karce`
-has two readings), so the model theory is world-indexed. But no Lojban
-sentence *binds* a world: the candidates were hunted down (attitudes, CAhA, `da'i`,
-property-internal descriptions — `lo ka viska lo pavyseljirna` included)
-but a lexical label alone does not provide delayed evaluation. The required
-typed description-consuming interface remains a bounded gap (spec §5.7/§14).
-This does not establish a need for object-language world variables. So terms
-stay world-free; `da'i` waits in the gap register for the treatment its
-three open dimensions deserve. The same restraint governs effects: the
-dynamics *is* one algebraic computation type in the model, but the
-normative surface is the named operations and the accessibility table —
-Kuna demonstrates the algebraic surface working for Toaq, and also
-demonstrates its cost (a composition search and ten wrapper types between
-the reader and the meaning). One content, two presentations; the
-definition shows the readable one and states the equivalence.
+### 2.3 Explicit contextual operations
 
-Worth stating once, because it locates this whole design: **dynamic
-semantics is static semantics at a higher type**, twice over. A
-supported at-issue declarative discourse — once its readings,
-contextual parameters, and precisifications are fixed — has
-classically statable truth conditions: the
-selected strong donkey reading's joint-locus lowering *is* a classical
-formula; it is a reading-specific mapping, not an equivalence theorem for the
-underlying selection computation. (Questions, directives,
-displays, and the projective dimension carry more than truth
-conditions; for them the desugaring target is the model's
-state-transformer objects, the second sense below.) And sentence meanings are
-statable statically too, at the state-transformer type — §5.1's
-carrier is a plain set-theoretic function space. What cannot be
-recovered by any desugaring is *compositional locality*: no assignment
-of ordinary truth-condition-type meanings to sentences makes `.i`
-conjunction and lets `su'o gerku cu klama .i ri melbi` come out right,
-because the witness closes inside sentence one before sentence two
-exists. A semantics of Lojban discourse must either raise the sentence
-type (the transformer model) or globalize the translation (per-
-configuration reading selection and lowering); this core does the second in the mapping
-for the selected supported fragment and tests those rules against the
-first in the model — with `Bind` as the visible seam (§1.14).
+Eberban threads a context argument through its predicates. Smusni instead
+uses an utterance-context record, named deictic projections, occurrence-bound
+`Context` computations, and explicit `InContext`/`ShiftedGround`
+operations.
 
-The comparison with Eberban sharpens here. Eberban is a *sentence*
-logic with a threaded context parameter: its binding particles desugar,
-in its own refgram's equations, to conjunction, ∃-closure, and argument
-routing in static HOL, and its `ze` family gives latest-instance
-cross-sentence anaphora that reaches even a preceding existential's
-witness (the refgram equates the follow-up sentence with the first
-sentence's witness, and marks the multiply-evaluated/donkey cases as
-an open TODO). Its conversation context is genuinely carried
-between sentences and updated by dedicated predicates (the refgram's
-`an` family), so what it lacks is neither conversational state nor
-simple witness anaphora but the general case: a *distinct computation
-type* with compositional witness export — covariant (donkey)
-dependence across binders — and a formal projective-commitment layer
-(at-issue vs aside). Nothing propositional is thereby inexpressible
-(HOL states any classical truth condition, given restructuring into
-one sentence with shared variables); the anaphoric route is what is
-absent. Lojban's grammar makes exactly that route
-core (`ri`, `go'i`, witness export, `noi`), so its definition cannot
-decline the discourse level; a language that adds covariant
-cross-sentence binding faces the same fork, and the fork is a fact
-about the phenomena, not a house style.
+Either architecture can make contextual dependence explicit in its formal
+definition. Smusni's choice exposes retrieval sites, admissibility constraints,
+and dependency profiles in the core term, which helps readers distinguish
+shared resolution from independent retrieval. It costs additional notation
+and requires scope and capture laws. The advantage is local visibility of
+these distinctions, not a claim that implicit parameters are inherently
+unverifiable or semantically inadequate.
+
+### 2.4 World dependence and dynamic denotation
+
+The model is world-indexed, but core terms do not bind world variables.
+The analyzed attitude, capability, and description cases have not established
+that an object-language world binder is necessary. Some of those cases still
+lack complete typed consumers, notably delayed de-dicto descriptions and
+`da'i` (spec §5.7 and §14). Their unfinished treatment cannot be used as a
+proof that every possible world-sensitive reading is already covered.
+
+Dynamic meanings can be represented mathematically as static higher-type
+objects, such as functions on information states. Likewise, after fixing
+a supported reading and its parameters, many declarative truth conditions
+can be expressed as classical formulas. Neither observation removes the
+need to define composition. A closed truth-condition translation of one
+sentence does not retain its witness for a separately translated anaphor.
+
+Smusni uses typed computation categories and visible sequencing to state
+these dependencies. The mapping supplies the selected binding structure;
+the model must validate its accessibility and effects. The bounded
+`PerformSource` construction addresses one source-preserving assertion
+case. It is not a general proof of equivalence between the documentary
+calculus and a completed dynamic model.
+
+Toaq's Kuna provides a comparison using algebraic effect constructors.
+Eberban's reference grammar provides contextual updates through the `an`
+family and latest-instance anaphora through `ze`; it therefore has both
+conversational state and ordinary witness reference. The inspected grammar
+leaves multiply evaluated and donkey cases unfinished. The relevant
+comparison is how each architecture states dependencies and projective
+commitments, not whether one can mention state at all. Smusni's own remaining
+source, force, and model obligations must be included in that comparison.
 
 ### 2.5 Why there is no distributivity parameter
 
-The tempting design: unmarked plural predication carries a covert cover
-variable (context supplies it, or it's vague). Rejected on three grounds.
-First, xorlo says unmarked gadri are *unspecified* for distributivity —
-and a parameter is not unspecification, it is a question the sentence
-now silently asks. Second, plural logic's lesson ("the rocks rained
-down" hides no quantifier over ways-of-raining) — the predicate holds of
-the plurality, and *how* it holds is the predicate's lexical business, which
-the lexicon interface records per place. Third, the cover readings fail
-the vagueness test from the other side: each-carried and
-together-carried are things speakers separately *mean* and hearers
-recover — reading-level choices, which live upstream in
-disambiguation — while the unmarked sentence's configurations (the
-piano carried, however the three shared the load) verify it without any
-cover fact existing at all. A covert parameter would turn every
-unmarked plural sentence into that upstream question, silently asked.
-So: neutral predication is
-the reading; `lu'a`, `Distrib`, and the group gadri are the marked forms.
-Absence means absence.
+P4 treats unmarked plural predication as neutral. A predicate holds of a
+plural reference, and its lexical semantics determines which configurations
+satisfy it. The core does not add a covert cover variable selecting a
+collective, distributive, or cumulative reading.
+
+The xorlo description of unmarked gadri as unspecified for distributivity
+motivates this choice, but does not by itself prove that every parameterized
+analysis is wrong. The project prefers direct plural predication because it
+does not require an extra contextual resolution for each unmarked use.
+Different arrangements of piano carrying can satisfy the same neutral claim
+without being different selected values of a hidden parameter.
+
+When a reading explicitly requires distribution or a constituted group,
+`lu'a`, `Distrib`, and group constructions state that requirement.
+The lexicon's subreference-monotonicity and collective-capability fields
+describe predicate behavior; they are not per-occurrence cover choices.
+This follows the plural-logic approach discussed in §1.7b and §2.8.
 
 ### 2.6 Why the lexicon is a first-class interface
 
-Many disputes that look semantic are lexical: which places are
-intensional, which deletions are meaningful, what `djuno` demands of its
-answer, which emotion `.uinai` names, how `bevri` composes with plural
-carriers. A definition that inlined all of this would be a dictionary; one
-that ignored it would be unusable. The core's answer is a typed interface
-(spec §10): the *schema* of lexical knowledge is normative, its *content*
-is curated data. The constitution field follows the same discipline: a
-`gunma`/event row declares admissible decomposition bases and every supported
-property-`joi` row supplies a concrete `MixAt`/`ContributesAt` instance;
-absence is a coverage gap, not permission for a model to improvise. No
-collection **place-structure replacement** was needed —
-source verification showed
-official `gunma` x2 is already the components and `selcmi` (a xorxes
-lujvo, now also glossed and used by the Contemporary CLL edition's
-set-descriptor expansion) already takes its members as x2; both are
-adopted with plural-reference x2. The defective gloss in this area is
-official `cmima`'s x2-as-set, which the library simply avoids.
-The `le`-description analysis deserves its history spelled out, since
-it was contested during drafting. `skicu`'s official definition — "x1 tells
-about/describes x2 (object/event/state) to audience x3 with description
-x4 (property)" —
-makes its x4 a property, so a `skicu`-based `le` (the property applied
-to x2 by `skicu`'s own definition) is expressively adequate. The
-question closed when guskant's own `le` expansion surfaced —
-`zo'e noi mi ke'a do skicu lo ka ce'u broda` (the commentary's gadri
-definitions) — showing the community's
-formal analysis was the `skicu` analysis all along, and the one
-surviving concern (that `skicu` names a describing *event*) is
-answered by the anchoring clause: the describing event is this
-utterance's own locution, true by construction, with the token
-machinery already there to say it. So `le` lowers through `skicu`,
-exact official fit, no dictionary change. (Why not a dedicated
-`DescribedBy` relation: it might look cleaner than reusing a
-dictionary word, but both of its would-be supports fail — reading
-`skicu`'s x4 as a "medium of expression" misreads the official row,
-and requiring core relations to be definable independently of the
-dictionary imposes a constraint nothing needs, since the lexicon
-program defines gismu semantics.)
+Lexical entries determine argument types, intensional behavior, permitted
+place deletion, plurality behavior, and indicator profiles. The core states
+the required interface in spec §10; each adopted field value is itself a
+semantic ruling. A template or fixture value is not an established lexical
+fact.
 
-### 2.7 Alternatives shaped like implementations
+The constitution interface follows the same policy. Group and event rows
+declare admissible decomposition bases; a supported property-`joi` row
+supplies its `MixAt`/`ContributesAt` instance. Missing instances remain
+coverage gaps.
 
-A recurring failure mode in formalizing a language: machinery that mirrors
-how a *processor* would work — run identities for quantifier retrieval,
-error taxonomies as meanings, canonical spellings as semantics, registry
-lookups as analyses, "unresolved" as a semantic value. This project's
-history included several such shapes, and each died the same death: ask
-for the *meaning* the machinery denotes and there is none — only a
-process state. The tests that killed them are usable on any future
-proposal: Does it survive alpha-conversion and re-serialization? Does a
-sentence witness it? Does it still make sense on paper, with no program
-running? Nothing in the core fails those tests; §14's gap register exists
-so that honesty about coverage never again requires inventing semantic
-objects for process states.
+The adopted `gunma` and `selcmi` rows use plural-reference x2 for
+components or members. Their published place structures already distinguish
+the whole from those components, so the project did not need an additional
+place-structure replacement for that distinction. The xorxes lujvo `selcmi`
+is used in the LLG-approved 2020 gadri expansion
+`lo'i [PA] broda = lo selcmi be lo [PA] broda`. The maintained CLL chapter 6
+reproduces this in project-authored wording, not independent corroboration.
+See spec References, “BPFK Gadri” and “Non-importing ro decision.”
+Ordinary plural subreference uses `Among`, not the set-selecting x2 of `cmima`.
+
+The `le` treatment is based on `skicu`. Its official x4 is a description
+property, not a medium of expression. Guskant's gadri commentary explicitly
+expands `le broda` through
+
+`zo'e noi mi ke'a do skicu lo ka ce'u broda`.
+
+This is direct intellectual provenance for the use of `skicu`; it is not
+a claim that every community analysis used that construction. Smusni's
+additional anchoring clause identifies the describing event with this
+utterance's locution. The resulting `SpeakerDescribes` definition preserves
+non-veridical description without existentially selecting an unrelated
+describing event.
+
+A dedicated `DescribedBy` predicate could encode a similar relation, but
+the project has not identified a needed distinction that would justify
+duplicating the adopted lexical interface. The row and anchoring argument
+also do not constitute a complete lexical semantics of `skicu`; that
+semantics remains subject to the same lexicon discipline.
+
+### 2.7 Semantic structure versus implementation structure
+
+A semantic construction must denote a linguistic distinction or factor shared
+semantic structure. Processor-specific registries, serialization choices,
+diagnostic taxonomies, and run identifiers do not become semantic objects
+merely because an implementation uses them.
+
+Useful checks include invariance under alpha-conversion and equivalent
+serialization, a stated semantic role, and an account independent of a
+particular program. A generic core form may pass through factorization rather
+than a direct surface example; spec §1.1 does not require every form to have
+a Lojban spelling.
+
+Semantic undefinedness must also be distinguished from implementation errors.
+The T/F/U interpretation-status rules and partial operations have semantic
+content. A checker diagnostic is evidence about its attempt to analyze a term,
+not another value in that term's domain. Likewise, a gap records the limits
+of the specification without inventing a denotation for an unanalysed reading.
+
+These are review criteria, not proof that the present core is free of every
+implementation-dependent assumption.
 
 ### 2.8 Why lexical arguments are plural references, not sets
 
-The most serious alternative to §1.7's plural algebra is a set-typed
-lexicon: every argument place currently typed `Referents<T>` becomes a
-nonempty `Set<T>`, as Eberban's dictionary does throughout (its `tce`
-type is a *non-empty* set; a `*` marks places whose satisfaction
-survives passing a subset — refgram, "Dictionary conventions") and as
-Brismu's foundations choose ("sets are free over a universe of
-individuals … an inevitable structure" — Brismu, "Sets, not Masses").
-The pre-xorlo dictionary ran a partial version of the same experiment:
-in the baselined gismu list (1994), roughly thirty places carry
-set-typed annotations — the word "set" in the place gloss, usually with
-a completeness side condition; the literal "(set)" marker on about a
-dozen entries (`sisku` x3 "complete specification of set"; `kampu`,
-`simxu` x1, `cuxna` x3, the `-mei`/`cmima` cluster).
-This section records what a full examination established, so the
-choice is never again defended with less than its real argument.
+A set-typed lexicon is a substantive alternative to `Referents<T>`.
+Eberban's “Dictionary conventions” uses the nonempty set type `tce` and
+marks places whose satisfaction is preserved under subsets with `*`.
+Brismu's “Sets, not Masses” also uses sets over individuals. The 1994
+baselined gismu list contains a less uniform precedent: roughly thirty
+place glosses have set annotations, including the `simxu`, `cuxna`,
+`kampu`, `cmima`, and `-mei` group and `sisku` x3.
 
-**First, the concession.** Under the discipline a working set-typed
-lexicon actually imposes — call it **D**: sets nonempty; members drawn
-from the individuals (atomistic generation); predication at lexical
-places reading the *members*, never the set-object; extensional
-identity, with discourse-introduction identity carried separately;
-representation sets kept distinct from first-order set objects — the
-two designs are intertranslatable. `Combine` is union, `Among` is
-subset, the singleton lift sends each individual to the set
-containing exactly it, and
-`Referents<T>/CoRef ≅ NonEmptySet<T>` is a theorem. Inside D nothing
-expressible distinguishes the designs; "the crowd is large while the
-set is abstract" is no objection there, because under D largeness is
-never predicated of the set-object at all. Eberban's own gloss of
-eating shows the discipline at work: the set is a delivery mechanism
-for the members, and the word's definition says how the members
-satisfy it (refgram, "Dictionary conventions": the `bure` example).
+There is an equivalence in the fragment satisfying discipline D of spec §4.8.
+Its premises include nonemptiness, atomistic generation, singleton separation
+and primeness, identity determined by represented units, representation of
+every nonempty unit set with the required infinite joins, and compatibility
+with subsorts. Under all those premises,
 
-**Second, the choice, and its grounds.**
+`Referents<T>/CoRef ≅ NonEmptySet<T>`,
 
-1. *The isomorphism is conditional, and the core sits outside its
-   conditions on purpose.* D's atomicity clause is a strict
-   strengthening of the plural algebra: §4.8 assumes no atoms
-   ("nothing requires that references bottom out in singletons"), and
-   counting is `CardBasis` — units under a description — rather than
-   cardinality of a canonical member basis. That is deliberate
-   plural-logic territory (guskant's indefinitely divisible bread;
-   mass-like reference generally). A set-typed lexicon either loses
-   that coverage or re-legislates it.
+with `Combine` represented by union and `Among` by subset. Lexical
+predication must concern the represented members, and discourse-introduction
+identity remains separate from extensional identity. Representation sets must
+also remain distinct from first-order set objects.
 
-2. *Inside D the re-spec is relabeling plus obligations.* The plural
-   axioms do not disappear; they return as side conditions —
-   nonemptiness at every place (Eberban's `tce` states it in the
-   argument's type just as our reference type does), ur-element
-   legislation, the member-wise reading imposed per place, and
-   provenance labels re-creating the co-reference/introduction
-   distinction that extensional sets collapse. Meanwhile lists, groups,
-   and genuine set objects survive untouched, so "one collection
-   machinery" is not delivered by any actual set-based design: Eberban
-   itself needs a wrapped/unwrapped split ("mostly use these 'wrapped
-   versions' unless … speaking about nested sets" — refgram, "Eberban
-   from scratch", the sets chapter) — which is the
-   `Referents<T>`/`Set<T>` distinction with the names filed off,
-   enforced by convention where this core enforces it by type.
+The objection that a crowd can be large while a mathematical set cannot is
+therefore irrelevant to that representation. Eberban's `bure` example
+illustrates member-directed predication: the set represents the participants,
+and the lexical definition states how they satisfy eating.
 
-3. *The two-sort split structurally excludes a real ambiguity.* With
-   plural references and set objects as different sorts, `lo selcmi cu
-   simxu lo ka tavla` has one analysis (set objects don't talk; the
-   members-reading goes through membership machinery). With one
-   set-type everywhere it is genuinely ambiguous — several sets
-   reciprocally related, or one set's members — which is solpahi's
-   argument ("A Simpler Quantifier Logic") that a place cannot accept
-   both readings without "a true ambiguity", and is where the
-   pre-xorlo set places actually hurt.
-   Under a uniform set re-spec the exception class that must be carved
-   out — `cmima`, `selcmi`, `kampu`, `sisku` x3, the set operators —
-   is exactly the current `Set<T>` vocabulary. The core is not
-   set-averse; it is place-precise, and the re-spec's own exceptions
-   recover its shape.
+Smusni retains plural-reference types for the following reasons.
 
-4. *The dictionary record.* The set annotations of the baselined
-   gismu list were inconsistently applied (the paradigm collective
-   predicate `sruri` carries none), dragged completeness side
-   conditions that plural reference does not need, and were re-read as
-   plural by xorlo-era practice without the text ever changing — the
-   official jbovlaste entry for `simxu` still says "(set)" as of this
-   writing, while the community's formal treatments (guskant's
-   commentary; solpahi's articles) reconstructed the plural reading
-   externally. Plural
-   reference is what the set annotations were reaching for; the core
-   says it directly. The per-place audit itself is owed under both
-   designs (spec §10's plurality-behavior field is the same docket as
-   Eberban's stars); what differs is the failure mode — under the
-   re-spec a misassigned member-wise/object-wise call silently moves
-   truth conditions, while an unpopulated lexical field leaves
-   vagueness, not error.
+1. D is stronger than the selected plural algebra. In particular, Smusni
+   does not require atomistic generation. Guskant's Condition₁ proof and
+   divisible-bread interpretation motivate this boundary. Counting uses a
+   declared unit property through `CardBasis`, not a universal atomic
+   basis. A set treatment outside D is not ruled out, but it needs a
+   representation of that additional coverage; the isomorphism above does
+   not establish one.
+2. Inside D, changing the representation does not remove the semantic
+   distinctions. Nonemptiness, member-directed versus object-directed
+   predication, and introduction identity still require rules. Lists,
+   groups, and first-order set objects also remain. Eberban's “from scratch”
+   chapter distinguishes wrapped collection objects from their unwrapped
+   representation. Smusni exposes the corresponding reference/object
+   distinction through separate types. This compares the stated designs,
+   not every possible set-based architecture.
+3. The intended level of predication must be explicit. In
+   `lo selcmi cu simxu lo ka tavla`, talking concerns participants, not
+   automatically the members of any set object mentioned. A uniform set
+   type still needs a way to distinguish predication of several set objects
+   from predication of one set's members. Solpahi's “A Simpler Quantifier
+   Logic” identifies this ambiguity. The reference/object split provides
+   that distinction without a per-use implicit unwrapping rule.
+4. The historical dictionary annotations are inconsistent as a uniform
+   type discipline. The collective predicate `sruri` lacks the set
+   annotation, while `simxu` retains it. Guskant and solpahi give
+   plural interpretations of this material. This supports reconsidering
+   the old annotations; it does not establish that every historical use of
+   “set” meant plural reference. A per-place semantic audit remains
+   necessary under either design.
+5. Brismu's stated equiconsistency comparison with monadic second-order
+   logic does not by itself decide this choice. Equiconsistency is weaker
+   than equivalence of semantic representations. Smusni already has
+   higher-type functions and comprehension, so its costs must be assessed
+   in that setting. Sets may be used in the metatheory without making
+   lexical arguments denote first-order set objects.
 
-5. *Brismu's second-order objection does not weigh here.* "Plural
-   logic is equiconsistent with monadic second-order logic, given a
-   predicate for masses" ("Sets, not Masses" — an assertion the chapter
-   supplies without proof) is, even granted, idle: equiconsistency is far
-   weaker than equivalence of designs, the hedge concedes that plural
-   quantification is present either way, and second-orderness is no
-   incremental cost in a core that is already a typed λ-calculus with
-   comprehension. The metatheory may freely use sets to model plural
-   extensions — §4.10's witness sets already do — without lexical
-   places denoting set objects.
+One feature adopted from Eberban is its explicit subset-preservation
+criterion. Smusni's lexical plurality field records the analogous
+subreference-monotonicity property using `Among`. Collective capability is
+a separate fact: absence of a distributivity guarantee does not imply that
+a predicate fails of every member. Neither field creates a hidden reading
+parameter under P4. Eberban's cumulative conventions for examples such as
+eating are not adopted as a general default.
 
-**Third, what was adopted from the set side.** The sharpest thing in
-Eberban's conventions is the star's definition, and the lexicon
-interface now uses it: the plurality-behavior field's
-subreference-monotonicity value means *satisfaction preserved under
-subreference* (`Among`) — a checkable lexical criterion — with
-collective capability recorded as an independent fact (a satisfying
-plurality need not satisfy in its parts, which is an absent guarantee,
-not a counter-entailment); per P4, never a reading parameter. Not imported: the cumulative default
-Eberban writes into definitions like its eating verb (everyone eats at
-least one; every apple is eaten) — that is a resolved cover reading,
-which P4 declines as a default and Lojban marks when it means.
+Solpahi's article, published in 2016 and revised in 2017, is also a reform
+proposal. It motivates the counted plural helpers but does not establish
+ordinary plural PA. Guskant and xorxes distinguish plural constants from
+ordinary singular variables. A collective predicate can hold of a plural
+reference without holding of an individual, so existential generalization
+across those domains is not licensed.
 
-Solpahi's “A Simpler Quantifier Logic” is a reform proposal (2016, revised
-2017), not independent ratification of ordinary plural PA. His plural-logic
-construction remains intellectual provenance for our counted plural helpers.
-Guskant and xorxes distinguish plural constants from ordinary singular variables.
-A plural reference can satisfy a collective predicate while no individual does;
-cross-domain existential generalization is not licensed. Ordinary `lo`,
-including `lo ro`/`lo su'o`, already supplies positive collective predication.
-That does not make descriptions interchangeable with plural quantifiers under
-negation. The current individual `su'o` ruling preserves this distinction.
-Ordinary finite numeric PA now counts individual qualifiers globally: a fourth
-relevant qualifier falsifies exact three. This was already the panel's ordinary-
-count conclusion; residual P17 wording had not applied it. Termset products,
-other count domains and effects remain separate. P43 retires extra group
-export without globally rewriting counted plural helpers.
+Ordinary `lo`, including `lo ro` and `lo su'o`, supports positive
+collective predication. Descriptions nevertheless differ from plural
+quantifiers under negation and other embeddings. The baseline keeps
+individual `su'o` and globally exact finite numerical PA; the shared core
+retains its plural helpers. P43 excludes additional outward quantified-group
+export without redefining those helpers. Numerical termsets and remaining
+count/effect domains have their own open construction requirements.
 
-### 2.9 Why the reflection layer was tried and withdrawn
+### 2.9 Why binders are direct forms, not executable quotations
 
-An earlier design made every binder a function over quoted core syntax.
-The attraction was real: atoms, quotation, and application would have
-given the notation one uniform grammar; binders and control operators
-could have been named like other vocabulary; and a stage-indexed tower
-might eventually have let Lojban describe the semantics of the stage
-below it. R's uniform call syntax and typed multi-stage calculi were useful
-inspirations rather than commitments (Nanevski, Pfenning & Pientka; Taha
-& Sheard; Davies & Pfenning).
+Smusni uses direct `λ`, `Let`, and `Bind` formation. Scope,
+alpha-equivalence, capture-avoiding substitution, and inert binder positions
+are structural judgments (spec §4.4 and §5.2). The [binding examples](samples.md#12-direct-binding-notation)
+show this distinction: braces delimit scope; they do not construct quoted
+source code.
 
-The proposal did not earn its cost. No current Lojban construction
-requires executable quotation of core notation. To make binder operands
-safe, the design added `Expression<Γ,A,ε>`, telescope signs,
-elaboration environments, capture rules, site-preservation laws, a
-partial staged `Interpret` family, `MakeLambda`, and facades for the
-remaining operators. The displayed type still omitted the very stage
-index on which the safety argument depended, while captured outer values
-already constituted cross-stage flow. Most importantly, a
-predicate-style row for a binder or force constructor could only
-*describe* the resulting function or act; it could not perform binding or
-force. The programme had conflated executing operators with their useful
-shadow predicates.
+Harper's treatment of abstract binding trees provides a reference for this
+direct binding discipline; see spec References.
 
-Unrestricted fexpr-style access to operand syntax was never acceptable:
-Wand's collapse result remains a warning that observation of arbitrary
-caller syntax destroys useful contextual equivalence. The attempted layer
-avoided the full fexpr problem, but doing so required almost all of the
-machinery just listed. With no Lojban necessity witness, that was
-complexity in service of the notation rather than the semantics.
+An executable-quotation design offers a real attraction. Atoms, quotation,
+and application could provide one uniform grammar, with binders expressed
+as functions over typed quoted syntax. Typed multi-stage calculi provide
+relevant comparisons (Nanevski, Pfenning and Pientka; Taha and Sheard;
+Davies and Pfenning, in spec References).
 
-The baseline therefore uses direct `λ`, `Let`, and `Bind` formation.
-Scope, α-equivalence, capture-avoiding substitution, and inert binder
-positions are structural judgments (§4.4/§5.2), as they are in ordinary
-typed calculi and proof assistants (Harper). Braces remain visible scope
-punctuation; they are not term-valued quotation. The carrier-level
-`bind` operation remains indispensable — this decision removes only its
-reflective facade, not effect sequencing.
+That uniformity requires additional semantic structure: staged expression
+types, representations of binder telescopes and environments, capture and
+hygiene rules, site-preserving interpretation, and explicit treatment of
+values crossing stages. No supported Lojban reading requires executable
+quotation of the core's own notation. Adding this machinery merely to make
+binders look like other calls would therefore optimize notation without
+a sufficient necessity or factorization argument.
 
-Nothing needed for linguistic use/mention is lost. Lojban quotations,
+Unrestricted access to operand syntax is not an acceptable shortcut.
+Wand's fexpr result shows how observation of arbitrary caller syntax can
+destroy useful contextual equivalence. Restricted staged designs need not
+have that defect, but their restrictions and equational theory must be stated.
+The failure of an unrestricted design is not a proof that all reflection
+is impossible.
+
+Direct formation avoids that extra interface without removing effect
+sequencing: carrier-level bind and its term-level `Bind` remain.
+It also leaves ordinary linguistic use and mention intact. Lojban quotations,
 signs, utterance tokens, `InterpretContent`/`InterpretAct`, and explicit
-`Perform` remain. Shadow relations such as `xusra`, `danfu`, and
-`smuni` remain valuable vocabulary for talking about acts and meanings,
-but they do not execute the operators they describe. The refusal of a
-general `TruthOf` dynamic-to-static crossing likewise remains (§1.5).
+`Perform` still distinguish quoted material from an act's performance.
+The [quotation examples](samples.md#10-signs-and-mention) require that
+distinction, not executable core code.
 
-A future core-self-description extension is not forbidden. Reconsider it
-only if an independently witnessed meaning requires executable core code,
-and then require an explicit stage index, a complete hygiene/capture
-theory, a nontrivial equational theory, and a proof that ordinary terms
-cannot be reified or inspected implicitly. Such an extension would be an
-additive proposal, outside the normative baseline until separately
-adopted; Lean macros or another host may implement convenient syntax
-without making reflection part of the semantic core.
+A predicate describing a function, computation, or act does not execute it.
+Relations such as `xusra`, `danfu`, and `smuni` can therefore be
+useful semantic vocabulary without replacing the binder or force operators
+they describe. This is the same interface boundary that prevents adding a
+general `TruthOf` solely to reduce two connectives (§1.5).
 
+The choice should be revisited if a supported meaning requires executable
+core self-description. Such an extension must provide explicit stages,
+complete hygiene and capture rules, a nontrivial equational theory, and
+a boundary preventing implicit inspection of ordinary terms. Host-language
+macros may provide convenient notation without making reflection part of
+Lojban's semantic core.
 
 ### 2.10 du'u, nullary ka, and the reserved reification family
 
-An influential community proposal — And Rosta's, on the Lojban
-Wiki's "ka, du'u, si'o, ce'u, zo'e" page, endorsed there with
-amendments and also recorded with dissent — holds that `du'u`, `ka`,
-and `si'o` "are logically
-identical. They all express n-adic relations, where n is the number of
-overt or covert `ce'u` within the abstraction. A proposition is a
-0-adic relation." The BPFK's *proposed* `ce'u` definition goes part of
-the same way: `ce'u` is "almost solely used in `ka`", though
-`si'o`/`du'u`/`su'u` clauses "can make some sense" with it. On the
-proposal, the
-abstractors differ only in what elided sumti default to. Is this core
-wrong to give `du'u` its own primitive?
+And Rosta's proposal on the Lojban Wiki page “ka, du'u, si'o, ce'u, zo'e”
+treats the three abstractors as n-adic relations whose arity depends on
+`ce'u`, with propositions as the nullary case. The page records support,
+amendments, and dissent; it is a proposal, not a ratified rule. The proposed
+BPFK `ce'u` definition also permits some uses outside `ka`. These sources
+motivate comparison between abstraction, arity, and nominalization; they do
+not specify Smusni's object/reference interface. See the corresponding
+entries in spec References.
 
-No — because the proposal and the primitive answer different
-questions, and the core asserts both answers where they are typable.
-As a claim about
-**abstraction syntax** the doctrine is correct over `ka` and `du'u` —
-the baseline's `ce'u`-capable abstractors — and holds there as a
-theorem: `ce'u`-marking extracts λ, arity is the count of distinct
-extracted variables, and the bare-`du'u` case is
-the 0-adic one — whose extracted "relation" is the content itself,
-since `PredTerm<⟨⟩>` applied at the empty record *is* `Content`
-(§3.3). (`si'o` is the point where this core declines the proposal:
-the conceptualizing mind is a lexical place of `SihoRel` — CLL's row,
-kept by the BPFK's own proposed `si'o` definition — not an
-elision-default rule, so `si'o` stays in the §9.2 relation family and
-the all-`ce'u` reading joins the reserved family below. The carve-out
-is itself evidence for the two-questions thesis: the proposal
-conflates a place-structure fact with an elision default.) Abstracting nothing out of a bridi leaves its content; in that
-exact sense `du'u` *is* nullary `ka`. What the doctrine never had the
-machinery to ask is the **object** question: what sort of first-class
-thing fills `djuno`'s x2, gets counted, identified, and anaphorically
-retrieved. `Content` cannot be that thing in this model — it is
-computation-typed, deliberately without equality, and putting it in
-the domain of individuals would make effects quantifiable objects. So
-the crossing the untyped doctrine leaves implicit gets a name:
-`Reify`, with `Holds` its inverse and the round trip as axiom (§9.1).
-A proposition is the *reification of* a 0-adic relation — the
-doctrine's slogan, plus the bridge it needed all along.
+Smusni adopts the arity analysis for its supported `ka` and `du'u`
+fragment. Each distinct extracted `ce'u` variable becomes a lambda
+parameter. With no extracted variables, the result is Content:
+`PredTerm<⟨⟩>`, applied at the empty record, is Content by spec §3.3.
+In this limited sense, unparameterized `du'u` has the same content as a
+nullary property abstraction.
 
-The asymmetry with `ka` is then principled, not accidental. Property
-places (`ckaji`, `mutce`) are consumed by *application* — the selbri
-applies the property — so they take function-typed operands directly
-and `lo ka` lowers straight to the λ. Proposition places are consumed
-by *aboutness* — nothing applies them — so they take the reified
-object, and all the sumti machinery (descriptions, anaphora,
-quantification, `du` as `CoRef`) runs on it.
+The analysis does not settle every abstractor. Smusni retains `SihoRel`'s
+conceptualizing-mind place, following the CLL row also retained in the
+proposed BPFK `si'o` definition. The general explicit-`ce'u` treatment of
+`si'o` remains a gap. That BPFK page also assigns implicit `ce'u` to every
+unfilled place in `si'o`; it does not explain the complete composition of
+this default with the conceptualizer row. This is a project choice about the row and its
+composition, not evidence that Rosta's broader proposal is incoherent.
 
-The experimental pair `me'ei`/`me'au` shows where this design is
-deliberately unfinished. `me'au` uses an abstract-predicate sumti as
-a selbri of the referent's arity; at the propositional case the model
-covers it under §9.1's singleton condition — for a singleton
-proposition reference `abu`, `me'au abu` is `(Holds p)` at the
-presupposed sole member: disquotation rather than the truth-predicate
-(`abu jetnu` claims *about* the object; the axiom pair aligns their
-truth conditions without conflating their shapes). The plural case
-has no baseline reading — silent distribution would breach the
-no-default-distributivity stance — and is registered with the
-universal reading as candidate. Above arity zero,
-`me'au`'s inverse `me'ei` manufactures property *objects* — and this
-baseline has none: `lo ka` is a transparent λ, so there is no referent
-for `goi` to bind and no domain for property quantification. Rather
-than either building the full family now or foreclosing it, §9.1
-records the reservation: the `Reify`/`Holds` shape generalizes row by
-row (Chierchia and Turner's nominalization/predicativization pair is
-the standing prior art), `Proposition` is the row-⟨⟩ member, and the
-rest is a registered gap. On identity the reservation is careful
-about what is already decided: the axiom pair makes `Reify` and
-`Holds` mutual inverses, so proposition identity is exactly content
-identity — intensional and dynamic, finer than logical equivalence —
-fixed by the axioms, not open; and any future row's crossing, being a
-function over the extensional `PredTerm<ρ>`, identifies β/η- and
-pointwise-equal predicates by congruence. What stays open is only the
-adoption-shape question (whether each row repeats the bijective
-shape; how row isomorphism and any cross-row operators are typed),
-and that is what makes the reservation cheap: adopting the family
-later fills a declared hole instead of reopening the bridge.
+A separate choice concerns how content participates in reference, counting,
+and identity. Smusni uses `Proposition` as a first-order sort and
+`Reify : Content → Proposition` as its explicit crossing from Content.
+`Holds` recovers the represented content. The round-trip axioms in spec
+§9.1 require that this crossing preserve the structured dynamic denotation,
+including projective effects and clause-event intension. Reification does
+not remove those features.
 
+This separation is a design decision, not an impossibility argument against
+content-taking alternatives. Content already has semantic identity, despite
+having no object-language equality operator. It can be constructed, shared,
+and passed as an operand without being evaluated; constructing `Reify c`
+likewise does not evaluate `c`. Calling both “first-class” would therefore
+not distinguish them. The relevant distinction is between a computation
+denotation and its representation in the first-order domain.
+
+The selected interface lets proposition references use the ordinary
+description, quantification, anaphora, and identity operations. Direct
+property operands instead have function types and may be applied by their
+consumers. These are the selected interfaces, not complete lexical analyses:
+a word's English gloss does not establish whether it must take a function or
+an object, nor does an object-taking place prohibit evaluation of represented
+content elsewhere. In particular, the illustrative `djuno` row is not a
+proof that a direct-content semantics of knowledge is impossible.
+
+The experimental `me'ei`/`me'au` pair motivates a possible extension to
+reified predicates. At arity zero, `me'au` uses the defined `Meau0`
+schema: a projective singleton condition supplies the proposition to
+`Holds`. A claim using `jetnu` is structurally different from evaluating
+that represented content, even where their truth conditions agree. The
+baseline does not silently distribute `Holds` over plural proposition
+references; that reading remains a candidate in spec §14.
+
+Above arity zero, Smusni has no first-order reified-property sort.
+Nevertheless, it already supports function-typed quantification at
+`PredTerm<ρ>` through P30. The missing facility is object-style property
+reference and its associated crossings, not property quantification in
+general. The direct `lo ka` lambda does not itself introduce a first-order
+discourse referent.
+
+Spec §9.1 reserves a row-indexed reification family, following the
+nominalization/predicativization distinction of Chierchia and Turner.
+Any crossing defined as a function on extensional `PredTerm<ρ>` must
+respect that domain's equality. Whether each row has the same bijective
+interface, and how row isomorphisms or cross-row operations are typed, remain
+undecided. At arity zero the round-trip contract is adopted: proposition
+identity tracks structured content identity, not merely logical equivalence.
+Constructing a combined model satisfying that contract and the other
+dynamic laws remains a separate obligation in spec §14.
+
+
+Worked examples: [abstraction types](samples.md#9-abstractions) and
+[signs and interpreted content](samples.md#10-signs-and-mention).
 
 ### 2.11 The resolved-reading datum and hoisting
 
-**Why a datum, and why it is not implementation residue.** §11 marks a
-dozen decisions ⊳ — anaphora counting, erasure, template expansion,
-attachment, tense and CAhA readings, dependency profiles, binder widths —
-and says the calculus sees only their results. Without a named carrier
-those results were appealed to informally, and coverage claims quantified
-over "all resolved readings" that no one could enumerate. `RR` names the
-carrier as pure data: a finite record whose fields are exactly the ⊳
-decisions plus the resolver stores §5.4–§5.6 presuppose. The residue test
-of §2.7 is passed by construction — `RR` denotes nothing, holds no world,
-information state, or capture, never occurs in a term, and survives
-α-conversion and re-serialization trivially because it holds only selected
-values (a label, a row, a width). Three exclusions keep it honest:
-mechanical rewrites (the affirmer override, numeral syntax, implicit
-`ce'u`, bare-interrogative scope) have no choice to record and are rule
-premises; story time contributes nothing to any term and has no field;
-`sites` carries only declared extras over §5.3's computed minimum, so the
-default discipline lives in one place. Reading selection — which `RR` a
-text receives — is not decided by the relation: reading-multiplicity stays
-where §11 states it. (The mechanical-rewrite boundary was the Gemini
-session's observation in #9's design review, generalized by the Kimi
-session.)
+The lowering relation consumes a resolved-reading record, RR, rather than
+guessing a reading from surface text. The record supplies the interpretative
+choices marked ⊳ in spec §11, including reference resolution, attachment, template use,
+tense and CAhA readings, dependency profiles, and binder scope. Mechanical
+rewrites such as numeral syntax or implicit-`ce'u` expansion have no
+choice to record; their conditions belong to the lowering rules.
 
-**Why hoisting is a lowering rule, not a former.** A lexical row applied at
-one place is an open `PredTerm` whose remaining defaultable places would be
-`Context` sites, i.e. effects — yet comprehensions, selections, quantifier
-and `Generic` restrictors, and the member-level `Refer` lift demand purity
-(§3.3). A "pure projection" former in the core would be machinery for a
-notational problem. L0.1 instead binds the sites outside the pure position
-and closes the event place; the position then receives exactly the resolved
-lexical property `R_p` that P39 and the lexicon's unit profiles already
-name. Meaning is preserved because a site retrieves once per dependency
-tuple per performance and introduces nothing (§5.3): moving it changes its
-place, not its tuple, so no reading is created or lost; hoisted binds are
-ordered by their dependencies, and only independent hoists commute (the
-Kimi session's argument in #9's review, adopted, and narrowed to
-dependency-independent sites after the codex_2/kimi_2 exact review of the
-first M2 head; no meaning-changing minimal pair was found for `Generic`,
-whose holder is a fixed parameter). `Vague` sites hoist by the same
-reasoning under VC3 — one precisification per parameter per binding site —
-since a site that cannot depend on the comprehension variable has the same
-precisification at every instantiation. Introductions are not hoisted: a
-`Refer` or selection inside a comprehension would need a binder-width law
-no general hoisting rule states. Such a scope has no pure form unless its
-reference is bound outside or the explicit P45 negation-local qualification
-applies. A contextual/vague site that would depend on the comprehension's own
-variable makes the position ill-formed — the right verdict, since such a
-comprehension has no pure meaning. **Cost.** Hoisted terms are longer, and
-the corpus's bare displays (`{λ [$x :: Entity] (gerku $x)}`) are
-abbreviations relative to the assumed row — honest only because L0.1 says
-so and the samples book states its provisional row assumptions.
+RR is input data for that relation, not a semantic object. It holds no
+world, information state, or performance capture and does not occur inside
+a core term. Separating it from the denotation makes coverage claims precise:
+a lowering rule must work on the resolved input it declares, not silently
+supply additional choices. The distinction between resolved input and
+derived term is illustrated by the [in-situ scope examples](samples.md#13-in-situ-scope).
 
-**Negation's bounded qualification (P45).** The human explicitly confirmed
-the reviewed PR46/#13/B1 interpretation: a temporary reference consumed
-entirely inside a negative Content test need not make that enclosing property
-effectful. This does not move the reference outside a comprehension or choose
-its width by hoisting. A candidate-dependent restriction/nucleus stays under
-the negation where it is evaluated. Only the reference-introduction effect
-is removed; contextual, projective and opaque call effects and all obligation
-metadata remain. `Local` still returns a value under its existing effectful
-contract; other connectives are not revised by this pin.
+Hoisting addresses a different problem. A lexical predicate with unfilled
+ordinary places may require contextual values, while a comprehension or
+quantifier restrictor requires a pure property. L0.1 binds the necessary
+contextual sites outside that pure position, giving it the resolved lexical
+property already used by the unit-profile rules. A new core operator called
+“pure projection” would obscure this binding structure rather than explain it.
 
-The literal internal-activity alternative would reject these current
-negated-selection expansions in pure positions and revise the previously
-reviewed admission of `No`, `AtMost 1`, `FewerThan 1` and `Exactly 0` in
-`SetOf`. It would require either a separately constructed pure replacement
-or an explicit unsupported route, not a claim of whole-core inexpressibility.
-P45 was chosen to preserve the argued prior interpretation and direct-versus-
-expansion typing while stating its previously missing prose qualification.
-The cost is an explicit operation-specific exception, not a proof that every
-non-exporting operator is pure. Double negation remains a test with no exported
-witness; truth equivalence alone does not establish full dynamic/event identity.
-Full model and other-connective effect completeness remain separate work.
-Spec References, **Negation-local purity: P45 reconciliation**, records the
-human approval and original August27–28 author/review arguments; neither
-the old code nor DPL terminology independently ratifies the pin.
+This move is licensed only when the site's dependencies remain available
+and unchanged. A contextual site retrieves once per dependency tuple per
+performance and introduces no descriptive reference. Independent hoists can
+commute; dependent hoists must follow their dependency order. A site that
+depends on the comprehension's own variable cannot simply be moved outside.
+The [expanded predication examples](samples.md#1-predication-and-closure)
+show what contextual closure supplies; the [count examples](samples.md#5-quantifiers-witnesses-anaphora)
+show why the resulting property must satisfy the pure-position rules.
 
-**Restrictor CAhA choice.** `Close` inside L0.1 fixes the actual mode for
-restrictor-internal predications: `lo bajra` describes actual runners
-whatever CAhA the host clause carries — `ka'e` on the main bridi does not
-turn its description's restrictor into a capability claim. The alternative,
-inheriting the host's clause former into every restrictor, is coherent and
-was recorded as rejected for want of any attested reading that needs it;
-P24's reading-multiplicity governs the main predication only. Reopen on a
-minimal pair in which a description under a capability host must itself be
-read as capability.
+Vague sites follow the same restriction through their shared profile value:
+one precisification belongs to each parameter site, rather than a fresh
+choice for each instantiation. Moving a dependency-independent site preserves
+that correlation. Hoisting an introduction is different. Moving a `Refer`
+or selection would choose its quantifier scope and reference lifetime;
+L0.1 supplies no general law permitting that change.
+
+Consequently, a reference-producing computation cannot occupy a pure
+position merely because some alternative placement would type-check.
+Its reference must already be bound outside, or its use must meet the
+specific negation-local qualification below. An alternative pure construction
+would need its own typed consumer and equivalence argument. This is not
+a proof that every equivalent pure representation is impossible.
+
+Negation-local reference purity (P45) permits a temporary reference
+introduced and consumed wholly inside a negative Content test without
+counting that introduction as an outward effect of the property. The
+reference remains under the negation; its dependence and cardinal scope
+are not changed. Only the reference-introduction effect is removed.
+Contextual, projective, and opaque-call effects, and obligation records,
+remain. `Local` retains its effectful contract.
+
+The alternative is to classify all internal introduction activity as impure,
+including introductions that negation seals. That would reject the current
+negated-selection expansions of `No`, `AtMost 1`, `FewerThan 1`,
+and `Exactly 0` in pure set conditions. Preserving those readings would
+then require a separately proved pure replacement, rather than simply using
+their existing expansions. The chosen rule preserves direct-versus-expanded
+typing and expresses the relevant observation boundary explicitly.
+Its cost is an operation-specific purity rule, not a theorem that every
+non-exporting operator is pure.
+
+Double negation still exports no internal witness; equality of truth
+conditions alone does not establish equality of dynamic or event behavior.
+The full model and other-connective effect questions remain separate.
+Spec References, “Negation-local purity: P45 reconciliation,” records the
+original hoisting, scope and purity arguments and their provenance.
+The older checker and the name DPL do not independently establish this rule.
+
+Finally, restrictor closure and host mode are separate. `Close` in L0.1
+selects actual mode for the restrictor's predication: `lo bajra` describes
+actual runners even under a capability claim about them. Inheriting the
+host's CAhA mode into every description would be a different coherent rule,
+but the source review did not establish a reading requiring it.
+The main clause's unmarked CAhA remains reading-dependent. A minimal pair
+requiring the description itself to inherit capability would reopen this
+boundary.
 
 ## 3. Pin arguments
 
-Condensed; each pin's full context is in spec §13. The ones that were
-genuinely fought:
+The following summarizes arguments for selected pins. Spec §13 gives the
+normative decisions; the cited discussions retain their alternatives.
 
 - **P1/P22 (xorlo, inner `no`).** "No default quantifiers. At all." is
   the xorlo page verbatim. Inner `no` is a separate adopted negative-frame
@@ -1512,24 +1569,22 @@ genuinely fought:
   might look simpler, but it would rest on the unverifiable premise
   that usage avoids it — and it breaks the answer-substitution pattern
   that motivates the reading; hence the special case.)
-- **P2 (non-importing bare/restricted `ro`).** The later panel outcome and
-  human clarification select ordinary universal conditional closure for both
-  `ro broda` and `ro da poi broda`; an empty restriction is vacuous, not an
-  existence assertion or presupposition. The revised gadri expansion ratified
-  by LLG aligns those forms, and BPFK Inexact Numbers gives direct quantified
-  equations supporting the non-importing analysis. Explicit `ro lo ...`
-  retains its description binding and reference requirements; no global
-  removal of `MaxRefer`/`Every`'s library presuppositions is intended.
-  The advantage is uniform individual quantification and the ordinary pure
-  negation duality. The cost is departure from published CLL v1.1 §16.8's
-  restricted import, whose combination with other CLL flip rules was disputed
-  in 2002. Cowan/Clifford's contrary arguments remain history, not erased votes.
-  At-issue and presuppositional import remain recorded alternatives, not open
-  baseline defaults. Commit492ad55a (2022-02-13) is an unmerged non-import
-  proposal branch; fork9392bb81 separately added project presuppositional
-  wording to already-importing text. Neither is independent ratification.
-  See spec References, **Non-importing ro decision** and **ro edition/discussion
-  record**. General source/effect realization remains work, not another P2 vote.
+- **P2 (non-importing bare/restricted `ro`).** Both `ro broda` and
+  `ro da poi broda` use universal conditional closure. An empty restriction
+  is vacuous, not an existence assertion or presupposition. The LLG-ratified
+  gadri expansion aligns those forms; BPFK Inexact Numbers supplies direct
+  quantified equations supporting this analysis. Explicit `ro lo …` retains
+  the reference requirement of its description. The [universal and count
+  examples](samples.md#5-quantifiers-witnesses-anaphora) keep these operations separate.
+  The advantages are uniform individual quantification and ordinary pure
+  negation duality. The compatibility cost is departure from CLL v1.1
+  §16.8's restricted import. At-issue import and presuppositional import are
+  coherent alternatives, but introduce different commitments and negation
+  behavior. Cowan and Clifford's arguments for import remain part of that
+  comparison, not evidence that the sources were unanimous. Spec References,
+  “Non-importing ro decision” and “ro edition/discussion record,” give the
+  primary arguments and distinguish ratified text from project-authored
+  amendments. The library's importing `MaxRefer`/`Every` is unaffected.
 
 - **P5 (collections and `joi`).** Three independent choices are bundled only
   because they meet at the same boundary. Bare collection bases remain
@@ -1542,91 +1597,74 @@ genuinely fought:
   hidden `Refer` from falsifying Example 6.52's surface-anaphora count. General `gunma`
   is non-exhaustive because its official gloss says “partially specified” and
   attested uses of `se gunma` name only one family member; complete
-  descriptors and `joi` add the defined converse cover. Finally `joi1` beats
-  `joi2`: only the
-  whole-forming reading distinguishes it from `jo'u` without reviving covert
-  distributivity. The local reference-level manufacture repair fixes one aggregate lift or one
+  descriptors and `joi` add the defined converse cover. Finally, only the whole-forming reading distinguishes `joi` from
+  `jo'u` under the selected absence of covert distributivity. The local reference-level manufacture repair fixes one aggregate lift or one
   event-whole CoRef class; number-neutral group descriptors are unaffected.
   Alternatives and the type/category costs are worked in
   §1.7a; the reopening tests are a genuine `joi` use whose result must remain
   the original plural reference, or a component-basis counterexample that
   cannot be expressed by the indexed cover/contribution interfaces.
-- **P9 (`kau` exhaustivity is absent).** Three candidates fought:
-  default-exhaustive (adds a claim CLL never makes), a `Vague`
-  exhaustivity parameter (posits a decision point that *no Lojban
-  expression can settle* — an idle wheel: vagueness machinery is owed
-  where the language could precisify, and `kau` has no such route), and
-  absence. Absence won, with its consequence stated plainly: unmarked
-  answerhood has the weakest (mention-some-compatible) truth conditions,
-  and stronger readings come from the embedding predicate's lexical
-  presuppositions or separately stated content. `MentionSome` is removed
-  because it duplicated the unmarked form. `Exhaustive` is not retained as an
-  uninterpreted marker: defining it would require both a pure answer-content
-  function and typed selection membership/equivalence across plural, tuple,
-  label, and predicate-valued answer domains. With no Lojban exponent to
-  justify that new generic interface, the candidate is gap-registered. The
-  parallel with tenselessness
-  and distributivity is exact, and deliberate.
-- **P10 (`le`).** The two supports for a dedicated description
-  relation fell (§2.6), guskant's expansion supplied the
-  precedent, and the anchoring clause answered act-vs-identification:
-  `le` lowers through `skicu` with the describing event anchored to
-  this utterance's locution — performative, true by construction.
-  `voi` = audience-deleted `skicu`. The `le` property is the §12 defined
-  form `SpeakerDescribes` (#41 item 1, adopted 2026-08-27): the earlier
-  display `(Close (skicu …))` was a valid core term with a weaker,
-  unanchored denotation, and §2 licenses only same-denotation spellings.
-  Rejected: writing the anchored property out in every specimen (verbose,
-  and the corpus loses its brief spelling) and keeping the brief spelling
-  as a labelled stand-in (one spelling with two denotations). `voi` anchors
-  likewise through `SpeakerDescribesUnaddressed` (#49, adopted 2026-08-27):
-  deleting the audience place removes the addressee, not the reason for the
-  anchor. Rejected: the unanchored existential the pre-#49 L4.3 stated —
-  satisfied by any past describing of the referent, near-vacuous as a
-  restriction, and an asymmetry with `le` nothing in CLL 8 or P10 motivates.
-- **P11 (`Generic`).** See §1.9; the fixed-prototype design died on the
-  split-normality witness.
+- **P9 (`kau` exhaustivity is absent).** Unmarked answerhood does not
+  assert that the answer lists every satisfier. The [question and answer
+  examples](samples.md#6-acts-questions-answers) use the weakest,
+  mention-some-compatible answer content; stronger requirements can come
+  from a lexical consumer or a separate claim. A default-exhaustive rule
+  would add a condition the cited CLL account does not state. A `Vague`
+  exhaustivity parameter would instead insert a hidden choice without
+  a Lojban expression that fixes it. Neither is required by bare `kau`.
+  A separate `MentionSome` marker would duplicate the unmarked form.
+  An `Exhaustive` definition would need a pure answer-content function
+  and suitable selection membership/equivalence for plural, tuple, label,
+  and predicate-valued answer domains. Those are real additional interfaces,
+  not semantics supplied by naming an uninterpreted marker. The candidate
+  therefore remains a gap rather than changing unmarked answerhood.
+
+- **P10 (`le` and `voi`).** Guskant's gadri expansion supplies the
+  `skicu` description relation (§2.6). Smusni anchors its describing
+  event to this utterance's locution. Without that anchor, an existential
+  describing event could be an unrelated earlier description, making the
+  restriction weaker than intended. The same reason applies to `voi`:
+  deleting the audience place does not remove the need to identify the
+  describing act. `SpeakerDescribes` and
+  `SpeakerDescribesUnaddressed` define these two properties once, so
+  specimens can use short names with exactly the expanded denotation.
+  A separate primitive duplicates the lexical interface; writing the full
+  property every time duplicates its definition. The [description examples](samples.md#3-reference-and-descriptions)
+  and [relative-clause examples](samples.md#4-relative-clauses-and-supplements)
+  show the shared construction.
+
+- **P11 (`Generic`).** Section 1.9 compares the selected normality interface with the
+  fixed-specimen alternative under the stated generic readings.
 - **P16 (KOhA keyed).** `ko'a du ko'a` must be true; per-site contextual
   holes would let the two sites diverge. One retrieval per key.
-- **P17 (provisional termsets; former numeric default retired).** Original CLL16.7 supplies the explicit
-  dog/man full product. Preserve that current termset policy while recording its
-  numeric-coordinate scope; pure ordinary su'o coordinates have the joint
-  individual locus of L5.3, not an implicit counted-plural selection. Record the
-  collective cost: six pairwise predications need not follow from three people
-  collectively moving two pianos. Equal scope alone is no theorem of distribution.
-  Ordinary finite numeric PA uses individual global exactness (§4.10), not
-  witness-local selection. The former residual numeric mapping was inspired
-  by solpahi's reform, not established xorlo, and is retired as the default.
-  Counted coordinate witness collections do not force a plural nuclear scope.
-  The historical selection policy was convenient because its explicit
-  witness binding composes directly with the existing export and product
-  interfaces; that is an architectural reason, not unique necessity or source
-  ratification.
-  Global exact quantifiers do not generally commute; their scope asymmetry is
-  meaningful, not an error to dismiss. Ordinary `su'o` now binds individuals,
-  while descriptions still provide collective arguments. The published
-  SUHO/ARCHIVE reports preserve countermodels and the rejected overclaims.
+- **P17 (numerical termsets).** The explicit CLL16.7 dog/person example
+  motivates the provisional full-product treatment of that termset.
+  Pure ordinary `su'o` coordinates use the joint individual locus of
+  L5.3, not counted plural selections; see the [termset examples](samples.md#5-quantifiers-witnesses-anaphora).
+  A constructed contrast exposes the collective cost: three people collectively
+  moving two pianos need not satisfy all six individual pairwise predications.
+  Equal scope alone does not prove distribution, and global exact
+  quantifiers do not generally commute.
+  Ordinary finite numerical PA is individually and globally exact.
+  Witness-local counting composes conveniently with explicit plural bindings,
+  but gives a different answer when extra individuals qualify. It is
+  appropriate to the comparison inspired by solpahi's plural reform, not
+  a substitute for the established standard count. The source and
+  countermodel record is in spec References, “Conservative profile adoption
+  and ordinary exactness” and the SUHO/ARCHIVE discussions.
 
-- **P42 (retired ordinary lower-bound witnesses).** See §1.6a. The human's September8
-  application instruction adopts the scoped RI RESULT-v2 policy, not the
-  reviewers' confidence levels as a vote or the broader R2/C_fin/model programme.
-  Count truth, reference output, resolved interpretation and admissible witness
-  assignments were separate; its retirement under P43 does not erase the
-  evidence or retrospectively complete its former construction.
+- **P43 (accessibility; comparison with P42).** Section 1.6a explains why
+  the baseline keeps ordinary existential and independent-reference
+  continuity without constructing extra outward numerical groups or
+  dependent families. The rejected broader recovery policy would add
+  output-selection, scope, dependency, and continuation contracts.
+  A positive `lo su'o n` description often provides the wanted reference,
+  but is not interchangeable with an outer count in every embedding.
+  Source/force realization, open answers, permitted quotation crossings,
+  partial values, and the plural carrier remain shared obligations.
+  This choice does not alter exact-count truth or the non-importing universal.
 
-- **P43 (conservative baseline and explicit profiles).** The human's September10
-  trajectory adoption and application instruction retain ordinary existential/
-  independent-reference continuity without synthesizing outward numerical
-  groups or dependent families. This removes extra export contracts rather than
-  requiring a C/V recovery choice at construction. The cost is loss of some
-  familiar bare continuations; lo-su'o-n supplies a positive descriptive
-  alternative under stated premises, not universal equivalence. Global exact
-  count truth and P2's non-importing universal are retained; their remaining
-  source/numerical interfaces stay separate. Open answer slots, permitted quotation direction, dependencies and
-  partial uses still owe shared machinery. See spec §4.10/§5.6 and References,
-  **Conservative profile adoption and ordinary exactness**.
-
-- **P44 (bare me'i defaults to ro).** The human adopts the BPFK-specific
+- **P44 (bare me'i defaults to ro).** The baseline uses the BPFK-specific
   less-than-all convention rather than CLLv1.1 §18.9's blanket pa default.
   Its explicit definition, omitted-bound rule and example, plus the recovered
   2002 advocacy and 2004 drafting, are stronger evidence than treating the
@@ -1640,18 +1678,20 @@ genuinely fought:
   distinct; the new rule neither adds a positive satisfier nor exports its
   counterexample. Strong contrary usage evidence or a concrete compositional
   defect can motivate reconsideration, not merely missing ratification metadata.
-  No new corpus-prevalence claim is made. See spec References, **Bare me'i
-  default: P44 adoption and history**, for original sources and rejected
+  No new corpus-prevalence claim is made. See spec References, Bare me'i
+  default: P44 adoption and history, for original sources and rejected
   import packages; the broader 2002 debate was not unanimous.
 
-- **P8 vs the present-tense temptation.** CLL
-  ch. 10 makes tense optional; "untensed = present" is an anglophone
-  reflex, not a rule. But pure absence was also wrong, as compatibility
-  review showed: CLL 10.1 itself enumerates the readings of
+- **P8: no default present tense.** CLL
+  ch. 10 makes tense optional; an English present-tense translation does not
+  establish a Lojban default. Treating every missing tense as pure absence would also be too strong: CLL 10.1 itself enumerates the readings of
   the tenseless example and says "context resolves which is correct",
-  and the Partee-style stove case (a tenseless denial targets one
-  contextually relevant occasion) demands a contextually anchored time
-  on episodic readings. The amended pin: tenselessness is
+  and Partee's stove example motivates the comparison with contextually
+  anchored episodic time. Partee discusses English past tense; applying that
+  comparison to tenseless Lojban and choosing Context are this project's
+  arguments, not conclusions of her paper. The accessible author handout and
+  original-paper attribution are given in spec References, “Partee.”
+  Under the pin, tenselessness is
   reading-multiple — episodic readings carry a `Context` time facet,
   habitual/gnomic readings carry nothing, and the semantics never
   inserts a default; the choice among readings is upstream, like every
@@ -1673,8 +1713,10 @@ genuinely fought:
   hard-coding those two sorts would violate P13; `JaiRoleAdmissible` is the
   axiomatic constraint because the reflection-free core exposes no
   abstraction AST from which to enumerate inner roles. CLL 9.12 fixes the
-  x1/`fai` routing, CLL 11.10 leaves the inner argument unstated, and the BPFK
-  place-structure record independently describes the same raising.
+  x1/fai routing, and CLL 11.10 leaves the inner argument unstated. The
+  proposed definition and notes in BPFK Section: Place Structure cmavo also
+  describe bare-jai raising from the abstraction at fai. They are independent
+  proposed wording, not a ratification record; see spec References.
   The rejected `Vague` analysis has the wrong negation and truth conditions:
   it ranges over every admissible abstraction/role rather than the one meant.
   A genuinely no-particular-value use would reopen the separate
@@ -1689,7 +1731,7 @@ genuinely fought:
   selbri. `ClauseContent` supplies the common typed target. Direct lexical
   episodes preserve their event; `StateClause` handles equality, negative,
   quantified, generic, and compound claims; disjunction retains a successful
-  branch event. For actuality, the tempting “bare assertion always actual”
+  branch event. For actuality, the proposed “bare assertion always actual”
   rule is too strong without a reading qualification: CLL 10.19 explicitly
   says missing CAhA can be actual or potential and that context disambiguates.
   The pin therefore treats omission as reading-multiple among the four named
@@ -1707,11 +1749,11 @@ genuinely fought:
   `TopicResolution<ρ>` union; place-fill is available for a single open bridi,
   with coarse `srana`-aboutness (CLL Example 19.10's money topic) as the other
   arm.
-  Cross-clausal place-linking remains a gap. Why not the Tanru link: types do
-  not fit —
-  a topic is a referent, not a modifier over the head's
-  row. Why no segment-state effect: `ni'o` owns segments, and two
-  owners of one state need an adjudication nothing asks for.
+  Cross-clausal place-linking remains a gap. A topic reference and a Tanru
+  modifier have different types; the latter is not a direct replacement for
+  the selected TopicResolution interface. Topic resolution does not itself
+  change discourse segments; ni'o/no'i supply those transitions. Additional
+  segment effects would require a separate rule and supporting evidence.
 - **P27 (imperatives, vocatives, the active addressee).** CLL 2.14
   says `doi` *sets* `do` — binding language, exactly the `goi`
   mechanism — and mutating the ctx `Audience` instead would make
@@ -1727,28 +1769,34 @@ genuinely fought:
   *quantification*, not second-order *objects*: the core's
   quantifiers are typed, so `∃` at `PredTerm<ρ>` expresses CLL 16.13
   directly, while reified predicate objects (§9.1's reserved family)
-  would bring the identity-granularity questions along for nothing —
-  no identity claims occur. The prenex constraint is CLL Example 16.107
+  would require an additional object-identity policy not needed by this
+  particular quantified reading, which makes no identity claim.
+  The prenex constraint is CLL Example 16.107
   verbatim. `cei` stores more than a relation (CLL 7.5: fills, tense,
   negation ride along, later fills override), so the binding is a
-  bridi template at the ⊳ layer — a `PredTerm` value would wrongly
-  make `go'i`-style override inexpressible.
+  bridi template at the ⊳ layer. A bare residual PredTerm value does not
+  itself retain those earlier fills, tense, and negation for override.
+  This does not prove that a richer predicate-based representation is impossible.
 - **P32 (one performance).** `.i ja` decides it: a disjunction is one
   claim, not two acts. `ClauseOr` preserves the successful branch event and
   the host closes that `ClauseContent` once; uniformity carries one-performance
-  force to `.i je`, whose `ClauseAnd` event is the joint State
-  (harmless there — asserting a conjunction commits to both, and `∧`
-  shares `Do`'s accessibility row, §5.4). The losing alternative (two
-  acts plus a cross-act connective) has no act to carry `∨` at all.
-  The earlier `.i joi = Do` claim is withdrawn: `JoiClause` now supplies its
-  complete event/content contribution, while the surrounding structured
-  `ConnectionPlan` performance remains a gap rather than a `Do` fallback.
+  force to `.i je`, whose `ClauseAnd` event is the joint State.
+  Conjunction and `Do` both allow left-to-right reference flow, but their
+  truth and assertion-return behavior differs under §5.4/§7.1.1. An analysis
+  that separately asserts both operands would not represent disjunction;
+  a more general cross-act alternative would need an explicit force account.
+  `JoiClause` supplies the event/content contribution of `.i joi`.
+  Its surrounding structured performance remains a gap: `Do` alone supplies
+  neither that constitution relation nor the required component roles.
 - **P33 (tanru-unit jeks).** With a shared head, connecting whole
-  units would duplicate the head predication (two houses from one
-  `zdani`); binding one constrained-`Context` intended link per conjunct and
-  connecting the link applications keeps one head and distributes classically
-  (`H ∧ (l₁ ∨ l₂)` ≡ the unit-level disjunction) while keeping one
-  discourse site per referent. Distinct heads have nothing to share,
+  units would repeat the head predication, potentially repeating effects or
+  changing site/event structure. This does not entail two distinct houses:
+  the same argument can satisfy both occurrences. Binding an intended link
+  from constrained Context for each conjunct and
+  connecting the link applications retains one head evaluation. For pure
+  truth conditions, H ∧ (l₁ ∨ l₂) has the usual distributive equivalence;
+  this does not authorize copying an effectful head or its sites.
+  Distinct heads have nothing to share,
   so they connect as whole predications.
 - **P34 (`vu'o`).** CLL 8.8's own gloss ("both Frank and George are
   claimed to be men") is per-connectee; predicating collectively of
@@ -1762,23 +1810,23 @@ genuinely fought:
   must *replace* the closure, over distinct eventualities in the
   interval. Under universal clause eventuality the counted events remain the
   component instances, while `StateClause` supplies the eventuality of the
-  count claim itself; confusing those two levels recreates the original bug.
+  count claim itself; confusing those two levels would count the claim's state instead of its instances.
   The interval default follows CLL 10.9's own words
   ("unspecified size, at least part … in the past"): a recoverable
   anchor (`Context`) with genuinely loose extent (`Vague`).
 - **P37 (`ji'i`).** CLL 18.9 distinguishes positions; one uniform
   tolerance would erase the rounding reading (suffix `ji'i` with
-  `ma'u`/`ni'u` direction) that CLL states. The retained point-valued family distinguishes tolerance from rounding but
-  fails the intended supertruth of approximate equality to a fixed number over
-  a non-singleton region. It is superseded by the Q08 claim-level constraint
-  direction: vague tolerance, an exact constrained value inside the claim,
+  `ma'u`/`ni'u` direction) that CLL states. A point-valued family distinguishes tolerance from rounding but
+  makes approximate equality to a fixed number fail supertruth whenever its
+  admissible region contains other values. The chosen claim-level treatment
+  instead uses vague tolerance, an exact constrained value inside the claim,
   ordinary equality/arithmetic there. Actual counts/identified values are tested,
   not reselected. Compatibility is a chosen cost, not certainty about two
   independent measurements. Aliases share one value; shared tolerance alone
   does not correlate error. Preserve unreduced expressions when no further
   reading is established, without a universal precision floor or full reducer.
   Typed scope/effect/cardinal/retention realization remains work (spec §12/§14).
-- **P39 (`CoveredBy` placement).** The dog-plus-cat countermodel requires a
+- **P39 (`CoveredBy` placement).** The [dog-plus-cat countermodel](#example-dog-plus-cat) requires a
   no-residue law, but it does not justify making descriptions stricter than
   predication. Official `lo` and the BPFK gadri equation identify the two;
   collective heads independently require per-row plural semantics. The
@@ -1795,51 +1843,59 @@ genuinely fought:
   a constituted group. The independent post-xorlo discussion converges on
   this shape, while current CLL only records the project's own amendment.
   Exact context constraints, costs, and reopening evidence are in §1.7c.
-- **P41 (scope and dependent descriptions).** The August28 A/Agreed turns
-  really adopted invariant outer description placement and corrected which
-  expressions count as quantifiers. But the presented rationale wrongly claimed
-  guskant required invariance. Her §3.2.2 permits Skolem-like constants; the
-  earlier July13 adjudication supplies prior cross-project support. The human's
-  September7 clarification and subsequent synchronization authorization establish
-  the current instruction to preserve dependent `lo` legitimacy. The corrected rule retains the invariant
-  reading without prohibiting dependency-selected inner binding. This is not
-  pre-xorlo `lo = su'o lo`: referential persistence and quantificational force
-  remain different. Bindings must actually be in scope for their dependencies;
-  no annotation captures a later variable automatically. Remaining work concerns
-  profile realization, pure restrictors, attitude consumers and export, not
-  whether co-variation is permitted. Source/history: spec References and #62.
+- **P41 (scope and dependent descriptions).** A referential description
+  can vary with its governing variables. Invariance is one possible
+  dependency profile, not a consequence of being referential. Guskant's
+  gadri commentary §3.2.2 permits Skolem-like constants: their values can
+  depend on the surrounding assignments while remaining fixed for a given
+  assignment. Prohibiting that dependence would lose readings without
+  gaining a distinction between reference and quantification.
+  This does not make `lo` an implicit existential quantifier. Binding
+  must still occur where all declared dependencies are in scope; an
+  annotation cannot capture an unavailable variable. The [in-situ scope
+  examples](samples.md#13-in-situ-scope) distinguish these placements.
+  The unresolved work concerns profile realization, pure restrictors,
+  attitude consumers and export, not whether co-variation is legitimate.
+  Spec References and the [scope/dependency record](https://github.com/int19h/smusni/issues/62)
+  preserve the supporting analysis and correction history.
 
 ## 4. What would change our minds
 
-A design-record note first, owed to accuracy: several of this document's
-positions were genuinely contested before they settled — the drops of the closure and witness
-primitives, the sort-hierarchy trims, the tanru/scalar formers' survival,
-`Generic` over fixed typical references, termset non-maximality, and the
-`kau` representation among them; this document records the losing
-alternatives beside the winners, and one proposed reading (`na'e`
-weaker than `¬`) was overruled by primary text (§1.8). One separation *was* found during
-the rounds: the dependent-witness sentence `ro prenu cu ponse ci gerku
-.i ri tatpi` genuinely separates an embedded quantifier's witness from
-any single top-level plural — and was absorbed by generalizing the
-mapping to a selected strong joint-locus reading, not by an
-equivalence-preserving normalization of the compositional selection.
+The comparisons above identify both the benefits of the selected rules and
+their costs. Reconsidering a rule requires evidence or a construction that
+changes that balance. For example, §1.6a separates the benefits of wider
+anaphoric recovery from its additional export contracts; a proposed extension
+must justify both, rather than merely demonstrate one successful binding.
 
-Standing invitations, recorded so future revisions know where to push:
-evidence for a Lojban surface selector of the weak dependent-witness reading,
-or a plural-information-state account that removes the current strong
-reading's retroactivity (narrows §1.6); a facet-joining sentence
-where dynamic `∧` mispredicts (revives a dedicated joining operator); a
-sentence forcing world variables into terms (moves intension into the
-syntax); a genericity theory that derives `Generic` while preserving the
-`lo'e`/`le'e` contrast (demotes it to the library); evidence that
-speakers systematically read unmarked `kau` exhaustively even in
-non-`djuno` frames (reopens P9); community usage data on termset
-maximality (reopens P17's default); and a construction where
-set-*objecthood* at a lexical place does work that member-wise
-predication plus `SetOf` cannot (reopens §2.8 — the hunt found
-none; the candidate that fails is `lo selcmi cu simxu`, which the
-two-sort typing resolves correctly and uniform set typing renders
-ambiguous). Each was hunted during the design
-rounds; where the hunts came back empty the invitations record the
-negative result, kept falsifiable, and where a find was absorbed (the
-dependent witness, above) the invitation is narrowed to what remains.
+Reopening evidence would include:
+
+- A query-constructor reduction preserving the full laws listed in §1.11a,
+  or a stronger necessity/factorization argument for retaining the individual
+  primitives. The current interface alone is not an irreducibility proof.
+
+- An established Lojban expression selecting a weak dependent-witness
+  reading, or a compositional plural-information-state account that improves
+  the supported dependency treatment. Extending reference beyond P43 would
+  require a separate compatibility and complexity decision, not merely a
+  different implementation of the baseline.
+- A facet-joining example whose effects are not correctly represented by
+  dynamic conjunction. This would motivate reconsidering a dedicated
+  joining operator.
+- A supported construction requiring explicit world variables in core terms,
+  rather than world dependence confined to denotation.
+- A genericity theory deriving `Generic` from existing forms while
+  preserving the `lo'e`/`le'e` distinction.
+- A consistent pattern of exhaustive unmarked `kau`, especially outside
+  `djuno` frames where lexical requirements might explain the reading.
+  This would bear on P9.
+- Usage and formal arguments discriminating the remaining numerical-termset
+  policies under P17.
+- A lexical construction whose set-object semantics cannot be represented
+  adequately by the selected distinction between plural reference and
+  first-order sets. Section 2.8 analyzes `lo selcmi cu simxu`; a different
+  counterexample could require revisiting that comparison.
+
+The earlier searches did not establish such counterexamples. That is a
+bounded research result, not proof that none exists. Any revision must state
+which argument or evidence changes and trace its consequences through the
+specification and derivative documents.

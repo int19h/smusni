@@ -1,10 +1,15 @@
 # S7 — Shared carrier specification for the #74 pilot
 
-**Status.** Pilot artifact (`pilot/shared`), written once so that every
-candidate platform encodes the *same* carrier natively and reviewers can diff
-each encoding against this text. It is not normative: it restates what the
-live documents settle, names what they leave open as explicit parameters,
-and fixes the probe expectations. Sources: `spec.md` §5.1–§5.5, §7.1, §9.1,
+Status: historical platform-comparison input for issue #74, retained to
+interpret the original probes. It is not the current semantic specification.
+In particular, S6–S7's shared conjunction/Do filtering and several open
+parameters predate the later interpretation-status and F01 assertion-return
+decisions. Do not apply those snapshot clauses as current laws; consult
+`spec.md` §5.4/§7.1.1 and [the current decision ledger](../../decisions.md).
+
+The original input fixed one carrier interface and named open parameters so
+candidate platforms could encode comparable probes. Its clauses below are
+preserved as historical evidence. Sources at that stage were `spec.md` §5.1–§5.5, §7.1, §9.1,
 §9.3; `review/MODEL_REPAIR.md` (proposal, v2); issue #11 (decision status);
 issue #10; the #74 circle record. Where this file and a live document
 disagree, the document wins and the discrepancy is a finding.
