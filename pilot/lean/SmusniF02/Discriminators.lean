@@ -1,4 +1,5 @@
 import SmusniF02.Host
+import SmusniF02.SourcePayload
 
 /-! F02-X01–08: kernel-checked concrete controls in addition to the universal laws.
 The small sources/nuclei are explicit toy interpretations, not corpus dispatch.
@@ -73,7 +74,7 @@ def toySource (p : Nat) (sourceWorld : Bool) : Terminal S Nat :=
 
 abbrev I := Origin toySource
 def K (p : Nat) (i : I p) : SourceResult Nat := i.result
-def outer (p : Nat) (i : I p) : Bool := i.parent
+def inherited (_ : Nat) (b : Bool) : Bool := b
 def emptyOrigin : I 1 := ⟨false, .dead (reachedPrefix 2), by simp [toySource]⟩
 def obtainedOrigin (n : Nat) (hn : n = 0 ∨ n = 1) : I 1 :=
   ⟨true, .live (reachedPrefix n) n, by
@@ -87,15 +88,15 @@ def nucleus (test : Nat → Bool → Bool → Bool) (r : Nat) :
   run _ _ e w s := NEFin.singleton (if test r e w then .live s () else .dead s)
   event _ _ _ _ beta := some (if beta then 20 else 10)
 
-noncomputable def constantPayload := payload .first K outer (nucleus (fun _ _ _ => true))
+noncomputable def constantPayload := sourcePayload .first toySource inherited (nucleus (fun _ _ _ => true))
 
 theorem X02_origin_distinction (s : S) (e w : Bool) :
     constantPayload.run 1 emptyOrigin e w s ≠
       constantPayload.run 1 (obtainedOrigin 0 (Or.inl rfl)) e w s := by
   intro h
   have he := congrArg (fun zs : Terminal S Unit => .dead s ∈ zs) h
-  simp [constantPayload, payload, Family.bind, Family.pull, reads, read, readOutcome,
-    K, emptyOrigin, obtainedOrigin, Origin.result, Outcome.result, Run.bind,
+  simp [constantPayload, sourcePayload, payload, Family.bind, Family.pull, reads, read, readOutcome,
+    emptyOrigin, obtainedOrigin, Origin.result, Outcome.result, Run.bind,
     Run.extend, nucleus] at he
 
 theorem X02_no_origin_erasure (s : S) (e w : Bool) :
@@ -123,12 +124,12 @@ theorem X03_run_equality_not_content_equality :
   simp [falseEvent, PartialEq] at he
 
 theorem X03_payload_false_event (phase : ReadPhase) (s : S) :
-    (payload phase K outer (nucleus (fun _ _ _ => false))).run
+    (sourcePayload phase toySource inherited (nucleus (fun _ _ _ => false))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s = NEFin.singleton (.dead s) ∧
-    (payload phase K outer (nucleus (fun _ _ _ => false))).event
+    (sourcePayload phase toySource inherited (nucleus (fun _ _ _ => false))).event
       1 (obtainedOrigin 0 (Or.inl rfl)) false false true = some 20 := by
   constructor
-  · rw [payload_obtained_run phase K outer _ 1 _ 0 rfl]; rfl
+  · rw [sourcePayload_obtained_run phase toySource inherited _ 1 _ 0 rfl]; rfl
   · rfl
 
 theorem X03_no_value_events (phase : ReadPhase) (k : SourceResult Nat)
@@ -142,19 +143,19 @@ theorem X04_constant_replay (s : S) :
     constantPayload.run 1 (obtainedOrigin 0 (Or.inl rfl)) false false s =
       NEFin.singleton (.live s ()) := by
   unfold constantPayload
-  rw [payload_obtained_run .first K outer _ 1 _ 0 rfl]; rfl
+  rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
 
 theorem X04_world_sensitive_replay (s : S) :
-    (payload .first K outer (nucleus (fun _ _ w => w))).run
+    (sourcePayload .first toySource inherited (nucleus (fun _ _ w => w))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s = NEFin.singleton (.dead s) ∧
-    (payload .first K outer (nucleus (fun _ _ w => w))).run
+    (sourcePayload .first toySource inherited (nucleus (fun _ _ w => w))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false true s = NEFin.singleton (.live s ()) := by
-  constructor <;> rw [payload_obtained_run .first K outer _ 1 _ 0 rfl] <;> rfl
+  constructor <;> rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl] <;> rfl
 
 theorem X04_empty_replay (s : S) (test : Nat → Bool → Bool → Bool) :
-    (payload .first K outer (nucleus test)).run 1 emptyOrigin false true s =
+    (sourcePayload .first toySource inherited (nucleus test)).run 1 emptyOrigin false true s =
       NEFin.singleton (.dead s) := by
-  simp [payload, Family.bind, Family.pull, reads, read, readOutcome, K, emptyOrigin,
+  simp [sourcePayload, payload, Family.bind, Family.pull, reads, read, readOutcome, emptyOrigin,
     Origin.result, Outcome.result, Run.bind, Run.extend]
 
 theorem X05_profiles_not_alternatives (s : S) :
@@ -162,33 +163,33 @@ theorem X05_profiles_not_alternatives (s : S) :
     constantPayload.run 1 (obtainedOrigin 0 (Or.inl rfl)) false true s =
       NEFin.singleton (.live s ()) := by
   constructor
-  · simp [constantPayload, payload, Family.bind, Family.pull, reads, read, readOutcome,
-      K, profileZeroOrigin, Origin.result, Outcome.result, Run.bind, Run.extend]
+  · simp [constantPayload, sourcePayload, payload, Family.bind, Family.pull, reads, read, readOutcome,
+      profileZeroOrigin, Origin.result, Outcome.result, Run.bind, Run.extend]
   · unfold constantPayload
-    rw [payload_obtained_run .first K outer _ 1 _ 0 rfl]; rfl
+    rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
 
 def emittingNucleus (r : Nat) : Content Nat (fun _ => Bool) Bool Bool S Bool Nat where
   run _ _ e _ s := NEFin.singleton (.live {s with sides := s.sides ++ [⟨r, e⟩]} ())
   event _ _ _ _ beta := some (if beta then 20 else 10)
 
 theorem X06_capture_caller_and_sides (s : S) :
-    (Content.capture true (payload .first K outer emittingNucleus)).run
+    (Content.capture true (sourcePayload .first toySource inherited emittingNucleus)).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s =
         NEFin.singleton (.live {s with sides := s.sides ++ [⟨0, true⟩]} ()) := by
-  change (payload .first K outer emittingNucleus).run
+  change (sourcePayload .first toySource inherited emittingNucleus).run
     1 (obtainedOrigin 0 (Or.inl rfl)) true false s = _
-  rw [payload_obtained_run .first K outer _ 1 _ 0 rfl]; rfl
+  rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
 
 theorem X06_raw_captured_context (s : S) :
-    (Content.capture true (payload .first K outer (nucleus (fun _ e _ => e)))).run
+    (Content.capture true (sourcePayload .first toySource inherited (nucleus (fun _ e _ => e)))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s = NEFin.singleton (.live s ()) ∧
-    (payload .first K outer (nucleus (fun _ e _ => e))).run
+    (sourcePayload .first toySource inherited (nucleus (fun _ e _ => e))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) false false s = NEFin.singleton (.dead s) := by
   constructor
-  · change (payload .first K outer (nucleus (fun _ e _ => e))).run
+  · change (sourcePayload .first toySource inherited (nucleus (fun _ e _ => e))).run
       1 (obtainedOrigin 0 (Or.inl rfl)) true false s = _
-    rw [payload_obtained_run .first K outer _ 1 _ 0 rfl]; rfl
-  · rw [payload_obtained_run .first K outer _ 1 _ 0 rfl]; rfl
+    rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
+  · rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ 0 rfl]; rfl
 
 theorem X06_saved_resolver_undefined (saved caller : Nat → Option Nat) (d : Nat) (s : S)
     (h : saved d = none) :
@@ -197,7 +198,7 @@ theorem X06_saved_resolver_undefined (saved caller : Nat → Option Nat) (d : Na
 
 noncomputable def firstHost (p : Nat) (i : I p) : Terminal S Nat :=
   Host.finalizeAll initial (fun _ => true) 100
-    (firstExecution toySource (fun _ b => b) true (payload .first K outer emittingNucleus).run p i)
+    (firstExecution toySource (fun _ b => b) true (sourcePayload .first toySource inherited emittingNucleus).run p i)
 
 /-- Supplied later source interpretation: consumes the first returned ground binding.
 This example is not a general multi-source-failure performance semantics. -/
@@ -238,7 +239,7 @@ def returned (n : Nat) : S := Host.finalizeState initial (fun _ => true) 100
 theorem firstHost_obtained (n : Nat) (hn : n = 0 ∨ n = 1) :
     firstHost 1 (obtainedOrigin n hn) = NEFin.singleton (.live (returned n) 100) := by
   unfold firstHost firstExecution
-  rw [payload_obtained_run .first K outer _ 1 _ n rfl]
+  rw [sourcePayload_obtained_run .first toySource inherited _ 1 _ n rfl]
   simp [emittingNucleus, obtainedOrigin, Origin.reached, Outcome.state, Host.finalizeAll,
     Host.finalize, returned, afterNucleus]
 

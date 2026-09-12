@@ -78,8 +78,9 @@ section Payload
 variable {P : Type u} {I : P → Type v} {Outer : P → Type t}
 variable {E : Type w} {W : Type x} {S : Type y} {Beta : Type z} {Event : Type q} {R : Type _}
 
-/-- The nucleus gets only the inherited outer coordinate and returned reference.
-It does not receive K, the newly added outcome, or its reached state. -/
+/-- Generic indexed payload combinator. `outer` is arbitrary and may expose I.
+This does NOT enforce an inherited-parameter boundary. Source-specific clients
+must use `sourcePayload`, which constructs the parent factorization internally. -/
 noncomputable def payload (phase : ReadPhase) (K : ∀ p, I p → SourceResult R)
     (outer : ∀ p, I p → Outer p) (nucleus : R → Content P Outer E W S Beta Event) :
     Content P I E W S Beta Event where

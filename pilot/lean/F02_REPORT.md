@@ -5,6 +5,9 @@ runtime. Task [#10](https://github.com/int19h/smusni/issues/10), addressed PM re
 `msg_20260911T234534032747Z_90570bd22ed84e5f8f7a7aeddaf69840`.
 Input commit `49615fe6ec01d01310e2545f51fa1bb691cd59dc` (merged F01/PR91).
 Branch `work/f02-auxiliary-20260911`; prior F01 branch/head `7426258` preserved.
+Correction batch01 descends from preserved F02 checkpoint `22c32f3`, addressing
+Astra's A1/A2 under PM release
+`msg_20260912T001624089880Z_2a9eac9fc18b418f876175d6856baae2`.
 
 ## What the code does
 
@@ -35,10 +38,14 @@ run equality. These run monad laws do not assert a general Content/event monad.
 
 `Origin source p` is the dependent sum of an inherited coordinate and an actual
 terminal member of its source family. `Family P I E W S A` keeps profiles outside
-the outcome set. Pullbacks map indices *within the same profile*. `payload` accepts
-a nucleus over `Outer`, not the new source fibre: it passes a returned reference,
-the inherited outer parameter, and current context/world/state/event inputs.
-No extra nucleus argument exposes K or the saved source state. Only
+the outcome set. Pullbacks map indices *within the same profile*. The
+**source-specific `sourcePayload`** accepts an inherited map on parent **B**, then
+composes it internally with `Origin.parent`. Its nucleus receives the reference,
+that inherited parameter, and current context/world/state/event inputs.
+Same-parent/same-K invariance is proved for run and event, not assumed.
+The generic `payload` accepts an arbitrary map out of I and **does not enforce**
+this boundary: that map can expose saved source state. Its broader equations
+remain valid, but source/first-Host controls now use `sourcePayload`. Only
 `firstExecution` supplies the reached source state; replay uses the caller state.
 
 `Host.finalizeState` computes binding projection, retains the terminal side list
@@ -94,6 +101,7 @@ command, including generated helpers; these are the substantive coverage entries
 | F02-v2 §2; spec §5.1 / §7.1.1 terminal carrier | [Carrier.lean](SmusniF02/Carrier.lean): `Outcome`, `FSet`, `NEFin`; `FSet.ext`, `NEFin.ext`, `unionMap` closure proofs; `Run.bind_finite`, `bind_nonempty`, `pure_bind`, `bind_pure`, `bind_assoc`, `bind_congr`. |
 | F02-v2 §7 successful projection | `Run.successes_pure`, `successes_bind`: successful relation preserves unit/strict Bind. `Controls.X01_no_success_factor`: no successful-only observation function can implement this returning Host; two legal failed prefixes witness the obstruction. |
 | F02-v2 §§3–4 source supports | [Fibres.lean](SmusniF02/Fibres.lean): `Origin`, `Origin.parent/result/reached`, `origin_over_each`; `Descendant`, `parent`, `descendant_over_each`. No finite global support assumption. |
+| F02-v2 §§4–5 inherited boundary; correction A1 | [SourcePayload.lean](SmusniF02/SourcePayload.lean): `sourcePayload` constructs K and parent factorization internally; `sourcePayload_run_invariant`, `sourcePayload_event_invariant` compare arbitrary same-parent/same-K origins at fixed current inputs, without a saved-state equality premise. `sourcePayload_obtained_run`, `sourcePayload_congr`, `capture_sourcePayload` connect to the broader combinator laws. |
 | F02-v2 §4 pointwise run lifting | `Family.pure_bind`, `bind_pure`, `bind_assoc`; `lift_pure`, `lift_bind`; `pull_pure`, `pull_bind`, `pull_comp`, `pull_id`. Pullback/lift is precomposition, so these commute by definitional equality where appropriate. |
 | F01 read table; F02-v2 §4 | `read_state`, `read_preserves_caller`, `read_obtained`, `reads_factor`, `pull_reads`, `repeatedRead_diagonal` (all natural-number repetition lengths). No source callback or saved state is an input to `read`. |
 | F02-v2 §5 first execution versus replay | `firstExecution` takes world from the source parent and state from its terminal outcome. `Controls.firstHost_obtained` computes a Host through that operation and actual payload/finalizer, not a separately selected expected state. X04 tests replay world sensitivity separately from origin preservation. |
@@ -103,12 +111,16 @@ command, including generated helpers; these are the substantive coverage entries
 | F02-v2 §5 single lexical association | `Act`, `HostOccurrence`, `makeHost`, `host_raw`, `host_captured`: direct projections of one value with no source index field. Freshness/unique-span selection are supplied, not established by those projection equalities. |
 | F01 return law; F02-v2 §5 | [Host.lean](SmusniF02/Host.lean): concrete `keep`, `currentSideTruth`, `finalizeState`, `finalize`, `finalizeAll`; `returns_live`, `retain_incoming`, `retain_eligible`, `drop_local`, `sides_once`, `side_status_is_suffix`, `history_append`, `cumulative_payload/sides`, `prior_failure_stays`, `finalize_congr`. |
 | F02-v2 §7 origin obstruction | `Controls.X02_no_origin_erasure`: at fixed current context/world/state, a function of current world/state alone cannot agree with the whole source-fibre payload. |
+| Reviewer A1 regression and non-overrestriction | [SourceBoundary.lean](SmusniF02/SourceBoundary.lean): six theorems retain the broader-map counterexample, prove the corrected two-terminal invariance at a fixed false caller for both phases, and preserve different-parent dependence and distinct Beta events. |
 
 ## Eight discriminator groups
 
 [Discriminators.lean](SmusniF02/Discriminators.lean) contains 30 explicitly authored
 theorems (including supporting lemmas), in addition to the general definitions
 and laws. These are new Lean proof obligations, not the old Python probe counts.
+Batch01 adds six source-boundary controls in `SourceBoundary.lean`. Source-bearing
+X02–X08/first-Host paths use the restricted constructor; X03's general no-value
+table lemma also continues to test the broader combinator over arbitrary K.
 
 | Group | Checked control and explicit toy input |
 |---|---|
@@ -135,20 +147,36 @@ Run from the repository root:
 bash pilot/lean/check-f02.sh
 ```
 
-This builds only `SmusniF02`, then runs `F02Audit.lean`. Existing default Lake
+This builds `SmusniF02` and its separate `F02AuditSupport` tooling library, then
+runs `F02Audit.lean` and isolated audit fixtures. Existing default Lake
 targets are unchanged. Lean remains pinned to **4.33.1**; no dependency was added
 and the existing Plausible pin is untouched (F02 does not import it).
 
-The check passes: **102 explicitly authored theorems**, **619 audited declarations**,
-**301 theorem declarations including generated lemmas**. Those latter two counts
+The corrected check passes: **113 explicitly authored theorems**, **644 audited declarations**,
+**316 theorem declarations including generated lemmas**. The original checkpoint
+had 102/619/301; the delta is 11 authored theorems (5 source laws and 6 regression
+controls), plus generated declarations. Those latter two counts
 describe the compiler environment, not independent semantic claims. The transitive
 axiom union is exactly **`propext`, `Classical.choice`, `Quot.sound`**. The audit
 enumerates declarations by their defining F02 module (including private/generated
 helpers), rejects declared project axioms and any other transitive axiom, rejects
-unsafe F02 definitions, and rejects production `SmusniPilot` imports. It therefore
+unsafe F02 declarations across ConstantInfo variants via `isUnsafe`, and rejects
+production `SmusniPilot` imports. It therefore
 rejects `sorryAx` and native-decide trust rather than accepting a text search.
 The script prints each theorem's axioms and SHA-256 identities of the checked
 source/toolchain/build/check files. There is no imported desired-law axiom.
+
+The actual shared audit entry point is `F02Audit.check`, defined in
+`F02AuditSupport.lean` and invoked by both the regular runner and fixture drivers.
+`audit-fixtures/SmusniF02/UnsafeOpaque.lean` and `PrivateUnsafeOpaque.lean` each
+compile successfully in isolation, but both actual audit invocations must fail
+with the unsafe-declaration diagnostic; an unrelated compiler/import failure
+does not count as rejection. `SafeOpaque.lean` is a positive control and passes
+with one audited declaration and no axioms. These files are outside the regular
+semantic library and its build search path. The check temporarily adds their
+compiled modules to *separate child processes* only and leaves their bounded
+`/tmp/smusni-f02-audit.*` directory for diagnosis. The normal semantic library
+contains no unsafe declaration; its axiom union is unchanged.
 
 `bash -n pilot/lean/check-f02.sh` and `git diff --check` pass. Production
 AST/typing/source normalization, oracles, coverage and performance baselines,
@@ -158,6 +186,18 @@ was rerun merely to reconfirm unrelated evidence. No global document audit or
 formal-authority transfer is claimed.
 
 ## Provenance and remaining obligations
+
+Batch01 implements both findings from Astra's exact-head review
+`msg_20260912T001533789225Z_20c9b55654ac4877aed582c121383463` of `22c32f3`.
+A1 exposed the overly broad claimed inherited interface: one parent and the same
+Obtained unit, with Live(false,unit)/Live(true,unit) source terminals, distinguished
+run and event at a fixed false caller through the old outer map. A2 exposed the
+defnInfo-only safety match, which missed unsafe opaque declarations with no
+transitive axioms. Both concrete probes were read in `/tmp/F02AstraBoundaryProbe.lean`;
+the review's universe inspection `/tmp/F02AstraUniverses.lean` was also read, not
+rerun as investigation. The counterexample and corrected guarantees are now
+tracked regressions. The original generic laws and uncontaminated proof status
+were not disputed; their source-boundary/audit-safety claims needed correction.
 
 The construction is derived from the Astra/High F02-v2 design, not invented by
 this implementation. Durable design copy and comparison provenance:
