@@ -5,6 +5,13 @@ static laws in `spec.md`. It is not a semantic authority: when the checker and
 the documents disagree, the discrepancy must be diagnosed against the live
 normative text.
 
+This README combines current instructions with milestone records. The F01
+and E01 sections describe the later structural and mapping changes; where
+older sections differ, they describe their named milestone, not an
+alternative current rule. Benchmark numbers, corpus counts, and migration
+partitions are measurements from those stages, not freshly verified totals.
+See [decisions.md](../../decisions.md) for semantic and derived-artifact status.
+
 ### F01 structural encoding (2026-09-11)
 
 `PerformSource` has a direct three-arm binder and general formation/typing
@@ -19,7 +26,7 @@ its pre-F01 implementation-status sentence.
 
 ### Adopted document synchronization (E01, 2026-09-10)
 
-The current corpus contains 95 fences (78 specimen fences / 99 terms). The
+The E01 corpus contained 95 fences (78 specimen fences / 99 terms). The
 five `IndividualSome/No/Every` and `PluralSome/No` closures and pure `Only`
 have general Redex equations and typed interfaces. `Massify` uses the current
 reference-level existential co-reference equation, rather than cardinal-one
@@ -83,12 +90,12 @@ The existing bounded pass-through rules and accepted legacy/Redex differences
 remain visible in the reports; a green run does not imply complete typing or
 formal-authority transfer. The separate Lean pilot is not regenerated here.
 
-Milestone 1 covers the declaration mirror, exhaustive classification of the
+The original milestone 1 covered the declaration mirror, exhaustive classification of the
 Markdown `lisp` fences in `spec.md` and `samples.md`, the concrete reader,
 elaboration, extrinsic typing, and the static regression ledger. Fences in
-derivative documents are outside this bounded corpus until a synchronization
-milestone explicitly adds them. Dynamic execution, Lojban lowering, finite
-model search, and Lean certificates are later milestones.
+derivative documents remain outside this bounded corpus unless a synchronization
+milestone explicitly adds them. The later sections describe additional lowering,
+model-bank, and port work; the separate Lean pilot has its own reports.
 
 Run the milestone checks from the repository root:
 
@@ -343,6 +350,10 @@ zero). The latter consumes the parsed `no` quantifier itself; question-answer
 substitution is explanatory context, not an RR reading or fixture shortcut.
 
 ### Place-agnostic argument composition (#56 M4 increment 3)
+
+The following records the pre-E01 mapping. Its witness-set PA defaults and
+unconditional outer description placement are historical. The E01 section
+above states the replacement individual-count and dependency-validation behavior.
 
 Descriptions, names, witness-set PA, universal PA, thresholds, and inner PA are
 decoded independently of place. The adapter allocates a fresh placeholder for

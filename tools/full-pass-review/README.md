@@ -13,9 +13,9 @@ python3 tools/full-pass-review/bundle.py --generation 3
 The output is the ignored file `review/bundle/full-pass-3.md`. Use `--docs` to
 replace the default document list. The label is a project convention for
 distinguishing full-pass cohorts and artifacts, not a protocol counter or an
-enforced workflow state. The last historical review-exchange generation was 2,
-so 3 is the natural next label if continuity is useful; a task may choose a
-different positive label explicitly.
+enforced workflow state. The value 3 is an example, not a counter maintained
+by the helper. Select a label appropriate to the task and avoid overwriting
+a bundle that another review still needs.
 
 For a coordinated pass, use fresh task-specific session handles such as
 `fable-g3` and `kimi-g3`. A coordinator may create an optional recipient group

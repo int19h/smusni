@@ -1,37 +1,27 @@
 # Cmavo index
 
-The cmavo-centric view of the mapping annex (spec §11): one entry per
-cmavo the baseline treats, each with a Lojban example, its core term,
-and links into the specification. The spec is normative; this index
-orients. Entries are grouped in the mapping annex's order (spec §11);
-grep for the cmavo you want. Families whose members lower uniformly
-(digits, BAI, UI, BY, VUhU) get one entry with representatives.
-Current settled/open status is [decisions.md](decisions.md); gaps below are
-not completed lowerings. Examples inherit the samples' resolved lexical-row
-and actual-mode conventions; a fragment need not be a complete act.
-The delimiter variants `(λ {$x :: T} body)` and `{λ [$x :: T] body}`
-have identical structure; delimiter shape is non-semantic (spec §2).
-Cmavo sequences that form a single grammatical unit — a unit at one
-level of the EBNF grammar, not a composition of its parts (`.i je` is
-not `.i` + `je`) — are indexed in §14. Cmavo that contribute pure
-structure and no term constructor (terminators, grouping) are listed
-once in §13. The documented no-mappings and open adjacencies the
-cmavo-centric view makes visible are collected in §15.
+This index presents the mappings in spec §11 by cmavo. Entries include
+examples, core forms, and specification references. The specification is
+normative; [decisions.md](decisions.md) records adopted rules and unfinished
+work. Families with a common lowering share representative entries.
 
-In the examples, the first comment line is the Lojban source, and
-every example is a **complete term** — no elision, and no comment ever
-substitutes for term structure. Where completeness makes an example
-larger than its point, the salient part is bracketed 👉 like this 👈 —
-a formatting convention of this index only, **never** part of the
-notation itself. Three kinds of names are not omissions: values bound
-by earlier discourse or by ⊳ text-to-reading resolution (letteral and
-KOhA assignments, transcript tokens, deictic values (directions, demonstrative
-referents) — written as
-plain names like `jan`, `dihu`, with their resolution noted, since
-their binders live outside any single term by nature); lexicon-
-supplied constants (relation names like `coi-greeting`, tag-supplied
-labels like `gau-role`); and type metavariables (`T`, `ρ`), which §2
-licenses as inferable-type elision.
+Examples use the lexical-row, contextual-resolution, and actual-mode
+conventions of samples.md. A fragment need not be an act. The forms
+`(λ {$x :: T} body)` and `{λ [$x :: T] body}` have identical structure under
+spec §2; delimiter choice does not change meaning.
+
+Grammatical grouping is resolved before lowering. Section 13 lists
+structure-only cmavo, §14 lists multi-cmavo units such as `.i je`, and §15
+summarizes selected coverage gaps. The meaning of a grammatical unit need not
+be the independent composition of its cmavo meanings.
+
+An example's first comment identifies its Lojban source. Named external
+values such as `jan` or `dihu` denote earlier bindings or resolved readings;
+lexical constants such as `coi-greeting` and `gau-role` come from the declared
+lexicon interface. Type metavariables and schematic dependency tuples follow
+spec §2 and §11. Such parameterized examples are not closed source-to-core
+implementations. Explanatory comments do not replace required term structure,
+and a reserved name does not complete a gap.
 
 ## 1. Predication and places
 
@@ -44,10 +34,10 @@ fills at distinct labels commute).
 ; klama fa mi fi la .paris.
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (Named "paris" $r)))
-  (Close (klama 👉:1 Speaker :3 $p👈)))
+  (Close (klama :1 Speaker :3 $p)))
 ```
 
-**See.** [Spec §4.1–4.2, §11](spec.md).
+References: [Spec §4.1–4.2, §11](spec.md).
 
 ### fai (FA)
 
@@ -64,11 +54,11 @@ The fill tag for the place `jai` demotes the old x1 into.
           (Refer (λ {$e :: Referents Eventuality}
             (Close (darxi :1 Speaker :2 $w :Eventuality $e))))
       (Close ((JaiPromote rinka gau-role)
-               :1 Speaker :2 $eff 👉:fai $cause👈)))))
+               :1 Speaker :2 $eff :fai $cause)))))
 ; gau-role: the agent label gau's tag reduction supplies
 ```
 
-**See.** [Spec §12, §11](spec.md); [catalog 2.20](catalog.md).
+References: [Spec §12, §11](spec.md); [catalog 2.20](catalog.md).
 
 ### se / te / ve / xe (SE)
 
@@ -80,7 +70,7 @@ label routing; no separate operator survives lowering.
 (Close (klama :2 Speaker))
 ```
 
-**See.** [Spec §4.2](spec.md).
+References: [Spec §4.2](spec.md).
 
 ### zi'o (KOhA)
 
@@ -92,7 +82,7 @@ relation, not a vague fill (contrast `zo'e`).
 (Close ((DropPlace zdani 1) :2 This))
 ```
 
-**See.** [Spec §4.3](spec.md); [catalog 1.16](catalog.md).
+References: [Spec §4.3](spec.md); [catalog 1.16](catalog.md).
 
 ### zo'e (KOhA)
 
@@ -106,7 +96,7 @@ sites retrieve independently.
   (Close (klama Speaker $dest)))
 ```
 
-**See.** [Spec §5.3, §11](spec.md), pin P15.
+References: [Spec §5.3, §11](spec.md), pin P15.
 
 ### zu'i (KOhA)
 
@@ -115,17 +105,17 @@ typical filler for the place.
 
 ```lisp
 ; mi klama zu'i
-(Bind {$dest :: Referents Entity} 👉(Context)👈
+(Bind {$dest :: Referents Entity} (Context)
   (Close (klama Speaker $dest)))
 ```
 
-The typicality is an **admissibility condition on the retrieval** —
+The typicality is an admissibility condition on the retrieval —
 only the place's typical filler is an admissible recovery (P15; part
 of the site's key, §5.3), not a
 term-level conjunct: the term is identical to `zo'e`'s, the key
 differs.
 
-**See.** [Spec §5.3, §11](spec.md), pin P15.
+References: [Spec §5.3, §11](spec.md), pin P15.
 
 ### co'e (GOhA), do'e (BAI)
 
@@ -136,11 +126,11 @@ tag type (P14).
 ; ko'a co'e ko'e — unassigned KOhA are keyed retrievals (P16)
 (Bind {$a :: Referents Entity} (Context)
   (Bind {$b :: Referents Entity} (Context)
-    (Bind {$r :: PredTerm ρ} 👉(Context)👈
+    (Bind {$r :: PredTerm ρ} (Context)
       (Close ($r $a $b)))))
 ```
 
-**See.** [Spec §5.3, §11](spec.md), pin P14.
+References: [Spec §5.3, §11](spec.md), pin P14.
 
 ### si / sa / su (SI/SA/SU)
 
@@ -148,7 +138,7 @@ Erasure: consumed before reading resolution (⊳ text-to-reading); no
 term survives. Inside quotation the erased text is preserved as sign
 material.
 
-**See.** [Spec §11 ¶1, §7.5](spec.md).
+References: [Spec §11 ¶1, §7.5](spec.md).
 
 ## 2. Descriptions and names
 
@@ -161,11 +151,11 @@ type; no default quantifier (P1, xorlo).
 ```lisp
 ; lo gerku cu bajra
 (Bind {$dogs :: Referents Entity}
-      👉(Refer (λ {$r :: Referents Entity} (gerku $r)))👈
+      (Refer (λ {$r :: Referents Entity} (gerku $r)))
   (Close (bajra $dogs)))
 ```
 
-**See.** [Spec §5.3, §11](spec.md), pin P1; [primer ch. 3](primer.md).
+References: [Spec §5.3, §11](spec.md), pin P1; [primer ch. 3](primer.md).
 
 ### le (LE)
 
@@ -177,7 +167,7 @@ clause — the describing event is this very utterance (P10).
 ; le gerku cu bajra
 (Bind {$x :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
-        👉(SpeakerDescribes $r (λ {$y :: Referents Entity} (gerku $y)))👈))
+        (SpeakerDescribes $r (λ {$y :: Referents Entity} (gerku $y)))))
   (Close (bajra $x)))
 ```
 
@@ -185,7 +175,7 @@ clause — the describing event is this very utterance (P10).
 is this utterance's locution, via token-first LocutionOf. Unanchored
 Close(skicu …) is not an equivalent abbreviation.
 
-**See.** [Spec §11](spec.md), pin P10; [rationale §2.6](rationale.md).
+References: [Spec §11](spec.md), pin P10; [rationale §2.6](rationale.md).
 
 ### la (LA)
 
@@ -200,7 +190,7 @@ referent bears the name-sign.
   (Close (bajra $x)))
 ```
 
-**See.** [Spec §7.5, §11](spec.md).
+References: [Spec §7.5, §11](spec.md).
 
 ### lo'e / le'e (LE)
 
@@ -210,11 +200,11 @@ as holder for `le'e`); no prototype individual (P11).
 
 ```lisp
 ; lo'e gerku cu batci
-(👉Generic Typical👈 (λ {$x :: Entity} (gerku $x))
+(Generic Typical (λ {$x :: Entity} (gerku $x))
   (λ {$x :: Entity} (Close (batci $x))))
 ```
 
-**See.** [Spec §5.8, §11](spec.md), pin P11.
+References: [Spec §5.8, §11](spec.md), pin P11.
 
 ### loi / lo'i (LE)
 
@@ -229,18 +219,18 @@ the maximal base, but the bare gadri and bare outer `ro` do not.
 ```lisp
 ; loi gerku cu sruri lo zdani — an ordinary base bound first
 (Bind {$base :: Referents Entity}
-      👉(Local (Refer (λ {$x :: Entity} (gerku $x))))👈
+      (Local (Refer (λ {$x :: Entity} (gerku $x))))
   (Bind {$κ :: GroupBasis Entity}
          (Context (GroupBasisConstraint loi Entity) deps…)
     (Bind {$g :: Referents (Group Entity)}
-           👉(Refer (λ {$r :: Group Entity}
-             (CompleteGunmaAt $κ $r $base)))👈
+           (Refer (λ {$r :: Group Entity}
+             (CompleteGunmaAt $κ $r $base)))
       (Bind {$z :: Referents Entity}
              (Refer (λ {$r :: Referents Entity} (zdani $r)))
         (Close (sruri $g $z))))))
 ```
 
-**See.** [Spec §4.8–4.9, §11](spec.md), pin P5; [rationale §2.8](rationale.md).
+References: [Spec §4.8–4.9, §11](spec.md), pin P5; [rationale §2.8](rationale.md).
 
 ### lei / le'i / lai / la'i (LE/LA)
 
@@ -250,7 +240,7 @@ complete-`GunmaAt` group / exact-`selcmi` set object over it; `Local` keeps
 the internal base from exporting. Inner PA constrains the
 base, outer PA counts the objects.
 
-**See.** [Spec §11](spec.md), pins P5, P10.
+References: [Spec §11](spec.md), pins P5, P10.
 
 ### Inner PA (`lo ci gerku`)
 
@@ -262,12 +252,12 @@ Unit count of the selected base under a counting basis:
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         (∧ (gerku $r)
-           👉(= (CardBasis $r (λ {$y :: Entity}
-                               (gerku $y))) 3)👈)))
+           (= (CardBasis $r (λ {$y :: Entity}
+                               (gerku $y))) 3))))
   (Close (bajra $d)))
 ```
 
-**See.** [Spec §4.10, §11](spec.md), pin P1.
+References: [Spec §4.10, §11](spec.md), pin P1.
 
 ### Inner `no` (`lo no broda`)
 
@@ -282,7 +272,7 @@ ordinary individual no.
     (λ {$w :: Referents Entity} (Close (bajra $w))))
 ```
 
-**See.** [Spec §12](spec.md), pin P22.
+References: [Spec §12](spec.md), pin P22.
 
 ### la'e / lu'e (LAhE)
 
@@ -291,12 +281,12 @@ X refers to; `lu'e X` a sign for X.
 
 ```lisp
 ; mi djuno la'e by — by ⊳-bound to a sentence-sign referent
-(Close (djuno Speaker (Reify 👉(InterpretContent by)👈)))
+(Close (djuno Speaker (Reify (InterpretContent by))))
 ; la'e di'u at performed assertion content crosses directly through:
 ; (RealizedContent dihu), then the host-sorted crossing (P28)
 ```
 
-**See.** [Spec §7.5, §11](spec.md).
+References: [Spec §7.5, §11](spec.md).
 
 ### lu'a (LAhE)
 
@@ -309,10 +299,10 @@ members — `Distrib` at the use site (the explicit each-reading; spec
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         (SpeakerDescribes $r (λ {$y :: Referents Entity} (prenu $y)))))
-  👉(Distrib (λ {$x :: Entity} (Close (bevri $x))) $p)👈)
+  (Distrib (λ {$x :: Entity} (Close (bevri $x))) $p))
 ```
 
-**See.** [Spec §4.8, §12, §11](spec.md).
+References: [Spec §4.8, §12, §11](spec.md).
 
 ### ku (elidable terminator)
 
@@ -333,7 +323,7 @@ quantifiers, the restrictor (P20: the only domain restriction on `da`).
   (Close (bajra $d)))
 ```
 
-**See.** [Spec §5.3, §11](spec.md), pin P20.
+References: [Spec §5.3, §11](spec.md), pin P20.
 
 ### noi (NOI)
 
@@ -345,25 +335,26 @@ beside the at-issue claim; negation and questioning never touch it
 ; lo gerku noi blabi cu bajra
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (gerku $r)))
-  👉(Supplement $d (Close (blabi $d))
-     (Close (bajra $d)))👈)
+  (Supplement $d (Close (blabi $d))
+     (Close (bajra $d))))
 ```
 
-**See.** [Spec §5.5, §11](spec.md), pin P7; [primer ch. 5](primer.md).
+References: [Spec §5.5, §11](spec.md), pin P7;
+[primer: the whole example](primer.md#11-the-whole-example).
 
 ### voi (NOI)
 
 Restrictive speaker-description: the audience-deleted `skicu`
 (`(DropPlace skicu 3)`) as a restrictive conjunct (P10).
 
-**See.** [Spec §11](spec.md), pin P10.
+References: [Spec §11](spec.md), pin P10.
 
 ### ke'a (KOhA)
 
 The relative clause's parameter — the bound variable of the clause
 property; inside `poi` it is the restricted referent.
 
-**See.** [Spec §5.3, §11](spec.md).
+References: [Spec §5.3, §11](spec.md).
 
 ### goi (GOI)
 
@@ -375,10 +366,10 @@ rest of the discourse (P16).
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (gerku $r)))
   (Do (Assert (Close (blabi $d)))
-       (Assert (Close (bajra 👉$d👈)))))
+       (Assert (Close (bajra $d)))))
 ```
 
-**See.** [Spec §5.6, §11](spec.md), pin P16.
+References: [Spec §5.6, §11](spec.md), pin P16.
 
 ### pe / ne / po / po'e / po'u / no'u (GOI)
 
@@ -394,11 +385,11 @@ associated sumti is bound before the pure restriction forms.
 (Bind {$s :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (stizu $y)))
-           👉(Close (srana $r Speaker))👈)))
+           (Close (srana $r Speaker)))))
   (Close (blanu $s)))
 ```
 
-**See.** [Spec §11](spec.md); CLL 8.3.
+References: [Spec §11](spec.md); CLL 8.3.
 
 ### zi'e (ZIhE)
 
@@ -413,27 +404,27 @@ supplements keeping source order at the effect level.
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity}
         (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (gerku $y)))
-           👉(blabi $r)👈)))
-  👉(Supplement $d
+           (blabi $r))))
+  (Supplement $d
      (Bind {$p :: Referents Entity}
            (Refer (λ {$r :: Referents Entity}
              (∧ (SpeakerDescribes $r (λ {$y :: Referents Entity} (pendo $y)))
                 (Close (srana $r Speaker)))))   ; le MI pendo (CLL 8.7)
        (Close (ponse $p $d)))
-     (Close (klama $d)))👈)
+     (Close (klama $d))))
 ```
 
-**See.** [Spec §11](spec.md); CLL 8.4.
+References: [Spec §11](spec.md); CLL 8.4.
 
 ### vu'o (VUhO)
 
 Attaches the relative clause to the whole connected sumti (P34): an
-incidental clause anchors at the joint unit and predicates **once of
-each immediate connectee**; a restrictive clause restricts each
+incidental clause anchors at the joint unit and predicates once of
+each immediate connectee; a restrictive clause restricts each
 operand under the connective's structure; a group-forming joik takes
 the clause on the resultant object.
 
-**See.** [Spec §11](spec.md), pin P34.
+References: [Spec §11](spec.md), pin P34.
 
 ## 4. Quantifiers, numbers, termsets
 
@@ -450,7 +441,7 @@ by a fresh MaxRefer and its reference requirements are not erased.
        {λ [$x :: Entity] (Close (bajra $x))})
 ```
 
-**See.** [Spec §4.5, §5.6, §11](spec.md), pin P2.
+References: [Spec §4.5, §5.6, §11](spec.md), pin P2.
 
 ### su'o (PA)
 
@@ -475,7 +466,8 @@ reading and must not receive different source statuses. Individual uptake
 after larger counts remains a separately unprovided source reading. The
 completed BPFK comparison supplies the recursive truth definition, not a later
 ri selection rule or a proof that such a rule is impossible; no group export follows.
-**See.** [Spec §4.10/§5.6/§12/§14](spec.md), P43; [decisions.md](decisions.md).
+
+References: [Spec §4.10/§5.6/§12/§14](spec.md), P43; [decisions.md](decisions.md).
 
 ### su'oi / ro'oi (experimental PA)
 
@@ -495,18 +487,18 @@ P43 forbids new numerical-group export beyond the quantifier's scope.
 Ordinary no uses IndividualNo; inner no uses PluralNo; counted No remains a
 separate helper. P17's former default is retired, while its termset questions
 and the explicit full-plural profile remain separate. The following is a
-**plural/library comparison only**, not a standard bare-PA lowering.
+plural/library comparison only, not a standard bare-PA lowering.
 
 ```lisp
 ; full-plural/library comparison: re prenu cu bevri lo pipno
 (Bind {$w :: Referents Entity}
-      👉(SelectExactly 2 (λ {$x :: Entity} (prenu $x)))👈
+      (SelectExactly 2 (λ {$x :: Entity} (prenu $x)))
   (Bind {$p :: Referents Entity}
         (Refer (λ {$r :: Referents Entity} (pipno $r)))
     (Close (bevri $w $p))))
 ```
 
-**See.** [Spec §4.10, §5.6](spec.md), pins P17/P43.
+References: [Spec §4.10, §5.6](spec.md), pins P17/P43.
 
 ### su'e / za'u / me'i (PA)
 
@@ -526,7 +518,7 @@ departs from CLLv1.1's blanket pa rule; source/history and costs are recorded
 in spec References/rationale P44. It introduces no new later-RI source and
 does not supply missing larger-construction mappings.
 
-**See.** [Spec §4.10, L5.2, §5.6, P44](spec.md).
+References: [Spec §4.10, L5.2, §5.6, P44](spec.md).
 
 ### so'a / so'e / so'i / so'o / so'u (PA)
 
@@ -535,7 +527,7 @@ The vague-magnitude series constrains the count scale by a
 comparisons; their standard individual-count adaptation is the explicit
 L5.28 gap, not an implicit ordinary plural-quantifier rule.
 
-**See.** [Spec §6.4–6.5](spec.md).
+References: [Spec §6.4–6.5](spec.md).
 
 ### ji'i (PA)
 
@@ -547,7 +539,7 @@ The old Number-valued point family is superseded. Typed profile, arithmetic,
 scope/effect and retention realization remain explicit work, with no universal
 precision floor or required full simplifier.
 
-**See.** [Spec §4.10, §6.4, §12](spec.md), pin P37.
+References: [Spec §4.10, §6.4, §12](spec.md), pin P37.
 
 ### du'e / rau / mo'a (PA)
 
@@ -557,14 +549,14 @@ over the count scale—a Vague threshold constrained by a Context purpose.
 ```lisp
 ; Reference-level library comparison, not a completed standard
 ; du'e gerku cu bajra lowering (L5.28).
-(👉TooMany👈 (λ {$x :: Entity} (gerku $x))
+(TooMany (λ {$x :: Entity} (gerku $x))
   (λ {$w :: Referents Entity} (Close (bajra $w))))
 ; TooMany is defined (catalog 2.13): a Context standard and a Vague
 ; admissible threshold, then MoreThan. The library term is complete;
 ; its ordinary individual-count surface adaptation is separately owed.
 ```
 
-**See.** [Spec §6.4](spec.md); [catalog](catalog.md).
+References: [Spec §6.4](spec.md); [catalog](catalog.md).
 
 ### da / de / di (KOhA)
 
@@ -579,7 +571,7 @@ restricted only by `poi` (P20).
 The prenexed spelling `da zo'u da gerku` denotes the same term;
 prenex order is scope order (P26).
 
-**See.** [Spec §4.5, §11](spec.md), pin P20.
+References: [Spec §4.5, §11](spec.md), pin P20.
 
 ### zo'u (ZOhU)
 
@@ -593,13 +585,13 @@ over a sequence, but cross-clausal place-linking is gap-registered.
 
 ```lisp
 ; ro da poi prenu ku'o su'o de zo'u de patfu da — CLL Example 19.8
-👉(∀ (λ {$x :: Entity} (→ (prenu $x)
-     (∃ (λ {$y :: Entity} (Close (patfu $y $x)))))))👈
+(∀ (λ {$x :: Entity} (→ (prenu $x)
+     (∃ (λ {$y :: Entity} (Close (patfu $y $x)))))))
 ; non-importing restricted universal under P2; no prior person reference.
 ; Prenex order = scope order: ro da outscopes su'o de.
 ```
 
-**See.** [Spec §11, §12](spec.md), pin P26; [catalog 1.51](catalog.md).
+References: [Spec §11, §12](spec.md), pin P26; [catalog 1.51](catalog.md).
 
 ### da'a (PA)
 
@@ -609,22 +601,22 @@ predicate (L5.4). It introduces no outward group. SelectAllBut retains its
 separate neutral plural-selection meaning and explicit binding scope; it
 is not the standard bare-da'a lowering.
 
-**See.** [Spec §12, §11](spec.md); [catalog 1.27](catalog.md).
+References: [Spec §12, §11](spec.md); [catalog 1.27](catalog.md).
 
 ### xo'e (experimental PA)
 
 Elliptical number: `Context` at `Number` — P15's analogue, referenced
 per the experimental-cmavo policy.
 
-**See.** [Spec §11](spec.md), pin P15.
+References: [Spec §11](spec.md), pin P15.
 
 ### bu'a / bu'e / bu'i (GOhA), cei + broda-series
 
-Relation variables: **typed quantification at `PredTerm<ρ>`** (P30) —
+Relation variables: typed quantification at `PredTerm<ρ>` (P30) —
 predicate-typed variables, no reified objects; bare `bu'a` carries
 implicit `su'o`, other quantifiers are prenex-only; the row is fixed
 across occurrences; only pure higher-order restrictions type.
-`cei`/`broda`-series: ⊳ **bridi-template** binding — fills, tense,
+`cei`/`broda`-series: ⊳ bridi-template binding — fills, tense,
 and negation stored, later fills override (the `go'i` machinery);
 unassigned brodV are CLL's schematic sample predicates.
 
@@ -634,10 +626,10 @@ unassigned brodV are CLL's schematic sample predicates.
       (Refer (λ {$r :: Referents Entity} (Named "djim" $r)))
   (Bind {$n :: Referents Entity}
         (Refer (λ {$r :: Referents Entity} (Named "djan" $r)))
-    👉(∃ (λ {$F :: PredTerm ρ} (Close ($F $j $n))))👈))
+    (∃ (λ {$F :: PredTerm ρ} (Close ($F $j $n))))))
 ```
 
-**See.** [Spec §11](spec.md), pin P30.
+References: [Spec §11](spec.md), pin P30.
 
 ### ce'e (CEhE), nu'i / nu'u (NUhI/NUhU)
 
@@ -649,10 +641,10 @@ export cases still need their specific rule.
 ```lisp
 ; ci gerku ce'e re prenu cu batci — co-selected witnesses, full
 ; product (P17)
-(Bind 👉{$dogs :: Referents Entity}
+(Bind {$dogs :: Referents Entity}
         (SelectExactly 3 (λ {$x :: Entity} (gerku $x)))
         {$people :: Referents Entity}
-        (SelectExactly 2 (λ {$x :: Entity} (prenu $x)))👈
+        (SelectExactly 2 (λ {$x :: Entity} (prenu $x)))
   (Distrib (λ {$d :: Entity}
      (Distrib (λ {$p :: Entity}
         (Close (batci $d $p))) $people)) $dogs))
@@ -662,7 +654,7 @@ export cases still need their specific rule.
 ; termset-anaphora export policy remains gap-registered.
 ```
 
-**See.** [Spec §4.10, §11](spec.md), pin P17; [samples §5](samples.md).
+References: [Spec §4.10, §11](spec.md), pin P17; [samples §5](samples.md).
 
 ### boi (elidable terminator)
 
@@ -687,9 +679,9 @@ Dependent descriptions obey P41 rather than an unconditional outer-binding rule.
 ; mi .e do nelci lo gerku — one dog referent, both conjuncts see it
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (gerku $r)))
-  👉(CloseClause
+  (CloseClause
       (ClauseAnd (DirectClause (nelci Speaker $d))
-                 (DirectClause (nelci Audience $d))))👈)
+                 (DirectClause (nelci Audience $d)))))
 ```
 
 ```lisp
@@ -697,12 +689,12 @@ Dependent descriptions obey P41 rather than an unconditional outer-binding rule.
 ; once, outside the disjunction
 (Bind {$z :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (zarci $r)))
-  👉(CloseClause
+  (CloseClause
       (ClauseOr (DirectClause (klama Speaker $z))
-                (DirectClause (klama Audience $z))))👈)
+                (DirectClause (klama Audience $z)))))
 ```
 
-**See.** [Spec §4.5, §5.3–5.4, §11](spec.md), pin P18. Compounds
+References: [Spec §4.5, §5.3–5.4, §11](spec.md), pin P18. Compounds
 (`na.a`, `se.u`, `.anai`): §14.
 
 ### ja / je / jo / ju (JA) — tanru-internal and general connectives
@@ -716,10 +708,10 @@ the link applications; distinct-head units connect as whole predications.
 ```lisp
 ; ta blabi ja cmalu zdani — one house; the modification link is
 ; white-flavored or small-flavored
-(Close (👉(TanruLinkConnect ∨ blabi cmalu zdani)👈 That))
+(Close ((TanruLinkConnect ∨ blabi cmalu zdani) That))
 ```
 
-**See.** [Spec §6.2, §12, §11](spec.md), pin P33;
+References: [Spec §6.2, §12, §11](spec.md), pin P33;
 [catalog 2.31](catalog.md).
 
 ### gi'a / gi'e / gi'o / gi'u (GIhA) — bridi-tail connectives
@@ -733,9 +725,9 @@ all tails.
 ; mi nelci lo gerku gi'e bajra — Speaker shared, dog in one tail only
 (Bind {$d :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (gerku $r)))
-  👉(CloseClause
+  (CloseClause
       (ClauseAnd (DirectClause (nelci Speaker $d))
-                 (DirectClause (bajra Speaker))))👈)
+                 (DirectClause (bajra Speaker)))))
 ```
 
 ```lisp
@@ -747,8 +739,8 @@ all tails.
   (Bind {$m :: Referents Entity}
         (Refer (λ {$r :: Referents Entity} (jdini $r)))
     (CloseClause
-      (ClauseAnd (DirectClause (dunda Speaker $b 👉Audience👈))
-                 (DirectClause (lebna Speaker $m 👉Audience👈))))))
+      (ClauseAnd (DirectClause (dunda Speaker $b Audience))
+                 (DirectClause (lebna Speaker $m Audience))))))
 ```
 
 Elided places in *different* tails stay distinct sites (CLL 14.58's
@@ -756,7 +748,7 @@ route argument: two goers' unspecified routes are not one route) —
 contrast the sumti-connective case above, where one shared tail keeps
 one site.
 
-**See.** [Spec §4.5, §5.4, §11](spec.md); CLL 14.9.
+References: [Spec §4.5, §5.4, §11](spec.md); CLL 14.9.
 
 ### ga … gi …, gu'a … gi … (GA/GUhA) — forethought
 
@@ -768,12 +760,12 @@ the same tail-sharing discipline as the afterthought forms.
 ; ga mi gi do citka lo plise — forethought ∨, apple introduced once
 (Bind {$p :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (plise $r)))
-  👉(CloseClause
+  (CloseClause
       (ClauseOr (DirectClause (citka Speaker $p))
-                (DirectClause (citka Audience $p))))👈)
+                (DirectClause (citka Audience $p)))))
 ```
 
-**See.** [Spec §4.5, §5.3, §11](spec.md); §14 for the gek/guhek units.
+References: [Spec §4.5, §5.3, §11](spec.md); §14 for the gek/guhek units.
 
 ### na (NA)
 
@@ -786,7 +778,7 @@ Description persistence under nuclear na is C25.
 (CloseClause (ClauseNot (DirectClause (klama Speaker))))
 ```
 
-**See.** [Spec §4.5, §11](spec.md), pin P18.
+References: [Spec §4.5, §11](spec.md), pin P18.
 
 ### naku
 
@@ -800,7 +792,7 @@ that introduction. It does not move surface descriptions under negation,
 alter C25/P43 accessibility, or erase contextual/projective/call effects.
 `Local` and other connectives keep their existing rules.
 
-**See.** [Spec §3.3, §4.5, §11](spec.md), pins P18/P45; §14 (`na ku` unit).
+References: [Spec §3.3, §4.5, §11](spec.md), pins P18/P45; §14 (`na ku` unit).
 
 ### joi (JOI)
 
@@ -820,12 +812,12 @@ fallbacks are rejected.
 `pe'e joi` termsets, `joi nai`, and the structured performance/targeting plan
 for `.i joi` (#6).
 
-**See.** [Spec §4.9, §11–§14](spec.md); [catalog 1.58, 2.34](catalog.md).
+References: [Spec §4.9, §11–§14](spec.md); [catalog 1.58, 2.34](catalog.md).
 
 ### ju'e (JOI)
 
 Officially “vague non-logical connective: analogous to plain `.i`.” This is a
-**registered gap**, not an invocation of `Vague`: neither CLL nor the dictionary
+registered gap, not an invocation of `Vague`: neither CLL nor the dictionary
 states whether one use has an intended connection, succeeds through any
 admissible connection, merely sequences discourse, or varies by grammatical
 locus. Attested uses make it a real candidate for the gap-level
@@ -833,7 +825,7 @@ locus. Attested uses make it a real candidate for the gap-level
 cross-locus behavior require a separate pin before any baseline term is
 assigned.
 
-**See.** [Spec §14](spec.md); GitHub issue
+References: [Spec §14](spec.md); GitHub issue
 [#21](https://github.com/int19h/smusni/issues/21).
 
 ### jo'u (JOI)
@@ -846,14 +838,14 @@ idempotent; no group object formed.
 (Close (casnu (Combine Speaker Audience)))
 ```
 
-**See.** [Spec §4.8](spec.md); [catalog 1.21](catalog.md).
+References: [Spec §4.8](spec.md); [catalog 1.21](catalog.md).
 
 ### ce / ce'o (JOI)
 
 Set former and list former: the connected terms as a `Set` object /
 `List` object (order carried by `ce'o`).
 
-**See.** [Spec §4.9, §11](spec.md).
+References: [Spec §4.9, §11](spec.md).
 
 ### fa'u (JOI)
 
@@ -866,13 +858,13 @@ Respectively-pairing: `ZipWith` over the paired lists.
   (List Speaker Audience) (List Audience Speaker))
 ```
 
-**See.** [Spec §11](spec.md); [samples](samples.md).
+References: [Spec §11](spec.md); [samples](samples.md).
 
 ### ku'a / jo'e / pi'u (JOI)
 
 Set operators: `∩` / `∪` / `×` on set objects.
 
-**See.** [Spec §4.9, §11](spec.md).
+References: [Spec §4.9, §11](spec.md).
 
 ### bi'i / bi'o / mi'i (BIhI), ga'o / ke'i (GAhO)
 
@@ -882,18 +874,18 @@ and the `SpanRegion` betweenness span at metric domains; `mi'i` →
 `MetricBall`
 (center-radius, Context metric — no endpoint arithmetic); `bi'o nai`
 → `RegionComplement` in a Context universe; the region object fills
-the host place. At tanru and sentence loci BIhI has **no standard
-resolved mapping** (CLL 14.16: no meanings found) — a documented
+the host place. At tanru and sentence loci BIhI has no standard
+resolved mapping (CLL 14.16: no meanings found) — a documented
 no-mapping.
 
 ```lisp
 ; li pa ga'o bi'i ga'o li mu — endpoints explicitly included
-(Interval 1 5 👉ga'o-kind ga'o-kind👈)
+(Interval 1 5 ga'o-kind ga'o-kind)
 ; ga'o-kind/ke'i-kind: the inclusive/exclusive endpoint kinds GAhO
 ; supplies (unmarked BIhI leaves them CLL-ambiguous)
 ```
 
-**See.** [Spec §11, §12](spec.md); [catalog 2.32](catalog.md).
+References: [Spec §11, §12](spec.md); [catalog 2.32](catalog.md).
 
 ## 6. Tense, aspect, modals
 
@@ -911,21 +903,21 @@ anchor); chains (`pu pu`) compose as anchor paths.
        (purci $e Now))))
 ```
 
-**See.** [Spec §11 tense block](spec.md), pin P8/P24.
+References: [Spec §11 tense block](spec.md), pin P8/P24.
 
 ### zi / za / zu (ZI), ze'i / ze'a / ze'u (ZEhA)
 
 Temporal distance and duration magnitudes: `Vague`-parameterized
 regions on the time scale conjoined to the tense facet.
 
-**See.** [Spec §6.4, §11](spec.md).
+References: [Spec §6.4, §11](spec.md).
 
 ### ki (KI)
 
 Tense stickiness: ⊳ text-to-reading — propagates the resolved tense
 by source order; no term constructor (P8).
 
-**See.** [Spec §11](spec.md), pin P8.
+References: [Spec §11](spec.md), pin P8.
 
 ### va / vi / vu (VA), FAhA, ve'i/ve'a/ve'u, vi'i/vi'a/vi'u, mo'i, fe'e
 
@@ -943,36 +935,37 @@ event bears the mover's `muvdu` motion in the `farna` direction);
   (CloseClause
     (λ {$e :: Referents Eventuality}
       (∧ ((DirectClause (cadzu $v)) $e)
-         👉(MotionVector $e $v rightward)👈))))
+         (MotionVector $e $v rightward)))))
 ```
 
-**See.** [Spec §11](spec.md); [catalog 1.50](catalog.md).
+References: [Spec §11](spec.md); [catalog 1.50](catalog.md).
 
 ### roi (ROI)
 
-Occurrence count: `n roi` **replaces** the single-event existential
+Occurrence count: `n roi` replaces the single-event existential
 closure with `RoiClause`: the set of distinct component eventualities
 satisfying the host `ClauseContent` within the reference interval has
 cardinality n, and `StateClause` supplies the event of that count claim
 holding (P35). `roi nai` negates the count before the state lift; subjective
-counts use the threshold GQs; the default interval is a Context anchor with
-Vague extent.
+counts use the threshold GQs as a design direction; their full non-cardinal
+mapping remains incomplete. Recurring-state episodes also need their occasion
+interface. The default interval is a Context anchor with Vague extent.
 
-**See.** [Spec §11](spec.md), pin P35.
+References: [Spec §11](spec.md), pin P35.
 
 ### ta'e / ru'i / di'i / na'o (TAhE)
 
-Habitual/regularity contours: **gap-registered** pending their lexicon
+Habitual/regularity contours: gap-registered pending their lexicon
 rows (P24 discipline applies).
 
-**See.** [Spec §14](spec.md).
+References: [Spec §14](spec.md).
 
 ### pu'o / ca'o / ba'o / co'a / co'u / mo'u / za'o (ZAhO)
 
 Aspectual contours: pinned as boundary-relation shape, contours filled
-lexically — **gap-registered** until the rows land (P24).
+lexically — gap-registered until the rows land (P24).
 
-**See.** [Spec §11, §14](spec.md), pin P24.
+References: [Spec §11, §14](spec.md), pin P24.
 
 ### ca'a / ka'e / nu'o / pu'i (CAhA)
 
@@ -987,7 +980,7 @@ reading-multiple among those four modes with no default (P24, CLL 10.19).
   (CapableClause (DirectClause (limna Speaker))))
 ```
 
-**See.** [Spec §12, §11](spec.md); [catalog 1.50, 2.21](catalog.md).
+References: [Spec §12, §11](spec.md); [catalog 1.50, 2.21](catalog.md).
 
 ### BAI family (bai, gau, ri'a, mu'i, ki'u, ta'i, pi'o, ka'a, …)
 
@@ -1004,19 +997,19 @@ conversions apply to the underlying row (§14 sequences).
        (Close (bapli :1 Audience :2 $e)))))
 ```
 
-**See.** [Spec §11](spec.md); [lexicon interface §10](spec.md).
+References: [Spec §11](spec.md); [lexicon interface §10](spec.md).
 
 ### fi'o … fe'u (FIhO)
 
 Ad-hoc tag: any predicate as tag, with the lexicon's host-event link.
 
-**See.** [Spec §11](spec.md).
+References: [Spec §11](spec.md).
 
 ### cu'e (CUhE)
 
 Tense/modal question: `OpenQ` over the tag domain.
 
-**See.** [Spec §8, §11](spec.md).
+References: [Spec §8, §11](spec.md).
 
 ## 7. Anaphora and pro-sumti
 
@@ -1031,13 +1024,13 @@ speaker⊕others, …).
 (Close (klama (Combine Speaker Audience)))
 ```
 
-**See.** [Spec §5.1](spec.md).
+References: [Spec §5.1](spec.md).
 
 ### ko (KOhA)
 
-Imperative `do` (P27): fills its place with the **active addressee**
+Imperative `do` (P27): fills its place with the active addressee
 (the `doi`-updated `do`, falling back to the utterance's Audience)
-and ⊳ marks the nearest **performed** clause as the command force —
+and ⊳ marks the nearest performed clause as the command force —
 no force extrusion through `Reify` or quotation (`lo nu ko klama`
 constructs content, commands nothing).
 
@@ -1048,7 +1041,7 @@ constructs content, commands nothing).
 ; fills both positions (see the doi entry)
 ```
 
-**See.** [Spec §11, §7.1](spec.md), pin P27.
+References: [Spec §11, §7.1](spec.md), pin P27.
 
 ### ti / ta / tu (KOhA)
 
@@ -1061,7 +1054,7 @@ separately anchored indications and explicit binding/ri eligibility (Q12).
 (Close (gerku This))     ; This ≝ (Deictic Proximal g), g the ctx ground
 ```
 
-**See.** [Spec §5.1, §6.1](spec.md).
+References: [Spec §5.1, §6.1](spec.md).
 
 ### ri / ra / ru (KOhA)
 
@@ -1083,7 +1076,7 @@ are distinct, with one shared reference on success. General source/force and
 multi-source failure laws remain explicit gaps. Open ma slots and later failed cardinality are not static
 scope errors, and no new weak selected-witness reading is silently added.
 
-**See.** [Spec §5.6, §7.1.1, §11, §14](spec.md), pins P16/P43.
+References: [Spec §5.6, §7.1.1, §11, §14](spec.md), pins P16/P43.
 
 ### ko'a … fo'u (KOhA)
 
@@ -1091,18 +1084,18 @@ Assignable pro-sumti: assigned (by `goi`) → the bound variable;
 unassigned → keyed `Context` — one value per key, so `ko'a du ko'a` is
 reflexively true (P16).
 
-**See.** [Spec §5.3, §11](spec.md), pin P16.
+References: [Spec §5.3, §11](spec.md), pin P16.
 
 ### vo'a / vo'e / vo'i / vo'o / vo'u (KOhA)
 
 Bridi-place reflexives: bindings to the current bridi's fills.
 
-**See.** [Spec §11](spec.md), pin P16.
+References: [Spec §11](spec.md), pin P16.
 
 ### go'i family (go'i, go'e, go'a, go'o, nei, no'a) (GOhA)
 
 Bridi anaphora: ⊳ cross-performance `go'i`/`go'e`/`go'a`/`go'o`
-expansion uses the antecedent's **resolved occurrence capture** —
+expansion uses the antecedent's resolved occurrence capture —
 utterance-context projections and closure sites keep their values. Whole
 assertion-content reuse is `RealizedContent u`; template overrides operate on
 the same captured expansion. `nei`/`no'a`, and uses inside unperformed
@@ -1110,7 +1103,7 @@ material, instead reuse the already resolved current/outer template
 environment: no occurrence is required. `go'i` as an answer is `Answer` with
 polar selection.
 
-**See.** [Spec §11, §8](spec.md), pin P16.
+References: [Spec §11, §8](spec.md), pin P16.
 
 ### ra'o (RAhO)
 
@@ -1122,7 +1115,7 @@ tanru links, and other unmarked `Context` sites retain the antecedent capture.
 This follows CLL 7.6's stated pro-assign update rather than treating `ra'o` as
 a wholesale raw-package replay.
 
-**See.** [Spec §5.1, §11](spec.md).
+References: [Spec §5.1, §11](spec.md).
 
 ### di'u / de'u / da'u / di'e / de'e / da'e / dei / do'i (KOhA)
 
@@ -1135,10 +1128,10 @@ uses `RealizedAct<F>`. No universal coercion.
 
 ```lisp
 ; di'u jitfa jufra — dihu ⊳-bound by transcript recency
-(Close ((Tanru jitfa jufra) 👉dihu👈))
+(Close ((Tanru jitfa jufra) dihu))
 ```
 
-**See.** [Spec §11, §7.4](spec.md), pin P28.
+References: [Spec §11, §7.4](spec.md), pin P28.
 
 ### da'o (DAhO)
 
@@ -1148,7 +1141,7 @@ assignment-clearing level (`ni'o` spoken / `ni'o ni'o` written), with
 the drastic level (one more) also resetting tenses and indicators,
 and `no'i` resuming what its `ni'o` dropped (spec §7.2).
 
-**See.** [Spec §11, §7.2](spec.md).
+References: [Spec §11, §7.2](spec.md).
 
 ### ce'u (KOhA)
 
@@ -1163,7 +1156,7 @@ readings arise.
 (λ {$x :: Referents Entity} (Close (tavla $x Speaker)))
 ```
 
-**See.** [Spec §9.2, §11](spec.md), pin P12.
+References: [Spec §9.2, §11](spec.md), pin P12.
 
 ## 8. Abstractors
 
@@ -1179,11 +1172,11 @@ abstraction-relation family instead (next entry; spec §9.2).
 ```lisp
 ; lo nu mi klama cu nandu
 (Bind {$ev :: Referents Eventuality}
-      (Refer 👉(ActualClause (DirectClause (klama Speaker)))👈)
+      (Refer (ActualClause (DirectClause (klama Speaker))))
   (Close (nandu $ev)))
 ```
 
-**See.** [Spec §9, §11](spec.md); [primer ch. 6](primer.md).
+References: [Spec §9, §11](spec.md); [primer ch. 2 and ch. 8](primer.md).
 
 ### du'u (NU)
 
@@ -1191,7 +1184,7 @@ Proposition abstraction: `Reify` — content held still as a first-order
 `Proposition` object, with `Holds` the sole way back (round-trip
 axiom). The inner `ClauseContent` is first closed once with `CloseClause`;
 with explicit `ce'u`, `du'u` instead extracts λ exactly as `ka` (§11's arity
-theorem: n **distinct** extracted variables = n-adic; bare `du'u` is
+theorem: n distinct extracted variables = n-adic; bare `du'u` is
 the 0-adic case). `se du'u`
 = the sentence place of the derived `DuhuRel` (defined only for the
 0-adic case — spec §9.2).
@@ -1200,10 +1193,10 @@ the 0-adic case). `se du'u`
 ; mi djuno lo du'u la .frank. cu bebna
 (Bind {$f :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (Named "frank" $r)))
-  (Close (djuno Speaker 👉(Reify (Close (bebna $f)))👈)))
+  (Close (djuno Speaker (Reify (Close (bebna $f))))))
 ```
 
-**See.** [Spec §9.1–9.2, §11](spec.md); [catalog 1.31, 2.18](catalog.md);
+References: [Spec §9.1–9.2, §11](spec.md); [catalog 1.31, 2.18](catalog.md);
 [rationale §2.10](rationale.md).
 
 ### ka (NU)
@@ -1217,7 +1210,7 @@ referent — the reified-property family is a §9.1 reservation).
 (λ {$x :: Referents Entity} (Close (klama :2 $x)))
 ```
 
-**See.** [Spec §4.4, §9.2, §11](spec.md), pin P12.
+References: [Spec §4.4, §9.2, §11](spec.md), pin P12.
 
 ### ni / jei / li'i / si'o / su'u / pu'u / zu'o (NU)
 
@@ -1225,7 +1218,7 @@ The abstraction-relation family: named relations with labelled rows
 (`NiRel`, `JeiRel`, `LihiRel`, `SihoRel`, `SuhuRel`, `PuhuRel`,
 `ZuhoRel`), parameterized by the abstracted content, with reference
 applying outside — so `lo`/`le`, quantification, and relative clauses
-work on abstractions for free; omitted x2s close into `Context`.
+use the ordinary abstraction-reference rules; omitted x2s close into `Context`.
 `JeiRel` yields an epistemology-relative `TruthValue`. P38 removes the
 unestablished numeric [0,1] crossing from the baseline and records it only as
 a gap proposal.
@@ -1233,11 +1226,11 @@ a gap proposal.
 ```lisp
 ; lo ni mi klama
 (Refer (λ {$a :: Referents Amount}
-  (Close (👉(NiRel (Close (klama :1 Speaker)))👈 $a))))
+  (Close ((NiRel (Close (klama :1 Speaker))) $a))))
 ; the outer Close handles NiRel's unfilled scale place (x2)
 ```
 
-**See.** [Spec §9.2, §11](spec.md).
+References: [Spec §9.2, §11](spec.md).
 
 ### kei (elidable terminator)
 
@@ -1256,14 +1249,14 @@ does not assert that any X-related abstraction will do.
 (Bind {$door :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (vorme $r)))
   (Bind {$a :: Referents Eventuality}
-        👉(Context (λ {$v :: Referents Eventuality}
+        (Context (λ {$v :: Referents Eventuality}
           (∧ (∃ (λ {$p :: Proposition}
                 (CoRef $v (EventOfContent (Holds $p)))))
-              (Close (srana $v $door)))) $door)👈
+              (Close (srana $v $door)))) $door)
     (Close (troci Speaker $a))))
 ```
 
-**See.** [Spec §11](spec.md), pin P14.
+References: [Spec §11](spec.md), pin P14.
 
 ### jai (JAI)
 
@@ -1280,7 +1273,7 @@ between the new x1 and the old abstraction at `fai`.
 (Bind {$eff :: Referents Eventuality}
       (Refer (λ {$e :: Referents Eventuality}
         (Close (klama :1 Audience :Eventuality $e))))
-  (Close (👉(JaiPromote rinka gau-role)👈 :1 Speaker :2 $eff)))
+  (Close ((JaiPromote rinka gau-role) :1 Speaker :2 $eff)))
 ; the unfilled fai place closes contextually; gau-role is the label
 ; gau's tag reduction supplies
 ```
@@ -1298,13 +1291,14 @@ between the new x1 and the old abstraction at `fai`.
 ; Close recovers the old rinka x1 at fai; $role relates Speaker to it.
 ```
 
-**See.** [Spec §11, §12](spec.md); [catalog 2.20](catalog.md).
+References: [Spec §11, §12](spec.md); [catalog 2.20](catalog.md).
 
 ### kau (UI)
 
-Implicit-answer use: `ContextualAnswer` — the answerhood object,
-exhaustivity **absent** (weakest truth conditions; strengthenings
-lexical/pragmatic/explicit; P9).
+Implicit-answer kau supplies ContextualAnswer as the selection in Answer.
+Answer returns Content; an enclosing du'u uses Reify to form a Proposition.
+P9 adds no exhaustivity marker; stronger requirements need lexical, pragmatic,
+or explicit support.
 Explicit-value kau instead uses the supplied value once at its marked locus,
 with a typed answer selection; it must not create an unconstrained contextual
 answer. The general source/effect/query-aware construction remains L10.3/§14 work.
@@ -1312,12 +1306,12 @@ answer. The general source/effect/query-aware construction remains L10.3/§14 wo
 ```lisp
 ; mi djuno lo du'u ma kau klama
 (Close (djuno Speaker
-  (Reify 👉(Answer (OpenQ (λ {$x :: Referents Entity}
+  (Reify (Answer (OpenQ (λ {$x :: Referents Entity}
                             (Close (klama $x))))
-                   ContextualAnswer)👈)))
+                   ContextualAnswer))))
 ```
 
-**See.** [Spec §8.2, §11](spec.md), pin P9.
+References: [Spec §8.2, §11](spec.md), pin P9.
 
 ### me'au / me'ei (experimental)
 
@@ -1330,11 +1324,11 @@ arity 0 the reified-predicate family is a §9.1 reservation (§14 gap).
 ```lisp
 ; me'au .abu gi'a me'au by. — A or B, as claims; abu/by ⊳-bound to
 ; prior lo-du'u referents
-(∨ 👉(Meau0 abu)👈 👉(Meau0 by)👈)
+(∨ (Meau0 abu) (Meau0 by))
 ; Meau0 (spec §9.1): presupposes a sole member and holds it
 ```
 
-**See.** [Spec §9.1, §14, §16.5](spec.md); [rationale §2.10](rationale.md).
+References: [Spec §9.1, §14, §16.5](spec.md); [rationale §2.10](rationale.md).
 
 ## 9. Questions
 
@@ -1348,7 +1342,7 @@ answerhood object.
 (Ask (Polar (Close (klama Audience))))
 ```
 
-**See.** [Spec §8.1](spec.md).
+References: [Spec §8.1](spec.md).
 
 ### ma / mo / xo / ji / cu'e / pei / fi'a
 
@@ -1363,7 +1357,7 @@ utterance-level scope even from embedded positions.
 (Ask (OpenQ (λ {$x :: Referents Entity} (Close (klama $x)))))
 ```
 
-**See.** [Spec §8.1–8.3, §11](spec.md).
+References: [Spec §8.1–8.3, §11](spec.md).
 
 ## 10. Indicators, discourse, vocatives
 
@@ -1390,7 +1384,7 @@ does not modify. A relation about the raw package may still target `$a`.
 A standalone UI with no separate host is itself `(Perform Host (Express …))`,
 not `AttachedDisplay`.
 
-**See.** [Spec §7.6, §11](spec.md), pin P19; [samples §7](samples.md).
+References: [Spec §7.6, §11](spec.md), pin P19; [samples §7](samples.md).
 
 ### Evidentials (za'a, ti'e, ka'u, ba'a, su'a, pe'i, ju'a, se'o, …) (UI)
 
@@ -1403,7 +1397,7 @@ negation never touches the basis.
 (GroundedBy Observation (Assert (Close (cadzu Audience))))
 ```
 
-**See.** [Spec §7.6](spec.md); [catalog 2.24](catalog.md).
+References: [Spec §7.6](spec.md); [catalog 2.24](catalog.md).
 
 ### nai (NAI), cu'i (CAI)
 
@@ -1411,60 +1405,61 @@ Polarity and neutrality on indicators: lexical pairing — `nai` selects
 the paired opposite relation, `cu'i` the scale midpoint (P19; the
 `-nmo` derivation extends to both poles).
 
-**See.** [Spec §7.6, §11](spec.md).
+References: [Spec §7.6, §11](spec.md).
 
 ### cai / sai / ru'e (CAI)
 
 Intensity: regions on the indicator's intensity scale (Intense /
 Strong / Weak).
 
-**See.** [Spec §6.4, §7.6](spec.md).
+References: [Spec §6.4, §7.6](spec.md).
 
 ### dai (UI)
 
 Experiencer shift: the displayed relation's experiencer moves from the
 speaker to the contextually attributed party.
 
-**See.** [Spec §7.6, §11](spec.md).
+References: [Spec §7.6, §11](spec.md).
 
 ### ba'e (BAhE)
 
 Sign-level focus: marks the focused sign token (P23); focus-sensitive
 derivations (`po'o`-class) consume it.
 
-**See.** [Spec §7.6, §11](spec.md), pin P23.
+References: [Spec §7.6, §11](spec.md), pin P23.
 
 ### fu'e / fu'o (FUhE/FUhO)
 
 Indicator scope extension: ⊳ widens the grammatical attachment target
 (P19); no term constructor of its own.
 
-**See.** [Spec §11](spec.md), pin P19.
+References: [Spec §11](spec.md), pin P19.
 
 ### na'i (UI)
 
 Metalinguistic objection: the `NahiObjection` act — express, of a
 bound prior target, defectiveness in a contextually recovered
-dimension; performs nothing, negates nothing.
+dimension. Performing this objection does not perform or negate the
+objected-to content.
 
 ```lisp
 ; do klama .i na'i — the objected act Let-bound (§7.2: no
 ; discourse constants); its performance occurrence Bind-bound
 (Let {$a :: Act Assertion} (Assert (Close (klama Audience)))
   (Bind {$o :: ActOccurrence Assertion} (Perform Host $a)
-    👉(NahiObjection $o)👈))
+    (NahiObjection $o)))
 ```
 
-**See.** [Spec §7.3, §12](spec.md); [catalog 2.23](catalog.md).
+References: [Spec §7.3, §12](spec.md); [catalog 2.23](catalog.md).
 
 ### da'i (UI)
 
-Hypothetical mood: **gap-registered** with a bounded design space —
+Hypothetical mood: gap-registered with a bounded design space —
 a member of the `Shift` operator family over the evaluation world,
 with scope, dynamic binding under the shift, and scenario identity
 the three things a treatment must define (spec §14's entry).
 
-**See.** [Spec §14, §5.1](spec.md).
+References: [Spec §14, §5.1](spec.md).
 
 ### Discursives (ku'i, ji'a, si'a, mi'u, ta'o, va'i, …) (UI)
 
@@ -1490,7 +1485,7 @@ and sharing/effect implementation remain owed.
           (Express (Close (Contrast $o2 $o1)))))))))
 ```
 
-**See.** [Spec §7.2, §11](spec.md); [catalog 2.25](catalog.md).
+References: [Spec §7.2, §11](spec.md); [catalog 2.25](catalog.md).
 
 ### .i (I)
 
@@ -1498,7 +1493,7 @@ Discourse sequencing: `Do` — performance one after the other,
 threading the information state (referents stay accessible per the
 table).
 
-**See.** [Spec §5.4, §7.1, §11](spec.md). Connected forms (`.i je`,
+References: [Spec §5.4, §7.1, §11](spec.md). Connected forms (`.i je`,
 `.i ba bo`): §14.
 
 ### ni'o / no'i (NIhO)
@@ -1506,7 +1501,7 @@ table).
 Topic structure: `NewTopic` / `Resume` — push/pop against the
 suspended-topic stack in the information state.
 
-**See.** [Spec §5.1, §7.2, §11](spec.md).
+References: [Spec §5.1, §7.2, §11](spec.md).
 
 ### COI family (coi, co'o, ki'e, fi'i, je'e, …)
 
@@ -1520,12 +1515,12 @@ grammar attaches it beside a distinct host.
 (COIExpress coi-greeting Audience)
 ```
 
-**See.** [Spec §7.6, §11](spec.md); [catalog 2.26](catalog.md).
+References: [Spec §7.6, §11](spec.md); [catalog 2.26](catalog.md).
 
 ### doi (DOI)
 
 Vocative address: `(Perform AttachedAddress (Vocative X))` beside the host,
-**plus** ⊳
+plus ⊳
 binding of the active `do` (P27) — `do` and `ko` consult the active
 binding before falling back to the utterance's Audience, which is
 never mutated.
@@ -1536,49 +1531,49 @@ A lone vocative with no distinct host uses unary/Host `Perform`, not
 ; doi .djan. ko klama — the vocative act, then the command to John
 (Bind {$j :: Referents Entity}
       (Refer (λ {$r :: Referents Entity} (Named "djan" $r)))
-  (Do 👉(Perform AttachedAddress (Vocative $j))👈
-       (Command 👉$j👈 (Close (klama $j)))))
+  (Do (Perform AttachedAddress (Vocative $j))
+       (Command $j (Close (klama $j)))))
 ; the ⊳ active-do binding makes ko and do resolve to $j (P27)
 ```
 
-**See.** [Spec §11, §7.1](spec.md), pin P27.
+References: [Spec §11, §7.1](spec.md), pin P27.
 
 ### mi'e (COI)
 
 Performative self-naming: the act that makes the speaker bear the
 name.
 
-**See.** [Spec §11](spec.md).
+References: [Spec §11](spec.md).
 
 ### mai / mo'o (MAI)
 
 Enumeration ordinals: `EnumerationOrdinal` display facts at the
-**attachment-selected** constituent (CLL 19.7 numbers sumti inside
+attachment-selected constituent (CLL 19.7 numbers sumti inside
 one bridi), item and section level; sequence key Context-recovered;
 no temporal order implied.
 
-**See.** [Spec §11, §12](spec.md); [catalog 1.54](catalog.md).
+References: [Spec §11, §12](spec.md); [catalog 1.54](catalog.md).
 
 ### sei … se'u (SEI)
 
 Metalinguistic comment: complete attachment/force/accessibility lowering
 remains work; not automatically one Content-valued Supplement.
 
-**See.** [Spec §5.5](spec.md).
+References: [Spec §5.5](spec.md).
 
 ### to … toi (TO)
 
 Parenthetical text: arbitrary discourse is not one Content side. Its force,
 attachment and accessibility need a typed lowering; gap-registered.
 
-**See.** [Spec §5.5](spec.md).
+References: [Spec §5.5](spec.md).
 
 ### soi (SOI)
 
 Reciprocity ("vice versa"): the `Reciprocate` schema via the lexicon
 rows it consumes.
 
-**See.** [Spec §12, §11 ¶2](spec.md); [catalog](catalog.md).
+References: [Spec §12, §11 ¶2](spec.md); [catalog](catalog.md).
 
 ## 11. Quotation, signs, MEX
 
@@ -1597,14 +1592,14 @@ a raw act package, not a performance occurrence, so `InterpretContent` uses
     {(Realizes $u (Assert (Close (klama Speaker))))}))))
 ```
 
-**See.** [Spec §7.4–7.5, §11](spec.md); [catalog 1.38, 2.27](catalog.md).
+References: [Spec §7.4–7.5, §11](spec.md); [catalog 1.38, 2.27](catalog.md).
 
 ### lo'u … le'u (LOhU/LEhU), zoi (ZOI)
 
 Opaque quotation: `OpaqueQuote` — text too broken to parse, or
 non-Lojban text; pure sign material.
 
-**See.** [Spec §7.5, §11](spec.md).
+References: [Spec §7.5, §11](spec.md).
 
 ### zo (ZO)
 
@@ -1615,7 +1610,7 @@ Single-word quotation: `WordSign`.
 (WordSign "klama")
 ```
 
-**See.** [Spec §7.5, §11](spec.md).
+References: [Spec §7.5, §11](spec.md).
 
 ### BY letterals (.abu, by, cy, …), bu (BU)
 
@@ -1623,7 +1618,7 @@ Letteral signs: `LetteralSign`; ⊳ letteral anaphora keys bindings to
 the referent whose name/description the letteral abbreviates. `bu`
 forms a letteral from any word.
 
-**See.** [Spec §7.5, §11](spec.md), pin P16.
+References: [Spec §7.5, §11](spec.md), pin P16.
 
 ### me'o (LI)
 
@@ -1632,7 +1627,7 @@ as a sign); contrast `li`.
 The MathExpression sign constructor remains a gap; the value/sign distinction
 does not itself supply that constructor.
 
-**See.** [Spec §4.9, §7.5, §11](spec.md).
+References: [Spec §4.9, §7.5, §11](spec.md).
 
 ### li (LI)
 
@@ -1644,7 +1639,7 @@ object.
 (CloseClause (StateClause (= (+ 2 2) 4)))
 ```
 
-**See.** [Spec §4.9, §11](spec.md).
+References: [Spec §4.9, §11](spec.md).
 
 ### du (GOhA)
 
@@ -1659,10 +1654,10 @@ an outside binding gives the de re reading.
 ; ko'a du ko'e — unassigned KOhA are keyed retrievals (P16)
 (Bind {$a :: Referents Entity} (Context)
   (Bind {$b :: Referents Entity} (Context)
-    👉(CloseClause (StateClause (CoRef $a $b)))👈))
+    (CloseClause (StateClause (CoRef $a $b)))))
 ```
 
-**See.** [Spec §4.5, §11](spec.md), pin P23.
+References: [Spec §4.5, §11](spec.md), pin P23.
 
 ### VUhU operators (su'i, vu'u, pi'i, fe'i, …), pi, ni'u / ma'u
 
@@ -1670,7 +1665,7 @@ The MEX fragment: operators as typed functions over `Number`;
 `pi` the radix point, `ni'u`/`ma'u` sign. Beyond the library fragment
 (non-decimal bases, arrays, indefinite operators): gap-registered.
 
-**See.** [Spec §4.9, §12, §14](spec.md).
+References: [Spec §4.9, §12, §14](spec.md).
 
 ### Numeral punctuation: fi'u, pi'e, ki'o, ra'e, ce'i (PA)
 
@@ -1680,7 +1675,7 @@ mixed radix with base data (`pi'e`), digit grouping with zero-padding
 `ni'u`/`ma'u` (above) they are the numeral grammar, not term-level
 operators.
 
-**See.** [Spec §11](spec.md).
+References: [Spec §11](spec.md).
 
 ### te'a / gei, xi (VUhU/XI)
 
@@ -1688,14 +1683,14 @@ Exponentiation and order-of-magnitude by metalanguage recursion;
 `xi` subscripting as list indexing (undefined past the end — a
 projective definedness condition).
 
-**See.** [Spec §12](spec.md); [catalog 2.29](catalog.md).
+References: [Spec §12](spec.md); [catalog 2.29](catalog.md).
 
 ### mo'e (MOhE)
 
 The numeric crossing: a sumti's value as an operand
 (`AmountValue`).
 
-**See.** [Spec §9.2, §11](spec.md).
+References: [Spec §9.2, §11](spec.md).
 
 ### me … me'u (ME/MEhU)
 
@@ -1718,7 +1713,7 @@ sumti` through it).
 ; Count the described kings, not actual kings; $P is one inert shared value.
 ```
 
-**See.** [Spec §12, §11](spec.md); [catalog 2.30](catalog.md).
+References: [Spec §12, §11](spec.md); [catalog 2.30](catalog.md).
 
 ### mei / moi / si'e / cu'o / va'e (MOI)
 
@@ -1751,10 +1746,10 @@ moi has the recovered typed-correspondence direction, not forced numeric coercio
              (CompleteGunmaAt $κg $r $base)))
       (Bind {$κmei :: GroupBasis Entity}
              (Context (GroupBasisConstraint mei Entity) deps₂…)
-        (Close (👉(MeiRel $κmei 3)👈 :1 $g))))))
+        (Close ((MeiRel $κmei 3) :1 $g))))))
 ```
 
-**See.** [Spec §12, §11](spec.md), pin P29; [catalog 1.52](catalog.md).
+References: [Spec §12, §11](spec.md), pin P29; [catalog 1.52](catalog.md).
 
 ### na'u / nu'a / ma'o / ni'e / te'u (MEX conversions)
 
@@ -1764,7 +1759,7 @@ functional), operator→relation (`nu'a`, total), operand→operator
 amount-operand crossing (`ni'e`); `te'u` structural; `se` on
 operators permutes.
 
-**See.** [Spec §12, §11](spec.md), pin P36; [catalog 1.53](catalog.md).
+References: [Spec §12, §11](spec.md), pin P36; [catalog 1.53](catalog.md).
 
 ### la'o (ZOI), zo'oi (experimental)
 
@@ -1773,7 +1768,7 @@ Foreign names: the ordinary naming route at the opaque text payload —
 is a fact about the text, not a type); `zo'oi` quotes one non-Lojban
 word as a word-level opaque sign.
 
-**See.** [Spec §12, §11, §7.5](spec.md).
+References: [Spec §12, §11, §7.5](spec.md).
 
 ## 12. Scalar and tanru operators
 
@@ -1789,16 +1784,16 @@ na'e-family contraries, not `¬` (P18 handles `na`).
   (Close ((Scalar OtherThan $d klama) :1 Speaker)))
 ```
 
-**See.** [Spec §6.3, §11](spec.md); [catalog](catalog.md).
+References: [Spec §6.3, §11](spec.md); [catalog](catalog.md).
 
 ### je'a (NAhE), ja'a (NA)
 
 Affirmers: transparent identities at their loci (`na je'a broda` ≡
-`na broda`) that ⊳ **override inherited negation** in pro-bridi
+`na broda`) that ⊳ override inherited negation in pro-bridi
 expansions — `ja'a go'i` over a negative template removes the `na`
 (P31). No fourth `Scalar` kind; emphasis is absence or `ba'e` focus.
 
-**See.** [Spec §11](spec.md), pin P31.
+References: [Spec §11](spec.md), pin P31.
 
 ### bo (tanru), ke / ke'e (KE/KEhE), co (CO)
 
@@ -1808,7 +1803,7 @@ which `Tanru M H` applications form, and contribute no constructor.
 places as `be`-fills (hence invisible to `vo'a`/`go'i`); multiple
 `co` right-group (spec §6.2; CLL 5.8).
 
-**See.** [Spec §6.2, §11](spec.md).
+References: [Spec §6.2, §11](spec.md).
 
 ### be / bei / be'o (BE/BEI/BEhO)
 
@@ -1818,17 +1813,17 @@ categorizer's `be` in `lo su'u … kei be lo fasnu` likewise).
 
 ```lisp
 ; ta blanu zdani be mi — the be-fill rides inside the head unit
-(Close ((Tanru blanu 👉(At zdani 2 Speaker)👈) That))
+(Close ((Tanru blanu (At zdani 2 Speaker)) That))
 ```
 
-**See.** [Spec §6.2, §4.2](spec.md).
+References: [Spec §6.2, §4.2](spec.md).
 
 ### zei (ZEI)
 
 Compound-word formation: morphology/lexicon level — the compound is a
 dictionary relation like any other; no term-level operator.
 
-**See.** [Spec §10](spec.md).
+References: [Spec §10](spec.md).
 
 ## 13. Structure-only cmavo
 
@@ -1843,7 +1838,7 @@ separator); the elidable terminators `ku`, `kei`, `vau`, `be'o`,
 (hesitation — morphology-level noise, no sign). (`zo'u` itself is
 meaningful — see its entry in §4.)
 
-**See.** [Spec §11 ¶1](spec.md).
+References: [Spec §11 ¶1](spec.md).
 
 ## 14. Multi-cmavo units (single-level EBNF sequences)
 
@@ -1868,7 +1863,7 @@ the accessibility row of the base connective.
              (ClauseNot (DirectClause (klama Audience)))))
 ```
 
-**See.** [Spec §4.5, §5.4, §11](spec.md), pin P18.
+References: [Spec §4.5, §5.4, §11](spec.md), pin P18.
 
 ### jek / gihek / joik with na / se / nai
 
@@ -1883,16 +1878,18 @@ alternative nor a contrast-domain/scope law. Its future route is §6.3
 contrast structure over a typed connective family; `nai` creates no hidden
 discrete-choice fallback.
 
-**See.** [Spec §4.5, §4.8, §11](spec.md).
+References: [Spec §4.5, §4.8, §11](spec.md).
 
 ### .i je / .i ja … — I + jek
 
-Sentence-level logical connection as one unit — NOT `.i` followed by
-an independent `je`: **one performance of the connected ClauseContent**
-(P32 — forced by `.i ja`, where no pair of assertions exists), the
-host's single force shared by the connection (content-taking forces;
-an interrogative host queries the connected content), with `∧`'s
-accessibility row shared with `Do`'s (spec §5.4). `JoiClause` now supplies
+Sentence-level logical connection forms one grammatical unit. Under P32,
+there is one performance of the connected ClauseContent, not two independent
+assertions. This is required for a disjunctive assertion: neither disjunct is
+separately asserted. A content-taking host force applies to the connection;
+an interrogative host questions the connected content. Conjunction and `Do`
+both have left-to-right accessibility but remain different operations, with
+distinct truth and assertion-return rules in spec §5.4 and §7.1.1.
+`JoiClause` supplies
 constitution-bearing `.i joi`'s component content and compound event;
 `ConnectionPlan` still owes its one-performance roles, targeting, transcript
 spans, and accessibility law, so the full surface ijoik remains a bounded gap.
@@ -1905,7 +1902,7 @@ spans, and accessibility law, so the full surface ijoik remains a bounded gap.
                (DirectClause (stali Audience)))))
 ```
 
-**See.** [Spec §11, §5.4, §7.1](spec.md), pin P32.
+References: [Spec §11, §5.4, §7.1](spec.md), pin P32.
 
 ### .i ba bo / .i pu bo … — I + stag + BO
 
@@ -1924,7 +1921,7 @@ binders exposed, the tag conjunct inside (P32):
                 (balvi $e2 $e1))))))))))
 ```
 
-**See.** [Spec §11](spec.md), pin P32.
+References: [Spec §11](spec.md), pin P32.
 
 ### ge … gi …, gu'e … gi (gek/guhek units)
 
@@ -1934,7 +1931,7 @@ Forethought connection as one unit — `[se] GA [nai] … gik`
 also admits `joik GI` (forethought non-logical connection) and
 `stag gik` (forethought tag connection) arms.
 
-**See.** [Spec §4.5, §11](spec.md).
+References: [Spec §4.5, §11](spec.md).
 
 ### Connective + BO / KE grouping (ek/jek/joik/gihek + bo, + ke…ke'e)
 
@@ -1946,7 +1943,7 @@ association tightness and contributes no constructor; the semantics
 is the base connective's, with an intervening tag adding its relation
 per the I+stag+BO pattern (P32).
 
-**See.** [Spec §11 ¶1, §4.5](spec.md).
+References: [Spec §11 ¶1, §4.5](spec.md).
 
 ### na ku
 
@@ -1954,21 +1951,21 @@ Surface-position negation as a quantifier-scope unit: `¬` exactly
 where it stands, conditional same-domain flips on movement (P18)—not `na` + a
 description terminator.
 
-**See.** [Spec §4.5, §11](spec.md), pin P18.
+References: [Spec §4.5, §11](spec.md), pin P18.
 
 ### SE + BAI (se bai, te gau, …)
 
 One tag token: the conversion applies to the BAI's underlying row
 before the tag reduction.
 
-**See.** [Spec §11](spec.md).
+References: [Spec §11](spec.md).
 
 ### NAhE + BO (na'e bo)
 
 Scalar variant of a sumti/tag as one unit: `Scalar` over the
 associated relation.
 
-**See.** [Spec §6.3, §11](spec.md).
+References: [Spec §6.3, §11](spec.md).
 
 ### number + ROI (re roi, so'i roi …)
 
@@ -1976,7 +1973,7 @@ Occurrence-count tense as one unit: the counted instantiation-set
 schema (P35)—see roi in §6. Non-cardinal counts and recurring-state episodes
 still need their interfaces.
 
-**See.** [Spec §11](spec.md), pin P35.
+References: [Spec §11](spec.md), pin P35.
 
 ### number + MOI (moi/mei/si'e/cu'o/va'e)
 
@@ -1986,8 +1983,8 @@ single selbri former: the MOI relation families (see the MOI entry in
 
 ## 15. Documented no-mappings and open adjacencies
 
-Every cmavo the baseline treats carries an entry above; what remains
-is exactly what the specification itself marks open:
+The following are selected coverage limits visible from this index.
+Spec §14 and decisions.md provide the full current gap register:
 
 - **Documented no-mapping**: BIhI at tanru and sentence loci — CLL
   14.16 records that no meanings have been found; the mapping states

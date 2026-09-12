@@ -13,6 +13,7 @@
   (row cadzu 4 direct-event "fixture; official row pending #12")
   (row cinri 2 holding-state "fixture; official row pending #12")
   (row citka 3 direct-event "fixture; official row pending #12")
+  (row ctigau 3 direct-event "tijlan ctigau: feeder, fed, food; jbovlaste via jbotci vlacku 2026-09-12; illustrative feeding-event fixture pending full #12 adjudication")
   (row cukta 1 holding-state "fixture unary description-head projection; pending #12")
   (row cusku 4 direct-event "fixture; official row pending #12")
   (row darxi 3 direct-event "fixture; official row pending #12")
