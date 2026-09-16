@@ -188,6 +188,17 @@ record its lasting scope and acceptance criteria in GitHub.
   refusal included — while an acknowledgement does not. Cancel a redundant
   watchdog or wake by its exact wake ID; a subject, a quoted message ID, an
   acknowledgement, and elapsed time all leave it armed.
+- Preserve the request thread with `reply REQUEST_ID`, or
+  `send --in-reply-to REQUEST_ID` when an ordinary send needs different
+  recipients. Inspect the answer rather than treating its arrival as completion:
+  while work remains, issue the next specifically scoped checkpoint under a new
+  idempotency key, or schedule one explicit self-wake. A watched send requires an
+  already-running scheduler for the same canonical state root advertising
+  `reply_watchdog_v1`; default or immediate-only owner notification also requires
+  the acting session's frozen native reference. The optional Herdr plugin is not
+  required. Notification is bounded to one guarded immediate attempt plus, only
+  after proven no-submission, the finite scheduler-owned retry, and
+  `delivered_unsettled` or `submission_unknown` input is never replayed.
 - Attachment assistance is not implemented, integrated, or installed. For a
   manually started or resumed native host, follow
   `docs/HERDR.md#manual-attachment-for-an-existing-native-session` in the
@@ -201,8 +212,8 @@ record its lasting scope and acceptance criteria in GitHub.
   sandbox-bypass, and task-relevant elevation prompts that are access-only, tied
   to an exact target, and needed for already-authorized work; prefer a supported
   persistent trust or bypass mode. That supplies access only and grants no new
-  task, destructive-action, external-service, production, review, merge, or
-  release authority, and it never touches the doctrine below: a semantic
+  task, destructive-action, external-service, production, review, merge,
+  release, or deployment authority, and it never touches the doctrine below: a semantic
   proposal still waits for the human partner. Never guess an answer to a
   substantive user choice, and leave ambiguous, inseparably mixed, unrelated, or
   new decision prompts unanswered, reporting them durably. Do not close a pane
