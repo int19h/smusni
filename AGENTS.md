@@ -154,12 +154,70 @@ record its lasting scope and acceptance criteria in GitHub.
   visible Herdr session. `herdr-collab session join` only registers a
   participant that was started manually; it does not create a Herdr session.
   Capture the returned UUID and set `HERDR_COLLAB_SESSION` for acting commands.
-- Check `herdr-collab inbox --pending` and `herdr-collab status` at natural
-  turn boundaries. `herdr-collab show <message-id>` reads the selected message
-  body; add `--json` to inspect that selected message's full record. Follow any
-  `in_reply_to` or `supersedes` ids explicitly to read related messages. Do not
-  impose polling, a forced model turn, or a standing end-of-turn wait; use the
-  finite foreground `wait` only when the current task actually calls for it.
+- Read the full combined mailbox with unfiltered `herdr-collab inbox` at turn
+  start and turn end, then inspect each relevant message with exact
+  `herdr-collab show <message-id>`; add `--json` to inspect that selected
+  message's full record. Follow any `in_reply_to` or `supersedes` ids explicitly
+  to read related messages. `inbox --pending` and `status` are additional views
+  of unresolved acknowledgement obligations, not unread-mail counts, so a zero
+  pending count does not mean that no reply or FYI mail arrived. That matters
+  here because `send` is acknowledgement-required by default while `reply` is
+  not: a peer's objection, finding, or completion handoff sent as an ordinary
+  reply is normally absent from both pending views. When a transient
+  notification's structured identity envelope carries `commands.show`, use that
+  exact command for its message ID. Do not impose polling, a forced model turn,
+  or a standing end-of-turn wait; use the finite foreground `wait` only when the
+  current task actually calls for it.
+- Send a critical reply or handoff as `reply <message-id> --require-ack` with
+  its notification left at the default, so the recipient must notice it and
+  record a disposition. `--no-retry-nudge` keeps the one immediate native
+  attempt and drops the scheduler retry; `--no-nudge` is the complete opt-out
+  with neither, and pairing it with `--no-ack` leaves durable mail that
+  pending-only checks omit and that never wakes anyone. Spell acting selectors
+  after the mail subcommand, as in `inbox --session UUID`; global
+  acting-selector placement is not installed.
+- Reaching another Herdr Collab project does not require joining it. A sender
+  stays registered in `smusni` and addresses the foreign participant as
+  `handle@project` or `UUID@project`, or gives an unqualified target with
+  `--target-project PROJECT`, which is the equivalent form and must not be
+  combined with an already qualified target. Only the unqualified audience is
+  project-local: a bare `@group` or `@all` always resolves inside `smusni`. For
+  work that expects a response, send one exact `UUID@PROJECT` request with a
+  generous `--reply-within` or `--reply-by` and a stable `--idempotency-key`;
+  any valid direct answer satisfies that watchdog — a question, blocker, or
+  refusal included — while an acknowledgement does not. Cancel a redundant
+  watchdog or wake by its exact wake ID; a subject, a quoted message ID, an
+  acknowledgement, and elapsed time all leave it armed.
+- Preserve the request thread with `reply REQUEST_ID`, or
+  `send --in-reply-to REQUEST_ID` when an ordinary send needs different
+  recipients. Inspect the answer rather than treating its arrival as completion:
+  while work remains, issue the next specifically scoped checkpoint under a new
+  idempotency key, or schedule one explicit self-wake. A watched send requires an
+  already-running scheduler for the same canonical state root advertising
+  `reply_watchdog_v1`; default or immediate-only owner notification also requires
+  the acting session's frozen native reference. The optional Herdr plugin is not
+  required. Notification is bounded to one guarded immediate attempt plus, only
+  after proven no-submission, the finite scheduler-owned retry, and
+  `delivered_unsettled` or `submission_unknown` input is never replayed.
+- Attachment assistance is not implemented, integrated, or installed. For a
+  manually started or resumed native host, follow
+  `docs/HERDR.md#manual-attachment-for-an-existing-native-session` in the
+  registered `herdr-collab` root, located with
+  `herdr-collab --json project show herdr-collab`, and preserve
+  report -> verify -> adopt -> verify. Select an intended native model in the
+  host's own arguments after `--`; `agent spawn --model` records Collab metadata
+  and does not itself select a host model, so verify the host-selected model and
+  effort before relying on it.
+- On the human-designated development VM, approve permission, workspace-trust,
+  sandbox-bypass, and task-relevant elevation prompts that are access-only, tied
+  to an exact target, and needed for already-authorized work; prefer a supported
+  persistent trust or bypass mode. That supplies access only and grants no new
+  task, destructive-action, external-service, production, review, merge,
+  release, or deployment authority, and it never touches the doctrine below: a semantic
+  proposal still waits for the human partner. Never guess an answer to a
+  substantive user choice, and leave ambiguous, inseparably mixed, unrelated, or
+  new decision prompts unanswered, reporting them durably. Do not close a pane
+  the current session did not create.
 - Publish task assignments, findings, questions, decisions, and handoffs with
   durable `send` or `reply`. A direct `agent prompt` is only a transient wakeup
   or alert and is never the sole copy of load-bearing content. Acknowledge with
@@ -185,9 +243,16 @@ record its lasting scope and acceptance criteria in GitHub.
 
 **Resumable pauses.** Before an anticipated long pause, first persist every
 load-bearing decision, exact head, important path, unresolved finding with its
-location, and open question in durable mail or a handoff file. The coordinating
-session may then request native compaction while the context is still likely
-cached, explicitly naming what the lossy summary must retain. Do not compact
+location, and open question in durable mail or a handoff file. Once a completed persistent role
+has published that handoff, the coordinating session may request native
+compaction, explicitly naming what the lossy summary must retain; do so
+immediately when the next meaningful turn is forecast more than one hour away or
+is unscheduled. The hour is a planning threshold, not a claim about any host's
+prompt cache, so do not wait it out when the forecast is already known, and
+retire the identity instead when it will not be reused. Framed Collab prompts
+are ordinary chat: `/model`, `/compact`, and similar native commands use the
+guarded raw Herdr path in `docs/HERDR.md#native-commands-and-chat-prompts`, and
+the requested host effect must be verified separately. Do not compact
 automatically or on a timer, and preserve full loaded context when that detail
 is the session's main value, such as a reviewer comparing exact heads or an
 implementer mid-change. After requested compaction, run
