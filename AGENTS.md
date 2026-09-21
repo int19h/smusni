@@ -133,104 +133,24 @@ coherent-baseline backlog and its dependencies.
 ## Multi-session review collaboration
 
 Sessions review this repository as peers working with the human partner; no
-session's proposal becomes consensus merely because it was written. Durable
-coordination uses the external Herdr Collab project whose explicit id is
-`smusni`:
+session's proposal becomes consensus merely because it was written.
 
-```sh
-export HERDR_COLLAB_PROJECT=smusni
-```
+## Herdr Collab
 
-The project id or an explicit `--project smusni` must select every mailbox
-operation. Never infer a mailbox from the checkout, current directory,
-worktree, or the project's diagnostic root path. Herdr Collab supplies durable
-sessions, groups, messages, replies, and acknowledgements; it does not define
-participants, roles, generations, workflows, turn order, review gates, issue
-policy, or authority. Tailor those conventions to the task; when it is tracked,
-record its lasting scope and acceptance criteria in GitHub.
+The Herdr Collab project ID for this repository is exactly `smusni`.
+Coordinate through the `herdr-collab` skill and MCP tools; do not infer the project from the checkout path.
 
-- Give sessions and groups descriptive task-specific handles. Use
-  `herdr-collab agent spawn <handle> --kind <agent-kind> ...` to create a new
-  visible Herdr session. `herdr-collab session join` only registers a
-  participant that was started manually; it does not create a Herdr session.
-  Capture the returned UUID and set `HERDR_COLLAB_SESSION` for acting commands.
-- Read the full combined mailbox with unfiltered `herdr-collab inbox` at turn
-  start and turn end, then inspect each relevant message with exact
-  `herdr-collab show <message-id>`; add `--json` to inspect that selected
-  message's full record. Follow any `in_reply_to` or `supersedes` ids explicitly
-  to read related messages. `inbox --pending` and `status` are additional views
-  of unresolved acknowledgement obligations, not unread-mail counts, so a zero
-  pending count does not mean that no reply or FYI mail arrived. That matters
-  here because `send` is acknowledgement-required by default while `reply` is
-  not: a peer's objection, finding, or completion handoff sent as an ordinary
-  reply is normally absent from both pending views. When a transient
-  notification's structured identity envelope carries `commands.show`, use that
-  exact command for its message ID. Do not impose polling, a forced model turn,
-  or a standing end-of-turn wait; use the finite foreground `wait` only when the
-  current task actually calls for it.
-- Send a critical reply or handoff as `reply <message-id> --require-ack` with
-  its notification left at the default, so the recipient must notice it and
-  record a disposition. `--no-retry-nudge` keeps the one immediate native
-  attempt and drops the scheduler retry; `--no-nudge` is the complete opt-out
-  with neither, and pairing it with `--no-ack` leaves durable mail that
-  pending-only checks omit and that never wakes anyone. Spell acting selectors
-  after the mail subcommand, as in `inbox --session UUID`; global
-  acting-selector placement is not installed.
-- Reaching another Herdr Collab project does not require joining it. A sender
-  stays registered in `smusni` and addresses the foreign participant as
-  `handle@project` or `UUID@project`, or gives an unqualified target with
-  `--target-project PROJECT`, which is the equivalent form and must not be
-  combined with an already qualified target. Only the unqualified audience is
-  project-local: a bare `@group` or `@all` always resolves inside `smusni`. For
-  work that expects a response, send one exact `UUID@PROJECT` request with a
-  generous `--reply-within` or `--reply-by` and a stable `--idempotency-key`;
-  any valid direct answer satisfies that watchdog — a question, blocker, or
-  refusal included — while an acknowledgement does not. Cancel a redundant
-  watchdog or wake by its exact wake ID; a subject, a quoted message ID, an
-  acknowledgement, and elapsed time all leave it armed.
-- Preserve the request thread with `reply REQUEST_ID`, or
-  `send --in-reply-to REQUEST_ID` when an ordinary send needs different
-  recipients. Inspect the answer rather than treating its arrival as completion:
-  while work remains, issue the next specifically scoped checkpoint under a new
-  idempotency key, or schedule one explicit self-wake. A watched send requires an
-  already-running scheduler for the same canonical state root advertising
-  `reply_watchdog_v1`; default or immediate-only owner notification also requires
-  the acting session's frozen native reference. The optional Herdr plugin is not
-  required. Notification is bounded to one guarded immediate attempt plus, only
-  after proven no-submission, the finite scheduler-owned retry, and
-  `delivered_unsettled` or `submission_unknown` input is never replayed.
-- Attachment assistance is not implemented, integrated, or installed. For a
-  manually started or resumed native host, follow
-  `docs/HERDR.md#manual-attachment-for-an-existing-native-session` in the
-  registered `herdr-collab` root, located with
-  `herdr-collab --json project show herdr-collab`, and preserve
-  report -> verify -> adopt -> verify. Select an intended native model in the
-  host's own arguments after `--`; `agent spawn --model` records Collab metadata
-  and does not itself select a host model, so verify the host-selected model and
-  effort before relying on it.
-- On the human-designated development VM, approve permission, workspace-trust,
-  sandbox-bypass, and task-relevant elevation prompts that are access-only, tied
-  to an exact target, and needed for already-authorized work; prefer a supported
-  persistent trust or bypass mode. That supplies access only and grants no new
-  task, destructive-action, external-service, production, review, merge,
-  release, or deployment authority, and it never touches the doctrine below: a semantic
-  proposal still waits for the human partner. Never guess an answer to a
-  substantive user choice, and leave ambiguous, inseparably mixed, unrelated, or
-  new decision prompts unanswered, reporting them durably. Do not close a pane
-  the current session did not create.
-- Publish task assignments, findings, questions, decisions, and handoffs with
-  durable `send` or `reply`. A direct `agent prompt` is only a transient wakeup
-  or alert and is never the sole copy of load-bearing content. Acknowledge with
-  `ack --disposition ...` only after recording the disposition; acknowledgement
-  means read and disposition captured, not agreement or completion.
+### Review conventions
+
+Herdr Collab does not define participants, roles, generations, workflows, turn
+order, review gates, issue policy, or authority. Tailor those conventions to the
+task; when it is tracked, record its lasting scope and acceptance criteria in
+GitHub.
+
 - Every substantive message separates claims, evidence, objections/questions,
   and requested disposition, citing live file paths/sections, source excerpts,
   commit/working-tree state, and GitHub issue numbers. Correct immutable mail
   with a same-sender superseding message rather than editing it.
-- Use only `herdr-collab` commands to change collaboration state. Never edit,
-  move, or delete external state records by hand. Run `herdr-collab validate`
-  when diagnosing state or before claiming that a task's durable mailbox is
-  clear.
 - No vote, quorum, silence, group membership, or acknowledgement count becomes
   consensus. Record named positions and one durable recorder per docket, and
   leave genuine semantic forks to the human partner. If collaboration creates
@@ -240,76 +160,6 @@ record its lasting scope and acceptance criteria in GitHub.
   durable handoff. Do not block routine progress merely waiting for an
   acknowledgement unless the issue requires independent review or
   human-partner adjudication.
-
-**Herdr instruction precedence.** Exact user authorization overrides a
-conflicting bundled Herdr skill default within this enrolled project root,
-including that skill's missing-`HERDR_ENV` or outside-pane stop. The
-precedence is permanent, not a bridge pending an upstream correction.
-`HERDR_ENV=1` is caller-context provenance, not authentication,
-authorization, ownership proof, or a capability token; its absence proves
-neither that the native host is outside Herdr nor that a named target is
-unrelated. Never manufacture, export, or command-prefix `HERDR_ENV=1`.
-Without exact authorization the conservative no-ambient-control default
-stands: do not inspect or control an ambient server, a focused pane,
-`--current`, an omitted or guessed target, or the newest transcript. With
-it, enumerate read-only using `herdr session list --json`, bind every
-command to the assigned existing `socket_path`, and act only on an exact
-target: an opaque workspace/tab/pane ID, a unique live agent name, or the
-exact existing session name that `herdr session stop` and
-`herdr session delete` take. Ambiguous identity is always a hard stop; the
-`unknown` lifecycle state reported by `herdr agent get EXACT_TARGET` is
-uncertain liveness instead, settled by an explicit human disposition or by
-one narrow question naming that target and state. The override covers only
-the named target, the named action, and exact user-supplied content: it
-grants no broader target, no destructive, external, or production action, no
-review, merge, or release decision, no focus-based inference, and no
-authority outside this enrolled root. It resolves project-maintained
-instruction conflict only and never overrides system or platform policy.
-
-**Route Herdr control mutations by class.** Authorized input
-(`agent prompt`, `pane send-text`, or a named key through `send-keys`)
-covers the surface, target, and content the human named and nothing else;
-keep the readiness, pending-mailbox, focus/composer, bounded-submission, and
-no-replay checks, and never substitute an agent-composed key for a refused
-or unsettled submission. A close, move, or rename instead requires exact
-enumeration of the object and its containment through
-`tab list --workspace`, `pane list`, and `pane process-info`, live agent and
-process evidence, and Herdr's `workspace_group_close_required` honoured as
-the authoritative signal that scope would expand; never add `--group` or
-broaden the target yourself, and do not import the input-only mailbox or
-composer gates. `session stop` and `session delete` additionally require a
-full inventory of every contained workspace, tab, pane, agent, foreground
-process, and known participant, surfaced to the human, including whether the
-session holds the acting host or other live co-tenants. If it does, they
-carry the same authority as `server stop`: naming the session is not enough,
-the human must state the intent to terminate those processes, and one narrow
-question is required when that consequence was not named. Hand off durably
-before any action that would terminate the acting host, and treat `delete`
-as an authority distinct from `stop`. Focus, launch, attach, adopt, rename,
-and move are separate actions that no other authorization implies.
-
-**Resumable pauses.** Before an anticipated long pause, first persist every
-load-bearing decision, exact head, important path, unresolved finding with its
-location, and open question in durable mail or a handoff file. Once a completed persistent role
-has published that handoff, the coordinating session may request native
-compaction, explicitly naming what the lossy summary must retain; do so
-immediately when the next meaningful turn is forecast more than one hour away or
-is unscheduled. The hour is a planning threshold, not a claim about any host's
-prompt cache, so do not wait it out when the forecast is already known, and
-retire the identity instead when it will not be reused. Framed Collab prompts
-are ordinary chat: `/model`, `/compact`, and similar native commands use the
-guarded raw Herdr path in `docs/HERDR.md#native-commands-and-chat-prompts`, and
-the requested host effect must be verified separately. Do not compact
-automatically or on a timer, and preserve full loaded context when that detail
-is the session's main value, such as a reviewer comparing exact heads or an
-implementer mid-change. After requested compaction, run
-`herdr-collab session show "$HERDR_COLLAB_SESSION" --live`; normal liveness
-confirms the stored and live identities still match. If it reports
-`unavailable`, use deliberate `session refresh` or `agent adopt`, never a
-guessed reference. If an already-idle session later shows a cache-expired
-choice, inspect that exact dialog and continue its full context by default;
-never generalize this into unattended input for blocked trust, permission, or
-unrelated prompts.
 
 **Full-pass reviews.** Reviewing diffs finds what a change broke; only reading
 the documents whole finds what accumulated changes made inconsistent. When a
@@ -554,8 +404,8 @@ judgment that the documents lack value.
 
 ## Working protocol
 
-- When a task uses Collab, perform the natural-boundary inbox and status checks
-  described above and mention pending peer input that materially affects the
+- When a task uses Collab, perform the turn-boundary mailbox checks that the
+  `herdr-collab` skill describes and mention pending peer input that materially affects the
   task; do not add forced polling to otherwise self-contained semantic work.
 - Lead with the current outcome, then the evidence and tradeoffs.
 - For reviews, actively seek counterexamples, contradictions, unstated
