@@ -1,5 +1,9 @@
 # Issue 97 Lean prototype
 
+This file records the initial comparison at `13a8dcf`.
+Its counts and size measurements refer to that checkpoint.
+The [bounded structural follow-up](ISSUE97_FOLLOWUP.md) records the later proofs and current evidence.
+
 This prototype does not demonstrate a material proof benefit from the explicit defining language over the strongest opaque model account.
 It gives the explicit alternative a concrete syntax and a working reviewed-export path.
 The panel must assess that evidence before any conditional full implementation starts.
@@ -105,6 +109,8 @@ The command builds `Smusni97` and audits every declaration from its seven module
 It rejects project axioms, unsafe declarations, and transitive axioms outside `propext`, `Classical.choice`, and `Quot.sound`.
 The result is PASS with 98 authored theorems, 1,038 audited declarations, and 470 theorem declarations including generated helpers.
 Five negative compilation controls pass: state-sort mismatch, a Dead-arm value, O1 scrub, O2 scrub, and opaque scrub.
+These controls reject the supplied malformed files.
+The kernel proofs of `¬LocalLaw` and `¬HostLaw`, not diagnostic matching, establish semantic scrub rejection.
 There are no new dependencies or changes to existing default Lake targets.
 
 Both candidates still need a bridge from the existing pilot AST and its effect judgments.

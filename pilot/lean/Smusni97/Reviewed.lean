@@ -1,4 +1,5 @@
 import Smusni97.Explicit
+import Smusni97.ProjectionAnalysis
 
 /-! O2: extensible named definitions with actual semantic certificates.
 Unlike Explicit.LocalExport, admission here is not equality to a fixed body.
@@ -48,19 +49,60 @@ theorem prune_idempotent (mask : Mask) (s : State) : prune mask (prune mask s) =
   funext n
   simp
 
+theorem twice_analyzed (e : Env) : twiceState.eval e = prune (support e.entry) e.reached := by
+  have h := analyze_sound twiceState
+    (fun e n => support e.entry n && (support e.entry n && true)) rfl e
+  simpa only [Bool.and_true, Bool.and_self] using h
+
 theorem twice_correct : LocalLaw (fun entry z =>
     observeOut (twiceDef : RunDef A A) entry (fun _ => false) 0 z) := by
   intro entry z
   cases z with
   | live s a =>
-    change Outcome.live (prune (support entry) (prune (support entry) s)) a = _
-    rw [prune_idempotent]; rfl
+    change Outcome.live (twiceState.eval ⟨entry, s, _, 0, .t⟩) a = _
+    rw [twice_analyzed]; rfl
   | dead s =>
-    change Outcome.dead (prune (support entry) (prune (support entry) s)) = _
-    rw [prune_idempotent]; rfl
+    change Outcome.dead (twiceState.eval ⟨entry, s, _, 0, .f⟩) = _
+    rw [twice_analyzed]; rfl
   | undef s =>
-    change Outcome.undef (prune (support entry) (prune (support entry) s)) = _
-    rw [prune_idempotent]; rfl
+    change Outcome.undef (twiceState.eval ⟨entry, s, _, 0, .u⟩) = _
+    rw [twice_analyzed]; rfl
+
+def hostMask : Expr .mask := .union (.support .entry) .eligible
+def hostTwiceInner : Expr .state := .prune hostMask (.prune hostMask .reached)
+def hostTwiceState : Expr .state := .record .payload (.suffix .entry .reached) hostTwiceInner
+def hostTwiceDef : RunDef Unit Nat :=
+  ⟨.live hostTwiceState .occurrence, .live hostTwiceState .occurrence, .live hostTwiceState .occurrence⟩
+
+theorem host_twice_analyzed (e : Env) :
+    hostTwiceInner.eval e = prune (unionMask (support e.entry) e.eligible) e.reached := by
+  have h := analyze_sound hostTwiceInner
+    (fun e n => unionMask (support e.entry) e.eligible n &&
+      (unionMask (support e.entry) e.eligible n && true)) rfl e
+  simpa only [Bool.and_true, Bool.and_self] using h
+
+theorem host_twice_not_canonical : hostTwiceDef ≠ hostDef := by
+  intro h
+  have same := congrArg (fun d : RunDef Unit Nat => d.dead) h
+  simp [hostTwiceDef, hostTwiceState, hostTwiceInner, hostMask, hostDef, hostState] at same
+
+theorem host_twice_correct : HostLaw (observeOut hostTwiceDef) := by
+  intro entry eligible h use
+  cases use.terminal with
+  | live s a =>
+    change Outcome.live (record h .t (suffixStatus entry s)
+      (hostTwiceInner.eval ⟨entry, s, eligible, h, .t⟩)) h = _
+    rw [host_twice_analyzed]; rfl
+  | dead s =>
+    change Outcome.live (record h .f (suffixStatus entry s)
+      (hostTwiceInner.eval ⟨entry, s, eligible, h, .f⟩)) h = _
+    rw [host_twice_analyzed]; rfl
+  | undef s =>
+    change Outcome.live (record h .u (suffixStatus entry s)
+      (hostTwiceInner.eval ⟨entry, s, eligible, h, .u⟩)) h = _
+    rw [host_twice_analyzed]; rfl
+
+def alternateHost : HostExport := ⟨"twice-host", hostTwiceDef, host_twice_correct⟩
 
 def bodyExport : LocalExport A := { canonicalLocal with name := "quantifier-body" }
 def alternateExport : LocalExport A := ⟨"equivalent-local", twiceDef, twice_correct⟩

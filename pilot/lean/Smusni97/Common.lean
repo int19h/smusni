@@ -82,7 +82,9 @@ theorem prune_inter (a b : Mask) (s : State) :
   cases ha : a n <;> cases hb : b n <;> simp [ha, hb]
 
 /-- This input contract does not assume a finalizer result. It also excludes
-nested Host recording in the bounded payload. Fresh occurrence is separate. -/
+nested Host recording in the bounded payload. Fresh occurrence is separate.
+It does not constrain obligations. Exact obligation retention is a derived
+invariant of the current reference grammar, not a general Frame guarantee. -/
 structure Frame (entry reached : State) : Prop where
   incoming : ∀ n v, entry.slots n = some v → reached.slots n = some v
   sidePrefix : ∃ suffix, reached.sides = entry.sides ++ suffix
