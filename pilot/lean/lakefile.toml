@@ -45,3 +45,9 @@ name = "SmusniF03A2"
 
 [[lean_lib]]
 name = "F03A2AuditSupport"
+
+[[lean_lib]]
+name = "SmusniPositive"
+
+[[lean_lib]]
+name = "PositiveAuditSupport"
