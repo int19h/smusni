@@ -77,6 +77,10 @@ The general kernel theorem also requires the exact state-map kernel `Kernel fs S
 The run component uses the identity map on Unit, so it retains the actual F02 Content result type.
 The event component maps the supplied event at the same external and event coordinates.
 
+F02 Content remains Unit-valued here.
+Transport for computations returning other types uses A1's supplied result relation and quotient map.
+This qualification requires no extension of Content or A2's API.
+
 `qContent` specializes this construction to A1's actual tagged `qState` and its proved coverage.
 The state relation is A1 `StateRel (ValueRel R) (AnchorRel R)` for arbitrary `R : Setoid Rep`.
 Name, Ground, GroundAnchor, Handle, profile, world, and source-parent interfaces remain fixed.
@@ -194,6 +198,17 @@ They also exercise annotation independence, distinct classes, a defined event, t
 These are kernel proofs, not a fixture-count claim about semantic coverage.
 The arbitrary-R mechanism remains independent of all diagnostic data.
 
+`RegressionControls.lean` retains Astra's two compiled probe groups and the distinct related-context control requested by Fable.
+Astra reconciled these requests in Collab message `msg_20261013T055400801682Z_6d32e6a6ddd44aa7a266849caad0f44d`.
+The anchored group also covers Grok's Undef/present-event boundary, so the module adds no duplicate of that case.
+These are diagnostic contract instances, not Lojban models.
+
+| Regression group | Public path and boundary |
+| --- | --- |
+| `AstraPR103.annotations_in_slot_and_anchor`, `anchored_side_keeps_false`, `undefined_run_defined_event` | Arbitrary annotations identify through a populated slot and side anchor. The false side bit remains, while Undef and a present event coexist. |
+| `AstraPR103.coordinates_remain_separate` | Pullback, saved capture, and joint descent yield the event class of exactly `(source + 5, saved, beta)`. |
+| `RelatedCapturePR103.full_context_parity`, `related_saved_captures_equal`, `raw_saved_events_differ` | The full all-coordinate context contract precedes the public `captured_quotient_equal` instance. Saved contexts 1 and 3 give equal descended captures but different raw events. |
+
 ## Validation and limits
 
 From the repository root, run the isolated command:
@@ -202,7 +217,7 @@ From the repository root, run the isolated command:
 bash pilot/lean/check-f03a2.sh
 ```
 
-The build and audit passed for 148 declarations, including 85 theorem declarations and generated lemmas.
+The build and audit passed for 163 declarations, including 95 theorem declarations and generated lemmas.
 The audit covers declarations by defining module, including private and generated declarations.
 It accepts only `propext`, `Classical.choice`, and `Quot.sound` as transitive axioms.
 It rejects own axioms, unsafe declarations, and imports from the production pilot, F03-B, or A1 diagnostic controls.
