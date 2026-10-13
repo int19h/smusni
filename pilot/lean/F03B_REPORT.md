@@ -29,6 +29,11 @@ It does not claim dependent source transport.
 Every run yields an actual F02 finite nonempty family of state-bearing outcomes.
 No finite enumeration of these domains is required.
 
+Within each supplied interpretation, `reifyValue` fixes one representative per closed term across inputs.
+Its represented run and event observations can still depend on those inputs.
+This bounds the candidate interface, not normative input independence.
+It does not cover every input-indexed reification interface.
+
 `RunLaws` supplies generic Context, strict Bind, substitution, and round-trip contracts.
 `run_L_eq_N` uses exact Context success and F02 Bind to derive the continuation result.
 It then uses body substitution to reach `N`.
@@ -152,7 +157,21 @@ Two Undef outcomes at different Boolean states supply a homogeneous scalar witho
 A second control satisfies the local scalar-negation implication but violates outcome flipping because its reached states differ.
 The event controls reject both mismatched definedness and distinct present events despite equal scalar status.
 Strict Bind controls retain Dead and Undef without selecting a successful continuation.
+`strict_live_returns` uses independent entry and reached states and an arbitrary continuation to test F02 state threading.
 The proofs never aggregate a family or choose a preferred branch.
+
+`RegressionControls.lean` retains Astra's two diagnostic probes and Fable's consistent-premises probe in separate namespaces.
+These instantiate the supplied contracts through the public theorem interfaces.
+They are diagnostic contract instances, not Lojban models.
+The reviewer source is recorded in Astra's confirmation, Collab message `msg_20261013T034511862039Z_831532e1616545e1bcbbee249cf1f453`.
+The strict-Live control follows Grok's request and Astra's independent-state refinement in that same message.
+
+| Diagnostic instance | Public interface exercised | Boundary retained |
+| --- | --- | --- |
+| `AstraPR101.mixed_candidate`, `mixed_set_result`, `mixed_call_result` | `RunLaws`, `ScalarNegation`, `conditional_set_fixed`, `call_cycle` | Successful Context retrieval and ReadOnlyUse do not imply a scalar observation. |
+| `AstraPR101.absent_event_laws`, `absent_event_result`, `no_holding_value` | `EventLaws`, `event_L_eq_N` | Absent events satisfy the contracts with nonidentity coordinate maps, without a supplied holding value. |
+| `FablePR101.scalar_premises_consistent`, `scalar_result`, `set_result` | `conditional_scalar`, `conditional_set_fixed` | All premises hold together with a real scalar antecedent. Undef means undefined, not ordinary false. |
+| `strict_live_returns` | F02 `Run.bind`, `Run.extend` | The continuation receives the reached state, not a restored entry state. |
 
 F03-A quotient maps, tagged anchors, function subcarriers, and transport proofs remain excluded.
 The simultaneous proposition/state model, constructor closure, both inverse laws, and realization remain open.
@@ -181,7 +200,7 @@ It runs no unrelated production suite.
 The actual pilot typing imports retain their existing unused-variable warnings.
 
 The tracked controls and proofs compile without placeholders.
-The isolated audit passed for 305 declarations, including 149 theorem declarations and generated lemmas.
+The isolated audit passed for 334 declarations, including 173 theorem declarations and generated lemmas.
 Its safe fixture passed, and both unsafe fixtures failed for the expected reason.
 `python3 tools/check-docs.py .` and `git diff --check` also passed.
 

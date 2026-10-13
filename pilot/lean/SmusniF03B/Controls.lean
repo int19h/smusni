@@ -103,6 +103,11 @@ theorem scalar_not_event_identity :
 theorem no_missing_holding (h : Event) : ¬PartialEq coRef none (some h) := by
   simp [PartialEq]
 
+/-- Strict Bind enters the arbitrary continuation at the returned state. -/
+theorem strict_live_returns (entry reached : S) (a : A) (k : A → Run S B) :
+    Run.bind (fun _ => NEFin.singleton (.live reached a)) k entry = k a reached := by
+  simp [Run.bind, Run.extend]
+
 /-- Strict Bind forwards Undef and Dead without evaluating a successful body. -/
 theorem strict_no_return_controls (s : S) (k : P → Run S Unit) :
     Run.bind (fun _ => NEFin.singleton (.undef s)) k s = NEFin.singleton (.undef s) ∧
