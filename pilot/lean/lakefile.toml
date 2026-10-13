@@ -33,3 +33,9 @@ name = "SmusniF03B"
 
 [[lean_lib]]
 name = "F03BAuditSupport"
+
+[[lean_lib]]
+name = "SmusniF03A1"
+
+[[lean_lib]]
+name = "F03A1AuditSupport"
