@@ -30,6 +30,16 @@ theorem truth_bit_retained (R : Setoid P) (p : P) :
     mapSide (qAnchor (G := G) R) ⟨.inr p, true⟩ ≠ mapSide (qAnchor R) ⟨.inr p, false⟩ := by
   simp [mapSide]
 
+/-- Related proposition anchors identify through the whole state map without
+changing the existing side prefix or the new side's truth bit. -/
+theorem related_side_anchors
+    (R : Setoid P) (s : RawState N G GA P H)
+    (p q : P) (related : R.r p q) (bit : Bool) :
+    qState R { s with sides := s.sides ++ [⟨.inr p, bit⟩] } =
+      qState R { s with sides := s.sides ++ [⟨.inr q, bit⟩] } := by
+  have eq : Quotient.mk R p = Quotient.mk R q := Quotient.sound related
+  simp [qState, mapState, mapSide, qAnchor, qTag, eq]
+
 def initial : RawState Nat Nat Nat Nat Nat := ⟨fun _ => none, [], [], .t, .t⟩
 def oneSlot (p : Nat) : RawState Nat Nat Nat Nat Nat := putSlot 0 (some (.inr p)) initial
 
@@ -61,6 +71,18 @@ theorem suffix_ignores_old_failure :
 /-- Entire families, not successful-only projections, pass through quotient maps. -/
 theorem failure_tags_retained (R : Setoid P) (AR : Setoid A) (s : RawState N G GA P H) :
     qOutcome R AR (.dead s) ≠ qOutcome R AR (.undef s) := by
+  simp [qOutcome, mapOutcome]
+
+/-- Direct image retains both success and failure, even if their states identify. -/
+theorem mixed_live_dead_image
+    (R : Setoid P) (AR : Setoid A)
+    (s t : RawState N G GA P H) (a : A) :
+    mapResults (qOutcome R AR)
+        (NEFin.ofHeadTail (.live s a) [.dead t]) =
+      NEFin.ofHeadTail
+        (.live (qState R s) (Quotient.mk AR a))
+        [.dead (qState R t)] := by
+  ext z
   simp [qOutcome, mapOutcome]
 
 theorem two_equivalent_outputs_collapse :

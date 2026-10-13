@@ -52,6 +52,10 @@ The computation equation is:
 qRun R AR m (qState R s) = mapResults (qOutcome R AR) (m.val s)
 ```
 
+`qRun` and `qOutcome` use `Quotient.mk AR` for returned values.
+Tagged result shapes use generic `descend` with `qValue`, as `descend_lookupSlot` demonstrates.
+This is a wrapper shape limit, not an A1 defect or an A2 prerequisite.
+
 The finite carrier and preimage selections use classical choice.
 These are noncomputable Lean denotational definitions, not an executable evaluator or a claimed algorithm for deciding arbitrary equivalence.
 Their outputs depend on the entire supplied computation and quotient input.
@@ -169,17 +173,20 @@ This target uses the existing F02 relative carrier and does not complete that la
 
 ## Generality and negative controls
 
-`Controls.lean` contains 17 named control theorems.
+`Controls.lean` contains 19 named control theorems.
 Several quantify over arbitrary types, equivalences, states, and continuations rather than a finite fixture list.
 These proof counts are not a count of semantic cases or model coverage.
 The diagnostic parity relation provides equivalent and distinct representatives without supplying the general maps.
+The two integration controls follow Fable's requests and Astra's confirmation in Collab message `msg_20261013T045338329543Z_2d9f67de34f849939284dfcc5835461c`.
 
 | Control | What it establishes |
 | --- | --- |
 | `representative_change`, `distinct_class`, `distinct_tags` | Equivalent representatives identify. Different classes and ground/representative tags remain distinct. |
 | `order_retained`, `truth_bit_retained`, `suffix_ignores_old_failure` | Side order and bits survive. Current suffix truth does not include an earlier failed side. |
+| `related_side_anchors` | Related proposition anchors identify through the full state map, with an arbitrary existing side prefix and fixed truth bit. |
 | `legal_frame_not_reflected` | A quotient legal frame need not be a raw legal frame. |
 | `failure_tags_retained`, `two_equivalent_outputs_collapse` | Dead and Undef remain distinct, while equivalent finite alternatives collapse extensionally. |
+| `mixed_live_dead_image` | The actual finite image contains both mapped Live and Dead outcomes, even when their states identify. |
 | `bind_body_premise_needed` | Related input computations do not suffice when the continuation distinguishes raw representatives. This tests A1 Bind, not A2 function admission. |
 | `visited_tuple_insufficient`, `capture_uses_saved_unvisited_tuple` | A visited-tuple match does not supply full resolver respect. Capture retains the saved result at an unvisited tuple. |
 | `other_context_fields_matter` | Equal resolvers do not make different remaining context fields related. |
@@ -193,7 +200,7 @@ From the repository root, run the isolated command:
 bash pilot/lean/check-f03a1.sh
 ```
 
-The build and audit passed for 270 declarations, including 178 theorem declarations and generated lemmas.
+The build and audit passed for 276 declarations, including 183 theorem declarations and generated lemmas.
 The audit selects declarations by defining module, including private and generated declarations.
 It accepts only `propext`, `Classical.choice`, and `Quot.sound` as transitive axioms.
 It rejects own axioms, unsafe declarations, and imports from the production pilot, F03-B, or F03-A2 targets.
