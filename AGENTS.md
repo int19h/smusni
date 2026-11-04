@@ -109,7 +109,7 @@ coherent-baseline backlog and its dependencies.
   copy of a tracked actionable requirement, accepted decision, test result, or
   TODO.
 - Ad hoc research, diagnosis, discussion, and other untracked tasks may proceed
-  directly from the human prompt or addressed Collab mail. Do not create an
+  directly from the human prompt or a brief. Do not create an
   issue merely to answer such a task.
 - For an issue-backed task, inspect the live issue and search open and closed
   issues for duplicates before starting. The issue body is canonical for
@@ -123,7 +123,7 @@ coherent-baseline backlog and its dependencies.
   `model-theory`, `verification`, and blocked work. A “ready” label records
   semantic readiness, not authorization for unrelated edits or release.
 - Update a tracked task's issue when scope or decisions change. Close it only
-  after the acceptance criteria and repository checks pass; a mailbox response
+  after the acceptance criteria and repository checks pass; a reply
   or local review note alone never closes work.
 - The human partner's adjudications are final. Record their durable
   consequence in the relevant issue body or comment, creating a decision issue
@@ -135,23 +135,22 @@ coherent-baseline backlog and its dependencies.
 Sessions review this repository as peers working with the human partner; no
 session's proposal becomes consensus merely because it was written.
 
-## Herdr Collab
+## Working with other agent sessions
 
-The Herdr Collab project ID for this repository is exactly `smusni`.
-Coordinate through the `herdr-collab` skill and MCP tools; do not infer the project from the checkout path.
+To work with other agent sessions, follow the global instructions on this machine.
 
 ### Review conventions
 
-Herdr Collab does not define participants, roles, generations, workflows, turn
+This repository does not fix participants, roles, generations, workflows, turn
 order, review gates, issue policy, or authority. Tailor those conventions to the
 task; when it is tracked, record its lasting scope and acceptance criteria in
 GitHub.
 
 - Every substantive message separates claims, evidence, objections/questions,
   and requested disposition, citing live file paths/sections, source excerpts,
-  commit/working-tree state, and GitHub issue numbers. Correct immutable mail
-  with a same-sender superseding message rather than editing it.
-- No vote, quorum, silence, group membership, or acknowledgement count becomes
+  commit/working-tree state, and GitHub issue numbers. Correct a sent brief or
+  report with a superseding one from the same sender rather than editing it.
+- No vote, quorum, silence, or acknowledgement count becomes
   consensus. Record named positions and one durable recorder per docket, and
   leave genuine semantic forks to the human partner. If collaboration creates
   or changes actionable work, update GitHub; if it proposes a semantic change,
@@ -167,7 +166,7 @@ task calls for a full pass, create a fresh, task-tailored set of sessions and
 load every in-scope document (`brief.md`, `spec.md`, `rationale.md`,
 `samples.md`, `primer.md`) in full. The generation label, handles, optional
 recipient group, review allocation, handoff, and retirement plan are project
-conventions for that run, not Herdr Collab protocol or enforced state. Generate
+conventions for that run, not enforced state. Generate
 a manifest-bearing bundle with `tools/full-pass-review/bundle.py`; see the
 README there for the historical label and an example convention.
 
@@ -404,9 +403,6 @@ judgment that the documents lack value.
 
 ## Working protocol
 
-- When a task uses Collab, perform the turn-boundary mailbox checks that the
-  `herdr-collab` skill describes and mention pending peer input that materially affects the
-  task; do not add forced polling to otherwise self-contained semantic work.
 - Lead with the current outcome, then the evidence and tradeoffs.
 - For reviews, actively seek counterexamples, contradictions, unstated
   assumptions, edition drift, non sequiturs, and apparently sourced claims that
